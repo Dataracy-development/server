@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: Deploy to EC2 (Blue/Green)
 
 on:
