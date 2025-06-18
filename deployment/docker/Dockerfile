@@ -1,8 +1,7 @@
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 
-# JAR 파일 복사
-COPY build/libs/app.jar app.jar
+COPY build/libs/dataracy-*.jar app.jar
 
 # 📌 설정 파일 복사
 COPY src/main/resources/application.yml ./application.yml
