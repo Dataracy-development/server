@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/dataracy
+    url: jdbc:mysql://localhost:3306/dataracy?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
     username: root
     password: jh9710501@
     driver-class-name: com.mysql.cj.jdbc.Driver
