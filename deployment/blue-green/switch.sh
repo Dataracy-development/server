@@ -39,6 +39,14 @@ else
   echo "upstream backend { server backend-green:8080; }" > ../nginx/upstream-blue-green.conf
 fi
 
+# 👉 포트 80 충돌 방어: 이미 포트 80을 점유한 프로세스가 있다면 강제 종료
+PID_80=$(sudo lsof -t -i :80)
+if [ -n "$PID_80" ]; then
+  echo "[WARN] 포트 80 사용 중 → PID $PID_80 종료 시도"
+  sudo kill -9 $PID_80
+  sleep 2
+fi
+
 # nginx 컨테이너 상태 확인 및 실행
 if docker ps -a --format '{{.Names}}' | grep -q '^nginx-proxy$'; then
   if docker restart nginx-proxy; then
