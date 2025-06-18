@@ -15,12 +15,11 @@ fi
 echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
 echo "[INFO] 새로운 컨테이너로 전환합니다: $NEXT"
 
-# 새 컨테이너 실행 (docker-compose up -d)
-docker-compose -f "$CURRENT_COMPOSE" up -d --build
+# 새 컨테이너 실행
+docker compose -f "$CURRENT_COMPOSE" up -d --build
 
-# 새 컨테이너 health check 대기
+# Health check 대기
 echo "[INFO] 새로운 컨테이너 Health Check 대기 중..."
-
 for i in {1..15}; do
   STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/actuator/health || echo "000")
   if [ "$STATUS" == "200" ]; then
@@ -40,7 +39,7 @@ else
   echo "upstream backend { server backend-green:8080; }" > ../nginx/upstream-blue-green.conf
 fi
 
-# nginx 컨테이너 존재 여부 확인 및 처리
+# nginx 컨테이너 상태 확인 및 실행
 echo "[INFO] nginx 컨테이너 재시작 시도"
 if docker ps -a --format '{{.Names}}' | grep -q '^nginx-proxy$'; then
   docker restart nginx-proxy
