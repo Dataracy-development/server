@@ -13,6 +13,19 @@ java {
 	}
 }
 
+jar {
+	enabled = true
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+
+	from {
+		sourceSets.main.resources.srcDirs
+	}
+}
+
 repositories {
 	mavenCentral()
 }
@@ -36,7 +49,7 @@ dependencies {
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	// MySQL
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'com.mysql:mysql-connector-j'
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
