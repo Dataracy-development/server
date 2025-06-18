@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: dataracy/backend
+      IMAGE_NAME: juuuunny/backend
 
     steps:
       - name: Checkout Source
