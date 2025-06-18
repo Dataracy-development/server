@@ -40,10 +40,14 @@ else
 fi
 
 # nginx 컨테이너 상태 확인 및 실행
-echo "[INFO] nginx 컨테이너 재시작 시도"
 if docker ps -a --format '{{.Names}}' | grep -q '^nginx-proxy$'; then
-  docker restart nginx-proxy
-  echo "[INFO] nginx-proxy 컨테이너 재시작 완료"
+  if docker restart nginx-proxy; then
+    echo "[INFO] nginx-proxy 컨테이너 재시작 완료"
+  else
+    echo "[ERROR] nginx-proxy 재시작 실패, 포트 충돌 등 확인 필요"
+    docker rm -f nginx-proxy || true
+    docker compose -f "$CURRENT_COMPOSE" up -d nginx
+  fi
 else
   echo "[WARNING] nginx-proxy 컨테이너가 없어 새로 실행합니다"
   docker compose -f "$CURRENT_COMPOSE" up -d nginx
