@@ -49,6 +49,10 @@ else
   docker compose -f "$CURRENT_COMPOSE" up -d nginx
 fi
 
+# 기존 컨테이너 제거
+echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}"
+docker rm -f backend-${CURRENT} || echo "[WARN] backend-${CURRENT} 제거 실패 또는 이미 없음"
+
 # 상태 갱신
 echo "$NEXT" > ./current_color
 echo "[DONE] 무중단 배포 완료! 현재 활성 인스턴스는 [$NEXT]"
