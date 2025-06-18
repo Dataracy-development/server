@@ -12,7 +12,6 @@ jobs:
 
     env:
       IMAGE_NAME: juuuunny/backend
-      DEPLOY_COLOR: green  # ⚠️ 현재 전환 대상 색상을 수동 또는 자동 지정 필요
 
     steps:
       - name: Checkout Source
@@ -36,15 +35,27 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Determine DEPLOY_COLOR from EC2 current_color
+        id: get-color
+        run: |
+          CURRENT=$(ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo 'blue'")
+          echo "[INFO] current_color on EC2 is $CURRENT"
+          if [ "$CURRENT" == "blue" ]; then
+            echo "DEPLOY_COLOR=green" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_COLOR=blue" >> $GITHUB_ENV
+          fi
+
       - name: Build Docker image
         run: |
-          docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} \
+          echo "[INFO] Building Docker image for: $DEPLOY_COLOR"
+          docker build -t $IMAGE_NAME:$DEPLOY_COLOR \
                        -t $IMAGE_NAME:${{ github.sha }} \
                        -t $IMAGE_NAME:latest \
                        -f deployment/docker/Dockerfile .
 
       - name: Push Docker image
         run: |
-          docker push $IMAGE_NAME:${{ env.DEPLOY_COLOR }}
+          docker push $IMAGE_NAME:$DEPLOY_COLOR
           docker push $IMAGE_NAME:${{ github.sha }}
           docker push $IMAGE_NAME:latest
