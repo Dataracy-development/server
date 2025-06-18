@@ -33,10 +33,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Save PEM key to file
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > ec2key.pem
+          chmod 600 ec2key.pem
+
       - name: Get DEPLOY_COLOR from EC2
         id: get-color
         run: |
-          COLOR=$(ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo blue")
+          COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo blue")
           if [ "$COLOR" = "blue" ]; then
             echo "DEPLOY_COLOR=green" >> $GITHUB_ENV
             echo "PREVIOUS_COLOR=blue" >> $GITHUB_ENV
