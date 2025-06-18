@@ -29,7 +29,7 @@ services:
       - ../ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
       - ../ssl/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
     depends_on:
-      - backend-blue
+      - backend-green  # ✅ 여기 중요하게 수정됨
     networks:
       - dataracy-network
 
