@@ -1,0 +1,22 @@
+name: Deploy to EC2 (Blue/Green)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Connect to EC2 and Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/dataracy
+            git pull origin main
+            chmod +x deployment/blue-green/switch.sh
+            ./deployment/blue-green/switch.sh
