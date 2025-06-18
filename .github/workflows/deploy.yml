@@ -33,32 +33,25 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Get CURRENT color from EC2 and determine DEPLOY_COLOR and PREVIOUS_COLOR
+      - name: Get DEPLOY_COLOR from EC2
         id: get-color
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            CURRENT=$(cat ~/dataracy/deployment/blue-green/current_color || echo "blue")
-            if [ "$CURRENT" = "blue" ]; then
-              echo "DEPLOY_COLOR=green" >> $GITHUB_ENV
-              echo "PREVIOUS_COLOR=blue" >> $GITHUB_ENV
-            else
-              echo "DEPLOY_COLOR=blue" >> $GITHUB_ENV
-              echo "PREVIOUS_COLOR=green" >> $GITHUB_ENV
-            fi
+        run: |
+          COLOR=$(ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo blue")
+          if [ "$COLOR" = "blue" ]; then
+            echo "DEPLOY_COLOR=green" >> $GITHUB_ENV
+            echo "PREVIOUS_COLOR=blue" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_COLOR=blue" >> $GITHUB_ENV
+            echo "PREVIOUS_COLOR=green" >> $GITHUB_ENV
+          fi
 
-      - name: Build and Push Docker Images (Blue & Green)
+      - name: Build and Push Docker Images
         run: |
           docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} \
-                       -t $IMAGE_NAME:${{ env.PREVIOUS_COLOR }} \
                        -t $IMAGE_NAME:${{ github.sha }} \
                        -t $IMAGE_NAME:latest \
                        -f deployment/docker/Dockerfile .
           docker push $IMAGE_NAME:${{ env.DEPLOY_COLOR }}
-          docker push $IMAGE_NAME:${{ env.PREVIOUS_COLOR }}
           docker push $IMAGE_NAME:${{ github.sha }}
           docker push $IMAGE_NAME:latest
 
