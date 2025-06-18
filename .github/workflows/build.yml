@@ -6,12 +6,12 @@ on:
   pull_request:
     branches: [ develop ]
 
+env:
+  IMAGE_NAME: juuuunny/backend
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-      IMAGE_NAME: juuuunny/backend
 
     steps:
       - name: Checkout Source
@@ -35,27 +35,31 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Determine DEPLOY_COLOR from EC2 current_color
+      - name: Get CURRENT color from EC2 and determine DEPLOY_COLOR and PREVIOUS_COLOR
         id: get-color
-        run: |
-          CURRENT=$(ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo 'blue'")
-          echo "[INFO] current_color on EC2 is $CURRENT"
-          if [ "$CURRENT" == "blue" ]; then
-            echo "DEPLOY_COLOR=green" >> $GITHUB_ENV
-          else
-            echo "DEPLOY_COLOR=blue" >> $GITHUB_ENV
-          fi
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            CURRENT=$(cat ~/dataracy/deployment/blue-green/current_color || echo "blue")
+            if [ "$CURRENT" = "blue" ]; then
+              echo "DEPLOY_COLOR=green" >> $GITHUB_ENV
+              echo "PREVIOUS_COLOR=blue" >> $GITHUB_ENV
+            else
+              echo "DEPLOY_COLOR=blue" >> $GITHUB_ENV
+              echo "PREVIOUS_COLOR=green" >> $GITHUB_ENV
+            fi
 
-      - name: Build Docker image
+      - name: Build and Push Docker Image (for both colors)
         run: |
-          echo "[INFO] Building Docker image for: $DEPLOY_COLOR"
-          docker build -t $IMAGE_NAME:$DEPLOY_COLOR \
+          docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} \
+                       -t $IMAGE_NAME:${{ env.PREVIOUS_COLOR }} \
                        -t $IMAGE_NAME:${{ github.sha }} \
                        -t $IMAGE_NAME:latest \
                        -f deployment/docker/Dockerfile .
-
-      - name: Push Docker image
-        run: |
-          docker push $IMAGE_NAME:$DEPLOY_COLOR
+          docker push $IMAGE_NAME:${{ env.DEPLOY_COLOR }}
+          docker push $IMAGE_NAME:${{ env.PREVIOUS_COLOR }}
           docker push $IMAGE_NAME:${{ github.sha }}
           docker push $IMAGE_NAME:latest
