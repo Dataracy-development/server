@@ -1,3 +1,4 @@
+# .github/workflows/deploy.yml
 name: Deploy to EC2 (Blue/Green)
 
 on:
@@ -18,5 +19,5 @@ jobs:
           script: |
             cd ~/dataracy
             git pull origin main
-            chmod +x deployment/blue-green/switch.sh
-            ./deployment/blue-green/switch.sh
+            chmod +x deployment/script/deploy.sh
+            ./deployment/script/deploy.sh
