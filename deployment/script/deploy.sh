@@ -12,7 +12,7 @@ if [ ! -f current_color ]; then
   echo "blue" > current_color
 fi
 
-chmod +x ./switch.sh
+chmod +x ../blue-green/switch.sh
 ./switch.sh
 
 echo "========================================"
