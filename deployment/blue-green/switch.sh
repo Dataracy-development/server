@@ -16,7 +16,7 @@ echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
 echo "[INFO] 새로운 컨테이너로 전환합니다: $NEXT"
 
 # 새 컨테이너 실행
-docker-compose -f "$CURRENT_COMPOSE" up -d --build
+docker compose -f "$CURRENT_COMPOSE" up -d --build
 
 # Health check 대기
 echo "[INFO] 새로운 컨테이너 Health Check 대기 중..."
@@ -46,7 +46,7 @@ if docker ps -a --format '{{.Names}}' | grep -q '^nginx-proxy$'; then
   echo "[INFO] nginx-proxy 컨테이너 재시작 완료"
 else
   echo "[WARNING] nginx-proxy 컨테이너가 없어 새로 실행합니다"
-  docker-compose -f "$CURRENT_COMPOSE" up -d nginx
+  docker compose -f "$CURRENT_COMPOSE" up -d nginx
 fi
 
 # 상태 갱신
