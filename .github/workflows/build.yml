@@ -12,6 +12,7 @@ jobs:
 
     env:
       IMAGE_NAME: juuuunny/backend
+      DEPLOY_COLOR: green  # ⚠️ 현재 전환 대상 색상을 수동 또는 자동 지정 필요
 
     steps:
       - name: Checkout Source
@@ -36,9 +37,14 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t $IMAGE_NAME:${{ github.sha }} -t $IMAGE_NAME:latest -f deployment/docker/Dockerfile .
+        run: |
+          docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} \
+                       -t $IMAGE_NAME:${{ github.sha }} \
+                       -t $IMAGE_NAME:latest \
+                       -f deployment/docker/Dockerfile .
 
       - name: Push Docker image
         run: |
+          docker push $IMAGE_NAME:${{ env.DEPLOY_COLOR }}
           docker push $IMAGE_NAME:${{ github.sha }}
           docker push $IMAGE_NAME:latest
