@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend-blue:
+    image: dataracy/backend:blue
+    container_name: backend-blue
+    restart: always
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dataracy-network
+
+networks:
+  dataracy-network:
+    external: true
