@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   backend-blue:
-    image: dataracy/backend:blue
+    image: juuuunny/backend:blue
     container_name: backend-blue
     restart: always
     ports:
