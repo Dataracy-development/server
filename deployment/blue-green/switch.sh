@@ -16,7 +16,7 @@ echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
 echo "[INFO] 새로운 컨테이너로 전환합니다: $NEXT"
 
 # 새 컨테이너 실행 (docker-compose up -d)
-docker compose -f $CURRENT_COMPOSE up -d --build
+docker-compose -f $CURRENT_COMPOSE up -d --build
 
 # 새 컨테이너 health check 대기
 echo "[INFO] 새로운 컨테이너 Health Check 대기 중..."
