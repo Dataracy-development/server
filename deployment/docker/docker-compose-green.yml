@@ -26,8 +26,8 @@ services:
     volumes:
       - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ../nginx/upstream-blue-green.conf:/etc/nginx/conf.d/upstream-blue-green.conf:ro
-      - /etc/letsencrypt/live/dataracy.co.kr/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
-      - /etc/letsencrypt/live/dataracy.co.kr/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+      - /etc/letsencrypt/live/dataracy.co.kr-0001/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/letsencrypt/live/dataracy.co.kr-0001/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
     depends_on:
       - backend-green
     networks:
