@@ -16,7 +16,7 @@ echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
 echo "[INFO] 새로운 컨테이너로 전환합니다: $NEXT"
 
 # 새 컨테이너 실행
-docker compose -f "$CURRENT_COMPOSE" up -d --build
+docker-compose -f "$CURRENT_COMPOSE" up -d --build
 
 # Health check 대기
 echo "[INFO] 새로운 컨테이너 Health Check 대기 중..."
@@ -39,7 +39,7 @@ else
   echo "upstream backend { server backend-green:8080; }" > ../nginx/upstream-blue-green.conf
 fi
 
-# 👉 포트 80 충돌 방어: 이미 포트 80을 점유한 프로세스가 있다면 강제 종료
+# 포트 80 충돌 방어
 PID_80=$(sudo lsof -t -i :80)
 if [ -n "$PID_80" ]; then
   echo "[WARN] 포트 80 사용 중 → PID $PID_80 종료 시도"
@@ -54,14 +54,14 @@ if docker ps -a --format '{{.Names}}' | grep -q '^nginx-proxy$'; then
   else
     echo "[ERROR] nginx-proxy 재시작 실패, 포트 충돌 등 확인 필요"
     docker rm -f nginx-proxy || true
-    docker compose -f "$CURRENT_COMPOSE" up -d nginx
+    docker-compose -f "$CURRENT_COMPOSE" up -d nginx
   fi
 else
   echo "[WARNING] nginx-proxy 컨테이너가 없어 새로 실행합니다"
-  docker compose -f "$CURRENT_COMPOSE" up -d nginx
+  docker-compose -f "$CURRENT_COMPOSE" up -d nginx
 fi
 
-# 기존 컨테이너 제거
+# 이전 컨테이너 제거
 echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}"
 docker rm -f backend-${CURRENT} || echo "[WARN] backend-${CURRENT} 제거 실패 또는 이미 없음"
 
