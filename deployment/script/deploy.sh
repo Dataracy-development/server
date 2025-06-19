@@ -4,15 +4,14 @@ echo "========================================"
 echo "[DEPLOY] Blue/Green 무중단 배포 시작"
 echo "========================================"
 
-# shellcheck disable=SC2164
 cd "$(dirname "$0")/../blue-green"
 
-# 현재 상태 확인 또는 기본값 지정
+# current_color 파일 없으면 기본 blue로 생성
 if [ ! -f current_color ]; then
   echo "blue" > current_color
 fi
 
-chmod +x ../blue-green/switch.sh
+chmod +x ./switch.sh
 ./switch.sh
 
 echo "========================================"
