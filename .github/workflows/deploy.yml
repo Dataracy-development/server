@@ -1,4 +1,4 @@
-name: Build and Deploy to EC2 (Blue/Green)
+name: Deploy to EC2 (Blue/Green)
 
 on:
   push:
@@ -8,11 +8,11 @@ env:
   IMAGE_NAME: juuuunny/backend
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Source
+      - name: Checkout source
         uses: actions/checkout@v3
 
       - name: Set up JDK 17
@@ -24,7 +24,7 @@ jobs:
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      - name: Build with Gradle
+      - name: Build with Gradle (skip tests)
         run: ./gradlew clean build -x test
 
       - name: Log in to DockerHub
@@ -33,12 +33,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Save PEM key to file
+      - name: Save PEM key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > ec2key.pem
           chmod 600 ec2key.pem
 
-      - name: Get DEPLOY_COLOR from EC2
+      - name: Get deploy color from EC2
         id: get-color
         run: |
           COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo blue")
@@ -50,17 +50,15 @@ jobs:
             echo "PREVIOUS_COLOR=green" >> $GITHUB_ENV
           fi
 
-      - name: Build and Push Docker Images
+      - name: Build and push Docker image
         run: |
           docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} \
-                       -t $IMAGE_NAME:${{ github.sha }} \
                        -t $IMAGE_NAME:latest \
                        -f deployment/docker/Dockerfile .
           docker push $IMAGE_NAME:${{ env.DEPLOY_COLOR }}
-          docker push $IMAGE_NAME:${{ github.sha }}
           docker push $IMAGE_NAME:latest
 
-      - name: Deploy to EC2 (Blue/Green)
+      - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}

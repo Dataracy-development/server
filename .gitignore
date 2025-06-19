@@ -35,3 +35,15 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# OS
+.DS_Store
+
+# JAR
+*.jar
+
+# PEM
+*.pem
+
+# 도커 이슈 방지
+**/target/
