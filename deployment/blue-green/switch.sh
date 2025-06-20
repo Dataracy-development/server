@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# 현재 배포 중인 색상 확인
 CURRENT=$(cat ./current_color)
 
-# 다음 배포 대상 결정
 if [ "$CURRENT" == "blue" ]; then
   NEXT="green"
   CURRENT_COMPOSE="../docker/docker-compose-green.yml"
@@ -15,10 +13,8 @@ fi
 echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
 echo "[INFO] 새로운 컨테이너로 전환합니다: $NEXT"
 
-# 새 컨테이너 실행
-docker-compose -f "$CURRENT_COMPOSE" up -d --build
+docker compose -f "$CURRENT_COMPOSE" up -d --build
 
-# Health check 대기
 echo "[INFO] 새로운 컨테이너 Health Check 대기 중..."
 for i in {1..15}; do
   STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/actuator/health || echo "000")
@@ -31,15 +27,13 @@ for i in {1..15}; do
   fi
 done
 
-# nginx 업스트림 설정 변경
 echo "[INFO] nginx 업스트림 설정 변경 중..."
 if [ "$NEXT" == "blue" ]; then
-  echo "upstream backend { server backend-blue:8080; }" > ../nginx/upstream-blue-green.conf
+  echo "upstream backend { server backend-blue:8080; }" > /home/ubuntu/dataracy/nginx/upstream-blue-green.conf
 else
-  echo "upstream backend { server backend-green:8080; }" > ../nginx/upstream-blue-green.conf
+  echo "upstream backend { server backend-green:8080; }" > /home/ubuntu/dataracy/nginx/upstream-blue-green.conf
 fi
 
-# 포트 80 충돌 방어
 PID_80=$(sudo lsof -t -i :80)
 if [ -n "$PID_80" ]; then
   echo "[WARN] 포트 80 사용 중 → PID $PID_80 종료 시도"
@@ -47,24 +41,18 @@ if [ -n "$PID_80" ]; then
   sleep 2
 fi
 
-# nginx 컨테이너 상태 확인 및 실행
 if docker ps -a --format '{{.Names}}' | grep -q '^nginx-proxy$'; then
-  if docker restart nginx-proxy; then
-    echo "[INFO] nginx-proxy 컨테이너 재시작 완료"
-  else
-    echo "[ERROR] nginx-proxy 재시작 실패, 포트 충돌 등 확인 필요"
+  docker restart nginx-proxy || {
+    echo "[ERROR] nginx-proxy 재시작 실패"
     docker rm -f nginx-proxy || true
-    docker-compose -f "$CURRENT_COMPOSE" up -d nginx
-  fi
+    docker compose -f "$CURRENT_COMPOSE" up -d nginx
+  }
 else
-  echo "[WARNING] nginx-proxy 컨테이너가 없어 새로 실행합니다"
-  docker-compose -f "$CURRENT_COMPOSE" up -d nginx
+  docker compose -f "$CURRENT_COMPOSE" up -d nginx
 fi
 
-# 이전 컨테이너 제거
 echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}"
 docker rm -f backend-${CURRENT} || echo "[WARN] backend-${CURRENT} 제거 실패 또는 이미 없음"
 
-# 상태 갱신
 echo "$NEXT" > ./current_color
 echo "[DONE] 무중단 배포 완료! 현재 활성 인스턴스는 [$NEXT]"
