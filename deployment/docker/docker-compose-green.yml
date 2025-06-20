@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  backend-blue:
+  backend-green:
     image: juuuunny/backend:green
     container_name: backend-green
     restart: always
