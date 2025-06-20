@@ -55,7 +55,7 @@ jobs:
           docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} \
                        -t $IMAGE_NAME:${{ github.sha }} \
                        -t $IMAGE_NAME:latest \
-                       -f deployment/docker/Dockerfile .
+                       -f Dockerfile .
           docker push $IMAGE_NAME:${{ env.DEPLOY_COLOR }}
           docker push $IMAGE_NAME:${{ github.sha }}
           docker push $IMAGE_NAME:latest
