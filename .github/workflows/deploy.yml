@@ -69,9 +69,5 @@ jobs:
           script: |
             cd ~/dataracy
             git pull origin main
-              
-            cp deployment/nginx/nginx.conf ~/dataracy/nginx/nginx.conf
-            cp deployment/nginx/upstream-blue-green.conf ~/dataracy/nginx/upstream-blue-green.conf
-              
             chmod +x deployment/script/deploy.sh
             ./deployment/script/deploy.sh
