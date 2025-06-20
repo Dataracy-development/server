@@ -15,17 +15,10 @@ spring:
       hibernate:
         format_sql: true
 
-  kafka:
-    bootstrap-servers: localhost:9092
-
   servlet:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
 logging:
   level:
@@ -35,7 +28,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus
+        include: health
   endpoint:
     health:
       show-details: always
