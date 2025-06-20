@@ -6,7 +6,6 @@ echo "========================================"
 
 cd "$(dirname "$0")/../blue-green"
 
-# current_color 파일 없으면 기본 blue로 생성
 if [ ! -f current_color ]; then
   echo "blue" > current_color
 fi

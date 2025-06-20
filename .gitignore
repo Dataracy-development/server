@@ -36,14 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-# OS
-.DS_Store
+src/main/resources/application-local.yml
+src/main/resources/application.yml
 
-# JAR
-*.jar
-
-# PEM
-*.pem
-
-# 도커 이슈 방지
-**/target/
