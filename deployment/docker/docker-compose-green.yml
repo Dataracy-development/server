@@ -25,9 +25,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      - /etc/letsencrypt/archive/dataracy.co.kr/fullchain1.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/letsencrypt/archive/dataracy.co.kr/privkey1.pem:/etc/nginx/ssl/privkey.pem:ro
       - /home/ubuntu/dataracy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - /home/ubuntu/dataracy/nginx/upstream-blue-green.conf:/etc/nginx/conf.d/upstream-blue-green.conf:ro
-      - /etc/letsencrypt/live/dataracy.co.kr:/etc/nginx/ssl:ro
     networks:
       - dataracy-network
 
