@@ -16,14 +16,15 @@ echo "[INFO] 새로운 컨테이너로 전환합니다: $NEXT"
 docker compose -f "$CURRENT_COMPOSE" up -d --build
 
 echo "[INFO] 새로운 컨테이너 Health Check 대기 중..."
+# Health 상태가 'healthy'가 될 때까지 검사
 for i in {1..15}; do
-  STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/actuator/health || echo "000")
-  if [ "$STATUS" == "200" ]; then
-    echo "[SUCCESS] $NEXT 컨테이너가 정상적으로 실행되었습니다."
+  STATUS=$(docker inspect --format='{{json .State.Health.Status}}' backend-green 2>/dev/null || echo "null")
+  if [ "$STATUS" == "\"healthy\"" ]; then
+    echo "[SUCCESS] backend-green 컨테이너가 정상적으로 실행되었습니다."
     break
   else
     echo "  [$i/15] 아직 준비되지 않음... (상태: $STATUS)"
-    sleep 3
+    sleep 5
   fi
 done
 

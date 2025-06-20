@@ -12,10 +12,10 @@ services:
     networks:
       - dataracy-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 10s
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 15s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   nginx:
     image: nginx:latest
