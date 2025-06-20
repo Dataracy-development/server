@@ -16,11 +16,10 @@ echo "[INFO] 새로운 컨테이너로 전환합니다: $NEXT"
 docker compose -f "$CURRENT_COMPOSE" up -d --build
 
 echo "[INFO] 새로운 컨테이너 Health Check 대기 중..."
-# Health 상태가 'healthy'가 될 때까지 검사
 for i in {1..15}; do
-  STATUS=$(docker inspect --format='{{json .State.Health.Status}}' backend-green 2>/dev/null || echo "null")
+  STATUS=$(docker inspect --format='{{json .State.Health.Status}}' backend-${NEXT} 2>/dev/null || echo "null")
   if [ "$STATUS" == "\"healthy\"" ]; then
-    echo "[SUCCESS] backend-green 컨테이너가 정상적으로 실행되었습니다."
+    echo "[SUCCESS] backend-${NEXT} 컨테이너가 정상적으로 실행되었습니다."
     break
   else
     echo "  [$i/15] 아직 준비되지 않음... (상태: $STATUS)"
@@ -29,18 +28,7 @@ for i in {1..15}; do
 done
 
 echo "[INFO] nginx 업스트림 설정 변경 중..."
-if [ "$NEXT" == "blue" ]; then
-  echo "upstream backend { server backend-blue:8080; }" > /home/ubuntu/dataracy/nginx/upstream-blue-green.conf
-else
-  echo "upstream backend { server backend-green:8080; }" > /home/ubuntu/dataracy/nginx/upstream-blue-green.conf
-fi
-
-PID_80=$(sudo lsof -t -i :80)
-if [ -n "$PID_80" ]; then
-  echo "[WARN] 포트 80 사용 중 → PID $PID_80 종료 시도"
-  sudo kill -9 $PID_80
-  sleep 2
-fi
+echo "upstream backend { server backend-${NEXT}:8080; }" > ../nginx/upstream-blue-green.conf
 
 if docker ps -a --format '{{.Names}}' | grep -q '^nginx-proxy$'; then
   docker restart nginx-proxy || {
