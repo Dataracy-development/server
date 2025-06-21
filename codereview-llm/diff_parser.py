@@ -1,5 +1,3 @@
-# diff_parser.py
-
 def parse_diff_by_file(diff_text: str) -> dict:
     """
     GitHub PR에서 받은 전체 diff 내용을 파일별로 나누는 함수입니다.
@@ -20,7 +18,7 @@ def parse_diff_by_file(diff_text: str) -> dict:
             if current_file:
                 files[current_file] = "\n".join(buffer)
                 buffer.clear()
-            # ex) diff --git a/file b/file → file
+            # ex) diff--git a/file b/file → file
             current_file = line.split(" b/")[-1].strip()
         elif current_file:
             buffer.append(line)
