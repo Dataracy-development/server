@@ -1,0 +1,10 @@
+# codereview-llm/docker-compose.yaml
+version: '3.8'
+
+services:
+  codereview-llm:
+    build: .
+    ports:
+      - "8000:8000"  # EC2에서는 예: 9000:8000 등으로 바꿔도 됨
+    env_file:
+      - .env
