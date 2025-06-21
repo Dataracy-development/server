@@ -3,6 +3,8 @@ import requests
 import time
 import json
 from typing import Optional
+import hashlib
+
 
 def extract_line_number(comment: str, position: dict) -> Optional[int]:
     match = re.search(r"[Ll]ine\s*(\d+)", comment)
@@ -37,10 +39,16 @@ def save_failed_prompt(prompt: str, error: str):
     except Exception as e:
         print(f"[Fallback 저장 실패] {e}")
 
+def hash_comment_body(body: str) -> str:
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()
+
 def match_existing_comment(new_comment: dict, existing_comments: list[dict]) -> Optional[dict]:
+    new_hash = hash_comment_body(new_comment["comment"])
     for old in existing_comments:
         if (old["path"] == new_comment["path"] and
             old["line"] == new_comment["line"] and
             old["side"] == "RIGHT"):
-            return old
+            old_hash = hash_comment_body(old["body"])
+            if old_hash == new_hash:
+                return old  # 내용까지 동일
     return None
