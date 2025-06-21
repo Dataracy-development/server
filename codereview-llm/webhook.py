@@ -17,8 +17,7 @@ headers = {
     "Accept": "application/vnd.github+json"
 }
 
-
-# ✅ 기존 요약 댓글 찾기 (comment_id 반환)
+# ✅ 기존 요약 댓글 찾기
 def find_existing_summary_comment(pr_number):
     url = f"https://api.github.com/repos/{REPO_NAME}/issues/{pr_number}/comments"
     response = requests.get(url, headers=headers)
@@ -32,14 +31,12 @@ def find_existing_summary_comment(pr_number):
             return comment["id"]
     return None
 
-
 # ✅ 댓글 수정
 def update_comment(comment_id, body):
     url = f"https://api.github.com/repos/{REPO_NAME}/issues/comments/{comment_id}"
     response = requests.patch(url, headers=headers, json={"body": body})
     if response.status_code != 200:
         print(f"❌ 댓글 수정 실패: {response.status_code} - {response.text}")
-
 
 # ✅ 새 댓글 생성
 def create_comment(pr_number, body):
@@ -48,23 +45,32 @@ def create_comment(pr_number, body):
     if response.status_code != 201:
         print(f"❌ 댓글 생성 실패: {response.status_code} - {response.text}")
 
+# ✅ 리뷰 생성 + 줄 단위 코멘트 통합
+def create_review_with_comments(pr_number, comments):
+    url = f"https://api.github.com/repos/{REPO_NAME}/pulls/{pr_number}/reviews"
 
-# ✅ 줄 단위 인라인 리뷰 추가 (중복 줄은 생략)
-def post_inline_comments(pr_number, comments):
-    url = f"https://api.github.com/repos/{REPO_NAME}/pulls/{pr_number}/comments"
+    review_body = "🔍 아래 줄별 리뷰 코멘트를 확인해주세요."
+    review_comments = []
+
     for c in comments:
-        payload = {
-            "body": c["comment"],
+        review_comments.append({
             "path": c["path"],
             "line": c["line"],
-            "side": "RIGHT"
-        }
-        response = requests.post(url, headers=headers, json=payload)
-        if response.status_code != 201:
-            print(f"❌ 인라인 댓글 실패: {c['path']} L{c['line']} - {response.text}")
+            "side": "RIGHT",
+            "body": c["comment"]
+        })
 
+    payload = {
+        "body": review_body,
+        "event": "COMMENT",  # 리뷰 승인/요청이 아닌 일반 코멘트
+        "comments": review_comments
+    }
 
-# ✅ 비동기 리뷰 처리
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code != 200:
+        print(f"❌ 리뷰 생성 실패: {response.status_code} - {response.text}")
+
+# 🧠 리뷰 처리 로직
 def handle_review(pr_number, diff_url):
     diff_response = requests.get(diff_url)
     if diff_response.status_code != 200:
@@ -73,7 +79,7 @@ def handle_review(pr_number, diff_url):
 
     diff_text = diff_response.text
 
-    # 전체 요약 리뷰
+    # 1️⃣ 전체 요약 댓글
     summary_body = get_summary_comment(diff_text)
     comment_id = find_existing_summary_comment(pr_number)
     if comment_id:
@@ -81,12 +87,12 @@ def handle_review(pr_number, diff_url):
     else:
         create_comment(pr_number, summary_body)
 
-    # 파일별 줄 리뷰
+    # 2️⃣ 줄 리뷰 → 하나의 review로 통합
     inline_comments = get_inline_comments(diff_text)
-    post_inline_comments(pr_number, inline_comments)
+    if inline_comments:
+        create_review_with_comments(pr_number, inline_comments)
 
-
-# ✅ GitHub Webhook 엔드포인트
+# 🎯 GitHub Webhook 엔드포인트
 @app.route("/webhook", methods=["POST"])
 def webhook():
     payload = request.json
@@ -98,7 +104,6 @@ def webhook():
 
     threading.Thread(target=handle_review, args=(pr_number, diff_url)).start()
     return "✅ Review triggered", 200
-
 
 # 로컬 실행
 if __name__ == "__main__":
