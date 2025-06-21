@@ -1,12 +1,22 @@
-# reviewer.py
-import openai
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
+import openai
+
 from prompt_summary import build_summary_prompt
 from prompt_inline import build_inline_prompt
 from prompt_refactor import build_refactor_prompt
 from diff_parser import parse_diff_by_file
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# 환경 변수 불러오기
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+REPO_NAME = os.getenv("REPO_NAME")
+
+# OpenAI API Key 설정
+openai.api_key = OPENAI_API_KEY
+
 
 def ask_gpt(prompt: str) -> str:
     response = openai.ChatCompletion.create(
@@ -15,6 +25,7 @@ def ask_gpt(prompt: str) -> str:
         temperature=0.2
     )
     return response.choices[0].message.content.strip()
+
 
 def review(diff: str) -> str:
     result = []
