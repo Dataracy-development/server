@@ -8,7 +8,6 @@ from prompt_summary import build_summary_prompt
 from prompt_inline import build_inline_prompt
 from prompt_refactor import build_refactor_prompt
 from diff_parser import parse_diff_by_file
-from openai.types.chat import ChatCompletionMessageParam
 
 # 환경 변수 불러오기
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -19,7 +18,7 @@ client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 def ask_gpt(prompt: str) -> str:
     try:
-        messages: list[ChatCompletionMessageParam] = [
+        messages = [  # 타입 힌트를 제거하거나
             {"role": "system", "content": "당신은 소프트웨어 아키텍트이자 리뷰어입니다."},
             {"role": "user", "content": prompt}
         ]
@@ -30,7 +29,6 @@ def ask_gpt(prompt: str) -> str:
         return response.choices[0].message.content
     except Exception as e:
         return f"[GPT 호출 실패] {str(e)}"
-
 
 def review(diff: str) -> str:
     result = []
