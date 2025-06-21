@@ -6,6 +6,10 @@ from dotenv import load_dotenv
 from reviewer import get_summary_comment, get_inline_comments
 from utils import fetch_existing_review_comments, match_existing_comment
 
+import concurrent.futures
+
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+
 load_dotenv()
 app = Flask(__name__)
 
@@ -80,7 +84,7 @@ def webhook():
     pr_number = payload["pull_request"]["number"]
     diff_url = payload["pull_request"]["diff_url"]
 
-    threading.Thread(target=handle_review, args=(pr_number, diff_url)).start()
+    executor.submit(handle_review, pr_number, diff_url)
     return "✅ Review triggered", 200
 
 if __name__ == "__main__":
