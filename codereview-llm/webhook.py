@@ -1,13 +1,10 @@
-# webhook.py
+from dotenv import load_dotenv
+load_dotenv()
 
 from flask import Flask, request
 from reviewer import review
 import requests
 import os
-from dotenv import load_dotenv
-
-# ✅ .env 파일에서 환경변수 로딩
-load_dotenv()
 
 # ✅ 환경 변수
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
