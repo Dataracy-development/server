@@ -3,32 +3,24 @@ load_dotenv()
 
 import os
 import openai
-
 from prompt_summary import build_summary_prompt
 from prompt_inline import build_inline_prompt
-from prompt_refactor import build_refactor_prompt
 from diff_parser import parse_diff_by_file
+from utils import extract_line_number  # 줄 번호 추출 함수 (직접 구현 필요)
 
-# 환경 변수 불러오기
+# 환경 변수
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-REPO_NAME = os.getenv("REPO_NAME")
-
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
-# GPT 응답에 의미 있는 내용이 있는지 판단하는 필터 함수
-def should_skip_output(output: str) -> bool:
-    skip_keywords = [
-        "리팩토링 제안 없음",
-        "변경 사항 없음",
-        "관련 항목 없음",
-        "유닛 테스트와 관련이 없습니다",
-        "AOP로 분리할 로직은 없습니다",
-        "예외 처리가 필요 없습니다",
-        "로그와 관련된 사항은 없습니다",
-        "테스트와 관련이 없습니다"
-    ]
-    return any(keyword in output for keyword in skip_keywords)
+REVIEWABLE_EXTENSIONS = [".java", ".kt", ".py", ".ts", ".js", ".go", ".rb", ".html", ".css"]
+SKIP_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".zip", ".jar", ".pdf", ".exe"]
+SKIP_PHRASES = [
+    "리팩토링 제안 없음",
+    "변경 사항 없음",
+    "수정할 부분이 없습니다",
+    "괜찮은 코드입니다",
+    "크게 문제 없어 보입니다"
+]
 
 def ask_gpt(prompt: str) -> str:
     try:
@@ -40,47 +32,51 @@ def ask_gpt(prompt: str) -> str:
             model="gpt-4o",
             messages=messages
         )
-        return response.choices[0].message.content
+        return response.choices[0].message.content.strip()
     except Exception as e:
         return f"[GPT 호출 실패] {str(e)}"
 
+# ✅ 요약용
+def get_summary_comment(diff: str) -> str:
+    output = ask_gpt(build_summary_prompt(diff))
+    return f"""## 📦 PR 전체 요약
+---
+{output}
+"""
 
-# 리뷰 대상 확장자 정의
-REVIEWABLE_EXTENSIONS = [".java", ".kt", ".py", ".ts", ".js", ".go", ".rb", ".html", ".css"]
-SKIP_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".zip", ".jar", ".pdf", ".exe"]
-
-def review(diff: str) -> str:
-    result = []
-
-    # 1. 요약 섹션
-    result.append("## 📌 Pull Request 리뷰 요약\n")
-    summary_output = ask_gpt(build_summary_prompt(diff))
-    result.append(summary_output)
-
-    # 2. 파일별 상세 리뷰
+# ✅ 줄 단위 코드 리뷰용
+def get_inline_comments(diff: str) -> list[dict]:
     files = parse_diff_by_file(diff)
-    for path, content in files.items():
+    inline_comments = []
 
-        # 확장자 필터링
+    for path, meta in files.items():
         if not any(path.endswith(ext) for ext in REVIEWABLE_EXTENSIONS):
             continue
         if any(path.endswith(ext) for ext in SKIP_EXTENSIONS):
             continue
 
-        inline_output = ask_gpt(build_inline_prompt(content))
-        refactor_output = ask_gpt(build_refactor_prompt(content))
+        file_diff = meta["diff"]
+        position = meta["position"]
 
-        # 둘 다 건질 내용 없으면 생략
-        if should_skip_output(inline_output) and should_skip_output(refactor_output):
+        inline_output = ask_gpt(build_inline_prompt(file_diff))
+
+        if any(skip in inline_output for skip in SKIP_PHRASES):
             continue
 
-        result.append(f"\n---\n### 🔍 파일: `{path}`\n")
+        # 줄 번호 기준으로 분할된 코멘트 추출 (한 줄당 하나씩)
+        comments = inline_output.split("\n")
+        for comment in comments:
+            if not comment.strip():
+                continue
 
-        if not should_skip_output(inline_output):
-            result.append(inline_output)
+            line = extract_line_number(comment, position)  # 이 함수는 줄번호를 추출하는 유틸로 따로 구현
+            if line is None:
+                continue
 
-        if not should_skip_output(refactor_output):
-            result.append("\n#### 🔧 리팩토링 제안\n")
-            result.append(refactor_output)
+            inline_comments.append({
+                "path": path,
+                "line": line,
+                "comment": comment.strip()
+            })
 
-    return "\n\n".join(result)
+    return inline_comments
