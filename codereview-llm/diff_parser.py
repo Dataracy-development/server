@@ -1,29 +1,41 @@
+import re
+
 def parse_diff_by_file(diff_text: str) -> dict:
     """
-    GitHub PR에서 받은 전체 diff 내용을 파일별로 나누는 함수입니다.
-
-    반환 구조:
-    {
-        "src/main/java/com/example/FooService.java": "diff --git ...\n@@ ...",
-        "src/main/resources/application.yml": "diff --git ...\n@@ ...",
-        ...
-    }
+    파일별로 diff와 줄 위치(position) 정보를 반환
     """
     files = {}
     current_file = None
     buffer = []
+    current_position = {}
 
     for line in diff_text.splitlines():
         if line.startswith("diff --git"):
             if current_file:
-                files[current_file] = "\n".join(buffer)
+                files[current_file] = {
+                    "diff": "\n".join(buffer),
+                    "position": current_position
+                }
                 buffer.clear()
-            # ex) diff--git a/file b/file → file
+                current_position = {}
             current_file = line.split(" b/")[-1].strip()
+        elif line.startswith("@@"):
+            try:
+                hunk_header = line
+                match = re.search(r"\+(\d+)", hunk_header)
+                if match:
+                    current_line = int(match.group(1))
+                    current_position[hunk_header] = current_line
+            except:
+                pass
+            buffer.append(line)
         elif current_file:
             buffer.append(line)
 
     if current_file:
-        files[current_file] = "\n".join(buffer)
+        files[current_file] = {
+            "diff": "\n".join(buffer),
+            "position": current_position
+        }
 
     return files
