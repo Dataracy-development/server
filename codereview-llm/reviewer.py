@@ -8,6 +8,7 @@ from prompt_summary import build_summary_prompt
 from prompt_inline import build_inline_prompt
 from prompt_refactor import build_refactor_prompt
 from diff_parser import parse_diff_by_file
+from openai.types.chat import ChatCompletionMessageParam
 
 # 환경 변수 불러오기
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -18,12 +19,13 @@ client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 def ask_gpt(prompt: str) -> str:
     try:
+        messages: list[ChatCompletionMessageParam] = [
+            {"role": "system", "content": "당신은 소프트웨어 아키텍트이자 리뷰어입니다."},
+            {"role": "user", "content": prompt}
+        ]
         response = client.chat.completions.create(
             model="gpt-4o",
-            messages=[
-                {"role": "system", "content": "당신은 소프트웨어 아키텍트이자 리뷰어입니다."},
-                {"role": "user", "content": prompt}
-            ]
+            messages=messages
         )
         return response.choices[0].message.content
     except Exception as e:
