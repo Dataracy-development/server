@@ -14,17 +14,20 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 REPO_NAME = os.getenv("REPO_NAME")
 
-# OpenAI API Key 설정
-openai.api_key = OPENAI_API_KEY
-
+client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 def ask_gpt(prompt: str) -> str:
-    response = openai.ChatCompletion.create(
-        model="gpt-4o",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.2
-    )
-    return response.choices[0].message.content.strip()
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "당신은 소프트웨어 아키텍트이자 리뷰어입니다."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"[GPT 호출 실패] {str(e)}"
 
 
 def review(diff: str) -> str:
