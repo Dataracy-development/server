@@ -44,6 +44,11 @@ def ask_gpt(prompt: str) -> str:
     except Exception as e:
         return f"[GPT 호출 실패] {str(e)}"
 
+
+# 리뷰 대상 확장자 정의
+REVIEWABLE_EXTENSIONS = [".java", ".kt", ".py", ".ts", ".js", ".go", ".rb", ".html", ".css"]
+SKIP_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".zip", ".jar", ".pdf", ".exe"]
+
 def review(diff: str) -> str:
     result = []
 
@@ -55,6 +60,13 @@ def review(diff: str) -> str:
     # 2. 파일별 상세 리뷰
     files = parse_diff_by_file(diff)
     for path, content in files.items():
+
+        # 확장자 필터링
+        if not any(path.endswith(ext) for ext in REVIEWABLE_EXTENSIONS):
+            continue
+        if any(path.endswith(ext) for ext in SKIP_EXTENSIONS):
+            continue
+
         inline_output = ask_gpt(build_inline_prompt(content))
         refactor_output = ask_gpt(build_refactor_prompt(content))
 
