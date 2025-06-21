@@ -33,14 +33,23 @@ def extract_line_map(structured_diff: Dict[str, List[Dict]]) -> Dict[str, Dict[i
     line_map_by_file = {}
     for file, lines in structured_diff.items():
         old_to_new = {}
-        approx_line = None
+        content_map = {}
+
         for line in lines:
             if line["type"] == "context":
                 old_to_new[line["old"]] = line["new"]
-                approx_line = (line["old"], line["new"])
-            elif line["type"] == "add" and approx_line:
-                # 추가된 줄도 가장 가까운 context 기준으로 추정 보정
-                old_to_new[approx_line[0] + 1] = approx_line[1] + 1
+                content_map[line["line"].lstrip(" ")] = (line["old"], line["new"])
+            elif line["type"] == "add":
+                added_content = line["line"].lstrip("+").strip()
+                if added_content in content_map:
+                    # 같은 줄 내용이 이전 context에 있었으면 매핑
+                    old_to_new[content_map[added_content][0]] = line["new"]
+                else:
+                    # fallback: 가장 가까운 context 기준 보정
+                    prev_context = max((o for o in old_to_new if o is not None), default=1)
+                    old_to_new[prev_context + 1] = line["new"]
+
         line_map_by_file[file] = old_to_new
     return line_map_by_file
+
 
