@@ -19,7 +19,7 @@ client = openai.OpenAI(api_key=OPENAI_API_KEY)
 def ask_gpt(prompt: str) -> str:
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "당신은 소프트웨어 아키텍트이자 리뷰어입니다."},
                 {"role": "user", "content": prompt}
