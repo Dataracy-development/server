@@ -32,9 +32,7 @@ def post_comment(pr_number, body):
 @app.route("/webhook", methods=["POST"])
 def webhook():
     payload = request.json
-
-    # PR이 열릴 때만 처리
-    if payload.get("action") != "opened":
+    if payload.get("action") not in ["opened", "reopened"]:  # 🔧 수정
         return "Ignored", 200
 
     # PR 번호 및 diff URL 추출
