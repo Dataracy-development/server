@@ -56,24 +56,18 @@ def webhook():
         }
     )
 
-    # ── 4. 파일 리뷰 코멘트들 (Files changed 탭, 줄 번호 없이 path + body)
+    # ── 4. 파일 리뷰 코멘트들 (Conversation 탭, 줄 번호 없이 body)
     review_comments = generate_review_comments(diff_text)
     for comment in review_comments:
         requests.post(
-            f"https://api.github.com/repos/{GITHUB_REPO}/pulls/{pr_number}/comments",
-            headers={
-                "Authorization": f"Bearer {GITHUB_TOKEN}",
-                "Accept": "application/vnd.github+json",
-            },
+            f"https://api.github.com/repos/{GITHUB_REPO}/issues/{pr_number}/comments",
+            headers={...},
             json={
-                "body": comment["body"],
-                "path": comment["path"],
-                "side": "RIGHT",     # 필수 필드: 오른쪽 변경 파일 기준
-                "line": 1            # 임시 줄 (position 없이 path만 전달하면 오류 발생하여 최소 줄 지정)
+                "body": comment["body"]
             }
         )
-
     return "Review posted", 200
+
 
 # ✅컨테이너가 계속 실행되도록 하기 위해선 이 부분이 꼭 필요하다
 if __name__ == "__main__":
