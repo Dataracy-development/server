@@ -15,14 +15,14 @@ def generate_review_comments(diff_text: str) -> list[dict]:
         prompt = build_file_review_prompt(file_diff)
         gpt_response = call_gpt(prompt).strip()
 
-        # ✂️ 여러 코멘트 블럭으로 분리 (🤖 기준으로)
-        review_blocks = re.split(r"\n?🤖", gpt_response)
+        # ✂️ 여러 코멘트 블럭으로 분리 (🚀 기준으로)
+        review_blocks = re.split(r"\n?🚀", gpt_response)
         for block in review_blocks:
             block = block.strip()
             if not block:
                 continue
             comments.append({
-                "body": f"[📄 `{path}` 파일 리뷰]\n\n💬 {block}"
+                "body": f"[🚀 `{path}` 파일 리뷰]\n\n💬 {block}"
             })
 
     return comments
