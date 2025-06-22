@@ -1,72 +1,45 @@
-import os
-import openai
-from dotenv import load_dotenv
-from prompt_inline import build_inline_prompt
-from prompt_summary import build_summary_prompt
-from diff_parser import parse_diff_by_file
-from diff_struct_parser import parse_structured_diff, extract_line_map
-from utils import extract_line_number, save_failed_prompt
+import requests
+from prompt_file_review import build_file_review_prompt
+from prompt_file_refactor import build_file_refactor_prompt
+from diff_parser import extract_changed_files
+from diff_struct_parser import parse_diff_structure
+from utils import call_gpt
 
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-client = openai.OpenAI(api_key=OPENAI_API_KEY)
+def get_inline_and_refactor_comments(diff_text: str) -> list[dict]:
+    """파일 기반 인라인 + 리팩토링 코멘트를 생성하여 리스트로 반환"""
+    comments = []
 
-REVIEWABLE_EXTENSIONS = [".java", ".kt", ".py", ".ts", ".js"]
-SKIP_PHRASES = ["리뷰할 것 없음", "수정할 부분이 없습니다"]
+    parsed_files = extract_changed_files(diff_text)
+    file_structs = parse_diff_structure(diff_text)
 
-def ask_gpt(prompt: str) -> str:
-    try:
-        messages = [
-            {"role": "system", "content": "당신은 소프트웨어 아키텍트입니다."},
-            {"role": "user", "content": prompt}
-        ]
-        response = client.chat.completions.create(model="gpt-4o", messages=messages)
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        save_failed_prompt(prompt, str(e))
-        return f"[GPT 호출 실패] {str(e)}"
+    for file in parsed_files:
+        path = file['path']
+        file_diff = file['content']
+        file_structure = file_structs.get(path)
 
-def get_summary_comment(diff: str) -> str:
-    output = ask_gpt(build_summary_prompt(diff))
-    return f"## 📦 PR 전체 요약\n---\n{output}"
+        # 🔹 1. 코드 블럭 기반 인라인 코멘트들
+        inline_prompt = build_file_review_prompt(file_diff)
+        inline_response = call_gpt(inline_prompt)
+        inline_blocks = inline_response.strip().split("\n\n")
 
-def get_inline_comments(diff: str) -> list[dict]:
-    files = parse_diff_by_file(diff)
-    structured = parse_structured_diff(diff)
-    line_map = extract_line_map(structured)
-    inline_comments = []
-
-    for path, meta in files.items():
-        if not any(path.endswith(ext) for ext in REVIEWABLE_EXTENSIONS):
-            continue
-        if path not in structured:
-            continue
-
-        file_lines = structured[path]
-        position = meta["position"]
-        changed_lines = [l["line"] for l in file_lines if l["type"] in ("add", "delete")]
-        file_diff = "\n".join(changed_lines).strip()
-        if not file_diff:
-            continue
-
-        inline_output = ask_gpt(build_inline_prompt(file_diff))
-        if any(skip in inline_output for skip in SKIP_PHRASES):
-            continue
-
-        for comment in inline_output.split("\n"):
-            if not comment.strip():
+        for block in inline_blocks:
+            block = block.strip()
+            if not block:
                 continue
-            line = extract_line_number(comment, position)
-            if line is not None and path in line_map:
-                mapped = line_map[path].get(line)
-                if mapped:
-                    line = mapped
-            if line is None:
-                continue
-            inline_comments.append({
+            comments.append({
                 "path": path,
-                "line": line,
-                "comment": comment.strip()
+                "body": f"💬 GPT 리뷰 코멘트 (내용 기반)\n\n{block}"
             })
 
-    return inline_comments
+        # 🔹 2. 구조적 리팩토링 코멘트 (1개만 추가)
+        refactor_prompt = build_file_refactor_prompt(file_diff)
+        refactor_response = call_gpt(refactor_prompt)
+        refactor_response = refactor_response.strip()
+
+        if refactor_response:
+            comments.append({
+                "path": path,
+                "body": f"🛠️ 리팩토링 제안\n\n{refactor_response}"
+            })
+
+    return comments

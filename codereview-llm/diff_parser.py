@@ -1,5 +1,13 @@
 import re
 
+def extract_changed_files(diff_text: str) -> list[str]:
+    """
+    전체 PR diff에서 변경된 파일 경로 목록 추출
+    """
+    pattern = re.compile(r"^diff --git a/(.+?) b/.*?$", re.MULTILINE)
+    return pattern.findall(diff_text)
+
+
 def parse_diff_by_file(diff_text: str) -> dict:
     """
     파일별로 diff와 줄 위치(position) 정보를 반환

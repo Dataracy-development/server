@@ -1,6 +1,25 @@
 import re
 from typing import List, Dict
 
+def parse_diff_structure(diff_text: str) -> dict[str, str]:
+    """
+    전체 diff 텍스트를 파일 단위로 나눠 dict로 반환
+
+    예시:
+    {
+        "src/service/UserService.java": "diff --git a/src/service/UserService.java b/src/service/UserService.java\n@@ ...",
+        ...
+    }
+    """
+    file_blocks = {}
+    pattern = re.compile(r"^diff --git a/(.+?) b/.*?\n(.*?)^diff --git", re.MULTILINE | re.DOTALL)
+    matches = pattern.findall(diff_text + "\ndiff --git")  # 마지막 파일까지 매칭되도록 끝에 추가
+
+    for file_path, block in matches:
+        file_blocks[file_path] = f"diff --git a/{file_path} b/{file_path}\n" + block.strip()
+
+    return file_blocks
+
 def parse_structured_diff(diff_text: str) -> Dict[str, List[Dict]]:
     results = {}
     current_file = None

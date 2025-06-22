@@ -1,91 +1,71 @@
-from flask import Flask, request
-import threading
-import requests
 import os
-from dotenv import load_dotenv
-from reviewer import get_summary_comment, get_inline_comments
-from utils import fetch_existing_review_comments, match_existing_comment
+import hmac
+import hashlib
+import requests
+from flask import Flask, request, abort
+from reviewer import get_inline_and_refactor_comments
+from prompt_summary import build_summary_prompt
+from utils import call_gpt
 
-import concurrent.futures
-
-executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
-
-load_dotenv()
 app = Flask(__name__)
-
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-REPO_NAME = os.getenv("REPO_NAME")
+GITHUB_REPO = os.getenv("GITHUB_REPO")
 
-headers = {
-    "Authorization": f"Bearer {GITHUB_TOKEN}",
-    "Accept": "application/vnd.github+json"
-}
-
-def create_review_with_inline_tracking(pr_number, new_comments):
-    existing_comments = fetch_existing_review_comments(pr_number, GITHUB_TOKEN, REPO_NAME)
-    review_comments = []
-
-    for new_c in new_comments:
-        match = match_existing_comment(new_c, existing_comments)
-        if match and match["body"] != new_c["comment"]:
-            patch_url = f"https://api.github.com/repos/{REPO_NAME}/pulls/comments/{match['id']}"
-            response = requests.patch(patch_url, headers=headers, json={"body": new_c["comment"]})
-            if response.status_code != 200:
-                print(f"❌ 코멘트 수정 실패: {response.text}")
-        elif not match:
-            review_comments.append({
-                "path": new_c["path"],
-                "line": new_c["line"],
-                "side": "RIGHT",
-                "body": new_c["comment"]
-            })
-
-    if review_comments:
-        url = f"https://api.github.com/repos/{REPO_NAME}/pulls/{pr_number}/reviews"
-        payload = {
-            "body": "🔍 아래 줄별 리뷰 코멘트를 확인해주세요.",
-            "event": "COMMENT",
-            "comments": review_comments
-        }
-        res = requests.post(url, headers=headers, json=payload)
-        if res.status_code != 200:
-            print(f"❌ 줄별 리뷰 생성 실패: {res.text}")
-
-def handle_review(pr_number, diff_url):
-    diff_response = requests.get(diff_url)
-    if diff_response.status_code != 200:
-        print("❌ Diff 요청 실패")
-        return
-
-    diff_text = diff_response.text
-    summary_body = get_summary_comment(diff_text)
-
-    comment_url = f"https://api.github.com/repos/{REPO_NAME}/issues/{pr_number}/comments"
-    res = requests.get(comment_url, headers=headers)
-    existing = res.json() if res.status_code == 200 else []
-    summary_id = next((c["id"] for c in existing if "📦 PR 전체 요약" in c["body"]), None)
-
-    if summary_id:
-        patch_url = f"https://api.github.com/repos/{REPO_NAME}/issues/comments/{summary_id}"
-        requests.patch(patch_url, headers=headers, json={"body": summary_body})
-    else:
-        requests.post(comment_url, headers=headers, json={"body": summary_body})
-
-    inline_comments = get_inline_comments(diff_text)
-    if inline_comments:
-        create_review_with_inline_tracking(pr_number, inline_comments)
+def verify_signature(payload, signature):
+    secret = os.getenv("GITHUB_SECRET").encode()
+    mac = hmac.new(secret, msg=payload, digestmod=hashlib.sha256)
+    expected = 'sha256=' + mac.hexdigest()
+    return hmac.compare_digest(expected, signature)
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    payload = request.json
-    if payload.get("action") not in ["opened", "reopened", "synchronize"]:
+    # ── 1. 보안 검증
+    payload = request.get_data()
+    signature = request.headers.get("X-Hub-Signature-256")
+    if not verify_signature(payload, signature):
+        abort(400, "Invalid signature")
+
+    event = request.headers.get("X-GitHub-Event")
+    if event != "pull_request":
         return "Ignored", 200
 
-    pr_number = payload["pull_request"]["number"]
-    diff_url = payload["pull_request"]["diff_url"]
+    data = request.json
+    action = data["action"]
+    pr = data["pull_request"]
+    pr_number = pr["number"]
+    diff_url = pr["diff_url"]
 
-    executor.submit(handle_review, pr_number, diff_url)
-    return "✅ Review triggered", 200
+    if action not in ["opened", "synchronize", "reopened"]:
+        return "Ignored", 200
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    # ── 2. Diff 조회
+    diff_text = requests.get(diff_url).text
+
+    # ── 3. 전체 요약 (Conversation 탭)
+    summary_prompt = build_summary_prompt(diff_text)
+    summary_response = call_gpt(summary_prompt).strip()
+
+    requests.post(
+        f"https://api.github.com/repos/{GITHUB_REPO}/issues/{pr_number}/comments",
+        headers={
+            "Authorization": f"Bearer {GITHUB_TOKEN}",
+            "Accept": "application/vnd.github+json",
+        },
+        json={
+            "body": f"📌 **GPT PR 전체 요약**\n\n{summary_response}"
+        }
+    )
+
+    # ── 4. 파일 단위 코멘트들 (Files changed 탭)
+    comments = get_inline_and_refactor_comments(diff_text)
+    for comment in comments:
+        requests.post(
+            f"https://api.github.com/repos/{GITHUB_REPO}/pulls/{pr_number}/comments",
+            headers={
+                "Authorization": f"Bearer {GITHUB_TOKEN}",
+                "Accept": "application/vnd.github+json",
+            },
+            json=comment
+        )
+
+    return "Review posted", 200
