@@ -52,7 +52,7 @@ def webhook():
             "Accept": "application/vnd.github+json",
         },
         json={
-            "body": f"🤖 **GPT PR 전체 요약**\n\n{summary_response}"
+            "body": f"🚀 **GPT PR 전체 요약**\n\n{summary_response}"
         }
     )
 
