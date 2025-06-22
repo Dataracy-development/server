@@ -2,8 +2,11 @@ version: '3.8'
 
 services:
   codereview-llm:
-    build: .
+    container_name: codereview-llm
+    build:
+      context: .
     ports:
       - "8000:8000"
     env_file:
       - .env
+    command: python webhook.py
