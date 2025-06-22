@@ -74,3 +74,7 @@ def webhook():
         )
 
     return "Review posted", 200
+
+# ✅컨테이너가 계속 실행되도록 하기 위해선 이 부분이 꼭 필요하다
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
