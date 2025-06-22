@@ -3,7 +3,7 @@ import hmac
 import hashlib
 import requests
 from flask import Flask, request, abort
-from reviewer import get_inline_and_refactor_comments
+from reviewer import generate_review_comments
 from prompt_summary import build_summary_prompt
 from utils import call_gpt
 
@@ -41,7 +41,7 @@ def webhook():
     # ── 2. Diff 조회
     diff_text = requests.get(diff_url).text
 
-    # ── 3. 전체 요약 (Conversation 탭)
+    # ── 3. 전체 요약 (Conversation 탭에 새로 추가)
     summary_prompt = build_summary_prompt(diff_text)
     summary_response = call_gpt(summary_prompt).strip()
 
@@ -52,20 +52,25 @@ def webhook():
             "Accept": "application/vnd.github+json",
         },
         json={
-            "body": f"📌 **GPT PR 전체 요약**\n\n{summary_response}"
+            "body": f"🤖 **GPT PR 전체 요약**\n\n{summary_response}"
         }
     )
 
-    # ── 4. 파일 단위 코멘트들 (Files changed 탭)
-    comments = get_inline_and_refactor_comments(diff_text)
-    for comment in comments:
+    # ── 4. 파일 리뷰 코멘트들 (Files changed 탭, 줄 번호 없이 path + body)
+    review_comments = generate_review_comments(diff_text)
+    for comment in review_comments:
         requests.post(
             f"https://api.github.com/repos/{GITHUB_REPO}/pulls/{pr_number}/comments",
             headers={
                 "Authorization": f"Bearer {GITHUB_TOKEN}",
                 "Accept": "application/vnd.github+json",
             },
-            json=comment
+            json={
+                "body": comment["body"],
+                "path": comment["path"],
+                "side": "RIGHT",     # 필수 필드: 오른쪽 변경 파일 기준
+                "line": 1            # 임시 줄 (position 없이 path만 전달하면 오류 발생하여 최소 줄 지정)
+            }
         )
 
     return "Review posted", 200

@@ -13,5 +13,8 @@ __pycache__/
 .env
 .env.*
 
+#재전송 큐
+retry_queue.json
+
 # 기타 PyCharm 설정 폴더
 .idea/
