@@ -1,16 +1,15 @@
 import os
-import openai
 import json
+from openai import OpenAI
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def call_gpt(prompt: str, model: str = "gpt-4o") -> str:
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3,
+def call_gpt(prompt):
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": prompt}]
     )
-    return response.choices[0].message["content"]
+    return response.choices[0].message.content
 
 def save_failed_prompt(prompt: str, error_message: str = ""):
     with open("retry_queue.json", "a") as f:
