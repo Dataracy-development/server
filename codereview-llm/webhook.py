@@ -61,7 +61,10 @@ def webhook():
     for comment in review_comments:
         requests.post(
             f"https://api.github.com/repos/{GITHUB_REPO}/issues/{pr_number}/comments",
-            headers={...},
+            headers={
+                "Authorization": f"Bearer {GITHUB_TOKEN}",
+                "Accept": "application/vnd.github+json",
+            },
             json={
                 "body": comment["body"]
             }
