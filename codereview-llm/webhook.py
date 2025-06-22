@@ -35,7 +35,7 @@ def webhook():
     pr_number = pr["number"]
     diff_url = pr["diff_url"]
 
-    if action not in ["opened", "synchronize", "reopened"]:
+    if action not in ["opened"]:
         return "Ignored", 200
 
     # ── 2. Diff 조회
