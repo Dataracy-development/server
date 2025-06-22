@@ -22,8 +22,7 @@ def generate_review_comments(diff_text: str) -> list[dict]:
             if not block:
                 continue
             comments.append({
-                "path": path,
-                "body": f"🤖 GPT Review Bot:\n\n💬 {block}"
+                "body": f"[📄 `{path}` 파일 리뷰]\n\n💬 {block}"
             })
 
     return comments
