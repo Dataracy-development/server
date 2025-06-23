@@ -1,10 +1,14 @@
 server:
   port: 8080
 
+logging:
+  level:
+    root: warn
+
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: prod
 
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
@@ -21,7 +25,16 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: false
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always

@@ -1,10 +1,10 @@
 server:
-  port: 8080
+  port: 8083
 
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: dev
 
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul

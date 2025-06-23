@@ -5,8 +5,10 @@ services:
     restart: always
     ports:
       - "8082:8080"
-    volumes:
-      - /home/ubuntu/dataracy/config/application.yml:/app/application.yml:ro
+    env_file:
+      - /home/ubuntu/dataracy/config/.env.prod
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
     networks:
       - dataracy-network
     healthcheck:
