@@ -32,3 +32,4 @@ services:
 networks:
   dataracy-network:
     driver: bridge
+    external: true
