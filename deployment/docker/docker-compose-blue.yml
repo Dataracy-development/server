@@ -6,7 +6,9 @@ services:
     ports:
       - "8081:8080"
     volumes:
-      - /home/ubuntu/dataracy/config/application.yml:/app/application.yml:ro
+      - /home/ubuntu/dataracy/config/application-prod.yml:/app/application.yml:ro
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
     networks:
       - dataracy-network
     healthcheck:
