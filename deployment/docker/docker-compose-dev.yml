@@ -6,8 +6,9 @@ services:
     container_name: backend-develop
     ports:
       - "8083:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
     volumes:
       - /home/ubuntu/dataracy/config/application-dev.yml:/app/application.yml:ro
-    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    networks:
+      - dataracy-network
