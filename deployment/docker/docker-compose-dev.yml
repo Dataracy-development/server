@@ -15,3 +15,4 @@ services:
 networks:
   dataracy-dev-network:
     driver: bridge
+    external: true
