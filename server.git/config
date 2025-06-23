@@ -1,0 +1,9 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+	ignorecase = true
+[remote "origin"]
+	url = https://github.com/Dataracy-development/server.git
+	fetch = +refs/*:refs/*
+	mirror = true
