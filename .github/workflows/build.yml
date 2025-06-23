@@ -1,9 +1,6 @@
-# .github/workflows/build.yml
 name: Build and Push Docker Image
 
 on:
-  push:
-    branches: [ develop ]
   pull_request:
     branches: [ develop ]
 
