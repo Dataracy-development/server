@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   backend-green:
     image: juuuunny/backend:green
@@ -5,8 +7,8 @@ services:
     restart: always
     ports:
       - "8082:8080"
-    volumes:
-      - /home/ubuntu/dataracy/config/application-prod.yml:/app/application.yml:ro
+    env_file:
+      - /home/ubuntu/dataracy/config/.env
     environment:
       SPRING_PROFILES_ACTIVE: prod
     networks:

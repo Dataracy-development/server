@@ -4,11 +4,13 @@ services:
   backend-dev:
     image: juuuunny/backend:develop
     container_name: backend-dev
+    restart: always
     ports:
       - "8083:8080"
-    volumes:
-      - /home/ubuntu/dataracy-dev/config/application-dev.yml:/app/application.yml:ro
-    restart: always
+    env_file:
+      - /home/ubuntu/dataracy/config/.env
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
     networks:
       - dataracy-dev-network
 
