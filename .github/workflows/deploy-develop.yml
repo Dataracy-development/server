@@ -53,5 +53,5 @@ jobs:
             cd ~/dataracy-dev
             git reset --hard origin/develop
             docker pull juuuunny/backend:develop
-            docker compose -f docker-compose-dev.yml down
-            docker compose -f docker-compose-dev.yml up -d
+            docker compose -f deployment/docker/docker-compose-dev.yml down
+            docker compose -f deployment/docker/docker-compose-dev.yml up -d
