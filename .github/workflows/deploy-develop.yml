@@ -43,7 +43,7 @@ jobs:
           docker build -t $IMAGE_NAME:develop -f Dockerfile .
           docker push $IMAGE_NAME:develop
 
-      - name: SSH to EC2 and Run Develop Container
+      - name: SSH to EC2 and Deploy Develop Container
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -55,5 +55,5 @@ jobs:
             docker pull juuuunny/backend:develop
             docker run -d --name backend-develop \
               -p 8083:8080 \
-              --env SPRING_PROFILES_ACTIVE=dev \
+              -e SPRING_PROFILES_ACTIVE=dev \
               juuuunny/backend:develop
