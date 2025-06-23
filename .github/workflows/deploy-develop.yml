@@ -50,11 +50,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # ✅ develop 브랜치 코드 최신화 추가!
-            cd ~/dataracy
-            git pull origin develop
-
-            cd deployment/docker
+            cd ~/dataracy-dev
+            git reset --hard origin/develop
             docker pull juuuunny/backend:develop
             docker compose -f docker-compose-dev.yml down
             docker compose -f docker-compose-dev.yml up -d
