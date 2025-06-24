@@ -55,5 +55,6 @@ jobs:
             git checkout develop
             git reset --hard origin/develop
             docker pull juuuunny/backend:develop
+            git clean -fd
             docker compose -f deployment/docker/docker-compose-dev.yml down
             docker compose -f deployment/docker/docker-compose-dev.yml up -d
