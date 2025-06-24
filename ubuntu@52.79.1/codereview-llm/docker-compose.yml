@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  codereview-llm:
+    container_name: codereview-llm
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: always  # optional: 컨테이너 자동 재시작
+    command: python webhook.py
