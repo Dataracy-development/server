@@ -13,6 +13,7 @@ fi
 echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
 echo "[INFO] 새로운 컨테이너로 전환합니다: $NEXT"
 
+# ✅ 새 컨테이너 실행
 docker compose -f "$CURRENT_COMPOSE" up -d --build
 
 echo "[INFO] 새로운 컨테이너 Health Check 대기 중..."
@@ -27,8 +28,8 @@ for i in {1..15}; do
   fi
 done
 
-echo "[INFO] nginx 업스트림 설정 변경 중..."
-echo "upstream backend { server backend-${NEXT}:8080; }" > ../nginx/upstream-blue-green.conf
+# ✅ nginx 업스트림 설정은 항상 localhost:8080
+echo "upstream backend { server localhost:8080; }" > ../nginx/upstream-blue-green.conf
 
 if docker ps -a --format '{{.Names}}' | grep -q '^nginx-proxy$'; then
   docker restart nginx-proxy || {
