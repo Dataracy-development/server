@@ -13,6 +13,10 @@ java {
 	}
 }
 
+configurations.all {
+	exclude group: 'commons-logging', module: 'commons-logging'
+}
+
 jar {
 	enabled = true
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE

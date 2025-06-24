@@ -6,7 +6,7 @@ services:
     ports:
       - "8083:8080"
     env_file:
-      - /home/ubuntu/dataracy/config/.env.dev
+      - /home/ubuntu/dataracy-dev/config/.env.dev
     environment:
       SPRING_PROFILES_ACTIVE: dev
     networks:
