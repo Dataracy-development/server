@@ -17,7 +17,7 @@ echo "[INFO] 새로운 컨테이너로 전환합니다: $NEXT"
 docker compose -f "$CURRENT_COMPOSE" up -d --build
 
 echo "[INFO] 새로운 컨테이너 Health Check 대기 중..."
-for i in {1..15}; do
+for i in {1..20}; do
   STATUS=$(docker inspect --format='{{json .State.Health.Status}}' backend-${NEXT} 2>/dev/null || echo "null")
   if [ "$STATUS" == "\"healthy\"" ]; then
     echo "[SUCCESS] backend-${NEXT} 컨테이너가 정상적으로 실행되었습니다."
@@ -27,6 +27,12 @@ for i in {1..15}; do
     sleep 5
   fi
 done
+
+# 🔥 실패한 경우 배포 중단
+if [ "$STATUS" != "\"healthy\"" ]; then
+  echo "[ERROR] backend-${NEXT} 컨테이너가 정상 상태가 아닙니다. 배포를 중단합니다."
+  exit 1
+fi
 
 # ✅ nginx 업스트림 설정은 항상 localhost:8080
 echo "upstream backend { server localhost:8080; }" > ../nginx/upstream-blue-green.conf
