@@ -5,6 +5,6 @@ services:
     network_mode: host
     restart: always
     env_file:
-      - /home/ubuntu/dataracy-dev/config/.env.dev
+      - /home/ubuntu/env-config/.env.dev
     environment:
       SPRING_PROFILES_ACTIVE: dev
