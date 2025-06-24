@@ -1,3 +1,4 @@
+# deploy.yml - 운영용 Blue/Green 무중단 배포
 name: Build and Deploy to EC2 (Blue/Green)
 
 on:
@@ -52,13 +53,8 @@ jobs:
 
       - name: Build and Push Docker Images
         run: |
-          docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} \
-                       -t $IMAGE_NAME:${{ github.sha }} \
-                       -t $IMAGE_NAME:latest \
-                       -f Dockerfile .
+          docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} -f Dockerfile .
           docker push $IMAGE_NAME:${{ env.DEPLOY_COLOR }}
-          docker push $IMAGE_NAME:${{ github.sha }}
-          docker push $IMAGE_NAME:latest
 
       - name: Deploy to EC2 (Blue/Green)
         uses: appleboy/ssh-action@v1.0.3

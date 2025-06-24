@@ -1,0 +1,7 @@
+services:
+  redis-local:
+    image: redis:7.1
+    container_name: redis-local
+    restart: always
+    ports:
+      - "6379:6379"
