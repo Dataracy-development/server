@@ -20,6 +20,9 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT:6379}
+      client-type: lettuce
+      lettuce:
+        ssl: true
 
   jpa:
     hibernate:
