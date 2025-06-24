@@ -39,17 +39,21 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > ec2key.pem
           chmod 600 ec2key.pem
 
-      - name: Get DEPLOY_COLOR from EC2
-        id: get-color
+      - name: Set Docker tag based on branch
+        id: set-tag
         run: |
-          COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo blue")
-          if [ "$COLOR" = "blue" ]; then
-            echo "DEPLOY_COLOR=green" >> $GITHUB_ENV
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo blue")
+            if [ "$COLOR" = "blue" ]; then
+              echo "TAG_NAME=green" >> $GITHUB_ENV
+            else
+              echo "TAG_NAME=blue" >> $GITHUB_ENV
+            fi
           else
-            echo "DEPLOY_COLOR=blue" >> $GITHUB_ENV
+            echo "TAG_NAME=develop" >> $GITHUB_ENV
           fi
 
-      - name: Build and Push Docker Images
+      - name: Build and Push Docker Image
         run: |
-          docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} -f Dockerfile .
-          docker push $IMAGE_NAME:${{ env.DEPLOY_COLOR }}
+          docker build -t $IMAGE_NAME:$TAG_NAME -f Dockerfile .
+          docker push $IMAGE_NAME:$TAG_NAME
