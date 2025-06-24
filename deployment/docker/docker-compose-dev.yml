@@ -10,9 +10,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
     networks:
-      - dataracy-dev-network
+      - dataracy-network
 
 networks:
-  dataracy-dev-network:
-    driver: bridge
+  dataracy-network:
     external: true
