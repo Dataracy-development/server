@@ -1,16 +1,15 @@
+version: "3.8"
+
 services:
   backend-green:
     image: juuuunny/backend:green
     container_name: backend-green
     restart: always
-    ports:
-      - "8082:8080"
+    network_mode: host
     env_file:
       - /home/ubuntu/dataracy/config/.env.prod
     environment:
       SPRING_PROFILES_ACTIVE: prod
-    networks:
-      - dataracy-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 15s
@@ -26,10 +25,3 @@ services:
     volumes:
       - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ../nginx/upstream-blue-green.conf:/etc/nginx/conf.d/upstream-blue-green.conf:ro
-    networks:
-      - dataracy-network
-
-networks:
-  dataracy-network:
-    driver: bridge
-    external: true

@@ -1,8 +1,9 @@
+# build.yml - 공통 이미지 빌드 & 푸시용 (PR 시점에 이미지 미리 빌드)
 name: Build and Push Docker Image
 
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [ develop, main ]
 
 env:
   IMAGE_NAME: juuuunny/backend
@@ -50,10 +51,5 @@ jobs:
 
       - name: Build and Push Docker Images
         run: |
-          docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} \
-                       -t $IMAGE_NAME:${{ github.sha }} \
-                       -t $IMAGE_NAME:latest \
-                       -f Dockerfile .
+          docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} -f Dockerfile .
           docker push $IMAGE_NAME:${{ env.DEPLOY_COLOR }}
-          docker push $IMAGE_NAME:${{ github.sha }}
-          docker push $IMAGE_NAME:latest

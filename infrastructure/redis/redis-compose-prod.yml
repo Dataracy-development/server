@@ -1,13 +1,14 @@
 services:
   redis-prod:
-    image: redis:7.2
+    image: redis:7.1
     container_name: redis-prod
     restart: always
     ports:
       - "6379:6379"
     networks:
-      - dataracy-network
+      - redis-prod-network
 
 networks:
-  dataracy-network:
-    external: true
+  redis-prod-network:
+    name: redis-prod-network
+    driver: bridge
