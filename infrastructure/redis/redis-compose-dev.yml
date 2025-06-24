@@ -1,12 +1,12 @@
 services:
   redis-dev:
-    image: redis:7.2
+    image: redis:7.1
     container_name: redis-dev
     restart: always
     ports:
       - "6380:6379"
     networks:
-      - dataracy-dev-network
+      - dataracy-network
 
 networks:
   dataracy-dev-network:
