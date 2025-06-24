@@ -64,8 +64,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/dataracy
+            git reset --hard
+            git clean -fd
             git fetch origin main
-            git checkout main
             git reset --hard origin/main
+            
             chmod +x deployment/script/deploy.sh
             ./deployment/script/deploy.sh
