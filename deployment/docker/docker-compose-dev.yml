@@ -10,9 +10,13 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
     networks:
-      - dataracy-dev-network
+      - dataracy-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
 
 networks:
-  dataracy-dev-network:
-    driver: bridge
+  dataracy-network:
     external: true
