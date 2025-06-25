@@ -10,7 +10,6 @@ env:
 jobs:
   deploy-develop:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
@@ -56,7 +55,6 @@ jobs:
             git fetch origin develop
             git checkout develop
             git reset --hard origin/develop
-
             docker pull juuuunny/backend:develop
             docker compose -f deployment/docker/docker-compose-dev.yml down
             docker compose -f deployment/docker/docker-compose-dev.yml up -d

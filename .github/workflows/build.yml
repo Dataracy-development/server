@@ -1,4 +1,3 @@
-# build.yml - 공통 이미지 빌드 & 푸시용 (PR 시점에 이미지 미리 빌드)
 name: Build and Push Docker Image
 
 on:
@@ -11,7 +10,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
@@ -51,7 +49,6 @@ jobs:
             fi
           else
             echo "TAG_NAME=develop" >> $GITHUB_ENV
-          fi
 
       - name: Build and Push Docker Image
         run: |

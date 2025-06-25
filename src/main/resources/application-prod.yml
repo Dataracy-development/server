@@ -1,10 +1,6 @@
 server:
   port: 8080
 
-logging:
-  level:
-    root: warn
-
 spring:
   config:
     activate:
@@ -28,6 +24,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+logging:
+  level:
+    root: warn
 
 management:
   endpoints:
