@@ -1,5 +1,7 @@
 # 공통 설정
 spring:
+  profiles:
+    active: local
   servlet:
     multipart:
       max-file-size: 20MB
