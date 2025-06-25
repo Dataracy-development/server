@@ -2,12 +2,16 @@
 
 set -e  # 오류 발생 시 스크립트 즉시 종료
 
+# 현재 switch.sh 파일의 절대 경로를 기준으로 current_color 경로 설정
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_COLOR_FILE="$SCRIPT_DIR/current_color"
+
 echo "========================================"
 echo "[DEPLOY] Blue/Green 무중단 배포 시작"
 echo "========================================"
 
 # 현재 색상 읽기 (없으면 기본 blue)
-CURRENT=$(cat ./current_color 2>/dev/null || echo "blue")
+CURRENT=$(cat "$CURRENT_COLOR_FILE" 2>/dev/null || echo "blue")
 
 # 다음 색상 결정
 if [ "$CURRENT" == "blue" ]; then
@@ -86,7 +90,7 @@ echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}"
 docker rm -f "backend-${CURRENT}" || echo "[WARN] backend-${CURRENT} 제거 실패 또는 이미 없음"
 
 # ✅ 상태 기록
-echo "$NEXT" > ./current_color
+echo "$NEXT" > "$CURRENT_COLOR_FILE"
 
 echo "========================================"
 echo "[DONE] 무중단 배포 완료! 현재 활성 인스턴스는 [$NEXT]"
