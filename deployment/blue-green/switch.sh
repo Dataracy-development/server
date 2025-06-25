@@ -7,7 +7,7 @@ echo "[DEPLOY] Blue/Green 무중단 배포 시작"
 echo "========================================"
 
 # 로컬 상태 파일 경로 (깃 관리 안됨)
-DEPLOY_STATE_DIR="/home/ubuntu/config"
+DEPLOY_STATE_DIR="/home/ubuntu/color-config"
 CURRENT_COLOR_FILE="$DEPLOY_STATE_DIR/current_color"
 
 mkdir -p "$DEPLOY_STATE_DIR"
