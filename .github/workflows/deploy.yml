@@ -1,4 +1,3 @@
-# deploy.yml - 운영용 Blue/Green 무중단 배포
 name: Build and Deploy to EC2 (Blue/Green)
 
 on:
@@ -11,7 +10,6 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
@@ -49,9 +47,8 @@ jobs:
           else
             echo "DEPLOY_COLOR=blue" >> $GITHUB_ENV
             echo "PREVIOUS_COLOR=green" >> $GITHUB_ENV
-          fi
 
-      - name: Build and Push Docker Images
+      - name: Build and Push Docker Image
         run: |
           docker build -t $IMAGE_NAME:${{ env.DEPLOY_COLOR }} -f Dockerfile .
           docker push $IMAGE_NAME:${{ env.DEPLOY_COLOR }}
@@ -68,6 +65,5 @@ jobs:
             git clean -fd
             git fetch origin main
             git reset --hard origin/main
-            
             chmod +x deployment/script/deploy.sh
             ./deployment/script/deploy.sh
