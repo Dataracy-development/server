@@ -10,5 +10,11 @@ public class UserController {
     public String testLog() {
         return "OK!";
     }
+
+    @GetMapping("/ping")
+    public String ping() {
+        return "PONG!";
+    }
+
 }
 
