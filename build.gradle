@@ -39,6 +39,7 @@ dependencies {
 	// Redis & Kafka
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.apache.commons:commons-pool2'
 
 	// AWS S3
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.643'

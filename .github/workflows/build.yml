@@ -1,4 +1,3 @@
-# build.yml - 공통 이미지 빌드 & 푸시용 (PR 시점에 이미지 미리 빌드)
 name: Build and Push Docker Image
 
 on:
@@ -11,7 +10,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
@@ -34,15 +32,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Save PEM key to file
+      - name: Save PEM key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > ec2key.pem
           chmod 600 ec2key.pem
 
       - name: Set Docker tag based on branch
-        id: set-tag
         run: |
-          if [ "${{ github.ref_name }}" = "main" ]; then
+          if [[ "${{ github.base_ref }}" == "main" ]]; then
             COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo blue")
             if [ "$COLOR" = "blue" ]; then
               echo "TAG_NAME=green" >> $GITHUB_ENV

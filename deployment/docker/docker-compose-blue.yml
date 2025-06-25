@@ -1,11 +1,12 @@
-version: "3.8"
-
 services:
   backend-blue:
     image: juuuunny/backend:blue
     container_name: backend-blue
     restart: always
-    network_mode: host
+    networks:
+      - dataracy-network
+    ports:
+      - "8081:8080"
     env_file:
       - /home/ubuntu/env-config/.env.prod
     environment:
@@ -25,3 +26,9 @@ services:
     volumes:
       - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ../nginx/upstream-blue-green.conf:/etc/nginx/conf.d/upstream-blue-green.conf:ro
+    networks:
+      - dataracy-network
+
+networks:
+  dataracy-network:
+    external: true
