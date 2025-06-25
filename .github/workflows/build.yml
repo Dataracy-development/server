@@ -32,13 +32,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Save PEM key to file
+      - name: Save PEM key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > ec2key.pem
           chmod 600 ec2key.pem
 
       - name: Set Docker tag based on branch
-        id: set-tag
         run: |
           if [ "${{ github.ref_name }}" = "main" ]; then
             COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo blue")
@@ -49,6 +48,7 @@ jobs:
             fi
           else
             echo "TAG_NAME=develop" >> $GITHUB_ENV
+          fi
 
       - name: Build and Push Docker Image
         run: |
