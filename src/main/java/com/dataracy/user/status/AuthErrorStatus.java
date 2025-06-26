@@ -14,6 +14,10 @@ public enum AuthErrorStatus implements BaseErrorCode {
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-003", "만료된 토큰입니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-004", "유효하지 않은 토큰입니다."),
     NOT_AUTHENTICATED(HttpStatus.UNAUTHORIZED, "AUTH-005", "인증에 실패했습니다. 현재 로그인된 유저가 아닙니다."),
+    INVALID_REGISTER_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-006", "유효하지 않은 레지스터 토큰입니다."),
+    EXPIRED_REGISTER_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-007", "추가정보 입력시간이 만료되었습니다. 재회원가입을 시도해주세요."),
+    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-008", "리프레쉬 토큰이 만료되었습니다. 재로그인을 시도해주세요."),
+    TOKEN_USER_MISMATCH(HttpStatus.UNAUTHORIZED, "AUTH-009", "인증된 사용자 정보와 어세스 토큰이 일치하지 않습니다."),
     ;
 
     private final HttpStatus httpStatus;
