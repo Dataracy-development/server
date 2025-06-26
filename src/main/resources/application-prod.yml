@@ -1,5 +1,6 @@
 server:
   port: 8080
+  url: http://${SERVER_HOST}:${SERVER_PORT}
 
 spring:
   config:
@@ -37,3 +38,16 @@ management:
   endpoint:
     health:
       show-details: always
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
+swagger:
+  title: Dataracy
+  description: Dataracy 백엔드 API 운영 문서입니다
+  version: v1.2.0
+  server-url: http://${SERVER_HOST}:${SERVER_PORT}
+  server-description: prod server
