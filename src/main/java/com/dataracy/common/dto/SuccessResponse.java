@@ -22,8 +22,8 @@ public class SuccessResponse<T> {
                 .build();
     }
 
-    public static <T> SuccessResponse<T> of(BaseSuccessCode successCode) {
-        return SuccessResponse.<T>builder()
+    public static SuccessResponse<Void> of(BaseSuccessCode successCode) {
+        return SuccessResponse.<Void>builder()
                 .httpStatus(successCode.getHttpStatus().value())
                 .code(successCode.getCode())
                 .message(successCode.getMessage())
