@@ -13,6 +13,7 @@ public enum AuthErrorStatus implements BaseErrorCode {
     NOT_FOUND_REFRESH_TOKEN_IN_COOKIES(HttpStatus.UNAUTHORIZED, "AUTH-002", "쿠키에 리프레시토큰이 누락되었습니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-003", "만료된 토큰입니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-004", "유효하지 않은 토큰입니다."),
+    NOT_AUTHENTICATED(HttpStatus.UNAUTHORIZED, "AUTH-005", "인증에 실패했습니다. 현재 로그인된 유저가 아닙니다."),
     ;
 
     private final HttpStatus httpStatus;
