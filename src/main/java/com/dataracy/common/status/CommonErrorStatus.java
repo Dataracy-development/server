@@ -35,6 +35,11 @@ public enum CommonErrorStatus implements BaseErrorCode {
     BAD_REQUEST_IMAGE_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE-002", "프로필 이미지는 jpg, jpeg, png 형식만 허용됩니다."),
     OVER_MAXIMUM_FILE_SIZE(HttpStatus.BAD_REQUEST, "FILE-003", "파일은 최대 50MB까지 업로드 가능합니다."),
     BAD_REQUEST_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE-004", "허용되지 않는 파일 형식입니다."),
+
+    // Util Errors
+    CAN_NOT_INSTANTIATE_COOKIE_UTILITY_CLASS(HttpStatus.INTERNAL_SERVER_ERROR, "UTIL-001", "CookieUtil은 인스턴스가 불가능한 클래스입니다."),
+    CAN_NOT_INSTANTIATE_HEADER_UTILITY_CLASS(HttpStatus.INTERNAL_SERVER_ERROR, "UTIL-002", "HeaderUtil은 인스턴스가 불가능한 클래스입니다."),
+    CAN_NOT_INSTANTIATE_FILE_UTILITY_CLASS(HttpStatus.INTERNAL_SERVER_ERROR, "UTIL-003", "FileUtil은 인스턴스가 불가능한 클래스입니다."),
     ;
 
     private final HttpStatus httpStatus;

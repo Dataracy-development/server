@@ -1,10 +1,16 @@
 package com.dataracy.common.util;
 
+import com.dataracy.common.status.CommonErrorStatus;
+import com.dataracy.common.status.CommonException;
 import com.dataracy.user.status.AuthErrorStatus;
 import com.dataracy.user.status.AuthException;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class ExtractHeaderUtil {
+
+    private ExtractHeaderUtil() {
+        throw new CommonException(CommonErrorStatus.CAN_NOT_INSTANTIATE_HEADER_UTILITY_CLASS);
+    }
 
     /**
      * Authorization 헤더에서 Bearer 토큰 추출

@@ -6,6 +6,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class FileUtil {
 
+    private FileUtil() {
+        throw new CommonException(CommonErrorStatus.CAN_NOT_INSTANTIATE_FILE_UTILITY_CLASS);
+    }
+
     public static void validateProfileImage(MultipartFile file) {
         if (file == null || file.isEmpty()) return;
         long maxSize = 10 * 1024 * 1024; // 10MB
