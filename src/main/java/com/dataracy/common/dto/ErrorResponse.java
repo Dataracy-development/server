@@ -12,19 +12,19 @@ public class ErrorResponse {
     private String code;
     private String message;
 
-    public static ErrorResponse of(BaseErrorCode errorCode) {
+    private static ErrorResponse buildResponse(BaseErrorCode errorCode, String message) {
         return ErrorResponse.builder()
                 .httpStatus(errorCode.getHttpStatus().value())
                 .code(errorCode.getCode())
-                .message(errorCode.getMessage())
+                .message(message)
                 .build();
     }
 
+    public static ErrorResponse of(BaseErrorCode errorCode) {
+        return buildResponse(errorCode, errorCode.getMessage());
+    }
+
     public static ErrorResponse of(BaseErrorCode errorCode, String customMessage) {
-        return ErrorResponse.builder()
-                .httpStatus(errorCode.getHttpStatus().value())
-                .code(errorCode.getCode())
-                .message(customMessage)
-                .build();
+        return buildResponse(errorCode, customMessage);
     }
 }
