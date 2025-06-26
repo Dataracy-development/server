@@ -1,6 +1,7 @@
 package com.dataracy.common.util;
 
 import com.dataracy.common.status.CommonErrorStatus;
+import com.dataracy.common.status.CommonException;
 import org.springframework.web.multipart.MultipartFile;
 
 public class FileUtil {
