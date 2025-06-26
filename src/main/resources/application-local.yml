@@ -26,3 +26,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+swagger:
+  title: Dataracy
+  description: Dataracy 백엔드 API 로컬 문서입니다
+  version: v1.2.0
+  server-url: http://${SERVER_HOST}:${SERVER_PORT}
+  server-description: local server

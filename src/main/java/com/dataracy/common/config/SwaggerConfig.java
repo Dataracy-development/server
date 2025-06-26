@@ -1,12 +1,13 @@
 package com.dataracy.common.config;
 
+import com.dataracy.common.properties.SwaggerProperties;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,17 +15,17 @@ import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
 
 // http(s)://<서버주소>:<포트번호>/swagger-ui/index.html로 접속
 @Configuration
+@RequiredArgsConstructor
 public class SwaggerConfig {
 
-    @Value("${server.url}")
-    private String serverUrl;
+    private final SwaggerProperties swaggerProperties;
 
     @Bean
     public OpenAPI publicApi() {
         Info info = new Info()
-                .title("Dataracy")
-                .description("Dataracy API 명세서")
-                .version("v1");
+                .title(swaggerProperties.getTitle())
+                .description(swaggerProperties.getDescription())
+                .version(swaggerProperties.getVersion());
 
         SecurityScheme securityScheme = new SecurityScheme()
                 .name("Authorization")
@@ -39,6 +40,6 @@ public class SwaggerConfig {
                 .info(info)
                 .components(components)
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .addServersItem(new Server().url(serverUrl).description("Dynamic Server"));
+                .addServersItem(new Server().url(swaggerProperties.getServerUrl()).description(swaggerProperties.getServerDescription()));
     }
 }
