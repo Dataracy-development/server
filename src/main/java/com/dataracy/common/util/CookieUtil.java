@@ -63,11 +63,12 @@ public class CookieUtil {
      * @throws AuthException 해당 Refresh Token이 없는 경우
      */
     public static String getRefreshTokenFromCookies(HttpServletRequest request) {
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().equals("refreshToken")) {
-                    return cookie.getValue();
-                }
+        if (request.getCookies() == null || request.getCookies().length == 0) {
+            throw new AuthException(AuthErrorStatus.NOT_FOUND_REFRESH_TOKEN_IN_COOKIES);
+        }
+        for (Cookie cookie : request.getCookies()) {
+            if (cookie.getName().equals("refreshToken")) {
+                return cookie.getValue();
             }
         }
         throw new AuthException(AuthErrorStatus.NOT_FOUND_REFRESH_TOKEN_IN_COOKIES);
