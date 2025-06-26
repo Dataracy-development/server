@@ -6,6 +6,14 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+
 logging:
   level:
     root: info
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  api-docs:
+    path: /v3/api-docs
