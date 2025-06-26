@@ -2,10 +2,19 @@
 spring:
   profiles:
     active: local
+
   servlet:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+
+  jwt:
+    secret: ${JWT_SECRET}
+    redirect-onboarding: ${JWT_REDIRECT_ONBOARDING}
+    redirect-base: ${JWT_REDIRECT_BASE}
+    register-token-expiration-time: ${REGISTER_TOKEN_EXPIRATION_TIME}    # 5 minutes
+    access-token-expiration-time: ${ACCESS_TOKEN_EXPIRATION_TIME}      # 1 hour
+    refresh-token-expiration-time: ${REFRESH_TOKEN_EXPIRATION_TIME}      # 14 days
 
 logging:
   level:
