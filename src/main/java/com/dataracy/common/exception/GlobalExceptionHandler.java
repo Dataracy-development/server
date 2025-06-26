@@ -2,6 +2,7 @@ package com.dataracy.common.exception;
 
 import com.dataracy.common.dto.ErrorResponse;
 import com.dataracy.common.status.GlobalErrorStatus;
+import com.dataracy.common.status.GlobalException;
 import com.dataracy.user.status.UserException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    // 비즈니스(도메인) 예외 처리
+    // 커스텀 비즈니스(도메인) 예외 처리
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(BusinessException e) {
         if (e instanceof UserException) {
@@ -41,6 +42,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             String errorMessage = "공통 예외입니다: " + e.getMessage();
             logException("CustomException", errorMessage);
         }
+        return ResponseEntity
+                .status(e.getHttpStatus())
+                .body(ErrorResponse.of(e.getErrorCode()));
+    }
+
+    // 커스텀 글로벌 예외 처리
+    @ExceptionHandler(GlobalException.class)
+    public ResponseEntity<ErrorResponse> handleGlobalException(GlobalException e) {
+        String errorMessage = "글로벌 예외입니다: " + e.getMessage();
+        logException("GlobalException", errorMessage);
+
         return ResponseEntity
                 .status(e.getHttpStatus())
                 .body(ErrorResponse.of(e.getErrorCode()));
