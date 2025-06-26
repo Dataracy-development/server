@@ -1,7 +1,7 @@
 package com.dataracy.common.exception;
 
 import com.dataracy.common.dto.ErrorResponse;
-import com.dataracy.common.status.GlobalErrorStatus;
+import com.dataracy.common.status.CommonErrorStatus;
 import com.dataracy.common.status.GlobalException;
 import com.dataracy.user.status.UserException;
 import jakarta.validation.ConstraintViolationException;
@@ -65,7 +65,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("SecurityException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(ErrorResponse.of(GlobalErrorStatus._UNAUTHORIZED, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.UNAUTHORIZED, errorMessage));
     }
 
     // IllegalArgumentException 처리 (잘못된 인자가 전달된 경우)
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("IllegalArgumentException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, errorMessage));
     }
 
     // NullPointerException 처리
@@ -85,7 +85,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("NullPointerException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse.of(GlobalErrorStatus._INTERNAL_SERVER_ERROR, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.INTERNAL_SERVER_ERROR, errorMessage));
     }
 
     // NumberFormatException 처리
@@ -95,7 +95,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("NumberFormatException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, errorMessage));
     }
 
     // IndexOutOfBoundsException 처리
@@ -105,7 +105,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("IndexOutOfBoundsException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, errorMessage));
     }
 
     // ConstraintViolationException 처리 (쿼리 파라미터에 올바른 값이 들어오지 않은 경우)
@@ -115,7 +115,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("ConstraintViolationException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, errorMessage));
     }
 
     // MissingRequestHeaderException 처리 (필수 헤더가 누락된 경우)
@@ -125,7 +125,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("MissingRequestHeaderException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, errorMessage));
     }
 
     // DataIntegrityViolationException 처리 (데이터베이스 제약 조건 위반)
@@ -135,7 +135,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("DataIntegrityViolationException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, errorMessage));
     }
 
     // MissingServletRequestParameterException 처리 (필수 쿼리 파라미터가 입력되지 않은 경우)
@@ -148,7 +148,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("MissingServletRequestParameterException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, errorMessage));
     }
 
     // MethodArgumentNotValidException 처리 (RequestBody로 들어온 필드들의 유효성 검증에 실패한 경우)
@@ -162,7 +162,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("ValidationError", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, errorMessage));
     }
 
     // NoHandlerFoundException 처리 (요청 경로에 매핑된 핸들러가 없는 경우)
@@ -175,7 +175,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("NoHandlerFoundException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ErrorResponse.of(GlobalErrorStatus._NOT_FOUND_HANDLER, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.NOT_FOUND_HANDLER, errorMessage));
     }
 
     // HttpRequestMethodNotSupportedException 처리 (지원하지 않는 HTTP 메소드 요청이 들어온 경우)
@@ -188,7 +188,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("HttpRequestMethodNotSupportedException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(ErrorResponse.of(GlobalErrorStatus._METHOD_NOT_ALLOWED, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.METHOD_NOT_ALLOWED, errorMessage));
     }
 
     // HttpMediaTypeNotSupportedException 처리 (지원하지 않는 미디어 타입 요청이 들어온 경우)
@@ -201,7 +201,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("HttpMediaTypeNotSupportedException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-                .body(ErrorResponse.of(GlobalErrorStatus._UNSUPPORTED_MEDIA_TYPE, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.UNSUPPORTED_MEDIA_TYPE, errorMessage));
     }
 
     // HttpMessageNotReadableException 처리 (잘못된 JSON 형식)
@@ -214,7 +214,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("HttpMessageNotReadableException", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, errorMessage));
     }
 
     // 내부 서버 에러 처리
@@ -224,7 +224,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logException("Exception", errorMessage, e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse.of(GlobalErrorStatus._INTERNAL_SERVER_ERROR, errorMessage));
+                .body(ErrorResponse.of(CommonErrorStatus.INTERNAL_SERVER_ERROR, errorMessage));
     }
 
     // 유효성 검증 오류 메시지 추출 메서드 (FieldErrors)
