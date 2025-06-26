@@ -1,5 +1,7 @@
 package com.dataracy.common.util;
 
+import com.dataracy.common.status.CommonErrorStatus;
+import com.dataracy.common.status.CommonException;
 import com.dataracy.user.status.AuthErrorStatus;
 import com.dataracy.user.status.AuthException;
 import jakarta.servlet.http.Cookie;
@@ -7,6 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class CookieUtil {
+
+    private CookieUtil() {
+        throw new CommonException(CommonErrorStatus.CAN_NOT_INSTANTIATE_COOKIE_UTILITY_CLASS);
+    }
 
     /**
      * 유저 온보딩을 위한 쿠키를 설정합니다 (Register Token, Expiration Time).
