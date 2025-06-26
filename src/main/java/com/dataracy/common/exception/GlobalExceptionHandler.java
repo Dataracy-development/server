@@ -2,7 +2,7 @@ package com.dataracy.common.exception;
 
 import com.dataracy.common.dto.ErrorResponse;
 import com.dataracy.common.status.CommonErrorStatus;
-import com.dataracy.common.status.GlobalException;
+import com.dataracy.common.status.CommonException;
 import com.dataracy.user.status.UserException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -48,10 +48,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // 커스텀 글로벌 예외 처리
-    @ExceptionHandler(GlobalException.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(GlobalException e) {
-        String errorMessage = "글로벌 예외입니다: " + e.getMessage();
-        logException("GlobalException", errorMessage, e);
+    @ExceptionHandler(CommonException.class)
+    public ResponseEntity<ErrorResponse> handleGlobalException(CommonException e) {
+        String errorMessage = "공통 글로벌 예외입니다: " + e.getMessage();
+        logException("CommonException", errorMessage, e);
 
         return ResponseEntity
                 .status(e.getHttpStatus())
