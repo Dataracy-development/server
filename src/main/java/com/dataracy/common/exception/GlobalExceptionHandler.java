@@ -102,7 +102,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IndexOutOfBoundsException.class)
     public ResponseEntity<ErrorResponse> handleIndexOutOfBoundsException(IndexOutOfBoundsException e) {
         String errorMessage = "인덱스가 범위를 벗어났습니다: " + e.getMessage();
-        logException("IndexOutOfBoundsException", e);
+        logException("IndexOutOfBoundsException", errorMessage);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
@@ -132,7 +132,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         String errorMessage = "데이터 무결성 제약 조건을 위반했습니다: " + e.getMessage();
-        logException("DataIntegrityViolationException", e);
+        logException("DataIntegrityViolationException", errorMessage);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(GlobalErrorStatus._BAD_REQUEST, errorMessage));
@@ -221,7 +221,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         String errorMessage = "내부 서버 오류입니다: " + e.getMessage();
-        logException(e.getMessage(), errorMessage);
+        logException("Exception", errorMessage);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.of(GlobalErrorStatus._INTERNAL_SERVER_ERROR, errorMessage));
@@ -235,7 +235,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // 로그 기록 메서드
-    private void logException(String message, Object errorDetails) {
-        log.error("{}: {}", message, errorDetails);
+    private void logException(String label, String message) {
+        if (message.equals("IllegalArgumentException")
+                || message.equals("NullPointerException")
+                || message.equals("DataIntegrityViolationException")
+                || message.equals("ConstraintViolationException")
+                || message.equals("MissingRequestHeaderException")
+                || message.equals("MissingServletRequestParameterException")
+                || message.equals("MethodArgumentNotValidException")
+                || message.equals("NumberFormatException")
+                || message.equals("HttpMessageNotReadableException")
+                || message.equals("HttpRequestMethodNotSupportedException")
+                || message.equals("HttpMediaTypeNotSupportedException")
+                || message.equals("NoHandlerFoundException")) {
+            log.warn("[{}] : {}", label, message);
+        } else {
+            log.error("[{}] : {}", label, message);
+        }
     }
 }
