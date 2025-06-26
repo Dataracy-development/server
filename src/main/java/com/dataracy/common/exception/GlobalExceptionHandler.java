@@ -49,7 +49,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // 커스텀 글로벌 예외 처리
     @ExceptionHandler(CommonException.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(CommonException e) {
+    public ResponseEntity<ErrorResponse> handleCommonException(CommonException e) {
         String errorMessage = "공통 글로벌 예외입니다: " + e.getMessage();
         logException("CommonException", errorMessage, e);
 
