@@ -3,6 +3,8 @@ package com.dataracy.user.infra.auth.jwt;
 import com.dataracy.user.domain.enums.RoleStatusType;
 import com.dataracy.user.status.AuthErrorStatus;
 import com.dataracy.user.status.AuthException;
+import com.dataracy.user.status.UserErrorStatus;
+import com.dataracy.user.status.UserException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -153,7 +155,8 @@ public class JwtUtil {
      */
     public RoleStatusType getRoleFromToken(String token) {
         String roleName = parseToken(token).get("role", String.class);
-        return RoleStatusType.of(roleName);
+        return RoleStatusType.of(roleName)
+                .orElseThrow(() -> new UserException(UserErrorStatus.BAD_REQUEST_ROLE_STATUS_TYPE));
     }
 
     /**
