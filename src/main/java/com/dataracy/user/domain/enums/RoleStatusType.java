@@ -10,9 +10,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public enum RoleStatusType {
 
-    ROLE_USER("USER"),
-    ROLE_ADMIN("ADMIN"),
-    ROLE_ANONYMOUS("ANONYMOUS");
+    ROLE_USER("ROLE_USER"),
+    ROLE_ADMIN("ROLE_ADMIN"),
+    ROLE_ANONYMOUS("ROLE_ANONYMOUS");
 
     private final String role;
 
