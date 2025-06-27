@@ -21,7 +21,8 @@ public class GoogleUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getEmail() {
-        return attribute.get("email").toString();
+        Object email = attribute.get("email");
+        return email != null ? email.toString() : "blank@example.com";
     }
 
     @Override
