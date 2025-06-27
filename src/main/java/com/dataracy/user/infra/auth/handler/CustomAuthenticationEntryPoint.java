@@ -15,6 +15,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * 서비스와 관련된 에러사항은 ControllerAdvice에서 처리할 수 있지만
+ * securityContext내의 에러사항은 시큐리티의 exceptionHandlingp에서 처리하기 때문에
+ * CustomAuthenticationEntryPoint를 통해 에러처리를 진행한다.
+ */
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
