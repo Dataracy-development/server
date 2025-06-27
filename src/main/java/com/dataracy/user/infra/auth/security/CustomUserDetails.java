@@ -3,6 +3,7 @@ package com.dataracy.user.infra.auth.security;
 import com.dataracy.user.domain.enums.RoleStatusType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -16,7 +17,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(role::getRole);
+        return List.of(new SimpleGrantedAuthority(role.getRole()));
     }
 
     public Long getUserId() { return userId; }
