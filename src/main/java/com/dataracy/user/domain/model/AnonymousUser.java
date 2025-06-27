@@ -1,4 +1,4 @@
-package com.dataracy.user.infra.auth.anonymous;
+package com.dataracy.user.domain.model;
 
 import lombok.Getter;
 
