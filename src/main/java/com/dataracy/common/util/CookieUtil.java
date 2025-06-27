@@ -17,36 +17,6 @@ public final class CookieUtil {
     }
 
     /**
-     * 유저 온보딩을 위한 쿠키를 설정합니다 (Register Token, Expiration Time).
-     *
-     * @param response          HTTP 응답 객체
-     * @param registerToken       레지스터 토큰
-     * @param registerTokenExpiry 레지스터 토큰 만료 시간 (밀리초)
-     */
-    public static void setRegisterTokenInCookies(
-            HttpServletResponse response,
-            String registerToken,
-            long registerTokenExpiry
-    ) {
-        setCookie(response, "registerToken", registerToken, (int) registerTokenExpiry / 1000);
-    }
-
-    /**
-     * 리프레시토큰 쿠키를 설정합니다 (Refresh Token, Expiration Time).
-     *
-     * @param response          HTTP 응답 객체
-     * @param refreshToken      리프레시 토큰
-     * @param refreshTokenExpiry 리프레시 토큰 만료 시간 (밀리초)
-     */
-    public static void setRefreshTokenInCookies(
-            HttpServletResponse response,
-            String refreshToken,
-            long refreshTokenExpiry
-    ) {
-        setCookie(response, "refreshToken", refreshToken, (int) refreshTokenExpiry / 1000);
-    }
-
-    /**
      * HTTP-Only, Secure 쿠키를 설정합니다.
      *
      * @param response HTTP 응답 객체
@@ -55,11 +25,14 @@ public final class CookieUtil {
      * @param maxAge   쿠키 만료 시간 (초)
      */
     public static void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
+
+        int maxAgeMillis = (int) maxAge / 1000;
+
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
-        cookie.setMaxAge(maxAge);
+        cookie.setMaxAge(maxAgeMillis);
         response.addCookie(cookie);
     }
 
@@ -98,20 +71,5 @@ public final class CookieUtil {
             }
         }
         return Optional.empty();
-    }
-
-    /**
-     * 익명id를 설정합니다 (anonymousId).
-     *
-     * @param response          HTTP 응답 객체
-     * @param anonymousId       익명id
-     * @param anonymousIdExpiry 익명id 만료 시간 (밀리초)
-     */
-    public static void setAnonymousIdInCookies(
-            HttpServletResponse response,
-            String anonymousId,
-            long anonymousIdExpiry
-    ) {
-        setCookie(response, "anonymousId", anonymousId, (int) anonymousIdExpiry / 1000);
     }
 }
