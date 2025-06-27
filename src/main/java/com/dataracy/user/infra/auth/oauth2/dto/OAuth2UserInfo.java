@@ -1,4 +1,4 @@
-package com.dataracy.user.application.dto.response;
+package com.dataracy.user.infra.auth.oauth2.dto;
 
 public interface OAuth2UserInfo {
     //제공자 (Ex. kakao, google, ...)

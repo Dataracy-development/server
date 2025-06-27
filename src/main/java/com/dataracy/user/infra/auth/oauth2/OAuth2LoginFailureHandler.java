@@ -1,4 +1,4 @@
-package com.dataracy.user.infra.auth.handler;
+package com.dataracy.user.infra.auth.oauth2;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
