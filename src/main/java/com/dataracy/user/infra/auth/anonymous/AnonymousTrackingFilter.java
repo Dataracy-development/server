@@ -44,13 +44,18 @@
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //        // 인증 객체가 없다면, 익명 인증 객체 수동 등록
 //        if (auth == null) {
-//            AnonymousUser principal = AnonymousUser.of(anonymousId);
-//            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
-//            Authentication authentication = new AnonymousAuthenticationToken("anonymousKey", principal, authorities);
+//            Authentication authentication = createAnonymousAuthentication(anonymousId);
 //            SecurityContextHolder.getContext().setAuthentication(authentication);
 //            System.out.println("inSecurityContext : " + anonymousId);
 //        }
 //
 //        filterChain.doFilter(request, response);
 //    }
+//
+//private Authentication createAnonymousAuthentication(String anonymousId) {
+//    AnonymousUser principal = AnonymousUser.of(anonymousId);
+//    List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
+//    return new AnonymousAuthenticationToken("anonymousKey", principal, authorities);
+//}
+//
 //}
