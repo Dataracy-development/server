@@ -1,7 +1,6 @@
 package com.dataracy.user.infra.auth.security;
 
 import com.dataracy.user.domain.enums.RoleStatusType;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
