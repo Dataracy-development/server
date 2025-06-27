@@ -1,9 +1,10 @@
 package com.dataracy.user.domain.enums;
 
-import com.dataracy.user.status.UserErrorStatus;
-import com.dataracy.user.status.UserException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
@@ -15,12 +16,9 @@ public enum RoleStatusType {
 
     private final String role;
 
-    public static RoleStatusType of(String role) {
-        for (RoleStatusType status : RoleStatusType.values()) {
-            if (status.getRole().equalsIgnoreCase(role)) {
-                return status;
-            }
-        }
-        throw new UserException(UserErrorStatus.BAD_REQUEST_ROLE_STATUS_TYPE);
+    public static Optional<RoleStatusType> of(String role) {
+        return Arrays.stream(RoleStatusType.values())
+                .filter(status -> status.getRole().equalsIgnoreCase(role))
+                .findFirst();
     }
 }
