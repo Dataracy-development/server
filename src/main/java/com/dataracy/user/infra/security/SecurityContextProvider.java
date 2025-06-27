@@ -1,4 +1,4 @@
-package com.dataracy.user.infra.auth;
+package com.dataracy.user.infra.security;
 
 import com.dataracy.user.domain.enums.RoleStatusType;
 import com.dataracy.user.infra.anonymous.AnonymousUser;
