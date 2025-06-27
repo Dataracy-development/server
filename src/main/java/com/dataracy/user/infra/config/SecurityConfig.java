@@ -1,7 +1,7 @@
 package com.dataracy.user.infra.config;
 
 //import com.dataracy.user.infra.anonymous.AnonymousTrackingFilter;
-import com.dataracy.user.infra.auth.handler.CustomAuthenticationEntryPoint;
+import com.dataracy.user.infra.auth.security.CustomAuthenticationEntryPoint;
 import com.dataracy.user.infra.auth.handler.OAuth2LoginFailureHandler;
 import com.dataracy.user.infra.auth.handler.OAuth2LoginSuccessHandler;
 import com.dataracy.user.infra.auth.jwt.JwtFilter;
