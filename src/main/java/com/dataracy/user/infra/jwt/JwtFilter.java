@@ -5,12 +5,15 @@ import com.dataracy.common.util.ExtractHeaderUtil;
 import com.dataracy.user.domain.enums.RoleStatusType;
 import com.dataracy.user.infra.auth.CustomUserDetails;
 import com.dataracy.user.infra.auth.UserAuthentication;
+import com.dataracy.user.status.AuthErrorStatus;
+import com.dataracy.user.status.AuthException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,25 +29,18 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws BusinessException, ServletException, IOException {
         try {
-            ExtractHeaderUtil.extractAccessToken(request).ifPresent(accessToken -> {
-                log.debug("Extracted JWT Token: {}", accessToken);
-
-                jwtUtil.validateToken(accessToken); // 유효성 검증
-                Long userId = jwtUtil.getUserIdFromToken(accessToken);
-                RoleStatusType role = jwtUtil.getRoleFromToken(accessToken);
-                log.debug("Authenticated UserId: {}", userId);
-
-                setAuthentication(request, userId, role);
-            });
-            filterChain.doFilter(request, response);
+            String accessToken = ExtractHeaderUtil.extractAccessToken(request)
+                    .orElseThrow(() -> new AuthException(AuthErrorStatus.NOT_FOUND_ACCESS_TOKEN_IN_HEADER));
+            log.debug("Extracted JWT Token: {}", accessToken);
+            jwtUtil.validateToken(accessToken); // 유효성 검증
+            Long userId = jwtUtil.getUserIdFromToken(accessToken);
+            RoleStatusType role = jwtUtil.getRoleFromToken(accessToken);
+            log.debug("Authenticated UserId: {}", userId);
+            setAuthentication(request, userId, role);
         }
         catch (BusinessException e) {
-            handleBusinessException(response, e);
-            return;
-        }
-        catch (Exception e) {
-            handleException(response, e);
-            return;
+            request.setAttribute("filter.error", e); // 예외를 요청에 저장
+            throw new AuthenticationCredentialsNotFoundException("JWT 인증 실패", e); // Spring Security 흐름 유지
         }
         filterChain.doFilter(request, response);
     }
@@ -68,25 +64,5 @@ public class JwtFilter extends OncePerRequestFilter {
         UserAuthentication authentication = new UserAuthentication(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    // 토큰 예외 처리 메서드
-    private void handleBusinessException(HttpServletResponse response, BusinessException e) throws IOException {
-        log.error("JWT 인증 예외 발생: {}", e.getMessage());
-        response.setStatus(e.getHttpStatus().value());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        String jsonResponse = String.format("{\"httpStatus\": \"%d\", \"code\": \"%s\", \"message\": \"%s\"}", e.getHttpStatus().value(), e.getCode(), e.getMessage());
-        response.getWriter().write(jsonResponse);
-    }
-
-    // 토큰 예외 처리 메서드
-    private void handleException(HttpServletResponse response, Exception e) throws IOException {
-        log.error("서버 예외 발생: {}", e.getMessage());
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        String jsonResponse = String.format("{\"httpStatus\": \"%d\", \"code\": \"%s\", \"message\": \"%s\"}", 500, "500", e.getMessage());
-        response.getWriter().write(jsonResponse);
     }
 }
