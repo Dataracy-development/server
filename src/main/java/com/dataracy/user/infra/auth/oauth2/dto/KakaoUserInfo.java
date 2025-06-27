@@ -1,4 +1,4 @@
-package com.dataracy.user.application.dto.response;
+package com.dataracy.user.infra.auth.oauth2.dto;
 
 import lombok.AllArgsConstructor;
 
