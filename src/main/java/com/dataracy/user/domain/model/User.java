@@ -25,9 +25,9 @@ public class User {
     private OccupationStatusType occupation;
     private List<InterestDomainStatusType> domains;
     private VisitSourceStatusType visitSource;
-    private Boolean isAdTermsAgreed;
+    private boolean isAdTermsAgreed;
 
-    private Boolean isDeleted;
+    private boolean isDeleted;
 
     public static User toDomain(
             Long id,
@@ -41,8 +41,8 @@ public class User {
             OccupationStatusType occupation,
             List<InterestDomainStatusType> domains,
             VisitSourceStatusType visitSource,
-            Boolean isAdTermsAgreed,
-            Boolean isDeleted
+            boolean isAdTermsAgreed,
+            boolean isDeleted
     ) {
         return User.builder()
                 .id(id)
