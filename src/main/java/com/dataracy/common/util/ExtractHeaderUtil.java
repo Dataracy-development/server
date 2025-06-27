@@ -2,9 +2,9 @@ package com.dataracy.common.util;
 
 import com.dataracy.common.status.CommonErrorStatus;
 import com.dataracy.common.status.CommonException;
-import com.dataracy.user.status.AuthErrorStatus;
-import com.dataracy.user.status.AuthException;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Optional;
 
 public final class ExtractHeaderUtil {
 
@@ -17,13 +17,13 @@ public final class ExtractHeaderUtil {
      * @param request HttpServletRequest
      * @return 헤더에서 어세스 토큰 추출
      */
-    public static String extractAccessToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
+    public static Optional<String> extractAccessToken(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new AuthException(AuthErrorStatus.NOT_FOUND_ACCESS_TOKEN_IN_HEADER);
+        if (header == null || !header.startsWith("Bearer ")) {
+            return Optional.empty();
         }
 
-        return authorizationHeader.substring(7);
+        return Optional.of(header.substring(7));
     }
 }
