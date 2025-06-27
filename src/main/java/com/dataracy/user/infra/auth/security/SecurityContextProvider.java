@@ -12,13 +12,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Slf4j
 public class SecurityContextProvider {
 
+    private static Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
     public static boolean isAnonymous() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = getAuthentication();
         return auth.getPrincipal() instanceof AnonymousUser;
     }
 
     public static boolean isAuthenticated() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = getAuthentication();
         return auth!=null && auth.getPrincipal() instanceof CustomUserDetails;
     }
 
@@ -26,7 +30,7 @@ public class SecurityContextProvider {
         if (!isAuthenticated()) {
             throw new AuthException(AuthErrorStatus.NOT_AUTHENTICATED);
         }
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = getAuthentication();
         CustomUserDetails customUserDetails = (CustomUserDetails) auth.getPrincipal();
         return customUserDetails.getUserId();
     }
@@ -35,14 +39,14 @@ public class SecurityContextProvider {
         if (!isAuthenticated()) {
             throw new AuthException(AuthErrorStatus.NOT_AUTHENTICATED);
         }
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = getAuthentication();
         CustomUserDetails customUserDetails = (CustomUserDetails) auth.getPrincipal();
         return customUserDetails.getRole();
     }
 
     public static String getAnonymousId(HttpServletRequest request) {
         if (isAnonymous()) {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Authentication auth = getAuthentication();
             AnonymousUser anonymousUser = (AnonymousUser) auth.getPrincipal();
             return anonymousUser.getAnonymousId();
         }
