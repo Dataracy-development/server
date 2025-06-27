@@ -2,12 +2,11 @@ package com.dataracy.modules.common.util;
 
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.status.CommonException;
-import com.dataracy.modules.auth.status.AuthErrorStatus;
-import com.dataracy.modules.auth.status.AuthException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public final class CookieUtil {
@@ -41,18 +40,15 @@ public final class CookieUtil {
      *
      * @param request HTTP 요청 객체
      * @return refreshToken 값
-     * @throws AuthException 해당 Refresh Token이 없는 경우
      */
-    public static String getRefreshTokenFromCookies(HttpServletRequest request) {
-        if (request.getCookies() == null || request.getCookies().length == 0) {
-            throw new AuthException(AuthErrorStatus.NOT_FOUND_REFRESH_TOKEN_IN_COOKIES);
+    public static Optional<String> getRefreshTokenFromCookies(HttpServletRequest request) {
+        if (request.getCookies() == null) {
+            return Optional.empty();
         }
-        for (Cookie cookie : request.getCookies()) {
-            if (cookie.getName().equals("refreshToken")) {
-                return cookie.getValue();
-            }
-        }
-        throw new AuthException(AuthErrorStatus.NOT_FOUND_REFRESH_TOKEN_IN_COOKIES);
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst();
     }
 
     /**
