@@ -2,8 +2,8 @@ package com.dataracy.modules.auth.infra.oauth;
 
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
-import com.dataracy.modules.auth.domain.model.GoogleUserInfo;
-import com.dataracy.modules.auth.domain.model.KakaoUserInfo;
+import com.dataracy.modules.auth.infra.oauth.response.GoogleUserInfo;
+import com.dataracy.modules.auth.infra.oauth.response.KakaoUserInfo;
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 
 import java.util.Map;

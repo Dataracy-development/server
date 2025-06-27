@@ -1,5 +1,6 @@
-package com.dataracy.modules.auth.domain.model;
+package com.dataracy.modules.auth.infra.oauth.response;
 
+import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 import lombok.AllArgsConstructor;
 
 import java.util.Map;
