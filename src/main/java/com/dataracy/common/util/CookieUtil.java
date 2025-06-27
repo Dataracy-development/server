@@ -8,6 +8,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Optional;
+
 public final class CookieUtil {
 
     private CookieUtil() {
@@ -86,16 +88,16 @@ public final class CookieUtil {
      * @param request HTTP 요청 객체
      * @return anonymousId 값
      */
-    public static String getAnonymousIdFromCookies(HttpServletRequest request) {
+    public static Optional<String> getAnonymousIdFromCookies(HttpServletRequest request) {
         // 쿠키에서 익명 ID 찾기
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("anonymousId".equals(cookie.getName())) {
-                    return cookie.getValue();
+                    return Optional.of(cookie.getValue());
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
