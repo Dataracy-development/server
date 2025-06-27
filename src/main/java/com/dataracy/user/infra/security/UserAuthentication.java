@@ -1,4 +1,4 @@
-package com.dataracy.user.infra.auth;
+package com.dataracy.user.infra.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
