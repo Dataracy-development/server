@@ -79,4 +79,37 @@ public final class CookieUtil {
         }
         throw new AuthException(AuthErrorStatus.NOT_FOUND_REFRESH_TOKEN_IN_COOKIES);
     }
+
+    /**
+     * 쿠키에서 anonymousId에 해당하는 값을 추출합니다.
+     *
+     * @param request HTTP 요청 객체
+     * @return anonymousId 값
+     */
+    public static String getAnonymousIdFromCookies(HttpServletRequest request) {
+        // 쿠키에서 익명 ID 찾기
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("anonymousId".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 익명id를 설정합니다 (anonymousId).
+     *
+     * @param response          HTTP 응답 객체
+     * @param anonymousId       익명id
+     * @param anonymousIdExpiry 익명id 만료 시간 (밀리초)
+     */
+    public static void setAnonymousIdInCookies(
+            HttpServletResponse response,
+            String anonymousId,
+            long anonymousIdExpiry
+    ) {
+        setCookie(response, "anonymousId", anonymousId, (int) anonymousIdExpiry / 1000);
+    }
 }

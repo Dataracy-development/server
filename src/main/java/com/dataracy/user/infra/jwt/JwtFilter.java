@@ -13,6 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -51,11 +54,15 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
                 || path.equals("/") || path.equals("/base") || path.equals("/onboarding")
-                || path.startsWith("/oauth2/callback")
+                || path.startsWith("/login")
+                || path.startsWith("/oauth2")
                 || path.startsWith("/static")
                 || path.startsWith("/api/v1/auth")
                 || path.startsWith("/api/v1/public")
-                || path.equals("/api/v1/login") || path.equals("/api/v1/signup");
+                || path.equals("/api/v1/login") || path.equals("/api/v1/signup")
+                || path.equals("/favicon.ico")
+                || path.startsWith("/error")
+                ;
     }
 
     // 사용자 인증 설정
