@@ -1,7 +1,7 @@
-package com.dataracy.user.infra.security;
+package com.dataracy.user.infra.auth.security;
 
 import com.dataracy.user.domain.enums.RoleStatusType;
-import com.dataracy.user.infra.anonymous.AnonymousUser;
+import com.dataracy.user.infra.auth.anonymous.AnonymousUser;
 import com.dataracy.user.status.AuthErrorStatus;
 import com.dataracy.user.status.AuthException;
 import jakarta.servlet.http.HttpServletRequest;

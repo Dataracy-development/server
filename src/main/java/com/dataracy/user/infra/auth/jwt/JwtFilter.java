@@ -1,10 +1,10 @@
-package com.dataracy.user.infra.jwt;
+package com.dataracy.user.infra.auth.jwt;
 
 import com.dataracy.common.exception.BusinessException;
 import com.dataracy.common.util.ExtractHeaderUtil;
 import com.dataracy.user.domain.enums.RoleStatusType;
-import com.dataracy.user.infra.security.CustomUserDetails;
-import com.dataracy.user.infra.security.UserAuthentication;
+import com.dataracy.user.infra.auth.security.CustomUserDetails;
+import com.dataracy.user.infra.auth.security.UserAuthentication;
 import com.dataracy.user.status.AuthErrorStatus;
 import com.dataracy.user.status.AuthException;
 import jakarta.servlet.FilterChain;

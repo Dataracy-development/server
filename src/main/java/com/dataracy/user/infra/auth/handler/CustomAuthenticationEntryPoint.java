@@ -1,4 +1,4 @@
-package com.dataracy.user.infra.handler;
+package com.dataracy.user.infra.auth.handler;
 
 import com.dataracy.common.dto.ErrorResponse;
 import com.dataracy.common.exception.BusinessException;

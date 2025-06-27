@@ -1,11 +1,11 @@
 package com.dataracy.user.infra.config;
 
 //import com.dataracy.user.infra.anonymous.AnonymousTrackingFilter;
-import com.dataracy.user.infra.handler.CustomAuthenticationEntryPoint;
-import com.dataracy.user.infra.handler.OAuth2LoginFailureHandler;
-import com.dataracy.user.infra.handler.OAuth2LoginSuccessHandler;
-import com.dataracy.user.infra.jwt.JwtFilter;
-import com.dataracy.user.infra.jwt.JwtUtil;
+import com.dataracy.user.infra.auth.handler.CustomAuthenticationEntryPoint;
+import com.dataracy.user.infra.auth.handler.OAuth2LoginFailureHandler;
+import com.dataracy.user.infra.auth.handler.OAuth2LoginSuccessHandler;
+import com.dataracy.user.infra.auth.jwt.JwtFilter;
+import com.dataracy.user.infra.auth.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
