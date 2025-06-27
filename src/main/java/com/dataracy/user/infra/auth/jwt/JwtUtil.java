@@ -1,4 +1,4 @@
-package com.dataracy.user.infra.jwt;
+package com.dataracy.user.infra.auth.jwt;
 
 import com.dataracy.user.domain.enums.RoleStatusType;
 import com.dataracy.user.status.AuthErrorStatus;

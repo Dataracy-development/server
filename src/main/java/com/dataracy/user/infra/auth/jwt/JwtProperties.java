@@ -1,4 +1,4 @@
-package com.dataracy.user.infra.jwt;
+package com.dataracy.user.infra.auth.jwt;
 
 import lombok.Getter;
 import lombok.Setter;

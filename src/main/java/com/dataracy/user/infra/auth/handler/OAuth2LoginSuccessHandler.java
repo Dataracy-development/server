@@ -1,6 +1,6 @@
-package com.dataracy.user.infra.handler;
+package com.dataracy.user.infra.auth.handler;
 
-import com.dataracy.user.infra.jwt.JwtUtil;
+import com.dataracy.user.infra.auth.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
