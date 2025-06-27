@@ -35,16 +35,15 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          AuthenticationException authException) throws IOException {
 
         Object ex = request.getAttribute("filter.error");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         if (ex instanceof BusinessException businessEx) {
             BaseErrorCode errorCode = businessEx.getErrorCode();
             ErrorResponse errorResponse = ErrorResponse.of(errorCode);
             response.setStatus(errorResponse.getHttpStatus());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             objectMapper.writeValue(response.getWriter(), errorResponse);
         } else {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             ErrorResponse errorResponse = ErrorResponse.of(CommonErrorStatus.INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(response.getWriter(), errorResponse);
         }
