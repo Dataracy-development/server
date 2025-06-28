@@ -6,19 +6,21 @@ import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.application.UserApplicationService;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
 import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
+import com.dataracy.modules.user.presentation.api.UserApi;
 import com.dataracy.modules.user.status.UserSuccessStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/")
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserApi {
 
     private final UserApplicationService userApplicationService;
     private final TokenApplicationService tokenApplicationService;
@@ -30,16 +32,18 @@ public class UserController {
      * @param requestDto 닉네임
      * @return void
      */
-    @PostMapping(value = "/public/signup/oauth2")
+    @Override
     public ResponseEntity<SuccessResponse<Void>> signupUserOAuth2(
-            @CookieValue(required = false) String registerToken,
-            @Validated @RequestBody OnboardingRequestDto requestDto,
+            String registerToken,
+            OnboardingRequestDto requestDto,
             HttpServletResponse response
     ) {
         LoginResponseDto responseDto = userApplicationService.signupUserOAuth2(registerToken, requestDto);
-        CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), (int) responseDto.refreshTokenExpiration() / 1000);
+        CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(),
+                (int) responseDto.refreshTokenExpiration() / 1000);
         tokenApplicationService.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
-        return ResponseEntity.status(HttpStatus.CREATED).body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
     }
 
     @GetMapping("/onboarding")

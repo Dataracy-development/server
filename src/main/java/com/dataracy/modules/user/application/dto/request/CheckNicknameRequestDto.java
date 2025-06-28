@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-@Schema(description = "닉네임 중복을 확인하는 DTO")
+@Schema(description = "닉네임 중복을 확인하는 요청 DTO")
 public record CheckNicknameRequestDto (
 
         @Schema(description = "닉네임 (2~8자)", example = "주니", minLength = 2, maxLength = 8)
