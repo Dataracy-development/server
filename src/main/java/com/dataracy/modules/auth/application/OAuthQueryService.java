@@ -4,7 +4,7 @@ import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponseD
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
 import com.dataracy.modules.user.application.UserQueryService;
-import com.dataracy.modules.user.application.dto.LoginResponseDto;
+import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

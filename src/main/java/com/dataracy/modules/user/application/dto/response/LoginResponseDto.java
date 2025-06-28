@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.dto;
+package com.dataracy.modules.user.application.dto.response;
 
 /**
  * 로그인 성공 시 리프레시 토콘 지급
