@@ -53,7 +53,7 @@ public class JwtUtil {
      * @return 생성된 토큰 문자열
      */
     public String generateAccessOrRefreshToken(Long userId, RoleStatusType role, long expirationMillis) {
-        return generateToken(Map.of("userId", userId, "role", role.getRole()), expirationMillis);
+        return generateToken(Map.of("userId", userId, "role", role.getValue()), expirationMillis);
     }
 
     /**

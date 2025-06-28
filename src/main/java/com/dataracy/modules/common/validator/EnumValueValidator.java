@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, Object> {
 
     private Set<String> validValues;
@@ -38,15 +37,15 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
 
     @Override
     public boolean isValid(Object input, ConstraintValidatorContext context) {
-        // [1] null 처리
+        // null 처리
         if (input == null) return !required;
 
-        // [2] String 단일 값
+        // String 단일 값
         if (input instanceof String str) {
             return !str.isBlank() && validValues.contains(str);
         }
 
-        // [3] List<String>
+        // List<String>
         if (input instanceof List<?> list) {
             if (required && list.isEmpty()) return false;
 
@@ -58,7 +57,7 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
             return true;
         }
 
-        // [4] 다른 타입은 지원하지 않음
+        // 다른 타입은 지원하지 않음
         return false;
     }
 }
