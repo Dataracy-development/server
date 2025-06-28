@@ -1,12 +1,13 @@
 package com.dataracy.modules.auth.infra.oauth;
 
+import com.dataracy.modules.auth.application.OAuthQueryService;
+import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponseDto;
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.application.UserApplicationService;
 import com.dataracy.modules.user.application.UserQueryService;
 import com.dataracy.modules.user.application.dto.LoginResponseDto;
-import com.dataracy.modules.user.application.dto.RegisterTokenResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtUtil jwtUtil;
     private final UserApplicationService userApplicationService;
     private final UserQueryService userQueryService;
+    private final OAuthQueryService oAuthQueryService;
 
     /**
      * OAuth2 로그인 성공 후 처리.
+     * 쿠키 설정, 레디스 설정 등 외부 I/O 부수 효과는 실패/성공 보장이 다르므로
+     * 컨트롤러 또는 핸들러에서 처리해야한다.
      *
      * @param request        HTTP 요청 객체
      * @param response       HTTP 응답 객체
@@ -40,16 +44,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(token);
         // 신규 사용자 처리
-        if (userQueryService.isNewUser(oAuth2UserInfo)) {
-            RegisterTokenResponseDto registerTokenResponseDto = userQueryService.handleNewUser(oAuth2UserInfo);
+        if (oAuthQueryService.isNewUser(oAuth2UserInfo)) {
+            RegisterTokenResponseDto registerTokenResponseDto = oAuthQueryService.handleNewUser(oAuth2UserInfo);
             CookieUtil.setCookie(response, "registerToken", registerTokenResponseDto.registerToken(), (int) registerTokenResponseDto.registerTokenExpiration() / 1000);
             getRedirectStrategy().sendRedirect(request, response, jwtUtil.getRedirectOnboardingUrl());
         }
         // 기존 사용자 처리
         else {
-            LoginResponseDto loginResponseDto = userQueryService.handleExistingUser(oAuth2UserInfo);
+            LoginResponseDto loginResponseDto = oAuthQueryService.handleExistingUser(oAuth2UserInfo);
             CookieUtil.setCookie(response, "refreshToken", loginResponseDto.refreshToken(), (int) loginResponseDto.refreshTokenExpiration() / 1000);
-            tokenRedisManager.saveRefreshToken(loginResponseDto.userId().toString(), loginResponseDto.refreshToken());
+//            tokenRedisManager.saveRefreshToken(loginResponseDto.userId().toString(), loginResponseDto.refreshToken());
             getRedirectStrategy().sendRedirect(request, response, jwtUtil.getRedirectBaseUrl());
         }
     }

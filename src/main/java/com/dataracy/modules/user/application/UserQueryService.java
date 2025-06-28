@@ -3,7 +3,6 @@ package com.dataracy.modules.user.application;
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
 import com.dataracy.modules.user.application.dto.LoginResponseDto;
-import com.dataracy.modules.user.application.dto.RegisterTokenResponseDto;
 import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,22 +30,8 @@ public class UserQueryService {
     }
 
     /**
-     * 신규 사용자 처리.
-     *
-     * @param oAuth2UserInfo    OAuth2 유저정보
-     */
-    public RegisterTokenResponseDto handleNewUser(OAuth2UserInfo oAuth2UserInfo) {
-        String registerToken = jwtUtil.generateRegisterToken(
-                oAuth2UserInfo.getProvider(),
-                oAuth2UserInfo.getProviderId(),
-                oAuth2UserInfo.getEmail()
-        );
-        log.info("신규 사용자 처리 완료: {}", oAuth2UserInfo.getEmail());
-        return new RegisterTokenResponseDto(registerToken, jwtUtil.getRegisterTokenExpirationTime());
-    }
-
-    /**
      * 기존 사용자 처리.
+     * oAuth2UserInfo의 providerId를 토대로 기존유저의 정보를 반환한다.
      *
      * @param oAuth2UserInfo    OAuth2 유저정보
      */
