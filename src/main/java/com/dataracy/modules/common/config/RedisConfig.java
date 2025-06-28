@@ -9,6 +9,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+/**
+ * 여러 레디스 처리 방법을 구혀핝다.
+ * String처리, json직렬화 처리
+ *
+ */
 @Configuration
 public class RedisConfig {
 

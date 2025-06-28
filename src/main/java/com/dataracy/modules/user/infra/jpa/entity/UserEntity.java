@@ -82,7 +82,7 @@ public class UserEntity extends BaseTimeEntity {
             String nickname,
             AuthorLevelStatusType authorLevel,
             OccupationStatusType occupation,
-            List<InterestDomainStatusType> domains,
+//            List<InterestDomainStatusType> domains,
             VisitSourceStatusType visitSource,
             Boolean isAdTermsAgreed,
             Boolean isDeleted
@@ -97,7 +97,7 @@ public class UserEntity extends BaseTimeEntity {
                 .nickname(nickname)
                 .authorLevel(authorLevel)
                 .occupation(occupation)
-                .domains(domains)
+//                .domains(domains)
                 .visitSource(visitSource)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)

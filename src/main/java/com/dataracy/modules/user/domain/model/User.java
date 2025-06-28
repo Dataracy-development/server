@@ -39,7 +39,7 @@ public class User {
             String nickname,
             AuthorLevelStatusType authorLevel,
             OccupationStatusType occupation,
-            List<InterestDomainStatusType> domains,
+//            List<InterestDomainStatusType> domains,
             VisitSourceStatusType visitSource,
             boolean isAdTermsAgreed,
             boolean isDeleted
@@ -54,7 +54,7 @@ public class User {
                 .nickname(nickname)
                 .authorLevel(authorLevel)
                 .occupation(occupation)
-                .domains(domains)
+//                .domains(domains)
                 .visitSource(visitSource)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)

@@ -1,10 +1,9 @@
 package com.dataracy.modules.user.domain.enums;
 
+import com.dataracy.modules.user.status.UserErrorStatus;
+import com.dataracy.modules.user.status.UserException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
@@ -17,9 +16,12 @@ public enum AuthorLevelStatusType {
 
     private final String authorLevel;
 
-    public static Optional<AuthorLevelStatusType> of(String authorLevel) {
-        return Arrays.stream(AuthorLevelStatusType.values())
-                .filter(status -> status.getAuthorLevel().equals(authorLevel))
-                .findFirst();
+    public static AuthorLevelStatusType of(String authorLevel) {
+        for (AuthorLevelStatusType status : AuthorLevelStatusType.values()) {
+            if (status.getAuthorLevel().equalsIgnoreCase(authorLevel)) {
+                return status;
+            }
+        }
+        throw new UserException(UserErrorStatus.BAD_REQUEST_AUTHOR_LEVEL_STATUS_TYPE);
     }
 }

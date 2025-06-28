@@ -1,10 +1,9 @@
 package com.dataracy.modules.user.domain.enums;
 
+import com.dataracy.modules.user.status.UserErrorStatus;
+import com.dataracy.modules.user.status.UserException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
@@ -15,9 +14,12 @@ public enum ProviderStatusType {
 
     private final String providerName;
 
-    public static Optional<ProviderStatusType> of(String providerName) {
-        return Arrays.stream(ProviderStatusType.values())
-                .filter(status -> status.getProviderName().equalsIgnoreCase(providerName))
-                .findFirst();
+    public static ProviderStatusType of(String providerName) {
+        for (ProviderStatusType status : ProviderStatusType.values()) {
+            if (status.getProviderName().equalsIgnoreCase(providerName)) {
+                return status;
+            }
+        }
+        throw new UserException(UserErrorStatus.BAD_REQUEST_PROVIDER_STATUS_TYPE);
     }
 }

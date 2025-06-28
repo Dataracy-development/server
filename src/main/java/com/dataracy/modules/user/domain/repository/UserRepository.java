@@ -9,7 +9,7 @@ public interface UserRepository {
     User findUserByProviderId(String providerId);
     User findUserByNickname(String nickname);
     User findUserByEmail(String email);
-    boolean existsByEmail(String email);
+    Boolean existsByEmail(String email);
     User saveUser(User user);
     void markUserAsDeleted(Long userId);
 }

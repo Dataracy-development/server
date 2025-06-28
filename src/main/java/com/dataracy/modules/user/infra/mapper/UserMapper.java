@@ -16,7 +16,7 @@ public class UserMapper {
                 userEntity.getNickname(),
                 userEntity.getAuthorLevel(),
                 userEntity.getOccupation(),
-                userEntity.getDomains(),
+//                userEntity.getDomains(),
                 userEntity.getVisitSource(),
                 userEntity.isAdTermsAgreed(),
                 userEntity.isDeleted()
@@ -34,7 +34,7 @@ public class UserMapper {
                 user.getNickname(),
                 user.getAuthorLevel(),
                 user.getOccupation(),
-                user.getDomains(),
+//                user.getDomains(),
                 user.getVisitSource(),
                 user.isAdTermsAgreed(),
                 user.isDeleted()

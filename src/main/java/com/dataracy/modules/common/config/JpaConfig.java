@@ -3,6 +3,9 @@ package com.dataracy.modules.common.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+/**
+ * 작성자, 수정자 자동 주입
+ */
 @Configuration
 @EnableJpaAuditing
 public class JpaConfig {
