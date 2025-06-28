@@ -17,11 +17,11 @@ public enum OccupationStatusType {
     OTHER("기타"),
     ;
 
-    private final String occuapation;
+    private final String value;
 
-    public static OccupationStatusType of(String occuapation) {
+    public static OccupationStatusType of(String value) {
         for (OccupationStatusType status : OccupationStatusType.values()) {
-            if (status.getOccuapation().equalsIgnoreCase(occuapation)) {
+            if (status.getValue().equalsIgnoreCase(value)) {
                 return status;
             }
         }

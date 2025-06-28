@@ -13,11 +13,11 @@ public enum RoleStatusType {
     ROLE_ADMIN("ROLE_ADMIN"),
     ROLE_ANONYMOUS("ROLE_ANONYMOUS");
 
-    private final String role;
+    private final String value;
 
-    public static RoleStatusType of(String role) {
+    public static RoleStatusType of(String value) {
         for (RoleStatusType status : RoleStatusType.values()) {
-            if (status.getRole().equalsIgnoreCase(role)) {
+            if (status.getValue().equalsIgnoreCase(value)) {
                 return status;
             }
         }

@@ -14,11 +14,11 @@ public enum AuthorLevelStatusType {
     EXPERT("전문가"),
     GPT("GPT활용");
 
-    private final String authorLevel;
+    private final String value;
 
-    public static AuthorLevelStatusType of(String authorLevel) {
+    public static AuthorLevelStatusType of(String value) {
         for (AuthorLevelStatusType status : AuthorLevelStatusType.values()) {
-            if (status.getAuthorLevel().equalsIgnoreCase(authorLevel)) {
+            if (status.getValue().equalsIgnoreCase(value)) {
                 return status;
             }
         }

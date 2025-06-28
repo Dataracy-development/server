@@ -18,11 +18,11 @@ public enum VisitSourceStatusType {
     OTHER("기타"),
     ;
 
-    private final String source;
+    private final String value;
 
-    public static VisitSourceStatusType of(String source) {
+    public static VisitSourceStatusType of(String value) {
         for (VisitSourceStatusType status : VisitSourceStatusType.values()) {
-            if (status.getSource().equalsIgnoreCase(source)) {
+            if (status.getValue().equalsIgnoreCase(value)) {
                 return status;
             }
         }

@@ -18,11 +18,11 @@ public enum InterestDomainStatusType {
     STARTUP("스타트업"),
     ;
 
-    private final String domain;
+    private final String value;
 
-    public static InterestDomainStatusType of(String domain) {
+    public static InterestDomainStatusType of(String value) {
         for (InterestDomainStatusType status : InterestDomainStatusType.values()) {
-            if (status.getDomain().equalsIgnoreCase(domain)) {
+            if (status.getValue().equalsIgnoreCase(value)) {
                 return status;
             }
         }
