@@ -1,5 +1,8 @@
 package com.dataracy.modules.auth.domain.model;
 
+/**
+ * 소셜 로그인으로부터 제공받는 정보 공통 인터페이스
+ */
 public interface OAuth2UserInfo {
     //제공자 (Ex. kakao, google, ...)
     String getProvider();

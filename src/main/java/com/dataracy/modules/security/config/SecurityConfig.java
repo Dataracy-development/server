@@ -1,16 +1,18 @@
 package com.dataracy.modules.security.config;
 
 //import com.dataracy.user.infra.anonymous.AnonymousTrackingFilter;
-import com.dataracy.modules.security.filter.JwtFilter;
+
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
 import com.dataracy.modules.auth.infra.oauth.OAuth2LoginFailureHandler;
 import com.dataracy.modules.auth.infra.oauth.OAuth2LoginSuccessHandler;
+import com.dataracy.modules.security.filter.JwtFilter;
 import com.dataracy.modules.security.handler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -32,9 +34,9 @@ public class SecurityConfig {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .csrf(csrf -> csrf.disable())
-                .formLogin(form -> form.disable())
-                .httpBasic(basic -> basic.disable())
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .oauth2Login(oauth2 -> oauth2
