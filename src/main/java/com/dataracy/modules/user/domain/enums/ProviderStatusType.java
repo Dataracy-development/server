@@ -12,11 +12,11 @@ public enum ProviderStatusType {
     KAKAO("KAKAO"),
     GOOGLE("GOOGLE");
 
-    private final String providerName;
+    private final String value;
 
-    public static ProviderStatusType of(String providerName) {
+    public static ProviderStatusType of(String value) {
         for (ProviderStatusType status : ProviderStatusType.values()) {
-            if (status.getProviderName().equalsIgnoreCase(providerName)) {
+            if (status.getValue().equalsIgnoreCase(value)) {
                 return status;
             }
         }

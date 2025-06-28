@@ -1,5 +1,6 @@
 package com.dataracy.modules.user.application;
 
+import com.dataracy.modules.auth.application.JwtApplicationService;
 import com.dataracy.modules.auth.application.JwtQueryService;
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
@@ -20,6 +21,7 @@ public class UserQueryService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final JwtQueryService jwtQueryService;
+    private final JwtApplicationService jwtApplicationService;
 
     /**
      * OAuth2 사용자 신규 여부 확인.
@@ -40,8 +42,7 @@ public class UserQueryService {
     public LoginResponseDto handleExistingUser(OAuth2UserInfo oAuth2UserInfo) {
         User existUser = userRepository.findUserByProviderId(oAuth2UserInfo.getProviderId());
         long refreshTokenExpirationTime = jwtQueryService.getRefreshTokenExpirationTime();
-        String refreshToken = jwtUtil.generateAccessOrRefreshToken(existUser.getId(), existUser.getRole(), refreshTokenExpirationTime);
-
+        String refreshToken = jwtApplicationService.generateAccessOrRefreshToken(existUser.getId(), existUser.getRole(), refreshTokenExpirationTime);
         log.info("기존 사용자 처리 완료: {}", existUser.getId());
         return new LoginResponseDto(existUser.getId(), refreshToken, refreshTokenExpirationTime);
     }
