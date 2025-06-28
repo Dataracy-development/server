@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.dto;
+package com.dataracy.modules.user.application;
 
 import com.dataracy.modules.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class UserApplicationService {
 
     private final UserRepository userRepository;
+
 }

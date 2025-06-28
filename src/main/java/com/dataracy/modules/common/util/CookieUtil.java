@@ -24,14 +24,11 @@ public final class CookieUtil {
      * @param maxAge   쿠키 만료 시간 (초)
      */
     public static void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
-
-        int maxAgeMillis = (int) maxAge / 1000;
-
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
-        cookie.setMaxAge(maxAgeMillis);
+        cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
     }
 
