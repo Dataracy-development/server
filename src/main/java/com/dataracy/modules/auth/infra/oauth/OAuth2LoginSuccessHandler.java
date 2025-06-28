@@ -6,7 +6,7 @@ import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
 import com.dataracy.modules.auth.infra.redis.TokenRedisManager;
 import com.dataracy.modules.common.util.CookieUtil;
-import com.dataracy.modules.user.application.dto.LoginResponseDto;
+import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

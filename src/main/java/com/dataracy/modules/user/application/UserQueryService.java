@@ -2,7 +2,7 @@ package com.dataracy.modules.user.application;
 
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
-import com.dataracy.modules.user.application.dto.LoginResponseDto;
+import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
