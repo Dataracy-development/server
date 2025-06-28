@@ -33,6 +33,6 @@ public final class FileUtil {
         if (file == null || file.isEmpty()) return;
         long maxSize = 50 * 1024 * 1024; // 50MB
         checkFileSize(file, maxSize, CommonErrorStatus.OVER_MAXIMUM_FILE_SIZE);
-        checkFileType(file.getOriginalFilename(), "(?i).+\\.(jpg|jpeg|png|pdf|docx|xlsx|pptx|txt)$", CommonErrorStatus.BAD_REQUEST_FILE_TYPE);
+        checkFileType(file.getOriginalFilename(), "(?i).+\\.(jpg|jpeg|png|pdf|docx|xlsx|pptx|txt|csv|json)$", CommonErrorStatus.BAD_REQUEST_FILE_TYPE);
     }
 }
