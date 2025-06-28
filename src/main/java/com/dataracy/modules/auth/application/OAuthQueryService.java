@@ -18,6 +18,7 @@ public class OAuthQueryService {
 
     private final UserQueryService userQueryService;
     private final JwtUtil jwtUtil;
+    private final JwtQueryService jwtQueryService;
 
     /**
      * OAuth2 사용자 신규 여부 확인.
@@ -41,7 +42,7 @@ public class OAuthQueryService {
                 oAuth2UserInfo.getEmail()
         );
         log.info("신규 사용자 처리 완료: {}", oAuth2UserInfo.getEmail());
-        return new RegisterTokenResponseDto(registerToken, jwtUtil.getRegisterTokenExpirationTime());
+        return new RegisterTokenResponseDto(registerToken, jwtQueryService.getRegisterTokenExpirationTime());
     }
 
     /**

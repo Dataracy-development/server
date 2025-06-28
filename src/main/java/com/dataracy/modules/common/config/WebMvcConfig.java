@@ -8,6 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
+/**
+ * 가장 앞에 추가해 Jackson의 default converter보다 우선되게 하여
+ * multipart/form-data에서의 httpmessage converter에서의 문제를 해결한다.
+ */
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -16,7 +20,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        // 가장 앞에 추가해 Jackson의 default converter보다 우선되게 한다.
         converters.add(0, multipartJackson2HttpMessageConverter);
     }
 }

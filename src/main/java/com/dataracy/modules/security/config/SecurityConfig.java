@@ -44,8 +44,11 @@ public class SecurityConfig {
                         .failureHandler(oAuth2LoginFailureHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/base", "/onboarding",
-                                "/login/**", "/oauth2/**", "/static/**", "/api/v1/public/**", "/api/v1/auth/**")
+                        .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**",
+                                "/base", "/onboarding",
+                                "/login/**", "/oauth2/**",
+                                "/static/**",
+                                "/api/v1/public/**", "/api/v1/auth/**")
                         .permitAll()
                         .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")

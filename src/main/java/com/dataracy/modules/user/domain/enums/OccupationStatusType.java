@@ -1,10 +1,9 @@
 package com.dataracy.modules.user.domain.enums;
 
+import com.dataracy.modules.user.status.UserErrorStatus;
+import com.dataracy.modules.user.status.UserException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
@@ -20,9 +19,12 @@ public enum OccupationStatusType {
 
     private final String occuapation;
 
-    public static Optional<OccupationStatusType> of(String occuapation) {
-        return Arrays.stream(OccupationStatusType.values())
-                .filter(status -> status.getOccuapation().equals(occuapation))
-                .findFirst();
+    public static OccupationStatusType of(String occuapation) {
+        for (OccupationStatusType status : OccupationStatusType.values()) {
+            if (status.getOccuapation().equalsIgnoreCase(occuapation)) {
+                return status;
+            }
+        }
+        throw new UserException(UserErrorStatus.BAD_REQUEST_OCCUPATION_STATUS_TYPE);
     }
 }

@@ -1,11 +1,11 @@
 package com.dataracy.modules.security.handler;
 
-import com.dataracy.modules.security.principal.CustomUserDetails;
-import com.dataracy.modules.security.principal.UserAuthentication;
-import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import com.dataracy.modules.auth.domain.model.AnonymousUser;
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
+import com.dataracy.modules.security.principal.CustomUserDetails;
+import com.dataracy.modules.security.principal.UserAuthentication;
+import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
