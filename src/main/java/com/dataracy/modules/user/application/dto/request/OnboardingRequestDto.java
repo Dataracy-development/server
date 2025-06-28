@@ -12,10 +12,10 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-@Schema(description = "유저 온보딩 요청 DTO")
+@Schema(description = "유저 추가정보 입력 온보딩 요청 DTO")
 public record OnboardingRequestDto(
 
-        @Schema(description = "닉네임 (2~8자)", example = "준형이", minLength = 2, maxLength = 8)
+        @Schema(description = "닉네임 (2~8자)", example = "주니", minLength = 2, maxLength = 8)
         @NotBlank(message = "닉네임은 필수입니다.")
         @Size(min = 2, max = 8, message = "닉네임은 2자 이상 8자 이하로 입력하세요.")
         String nickname,
