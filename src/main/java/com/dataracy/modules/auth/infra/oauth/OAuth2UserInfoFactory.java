@@ -13,6 +13,7 @@ public class OAuth2UserInfoFactory {
 
     /**
      * OAuth2 사용자 정보 추출.
+     * 어떤 구현체를 사용할지 결정한다.
      *
      * @param token OAuth2 인증 토큰
      * @return 추출된 사용자 정보

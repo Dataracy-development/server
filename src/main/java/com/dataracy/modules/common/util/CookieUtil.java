@@ -33,7 +33,7 @@ public final class CookieUtil {
     }
 
     /**
-     * 쿠키에서 name에 해당하는 값을 추출합니다.
+     * 쿠키에서 refreshToken에 해당하는 값을 추출합니다.
      *
      * @param request HTTP 요청 객체
      * @return refreshToken 값

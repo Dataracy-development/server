@@ -7,6 +7,10 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 
+/**
+ * multipart/form-data 처리 시 Jackson이 처리하지 않도록 한다.
+ * Jackson은 파일과 json이 함께 있을때 dto json을 octec-stream으로 간주하여 에러가 발생할 수 있다.
+ */
 @Component
 public class MultipartJackson2HttpMessageConverter extends AbstractJackson2HttpMessageConverter {
 

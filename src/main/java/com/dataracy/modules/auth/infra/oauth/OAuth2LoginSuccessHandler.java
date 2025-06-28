@@ -4,9 +4,8 @@ import com.dataracy.modules.auth.application.OAuthQueryService;
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponseDto;
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
+import com.dataracy.modules.auth.infra.redis.TokenRedisManager;
 import com.dataracy.modules.common.util.CookieUtil;
-import com.dataracy.modules.user.application.UserApplicationService;
-import com.dataracy.modules.user.application.UserQueryService;
 import com.dataracy.modules.user.application.dto.LoginResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,10 +24,8 @@ import java.io.IOException;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
-    private final UserApplicationService userApplicationService;
-    private final UserQueryService userQueryService;
     private final OAuthQueryService oAuthQueryService;
-
+    private final TokenRedisManager tokenRedisManager;
     /**
      * OAuth2 로그인 성공 후 처리.
      * 쿠키 설정, 레디스 설정 등 외부 I/O 부수 효과는 실패/성공 보장이 다르므로
@@ -53,7 +50,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         else {
             LoginResponseDto loginResponseDto = oAuthQueryService.handleExistingUser(oAuth2UserInfo);
             CookieUtil.setCookie(response, "refreshToken", loginResponseDto.refreshToken(), (int) loginResponseDto.refreshTokenExpiration() / 1000);
-//            tokenRedisManager.saveRefreshToken(loginResponseDto.userId().toString(), loginResponseDto.refreshToken());
+            tokenRedisManager.saveRefreshToken(loginResponseDto.userId().toString(), loginResponseDto.refreshToken());
             getRedirectStrategy().sendRedirect(request, response, jwtUtil.getRedirectBaseUrl());
         }
     }
