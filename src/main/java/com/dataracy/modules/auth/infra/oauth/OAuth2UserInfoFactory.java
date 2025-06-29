@@ -5,7 +5,6 @@ import com.dataracy.modules.auth.infra.oauth.response.GoogleUserInfo;
 import com.dataracy.modules.auth.infra.oauth.response.KakaoUserInfo;
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 import java.util.Map;
 
@@ -15,13 +14,11 @@ public class OAuth2UserInfoFactory {
      * OAuth2 사용자 정보 추출.
      * 어떤 구현체를 사용할지 결정한다.
      *
-     * @param token OAuth2 인증 토큰
+     * @param provider 소셜 유형 (구글, 카카오)
+     * @param attributes 소셜 서버로부터 받은 유저 정보
      * @return 추출된 사용자 정보
      */
-    public static OAuth2UserInfo getOAuth2UserInfo(OAuth2AuthenticationToken token) {
-
-        String provider = token.getAuthorizedClientRegistrationId();
-        Map<String, Object> attributes = token.getPrincipal().getAttributes();
+    public static OAuth2UserInfo getOAuth2UserInfo(String provider, Map<String, Object> attributes) {
 
         return switch (provider) {
             case "google" -> new GoogleUserInfo(attributes);
