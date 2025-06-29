@@ -1,6 +1,7 @@
 package com.dataracy.modules.user.presentation.api;
 
 import com.dataracy.modules.common.dto.SuccessResponse;
+import com.dataracy.modules.user.application.dto.request.CheckNicknameRequestDto;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -60,5 +61,32 @@ public interface UserApi {
             @Validated @RequestBody
             OnboardingRequestDto requestDto,
             HttpServletResponse response
+    );
+
+    /**
+     * 닉네임 중복유무를 확인한다.
+     *
+     * @param requestDto 유저 닉네임
+     * @return void
+     */
+    @Operation(
+            summary = "닉네임 중복체크를 진행한다.",
+            description = "제공받은 요청 DTO의 닉네임이 이미 존재하는 닉네임인지 유무를 판단한다.",
+            security = {}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "닉네임이 중복되지 않는다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @PostMapping(value = "/public/nickname/check", consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<SuccessResponse<Void>> checkNickname(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "확인하고자 하는 닉네임",
+                    content = @Content(schema = @Schema(implementation = CheckNicknameRequestDto.class))
+            )
+            @Validated @RequestBody
+            CheckNicknameRequestDto requestDto
     );
 }

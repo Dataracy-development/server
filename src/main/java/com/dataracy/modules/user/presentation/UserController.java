@@ -4,6 +4,7 @@ import com.dataracy.modules.auth.application.TokenApplicationService;
 import com.dataracy.modules.common.dto.SuccessResponse;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.application.UserApplicationService;
+import com.dataracy.modules.user.application.dto.request.CheckNicknameRequestDto;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
 import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import com.dataracy.modules.user.presentation.api.UserApi;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,6 +44,21 @@ public class UserController implements UserApi {
         tokenApplicationService.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
+    }
+
+    /**
+     * 닉네임 중복유무를 확인한다.
+     *
+     * @param requestDto 유저 닉네임
+     * @return void
+     */
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> checkNickname(
+            CheckNicknameRequestDto requestDto
+    ) {
+        userApplicationService.checkNickname(requestDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(UserSuccessStatus.OK_NOT_DUPLICATED_NICKNAME));
     }
 
     @GetMapping("/onboarding")

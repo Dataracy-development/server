@@ -2,6 +2,8 @@ package com.dataracy.modules.user.application;
 
 import com.dataracy.modules.auth.application.JwtApplicationService;
 import com.dataracy.modules.auth.application.JwtQueryService;
+import com.dataracy.modules.common.lock.DistributedLock;
+import com.dataracy.modules.user.application.dto.request.CheckNicknameRequestDto;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
 import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import com.dataracy.modules.user.domain.enums.*;
@@ -64,5 +66,26 @@ public class UserApplicationService {
 
         log.info("소셜 회원가입 성공: {}", email);
         return new LoginResponseDto(savedUser.getId(), refreshToken, refreshTokenExpirationTime);
+    }
+
+    /**
+     * 닉네임 중복 확인.
+     *
+     * @param requestDto 닉네임 중복 확인 요청 정보
+     */
+    @DistributedLock(
+            key = "'lock:nickname:' + #requestDto.nickname()",
+            waitTime = 200L,
+            leaseTime = 3000L,
+            retry = 3
+    )
+    public void checkNickname(CheckNicknameRequestDto requestDto) {
+        String nickname = requestDto.nickname();
+
+        if (userRepository.existsByNickname(nickname)) {
+            throw new UserException(UserErrorStatus.DUPLICATED_NICKNAME);
+        }
+
+        log.info("닉네임 사용 가능: {}", nickname);
     }
 }

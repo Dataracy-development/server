@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository {
     User findUserById(Long id);
     User findUserByProviderId(String providerId);
-    User findUserByNickname(String nickname);
     User findUserByEmail(String email);
+    Boolean existsByNickname(String nickname);
     Boolean existsByEmail(String email);
     User saveUser(User user);
     void markUserAsDeleted(Long userId);

@@ -1,6 +1,7 @@
 package com.dataracy.modules.common.exception;
 
 import com.dataracy.modules.common.dto.ErrorResponse;
+import com.dataracy.modules.common.lock.LockAcquisitionException;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.status.CommonException;
 import com.dataracy.modules.user.status.UserException;
@@ -56,6 +57,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(e.getHttpStatus())
                 .body(ErrorResponse.of(e.getErrorCode()));
+    }
+
+    // 동시성 이슈 예외 처리
+    @ExceptionHandler(LockAcquisitionException.class)
+    public ResponseEntity<ErrorResponse> handleLockError(LockAcquisitionException e) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of(CommonErrorStatus.CONFLICT, e.getMessage()));
     }
 
     // Security 인증 관련 처리
