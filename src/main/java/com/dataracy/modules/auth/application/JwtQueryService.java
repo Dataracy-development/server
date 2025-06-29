@@ -21,7 +21,7 @@ public class JwtQueryService {
      * @param token 토큰 문자열
      */
     public void validateToken(String token) {
-        jwtUtil.validateToken(token);
+        jwtUtil.parseToken(token);
     }
 
     /**
@@ -31,7 +31,7 @@ public class JwtQueryService {
      * @return 사용자 ID
      */
     public Long getUserIdFromToken(String token) {
-        return jwtUtil.getUserIdFromToken(token);
+        return jwtUtil.parseToken(token).get("userId", Long.class);
     }
 
     /**
@@ -41,7 +41,7 @@ public class JwtQueryService {
      * @return OAuth2 제공자
      */
     public String getProviderFromRegisterToken(String token) {
-        return jwtUtil.getProviderFromRegisterToken(token);
+        return jwtUtil.parseToken(token).get("provider", String.class);
     }
 
     /**
@@ -51,7 +51,7 @@ public class JwtQueryService {
      * @return 제공자 ID
      */
     public String getProviderIdFromRegisterToken(String token) {
-        return jwtUtil.getProviderIdFromRegisterToken(token);
+        return jwtUtil.parseToken(token).get("providerId", String.class);
     }
 
     /**
@@ -61,7 +61,7 @@ public class JwtQueryService {
      * @return 사용자 이메일
      */
     public String getEmailFromRegisterToken(String token) {
-        return jwtUtil.getEmailFromRegisterToken(token);
+        return jwtUtil.parseToken(token).get("email", String.class);
     }
 
     /**
@@ -71,7 +71,8 @@ public class JwtQueryService {
      * @return 사용자 Role
      */
     public RoleStatusType getRoleFromToken(String token) {
-        return jwtUtil.getRoleFromToken(token);
+        String roleName = jwtUtil.parseToken(token).get("role", String.class);
+        return RoleStatusType.of(roleName);
     }
 
     /**
