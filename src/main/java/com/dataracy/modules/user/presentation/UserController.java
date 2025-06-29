@@ -11,15 +11,14 @@ import com.dataracy.modules.user.application.dto.request.SelfSignupRequestDto;
 import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import com.dataracy.modules.user.presentation.api.UserApi;
 import com.dataracy.modules.user.status.UserSuccessStatus;
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,12 +34,8 @@ public class UserController implements UserApi {
      * @param response 리프레시 토큰을 쿠키에 저장
      * @return 로그인 성공
      */
-    @Operation(summary = "자체 로그인",
-            description = "자체 로그인(email, password)을 통해 로그인합니다.",
-            security = {})
-    @PostMapping("/login")
     public ResponseEntity<SuccessResponse<Void>> login(
-            @Validated @RequestBody SelfLoginRequestDto requestDto,
+            SelfLoginRequestDto requestDto,
             HttpServletResponse response
     ) {
         LoginResponseDto responseDto = userApplicationService.login(requestDto);
@@ -55,9 +50,8 @@ public class UserController implements UserApi {
      * @param requestDto 자체 회원가입 정보
      * @return Void
      */
-    @PostMapping(value = "/signup/self" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse<Void>> signupUserSelf(
-            @Validated @RequestBody SelfSignupRequestDto requestDto,
+            SelfSignupRequestDto requestDto,
             HttpServletResponse response
     ) {
         LoginResponseDto responseDto = userApplicationService.signupUserSelf(requestDto);

@@ -2,6 +2,7 @@ package com.dataracy.modules.user.application;
 
 import com.dataracy.modules.auth.application.JwtApplicationService;
 import com.dataracy.modules.auth.application.JwtQueryService;
+import com.dataracy.modules.auth.application.TokenApplicationService;
 import com.dataracy.modules.common.lock.DistributedLock;
 import com.dataracy.modules.user.application.dto.request.CheckNicknameRequestDto;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
