@@ -2,8 +2,10 @@ package com.dataracy.modules.auth.infra.jwt;
 
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
+import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,9 +19,13 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-    private final SecretKey secretKey;
+    @Value("${spring.jwt.secret}")
+    private String secret;
 
-    public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
+    private SecretKey secretKey;
+
+    @PostConstruct
+    public void init() {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -42,7 +48,6 @@ public class JwtUtil {
         claims.forEach(builder::claim);
         return builder.compact();
     }
-
 
     /**
      * JWT 토큰 파싱 및 유효성 검사.
@@ -67,5 +72,65 @@ public class JwtUtil {
             log.error("Unknown error while parsing token: {}", token);
             throw new AuthException(AuthErrorStatus.INVALID_TOKEN);
         }
+    }
+
+    /**
+     * JWT 토큰 유효성 검사.
+     *
+     * @param token 토큰 문자열
+     */
+    public void validateToken(String token) {
+        parseToken(token);
+    }
+
+    /**
+     * JWT 토큰에서 사용자 ID 추출.
+     *
+     * @param token 토큰 문자열
+     * @return 사용자 ID
+     */
+    public Long getUserIdFromToken(String token) {
+        return parseToken(token).get("userId", Long.class);
+    }
+
+    /**
+     * Register Token에서 OAuth2 제공자 추출.
+     *
+     * @param token Register Token 문자열
+     * @return OAuth2 제공자
+     */
+    public String getProviderFromRegisterToken(String token) {
+        return parseToken(token).get("provider", String.class);
+    }
+
+    /**
+     * Register Token에서 제공자 ID 추출.
+     *
+     * @param token Register Token 문자열
+     * @return 제공자 ID
+     */
+    public String getProviderIdFromRegisterToken(String token) {
+        return parseToken(token).get("providerId", String.class);
+    }
+
+    /**
+     * Register Token에서 이메일 추출.
+     *
+     * @param token Register Token 문자열
+     * @return 사용자 이메일
+     */
+    public String getEmailFromRegisterToken(String token) {
+        return parseToken(token).get("email", String.class);
+    }
+
+    /**
+     * Token에서 Role 추출.
+     *
+     * @param token Access Token 문자열
+     * @return 사용자 Role
+     */
+    public RoleStatusType getRoleFromToken(String token) {
+        String roleName = parseToken(token).get("role", String.class);
+        return RoleStatusType.of(roleName);
     }
 }

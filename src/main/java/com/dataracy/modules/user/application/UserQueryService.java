@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserQueryService {
 
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
     private final JwtQueryService jwtQueryService;
     private final JwtApplicationService jwtApplicationService;
 
