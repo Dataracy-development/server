@@ -14,9 +14,6 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "spring.jwt")
 public class JwtProperties {
 
-    @NotBlank(message = "암호화를 위한 jwt 시크릿 키를 입력하세요.")
-    private String secret;
-
     private long registerTokenExpirationTime;
 
     private long accessTokenExpirationTime;
