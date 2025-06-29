@@ -16,6 +16,7 @@ public enum CommonErrorStatus implements BaseErrorCode {
     NOT_FOUND_HANDLER(HttpStatus.NOT_FOUND, "GLOBAL-404", "요청 경로를 찾을 수 없습니다."),
     NOT_FOUND_RESOURCE(HttpStatus.NOT_FOUND, "GLOBAL-404", "요청한 리소스를 찾을 수 없습니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "GLOBAL-405", "허용되지 않는 HTTP 메서드입니다."),
+    CONFLICT(HttpStatus.CONFLICT, "GLOBAL-409", "중복된 값입니다."),
     UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "GLOBAL-415", "지원되지 않는 미디어 타입입니다."),
 
     // JSON Serialization Errors

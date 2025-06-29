@@ -33,15 +33,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findUserByNickname(String nickname) {
-        UserEntity userEntity = userJpaRepository.findByNickname(nickname);
-        if (userEntity == null) {
-            return null;
-        }
-        return UserMapper.toDomain(userEntity);
-    }
-
-    @Override
     public User findUserByEmail(String email) {
         UserEntity userEntity = userJpaRepository.findByEmail(email);
         if (userEntity == null) {
@@ -53,6 +44,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Boolean existsByEmail(String email) {
         return userJpaRepository.existsByEmail(email);
+    }
+
+    @Override
+    public Boolean existsByNickname(String nickname) {
+        return userJpaRepository.existsByNickname(nickname);
     }
 
     @Override
