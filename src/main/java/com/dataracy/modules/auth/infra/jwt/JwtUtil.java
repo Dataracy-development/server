@@ -53,7 +53,12 @@ public class JwtUtil {
      * @return 생성된 토큰 문자열
      */
     public String generateAccessOrRefreshToken(Long userId, RoleStatusType role, long expirationMillis) {
-        return generateToken(Map.of("userId", userId, "role", role.getValue()), expirationMillis);
+        try {
+            return generateToken(Map.of("userId", userId, "role", role.getValue()), expirationMillis);
+        } catch (Exception e){
+            log.error("Failed to generate jwt token");
+            throw new AuthException(AuthErrorStatus.FAILED_GENERATE_JWT_TOKEN);
+        }
     }
 
     /**
@@ -65,10 +70,15 @@ public class JwtUtil {
      * @return 생성된 Register Token
      */
     public String generateRegisterToken(String provider, String providerId, String email) {
-        return generateToken(
-                Map.of("provider", provider, "providerId", providerId, "email", email),
-                jwtProperties.getRegisterTokenExpirationTime()
-        );
+        try {
+            return generateToken(
+                    Map.of("provider", provider, "providerId", providerId, "email", email),
+                    jwtProperties.getRegisterTokenExpirationTime()
+            );
+        } catch (Exception e){
+            log.error("Failed to generate jwt token");
+            throw new AuthException(AuthErrorStatus.FAILED_GENERATE_REGISTER_TOKEN);
+        }
     }
 
     /**
