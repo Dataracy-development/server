@@ -63,14 +63,14 @@ public class UserApplicationService {
         if (userRepository.existsByEmail(requestDto.email())) {
             throw new UserException(UserErrorStatus.CONFLICT_DUPLICATE_EMAIL);
         }
-
+        String encodedPassword = passwordEncoder.encode(requestDto.password());
         User user = User.toDomain(
                 null,
                 ProviderStatusType.of("LOCAL"),
                 null,
                 RoleStatusType.ROLE_USER,
                 requestDto.email(),
-                requestDto.password(),
+                encodedPassword,
                 requestDto.nickname(),
                 AuthorLevelStatusType.of(requestDto.authorLevel()),
                 OccupationStatusType.of(requestDto.occupation()),
