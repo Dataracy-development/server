@@ -57,8 +57,8 @@ public class UserEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private OccupationStatusType occupation;
 
-//    @Column
-//    private List<InterestDomainStatusType> domains;
+    @Lob
+    private List<InterestDomainStatusType> domains;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -82,7 +82,7 @@ public class UserEntity extends BaseTimeEntity {
             String nickname,
             AuthorLevelStatusType authorLevel,
             OccupationStatusType occupation,
-            List<InterestDomainStatusType> domains,
+//            List<InterestDomainStatusType> domains,
             VisitSourceStatusType visitSource,
             Boolean isAdTermsAgreed,
             Boolean isDeleted

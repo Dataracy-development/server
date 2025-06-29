@@ -4,6 +4,9 @@ import com.dataracy.modules.common.status.BaseErrorCode;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * 공통 에러 응답
+ */
 @Getter
 @Builder
 public class ErrorResponse {

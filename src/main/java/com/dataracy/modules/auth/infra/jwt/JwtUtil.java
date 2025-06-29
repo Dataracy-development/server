@@ -1,13 +1,13 @@
 package com.dataracy.modules.auth.infra.jwt;
 
-import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
-import com.dataracy.modules.user.status.UserErrorStatus;
-import com.dataracy.modules.user.status.UserException;
+import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -19,12 +19,14 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-    private final JwtProperties jwtProperties;
-    private final SecretKey secretKey;
+    @Value("${spring.jwt.secret}")
+    private String secret;
 
-    public JwtUtil(JwtProperties jwtProperties) {
-        this.jwtProperties = jwtProperties;
-        this.secretKey = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
+    private SecretKey secretKey;
+
+    @PostConstruct
+    public void init() {
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -48,38 +50,12 @@ public class JwtUtil {
     }
 
     /**
-     * Access Token 또는 Refresh Token 생성.
-     *
-     * @param userId          사용자 ID
-     * @param expirationMillis 토큰 유효기간 (밀리초)
-     * @return 생성된 토큰 문자열
-     */
-    public String generateAccessOrRefreshToken(Long userId, RoleStatusType role, long expirationMillis) {
-        return generateToken(Map.of("userId", userId, "role", role.getRole()), expirationMillis);
-    }
-
-    /**
-     * Register Token 생성.
-     *
-     * @param provider   OAuth2 제공자
-     * @param providerId 제공자 ID
-     * @param email      사용자 이메일
-     * @return 생성된 Register Token
-     */
-    public String generateRegisterToken(String provider, String providerId, String email) {
-        return generateToken(
-                Map.of("provider", provider, "providerId", providerId, "email", email),
-                jwtProperties.getRegisterTokenExpirationTime()
-        );
-    }
-
-    /**
      * JWT 토큰 파싱 및 유효성 검사.
      *
      * @param token 토큰 문자열
      * @return 토큰의 클레임 정보
      */
-    private Claims parseToken(String token) {
+    public Claims parseToken(String token) {
         try {
             return Jwts.parser()
                     .verifyWith(secretKey)
@@ -155,52 +131,6 @@ public class JwtUtil {
      */
     public RoleStatusType getRoleFromToken(String token) {
         String roleName = parseToken(token).get("role", String.class);
-        return RoleStatusType.of(roleName)
-                .orElseThrow(() -> new UserException(UserErrorStatus.BAD_REQUEST_ROLE_STATUS_TYPE));
-    }
-
-    /**
-     * Access Token 유효기간 반환.
-     *
-     * @return Access Token 유효기간 (밀리초)
-     */
-    public long getAccessTokenExpirationTime() {
-        return jwtProperties.getAccessTokenExpirationTime();
-    }
-
-    /**
-     * Refresh Token 유효기간 반환.
-     *
-     * @return Refresh Token 유효기간 (밀리초)
-     */
-    public long getRefreshTokenExpirationTime() {
-        return jwtProperties.getRefreshTokenExpirationTime();
-    }
-
-    /**
-     * Register Token 유효기간 반환.
-     *
-     * @return Register Token 유효기간 (밀리초)
-     */
-    public long getRegisterTokenExpirationTime() {
-        return jwtProperties.getRegisterTokenExpirationTime();
-    }
-
-    /**
-     * 온보딩 리다이렉트 URL 반환.
-     *
-     * @return 온보딩 리다이렉트 URL
-     */
-    public String getRedirectOnboardingUrl() {
-        return jwtProperties.getRedirectOnboarding();
-    }
-
-    /**
-     * 로그인 성공 후 리다이렉트 URL 반환.
-     *
-     * @return 로그인 성공 후 리다이렉트 URL
-     */
-    public String getRedirectBaseUrl() {
-        return jwtProperties.getRedirectBase();
+        return RoleStatusType.of(roleName);
     }
 }

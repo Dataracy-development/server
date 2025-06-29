@@ -9,6 +9,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+/**
+ * Redis와의 통신을 설정하는 구성 클래스입니다.
+ * 주로 문자열 및 JSON 형태의 데이터를 처리합니다.
+ * 이 설정은 어플리케이션의 캐시 처리 시 사용됩니다.
+ */
 @Configuration
 public class RedisConfig {
 

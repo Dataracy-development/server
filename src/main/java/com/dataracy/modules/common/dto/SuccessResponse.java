@@ -4,6 +4,10 @@ import com.dataracy.modules.common.status.BaseSuccessCode;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * 공통 성공 응답
+ * @param <T> 데이터 타입 T
+ */
 @Getter
 @Builder
 public class SuccessResponse<T> {

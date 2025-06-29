@@ -15,6 +15,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws ServletException, IOException {
         log.error("LOGIN FAILED : {}", exception.getMessage());

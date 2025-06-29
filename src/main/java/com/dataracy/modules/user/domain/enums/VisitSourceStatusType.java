@@ -1,10 +1,9 @@
 package com.dataracy.modules.user.domain.enums;
 
+import com.dataracy.modules.user.status.UserErrorStatus;
+import com.dataracy.modules.user.status.UserException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
@@ -19,11 +18,14 @@ public enum VisitSourceStatusType {
     OTHER("기타"),
     ;
 
-    private final String source;
+    private final String value;
 
-    public static Optional<VisitSourceStatusType> of(String source) {
-        return Arrays.stream(VisitSourceStatusType.values())
-                .filter(status -> status.getSource().equals(source))
-                .findFirst();
+    public static VisitSourceStatusType of(String value) {
+        for (VisitSourceStatusType status : VisitSourceStatusType.values()) {
+            if (status.getValue().equalsIgnoreCase(value)) {
+                return status;
+            }
+        }
+        throw new UserException(UserErrorStatus.BAD_REQUEST_VISIT_SOURCE_STATUS_TYPE);
     }
 }
