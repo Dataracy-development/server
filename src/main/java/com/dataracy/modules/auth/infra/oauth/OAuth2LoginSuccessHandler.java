@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -40,7 +41,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
-        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(token);
+        String provider = token.getAuthorizedClientRegistrationId();
+        Map<String, Object> attributes = token.getPrincipal().getAttributes();
+        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(provider, attributes);
         // 신규 사용자 처리
         if (oAuthQueryService.isNewUser(oAuth2UserInfo)) {
             RegisterTokenResponseDto registerTokenResponseDto = oAuthQueryService.handleNewUser(oAuth2UserInfo);
