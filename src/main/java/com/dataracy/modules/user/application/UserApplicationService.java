@@ -79,7 +79,7 @@ public class UserApplicationService {
             leaseTime = 3000L,
             retry = 3
     )
-    @Transactional
+    @Transactional(readOnly = true)
     public void checkNickname(CheckNicknameRequestDto requestDto) {
         String nickname = requestDto.nickname();
 
