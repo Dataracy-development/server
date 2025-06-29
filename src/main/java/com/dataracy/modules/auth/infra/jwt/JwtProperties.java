@@ -1,5 +1,6 @@
 package com.dataracy.modules.auth.infra.jwt;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,16 +15,13 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "spring.jwt")
 public class JwtProperties {
 
-    @NotBlank(message = "암호화를 위한 jwt 시크릿 키를 입력하세요.")
-    private String secret;
-
-    @NotBlank(message = "레지스터토큰 유효시간을 작성해주세요.")
+    @Min(value = 1, message = "레지스터 토큰 유효시간은 1 이상이어야 합니다.")
     private long registerTokenExpirationTime;
 
-    @NotBlank(message = "어세스토큰 유효시간을 작성해주세요.")
+    @Min(value = 1, message = "어세스 토큰 유효시간은 1 이상이어야 합니다.")
     private long accessTokenExpirationTime;
 
-    @NotBlank(message = "리프레시토큰 유효시간을 작성해주세요.")
+    @Min(value = 1, message = "리프레시 토큰 유효시간은 1 이상이어야 합니다.")
     private long refreshTokenExpirationTime;
 
     @NotBlank(message = "신규유저의 리다이렉트 주소를 작성해주세요.")

@@ -1,13 +1,14 @@
 package com.dataracy.modules.security.filter;
 
+import com.dataracy.modules.auth.application.JwtQueryService;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
-import com.dataracy.modules.common.exception.BusinessException;
-import com.dataracy.modules.common.util.ExtractHeaderUtil;
-import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
+import com.dataracy.modules.common.exception.BusinessException;
+import com.dataracy.modules.common.util.ExtractHeaderUtil;
 import com.dataracy.modules.security.principal.CustomUserDetails;
 import com.dataracy.modules.security.principal.UserAuthentication;
+import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final JwtQueryService jwtQueryService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws BusinessException, ServletException, IOException {
@@ -35,9 +37,9 @@ public class JwtFilter extends OncePerRequestFilter {
             String accessToken = ExtractHeaderUtil.extractAccessToken(request)
                     .orElseThrow(() -> new AuthException(AuthErrorStatus.NOT_FOUND_ACCESS_TOKEN_IN_HEADER));
             log.debug("Extracted JWT Token: {}", accessToken);
-            jwtUtil.validateToken(accessToken); // 유효성 검증
-            Long userId = jwtUtil.getUserIdFromToken(accessToken);
-            RoleStatusType role = jwtUtil.getRoleFromToken(accessToken);
+            jwtQueryService.validateToken(accessToken); // 유효성 검증
+            Long userId = jwtQueryService.getUserIdFromToken(accessToken);
+            RoleStatusType role = jwtQueryService.getRoleFromToken(accessToken);
             log.debug("Authenticated UserId: {}", userId);
             setAuthentication(request, userId, role);
         }

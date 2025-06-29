@@ -13,7 +13,10 @@ import org.springframework.context.annotation.Configuration;
 
 import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
 
-// http(s)://<서버주소>:<포트번호>/swagger-ui/index.html로 접속
+/**
+ * 스웨거 문서화를 위한 설정
+ * http(s)://<서버주소>:<포트번호>/swagger-ui/index.html로 접속
+ */
 @Configuration
 @RequiredArgsConstructor
 public class SwaggerConfig {

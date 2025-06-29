@@ -1,10 +1,9 @@
 package com.dataracy.modules.user.domain.enums;
 
+import com.dataracy.modules.user.status.UserErrorStatus;
+import com.dataracy.modules.user.status.UserException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
@@ -19,11 +18,14 @@ public enum InterestDomainStatusType {
     STARTUP("스타트업"),
     ;
 
-    private final String domain;
+    private final String value;
 
-    public static Optional<InterestDomainStatusType> of(String domain) {
-        return Arrays.stream(InterestDomainStatusType.values())
-                .filter(status -> status.getDomain().equals(domain))
-                .findFirst();
+    public static InterestDomainStatusType of(String value) {
+        for (InterestDomainStatusType status : InterestDomainStatusType.values()) {
+            if (status.getValue().equalsIgnoreCase(value)) {
+                return status;
+            }
+        }
+        throw new UserException(UserErrorStatus.BAD_REQUEST_DOMAIN_TOPIC_STATUS_TYPE);
     }
 }
