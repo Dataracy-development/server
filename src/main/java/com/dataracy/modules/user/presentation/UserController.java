@@ -6,6 +6,8 @@ import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.application.UserApplicationService;
 import com.dataracy.modules.user.application.dto.request.CheckNicknameRequestDto;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
+import com.dataracy.modules.user.application.dto.request.SelfLoginRequestDto;
+import com.dataracy.modules.user.application.dto.request.SelfSignupRequestDto;
 import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import com.dataracy.modules.user.presentation.api.UserApi;
 import com.dataracy.modules.user.status.UserSuccessStatus;
@@ -24,6 +26,39 @@ public class UserController implements UserApi {
 
     private final UserApplicationService userApplicationService;
     private final TokenApplicationService tokenApplicationService;
+
+    /**
+     * 자체로그인을 통해 로그인을 진행한다.
+     *
+     * @param requestDto 자체로그인 정보(email, password)
+     * @param response 리프레시 토큰을 쿠키에 저장
+     * @return 로그인 성공
+     */
+    public ResponseEntity<SuccessResponse<Void>> login(
+            SelfLoginRequestDto requestDto,
+            HttpServletResponse response
+    ) {
+        LoginResponseDto responseDto = userApplicationService.login(requestDto);
+        CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), (int) responseDto.refreshTokenExpiration() / 1000);
+        tokenApplicationService.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
+        return ResponseEntity.ok(SuccessResponse.of(UserSuccessStatus.OK_SELF_LOGIN));
+    }
+
+    /**
+     * 자체 회원가입을 진행한다.
+     *
+     * @param requestDto 자체 회원가입 정보
+     * @return Void
+     */
+    public ResponseEntity<SuccessResponse<Void>> signupUserSelf(
+            SelfSignupRequestDto requestDto,
+            HttpServletResponse response
+    ) {
+        LoginResponseDto responseDto = userApplicationService.signupUserSelf(requestDto);
+        CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), (int) responseDto.refreshTokenExpiration() / 1000);
+        tokenApplicationService.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
+        return ResponseEntity.status(HttpStatus.CREATED).body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
+    }
 
     /**
      * 레지스터 토큰에서 추출한 정보들과 닉네임으로 회원가입을 진행한다.
