@@ -70,7 +70,7 @@ public interface UserApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @PostMapping(value = "/signup/self", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/public/signup/self", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> signupUserSelf(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
