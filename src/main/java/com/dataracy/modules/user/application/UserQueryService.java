@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserQueryService {
 
     private final UserRepository userRepository;
@@ -29,6 +28,7 @@ public class UserQueryService {
      * @param oAuth2UserInfo 소셜로부터 받은 oAuth2UserInfo
      * @return 신규 사용자 여부
      */
+    @Transactional(readOnly = true)
     public boolean isNewUser(OAuth2UserInfo oAuth2UserInfo) {
         return userRepository.findUserByProviderId(oAuth2UserInfo.getProviderId()) == null;
     }
@@ -39,6 +39,7 @@ public class UserQueryService {
      *
      * @param oAuth2UserInfo    OAuth2 유저정보
      */
+    @Transactional(readOnly = true)
     public LoginResponseDto handleExistingUser(OAuth2UserInfo oAuth2UserInfo) {
         User existUser = userRepository.findUserByProviderId(oAuth2UserInfo.getProviderId());
         long refreshTokenExpirationTime = jwtQueryService.getRefreshTokenExpirationTime();

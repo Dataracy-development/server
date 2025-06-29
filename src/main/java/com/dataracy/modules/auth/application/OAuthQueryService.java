@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class OAuthQueryService {
 
     private final UserQueryService userQueryService;
     private final JwtUtil jwtUtil;
     private final JwtQueryService jwtQueryService;
+    private final JwtApplicationService jwtApplicationService;
 
     /**
      * OAuth2 사용자 신규 여부 확인.
@@ -26,6 +26,7 @@ public class OAuthQueryService {
      * @param oAuth2UserInfo 소셜로부터 받은 oAuth2UserInfo
      * @return 신규 사용자 여부
      */
+    @Transactional(readOnly = true)
     public boolean isNewUser(OAuth2UserInfo oAuth2UserInfo) {
         return userQueryService.isNewUser(oAuth2UserInfo);
     }
@@ -36,7 +37,7 @@ public class OAuthQueryService {
      * @param oAuth2UserInfo    OAuth2 유저정보
      */
     public RegisterTokenResponseDto handleNewUser(OAuth2UserInfo oAuth2UserInfo) {
-        String registerToken = jwtUtil.generateRegisterToken(
+        String registerToken = jwtApplicationService.generateRegisterToken(
                 oAuth2UserInfo.getProvider(),
                 oAuth2UserInfo.getProviderId(),
                 oAuth2UserInfo.getEmail()

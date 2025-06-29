@@ -2,10 +2,10 @@ package com.dataracy.modules.auth.infra.oauth;
 
 import com.dataracy.modules.auth.application.JwtQueryService;
 import com.dataracy.modules.auth.application.OAuthQueryService;
+import com.dataracy.modules.auth.application.TokenApplicationService;
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponseDto;
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
-import com.dataracy.modules.auth.infra.redis.TokenRedisManager;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +26,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final JwtUtil jwtUtil;
     private final OAuthQueryService oAuthQueryService;
-    private final TokenRedisManager tokenRedisManager;
     private final JwtQueryService jwtQueryService;
+    private final TokenApplicationService tokenApplicationService;
 
     /**
      * OAuth2 로그인 성공 후 처리.
@@ -53,7 +53,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         else {
             LoginResponseDto loginResponseDto = oAuthQueryService.handleExistingUser(oAuth2UserInfo);
             CookieUtil.setCookie(response, "refreshToken", loginResponseDto.refreshToken(), (int) loginResponseDto.refreshTokenExpiration() / 1000);
-            tokenRedisManager.saveRefreshToken(loginResponseDto.userId().toString(), loginResponseDto.refreshToken());
+            tokenApplicationService.saveRefreshToken(loginResponseDto.userId().toString(), loginResponseDto.refreshToken());
             getRedirectStrategy().sendRedirect(request, response, jwtQueryService.getRedirectBaseUrl());
         }
     }
