@@ -1,11 +1,11 @@
 package com.dataracy.modules.auth.infra.redis;
 
+import com.dataracy.modules.auth.infra.jwt.JwtProperties;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +19,7 @@ public class TokenRedisManager {
 
     private final StringRedisTemplate redisTemplate;
     private final JwtUtil jwtUtil;
-
-    @Value("${spring.redis.refresh-token-expiration-days}")
-    private int refreshTokenExpirationDays; // 리프레시 토큰 유효기간 (일)
+    private final JwtProperties jwtProperties;
 
     /**
      * 리프레시 토큰 저장.
@@ -31,7 +29,7 @@ public class TokenRedisManager {
      */
     public void saveRefreshToken(String userId, String refreshToken) {
         try {
-            redisTemplate.opsForValue().set(getRefreshTokenKey(userId), refreshToken, refreshTokenExpirationDays, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set(getRefreshTokenKey(userId), refreshToken, jwtProperties.getRefreshTokenExpirationTime(), TimeUnit.DAYS);
             log.info("Saved refresh token for userId: {}", userId);
         } catch (Exception e) {
             log.error("Failed to save refresh token for userId: {}", userId);

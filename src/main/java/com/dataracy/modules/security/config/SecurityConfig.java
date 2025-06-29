@@ -2,6 +2,8 @@ package com.dataracy.modules.security.config;
 
 //import com.dataracy.user.infra.anonymous.AnonymousTrackingFilter;
 
+import com.dataracy.modules.auth.application.JwtApplicationService;
+import com.dataracy.modules.auth.application.JwtQueryService;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
 import com.dataracy.modules.auth.infra.oauth.OAuth2LoginFailureHandler;
 import com.dataracy.modules.auth.infra.oauth.OAuth2LoginSuccessHandler;
@@ -24,6 +26,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final JwtQueryService jwtQueryService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
@@ -54,7 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil, jwtQueryService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

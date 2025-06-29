@@ -2,7 +2,6 @@ package com.dataracy.modules.auth.application;
 
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponseDto;
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
-import com.dataracy.modules.auth.infra.jwt.JwtUtil;
 import com.dataracy.modules.user.application.UserQueryService;
 import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class OAuthQueryService {
 
     private final UserQueryService userQueryService;
-    private final JwtUtil jwtUtil;
     private final JwtQueryService jwtQueryService;
     private final JwtApplicationService jwtApplicationService;
 
@@ -42,7 +40,7 @@ public class OAuthQueryService {
                 oAuth2UserInfo.getProviderId(),
                 oAuth2UserInfo.getEmail()
         );
-        log.info("신규 사용자 처리 완료: {}", oAuth2UserInfo.getEmail());
+        log.info("신규 사용자 등록 토큰 생성 완료 - 이메일: {}", oAuth2UserInfo.getEmail());
         return new RegisterTokenResponseDto(registerToken, jwtQueryService.getRegisterTokenExpirationTime());
     }
 

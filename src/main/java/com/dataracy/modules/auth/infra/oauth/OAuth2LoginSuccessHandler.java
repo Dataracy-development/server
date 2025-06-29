@@ -5,7 +5,6 @@ import com.dataracy.modules.auth.application.OAuthQueryService;
 import com.dataracy.modules.auth.application.TokenApplicationService;
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponseDto;
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
-import com.dataracy.modules.auth.infra.jwt.JwtUtil;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +23,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final JwtUtil jwtUtil;
     private final OAuthQueryService oAuthQueryService;
     private final JwtQueryService jwtQueryService;
     private final TokenApplicationService tokenApplicationService;
