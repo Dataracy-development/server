@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 public class TokenApplicationService {
 
     private final TokenRedisManager tokenRedisManager;
+    private final JwtApplicationService jwtApplicationService;
+    private final JwtQueryService jwtQueryService;
 
     /**
      * 리프레시 토큰 저장.

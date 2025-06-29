@@ -3,6 +3,8 @@ package com.dataracy.modules.user.presentation.api;
 import com.dataracy.modules.common.dto.SuccessResponse;
 import com.dataracy.modules.user.application.dto.request.CheckNicknameRequestDto;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
+import com.dataracy.modules.user.application.dto.request.SelfLoginRequestDto;
+import com.dataracy.modules.user.application.dto.request.SelfSignupRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -23,6 +25,62 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "User", description = "사용자 관련 API")
 @RequestMapping("/api/v1")
 public interface UserApi {
+
+    /**
+     * 자체로그인을 통해 로그인을 진행한다.
+     *
+     * @param requestDto 자체로그인 정보(email, password)
+     * @param response 리프레시 토큰을 쿠키에 저장
+     * @return 로그인 성공
+     */
+    @Operation(
+            summary = "자체 로그인",
+            description = "자체 로그인(email, password)을 통해 로그인합니다.",
+            security = {}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "자체로그인 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @PostMapping(value = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<SuccessResponse<Void>> login(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "로그인 정보 (이메일, 비밀번호)",
+                    content = @Content(schema = @Schema(implementation = SelfLoginRequestDto.class))
+            )
+            @Validated @RequestBody SelfLoginRequestDto requestDto,
+            HttpServletResponse response
+    );
+
+    /**
+     * 자체 회원가입을 진행한다.
+     *
+     * @param requestDto 자체 회원가입 정보
+     * @return Void
+     */
+    @Operation(
+            summary = "자체 회원가입",
+            description = "자체 회원가입을 통해 회원가입을 합니다.",
+            security = {}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "자체회원가입 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @PostMapping(value = "/public/signup/self", consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<SuccessResponse<Void>> signupUserSelf(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "회원가입 정보",
+                    content = @Content(schema = @Schema(implementation = SelfSignupRequestDto.class))
+            )
+            @Validated @RequestBody SelfSignupRequestDto requestDto,
+            HttpServletResponse response
+    );
+
 
     /**
      * 레지스터 토큰에서 추출한 정보들과 닉네임으로 회원가입을 진행한다.

@@ -18,6 +18,8 @@ public enum UserErrorStatus implements BaseErrorCode {
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "USER-007", "해당하는 유저가 존재하지 않습니다."),
     EXPIRED_REGISTER_TOKEN(HttpStatus.FORBIDDEN, "USER-008", "소셜 회원가입 추가정보 입력을 위한 레지스터 토큰이 만료되었습니다. 다시 소셜로그인을 진행해주세요. 추가정보 입력시간은 10분입니다."),
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "USER-09", "중복된 닉네임입니다."),
+    BAD_REQUEST_LOGIN_REQUEST(HttpStatus.BAD_REQUEST, "USER-10", "중복된 닉네임입니다."),
+    CONFLICT_DUPLICATE_EMAIL(HttpStatus.CONFLICT, "USER-11", "중복된 이메일입니다."),
     ;
 
     private final HttpStatus httpStatus;
