@@ -64,7 +64,7 @@ public class TokenRedisManager {
      * @param userId 사용자 ID
      * @return 저장된 리프레시 토큰
      */
-    private String getStoredRefreshToken(String userId) {
+    public String getStoredRefreshToken(String userId) {
         String refreshTokenKey = getRefreshTokenKey(userId);
         String token = redisTemplate.opsForValue().get(refreshTokenKey);
         if (token == null) {

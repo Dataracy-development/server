@@ -1,6 +1,7 @@
 package com.dataracy.modules.auth.application;
 
 import com.dataracy.modules.auth.infra.redis.TokenRedisManager;
+import com.dataracy.modules.common.lock.DistributedLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,12 +16,18 @@ public class TokenApplicationService {
     private final JwtQueryService jwtQueryService;
 
     /**
-     * 리프레시 토큰 저장.
+     * 분산 락 기반으로 리프레시 토큰을 저장합니다.
      *
      * @param userId       사용자 ID
      * @param refreshToken 리프레시 토큰
      */
+    @DistributedLock(key = "'lock:refresh:' + #userId", waitTime = 200, leaseTime = 3000)
     public void saveRefreshToken(String userId, String refreshToken) {
+        String existing = tokenRedisManager.getStoredRefreshToken(userId);
+        if (refreshToken.equals(existing)) {
+            log.debug("[TOKEN] 동일한 토큰이 이미 존재함 - 저장 생략");
+            return;
+        }
         tokenRedisManager.saveRefreshToken(userId, refreshToken);
     }
 
