@@ -2,6 +2,7 @@ package com.dataracy.modules.auth.application;
 
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
+import com.dataracy.modules.common.lock.DistributedLock;
 import com.dataracy.modules.user.application.dto.response.ReIssueTokenResponseDto;
 import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class AuthApplicationService {
      * @param refreshToken 클라이언트로부터 받은 리프레시 토큰
      * @return 새로 생성된 Access Token과 Refresh Token
      */
+    @DistributedLock(key = "'lock:refresh-reissue:' + #refreshToken", waitTime = 200, leaseTime = 3000)
     public ReIssueTokenResponseDto reIssueToken(String refreshToken) {
         if (refreshToken == null) {
             throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
