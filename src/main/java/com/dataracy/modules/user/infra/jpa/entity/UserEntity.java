@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -57,8 +58,8 @@ public class UserEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private OccupationStatusType occupation;
 
-    @Lob
-    private List<InterestDomainStatusType> domains;
+    @OneToMany(mappedBy = "user")
+    private List<UserTopicEntity> userTopicEntities = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -72,6 +73,11 @@ public class UserEntity extends BaseTimeEntity {
     @Builder.Default
     private boolean isDeleted = false;
 
+    public void addUserTopic(UserTopicEntity topicEntity) {
+        userTopicEntities.add(topicEntity);
+        topicEntity.setUser(this);
+    }
+
     public static UserEntity toEntity(
             Long id,
             ProviderStatusType provider,
@@ -82,7 +88,6 @@ public class UserEntity extends BaseTimeEntity {
             String nickname,
             AuthorLevelStatusType authorLevel,
             OccupationStatusType occupation,
-//            List<InterestDomainStatusType> domains,
             VisitSourceStatusType visitSource,
             Boolean isAdTermsAgreed,
             Boolean isDeleted
@@ -97,7 +102,6 @@ public class UserEntity extends BaseTimeEntity {
                 .nickname(nickname)
                 .authorLevel(authorLevel)
                 .occupation(occupation)
-//                .domains(domains)
                 .visitSource(visitSource)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)

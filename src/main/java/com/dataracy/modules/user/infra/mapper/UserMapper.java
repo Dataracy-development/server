@@ -2,10 +2,17 @@ package com.dataracy.modules.user.infra.mapper;
 
 import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.infra.jpa.entity.UserEntity;
+import com.dataracy.modules.user.infra.jpa.entity.UserTopicEntity;
+
+import java.util.List;
 
 public class UserMapper {
 
     public static User toDomain(UserEntity userEntity) {
+        List<Long> topicIds = userEntity.getUserTopicEntities().stream()
+                .map(UserTopicEntity::getTopicId)
+                .toList();
+
         return User.toDomain(
                 userEntity.getId(),
                 userEntity.getProvider(),
@@ -16,7 +23,7 @@ public class UserMapper {
                 userEntity.getNickname(),
                 userEntity.getAuthorLevel(),
                 userEntity.getOccupation(),
-//                userEntity.getDomains(),
+                topicIds,
                 userEntity.getVisitSource(),
                 userEntity.isAdTermsAgreed(),
                 userEntity.isDeleted()
@@ -24,7 +31,8 @@ public class UserMapper {
     }
 
     public static UserEntity toEntity(User user) {
-        return UserEntity.toEntity(
+
+        UserEntity userEntity =  UserEntity.toEntity(
                 user.getId(),
                 user.getProvider(),
                 user.getProviderId(),
@@ -34,10 +42,18 @@ public class UserMapper {
                 user.getNickname(),
                 user.getAuthorLevel(),
                 user.getOccupation(),
-//                user.getDomains(),
                 user.getVisitSource(),
                 user.isAdTermsAgreed(),
                 user.isDeleted()
         );
+
+        // topicIds → userTopicEntities 변환 후 연결
+        List<UserTopicEntity> userTopicEntities = user.getTopicIds().stream()
+                .map(topicId -> UserTopicEntity.of(userEntity, topicId))
+                .toList();
+
+        userTopicEntities.forEach(userEntity::addUserTopic);
+
+        return userEntity;
     }
 }
