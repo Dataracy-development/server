@@ -59,6 +59,7 @@ public class UserEntity extends BaseTimeEntity {
     private OccupationStatusType occupation;
 
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private List<UserTopicEntity> userTopicEntities = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)

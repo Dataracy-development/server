@@ -2,14 +2,13 @@ package com.dataracy.modules.user.application;
 
 import com.dataracy.modules.auth.application.JwtApplicationService;
 import com.dataracy.modules.auth.application.JwtQueryService;
-import com.dataracy.modules.auth.application.TokenApplicationService;
 import com.dataracy.modules.common.lock.DistributedLock;
 import com.dataracy.modules.topic.application.TopicQueryService;
 import com.dataracy.modules.user.application.dto.request.CheckNicknameRequestDto;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
 import com.dataracy.modules.user.application.dto.request.SelfLoginRequestDto;
 import com.dataracy.modules.user.application.dto.request.SelfSignupRequestDto;
-import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
+import com.dataracy.modules.user.application.dto.response.RefreshTokenResponseDto;
 import com.dataracy.modules.user.domain.converter.AuthorLevelStatusTypeConverter;
 import com.dataracy.modules.user.domain.converter.OccupationStatusTypeConverter;
 import com.dataracy.modules.user.domain.converter.ProviderStatusTypeConverter;
@@ -39,35 +38,19 @@ public class UserApplicationService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 클라이언트로부터 받은 이메일과 비밀번호로 로그인을 진행한다.
-     *
-     * @param requestDto 자체 로그인을 위한 Dto
-     * @return LoginResponseDto (컨트롤러에서 리프레시 토큰 쿠키 저장을 위한 response)
-     */
-    @Transactional(readOnly = true)
-    public LoginResponseDto login(SelfLoginRequestDto requestDto) {
-        User user = userRepository.findUserByEmail(requestDto.email());
-        if (user == null || userRepository.existsByEmail(requestDto.email())) {
-            throw new UserException(UserErrorStatus.BAD_REQUEST_LOGIN_REQUEST);
-        }
-        if (!passwordEncoder.matches(requestDto.password(), user.getPassword())) {
-            throw new UserException(UserErrorStatus.BAD_REQUEST_LOGIN_REQUEST);
-        }
-
-        String refreshToken = jwtApplicationService.generateAccessOrRefreshToken(user.getId(), user.getRole(), jwtQueryService.getRefreshTokenExpirationTime());
-
-        log.info("자체 로그인 성공: {}", user.getEmail());
-        return new LoginResponseDto(user.getId(), refreshToken, jwtQueryService.getRefreshTokenExpirationTime());
-    }
-
-    /**
      * 클라이언트로부터 받은 유저 정보를 토대로 자체 회원가입을 진행한다.(이메일, 닉네임, 비밀번호, 성별)
      *
      * @param requestDto 자체 회원가입을 위한 Dto
      * @return LoginResponseDto (컨트롤러에서 리프레시 토큰 쿠키 저장을 위한 response)
      */
+    @DistributedLock(
+            key = "'lock:nickname:' + #requestDto.nickname()",
+            waitTime = 300L,
+            leaseTime = 2000L,
+            retry = 2
+    )
     @Transactional
-    public LoginResponseDto signupUserSelf(SelfSignupRequestDto requestDto) {
+    public RefreshTokenResponseDto signupUserSelf(SelfSignupRequestDto requestDto) {
         if (userRepository.existsByEmail(requestDto.email())) {
             throw new UserException(UserErrorStatus.CONFLICT_DUPLICATE_EMAIL);
         }
@@ -99,17 +82,24 @@ public class UserApplicationService {
         String refreshToken = jwtApplicationService.generateAccessOrRefreshToken(savedUser.getId(), RoleStatusType.ROLE_USER, refreshTokenExpirationTime);
 
         log.info("자체 회원가입 성공: {}", user.getEmail());
-        return new LoginResponseDto(savedUser.getId(), refreshToken, jwtQueryService.getRefreshTokenExpirationTime());
+        return new RefreshTokenResponseDto(savedUser.getId(), refreshToken, jwtQueryService.getRefreshTokenExpirationTime());
     }
 
     /**
      * 회원가입 처리.
+     * 닉네임 동시성 분산락 처리
      *
      * @param registerToken 회원가입 토큰
      * @param requestDto    회원가입 요청 정보
      */
+    @DistributedLock(
+            key = "'lock:nickname:' + #requestDto.nickname()",
+            waitTime = 300L,
+            leaseTime = 2000L,
+            retry = 2
+    )
     @Transactional
-    public LoginResponseDto signupUserOAuth2(String registerToken, OnboardingRequestDto requestDto) {
+    public RefreshTokenResponseDto signupUserOAuth2(String registerToken, OnboardingRequestDto requestDto) {
 
         if (registerToken == null) {
             throw new UserException(UserErrorStatus.EXPIRED_REGISTER_TOKEN);
@@ -119,6 +109,10 @@ public class UserApplicationService {
         String provider = jwtQueryService.getProviderFromRegisterToken(registerToken);
         String providerId = jwtQueryService.getProviderIdFromRegisterToken(registerToken);
         String email = jwtQueryService.getEmailFromRegisterToken(registerToken);
+
+        if (userRepository.findUserByProviderId(providerId) != null){
+            throw new UserException(UserErrorStatus.ALREADY_SIGN_UP_USER);
+        }
 
         // String domains → topicIds 변환
         List<Long> topicIds = requestDto.topics().stream()
@@ -146,7 +140,7 @@ public class UserApplicationService {
         String refreshToken = jwtApplicationService.generateAccessOrRefreshToken(savedUser.getId(), RoleStatusType.ROLE_USER, refreshTokenExpirationTime);
 
         log.info("소셜 회원가입 성공: {}", email);
-        return new LoginResponseDto(savedUser.getId(), refreshToken, refreshTokenExpirationTime);
+        return new RefreshTokenResponseDto(savedUser.getId(), refreshToken, refreshTokenExpirationTime);
     }
 
     /**
@@ -154,14 +148,9 @@ public class UserApplicationService {
      *
      * @param requestDto 닉네임 중복 확인 요청 정보
      */
-    @DistributedLock(
-            key = "'lock:nickname:' + #requestDto.nickname()",
-            waitTime = 200L,
-            leaseTime = 3000L,
-            retry = 3
-    )
     @Transactional(readOnly = true)
     public void checkNickname(CheckNicknameRequestDto requestDto) {
+
         String nickname = requestDto.nickname();
 
         if (userRepository.existsByNickname(nickname)) {

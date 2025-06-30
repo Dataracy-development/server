@@ -6,9 +6,8 @@ import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.application.UserApplicationService;
 import com.dataracy.modules.user.application.dto.request.CheckNicknameRequestDto;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
-import com.dataracy.modules.user.application.dto.request.SelfLoginRequestDto;
 import com.dataracy.modules.user.application.dto.request.SelfSignupRequestDto;
-import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
+import com.dataracy.modules.user.application.dto.response.RefreshTokenResponseDto;
 import com.dataracy.modules.user.presentation.api.UserApi;
 import com.dataracy.modules.user.status.UserSuccessStatus;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,23 +27,6 @@ public class UserController implements UserApi {
     private final TokenApplicationService tokenApplicationService;
 
     /**
-     * 자체로그인을 통해 로그인을 진행한다.
-     *
-     * @param requestDto 자체로그인 정보(email, password)
-     * @param response 리프레시 토큰을 쿠키에 저장
-     * @return 로그인 성공
-     */
-    public ResponseEntity<SuccessResponse<Void>> login(
-            SelfLoginRequestDto requestDto,
-            HttpServletResponse response
-    ) {
-        LoginResponseDto responseDto = userApplicationService.login(requestDto);
-        CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), (int) responseDto.refreshTokenExpiration() / 1000);
-        tokenApplicationService.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
-        return ResponseEntity.ok(SuccessResponse.of(UserSuccessStatus.OK_SELF_LOGIN));
-    }
-
-    /**
      * 자체 회원가입을 진행한다.
      *
      * @param requestDto 자체 회원가입 정보
@@ -54,7 +36,7 @@ public class UserController implements UserApi {
             SelfSignupRequestDto requestDto,
             HttpServletResponse response
     ) {
-        LoginResponseDto responseDto = userApplicationService.signupUserSelf(requestDto);
+        RefreshTokenResponseDto responseDto = userApplicationService.signupUserSelf(requestDto);
         CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), (int) responseDto.refreshTokenExpiration() / 1000);
         tokenApplicationService.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
         return ResponseEntity.status(HttpStatus.CREATED).body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
@@ -73,7 +55,7 @@ public class UserController implements UserApi {
             OnboardingRequestDto requestDto,
             HttpServletResponse response
     ) {
-        LoginResponseDto responseDto = userApplicationService.signupUserOAuth2(registerToken, requestDto);
+        RefreshTokenResponseDto responseDto = userApplicationService.signupUserOAuth2(registerToken, requestDto);
         CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(),
                 (int) responseDto.refreshTokenExpiration() / 1000);
         tokenApplicationService.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
@@ -97,14 +79,12 @@ public class UserController implements UserApi {
     }
 
     @GetMapping("/onboarding")
-    public String onboarding(@CookieValue(value = "registerToken", required = false) String registerToken, Model model) {
-        model.addAttribute("registerToken", registerToken);
+    public String onboarding(Model model) {
         return "onboarding";
     }
 
     @GetMapping("/base")
-    public String base(@CookieValue(value = "refreshToken", required = false) String refreshToken, Model model) {
-        model.addAttribute("refreshToken", refreshToken);
+    public String base(Model model) {
         return "base";  // base.html 반환
     }
 }

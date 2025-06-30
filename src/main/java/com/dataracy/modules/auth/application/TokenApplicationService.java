@@ -1,7 +1,6 @@
 package com.dataracy.modules.auth.application;
 
 import com.dataracy.modules.auth.infra.redis.TokenRedisManager;
-import com.dataracy.modules.common.lock.DistributedLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ public class TokenApplicationService {
      * @param userId       사용자 ID
      * @param refreshToken 리프레시 토큰
      */
-    @DistributedLock(key = "'lock:refresh:' + #userId", waitTime = 200, leaseTime = 3000)
     public void saveRefreshToken(String userId, String refreshToken) {
         String existing = tokenRedisManager.getStoredRefreshToken(userId);
         if (refreshToken.equals(existing)) {
