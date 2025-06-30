@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(name = "User", description = "사용자 관련 API")
+@Tag(name = "Auth", description = "인증 관련 API")
 @RequestMapping("/api/v1")
 public interface AuthApi {
 

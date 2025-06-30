@@ -1,6 +1,5 @@
 package com.dataracy.modules.topic.infra.jpa.entity;
 
-import com.dataracy.modules.common.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +14,7 @@ import lombok.*;
                 @UniqueConstraint(columnNames = {"domain"})
         }
 )
-public class TopicEntity extends BaseTimeEntity {
+public class TopicEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
