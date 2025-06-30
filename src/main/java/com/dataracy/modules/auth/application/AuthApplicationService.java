@@ -32,7 +32,7 @@ public class AuthApplicationService {
      */
     @Transactional(readOnly = true)
     public RefreshTokenResponseDto login(SelfLoginRequestDto requestDto) {
-        User user = userQueryService.getUserNotDuplicatedEmailAndPassword(requestDto.email(), requestDto.password());
+        User user = userQueryService.getMatchUserInDB(requestDto.email(), requestDto.password());
 
         String refreshToken = jwtApplicationService.generateAccessOrRefreshToken(user.getId(), user.getRole(), jwtQueryService.getRefreshTokenExpirationTime());
 

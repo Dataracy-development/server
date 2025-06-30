@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum AuthErrorStatus implements BaseErrorCode {
 
+    BAD_REQUEST_LOGIN(HttpStatus.BAD_REQUEST, "AUTH-001", "이메일 또는 비밀번호가 올바르지 않습니다."),
+
     NOT_FOUND_ACCESS_TOKEN_IN_HEADER(HttpStatus.UNAUTHORIZED, "AUTH-001", "헤더에 어세스토큰이 누락되었습니다."),
     NOT_FOUND_REFRESH_TOKEN_IN_COOKIES(HttpStatus.UNAUTHORIZED, "AUTH-002", "쿠키에 리프레시토큰이 누락되었습니다."),
 

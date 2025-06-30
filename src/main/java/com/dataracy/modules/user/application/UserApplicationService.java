@@ -51,6 +51,11 @@ public class UserApplicationService {
     )
     @Transactional
     public RefreshTokenResponseDto signupUserSelf(SelfSignupRequestDto requestDto) {
+
+        if (userRepository.existsByNickname(requestDto.nickname())) {
+            throw new UserException(UserErrorStatus.DUPLICATED_NICKNAME);
+        }
+
         if (userRepository.existsByEmail(requestDto.email())) {
             throw new UserException(UserErrorStatus.CONFLICT_DUPLICATE_EMAIL);
         }
@@ -100,6 +105,10 @@ public class UserApplicationService {
     )
     @Transactional
     public RefreshTokenResponseDto signupUserOAuth2(String registerToken, OnboardingRequestDto requestDto) {
+
+        if (userRepository.existsByNickname(requestDto.nickname())) {
+            throw new UserException(UserErrorStatus.DUPLICATED_NICKNAME);
+        }
 
         if (registerToken == null) {
             throw new UserException(UserErrorStatus.EXPIRED_REGISTER_TOKEN);

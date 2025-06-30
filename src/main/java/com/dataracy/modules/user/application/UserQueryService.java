@@ -3,6 +3,8 @@ package com.dataracy.modules.user.application;
 import com.dataracy.modules.auth.application.JwtApplicationService;
 import com.dataracy.modules.auth.application.JwtQueryService;
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
+import com.dataracy.modules.auth.status.AuthErrorStatus;
+import com.dataracy.modules.auth.status.AuthException;
 import com.dataracy.modules.user.application.dto.response.RefreshTokenResponseDto;
 import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.repository.UserRepository;
@@ -51,14 +53,12 @@ public class UserQueryService {
     }
 
     @Transactional(readOnly = true)
-    public User getUserNotDuplicatedEmailAndPassword(String email, String password){
+    public User getMatchUserInDB(String email, String password){
         User user = userRepository.findUserByEmail(email);
-        if (user == null || userRepository.existsByEmail(email)) {
-            throw new UserException(UserErrorStatus.BAD_REQUEST_DUPLICATE_EMAIL);
+
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return user;
         }
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new UserException(UserErrorStatus.BAD_REQUEST_DUPLICATE_PASSWORD);
-        }
-        return user;
+        throw new AuthException(AuthErrorStatus.BAD_REQUEST_LOGIN);
     }
 }

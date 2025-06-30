@@ -66,7 +66,7 @@ public interface AuthApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @PutMapping(value = "/auth/token/re-issue", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping("/auth/token/re-issue")
     ResponseEntity<SuccessResponse<Void>> reIssueToken(
 
             @Parameter(
@@ -76,7 +76,7 @@ public interface AuthApi {
                     description = "리프레시 토큰으로 토큰 재발급을 진행한다.",
                     schema = @Schema(type = "string")
             )
-            @CookieValue(value = "refreshToken", required = false)
+            @CookieValue(value = "refreshToken")
             String refreshToken,
 
             HttpServletResponse response
