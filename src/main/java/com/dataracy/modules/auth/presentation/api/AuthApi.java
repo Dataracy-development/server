@@ -38,7 +38,7 @@ public interface AuthApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @PutMapping(value = "/token/re-issue", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/auth/token/re-issue", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> reIssueToken(
 
             @Parameter(

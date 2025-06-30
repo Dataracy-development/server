@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 public class TokenApplicationService {
 
     private final TokenRedisManager tokenRedisManager;
-    private final JwtApplicationService jwtApplicationService;
-    private final JwtQueryService jwtQueryService;
 
     /**
      * 분산 락 기반으로 리프레시 토큰을 저장합니다.
