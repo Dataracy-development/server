@@ -9,6 +9,10 @@ import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
 import com.dataracy.modules.user.application.dto.request.SelfLoginRequestDto;
 import com.dataracy.modules.user.application.dto.request.SelfSignupRequestDto;
 import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
+import com.dataracy.modules.user.domain.converter.AuthorLevelStatusTypeConverter;
+import com.dataracy.modules.user.domain.converter.OccupationStatusTypeConverter;
+import com.dataracy.modules.user.domain.converter.ProviderStatusTypeConverter;
+import com.dataracy.modules.user.domain.converter.VisitSourceStatusTypeConverter;
 import com.dataracy.modules.user.domain.enums.*;
 import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.repository.UserRepository;
@@ -66,16 +70,16 @@ public class UserApplicationService {
         String encodedPassword = passwordEncoder.encode(requestDto.password());
         User user = User.toDomain(
                 null,
-                ProviderStatusType.of("LOCAL"),
+                ProviderStatusTypeConverter.of("LOCAL"),
                 null,
                 RoleStatusType.ROLE_USER,
                 requestDto.email(),
                 encodedPassword,
                 requestDto.nickname(),
-                AuthorLevelStatusType.of(requestDto.authorLevel()),
-                OccupationStatusType.of(requestDto.occupation()),
+                AuthorLevelStatusTypeConverter.of(requestDto.authorLevel()),
+                OccupationStatusTypeConverter.of(requestDto.occupation()),
 //                requestDto.domains(),
-                VisitSourceStatusType.of(requestDto.visitSource()),
+                VisitSourceStatusTypeConverter.of(requestDto.visitSource()),
                 requestDto.isAdTermsAgreed(),
                 false
         );
@@ -108,16 +112,16 @@ public class UserApplicationService {
 
         User user = User.toDomain(
                 null,
-                ProviderStatusType.of(provider),
+                ProviderStatusTypeConverter.of(provider),
                 providerId,
                 RoleStatusType.ROLE_USER,
                 email,
                 null,
                 requestDto.nickname(),
-                AuthorLevelStatusType.of(requestDto.authorLevel()),
-                OccupationStatusType.of(requestDto.occupation()),
+                AuthorLevelStatusTypeConverter.of(requestDto.authorLevel()),
+                OccupationStatusTypeConverter.of(requestDto.occupation()),
 //                requestDto.domains(),
-                VisitSourceStatusType.of(requestDto.visitSource()),
+                VisitSourceStatusTypeConverter.of(requestDto.visitSource()),
                 requestDto.isAdTermsAgreed(),
                 false
         );

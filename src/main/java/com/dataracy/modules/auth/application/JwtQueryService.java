@@ -2,6 +2,7 @@ package com.dataracy.modules.auth.application;
 
 import com.dataracy.modules.auth.infra.jwt.JwtProperties;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
+import com.dataracy.modules.user.domain.converter.RoleStatusTypeConverter;
 import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +73,7 @@ public class JwtQueryService {
      */
     public RoleStatusType getRoleFromToken(String token) {
         String roleName = jwtUtil.parseToken(token).get("role", String.class);
-        return RoleStatusType.of(roleName);
+        return RoleStatusTypeConverter.of(roleName);
     }
 
     /**
