@@ -2,10 +2,10 @@ package com.dataracy.modules.auth.presentation;
 
 import com.dataracy.modules.auth.application.AuthApplicationService;
 import com.dataracy.modules.auth.application.TokenApplicationService;
+import com.dataracy.modules.auth.application.dto.response.ReIssueTokenResponseDto;
 import com.dataracy.modules.auth.status.AuthSuccessStatus;
 import com.dataracy.modules.common.dto.SuccessResponse;
 import com.dataracy.modules.common.util.CookieUtil;
-import com.dataracy.modules.user.application.dto.response.ReIssueTokenResponseDto;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,8 +39,8 @@ public class AuthController {
     }
 
     private void setResponseHeaders(HttpServletResponse response, ReIssueTokenResponseDto responseDto) {
-        response.setHeader("Authorization", "Bearer " + responseDto.accessToken());
-        response.setHeader("Access-Token-Expire-Time", String.valueOf(responseDto.accessTokenExpiration()));
+        CookieUtil.setCookie(response, "accessToken", responseDto.accessToken(), (int) responseDto.accessTokenExpiration() / 1000);
+        CookieUtil.setCookie(response, "accessTokenExpiration", String.valueOf(responseDto.accessTokenExpiration()), (int) responseDto.accessTokenExpiration() / 1000);
         CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), (int) responseDto.refreshTokenExpiration() / 1000);
     }
 

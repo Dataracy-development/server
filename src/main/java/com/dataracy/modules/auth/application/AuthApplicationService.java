@@ -3,7 +3,7 @@ package com.dataracy.modules.auth.application;
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
 import com.dataracy.modules.common.lock.DistributedLock;
-import com.dataracy.modules.user.application.dto.response.ReIssueTokenResponseDto;
+import com.dataracy.modules.auth.application.dto.response.ReIssueTokenResponseDto;
 import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

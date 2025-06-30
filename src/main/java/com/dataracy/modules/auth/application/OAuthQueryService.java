@@ -7,7 +7,6 @@ import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -24,7 +23,6 @@ public class OAuthQueryService {
      * @param oAuth2UserInfo 소셜로부터 받은 oAuth2UserInfo
      * @return 신규 사용자 여부
      */
-    @Transactional(readOnly = true)
     public boolean isNewUser(OAuth2UserInfo oAuth2UserInfo) {
         return userQueryService.isNewUser(oAuth2UserInfo);
     }
