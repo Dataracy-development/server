@@ -32,11 +32,19 @@ public class AuthController {
             HttpServletResponse response
     ) {
         ReIssueTokenResponseDto responseDto = authApplicationService.reIssueToken(refreshToken);
+        setResponseHeaders(response, responseDto);
+        saveRefreshToken(responseDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(AuthSuccessStatus.OK_RE_ISSUE_TOKEN));
+    }
+
+    private void setResponseHeaders(HttpServletResponse response, ReIssueTokenResponseDto responseDto) {
         response.setHeader("Authorization", "Bearer " + responseDto.accessToken());
         response.setHeader("Access-Token-Expire-Time", String.valueOf(responseDto.accessTokenExpiration()));
         CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), (int) responseDto.refreshTokenExpiration() / 1000);
+    }
+
+    private void saveRefreshToken(ReIssueTokenResponseDto responseDto) {
         tokenApplicationService.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(SuccessResponse.of(AuthSuccessStatus.OK_RE_ISSUE_TOKEN));
     }
 }
