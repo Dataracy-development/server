@@ -4,6 +4,7 @@ import com.dataracy.modules.common.converter.MultipartJackson2HttpMessageConvert
 import com.dataracy.modules.common.resolver.CurrentUserIdArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

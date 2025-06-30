@@ -1,6 +1,7 @@
 package com.dataracy.modules.auth.presentation.api;
 
 import com.dataracy.modules.common.dto.SuccessResponse;
+import com.dataracy.modules.user.application.dto.request.SelfLoginRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -12,13 +13,40 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Auth", description = "인증 관련 API")
 @RequestMapping("/api/v1")
 public interface AuthApi {
+
+    /**
+     * 자체로그인을 통해 로그인을 진행한다.
+     *
+     * @param requestDto 자체로그인 정보(email, password)
+     * @param response 리프레시 토큰을 쿠키에 저장
+     * @return 로그인 성공
+     */
+    @Operation(
+            summary = "자체 로그인",
+            description = "자체 로그인(email, password)을 통해 로그인합니다.",
+            security = {}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "자체로그인 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @PostMapping(value = "/auth/login", consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<SuccessResponse<Void>> login(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "로그인 정보 (이메일, 비밀번호)",
+                    content = @Content(schema = @Schema(implementation = SelfLoginRequestDto.class))
+            )
+            @Validated @RequestBody SelfLoginRequestDto requestDto,
+            HttpServletResponse response
+    );
 
     /**
      * 리프레시 토큰을 통해 새로운 액세스 토큰과 리프레시 토큰을 발급받아 쿠키에 저장합니다.

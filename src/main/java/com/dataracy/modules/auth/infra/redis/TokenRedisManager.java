@@ -69,7 +69,6 @@ public class TokenRedisManager {
         String token = redisTemplate.opsForValue().get(refreshTokenKey);
         if (token == null) {
             log.warn("Refresh token not found for userId: {}", userId);
-            throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_NOT_FOUND_IN_REDIS);
         }
         return token;
     }

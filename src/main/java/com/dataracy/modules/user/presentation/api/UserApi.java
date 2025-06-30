@@ -27,34 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface UserApi {
 
     /**
-     * 자체로그인을 통해 로그인을 진행한다.
-     *
-     * @param requestDto 자체로그인 정보(email, password)
-     * @param response 리프레시 토큰을 쿠키에 저장
-     * @return 로그인 성공
-     */
-    @Operation(
-            summary = "자체 로그인",
-            description = "자체 로그인(email, password)을 통해 로그인합니다.",
-            security = {}
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "자체로그인 성공",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
-    })
-    @PostMapping(value = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<SuccessResponse<Void>> login(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    description = "로그인 정보 (이메일, 비밀번호)",
-                    content = @Content(schema = @Schema(implementation = SelfLoginRequestDto.class))
-            )
-            @Validated @RequestBody SelfLoginRequestDto requestDto,
-            HttpServletResponse response
-    );
-
-    /**
      * 자체 회원가입을 진행한다.
      *
      * @param requestDto 자체 회원가입 정보
