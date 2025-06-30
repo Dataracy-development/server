@@ -4,6 +4,7 @@ import com.dataracy.modules.auth.application.JwtApplicationService;
 import com.dataracy.modules.auth.application.JwtQueryService;
 import com.dataracy.modules.auth.application.TokenApplicationService;
 import com.dataracy.modules.common.lock.DistributedLock;
+import com.dataracy.modules.topic.application.TopicQueryService;
 import com.dataracy.modules.user.application.dto.request.CheckNicknameRequestDto;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequestDto;
 import com.dataracy.modules.user.application.dto.request.SelfLoginRequestDto;
@@ -24,6 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class UserApplicationService {
     private final UserRepository userRepository;
     private final JwtApplicationService jwtApplicationService;
     private final JwtQueryService jwtQueryService;
+    private final TopicQueryService topicQueryService;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -68,6 +72,12 @@ public class UserApplicationService {
             throw new UserException(UserErrorStatus.CONFLICT_DUPLICATE_EMAIL);
         }
         String encodedPassword = passwordEncoder.encode(requestDto.password());
+
+        // 요청된 도메인(String) → topicId(Long) 변환
+        List<Long> topicIds = requestDto.topics().stream()
+                .map(topicQueryService::findTopicIdByName)
+                .toList();
+
         User user = User.toDomain(
                 null,
                 ProviderStatusTypeConverter.of("LOCAL"),
@@ -78,7 +88,7 @@ public class UserApplicationService {
                 requestDto.nickname(),
                 AuthorLevelStatusTypeConverter.of(requestDto.authorLevel()),
                 OccupationStatusTypeConverter.of(requestDto.occupation()),
-//                requestDto.domains(),
+                topicIds,
                 VisitSourceStatusTypeConverter.of(requestDto.visitSource()),
                 requestDto.isAdTermsAgreed(),
                 false
@@ -110,6 +120,11 @@ public class UserApplicationService {
         String providerId = jwtQueryService.getProviderIdFromRegisterToken(registerToken);
         String email = jwtQueryService.getEmailFromRegisterToken(registerToken);
 
+        // String domains → topicIds 변환
+        List<Long> topicIds = requestDto.topics().stream()
+                .map(topicQueryService::findTopicIdByName)
+                .toList();
+
         User user = User.toDomain(
                 null,
                 ProviderStatusTypeConverter.of(provider),
@@ -120,7 +135,7 @@ public class UserApplicationService {
                 requestDto.nickname(),
                 AuthorLevelStatusTypeConverter.of(requestDto.authorLevel()),
                 OccupationStatusTypeConverter.of(requestDto.occupation()),
-//                requestDto.domains(),
+                topicIds,
                 VisitSourceStatusTypeConverter.of(requestDto.visitSource()),
                 requestDto.isAdTermsAgreed(),
                 false
