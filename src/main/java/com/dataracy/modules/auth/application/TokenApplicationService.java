@@ -42,12 +42,12 @@ public class TokenApplicationService {
     }
 
     /**
-     * 로그아웃 시 해당 어세스토큰을 블랙리스트 처리한다.
+     * 해당 토큰을 블랙리스트 처리한다.
      * @param token 토큰
      * @param expirationMillis 밀리초
      */
-    public void blacklistAccessToken(String token, long expirationMillis) {
-        tokenRedisManager.blacklistAccessToken(token, expirationMillis);
+    public void blacklistToken(String token, long expirationMillis) {
+        tokenRedisManager.blacklistToken(token, expirationMillis);
     }
 
     /**

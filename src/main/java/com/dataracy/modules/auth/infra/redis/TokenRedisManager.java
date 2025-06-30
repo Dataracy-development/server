@@ -79,11 +79,11 @@ public class TokenRedisManager {
     }
 
     /**
-     * 로그아웃 시 해당 어세스토큰을 블랙리스트 처리한다.
+     * 해당 토큰을 블랙리스트 처리한다.
      * @param token 토큰
      * @param expirationMillis 유효기간
      */
-    public void blacklistAccessToken(String token, long expirationMillis) {
+    public void blacklistToken(String token, long expirationMillis) {
         redisTemplate.opsForValue().set("blacklist:" + token, "logout", Duration.ofMillis(expirationMillis));
     }
 
