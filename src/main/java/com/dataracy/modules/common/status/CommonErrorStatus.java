@@ -36,6 +36,10 @@ public enum CommonErrorStatus implements BaseErrorCode {
     CAN_NOT_INSTANTIATE_COOKIE_UTILITY_CLASS(HttpStatus.INTERNAL_SERVER_ERROR, "UTIL-001", "CookieUtil은 인스턴스가 불가능한 클래스입니다."),
     CAN_NOT_INSTANTIATE_HEADER_UTILITY_CLASS(HttpStatus.INTERNAL_SERVER_ERROR, "UTIL-002", "HeaderUtil은 인스턴스가 불가능한 클래스입니다."),
     CAN_NOT_INSTANTIATE_FILE_UTILITY_CLASS(HttpStatus.INTERNAL_SERVER_ERROR, "UTIL-003", "FileUtil은 인스턴스가 불가능한 클래스입니다."),
+
+    REDIS_CONNECTION_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS-001", "레디스 연결에 실패했습니다."),
+    DATA_ACCESS_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS-002", "네트워크 오류로 데이터 접근에 실패했습니다."),
+
     ;
 
     private final HttpStatus httpStatus;

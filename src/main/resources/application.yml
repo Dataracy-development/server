@@ -68,3 +68,4 @@ aws:
     secret-key: ${SES_SECRET_KEY}
     region: ${SES_REGION}
     sender: ${SES_SENDER}
+    expire-minutes: ${SES_EXPIRE_MINUTES}
