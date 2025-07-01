@@ -58,7 +58,7 @@ public class UserEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private OccupationStatusType occupation;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     @Builder.Default
     private List<UserTopicEntity> userTopicEntities = new ArrayList<>();
 
