@@ -1,7 +1,5 @@
 package com.dataracy.modules.user.domain.enums;
 
-import com.dataracy.modules.user.status.UserErrorStatus;
-import com.dataracy.modules.user.status.UserException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,13 +16,4 @@ public enum OccupationStatusType {
     ;
 
     private final String value;
-
-    public static OccupationStatusType of(String value) {
-        for (OccupationStatusType status : OccupationStatusType.values()) {
-            if (status.getValue().equalsIgnoreCase(value)) {
-                return status;
-            }
-        }
-        throw new UserException(UserErrorStatus.BAD_REQUEST_OCCUPATION_STATUS_TYPE);
-    }
 }

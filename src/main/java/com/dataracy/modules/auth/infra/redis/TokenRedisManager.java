@@ -64,12 +64,11 @@ public class TokenRedisManager {
      * @param userId 사용자 ID
      * @return 저장된 리프레시 토큰
      */
-    private String getStoredRefreshToken(String userId) {
+    public String getStoredRefreshToken(String userId) {
         String refreshTokenKey = getRefreshTokenKey(userId);
         String token = redisTemplate.opsForValue().get(refreshTokenKey);
         if (token == null) {
             log.warn("Refresh token not found for userId: {}", userId);
-            throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_NOT_FOUND_IN_REDIS);
         }
         return token;
     }
@@ -79,11 +78,11 @@ public class TokenRedisManager {
     }
 
     /**
-     * 로그아웃 시 해당 어세스토큰을 블랙리스트 처리한다.
+     * 해당 토큰을 블랙리스트 처리한다.
      * @param token 토큰
      * @param expirationMillis 유효기간
      */
-    public void blacklistAccessToken(String token, long expirationMillis) {
+    public void blacklistToken(String token, long expirationMillis) {
         redisTemplate.opsForValue().set("blacklist:" + token, "logout", Duration.ofMillis(expirationMillis));
     }
 

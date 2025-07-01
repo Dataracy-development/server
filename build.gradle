@@ -19,6 +19,10 @@ configurations {
 	}
 }
 
+tasks.withType(JavaCompile) {
+	options.compilerArgs += ['-parameters']
+}
+
 configurations.all {
 	exclude group: 'commons-logging', module: 'commons-logging'
 }
@@ -29,6 +33,8 @@ jar {
 	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 	from { sourceSets.main.resources.srcDirs }
 }
+
+
 
 repositories {
 	mavenCentral()
@@ -61,6 +67,7 @@ dependencies {
 	// Redis & Redisson & Kafka
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.redisson:redisson:3.27.0'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.apache.commons:commons-pool2'
 

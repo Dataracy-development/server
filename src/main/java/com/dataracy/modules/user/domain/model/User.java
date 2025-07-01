@@ -23,7 +23,10 @@ public class User {
     private String nickname;
     private AuthorLevelStatusType authorLevel;
     private OccupationStatusType occupation;
-    private List<InterestDomainStatusType> domains;
+
+    // 다른 어그리거트 Topic 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
+    private List<Long> topicIds;
+
     private VisitSourceStatusType visitSource;
     private boolean isAdTermsAgreed;
 
@@ -39,7 +42,7 @@ public class User {
             String nickname,
             AuthorLevelStatusType authorLevel,
             OccupationStatusType occupation,
-//            List<InterestDomainStatusType> domains,
+            List<Long> topicIds,
             VisitSourceStatusType visitSource,
             boolean isAdTermsAgreed,
             boolean isDeleted
@@ -54,7 +57,7 @@ public class User {
                 .nickname(nickname)
                 .authorLevel(authorLevel)
                 .occupation(occupation)
-//                .domains(domains)
+                .topicIds(topicIds)
                 .visitSource(visitSource)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)

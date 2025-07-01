@@ -3,11 +3,10 @@ package com.dataracy.modules.auth.application;
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponseDto;
 import com.dataracy.modules.auth.domain.model.OAuth2UserInfo;
 import com.dataracy.modules.user.application.UserQueryService;
-import com.dataracy.modules.user.application.dto.response.LoginResponseDto;
+import com.dataracy.modules.user.application.dto.response.RefreshTokenResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -24,7 +23,6 @@ public class OAuthQueryService {
      * @param oAuth2UserInfo 소셜로부터 받은 oAuth2UserInfo
      * @return 신규 사용자 여부
      */
-    @Transactional(readOnly = true)
     public boolean isNewUser(OAuth2UserInfo oAuth2UserInfo) {
         return userQueryService.isNewUser(oAuth2UserInfo);
     }
@@ -49,7 +47,7 @@ public class OAuthQueryService {
      *
      * @param oAuth2UserInfo    OAuth2 유저정보
      */
-    public LoginResponseDto handleExistingUser(OAuth2UserInfo oAuth2UserInfo) {
+    public RefreshTokenResponseDto handleExistingUser(OAuth2UserInfo oAuth2UserInfo) {
         return userQueryService.handleExistingUser(oAuth2UserInfo);
     }
 }

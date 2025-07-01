@@ -31,7 +31,7 @@ public record OnboardingRequestDto(
         @Schema(description = "흥미 도메인", example = "[\"프론트엔드\", \"디자인\"]",
                 allowableValues = {"프론트엔드", "백엔드", "인공지능", "데이터분석", "보안", "디자인", "스타트업"})
         @ValidEnumValue(enumClass = InterestDomainStatusType.class, required = false, message = "흥미 도메인은 프론트엔드, 백엔드, 인공지능, 데이터분석, 보안, 디자인, 스타트업이 가능하다.")
-        List<String> domains,
+        List<String> topics,
 
         @Schema(description = "방문 경로", allowableValues = {"SNS", "검색엔진", "지인추천", "커뮤니티", "블로그", "광고", "기타"})
         @ValidEnumValue(enumClass = VisitSourceStatusType.class, required = false, message = "방문 경로는 SNS, 검색엔진, 지인추천, 커뮤니티, 블로그, 광고, 기타만 가능하다.")
