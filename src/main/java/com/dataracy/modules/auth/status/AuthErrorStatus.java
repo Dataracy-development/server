@@ -31,10 +31,6 @@ public enum AuthErrorStatus implements BaseErrorCode {
 
     FAILED_GENERATE_JWT_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-014", "JWT 토큰 생성에 실패했습니다."),
     FAILED_GENERATE_REGISTER_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-015", "레지스터 토큰 생성에 실패했습니다."),
-
-    REDIS_CONNECTION_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-016", "레디스 연결에 실패했습니다."),
-
-    DATA_ACCESS_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-017", "네트워크 오류로 데이터 접근에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;

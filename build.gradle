@@ -64,6 +64,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.security:spring-security-test'
 
+	// SES & MAIL
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'com.amazonaws:aws-java-sdk-ses:1.12.3'
+
 	// Redis & Redisson & Kafka
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.redisson:redisson:3.27.0'
