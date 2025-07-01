@@ -3,6 +3,8 @@ package com.dataracy.modules.email.application;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
 import com.dataracy.modules.email.infra.redis.EmailRedisManager;
+import com.dataracy.modules.email.status.EmailErrorStatus;
+import com.dataracy.modules.email.status.EmailException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,8 +36,11 @@ public class EmailApplicationService {
         ses.sendEmail(request);
     }
 
-    public boolean verifyCode(String email, String code) {
-        return emailRedisManager.verifyCode(email, code);
+    public void verifyCode(String email, String code) {
+        boolean verified = emailRedisManager.verifyCode(email, code);
+        if (!verified) {
+            throw new EmailException(EmailErrorStatus.FAIL_VERIFY_EMAIL_CODE);
+        }
     }
 
     private String generateCode() {
