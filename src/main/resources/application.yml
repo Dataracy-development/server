@@ -61,3 +61,11 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+aws:
+  ses:
+    access-key: ${SES_ACCESS_KEY}
+    secret-key: ${SES_SECRET_KEY}
+    region: ${SES_REGION}
+    sender: ${SES_SENDER}
+    expire-minutes: ${SES_EXPIRE_MINUTES}
