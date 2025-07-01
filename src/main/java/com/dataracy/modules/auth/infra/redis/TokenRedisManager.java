@@ -4,6 +4,8 @@ import com.dataracy.modules.auth.infra.jwt.JwtProperties;
 import com.dataracy.modules.auth.infra.jwt.JwtUtil;
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
+import com.dataracy.modules.common.status.CommonErrorStatus;
+import com.dataracy.modules.common.status.CommonException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -35,10 +37,10 @@ public class TokenRedisManager {
             log.info("Saved refresh token for userId: {}", userId);
         } catch (RedisConnectionFailureException e) {
             log.error("Redis connection failure.", e);
-            throw new AuthException(AuthErrorStatus.REDIS_CONNECTION_FAILURE);
+            throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
             log.error("Data access exception while saving refresh token.", e);
-            throw new AuthException(AuthErrorStatus.DATA_ACCESS_EXCEPTION);
+            throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
 
