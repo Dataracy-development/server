@@ -1,4 +1,4 @@
-package com.dataracy.modules.email.presentation;
+package com.dataracy.modules.email.application;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
