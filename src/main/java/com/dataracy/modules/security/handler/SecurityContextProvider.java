@@ -14,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Slf4j
 public class SecurityContextProvider {
 
-    private static Authentication getAuthentication() {
+    public static Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
@@ -33,6 +33,9 @@ public class SecurityContextProvider {
             throw new AuthException(AuthErrorStatus.NOT_AUTHENTICATED);
         }
         Authentication auth = getAuthentication();
+
+        Object principal = auth.getPrincipal();
+
         CustomUserDetails customUserDetails = (CustomUserDetails) auth.getPrincipal();
         return customUserDetails.getUserId();
     }

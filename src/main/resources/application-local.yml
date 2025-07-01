@@ -17,6 +17,8 @@ spring:
   data:
     redis:
       url: redis://${REDIS_HOST}:${REDIS_PORT}
+      host: localhost
+      port : 6380
 
   jpa:
     hibernate:

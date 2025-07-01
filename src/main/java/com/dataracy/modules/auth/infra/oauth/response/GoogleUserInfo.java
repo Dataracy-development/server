@@ -17,17 +17,19 @@ public class GoogleUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getProviderId() {
-        return attribute.get("sub").toString();
+        Object providerId = attribute.get("sub");
+        return providerId != null ? providerId.toString() : null;
     }
 
     @Override
     public String getEmail() {
         Object email = attribute.get("email");
-        return email != null ? email.toString() : "blank@example.com";
+        return email != null ? email.toString() : "default@gmail.com";
     }
 
     @Override
     public String getName() {
-        return attribute.get("name").toString();
+        Object name = attribute.get("name");
+        return name != null ? name.toString() : null;
     }
 }

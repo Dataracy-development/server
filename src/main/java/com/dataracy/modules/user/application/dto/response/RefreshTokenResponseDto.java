@@ -7,7 +7,7 @@ package com.dataracy.modules.user.application.dto.response;
  * @param refreshToken
  * @param refreshTokenExpiration
  */
-public record LoginResponseDto(
+public record RefreshTokenResponseDto(
         Long userId,
         String refreshToken,
         long refreshTokenExpiration

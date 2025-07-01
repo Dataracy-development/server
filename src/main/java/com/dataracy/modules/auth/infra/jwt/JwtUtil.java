@@ -2,6 +2,7 @@ package com.dataracy.modules.auth.infra.jwt;
 
 import com.dataracy.modules.auth.status.AuthErrorStatus;
 import com.dataracy.modules.auth.status.AuthException;
+import com.dataracy.modules.user.domain.converter.RoleStatusTypeConverter;
 import com.dataracy.modules.user.domain.enums.RoleStatusType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -131,6 +132,6 @@ public class JwtUtil {
      */
     public RoleStatusType getRoleFromToken(String token) {
         String roleName = parseToken(token).get("role", String.class);
-        return RoleStatusType.of(roleName);
+        return RoleStatusTypeConverter.of(roleName);
     }
 }

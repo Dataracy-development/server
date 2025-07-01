@@ -11,16 +11,19 @@ import org.springframework.stereotype.Service;
 public class TokenApplicationService {
 
     private final TokenRedisManager tokenRedisManager;
-    private final JwtApplicationService jwtApplicationService;
-    private final JwtQueryService jwtQueryService;
 
     /**
-     * 리프레시 토큰 저장.
+     * 분산 락 기반으로 리프레시 토큰을 저장합니다.
      *
      * @param userId       사용자 ID
      * @param refreshToken 리프레시 토큰
      */
     public void saveRefreshToken(String userId, String refreshToken) {
+        String existing = tokenRedisManager.getStoredRefreshToken(userId);
+        if (refreshToken.equals(existing)) {
+            log.debug("[TOKEN] 동일한 토큰이 이미 존재함 - 저장 생략");
+            return;
+        }
         tokenRedisManager.saveRefreshToken(userId, refreshToken);
     }
 
@@ -35,12 +38,12 @@ public class TokenApplicationService {
     }
 
     /**
-     * 로그아웃 시 해당 어세스토큰을 블랙리스트 처리한다.
+     * 해당 토큰을 블랙리스트 처리한다.
      * @param token 토큰
      * @param expirationMillis 밀리초
      */
-    public void blacklistAccessToken(String token, long expirationMillis) {
-        tokenRedisManager.blacklistAccessToken(token, expirationMillis);
+    public void blacklistToken(String token, long expirationMillis) {
+        tokenRedisManager.blacklistToken(token, expirationMillis);
     }
 
     /**

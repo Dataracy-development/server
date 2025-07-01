@@ -1,7 +1,5 @@
 package com.dataracy.modules.user.domain.enums;
 
-import com.dataracy.modules.user.status.UserErrorStatus;
-import com.dataracy.modules.user.status.UserException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -19,13 +17,4 @@ public enum InterestDomainStatusType {
     ;
 
     private final String value;
-
-    public static InterestDomainStatusType of(String value) {
-        for (InterestDomainStatusType status : InterestDomainStatusType.values()) {
-            if (status.getValue().equalsIgnoreCase(value)) {
-                return status;
-            }
-        }
-        throw new UserException(UserErrorStatus.BAD_REQUEST_DOMAIN_TOPIC_STATUS_TYPE);
-    }
 }
