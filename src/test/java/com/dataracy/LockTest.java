@@ -1,7 +1,7 @@
 package com.dataracy;
 
-import com.dataracy.modules.user.application.dto.request.CheckNicknameRequestDto;
-import com.dataracy.modules.user.presentation.UserController;
+import com.dataracy.modules.user.application.dto.request.DuplicateNicknameRequest;
+import com.dataracy.modules.user.adapter.web.api.UserController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ public class LockTest {
         CountDownLatch latch = new CountDownLatch(threadCount);
 
         // ✅ 테스트용 닉네임 DTO JSON 생성
-        String json = objectMapper.writeValueAsString(new CheckNicknameRequestDto("주니22"));
+        String json = objectMapper.writeValueAsString(new DuplicateNicknameRequest("주니22"));
 
         for (int i = 0; i < threadCount; i++) {
             executor.submit(() -> {

@@ -2,7 +2,7 @@ package com.dataracy.modules.security.principal;
 
 import com.dataracy.modules.security.status.SecurityErrorStatus;
 import com.dataracy.modules.security.status.SecurityException;
-import com.dataracy.modules.user.domain.enums.RoleStatusType;
+import com.dataracy.modules.user.domain.enums.RoleType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -40,11 +40,11 @@ public class UserAuthentication extends UsernamePasswordAuthenticationToken {
     /**
      * 유저 역할 반환
      */
-    public RoleStatusType getRole() {
+    public RoleType getRole() {
         if (getPrincipal() instanceof CustomUserDetails userDetails) {
             return userDetails.getRole();
         }
-        return RoleStatusType.ROLE_ANONYMOUS;
+        return RoleType.ROLE_ANONYMOUS;
     }
 
     /**

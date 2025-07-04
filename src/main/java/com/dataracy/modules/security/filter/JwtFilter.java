@@ -1,14 +1,13 @@
 package com.dataracy.modules.security.filter;
 
-import com.dataracy.modules.auth.application.JwtQueryService;
-import com.dataracy.modules.auth.infra.jwt.JwtUtil;
-import com.dataracy.modules.auth.status.AuthErrorStatus;
-import com.dataracy.modules.auth.status.AuthException;
+import com.dataracy.modules.auth.application.port.in.JwtValidateUseCase;
+import com.dataracy.modules.auth.domain.exception.AuthException;
+import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.exception.BusinessException;
 import com.dataracy.modules.common.util.ExtractHeaderUtil;
 import com.dataracy.modules.security.principal.CustomUserDetails;
 import com.dataracy.modules.security.principal.UserAuthentication;
-import com.dataracy.modules.user.domain.enums.RoleStatusType;
+import com.dataracy.modules.user.domain.enums.RoleType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,29 +22,39 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * JWT 인증을 하는 커스텀 필터
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
-    private final JwtQueryService jwtQueryService;
+    private final JwtValidateUseCase jwtValidateUseCase;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws BusinessException, ServletException, IOException {
         try {
+            // 헤더에서 어세스 토큰 추출
             String accessToken = ExtractHeaderUtil.extractAccessToken(request)
                     .orElseThrow(() -> new AuthException(AuthErrorStatus.NOT_FOUND_ACCESS_TOKEN_IN_HEADER));
             log.debug("Extracted JWT Token: {}", accessToken);
-            jwtQueryService.validateToken(accessToken); // 유효성 검증
-            Long userId = jwtQueryService.getUserIdFromToken(accessToken);
-            RoleStatusType role = jwtQueryService.getRoleFromToken(accessToken);
+
+            // 어세스 토큰 유효성 검증
+            jwtValidateUseCase.validateToken(accessToken);
+
+            // 토큰에서 유저 id, 유저 역할 반환
+            Long userId = jwtValidateUseCase.getUserIdFromToken(accessToken);
+            RoleType role = jwtValidateUseCase.getRoleFromToken(accessToken);
             log.debug("Authenticated UserId: {}", userId);
+
+            // 인증 객체 SecurityContextHolder에 주입
             setAuthentication(request, userId, role);
         }
         catch (BusinessException e) {
-            request.setAttribute("filter.error", e); // 예외를 요청에 저장
-            throw new AuthenticationCredentialsNotFoundException("JWT 인증 실패", e); // Spring Security 흐름 유지
+            // 예외를 요청에 저장
+            request.setAttribute("filter.error", e);
+            throw new AuthenticationCredentialsNotFoundException("JWT 인증 실패", e);
         }
         filterChain.doFilter(request, response);
     }
@@ -55,21 +64,22 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
         return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
-                || path.equals("/") || path.equals("/api/v1/base") || path.equals("/api/v1/onboarding")
-                || path.startsWith("/login")
                 || path.startsWith("/.well-known")
-                || path.startsWith("/oauth2")
                 || path.startsWith("/static")
+                || path.equals("/api/v1/base") || path.equals("/api/v1/onboarding")
+                || path.startsWith("/login") || path.startsWith("/oauth2")
+                || path.equals("/")
+                || path.startsWith("/api/v1/email")
+                || path.startsWith("/api/v1/signup")
                 || path.startsWith("/api/v1/auth")
-                || path.startsWith("/api/v1/public")
-                || path.equals("/api/v1/login") || path.equals("/api/v1/signup")
+                || path.equals("/api/v1/nickname/check")
                 || path.equals("/favicon.ico")
                 || path.startsWith("/error")
                 ;
     }
 
     // 사용자 인증 설정
-    private void setAuthentication(HttpServletRequest request, Long userId, RoleStatusType role) {
+    private void setAuthentication(HttpServletRequest request, Long userId, RoleType role) {
         CustomUserDetails userDetails = new CustomUserDetails(userId, role);
         UserAuthentication authentication = new UserAuthentication(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
