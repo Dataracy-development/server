@@ -13,4 +13,7 @@ public class AuthWebMapper {
     public SelfLoginRequest toApplicationDto(SelfLoginWebRequest webRequest) {
         return new SelfLoginRequest(webRequest.email(), webRequest.password());
     }
+
+    // 전체 토픽 리스트 조회 도메인 응답 DTO -> 전체 토픽 리스트 조회 웹 응답 DTO
+
 }

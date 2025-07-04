@@ -1,0 +1,28 @@
+package com.dataracy.modules.topic.adapter.web.mapper;
+
+import com.dataracy.modules.topic.adapter.web.response.AllTopicsWebResponse;
+import com.dataracy.modules.topic.application.dto.response.AllTopicsResponse;
+
+/**
+ * 토픽 웹 DTO와 토픽 도메인 DTO를 변환하는 매퍼
+ */
+public class TopicWebMapper {
+    // 토픽 조회 도메인 응답 DTO -> 토픽 조회 웹 응답 DTO
+    public static AllTopicsWebResponse.TopicWebResponse toWebDto(AllTopicsResponse.TopicResponse topicResponse) {
+        return new AllTopicsWebResponse.TopicWebResponse(
+                topicResponse.id(),
+                topicResponse.value(),
+                topicResponse.label()
+        );
+    }
+
+    // 전체 토픽 리스트 조회 도메인 응답 DTO -> 전체 토픽 리스트 조회 웹 응답 DTO
+    public static AllTopicsWebResponse toWebDto(AllTopicsResponse allTopicsResponse) {
+        return new AllTopicsWebResponse(
+                allTopicsResponse.topics()
+                        .stream()
+                        .map(TopicWebMapper::toWebDto)
+                        .toList()
+        );
+    }
+}
