@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface OccupationRepositoryPort {
     List<Occupation> allOccupations();
+    Occupation findOccupationById(Long occupationId);
 }

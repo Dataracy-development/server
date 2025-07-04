@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/base", "/api/v1/onboarding").permitAll()
                         .requestMatchers("/login/**", "/login/oauth2/**", "/oauth2/**").permitAll()
                         .requestMatchers("/", "/api/v1/nickname/check", "/api/v1/signup/**").permitAll()
+                        .requestMatchers("/api/v1/topics", "/api/v1/author-levels", "/api/v1/occupations", "/api/v1/visit-sources").permitAll()
                         .requestMatchers("/api/v1/email/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "ADMIN")

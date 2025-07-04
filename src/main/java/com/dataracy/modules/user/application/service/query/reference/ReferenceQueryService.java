@@ -6,9 +6,7 @@ import com.dataracy.modules.user.application.dto.response.reference.AllVisitSour
 import com.dataracy.modules.user.application.mapper.reference.AuthorLevelDtoMapper;
 import com.dataracy.modules.user.application.mapper.reference.OccupationDtoMapper;
 import com.dataracy.modules.user.application.mapper.reference.VisitSourceDtoMapper;
-import com.dataracy.modules.user.application.port.in.reference.FindAllAuthorLevelsUseCase;
-import com.dataracy.modules.user.application.port.in.reference.FindAllOccupationsUseCase;
-import com.dataracy.modules.user.application.port.in.reference.FindAllVisitSourcesUseCase;
+import com.dataracy.modules.user.application.port.in.reference.*;
 import com.dataracy.modules.user.application.port.out.reference.AuthorLevelRepositoryPort;
 import com.dataracy.modules.user.application.port.out.reference.OccupationRepositoryPort;
 import com.dataracy.modules.user.application.port.out.reference.VisitSourceRepositoryPort;
@@ -24,7 +22,14 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ReferenceQueryService implements FindAllAuthorLevelsUseCase, FindAllOccupationsUseCase, FindAllVisitSourcesUseCase {
+public class ReferenceQueryService implements
+        FindAllAuthorLevelsUseCase,
+        FindAllOccupationsUseCase,
+        FindAllVisitSourcesUseCase,
+        FindAuthorLevelUseCase,
+        FindOccupationUseCase,
+        FindVisitSourceUseCase
+{
 
     private final AuthorLevelDtoMapper authorLevelDtoMapper;
     private final OccupationDtoMapper occupationDtoMapper;
@@ -62,5 +67,20 @@ public class ReferenceQueryService implements FindAllAuthorLevelsUseCase, FindAl
     public AllVisitSourcesResponse allVisitSources() {
         List<VisitSource> visitSources = visitSourceRepositoryPort.allVisitSources();
         return visitSourceDtoMapper.toResponseDto(visitSources);
+    }
+
+    @Override
+    public AuthorLevel findAuthorLevel(Long authorLevelId) {
+        return authorLevelRepositoryPort.findAuthorLevelById(authorLevelId);
+    }
+
+    @Override
+    public Occupation findOccupation(Long occupationId) {
+        return occupationRepositoryPort.findOccupationById(occupationId);
+    }
+
+    @Override
+    public VisitSource findVisitSource(Long visitSourceId) {
+        return visitSourceRepositoryPort.findVisitSourceById(visitSourceId);
     }
 }

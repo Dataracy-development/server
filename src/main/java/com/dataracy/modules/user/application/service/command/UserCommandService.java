@@ -4,22 +4,27 @@ import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.port.in.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.JwtValidateUseCase;
 import com.dataracy.modules.common.support.lock.DistributedLock;
-import com.dataracy.modules.topic.application.port.in.FindTopicUseCase;
+import com.dataracy.modules.topic.application.port.in.IsExistTopicUseCase;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
 import com.dataracy.modules.user.application.port.in.OAuthSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.SelfSignUpUseCase;
+import com.dataracy.modules.user.application.port.in.reference.FindAuthorLevelUseCase;
+import com.dataracy.modules.user.application.port.in.reference.FindOccupationUseCase;
+import com.dataracy.modules.user.application.port.in.reference.FindVisitSourceUseCase;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.application.service.validator.UserDuplicateValidator;
-import com.dataracy.modules.user.domain.enums.*;
+import com.dataracy.modules.user.domain.enums.ProviderType;
+import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.model.User;
+import com.dataracy.modules.user.domain.model.reference.AuthorLevel;
+import com.dataracy.modules.user.domain.model.reference.Occupation;
+import com.dataracy.modules.user.domain.model.reference.VisitSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -29,9 +34,13 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     private final UserRepositoryPort userRepositoryPort;
     private final JwtGenerateUseCase jwtGenerateUseCase;
     private final JwtValidateUseCase jwtValidateUseCase;
-    private final FindTopicUseCase findTopicUseCase;
+    private final IsExistTopicUseCase isExistTopicUseCase;
     private final UserDuplicateValidator userDuplicateValidator;
     private final PasswordEncoder passwordEncoder;
+
+    private final FindAuthorLevelUseCase findAuthorLevelUseCase;
+    private final FindOccupationUseCase findOccupationUseCase;
+    private final FindVisitSourceUseCase findVisitSourceUseCase;
 
     /**
      * 클라이언트로부터 받은 유저 정보를 토대로 자체 회원가입을 진행한다.(이메일, 닉네임, 비밀번호, 성별)
@@ -56,10 +65,14 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 패스워드 암호화
         String encodedPassword = passwordEncoder.encode(requestDto.password());
 
-        // 요청된 도메인(String) → topicId(Long) 변환
-        List<Long> topicIds = requestDto.topics().stream()
-                .map(findTopicUseCase::findTopicIdByName)
-                .toList();
+        AuthorLevel authorLevel = findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId());
+
+        requestDto.topicIds()
+                .forEach(isExistTopicUseCase::validateTopicById);
+
+        Occupation occupation = findOccupationUseCase.findOccupation(requestDto.occupationId());
+
+        VisitSource visitSource = findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId());
 
         // 유저 도메인 모델 생성 및 db 저장
         User user = User.toDomain(
@@ -70,10 +83,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 requestDto.email(),
                 encodedPassword,
                 requestDto.nickname(),
-                AuthorLevelType.of(requestDto.authorLevel()),
-                OccupationType.of(requestDto.occupation()),
-                topicIds,
-                VisitSourceType.of(requestDto.visitSource()),
+                authorLevel,
+                occupation,
+                requestDto.topicIds(),
+                visitSource,
                 requestDto.isAdTermsAgreed(),
                 false
         );
@@ -114,10 +127,14 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         String providerId = jwtValidateUseCase.getProviderIdFromRegisterToken(registerToken);
         String email = jwtValidateUseCase.getEmailFromRegisterToken(registerToken);
 
-        // String domains → topicIds 변환
-        List<Long> topicIds = requestDto.topics().stream()
-                .map(findTopicUseCase::findTopicIdByName)
-                .toList();
+        AuthorLevel authorLevel = findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId());
+
+        requestDto.topicIds()
+                .forEach(isExistTopicUseCase::validateTopicById);
+
+        Occupation occupation = findOccupationUseCase.findOccupation(requestDto.occupationId());
+
+        VisitSource visitSource = findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId());
 
         // 유저 도메인 모델 생성 및 db 저장
         User user = User.toDomain(
@@ -128,10 +145,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 email,
                 null,
                 requestDto.nickname(),
-                AuthorLevelType.of(requestDto.authorLevel()),
-                OccupationType.of(requestDto.occupation()),
-                topicIds,
-                VisitSourceType.of(requestDto.visitSource()),
+                authorLevel,
+                occupation,
+                requestDto.topicIds(),
+                visitSource,
                 requestDto.isAdTermsAgreed(),
                 false
         );

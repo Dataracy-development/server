@@ -30,6 +30,6 @@ public interface TopicApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
-    @GetMapping(value = "/")
+    @GetMapping
     ResponseEntity<SuccessResponse<AllTopicsWebResponse>> allTopics();
 }

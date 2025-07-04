@@ -10,6 +10,6 @@ import java.util.List;
  */
 @Repository
 public interface TopicRepositoryPort {
-    Long findTopicIdByName(String topicName);
     List<Topic> allTopics();
+    Boolean isExistTopicById(Long topicId);
 }
