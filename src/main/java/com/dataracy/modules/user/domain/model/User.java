@@ -1,6 +1,10 @@
 package com.dataracy.modules.user.domain.model;
 
-import com.dataracy.modules.user.domain.enums.*;
+import com.dataracy.modules.user.domain.enums.ProviderType;
+import com.dataracy.modules.user.domain.enums.RoleType;
+import com.dataracy.modules.user.domain.model.reference.AuthorLevel;
+import com.dataracy.modules.user.domain.model.reference.Occupation;
+import com.dataracy.modules.user.domain.model.reference.VisitSource;
 import lombok.*;
 
 import java.util.List;
@@ -24,13 +28,13 @@ public class User {
     private String password;
 
     private String nickname;
-    private AuthorLevelType authorLevel;
-    private OccupationType occupation;
+    private AuthorLevel authorLevel;
+    private Occupation occupation;
 
     // 다른 어그리거트 Topic 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
     private List<Long> topicIds;
 
-    private VisitSourceType visitSource;
+    private VisitSource visitSource;
     private boolean isAdTermsAgreed;
 
     private boolean isDeleted;
@@ -43,10 +47,10 @@ public class User {
             String email,
             String password,
             String nickname,
-            AuthorLevelType authorLevel,
-            OccupationType occupation,
+            AuthorLevel authorLevel,
+            Occupation occupation,
             List<Long> topicIds,
-            VisitSourceType visitSource,
+            VisitSource visitSource,
             boolean isAdTermsAgreed,
             boolean isDeleted
     ) {

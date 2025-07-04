@@ -1,7 +1,7 @@
-package com.dataracy.modules.user.adapter.persistence.mapper;
+package com.dataracy.modules.user.adapter.persistence.mapper.reference;
 
-import com.dataracy.modules.user.adapter.persistence.entity.VisitSourceEntity;
-import com.dataracy.modules.user.domain.model.VisitSource;
+import com.dataracy.modules.user.adapter.persistence.entity.reference.VisitSourceEntity;
+import com.dataracy.modules.user.domain.model.reference.VisitSource;
 
 /**
  * VisitSource 엔티티와 VisitSource 도메인 모델을 변환하는 매퍼
@@ -9,7 +9,7 @@ import com.dataracy.modules.user.domain.model.VisitSource;
 public class VisitSourceEntityMapper {
     // VisitSource 엔티티 -> VisitSource 도메인 모델
     public static VisitSource toDomain(VisitSourceEntity visitSourceEntity) {
-        return VisitSource.toDomain(
+        return new VisitSource(
                 visitSourceEntity.getId(),
                 visitSourceEntity.getValue(),
                 visitSourceEntity.getLabel()
@@ -19,9 +19,9 @@ public class VisitSourceEntityMapper {
     // VisitSource 도메인 모델 -> VisitSource 엔티티
     public static VisitSourceEntity toEntity(VisitSource visitSource) {
         return VisitSourceEntity.toEntity(
-                visitSource.getId(),
-                visitSource.getValue(),
-                visitSource.getLabel()
+                visitSource.id(),
+                visitSource.value(),
+                visitSource.label()
         );
     }
 }

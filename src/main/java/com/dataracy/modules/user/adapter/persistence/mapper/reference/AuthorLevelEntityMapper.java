@@ -1,7 +1,7 @@
-package com.dataracy.modules.user.adapter.persistence.mapper;
+package com.dataracy.modules.user.adapter.persistence.mapper.reference;
 
-import com.dataracy.modules.user.adapter.persistence.entity.AuthorLevelEntity;
-import com.dataracy.modules.user.domain.model.AuthorLevel;
+import com.dataracy.modules.user.adapter.persistence.entity.reference.AuthorLevelEntity;
+import com.dataracy.modules.user.domain.model.reference.AuthorLevel;
 
 /**
  * AuthorLevel 엔티티와 AuthorLevel 도메인 모델을 변환하는 매퍼
@@ -9,7 +9,7 @@ import com.dataracy.modules.user.domain.model.AuthorLevel;
 public class AuthorLevelEntityMapper {
     // AuthorLevel 엔티티 -> AuthorLevel 도메인 모델
     public static AuthorLevel toDomain(AuthorLevelEntity authorLevelEntity) {
-        return AuthorLevel.toDomain(
+        return new AuthorLevel(
                 authorLevelEntity.getId(),
                 authorLevelEntity.getValue(),
                 authorLevelEntity.getLabel()
@@ -19,9 +19,9 @@ public class AuthorLevelEntityMapper {
     // AuthorLevel 도메인 모델 -> AuthorLevel 엔티티
     public static AuthorLevelEntity toEntity(AuthorLevel authorLevel) {
         return AuthorLevelEntity.toEntity(
-                authorLevel.getId(),
-                authorLevel.getValue(),
-                authorLevel.getLabel()
+                authorLevel.id(),
+                authorLevel.value(),
+                authorLevel.label()
         );
     }
 }

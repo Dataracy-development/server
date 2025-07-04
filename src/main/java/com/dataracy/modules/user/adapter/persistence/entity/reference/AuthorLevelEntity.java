@@ -1,21 +1,26 @@
-package com.dataracy.modules.user.adapter.persistence.entity;
+package com.dataracy.modules.user.adapter.persistence.entity.reference;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * 방문 경로 엔티티
+ * 작성자 유형 엔티티
  */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@Table(name = "visit_source")
-public class VisitSourceEntity {
+@Table(
+        name = "author_level",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"value"})
+        }
+)
+public class AuthorLevelEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "visit_source_id", nullable = false)
+    @Column(name = "author_level_id")
     private Long id;
 
     @Column(nullable = false)
@@ -24,12 +29,12 @@ public class VisitSourceEntity {
     @Column(nullable = false)
     private String label;
 
-    public static VisitSourceEntity toEntity(
+    public static AuthorLevelEntity toEntity(
             Long id,
             String value,
             String label
     ) {
-        return VisitSourceEntity.builder()
+        return AuthorLevelEntity.builder()
                 .id(id)
                 .value(value)
                 .label(label)

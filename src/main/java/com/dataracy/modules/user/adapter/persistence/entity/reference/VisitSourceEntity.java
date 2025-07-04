@@ -1,21 +1,26 @@
-package com.dataracy.modules.user.adapter.persistence.entity;
+package com.dataracy.modules.user.adapter.persistence.entity.reference;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * 직업 엔티티
+ * 방문 경로 엔티티
  */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@Table(name = "occupation")
-public class OccupationEntity {
+@Table(
+        name = "visit_source",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"value"})
+        }
+)
+public class VisitSourceEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "occupation_id", nullable = false)
+    @Column(name = "visit_source_id")
     private Long id;
 
     @Column(nullable = false)
@@ -24,12 +29,12 @@ public class OccupationEntity {
     @Column(nullable = false)
     private String label;
 
-    public static OccupationEntity toEntity(
+    public static VisitSourceEntity toEntity(
             Long id,
             String value,
             String label
     ) {
-        return OccupationEntity.builder()
+        return VisitSourceEntity.builder()
                 .id(id)
                 .value(value)
                 .label(label)
