@@ -16,7 +16,7 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
 
     @Override
     public Long findTopicIdByName(String topicName) {
-        TopicEntity topicEntity = topicJpaRepository.findByName(topicName)
+        TopicEntity topicEntity = topicJpaRepository.findByLabel(topicName)
                 .orElseThrow(() -> new TopicException(TopicErrorStatus.NOT_FOUND_TOPIC_NAME));
         return topicEntity.getId();
     }
