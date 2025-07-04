@@ -4,7 +4,9 @@ import com.dataracy.modules.user.adapter.persistence.entity.reference.Occupation
 import com.dataracy.modules.user.adapter.persistence.mapper.reference.OccupationEntityMapper;
 import com.dataracy.modules.user.adapter.persistence.repository.reference.OccupationJpaRepository;
 import com.dataracy.modules.user.application.port.out.reference.OccupationRepositoryPort;
+import com.dataracy.modules.user.domain.exception.ReferenceException;
 import com.dataracy.modules.user.domain.model.reference.Occupation;
+import com.dataracy.modules.user.domain.status.reference.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -25,5 +27,12 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
         return occupationEntities.stream()
                 .map(OccupationEntityMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Occupation findOccupationById(Long occupationId) {
+        OccupationEntity occupationEntity = occupationJpaRepository.findById(occupationId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION));
+        return OccupationEntityMapper.toDomain(occupationEntity);
     }
 }

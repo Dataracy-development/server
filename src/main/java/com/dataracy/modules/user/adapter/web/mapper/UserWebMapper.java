@@ -16,10 +16,10 @@ public class UserWebMapper {
                 webRequest.email(),
                 webRequest.password(),
                 webRequest.nickname(),
-                webRequest.authorLevel(),
-                webRequest.occupation(),
-                webRequest.topics(),
-                webRequest.visitSource(),
+                webRequest.authorLevelId(),
+                webRequest.occupationId(),
+                webRequest.topicIds(),
+                webRequest.visitSourceId(),
                 webRequest.isAdTermsAgreed()
         );
     }
@@ -28,10 +28,10 @@ public class UserWebMapper {
     public OnboardingRequest toApplicationDto(OnboardingWebRequest webRequest) {
         return new OnboardingRequest(
                 webRequest.nickname(),
-                webRequest.authorLevel(),
-                webRequest.occupation(),
-                webRequest.topics(),
-                webRequest.visitSource(),
+                webRequest.authorLevelId(),
+                webRequest.occupationId(),
+                webRequest.topicIds(),
+                webRequest.visitSourceId(),
                 webRequest.isAdTermsAgreed()
         );
     }

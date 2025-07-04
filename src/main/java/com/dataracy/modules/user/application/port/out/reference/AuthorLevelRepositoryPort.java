@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface AuthorLevelRepositoryPort {
     List<AuthorLevel> allAuthorLevels();
+    AuthorLevel findAuthorLevelById(Long authorLevelId);
 }

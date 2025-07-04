@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface VisitSourceRepositoryPort {
     List<VisitSource> allVisitSources();
+    VisitSource findVisitSourceById(Long visitSourceId);
 }

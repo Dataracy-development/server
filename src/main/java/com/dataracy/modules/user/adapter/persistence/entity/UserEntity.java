@@ -61,7 +61,7 @@ public class UserEntity extends BaseTimeEntity {
     private AuthorLevelEntity authorLevel;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_level_id")
+    @JoinColumn(name = "occupation_id")
     private OccupationEntity occupation;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)

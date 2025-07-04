@@ -4,7 +4,9 @@ import com.dataracy.modules.user.adapter.persistence.entity.reference.AuthorLeve
 import com.dataracy.modules.user.adapter.persistence.mapper.reference.AuthorLevelEntityMapper;
 import com.dataracy.modules.user.adapter.persistence.repository.reference.AuthorLevelJpaRepository;
 import com.dataracy.modules.user.application.port.out.reference.AuthorLevelRepositoryPort;
+import com.dataracy.modules.user.domain.exception.ReferenceException;
 import com.dataracy.modules.user.domain.model.reference.AuthorLevel;
+import com.dataracy.modules.user.domain.status.reference.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -25,5 +27,12 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
         return authorLevelEntities.stream()
                 .map(AuthorLevelEntityMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public AuthorLevel findAuthorLevelById(Long authorLevelId) {
+        AuthorLevelEntity authorLevelEntity = authorLevelJpaRepository.findById(authorLevelId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL));
+        return AuthorLevelEntityMapper.toDomain(authorLevelEntity);
     }
 }

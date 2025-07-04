@@ -4,7 +4,9 @@ import com.dataracy.modules.user.adapter.persistence.entity.reference.VisitSourc
 import com.dataracy.modules.user.adapter.persistence.mapper.reference.VisitSourceEntityMapper;
 import com.dataracy.modules.user.adapter.persistence.repository.reference.VisitSourceJpaRepository;
 import com.dataracy.modules.user.application.port.out.reference.VisitSourceRepositoryPort;
+import com.dataracy.modules.user.domain.exception.ReferenceException;
 import com.dataracy.modules.user.domain.model.reference.VisitSource;
+import com.dataracy.modules.user.domain.status.reference.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -25,5 +27,12 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
         return visitSourceEntities.stream()
                 .map(VisitSourceEntityMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public VisitSource findVisitSourceById(Long visitSourceId) {
+        VisitSourceEntity visitSourceEntity = visitSourceJpaRepository.findById(visitSourceId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE));
+        return VisitSourceEntityMapper.toDomain(visitSourceEntity);
     }
 }

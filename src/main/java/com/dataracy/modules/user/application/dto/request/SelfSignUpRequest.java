@@ -7,19 +7,19 @@ import java.util.List;
  * @param email 이메일
  * @param password 비밀번호
  * @param nickname 닉네임
- * @param authorLevel 작성자 유형
- * @param occupation 직업
- * @param topics 흥미있는 도메인 리스트
- * @param visitSource 방문경로
+ * @param authorLevelId 작성자 유형 아이디
+ * @param occupationId 직업 아이디
+ * @param topicIds 흥미있는 도메인 아이디 리스트
+ * @param visitSourceId 방문경로 아이디
  * @param isAdTermsAgreed 광고 동의 여부
  */
 public record SelfSignUpRequest(
         String email,
         String password,
         String nickname,
-        String authorLevel,
-        String occupation,
-        List<String> topics,
-        String visitSource,
+        Long authorLevelId,
+        Long occupationId,
+        List<Long> topicIds,
+        Long visitSourceId,
         Boolean isAdTermsAgreed
 ) {}
