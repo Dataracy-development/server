@@ -11,18 +11,18 @@ import lombok.*;
 @Builder
 public class Topic {
     private Long id;
-    private String domain;
-    private String name;
+    private String value;
+    private String label;
 
     public static Topic toDomain(
             Long id,
-            String domain,
-            String name
+            String value,
+            String label
     ) {
         return Topic.builder()
                 .id(id)
-                .domain(domain)
-                .name(name)
+                .value(value)
+                .label(label)
                 .build();
     }
 }

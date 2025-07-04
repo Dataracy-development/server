@@ -11,8 +11,8 @@ public class TopicEntityMapper {
     public static Topic toDomain(TopicEntity topicEntity) {
         return Topic.toDomain(
                 topicEntity.getId(),
-                topicEntity.getDomain(),
-                topicEntity.getName()
+                topicEntity.getValue(),
+                topicEntity.getLabel()
         );
     }
 
@@ -20,8 +20,8 @@ public class TopicEntityMapper {
     public static TopicEntity toEntity(Topic topic) {
         return TopicEntity.toEntity(
                 topic.getId(),
-                topic.getDomain(),
-                topic.getName()
+                topic.getValue(),
+                topic.getLabel()
         );
     }
 }
