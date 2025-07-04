@@ -5,7 +5,7 @@ import com.dataracy.modules.topic.adapter.web.mapper.TopicWebMapper;
 import com.dataracy.modules.topic.adapter.web.response.AllTopicsWebResponse;
 import com.dataracy.modules.topic.application.dto.response.AllTopicsResponse;
 import com.dataracy.modules.topic.application.port.in.FindAllTopicsUseCase;
-import com.dataracy.modules.user.domain.status.UserSuccessStatus;
+import com.dataracy.modules.topic.domain.status.TopicSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +23,6 @@ public class TopicController implements TopicApi {
         AllTopicsResponse allTopicsResponse = findAllTopicsUseCase.allTopics();
         AllTopicsWebResponse allTopicsWebResponse = topicWebMapper.toWebDto(allTopicsResponse);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(SuccessResponse.of(UserSuccessStatus.OK_NOT_DUPLICATED_NICKNAME, allTopicsWebResponse));
+                .body(SuccessResponse.of(TopicSuccessStatus.OK_TOTAL_TOPIC_LIST, allTopicsWebResponse));
     }
 }

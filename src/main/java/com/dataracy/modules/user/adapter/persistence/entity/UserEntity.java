@@ -1,7 +1,11 @@
 package com.dataracy.modules.user.adapter.persistence.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
-import com.dataracy.modules.user.domain.enums.*;
+import com.dataracy.modules.user.adapter.persistence.entity.reference.AuthorLevelEntity;
+import com.dataracy.modules.user.adapter.persistence.entity.reference.OccupationEntity;
+import com.dataracy.modules.user.adapter.persistence.entity.reference.VisitSourceEntity;
+import com.dataracy.modules.user.domain.enums.ProviderType;
+import com.dataracy.modules.user.domain.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
@@ -52,21 +56,21 @@ public class UserEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String nickname;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AuthorLevelType authorLevel;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_level_id", nullable = false)
+    private AuthorLevelEntity authorLevel;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private OccupationType occupation;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_level_id")
+    private OccupationEntity occupation;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     @Builder.Default
     private List<UserTopicEntity> userTopicEntities = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private VisitSourceType visitSource;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "visit_source_id")
+    private VisitSourceEntity visitSource;
 
     @Column(nullable = false)
     @Builder.Default
@@ -89,9 +93,9 @@ public class UserEntity extends BaseTimeEntity {
             String email,
             String password,
             String nickname,
-            AuthorLevelType authorLevel,
-            OccupationType occupation,
-            VisitSourceType visitSource,
+            AuthorLevelEntity authorLevelEntity,
+            OccupationEntity occupationEntity,
+            VisitSourceEntity visitSourceEntity,
             Boolean isAdTermsAgreed,
             Boolean isDeleted
     ) {
@@ -103,9 +107,9 @@ public class UserEntity extends BaseTimeEntity {
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .authorLevel(authorLevel)
-                .occupation(occupation)
-                .visitSource(visitSource)
+                .authorLevel(authorLevelEntity)
+                .occupation(occupationEntity)
+                .visitSource(visitSourceEntity)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)
                 .build();

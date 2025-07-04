@@ -14,7 +14,7 @@ import lombok.*;
 @Table(
         name = "topic",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"domain"})
+                @UniqueConstraint(columnNames = {"value"})
         }
 )
 public class TopicEntity {
