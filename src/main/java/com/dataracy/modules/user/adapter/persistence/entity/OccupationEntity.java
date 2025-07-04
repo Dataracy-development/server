@@ -1,0 +1,38 @@
+package com.dataracy.modules.user.adapter.persistence.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+/**
+ * 직업 엔티티
+ */
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@Table(name = "occupation")
+public class OccupationEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "occupation_id", nullable = false)
+    private Long id;
+
+    @Column(nullable = false)
+    private String value;
+
+    @Column(nullable = false)
+    private String label;
+
+    public static OccupationEntity toEntity(
+            Long id,
+            String value,
+            String label
+    ) {
+        return OccupationEntity.builder()
+                .id(id)
+                .value(value)
+                .label(label)
+                .build();
+    }
+}
