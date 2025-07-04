@@ -7,9 +7,10 @@ import com.dataracy.modules.user.domain.model.User;
 import java.util.List;
 
 /**
- * 유저 도메인 모델과 유저 엔티티 매퍼
+ * 유저 엔티티와 유저 도메인 모델을 변환하는 매퍼
  */
-public class UserMapper {
+public class UserEntityMapper {
+    // 유저 엔티티 -> 유저 도메인 모델
     public static User toDomain(UserEntity userEntity) {
         List<Long> topicIds = userEntity.getUserTopicEntities().stream()
                 .map(UserTopicEntity::getTopicId)
@@ -32,8 +33,8 @@ public class UserMapper {
         );
     }
 
+    // 유저 도메인 모델 -> 유저 엔티티
     public static UserEntity toEntity(User user) {
-
         UserEntity userEntity =  UserEntity.toEntity(
                 user.getId(),
                 user.getProvider(),

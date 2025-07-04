@@ -5,7 +5,7 @@ import com.dataracy.modules.auth.application.dto.request.SelfLoginRequest;
 import org.springframework.stereotype.Component;
 
 /**
- * Auth 도메인의 웹 DTO와 도메인 DTO를 변환하는 매퍼
+ * Auth 웹 DTO와 Auth 도메인 DTO를 변환하는 매퍼
  */
 @Component
 public class AuthWebMapper {

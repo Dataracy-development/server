@@ -1,7 +1,7 @@
 package com.dataracy.modules.user.adapter.persistence.repositoryImpl;
 
 import com.dataracy.modules.user.adapter.persistence.entity.UserEntity;
-import com.dataracy.modules.user.adapter.persistence.mapper.UserMapper;
+import com.dataracy.modules.user.adapter.persistence.mapper.UserEntityMapper;
 import com.dataracy.modules.user.adapter.persistence.repository.UserJpaRepository;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
@@ -19,7 +19,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     public User findUserById(Long userId) {
         UserEntity userEntity = userJpaRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
-        return UserMapper.toDomain(userEntity);
+        return UserEntityMapper.toDomain(userEntity);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         if (userEntity == null) {
             return null;
         }
-        return UserMapper.toDomain(userEntity);
+        return UserEntityMapper.toDomain(userEntity);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         if (userEntity == null) {
             return null;
         }
-        return UserMapper.toDomain(userEntity);
+        return UserEntityMapper.toDomain(userEntity);
     }
 
     @Override
@@ -52,8 +52,8 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
 
     @Override
     public User saveUser(User user) {
-        UserEntity savedUser = userJpaRepository.save(UserMapper.toEntity(user));
-        return UserMapper.toDomain(savedUser);
+        UserEntity savedUser = userJpaRepository.save(UserEntityMapper.toEntity(user));
+        return UserEntityMapper.toDomain(savedUser);
     }
 
 //    @Override
