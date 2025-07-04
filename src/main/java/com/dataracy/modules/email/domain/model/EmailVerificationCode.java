@@ -2,6 +2,9 @@ package com.dataracy.modules.email.domain.model;
 
 import lombok.*;
 
+/**
+ * 이메일 인증 도메인 객체
+ */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -21,4 +24,3 @@ public class EmailVerificationCode {
                 .build();
     }
 }
-

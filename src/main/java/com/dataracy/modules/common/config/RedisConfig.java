@@ -12,11 +12,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 /**
  * Redis와의 통신을 설정하는 구성 클래스입니다.
  * 주로 문자열 및 JSON 형태의 데이터를 처리합니다.
- * 이 설정은 어플리케이션의 캐시 처리 시 사용됩니다.
+ * 이 설정은 어플리케이션의 캐시 처리, 레디스 저장 및 검증 시 사용됩니다.
  */
 @Configuration
 public class RedisConfig {
-
+    // 객체 저장 시
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
@@ -34,6 +34,7 @@ public class RedisConfig {
         return template;
     }
 
+    // 문자열 저장 시
     @Bean
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
         return new StringRedisTemplate(connectionFactory);

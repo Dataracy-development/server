@@ -2,6 +2,9 @@ package com.dataracy.modules.topic.domain.model;
 
 import lombok.*;
 
+/**
+ * 토픽 도메인 모델
+ */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

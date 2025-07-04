@@ -13,37 +13,37 @@ public class User {
 
     private Long id;
 
-    private ProviderStatusType provider;
+    private ProviderType provider;
     private String providerId;
-    private RoleStatusType role;
+    private RoleType role;
 
     private String email;
     private String password;
 
     private String nickname;
-    private AuthorLevelStatusType authorLevel;
-    private OccupationStatusType occupation;
+    private AuthorLevelType authorLevel;
+    private OccupationType occupation;
 
     // 다른 어그리거트 Topic 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
     private List<Long> topicIds;
 
-    private VisitSourceStatusType visitSource;
+    private VisitSourceType visitSource;
     private boolean isAdTermsAgreed;
 
     private boolean isDeleted;
 
     public static User toDomain(
             Long id,
-            ProviderStatusType provider,
+            ProviderType provider,
             String providerId,
-            RoleStatusType role,
+            RoleType role,
             String email,
             String password,
             String nickname,
-            AuthorLevelStatusType authorLevel,
-            OccupationStatusType occupation,
+            AuthorLevelType authorLevel,
+            OccupationType occupation,
             List<Long> topicIds,
-            VisitSourceStatusType visitSource,
+            VisitSourceType visitSource,
             boolean isAdTermsAgreed,
             boolean isDeleted
     ) {
