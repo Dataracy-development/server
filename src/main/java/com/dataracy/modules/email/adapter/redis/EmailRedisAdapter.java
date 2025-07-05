@@ -3,6 +3,7 @@ package com.dataracy.modules.email.adapter.redis;
 import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.email.application.port.out.EmailRedisPort;
+import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,21 +30,28 @@ public class EmailRedisAdapter implements EmailRedisPort {
     /**
      * 이메일 인증키 생성
      * @param email 이메일
+     * @param type 이메일 인증코드 전송 목적
      * @return 레디스 키
      */
-    private String getEmailKey(String email) {
-        return "email:verification: " + email;
+    private String getEmailKey(String email, EmailVerificationType type) {
+        return switch (type) {
+            case SIGN_UP -> "email:signup:" + email;
+            case PASSWORD_SEARCH -> "email:password:search:" + email;
+            case PASSWORD_RESET -> "email:password:reset:" + email;
+        };
     }
 
     /**
      * 이메일 인증코드 저장
      * @param email 이메일
      * @param code 인증 코드
+     * @param verificationType 이메일 인증 코드 전송 목적 타입
      */
     @Override
-    public void saveCode(String email, String code) {
+    public void saveCode(String email, String code, EmailVerificationType verificationType) {
         try {
-            redisTemplate.opsForValue().set(getEmailKey(email), code, EXPIRE_MINUTES, TimeUnit.MINUTES);
+            String emailKey = getEmailKey(email, verificationType);
+            redisTemplate.opsForValue().set(emailKey, code, EXPIRE_MINUTES, TimeUnit.MINUTES);
             log.info("Saved email certification for email: {}", email);
         } catch (RedisConnectionFailureException e) {
             log.error("Redis connection failure.", e);
@@ -58,11 +66,12 @@ public class EmailRedisAdapter implements EmailRedisPort {
      * 레디스에 저장된 인증코드를 추출한다.
      * @param email 이메일
      * @param code 클라이언트로부터 받은 입력 코드
+     * @param verificationType 이메일 인증 코드 전송 목적 타입
      */
     @Override
-    public String verifyCode(String email, String code) {
+    public String verifyCode(String email, String code, EmailVerificationType verificationType) {
         try {
-            String emailKey = getEmailKey(email);
+            String emailKey = getEmailKey(email, verificationType);
             return redisTemplate.opsForValue().get(emailKey);
         } catch (RedisConnectionFailureException e) {
             log.error("Redis connection failure.", e);
@@ -77,11 +86,12 @@ public class EmailRedisAdapter implements EmailRedisPort {
      * 해당 이메일 인증 코드를 레디스에서 삭제한다.
      *
      * @param email 이메일
+     * @param verificationType 이메일 인증 코드 전송 목적 타입
      */
     @Override
-    public void deleteCode(String email) {
+    public void deleteCode(String email, EmailVerificationType verificationType) {
         try {
-            String emailKey = getEmailKey(email);
+            String emailKey = getEmailKey(email, verificationType);
             redisTemplate.delete(emailKey);
         } catch (RedisConnectionFailureException e) {
             log.error("Redis connection failure.", e);

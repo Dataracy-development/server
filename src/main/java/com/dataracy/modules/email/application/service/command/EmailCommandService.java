@@ -38,7 +38,7 @@ public class EmailCommandService implements EmailSendUseCase {
             throw new EmailException(EmailErrorStatus.FAIL_SEND_EMAIL_CODE);
         }
 
-        emailRedisPort.saveCode(email, code);
+        emailRedisPort.saveCode(email, code, type);
     }
 
     // 6자리 숫자 형식

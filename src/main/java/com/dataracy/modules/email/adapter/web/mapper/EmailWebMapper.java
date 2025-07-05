@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 public class EmailWebMapper {
     // 이메일 인증 웹 요청 DTO -> 이메일 인증 도메인 요청 DTO
     public SendEmailRequest toApplicationDto(SendEmailWebRequest webRequest) {
-        return new SendEmailRequest(webRequest.email());
+        return new SendEmailRequest(webRequest.email(), webRequest.purpose());
     }
 
     // 이메일 인증 코드 검증 웹 요청 DTO -> 이메일 인증 코드 검증 도메인 요청 DTO
     public VerifyCodeRequest toApplicationDto(VerifyCodeWebRequest webRequest) {
-        return new VerifyCodeRequest(webRequest.email(), webRequest.code());
+        return new VerifyCodeRequest(webRequest.email(), webRequest.code(), webRequest.purpose());
     }
 }
