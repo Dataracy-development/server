@@ -35,7 +35,10 @@ public enum UserErrorStatus implements BaseErrorCode {
     INVALID_DOMAIN_TOPIC_TYPE(HttpStatus.BAD_REQUEST, "USER-011", "유효하지 않은 도메인 토픽입니다. (프론트엔드, 백엔드, 인공지능, 데이터분석, 보안, 디자인, 스타트업 중 하나여야 합니다.)"),
     INVALID_VISIT_SOURCE_TYPE(HttpStatus.BAD_REQUEST, "USER-012", "유효하지 않은 방문 경로입니다. (SNS, 검색엔진, 지인추천, 커뮤니티, 블로그, 광고, 기타 중 하나여야 합니다.)"),
 
-    FAIL_CONFIRM_PASSWORD(HttpStatus.BAD_REQUEST, "USER-013", "비밀번호 확인에 실패했습니다. 비밀번호가 일치하지 않습니다.")
+    FAIL_CONFIRM_PASSWORD(HttpStatus.BAD_REQUEST, "USER-013", "비밀번호 확인에 실패했습니다. 비밀번호가 일치하지 않습니다."),
+
+    FORBIDDEN_CHANGE_PASSWORD_KAKAO(HttpStatus.FORBIDDEN, "USER-014", "카카오 로그인으로 가입된 계정은 비밀번호를 변경할 수 없습니다"),
+    FORBIDDEN_CHANGE_PASSWORD_GOOGLE(HttpStatus.FORBIDDEN, "USER-015", "구글 로그인으로 가입된 계정은 비밀번호를 변경할 수 없습니다"),
     ;
     private final HttpStatus httpStatus;
     private final String code;
