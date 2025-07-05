@@ -183,6 +183,12 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
 
     @Override
     public void changePassword(Long userId, ChangePasswordRequest requestDto) {
+        User savedUser = userRepositoryPort.findUserById(userId);
+        switch (savedUser.getProvider()) {
+            case GOOGLE -> throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE);
+            case KAKAO -> throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO);
+        }
+
         // 패스워드 암호화
         String encodedPassword = passwordEncoder.encode(requestDto.password());
         userRepositoryPort.changePassword(userId, encodedPassword);
