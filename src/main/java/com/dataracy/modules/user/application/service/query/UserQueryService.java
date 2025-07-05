@@ -5,23 +5,31 @@ import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponse;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.user.application.dto.request.ConfirmPasswordRequest;
 import com.dataracy.modules.user.application.port.in.auth.HandleUserUseCase;
-import com.dataracy.modules.user.application.port.in.user.IsLoginPossibleUseCase;
 import com.dataracy.modules.user.application.port.in.auth.IsNewUserUseCase;
+import com.dataracy.modules.user.application.port.in.user.ConfirmPasswordUseCase;
+import com.dataracy.modules.user.application.port.in.user.IsLoginPossibleUseCase;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
+import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;
+import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, IsLoginPossibleUseCase {
+public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, IsLoginPossibleUseCase, ConfirmPasswordUseCase {
     private final UserRepositoryPort userRepositoryPort;
+
     private final JwtValidateUseCase jwtValidateUseCase;
     private final JwtGenerateUseCase jwtGenerateUseCase;
+
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * OAuth2 사용자 신규 여부 확인.
@@ -76,5 +84,14 @@ public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, Is
     @Transactional(readOnly = true)
     public User findUserByEmail(String email) {
         return userRepositoryPort.findUserByEmail(email);
+    }
+
+    @Override
+    public void confirmPassword(Long userId, ConfirmPasswordRequest requestDto) {
+        User user = userRepositoryPort.findUserById(userId);
+        boolean isMatched = passwordEncoder.matches(requestDto.password(), user.getPassword());
+        if (!isMatched) {
+            throw new UserException(UserErrorStatus.FAIL_CONFIRM_PASSWORD);
+        }
     }
 }

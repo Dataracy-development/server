@@ -2,10 +2,7 @@ package com.dataracy.modules.user.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
-import com.dataracy.modules.user.adapter.web.request.ChangePasswordWebRequest;
-import com.dataracy.modules.user.adapter.web.request.DuplicateNicknameWebRequest;
-import com.dataracy.modules.user.adapter.web.request.OnboardingWebRequest;
-import com.dataracy.modules.user.adapter.web.request.SelfSignUpWebRequest;
+import com.dataracy.modules.user.adapter.web.request.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -135,7 +132,7 @@ public interface UserApi {
     );
 
     /**
-     * 비밀번호를 변경한다.
+     * 비밀번호를 변경한다. (헤더의 jwt 토큰을 사용)
      *
      * @param webRequest 웹 요청 DTO (비밀번호)
      * @return 비밀번호 변경 성공
@@ -161,5 +158,35 @@ public interface UserApi {
                     content = @Content(schema = @Schema(implementation = ChangePasswordWebRequest.class))
             )
             @Validated @RequestBody ChangePasswordWebRequest webRequest
+    );
+
+    /**
+     * 비밀번호 확인한다. (헤더의 jwt 토큰을 사용)
+     *
+     * @param webRequest 웹 요청 DTO (비밀번호)
+     * @return 비밀번호 확인 성공
+     */
+    @Operation(
+            summary = "비밀번호를 확인한다.",
+            description = "비밀번호를 확인한다. 유저id는 SecurityContext에서 주입받는다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 확인에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class))),
+    })
+    @PostMapping(value = "/user/password/confirm")
+    ResponseEntity<SuccessResponse<Void>> confirmPassword(
+            @Parameter(hidden = true)
+            @CurrentUserId
+            Long userId,
+
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "확인할 비밀번호",
+                    content = @Content(schema = @Schema(implementation = ConfirmPasswordWebRequest.class))
+            )
+            @Validated @RequestBody
+            ConfirmPasswordWebRequest webRequest
     );
 }
