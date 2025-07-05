@@ -33,7 +33,9 @@ public enum UserErrorStatus implements BaseErrorCode {
     INVALID_AUTHOR_LEVEL_TYPE(HttpStatus.BAD_REQUEST, "USER-009", "유효하지 않은 사용자 유형입니다. (초심자, 실무자, 전문가, GPT활용 중 하나여야 합니다.)"),
     INVALID_OCCUPATION_TYPE(HttpStatus.BAD_REQUEST, "USER-010", "유효하지 않은 직업입니다. (학생, 개발자, 기획자, 디자이너, 마케터, 기타 중 하나여야 합니다.)"),
     INVALID_DOMAIN_TOPIC_TYPE(HttpStatus.BAD_REQUEST, "USER-011", "유효하지 않은 도메인 토픽입니다. (프론트엔드, 백엔드, 인공지능, 데이터분석, 보안, 디자인, 스타트업 중 하나여야 합니다.)"),
-    INVALID_VISIT_SOURCE_TYPE(HttpStatus.BAD_REQUEST, "USER-012", "유효하지 않은 방문 경로입니다. (SNS, 검색엔진, 지인추천, 커뮤니티, 블로그, 광고, 기타 중 하나여야 합니다.)")
+    INVALID_VISIT_SOURCE_TYPE(HttpStatus.BAD_REQUEST, "USER-012", "유효하지 않은 방문 경로입니다. (SNS, 검색엔진, 지인추천, 커뮤니티, 블로그, 광고, 기타 중 하나여야 합니다.)"),
+
+    FAIL_CONFIRM_PASSWORD(HttpStatus.BAD_REQUEST, "USER-013", "비밀번호 확인에 실패했습니다. 비밀번호가 일치하지 않습니다.")
     ;
     private final HttpStatus httpStatus;
     private final String code;

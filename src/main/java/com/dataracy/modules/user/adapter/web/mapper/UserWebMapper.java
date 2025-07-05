@@ -1,13 +1,7 @@
 package com.dataracy.modules.user.adapter.web.mapper;
 
-import com.dataracy.modules.user.adapter.web.request.ChangePasswordWebRequest;
-import com.dataracy.modules.user.adapter.web.request.DuplicateNicknameWebRequest;
-import com.dataracy.modules.user.adapter.web.request.OnboardingWebRequest;
-import com.dataracy.modules.user.adapter.web.request.SelfSignUpWebRequest;
-import com.dataracy.modules.user.application.dto.request.ChangePasswordRequest;
-import com.dataracy.modules.user.application.dto.request.DuplicateNicknameRequest;
-import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
-import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
+import com.dataracy.modules.user.adapter.web.request.*;
+import com.dataracy.modules.user.application.dto.request.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -49,6 +43,13 @@ public class UserWebMapper {
     // 비밀번호 변경 웹 요청 DTO -> 비밀번호 변경 도메인 요청 DTO
     public ChangePasswordRequest toApplicationDto(ChangePasswordWebRequest webRequest) {
         return new ChangePasswordRequest(
+                webRequest.password()
+        );
+    }
+
+    // 비밀번호 확인 웹 요청 DTO -> 비밀번호 확인 도메인 요청 DTO
+    public ConfirmPasswordRequest toApplicationDto(ConfirmPasswordWebRequest webRequest) {
+        return new ConfirmPasswordRequest (
                 webRequest.password()
         );
     }

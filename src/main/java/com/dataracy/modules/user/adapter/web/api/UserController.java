@@ -6,15 +6,10 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.adapter.web.mapper.UserWebMapper;
-import com.dataracy.modules.user.adapter.web.request.ChangePasswordWebRequest;
-import com.dataracy.modules.user.adapter.web.request.DuplicateNicknameWebRequest;
-import com.dataracy.modules.user.adapter.web.request.OnboardingWebRequest;
-import com.dataracy.modules.user.adapter.web.request.SelfSignUpWebRequest;
-import com.dataracy.modules.user.application.dto.request.ChangePasswordRequest;
-import com.dataracy.modules.user.application.dto.request.DuplicateNicknameRequest;
-import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
-import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
+import com.dataracy.modules.user.adapter.web.request.*;
+import com.dataracy.modules.user.application.dto.request.*;
 import com.dataracy.modules.user.application.port.in.user.ChangePasswordUseCase;
+import com.dataracy.modules.user.application.port.in.user.ConfirmPasswordUseCase;
 import com.dataracy.modules.user.application.port.in.user.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
@@ -37,6 +32,8 @@ public class UserController implements UserApi {
 
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
     private final ChangePasswordUseCase changePasswordUseCase;
+    private final ConfirmPasswordUseCase confirmPasswordUseCase;
+
     private final TokenRedisUseCase tokenRedisUseCase;
 
     /**
@@ -113,6 +110,18 @@ public class UserController implements UserApi {
         changePasswordUseCase.changePassword(userId, requestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CHANGE_PASSWORD));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> confirmPassword(
+            Long userId,
+            ConfirmPasswordWebRequest webRequest
+    ) {
+        ConfirmPasswordRequest requestDto = userWebMapper.toApplicationDto(webRequest);
+
+        confirmPasswordUseCase.confirmPassword(userId, requestDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(UserSuccessStatus.OK_CONFIRM_PASSWORD));
     }
 
 
