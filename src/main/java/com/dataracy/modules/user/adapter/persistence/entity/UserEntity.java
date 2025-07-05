@@ -80,6 +80,7 @@ public class UserEntity extends BaseTimeEntity {
     @Builder.Default
     private boolean isDeleted = false;
 
+
     public void addUserTopic(UserTopicEntity topicEntity) {
         userTopicEntities.add(topicEntity);
         topicEntity.setUser(this);
