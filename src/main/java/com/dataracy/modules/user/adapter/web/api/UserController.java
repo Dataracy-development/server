@@ -93,7 +93,7 @@ public class UserController implements UserApi {
     ) {
         DuplicateNicknameRequest requestDto = userWebMapper.toApplicationDto(webRequest);
         // 닉네임 중복 체크
-        duplicateNicknameUseCase.validateDuplicatedNickname(requestDto);
+        duplicateNicknameUseCase.validateDuplicatedNickname(requestDto.nickname());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_NOT_DUPLICATED_NICKNAME));
     }

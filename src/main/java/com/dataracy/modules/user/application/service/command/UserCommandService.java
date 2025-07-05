@@ -7,11 +7,13 @@ import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.topic.application.port.in.IsExistTopicUseCase;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
-import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
-import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.reference.FindAuthorLevelUseCase;
 import com.dataracy.modules.user.application.port.in.reference.FindOccupationUseCase;
 import com.dataracy.modules.user.application.port.in.reference.FindVisitSourceUseCase;
+import com.dataracy.modules.user.application.port.in.signup.DuplicateEmailUseCase;
+import com.dataracy.modules.user.application.port.in.signup.DuplicateNicknameUseCase;
+import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
+import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.application.service.validator.UserDuplicateValidator;
 import com.dataracy.modules.user.domain.enums.ProviderType;
@@ -42,6 +44,9 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     private final FindOccupationUseCase findOccupationUseCase;
     private final FindVisitSourceUseCase findVisitSourceUseCase;
 
+    private final DuplicateNicknameUseCase duplicateNicknameUseCase;
+    private final DuplicateEmailUseCase duplicateEmailUseCase;
+
     /**
      * 클라이언트로부터 받은 유저 정보를 토대로 자체 회원가입을 진행한다.(이메일, 닉네임, 비밀번호, 성별)
      *
@@ -57,10 +62,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     )
     @Transactional
     public RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto) {
-        // 닉네임 중복 체크
-        userDuplicateValidator.duplicateNickname(requestDto.nickname());
         // 이메일 중복 체크
-        userDuplicateValidator.duplicateEmail(requestDto.email());
+        duplicateEmailUseCase.validateDuplicatedEmail(requestDto.email());
+        // 닉네임 중복 체크
+        duplicateNicknameUseCase.validateDuplicatedNickname(requestDto.nickname());
 
         // 패스워드 암호화
         String encodedPassword = passwordEncoder.encode(requestDto.password());
@@ -119,14 +124,16 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     )
     @Transactional
     public RefreshTokenResponse signUpOAuth(String registerToken, OnboardingRequest requestDto) {
-        // 닉네임 중복 체크
-        userDuplicateValidator.duplicateNickname(requestDto.nickname());
-
         // 레지스터 토큰 유효성 체크 및 정보 조회
         jwtValidateUseCase.validateToken(registerToken);
         String provider = jwtValidateUseCase.getProviderFromRegisterToken(registerToken);
         String providerId = jwtValidateUseCase.getProviderIdFromRegisterToken(registerToken);
         String email = jwtValidateUseCase.getEmailFromRegisterToken(registerToken);
+
+        // 이메일 중복 체크
+        duplicateEmailUseCase.validateDuplicatedEmail(email);
+        // 닉네임 중복 체크
+        duplicateNicknameUseCase.validateDuplicatedNickname(requestDto.nickname());
 
         // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
         AuthorLevel authorLevel = findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId());

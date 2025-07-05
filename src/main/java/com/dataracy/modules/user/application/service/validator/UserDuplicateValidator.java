@@ -2,6 +2,7 @@ package com.dataracy.modules.user.application.service.validator;
 
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
+import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +28,11 @@ public class UserDuplicateValidator {
     }
 
     /**
-     * 이메일 중복 확인
+     * 이메일이 중복되어 있는지 여부를 판단하여 중복된 유저를 반환한다.
      * @param email 이메일
+     * @return 유저 도메인 객체
      */
-    public void duplicateEmail(String email) {
-        if (userRepositoryPort.existsByEmail(email)) {
-            throw new UserException(UserErrorStatus.DUPLICATED_EMAIL);
-        }
+    public User duplicateEmail(String email) {
+        return userRepositoryPort.findUserByEmail(email);
     }
 }
