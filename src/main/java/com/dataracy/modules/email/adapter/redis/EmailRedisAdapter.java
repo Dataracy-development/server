@@ -35,9 +35,9 @@ public class EmailRedisAdapter implements EmailRedisPort {
      */
     private String getEmailKey(String email, EmailVerificationType type) {
         return switch (type) {
-            case SIGN_UP -> "email:signup:" + email;
-            case PASSWORD_SEARCH -> "email:password:search:" + email;
-            case PASSWORD_RESET -> "email:password:reset:" + email;
+            case SIGN_UP -> "email:verification:signup:" + email;
+            case PASSWORD_SEARCH -> "email:verification:password:search:" + email;
+            case PASSWORD_RESET -> "email:verification:password:reset:" + email;
         };
     }
 
