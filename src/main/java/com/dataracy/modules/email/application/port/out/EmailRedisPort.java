@@ -6,4 +6,5 @@ package com.dataracy.modules.email.application.port.out;
 public interface EmailRedisPort {
     void saveCode(String email, String code);
     String verifyCode(String email, String code);
+    void deleteCode(String email);
 }

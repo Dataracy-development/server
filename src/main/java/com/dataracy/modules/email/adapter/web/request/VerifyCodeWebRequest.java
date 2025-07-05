@@ -17,7 +17,7 @@ public record VerifyCodeWebRequest(
         String email,
 
         @Schema(description = "인증코드", example = "123456")
-        @NotBlank(message = "인증코드는 공백이나 빈칸일 수 없습니다.")
-        @Pattern(regexp = "^\\d{6}$", message = "인증코드는 6자리 숫자여야 합니다.")
+        @NotBlank(message = "인증번호를 입력해주세요")
+        @Pattern(regexp = "^\\d{6}$", message = "인증번호 6자리를 입력해주세요")
         String code
 ) {}
