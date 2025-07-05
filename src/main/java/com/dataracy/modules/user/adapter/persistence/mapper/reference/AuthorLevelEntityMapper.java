@@ -9,6 +9,10 @@ import com.dataracy.modules.user.domain.model.reference.AuthorLevel;
 public class AuthorLevelEntityMapper {
     // AuthorLevel 엔티티 -> AuthorLevel 도메인 모델
     public static AuthorLevel toDomain(AuthorLevelEntity authorLevelEntity) {
+        if (authorLevelEntity == null) {
+            return null;
+        }
+
         return new AuthorLevel(
                 authorLevelEntity.getId(),
                 authorLevelEntity.getValue(),
@@ -18,6 +22,10 @@ public class AuthorLevelEntityMapper {
 
     // AuthorLevel 도메인 모델 -> AuthorLevel 엔티티
     public static AuthorLevelEntity toEntity(AuthorLevel authorLevel) {
+        if (authorLevel == null) {
+            return null;
+        }
+
         return AuthorLevelEntity.toEntity(
                 authorLevel.id(),
                 authorLevel.value(),

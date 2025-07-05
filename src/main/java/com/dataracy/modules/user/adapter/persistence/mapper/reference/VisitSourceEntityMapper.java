@@ -9,6 +9,10 @@ import com.dataracy.modules.user.domain.model.reference.VisitSource;
 public class VisitSourceEntityMapper {
     // VisitSource 엔티티 -> VisitSource 도메인 모델
     public static VisitSource toDomain(VisitSourceEntity visitSourceEntity) {
+        if (visitSourceEntity == null) {
+            return null;
+        }
+
         return new VisitSource(
                 visitSourceEntity.getId(),
                 visitSourceEntity.getValue(),
@@ -18,6 +22,10 @@ public class VisitSourceEntityMapper {
 
     // VisitSource 도메인 모델 -> VisitSource 엔티티
     public static VisitSourceEntity toEntity(VisitSource visitSource) {
+        if (visitSource == null) {
+            return null;
+        }
+
         return VisitSourceEntity.toEntity(
                 visitSource.id(),
                 visitSource.value(),

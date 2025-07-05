@@ -36,6 +36,10 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
      */
     @Override
     public VisitSource findVisitSourceById(Long visitSourceId) {
+        if (visitSourceId == null) {
+            return null;
+        }
+
         VisitSourceEntity visitSourceEntity = visitSourceJpaRepository.findById(visitSourceId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE));
         return VisitSourceEntityMapper.toDomain(visitSourceEntity);

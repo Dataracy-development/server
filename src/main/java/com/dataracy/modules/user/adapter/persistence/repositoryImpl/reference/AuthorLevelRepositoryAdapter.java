@@ -36,6 +36,10 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
      */
     @Override
     public AuthorLevel findAuthorLevelById(Long authorLevelId) {
+        if (authorLevelId == null) {
+            return null;
+        }
+
         AuthorLevelEntity authorLevelEntity = authorLevelJpaRepository.findById(authorLevelId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL));
         return AuthorLevelEntityMapper.toDomain(authorLevelEntity);
