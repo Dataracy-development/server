@@ -1,7 +1,7 @@
 package com.dataracy.modules.user.application.service.query;
 
-import com.dataracy.modules.user.application.port.in.signup.DuplicateEmailUseCase;
-import com.dataracy.modules.user.application.port.in.signup.DuplicateNicknameUseCase;
+import com.dataracy.modules.user.application.port.in.user.DuplicateEmailUseCase;
+import com.dataracy.modules.user.application.port.in.user.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.service.validator.UserDuplicateValidator;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.exception.UserException;

@@ -1,8 +1,10 @@
 package com.dataracy.modules.user.adapter.web.mapper;
 
+import com.dataracy.modules.user.adapter.web.request.ChangePasswordWebRequest;
 import com.dataracy.modules.user.adapter.web.request.DuplicateNicknameWebRequest;
 import com.dataracy.modules.user.adapter.web.request.OnboardingWebRequest;
 import com.dataracy.modules.user.adapter.web.request.SelfSignUpWebRequest;
+import com.dataracy.modules.user.application.dto.request.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.DuplicateNicknameRequest;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
@@ -41,6 +43,13 @@ public class UserWebMapper {
     public DuplicateNicknameRequest toApplicationDto(DuplicateNicknameWebRequest webRequest) {
         return new DuplicateNicknameRequest(
                 webRequest.nickname()
+        );
+    }
+
+    // 비밀번호 변경 웹 요청 DTO -> 비밀번호 변경 도메인 요청 DTO
+    public ChangePasswordRequest toApplicationDto(ChangePasswordWebRequest webRequest) {
+        return new ChangePasswordRequest(
+                webRequest.password()
         );
     }
 }

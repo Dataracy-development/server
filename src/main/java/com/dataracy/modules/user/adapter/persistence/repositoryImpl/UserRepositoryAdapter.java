@@ -20,7 +20,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
      * @param userId 유저 id
      * @return 유저
      */
-//    @Override
+    @Override
     public User findUserById(Long userId) {
         UserEntity userEntity = userJpaRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
@@ -84,6 +84,13 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     public User saveUser(User user) {
         UserEntity savedUser = userJpaRepository.save(UserEntityMapper.toEntity(user));
         return UserEntityMapper.toDomain(savedUser);
+    }
+
+    @Override
+    public void changePassword(Long userId, String encodePassword) {
+        UserEntity userEntity = userJpaRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
+        userEntity.changePassword(encodePassword);
     }
 
     /**

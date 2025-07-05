@@ -1,6 +1,8 @@
 package com.dataracy.modules.user.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.support.annotation.CurrentUserId;
+import com.dataracy.modules.user.adapter.web.request.ChangePasswordWebRequest;
 import com.dataracy.modules.user.adapter.web.request.DuplicateNicknameWebRequest;
 import com.dataracy.modules.user.adapter.web.request.OnboardingWebRequest;
 import com.dataracy.modules.user.adapter.web.request.SelfSignUpWebRequest;
@@ -17,10 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "User", description = "사용자 관련 API")
 @RequestMapping("/api/v1")
@@ -133,5 +132,34 @@ public interface UserApi {
             )
             @Validated @RequestBody
             DuplicateNicknameWebRequest webRequest
+    );
+
+    /**
+     * 비밀번호를 변경한다.
+     *
+     * @param webRequest 웹 요청 DTO (비밀번호)
+     * @return 비밀번호 변경 성공
+     */
+    @Operation(
+            summary = "비밀번호를 변경한다.",
+            description = "비밀번호를 변경한다. 유저id는 SecurityContext에서 주입받는다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 변겅에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class))),
+    })
+    @PatchMapping(value = "/user/password/change")
+    ResponseEntity<SuccessResponse<Void>> changePassword(
+            @Parameter(hidden = true)
+            @CurrentUserId
+            Long userId,
+
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "변경할 비밀번호",
+                    content = @Content(schema = @Schema(implementation = ChangePasswordWebRequest.class))
+            )
+            @Validated @RequestBody ChangePasswordWebRequest webRequest
     );
 }

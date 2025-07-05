@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.port.in.auth;
+package com.dataracy.modules.user.application.port.in.user;
 
 import com.dataracy.modules.user.domain.model.User;
 
