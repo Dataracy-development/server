@@ -30,6 +30,9 @@ public class ReferenceController implements ReferenceApi {
     private final FindAllOccupationsUseCase findAllOccupationsUseCase;
     private final FindAllVisitSourcesUseCase findAllVisitSourcesUseCase;
 
+    /**
+     * 전체 작성자 유형 목록 조회
+     */
     @Override
     public ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> allAuthorLevels (
     ) {
@@ -39,6 +42,9 @@ public class ReferenceController implements ReferenceApi {
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_AUTHOR_LEVEL_LIST, allAuthorLevelsWebResponse));
     }
 
+    /**
+     * 전체 직업 목록 조회
+     */
     @Override
     public ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> allOccupations (
     ) {
@@ -48,6 +54,9 @@ public class ReferenceController implements ReferenceApi {
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_OCCUPATION_LIST, allOccupationsWebResponse));
     }
 
+    /**
+     * 전체 방문 경로 목록 조회
+     */
     @Override
     public ResponseEntity<SuccessResponse<AllVisitSourcesWebResponse>> allVisitSources (
     ) {

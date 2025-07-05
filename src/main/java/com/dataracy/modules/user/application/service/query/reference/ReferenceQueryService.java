@@ -30,7 +30,6 @@ public class ReferenceQueryService implements
         FindOccupationUseCase,
         FindVisitSourceUseCase
 {
-
     private final AuthorLevelDtoMapper authorLevelDtoMapper;
     private final OccupationDtoMapper occupationDtoMapper;
     private final VisitSourceDtoMapper visitSourceDtoMapper;
@@ -69,16 +68,31 @@ public class ReferenceQueryService implements
         return visitSourceDtoMapper.toResponseDto(visitSources);
     }
 
+    /**
+     * 작성자 유형 id로 작성자 유형을 조회한다.
+     * @param authorLevelId 작성자 유형 id
+     * @return 작성자 유형
+     */
     @Override
     public AuthorLevel findAuthorLevel(Long authorLevelId) {
         return authorLevelRepositoryPort.findAuthorLevelById(authorLevelId);
     }
 
+    /**
+     * 경험 id로 경험을 조회한다.
+     * @param occupationId 경험 id
+     * @return 경험
+     */
     @Override
     public Occupation findOccupation(Long occupationId) {
         return occupationRepositoryPort.findOccupationById(occupationId);
     }
 
+    /**
+     * 방문 경로 id로 방문 경로를 조회한다.
+     * @param visitSourceId 방문 경로 id
+     * @return 방문 경로
+     */
     @Override
     public VisitSource findVisitSource(Long visitSourceId) {
         return visitSourceRepositoryPort.findVisitSourceById(visitSourceId);

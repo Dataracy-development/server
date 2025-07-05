@@ -13,7 +13,6 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum RoleType {
-
     ROLE_USER("ROLE_USER"),
     ROLE_ADMIN("ROLE_ADMIN"),
     ROLE_ANONYMOUS("ROLE_ANONYMOUS");

@@ -67,6 +67,7 @@ public class AuthController implements AuthApi {
             String refreshToken,
             HttpServletResponse response
     ) {
+        // 토큰 재발급 진행
         ReIssueTokenResponse responseDto = reIssueTokenUseCase.reIssueToken(refreshToken);
         // 어세스 토큰, 어세스 토큰 만료기간, 리프레시 토큰 쿠키 저장
         setResponseHeaders(response, responseDto);

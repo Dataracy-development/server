@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, IsLoginPossibleUseCase {
-
     private final UserRepositoryPort userRepositoryPort;
     private final JwtValidateUseCase jwtValidateUseCase;
     private final JwtGenerateUseCase jwtGenerateUseCase;

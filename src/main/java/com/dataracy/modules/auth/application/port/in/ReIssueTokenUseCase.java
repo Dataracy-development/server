@@ -8,4 +8,3 @@ import com.dataracy.modules.auth.application.dto.response.ReIssueTokenResponse;
 public interface ReIssueTokenUseCase {
     ReIssueTokenResponse reIssueToken(String refreshToken);
 }
-

@@ -1,8 +1,8 @@
 package com.dataracy.modules.common.support.resolver;
 
-import com.dataracy.modules.common.support.annotation.CurrentUserId;
-import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.exception.CommonException;
+import com.dataracy.modules.common.status.CommonErrorStatus;
+import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.security.handler.SecurityContextProvider;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -11,6 +11,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+/**
+ * CurrentUserId 어노테이션에 바로 값을 주입받을 수 있게 설정한다.
+ */
 @Component
 public class CurrentUserIdArgumentResolver implements HandlerMethodArgumentResolver {
 

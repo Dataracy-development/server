@@ -46,7 +46,6 @@ public class RedissonDistributedLockManager {
                 attempts++;
                 log.warn("[LOCK] 락 획득 실패 - key: {}, retry attempt: {}", key, attempts);
                 Thread.sleep(100); // 간단한 재시도 대기
-
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 log.error("[LOCK] 인터럽트 발생 - key: {}", key, e);

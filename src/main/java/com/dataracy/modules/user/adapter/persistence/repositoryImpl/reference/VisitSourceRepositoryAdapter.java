@@ -29,6 +29,11 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
                 .toList();
     }
 
+    /**
+     * 방문 경로 id에 해당하는 방문 경로가 존재하면 방문 경로를 조회한다.
+     * @param visitSourceId 방문 경로 id
+     * @return 방문 경로
+     */
     @Override
     public VisitSource findVisitSourceById(Long visitSourceId) {
         VisitSourceEntity visitSourceEntity = visitSourceJpaRepository.findById(visitSourceId)

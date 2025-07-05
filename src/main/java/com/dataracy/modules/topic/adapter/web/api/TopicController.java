@@ -17,6 +17,10 @@ public class TopicController implements TopicApi {
     private final TopicWebMapper topicWebMapper;
     private final FindAllTopicsUseCase findAllTopicsUseCase;
 
+    /**
+     * DB 상의 모든 Topic 목록 조회
+     * @return
+     */
     @Override
     public ResponseEntity<SuccessResponse<AllTopicsWebResponse>> allTopics (
     ) {

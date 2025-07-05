@@ -10,18 +10,33 @@ public final class FileUtil {
         throw new CommonException(CommonErrorStatus.CAN_NOT_INSTANTIATE_FILE_UTILITY_CLASS);
     }
 
+    /**
+     * 파일의 크기가 일정 크기를 넘어갈 경우 예외
+     * @param file 파일
+     * @param maxSize 일정 크기
+     * @param errorStatus 예외
+     */
     private static void checkFileSize(MultipartFile file, long maxSize, CommonErrorStatus errorStatus) {
         if (file.getSize() > maxSize) {
             throw new CommonException(errorStatus);
         }
     }
 
+    /**
+     * 파일 타입이 특정 타입에 맞지 않을 경우
+     * @param originalFilename 파일명
+     * @param regex 특정 확장자 형식
+     * @param errorStatus 예외
+     */
     private static void checkFileType(String originalFilename, String regex, CommonErrorStatus errorStatus) {
         if (!originalFilename.matches(regex)) {
             throw new CommonException(errorStatus);
         }
     }
 
+    /**
+     * 파일이 이미지 일 경우 조건
+     */
     public static void validateProfileImage(MultipartFile file) {
         if (file == null || file.isEmpty()) return;
         long maxSize = 10 * 1024 * 1024; // 10MB
@@ -29,6 +44,9 @@ public final class FileUtil {
         checkFileType(file.getOriginalFilename(), "(?i).+\\.(jpg|jpeg|png)$", CommonErrorStatus.BAD_REQUEST_IMAGE_FILE_TYPE);
     }
 
+    /**
+     * 일반 파일 일 경우 조건
+     */
     public static void validateGeneralFile(MultipartFile file) {
         if (file == null || file.isEmpty()) return;
         long maxSize = 50 * 1024 * 1024; // 50MB
