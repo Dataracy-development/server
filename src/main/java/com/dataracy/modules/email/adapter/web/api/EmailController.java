@@ -13,7 +13,6 @@ import com.dataracy.modules.email.domain.status.EmailSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,8 +34,11 @@ public class EmailController implements EmailApi {
             SendEmailWebRequest webRequest
     ) {
         SendEmailRequest requestDto = emailWebMapper.toApplicationDto(webRequest);
+        // 전송 목적 확인
+        EmailVerificationType verificationType = EmailVerificationType.of(webRequest.purpose());
+
         // 인증 코드 전송
-        emailSendUseCase.sendEmailVerificationCode(requestDto.email(), EmailVerificationType.SIGN_UP);
+        emailSendUseCase.sendEmailVerificationCode(requestDto.email(), verificationType);
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.of(EmailSuccessStatus.OK_SEND_EMAIL_CODE));
     }
 
@@ -48,8 +50,11 @@ public class EmailController implements EmailApi {
     @Override
     public ResponseEntity<SuccessResponse<Void>> verify(VerifyCodeWebRequest webRequest) {
         VerifyCodeRequest requestDto = emailWebMapper.toApplicationDto(webRequest);
+        // 전송 목적 확인
+        EmailVerificationType verificationType = EmailVerificationType.of(webRequest.purpose());
+
         // 인증 코드 검증
-        emailVerifyUseCase.verifyCode(requestDto.email(), requestDto.code());
+        emailVerifyUseCase.verifyCode(requestDto.email(), requestDto.code(), verificationType);
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.of(EmailSuccessStatus.OK_VERIFY_EMAIL_CODE));
     }
 }
