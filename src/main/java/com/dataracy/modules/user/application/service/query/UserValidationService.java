@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserValidationService implements DuplicateNicknameUseCase {
-
     private final UserDuplicateValidator userDuplicateValidator;
 
     /**

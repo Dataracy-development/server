@@ -11,7 +11,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class SuccessResponse<T> {
-
     private int httpStatus;
     private String code;
     private String message;

@@ -25,11 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase {
-
     private final JwtGeneratorPort jwtGeneratorPort;
     private final JwtValidatorPort jwtValidatorPort;
     private final JwtProperties jwtProperties;
+
     private final TokenRedisPort tokenRedisPort;
+
     private final IsLoginPossibleUseCase isLoginPossibleUseCase;
     private final PasswordEncoder passwordEncoder;
 
@@ -74,11 +75,11 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
             // 레디스의 리프레시 토큰과 입력받은 리프레시 토큰을 비교한다.
             Long userId = jwtValidatorPort.getUserIdFromToken(refreshToken);
             String savedRefreshToken = tokenRedisPort.getRefreshToken(userId.toString());
-            if (savedRefreshToken.equals(refreshToken)) {
+            if (!savedRefreshToken.equals(refreshToken)) {
                 throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
             }
 
-            // 토큰을 발급한다.
+            // 어세스 토큰과 리프레시 토큰을 발급후 반환한다.
             String newAccessToken = jwtGeneratorPort.generateAccessToken(userId, RoleType.ROLE_USER);
             String newRefreshToken = jwtGeneratorPort.generateRefreshToken(userId, RoleType.ROLE_USER);
             return new ReIssueTokenResponse(

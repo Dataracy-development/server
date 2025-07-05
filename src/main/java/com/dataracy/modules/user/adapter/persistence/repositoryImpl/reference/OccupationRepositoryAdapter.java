@@ -29,6 +29,11 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
                 .toList();
     }
 
+    /**
+     * 직업 id에 해당하는 직업이 존재할 경우 조회한다.
+     * @param occupationId 직업 아이디
+     * @return 직업
+     */
     @Override
     public Occupation findOccupationById(Long occupationId) {
         OccupationEntity occupationEntity = occupationJpaRepository.findById(occupationId)

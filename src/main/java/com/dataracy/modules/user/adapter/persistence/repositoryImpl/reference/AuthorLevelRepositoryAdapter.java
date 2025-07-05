@@ -29,6 +29,11 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
                 .toList();
     }
 
+    /**
+     * 작성자 유형 id에 해당하는 작성자 유형이 존재하면 조회한다.
+     * @param authorLevelId 작성자 유형  아이디
+     * @return 작성자 유형
+     */
     @Override
     public AuthorLevel findAuthorLevelById(Long authorLevelId) {
         AuthorLevelEntity authorLevelEntity = authorLevelJpaRepository.findById(authorLevelId)

@@ -31,7 +31,7 @@ public class User {
     private AuthorLevel authorLevel;
     private Occupation occupation;
 
-    // 다른 어그리거트 Topic 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
+    // 타 어그리거트인 Topic 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
     private List<Long> topicIds;
 
     private VisitSource visitSource;

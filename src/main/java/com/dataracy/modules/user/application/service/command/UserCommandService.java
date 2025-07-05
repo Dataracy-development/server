@@ -30,8 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase {
-
     private final UserRepositoryPort userRepositoryPort;
+
     private final JwtGenerateUseCase jwtGenerateUseCase;
     private final JwtValidateUseCase jwtValidateUseCase;
     private final IsExistTopicUseCase isExistTopicUseCase;
@@ -65,13 +65,14 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 패스워드 암호화
         String encodedPassword = passwordEncoder.encode(requestDto.password());
 
+        // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
         AuthorLevel authorLevel = findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId());
-
+        // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         requestDto.topicIds()
                 .forEach(isExistTopicUseCase::validateTopicById);
-
+        // 직업 id를 통해 직업 조회 및 유효성 검사
         Occupation occupation = findOccupationUseCase.findOccupation(requestDto.occupationId());
-
+        // 방문 경로 id를 통해 방문 경로 조회 및 유효성 검사
         VisitSource visitSource = findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId());
 
         // 유저 도메인 모델 생성 및 db 저장
@@ -127,13 +128,14 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         String providerId = jwtValidateUseCase.getProviderIdFromRegisterToken(registerToken);
         String email = jwtValidateUseCase.getEmailFromRegisterToken(registerToken);
 
+        // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
         AuthorLevel authorLevel = findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId());
-
+        // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         requestDto.topicIds()
                 .forEach(isExistTopicUseCase::validateTopicById);
-
+        // 직업 id를 통해 직업 조회 및 유효성 검사
         Occupation occupation = findOccupationUseCase.findOccupation(requestDto.occupationId());
-
+        // 방문 경로 id를 통해 방문 경로 조회 및 유효성 검사
         VisitSource visitSource = findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId());
 
         // 유저 도메인 모델 생성 및 db 저장

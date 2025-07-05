@@ -3,8 +3,8 @@ package com.dataracy.modules.auth.adapter.jwt;
 import com.dataracy.modules.auth.domain.enums.TokenType;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
-import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.exception.CommonException;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -72,13 +72,11 @@ public class JwtUtilInternal {
     public Claims parseToken(String token) {
         try {
             // 토큰 파싱으로 클레임 객체 반환
-            Claims claims = Jwts.parser()
+            return Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-
-            return claims;
         } catch (ExpiredJwtException e) {
             log.error("Expired Token: {}", token, e);
             throw new AuthException(AuthErrorStatus.EXPIRED_TOKEN);

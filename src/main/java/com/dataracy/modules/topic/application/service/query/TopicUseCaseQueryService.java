@@ -32,6 +32,11 @@ public class TopicUseCaseQueryService implements FindAllTopicsUseCase, IsExistTo
         return topicDtoMapper.toResponseDto(topics);
     }
 
+    /**
+     * id에 따른 해당 토픽이 존재하는지 여부 확인
+     * 해당 토픽이 존재 하지 않으면 에러 발생
+     * @param topicId 토픽 id
+     */
     @Override
     public void validateTopicById(Long topicId) {
         Boolean isExist = topicRepositoryPort.isExistTopicById(topicId);

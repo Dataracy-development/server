@@ -2,8 +2,8 @@ package com.dataracy.modules.auth.adapter.redis;
 
 import com.dataracy.modules.auth.adapter.jwt.JwtProperties;
 import com.dataracy.modules.auth.application.port.out.TokenRedisPort;
-import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.exception.CommonException;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 public class TokenRedisAdapter implements TokenRedisPort {
-
     private final StringRedisTemplate redisTemplate;
     private final JwtProperties jwtProperties;
 
@@ -27,7 +26,7 @@ public class TokenRedisAdapter implements TokenRedisPort {
      * @return 레디스 키
      */
     private String getRefreshTokenKey(String userId) {
-        return "refreshToken: user" + userId;
+        return "refreshToken:user" + userId;
     }
 
     /**
@@ -69,7 +68,6 @@ public class TokenRedisAdapter implements TokenRedisPort {
             if (token == null) {
                 log.warn("Refresh token not found for userId: {}", userId);
             }
-            log.info("Saved refresh token for userId: {}", userId);
             return token;
         } catch (RedisConnectionFailureException e) {
             log.error("Redis connection failure.", e);

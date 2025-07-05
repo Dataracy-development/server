@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * 스프링 빈으로 OAuthUserInfo인 클래스들이 adapters에 주입된다.
+ * provider와 일치하는 소셜 로그인이 선택되어 유저 정보가 반환된다.
+ */
 @Component
 @RequiredArgsConstructor
 public class OAuthUserInfoFactory implements SelectSocialProviderPort {
