@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class EmailController implements EmailApi {
-
     private final EmailWebMapper emailWebMapper;
 
     private final EmailSendUseCase emailSendUseCase;
@@ -39,7 +38,13 @@ public class EmailController implements EmailApi {
 
         // 인증 코드 전송
         emailSendUseCase.sendEmailVerificationCode(requestDto.email(), verificationType);
-        return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.of(EmailSuccessStatus.OK_SEND_EMAIL_CODE));
+
+        // 이메일 전송 목적에 따라 응답 형태를 설정하여 반환한다.
+        return switch (verificationType) {
+            case SIGN_UP -> ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.of(EmailSuccessStatus.OK_SEND_EMAIL_CODE_SIGN_UP));
+            case PASSWORD_SEARCH -> ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.of(EmailSuccessStatus.OK_SEND_EMAIL_CODE_PASSWORD_SEARCH));
+            case PASSWORD_RESET -> ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.of(EmailSuccessStatus.OK_SEND_EMAIL_CODE_PASSWORD_RESET));
+        };
     }
 
     /**
@@ -50,9 +55,9 @@ public class EmailController implements EmailApi {
     @Override
     public ResponseEntity<SuccessResponse<Void>> verify(VerifyCodeWebRequest webRequest) {
         VerifyCodeRequest requestDto = emailWebMapper.toApplicationDto(webRequest);
+
         // 전송 목적 확인
         EmailVerificationType verificationType = EmailVerificationType.of(webRequest.purpose());
-
         // 인증 코드 검증
         emailVerifyUseCase.verifyCode(requestDto.email(), requestDto.code(), verificationType);
         return ResponseEntity.status(HttpStatus.OK).body(SuccessResponse.of(EmailSuccessStatus.OK_VERIFY_EMAIL_CODE));

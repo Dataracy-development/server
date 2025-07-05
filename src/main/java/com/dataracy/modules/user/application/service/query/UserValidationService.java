@@ -33,6 +33,10 @@ public class UserValidationService implements DuplicateNicknameUseCase, Duplicat
         log.info("닉네임 사용 가능: {}", nickname);
     }
 
+    /**
+     * 이메일 중복 유무를 확인한다.
+     * @param email 이메일
+     */
     @Override
     @Transactional(readOnly = true)
     public void validateDuplicatedEmail(String email) {

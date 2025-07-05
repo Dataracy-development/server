@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class EmailQueryService implements EmailVerifyUseCase {
-
     private final EmailRedisPort emailRedisPort;
 
     /**
@@ -20,11 +19,15 @@ public class EmailQueryService implements EmailVerifyUseCase {
      * @param code 인증 코드
      * @param verificationType 이메일 인증 목적
      */
+    @Override
     public void verifyCode(String email, String code, EmailVerificationType verificationType) {
+        // 레디스에서 이메일 인증 코드 조회
         String savedCode = emailRedisPort.verifyCode(email, code, verificationType);
         if (savedCode == null) {
             throw new EmailException(EmailErrorStatus.EXPIRED_EMAIL_CODE);
         }
+
+        // 이메일 인증코드 일치하지 않을 경우
         if (!savedCode.equals(code)) {
             throw new EmailException(EmailErrorStatus.FAIL_VERIFY_EMAIL_CODE);
         }

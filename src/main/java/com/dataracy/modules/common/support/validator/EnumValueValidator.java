@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, Object> {
-
     private Set<String> validValues;
     private boolean required;
     private String enumValuesString;

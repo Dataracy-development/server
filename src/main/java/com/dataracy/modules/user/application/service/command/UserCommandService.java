@@ -11,13 +11,12 @@ import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
 import com.dataracy.modules.user.application.port.in.reference.FindAuthorLevelUseCase;
 import com.dataracy.modules.user.application.port.in.reference.FindOccupationUseCase;
 import com.dataracy.modules.user.application.port.in.reference.FindVisitSourceUseCase;
+import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
+import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.user.ChangePasswordUseCase;
 import com.dataracy.modules.user.application.port.in.user.DuplicateEmailUseCase;
 import com.dataracy.modules.user.application.port.in.user.DuplicateNicknameUseCase;
-import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
-import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
-import com.dataracy.modules.user.application.service.validator.UserDuplicateValidator;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.exception.UserException;
@@ -52,18 +51,19 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
 
     /**
      * 클라이언트로부터 받은 유저 정보를 토대로 자체 회원가입을 진행한다.(이메일, 닉네임, 비밀번호, 성별)
+     * 리프레시 토큰 분산락 처리
      *
      * @param requestDto 자체 회원가입을 위한 요청 Dto
      * @return LoginResponseDto (컨트롤러에서 리프레시 토큰 쿠키 저장을 위한 response)
      */
     @Override
+    @Transactional
     @DistributedLock(
             key = "'lock:nickname:' + #requestDto.nickname()",
             waitTime = 300L,
             leaseTime = 2000L,
             retry = 2
     )
-    @Transactional
     public RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto) {
         // 이메일 중복 체크
         duplicateEmailUseCase.validateDuplicatedEmail(requestDto.email());
@@ -124,13 +124,13 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
      * @param requestDto    회원가입 요청 정보
      */
     @Override
+    @Transactional
     @DistributedLock(
             key = "'lock:nickname:' + #requestDto.nickname()",
             waitTime = 300L,
             leaseTime = 2000L,
             retry = 2
     )
-    @Transactional
     public RefreshTokenResponse signUpOAuth(String registerToken, OnboardingRequest requestDto) {
         // 레지스터 토큰 유효성 체크 및 정보 조회
         jwtValidateUseCase.validateToken(registerToken);
@@ -181,7 +181,14 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         );
     }
 
+    /**
+     * 유저의 비밀번호를 변경한다.
+     *
+     * @param userId 유저 id
+     * @param requestDto 비밀번호를 담은 dto
+     */
     @Override
+    @Transactional
     public void changePassword(Long userId, ChangePasswordRequest requestDto) {
         User savedUser = userRepositoryPort.findUserById(userId);
         switch (savedUser.getProvider()) {
@@ -189,7 +196,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
             case KAKAO -> throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO);
         }
 
-        // 패스워드 암호화
+        // 패스워드 암호화 및 변경
         String encodedPassword = passwordEncoder.encode(requestDto.password());
         userRepositoryPort.changePassword(userId, encodedPassword);
     }

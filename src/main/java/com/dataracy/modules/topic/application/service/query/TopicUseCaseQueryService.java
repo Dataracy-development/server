@@ -11,6 +11,7 @@ import com.dataracy.modules.topic.domain.status.TopicErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,7 +19,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TopicUseCaseQueryService implements FindAllTopicsUseCase, IsExistTopicUseCase {
-
     private final TopicDtoMapper topicDtoMapper;
     private final TopicRepositoryPort topicRepositoryPort;
 
@@ -27,6 +27,7 @@ public class TopicUseCaseQueryService implements FindAllTopicsUseCase, IsExistTo
      * @return 토픽 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public AllTopicsResponse allTopics() {
         List<Topic> topics = topicRepositoryPort.allTopics();
         return topicDtoMapper.toResponseDto(topics);
@@ -38,6 +39,7 @@ public class TopicUseCaseQueryService implements FindAllTopicsUseCase, IsExistTo
      * @param topicId 토픽 id
      */
     @Override
+    @Transactional(readOnly = true)
     public void validateTopicById(Long topicId) {
         Boolean isExist = topicRepositoryPort.isExistTopicById(topicId);
         if (!isExist) {

@@ -18,7 +18,6 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class EmailCommandService implements EmailSendUseCase {
-
     private final EmailSenderPort emailSenderPort;
     private final EmailRedisPort emailRedisPort;
 
@@ -28,9 +27,12 @@ public class EmailCommandService implements EmailSendUseCase {
      */
     @Override
     public void sendEmailVerificationCode(String email, EmailVerificationType type) {
+        // 인증 코드 생성
         String code = generateCode();
+        // 이메일 인증 코드 전송 목적에 따라 내용 설정
         EmailContent content = EmailContentFactory.generate(type, code);
 
+        // 이메일 전송
         try {
             emailSenderPort.send(email, content.subject(), content.body());
         } catch (Exception e) {
@@ -38,6 +40,7 @@ public class EmailCommandService implements EmailSendUseCase {
             throw new EmailException(EmailErrorStatus.FAIL_SEND_EMAIL_CODE);
         }
 
+        // 레디스에 이메일 인증 코드 저장
         emailRedisPort.saveCode(email, code, type);
     }
 

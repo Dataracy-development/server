@@ -64,6 +64,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
 
     /**
      * Refresh Token 검증 및 새로운 토큰 발급.
+     * 리프레시 토큰 분산락을 적용한다.
      *
      * @param refreshToken 클라이언트로부터 받은 리프레시 토큰
      * @return 새로 생성된 Access Token과 Refresh Token

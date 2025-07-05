@@ -86,7 +86,14 @@ public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, Is
         return userRepositoryPort.findUserByEmail(email);
     }
 
+    /**
+     * 비밀번호를 확인한다.
+     *
+     * @param userId 유저id
+     * @param requestDto 비밀번호
+     */
     @Override
+    @Transactional(readOnly = true)
     public void confirmPassword(Long userId, ConfirmPasswordRequest requestDto) {
         User user = userRepositoryPort.findUserById(userId);
         boolean isMatched = passwordEncoder.matches(requestDto.password(), user.getPassword());

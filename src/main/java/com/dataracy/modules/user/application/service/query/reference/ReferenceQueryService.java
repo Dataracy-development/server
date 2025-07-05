@@ -16,6 +16,7 @@ import com.dataracy.modules.user.domain.model.reference.VisitSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class ReferenceQueryService implements
      * @return authorLevel 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public AllAuthorLevelsResponse allAuthorLevels() {
         List<AuthorLevel> authorLevels = authorLevelRepositoryPort.allAuthorLevels();
         return authorLevelDtoMapper.toResponseDto(authorLevels);
@@ -53,6 +55,7 @@ public class ReferenceQueryService implements
      * @return occupation 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public AllOccupationsResponse allOccupations() {
         List<Occupation> occupations = occupationRepositoryPort.allOccupations();
         return occupationDtoMapper.toResponseDto(occupations);
@@ -63,6 +66,7 @@ public class ReferenceQueryService implements
      * @return visitSource 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public AllVisitSourcesResponse allVisitSources() {
         List<VisitSource> visitSources = visitSourceRepositoryPort.allVisitSources();
         return visitSourceDtoMapper.toResponseDto(visitSources);
@@ -74,6 +78,7 @@ public class ReferenceQueryService implements
      * @return 작성자 유형
      */
     @Override
+    @Transactional(readOnly = true)
     public AuthorLevel findAuthorLevel(Long authorLevelId) {
         return authorLevelRepositoryPort.findAuthorLevelById(authorLevelId);
     }
@@ -84,6 +89,7 @@ public class ReferenceQueryService implements
      * @return 경험
      */
     @Override
+    @Transactional(readOnly = true)
     public Occupation findOccupation(Long occupationId) {
         return occupationRepositoryPort.findOccupationById(occupationId);
     }
@@ -94,6 +100,7 @@ public class ReferenceQueryService implements
      * @return 방문 경로
      */
     @Override
+    @Transactional(readOnly = true)
     public VisitSource findVisitSource(Long visitSourceId) {
         return visitSourceRepositoryPort.findVisitSourceById(visitSourceId);
     }

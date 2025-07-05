@@ -1,7 +1,7 @@
 package com.dataracy.modules.auth.application.service.command;
 
-import com.dataracy.modules.auth.adapter.jwt.JwtGeneratorAdapter;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
+import com.dataracy.modules.auth.application.port.out.jwt.JwtGeneratorPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.user.domain.enums.RoleType;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class JwtCommandService implements JwtGenerateUseCase {
-    private final JwtGeneratorAdapter jwtGeneratorAdapter;
+    private final JwtGeneratorPort jwtGeneratorPort;
 
     /**
      * Register Token 발급
@@ -26,7 +26,7 @@ public class JwtCommandService implements JwtGenerateUseCase {
     @Override
     public String generateRegisterToken(String provider, String providerId, String email) {
         try {
-            return jwtGeneratorAdapter.generateRegisterToken(provider, providerId, email);
+            return jwtGeneratorPort.generateRegisterToken(provider, providerId, email);
         } catch (Exception e){
             log.error("Failed to generate register token from provider : {}, email : {}", provider, email);
             throw new AuthException(AuthErrorStatus.FAILED_GENERATE_REGISTER_TOKEN);
@@ -43,7 +43,7 @@ public class JwtCommandService implements JwtGenerateUseCase {
     @Override
     public String generateAccessToken(Long userId, RoleType role) {
         try {
-            return jwtGeneratorAdapter.generateAccessToken(userId, role);
+            return jwtGeneratorPort.generateAccessToken(userId, role);
         } catch (Exception e){
             log.error("Failed to generate access token for userId : {}", userId);
             throw new AuthException(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN);
@@ -60,7 +60,7 @@ public class JwtCommandService implements JwtGenerateUseCase {
     @Override
     public String generateRefreshToken(Long userId, RoleType role) {
         try {
-            return jwtGeneratorAdapter.generateRefreshToken(userId, role);
+            return jwtGeneratorPort.generateRefreshToken(userId, role);
         } catch (Exception e){
             log.error("Failed to generate refresh token for userId : {}", userId);
             throw new AuthException(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN);

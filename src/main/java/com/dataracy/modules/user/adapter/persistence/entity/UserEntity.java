@@ -80,10 +80,12 @@ public class UserEntity extends BaseTimeEntity {
     @Builder.Default
     private boolean isDeleted = false;
 
+    // 비밀번호 변경
     public void changePassword(String encodedPassword) {
         this.password = encodedPassword;
     }
 
+    // 유저의 흥미있는 도메인리스트에 도메인을 추가한다
     public void addUserTopic(UserTopicEntity topicEntity) {
         userTopicEntities.add(topicEntity);
         topicEntity.setUser(this);

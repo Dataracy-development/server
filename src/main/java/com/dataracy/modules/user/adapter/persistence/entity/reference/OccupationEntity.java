@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * 경험 엔티티
+ * 직업 엔티티
  */
 @Entity
 @Getter
