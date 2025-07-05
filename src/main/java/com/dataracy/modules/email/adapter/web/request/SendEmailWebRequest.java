@@ -2,6 +2,7 @@ package com.dataracy.modules.email.adapter.web.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * 이메일 인증 코드 전송을 위한 이메일 웹 요청
@@ -10,6 +11,7 @@ import jakarta.validation.constraints.Email;
 @Schema(description = "이메일 인증 코드를 보내는 웹 요청 DTO")
 public record SendEmailWebRequest(
         @Schema(description = "이메일", example = "example@gmail.com")
-        @Email(message = "유효한 이메일 형식이어야 합니다.")
+        @NotBlank(message = "이메일을 입력해주세요")
+        @Email(message = "이메일을 형식에 맞게 입력해주세요")
         String email
 ) {}

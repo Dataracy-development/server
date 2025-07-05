@@ -12,7 +12,8 @@ import jakarta.validation.constraints.Pattern;
  */
 public record VerifyCodeWebRequest(
         @Schema(description = "이메일", example = "example@gmail.com")
-        @Email(message = "유효한 이메일 형식이어야 합니다.")
+        @NotBlank(message = "이메일을 입력해주세요")
+        @Email(message = "이메일을 형식에 맞게 입력해주세요")
         String email,
 
         @Schema(description = "인증코드", example = "123456")
