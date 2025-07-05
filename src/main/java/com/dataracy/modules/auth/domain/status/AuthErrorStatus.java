@@ -12,7 +12,7 @@ public enum AuthErrorStatus implements BaseErrorCode {
     NOT_AUTHENTICATED(HttpStatus.UNAUTHORIZED, "AUTH-001", "로그인이 필요한 요청입니다."),
     NOT_FOUND_ACCESS_TOKEN_IN_HEADER(HttpStatus.UNAUTHORIZED, "AUTH-002", "요청 헤더에 액세스 토큰이 없습니다."),
     BAD_REQUEST_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "AUTH-003", "잘못된 토큰 유형입니다. REGISTER, ACCESS, REFRESH 중 하나여야 합니다."),
-    BAD_REQUEST_LOGIN(HttpStatus.BAD_REQUEST, "AUTH-004", "이메일 또는 비밀번호가 올바르지 않습니다."),
+    BAD_REQUEST_LOGIN(HttpStatus.BAD_REQUEST, "AUTH-004", "이메일 또는 비밀번호를 확인해주세요"),
 
     // 토큰 만료
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-005", "토큰이 만료되었습니다."),
