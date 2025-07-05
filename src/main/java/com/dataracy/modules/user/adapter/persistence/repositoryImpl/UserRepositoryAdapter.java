@@ -9,6 +9,7 @@ import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @RequiredArgsConstructor

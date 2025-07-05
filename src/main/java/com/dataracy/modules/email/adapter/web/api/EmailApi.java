@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "Email", description = "이메일 관련 API")
 @RequestMapping("/api/v1/email")
 public interface EmailApi {
-
     /**
      * 이메일 인증을 위한 코드를 전송한다.
      * @param webRequest 이메일

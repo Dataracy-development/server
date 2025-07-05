@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 public class EmailRedisAdapter implements EmailRedisPort {
-
     private final StringRedisTemplate redisTemplate;
 
     @Value("${aws.ses.expire-minutes}")

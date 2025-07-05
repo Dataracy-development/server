@@ -21,7 +21,6 @@ public enum EmailVerificationType {
     private final String value;
 
     public static EmailVerificationType of(String input) {
-
         return Arrays.stream(EmailVerificationType.values())
                 .filter(type -> type.value.equalsIgnoreCase(input) || type.name().equalsIgnoreCase(input))
                 .findFirst()

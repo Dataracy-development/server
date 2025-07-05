@@ -34,6 +34,7 @@ public class AuthController implements AuthApi {
      * @param response 리프레시 토큰을 쿠키에 저장
      * @return 로그인 성공
      */
+    @Override
     public ResponseEntity<SuccessResponse<Void>> login(
             SelfLoginWebRequest webRequest,
             HttpServletResponse response
@@ -63,6 +64,7 @@ public class AuthController implements AuthApi {
      * @param response     새로운 토큰을 클라이언트 쿠키에 저장하기 위한 HTTP 응답 객체
      * @return 토큰을 쿠키, 레디스 저장 성공
      */
+    @Override
     public ResponseEntity<SuccessResponse<Void>> reIssueToken(
             String refreshToken,
             HttpServletResponse response
@@ -77,6 +79,7 @@ public class AuthController implements AuthApi {
                 .body(SuccessResponse.of(AuthSuccessStatus.OK_RE_ISSUE_TOKEN));
     }
 
+    // 어세스 토큰, 어세스 토큰 만료기간, 리프레시 토큰 쿠키 저장
     private void setResponseHeaders(HttpServletResponse response, ReIssueTokenResponse responseDto) {
         CookieUtil.setCookie(response, "accessToken", responseDto.accessToken(), (int) responseDto.accessTokenExpiration() / 1000);
         CookieUtil.setCookie(response, "accessTokenExpiration", String.valueOf(responseDto.accessTokenExpiration()), (int) responseDto.accessTokenExpiration() / 1000);

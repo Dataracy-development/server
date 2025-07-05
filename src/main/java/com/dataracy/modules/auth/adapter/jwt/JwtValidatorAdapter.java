@@ -42,7 +42,6 @@ public class JwtValidatorAdapter implements JwtValidatorPort {
      * @param token Register Token 문자열
      * @return OAuth2 제공자
      */
-
     @Override
     public String getProviderFromRegisterToken(String token) {
         return jwtUtilInternal.parseToken(token).get("provider", String.class);

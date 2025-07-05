@@ -19,7 +19,6 @@ import java.util.function.Supplier;
 @Component
 @RequiredArgsConstructor
 public class RedissonDistributedLockManager {
-
     private final RedissonClient redissonClient;
 
     public <T> T execute(String key, long waitTime, long leaseTime, int retryCount, Supplier<T> action) {
