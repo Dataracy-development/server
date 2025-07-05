@@ -15,6 +15,7 @@ public class UserWebMapper {
         return new SelfSignUpRequest(
                 webRequest.email(),
                 webRequest.password(),
+                webRequest.passwordConfirm(),
                 webRequest.nickname(),
                 webRequest.authorLevelId(),
                 webRequest.occupationId(),

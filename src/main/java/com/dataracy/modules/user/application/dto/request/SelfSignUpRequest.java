@@ -6,6 +6,7 @@ import java.util.List;
  * 자체 회원가입을 위한 도메인 요청 객체
  * @param email 이메일
  * @param password 비밀번호
+ * @param passwordConfirm 비밀번호 확인
  * @param nickname 닉네임
  * @param authorLevelId 작성자 유형 아이디
  * @param occupationId 직업 아이디
@@ -16,6 +17,7 @@ import java.util.List;
 public record SelfSignUpRequest(
         String email,
         String password,
+        String passwordConfirm,
         String nickname,
         Long authorLevelId,
         Long occupationId,
