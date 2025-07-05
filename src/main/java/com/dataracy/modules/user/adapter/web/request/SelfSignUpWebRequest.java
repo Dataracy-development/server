@@ -33,14 +33,12 @@ public record SelfSignUpWebRequest(
         Long authorLevelId,
 
         @Schema(description = "직업", example = "3")
-        @Min(1)
         Long occupationId,
 
         @Schema(description = "흥미 도메인", example = "[1, 3]")
         List<Long> topicIds,
 
         @Schema(description = "방문 경로", example = "3")
-        @Min(1)
         Long visitSourceId,
 
         @Schema(description = "광고 약관 동의 여부", example = "true")
