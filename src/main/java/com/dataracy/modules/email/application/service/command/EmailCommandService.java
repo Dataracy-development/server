@@ -3,8 +3,11 @@ package com.dataracy.modules.email.application.service.command;
 import com.dataracy.modules.email.application.port.in.EmailSendUseCase;
 import com.dataracy.modules.email.application.port.out.EmailRedisPort;
 import com.dataracy.modules.email.application.port.out.EmailSenderPort;
+import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 import com.dataracy.modules.email.domain.exception.EmailException;
+import com.dataracy.modules.email.domain.model.EmailContent;
 import com.dataracy.modules.email.domain.status.EmailErrorStatus;
+import com.dataracy.modules.email.domain.support.EmailContentFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,16 +26,18 @@ public class EmailCommandService implements EmailSendUseCase {
      * 이메일 인증 코드 전송
      * @param email 이메일
      */
-    public void sendEmailVerificationCode(String email) {
+    @Override
+    public void sendEmailVerificationCode(String email, EmailVerificationType type) {
         String code = generateCode();
-        String title = "이메일 인증 코드";
-        String body = "Dataracy 이메일 인증 코드 : " + code;
+        EmailContent content = EmailContentFactory.generate(type, code);
+
         try {
-            emailSenderPort.send(email, title, body);
+            emailSenderPort.send(email, content.subject(), content.body());
         } catch (Exception e) {
             log.error("이메일 전송 실패: {}", e.getMessage(), e);
             throw new EmailException(EmailErrorStatus.FAIL_SEND_EMAIL_CODE);
         }
+
         emailRedisPort.saveCode(email, code);
     }
 
