@@ -9,6 +9,10 @@ import com.dataracy.modules.user.domain.model.reference.Occupation;
 public class OccupationEntityMapper {
     // Occupation 엔티티 -> Occupation 도메인 모델
     public static Occupation toDomain(OccupationEntity occupationEntity) {
+        if (occupationEntity == null) {
+            return null;
+        }
+
         return new Occupation(
                 occupationEntity.getId(),
                 occupationEntity.getValue(),
@@ -18,6 +22,10 @@ public class OccupationEntityMapper {
 
     // Occupation 도메인 모델 -> Occupation 엔티티
     public static OccupationEntity toEntity(Occupation occupation) {
+        if (occupation == null) {
+            return null;
+        }
+
         return OccupationEntity.toEntity(
                 occupation.id(),
                 occupation.value(),

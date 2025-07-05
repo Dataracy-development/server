@@ -9,6 +9,10 @@ import com.dataracy.modules.topic.domain.model.Topic;
 public class TopicEntityMapper {
     // 토픽 엔티티 -> 토픽 도메인 모델
     public static Topic toDomain(TopicEntity topicEntity) {
+        if (topicEntity == null) {
+            return null;
+        }
+
         return Topic.toDomain(
                 topicEntity.getId(),
                 topicEntity.getValue(),
@@ -18,6 +22,10 @@ public class TopicEntityMapper {
 
     // 토픽 도메인 모델 -> 토픽 엔티티
     public static TopicEntity toEntity(Topic topic) {
+        if (topic == null) {
+            return null;
+        }
+
         return TopicEntity.toEntity(
                 topic.getId(),
                 topic.getValue(),

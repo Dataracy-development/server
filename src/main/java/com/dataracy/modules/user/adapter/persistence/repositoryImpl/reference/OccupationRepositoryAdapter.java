@@ -36,6 +36,10 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
      */
     @Override
     public Occupation findOccupationById(Long occupationId) {
+        if (occupationId == null) {
+            return null;
+        }
+
         OccupationEntity occupationEntity = occupationJpaRepository.findById(occupationId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION));
         return OccupationEntityMapper.toDomain(occupationEntity);
