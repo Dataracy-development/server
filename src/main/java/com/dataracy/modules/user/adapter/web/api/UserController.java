@@ -1,7 +1,7 @@
 package com.dataracy.modules.user.adapter.web.api;
 
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
-import com.dataracy.modules.auth.application.port.in.TokenRedisUseCase;
+import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.adapter.web.mapper.UserWebMapper;
@@ -11,9 +11,9 @@ import com.dataracy.modules.user.adapter.web.request.SelfSignUpWebRequest;
 import com.dataracy.modules.user.application.dto.request.DuplicateNicknameRequest;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
-import com.dataracy.modules.user.application.port.in.DuplicateNicknameUseCase;
-import com.dataracy.modules.user.application.port.in.OAuthSignUpUseCase;
-import com.dataracy.modules.user.application.port.in.SelfSignUpUseCase;
+import com.dataracy.modules.user.application.port.in.signup.DuplicateNicknameUseCase;
+import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
+import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

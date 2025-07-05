@@ -1,8 +1,8 @@
 package com.dataracy.modules.auth.adapter.oauth;
 
 import com.dataracy.modules.auth.application.dto.response.OAuthUserInfo;
-import com.dataracy.modules.auth.application.port.out.OAuthUserInfoPort;
-import com.dataracy.modules.auth.application.port.out.SelectSocialProviderPort;
+import com.dataracy.modules.auth.application.port.out.oauth.OAuthUserInfoPort;
+import com.dataracy.modules.auth.application.port.out.oauth.SelectSocialProviderPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import lombok.RequiredArgsConstructor;

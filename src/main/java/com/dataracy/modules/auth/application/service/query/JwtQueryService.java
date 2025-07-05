@@ -1,8 +1,8 @@
 package com.dataracy.modules.auth.application.service.query;
 
 import com.dataracy.modules.auth.adapter.jwt.JwtProperties;
-import com.dataracy.modules.auth.application.port.in.JwtValidateUseCase;
-import com.dataracy.modules.auth.application.port.out.JwtValidatorPort;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.auth.application.port.out.jwt.JwtValidatorPort;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

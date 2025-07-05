@@ -1,4 +1,4 @@
-package com.dataracy.modules.auth.application.port.out;
+package com.dataracy.modules.auth.application.port.out.oauth;
 
 import com.dataracy.modules.auth.application.dto.response.OAuthUserInfo;
 

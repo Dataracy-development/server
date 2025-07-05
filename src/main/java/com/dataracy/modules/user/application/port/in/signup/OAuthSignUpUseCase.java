@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.port.in;
+package com.dataracy.modules.user.application.port.in.signup;
 
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;

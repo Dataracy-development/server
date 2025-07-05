@@ -1,7 +1,7 @@
 package com.dataracy.modules.auth.application.service.command;
 
-import com.dataracy.modules.auth.application.port.in.TokenRedisUseCase;
-import com.dataracy.modules.auth.application.port.out.TokenRedisPort;
+import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
+import com.dataracy.modules.auth.application.port.out.redis.TokenRedisPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

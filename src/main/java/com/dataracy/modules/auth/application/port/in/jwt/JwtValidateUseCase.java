@@ -1,4 +1,4 @@
-package com.dataracy.modules.auth.application.port.in;
+package com.dataracy.modules.auth.application.port.in.jwt;
 
 import com.dataracy.modules.user.domain.enums.RoleType;
 

@@ -1,6 +1,6 @@
 package com.dataracy.modules.auth.adapter.jwt;
 
-import com.dataracy.modules.auth.application.port.out.JwtGeneratorPort;
+import com.dataracy.modules.auth.application.port.out.jwt.JwtGeneratorPort;
 import com.dataracy.modules.auth.domain.enums.TokenType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import lombok.RequiredArgsConstructor;

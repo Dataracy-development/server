@@ -1,4 +1,4 @@
-package com.dataracy.modules.auth.application.port.in;
+package com.dataracy.modules.auth.application.port.in.auth;
 
 import com.dataracy.modules.auth.application.dto.request.SelfLoginRequest;
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
