@@ -13,6 +13,9 @@ public enum UserErrorStatus implements BaseErrorCode {
     ALREADY_SIGN_UP_USER(HttpStatus.CONFLICT, "USER-001", "이미 가입된 계정입니다."),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "USER-002", "해당 유저가 존재하지 않습니다."),
 
+    NOT_SAME_PASSWORD(HttpStatus.BAD_REQUEST, "USER-003", "비밀번호와 비밀번호 확인은 동일해야합니다"),
+
+
     // 닉네임, 이메일, 패스워드 중복
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "USER-003", "이미 사용 중인 닉네임입니다."),
     DUPLICATED_EMAIL(HttpStatus.CONFLICT, "USER-004", "중복된 이메일은 사용할 수 없습니다"),

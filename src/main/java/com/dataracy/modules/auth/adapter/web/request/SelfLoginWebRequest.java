@@ -13,11 +13,12 @@ public record SelfLoginWebRequest(
         @Email(message = "이메일을 형식에 맞게 입력해주세요")
         String email,
 
-        @Schema(description = "비밀번호", example = "juuuunny123@", minLength = 8, maxLength = 20)
-        @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력하세요.")
+        @Schema(description = "비밀번호", example = "juuuunny123@", minLength = 8)
+        @NotBlank(message = "비밀번호를 입력해주세요")
+        @Size(min = 8, message = "비밀번호는 8자 이상 20자 이하로 입력하세요.")
         @Pattern(
-                regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,20}$",
-                message = "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자리여야 합니다."
+                regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,}$",
+                message = "비밀번호는 영문, 숫자, 특수문자가 포함된 8자리 이상 문자열입니다"
         )
         String password
 ) {}

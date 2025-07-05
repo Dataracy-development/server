@@ -18,10 +18,12 @@ import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.application.service.validator.UserDuplicateValidator;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
+import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.model.reference.AuthorLevel;
 import com.dataracy.modules.user.domain.model.reference.Occupation;
 import com.dataracy.modules.user.domain.model.reference.VisitSource;
+import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -66,6 +68,11 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         duplicateEmailUseCase.validateDuplicatedEmail(requestDto.email());
         // 닉네임 중복 체크
         duplicateNicknameUseCase.validateDuplicatedNickname(requestDto.nickname());
+
+        // 비밀번호와 비밀번호 확인이 다를 경우
+        if (!requestDto.password().equals(requestDto.passwordConfirm())) {
+            throw new UserException(UserErrorStatus.NOT_SAME_PASSWORD);
+        }
 
         // 패스워드 암호화
         String encodedPassword = passwordEncoder.encode(requestDto.password());
