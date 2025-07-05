@@ -35,7 +35,7 @@ public interface EmailApi {
             @ApiResponse(responseCode = "200", description = "이메일 인증코드 전송 성공",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "500", description = "이메일 인증코드 전송 실패",
+            @ApiResponse(responseCode = "500", description = "인증번호 발송에 실패했습니다. 다시 시도해주세요",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
     })

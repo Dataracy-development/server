@@ -20,8 +20,14 @@ public class EmailQueryService implements EmailVerifyUseCase {
      */
     public void verifyCode(String email, String code) {
         String savedCode = emailRedisPort.verifyCode(email, code);
+        if (savedCode == null) {
+            throw new EmailException(EmailErrorStatus.EXPIRED_EMAIL_CODE);
+        }
         if (!savedCode.equals(code)) {
             throw new EmailException(EmailErrorStatus.FAIL_VERIFY_EMAIL_CODE);
         }
+        // 검증 완료 후 레디스에서 삭제
+        // 트래잭션 정합성을 유지해야 하는 경우는 afterCommit을 사용하지만 검증 후 삭제는 생략해도 비즈니스 로직상 문제가 없다.
+        emailRedisPort.deleteCode(email);
     }
 }

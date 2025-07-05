@@ -1,7 +1,7 @@
 package com.dataracy.modules.email.adapter.redis;
 
-import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.exception.CommonException;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.email.application.port.out.EmailRedisPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +40,7 @@ public class EmailRedisAdapter implements EmailRedisPort {
      * @param email 이메일
      * @param code 인증 코드
      */
+    @Override
     public void saveCode(String email, String code) {
         try {
             redisTemplate.opsForValue().set(getEmailKey(email), code, EXPIRE_MINUTES, TimeUnit.MINUTES);
@@ -58,8 +59,36 @@ public class EmailRedisAdapter implements EmailRedisPort {
      * @param email 이메일
      * @param code 클라이언트로부터 받은 입력 코드
      */
+    @Override
     public String verifyCode(String email, String code) {
-        String emailKey = getEmailKey(email);
-        return redisTemplate.opsForValue().get(emailKey);
+        try {
+            String emailKey = getEmailKey(email);
+            return redisTemplate.opsForValue().get(emailKey);
+        } catch (RedisConnectionFailureException e) {
+            log.error("Redis connection failure.", e);
+            throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+        } catch (DataAccessException e) {
+            log.error("Data access exception while saving refresh token.", e);
+            throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+        }
+    }
+
+    /**
+     * 해당 이메일 인증 코드를 레디스에서 삭제한다.
+     *
+     * @param email 이메일
+     */
+    @Override
+    public void deleteCode(String email) {
+        try {
+            String emailKey = getEmailKey(email);
+            redisTemplate.delete(emailKey);
+        } catch (RedisConnectionFailureException e) {
+            log.error("Redis connection failure.", e);
+            throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+        } catch (DataAccessException e) {
+            log.error("Data access exception while saving refresh token.", e);
+            throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+        }
     }
 }
