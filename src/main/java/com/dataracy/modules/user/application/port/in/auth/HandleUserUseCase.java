@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.port.in;
+package com.dataracy.modules.user.application.port.in.auth;
 
 import com.dataracy.modules.auth.application.dto.response.OAuthUserInfo;
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;

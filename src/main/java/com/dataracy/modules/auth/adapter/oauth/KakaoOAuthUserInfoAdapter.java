@@ -1,7 +1,7 @@
 package com.dataracy.modules.auth.adapter.oauth;
 
 import com.dataracy.modules.auth.application.dto.response.OAuthUserInfo;
-import com.dataracy.modules.auth.application.port.out.OAuthUserInfoPort;
+import com.dataracy.modules.auth.application.port.out.oauth.OAuthUserInfoPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

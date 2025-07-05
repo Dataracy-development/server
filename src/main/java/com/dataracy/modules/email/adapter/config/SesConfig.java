@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * AWS SES Configuration 설정
+ * AWS Ses Configuration 설정
  */
 @Configuration
 @RequiredArgsConstructor
-public class SESConfig {
+public class SesConfig {
 
     @Value("${aws.ses.access-key}")
     private String accessKey;

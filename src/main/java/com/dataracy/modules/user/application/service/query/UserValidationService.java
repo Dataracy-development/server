@@ -1,7 +1,7 @@
 package com.dataracy.modules.user.application.service.query;
 
 import com.dataracy.modules.user.application.dto.request.DuplicateNicknameRequest;
-import com.dataracy.modules.user.application.port.in.DuplicateNicknameUseCase;
+import com.dataracy.modules.user.application.port.in.signup.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.service.validator.UserDuplicateValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

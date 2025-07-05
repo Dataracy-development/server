@@ -1,6 +1,6 @@
 package com.dataracy.modules.security.filter;
 
-import com.dataracy.modules.auth.application.port.in.JwtValidateUseCase;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.exception.BusinessException;

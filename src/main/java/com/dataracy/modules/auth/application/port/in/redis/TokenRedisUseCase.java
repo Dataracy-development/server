@@ -1,4 +1,4 @@
-package com.dataracy.modules.auth.application.port.in;
+package com.dataracy.modules.auth.application.port.in.redis;
 
 /**
  * 리프레시 토큰 레디스 유스케이스

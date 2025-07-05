@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.port.in;
+package com.dataracy.modules.user.application.port.in.signup;
 
 import com.dataracy.modules.user.application.dto.request.DuplicateNicknameRequest;
 

@@ -1,7 +1,7 @@
 package com.dataracy.modules.auth.adapter.redis;
 
 import com.dataracy.modules.auth.adapter.jwt.JwtProperties;
-import com.dataracy.modules.auth.application.port.out.TokenRedisPort;
+import com.dataracy.modules.auth.application.port.out.redis.TokenRedisPort;
 import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import lombok.RequiredArgsConstructor;

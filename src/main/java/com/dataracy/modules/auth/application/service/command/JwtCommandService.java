@@ -1,7 +1,7 @@
 package com.dataracy.modules.auth.application.service.command;
 
 import com.dataracy.modules.auth.adapter.jwt.JwtGeneratorAdapter;
-import com.dataracy.modules.auth.application.port.in.JwtGenerateUseCase;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.user.domain.enums.RoleType;

@@ -2,7 +2,7 @@ package com.dataracy.modules.security.config;
 
 import com.dataracy.modules.auth.adapter.handler.OAuth2LoginFailureHandler;
 import com.dataracy.modules.auth.adapter.handler.OAuth2LoginSuccessHandler;
-import com.dataracy.modules.auth.application.port.in.JwtValidateUseCase;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.security.filter.JwtFilter;
 import com.dataracy.modules.security.handler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;

@@ -1,14 +1,14 @@
 package com.dataracy.modules.user.application.service.command;
 
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
-import com.dataracy.modules.auth.application.port.in.JwtGenerateUseCase;
-import com.dataracy.modules.auth.application.port.in.JwtValidateUseCase;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.topic.application.port.in.IsExistTopicUseCase;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
-import com.dataracy.modules.user.application.port.in.OAuthSignUpUseCase;
-import com.dataracy.modules.user.application.port.in.SelfSignUpUseCase;
+import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
+import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.reference.FindAuthorLevelUseCase;
 import com.dataracy.modules.user.application.port.in.reference.FindOccupationUseCase;
 import com.dataracy.modules.user.application.port.in.reference.FindVisitSourceUseCase;
