@@ -3,15 +3,19 @@ package com.dataracy.modules.user.adapter.web.api;
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.adapter.web.mapper.UserWebMapper;
+import com.dataracy.modules.user.adapter.web.request.ChangePasswordWebRequest;
 import com.dataracy.modules.user.adapter.web.request.DuplicateNicknameWebRequest;
 import com.dataracy.modules.user.adapter.web.request.OnboardingWebRequest;
 import com.dataracy.modules.user.adapter.web.request.SelfSignUpWebRequest;
+import com.dataracy.modules.user.application.dto.request.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.DuplicateNicknameRequest;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
-import com.dataracy.modules.user.application.port.in.signup.DuplicateNicknameUseCase;
+import com.dataracy.modules.user.application.port.in.user.ChangePasswordUseCase;
+import com.dataracy.modules.user.application.port.in.user.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
@@ -32,6 +36,7 @@ public class UserController implements UserApi {
     private final OAuthSignUpUseCase oauthSignUpUseCase;
 
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
+    private final ChangePasswordUseCase changePasswordUseCase;
     private final TokenRedisUseCase tokenRedisUseCase;
 
     /**
@@ -97,6 +102,19 @@ public class UserController implements UserApi {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_NOT_DUPLICATED_NICKNAME));
     }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> changePassword(
+            Long userId,
+            ChangePasswordWebRequest webRequest
+    ) {
+        ChangePasswordRequest requestDto = userWebMapper.toApplicationDto(webRequest);
+
+        changePasswordUseCase.changePassword(userId, requestDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(UserSuccessStatus.OK_CHANGE_PASSWORD));
+    }
+
 
     @GetMapping("/onboarding")
     public String onboarding(Model model) {

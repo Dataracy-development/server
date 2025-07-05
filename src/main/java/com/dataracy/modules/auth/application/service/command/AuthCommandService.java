@@ -12,7 +12,7 @@ import com.dataracy.modules.auth.application.port.out.redis.TokenRedisPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.support.lock.DistributedLock;
-import com.dataracy.modules.user.application.port.in.auth.IsLoginPossibleUseCase;
+import com.dataracy.modules.user.application.port.in.user.IsLoginPossibleUseCase;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.model.User;
 import lombok.RequiredArgsConstructor;

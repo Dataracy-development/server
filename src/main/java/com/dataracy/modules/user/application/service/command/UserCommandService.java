@@ -5,13 +5,15 @@ import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.topic.application.port.in.IsExistTopicUseCase;
+import com.dataracy.modules.user.application.dto.request.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
 import com.dataracy.modules.user.application.port.in.reference.FindAuthorLevelUseCase;
 import com.dataracy.modules.user.application.port.in.reference.FindOccupationUseCase;
 import com.dataracy.modules.user.application.port.in.reference.FindVisitSourceUseCase;
-import com.dataracy.modules.user.application.port.in.signup.DuplicateEmailUseCase;
-import com.dataracy.modules.user.application.port.in.signup.DuplicateNicknameUseCase;
+import com.dataracy.modules.user.application.port.in.user.ChangePasswordUseCase;
+import com.dataracy.modules.user.application.port.in.user.DuplicateEmailUseCase;
+import com.dataracy.modules.user.application.port.in.user.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
@@ -33,13 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase {
+public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase, ChangePasswordUseCase {
     private final UserRepositoryPort userRepositoryPort;
 
     private final JwtGenerateUseCase jwtGenerateUseCase;
     private final JwtValidateUseCase jwtValidateUseCase;
     private final IsExistTopicUseCase isExistTopicUseCase;
-    private final UserDuplicateValidator userDuplicateValidator;
     private final PasswordEncoder passwordEncoder;
 
     private final FindAuthorLevelUseCase findAuthorLevelUseCase;
@@ -178,5 +179,12 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 refreshToken,
                 jwtValidateUseCase.getRefreshTokenExpirationTime()
         );
+    }
+
+    @Override
+    public void changePassword(Long userId, ChangePasswordRequest requestDto) {
+        // 패스워드 암호화
+        String encodedPassword = passwordEncoder.encode(requestDto.password());
+        userRepositoryPort.changePassword(userId, encodedPassword);
     }
 }

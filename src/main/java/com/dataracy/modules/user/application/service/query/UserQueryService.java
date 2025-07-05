@@ -6,7 +6,7 @@ import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponse;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.user.application.port.in.auth.HandleUserUseCase;
-import com.dataracy.modules.user.application.port.in.auth.IsLoginPossibleUseCase;
+import com.dataracy.modules.user.application.port.in.user.IsLoginPossibleUseCase;
 import com.dataracy.modules.user.application.port.in.auth.IsNewUserUseCase;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.domain.model.User;

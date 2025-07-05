@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.port.in.signup;
+package com.dataracy.modules.user.application.port.in.user;
 
 /**
  * 이메일 중복 체크 유스케이스

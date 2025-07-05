@@ -80,6 +80,9 @@ public class UserEntity extends BaseTimeEntity {
     @Builder.Default
     private boolean isDeleted = false;
 
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 
     public void addUserTopic(UserTopicEntity topicEntity) {
         userTopicEntities.add(topicEntity);
