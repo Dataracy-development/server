@@ -1,8 +1,12 @@
 package com.dataracy.modules.user.application.service.query;
 
-import com.dataracy.modules.user.application.dto.request.DuplicateNicknameRequest;
+import com.dataracy.modules.user.application.port.in.signup.DuplicateEmailUseCase;
 import com.dataracy.modules.user.application.port.in.signup.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.service.validator.UserDuplicateValidator;
+import com.dataracy.modules.user.domain.enums.ProviderType;
+import com.dataracy.modules.user.domain.exception.UserException;
+import com.dataracy.modules.user.domain.model.User;
+import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,19 +18,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserValidationService implements DuplicateNicknameUseCase {
+public class UserValidationService implements DuplicateNicknameUseCase, DuplicateEmailUseCase {
     private final UserDuplicateValidator userDuplicateValidator;
 
     /**
      * 닉네임 중복 확인.
      *
-     * @param requestDto 닉네임 중복 확인 요청 정보
+     * @param nickname 닉네임
      */
     @Override
     @Transactional(readOnly = true)
-    public void validateDuplicatedNickname(DuplicateNicknameRequest requestDto) {
-        String nickname = requestDto.nickname();
+    public void validateDuplicatedNickname(String nickname) {
         userDuplicateValidator.duplicateNickname(nickname);
         log.info("닉네임 사용 가능: {}", nickname);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateDuplicatedEmail(String email) {
+        User duplicatedUser = userDuplicateValidator.duplicateEmail(email);
+        if (duplicatedUser != null) {
+            ProviderType providerType = duplicatedUser.getProvider();
+            switch (providerType) {
+                case GOOGLE -> throw new UserException(UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
+                case KAKAO -> throw new UserException(UserErrorStatus.DUPLICATED_KAKAO_EMAIL);
+                case LOCAL -> throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
+            }
+        }
     }
 }
