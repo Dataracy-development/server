@@ -20,44 +20,43 @@ def verify_signature(payload, signature):
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    # ── 1. 보안 검증
     payload = request.get_data()
     signature = request.headers.get("X-Hub-Signature-256")
     if not verify_signature(payload, signature):
         abort(400, "Invalid signature")
 
     event = request.headers.get("X-GitHub-Event")
+    print(f"📩 Received event: {event}")
+
     if event != "pull_request":
+        print("⛔ Not a PR event.")
         return "Ignored", 200
 
     data = request.json
+    action = data.get("action")
+    print(f"🪄 PR Action: {action}")
 
-    # debug 로그 찍기
+    if action not in ["opened", "synchronize"]:
+        print("⛔ Action not in [opened, synchronize]")
+        return "Ignored", 200
+
+    # 저장해서 실제 payload 분석
     import json
     with open("payload_debug.json", "w") as f:
         json.dump(data, f, indent=2)
 
-    action = data.get("action")
-    if action not in ["opened", "synchronize"]:
-        return "Ignored", 200
-
     pr = data.get("pull_request", {})
     pr_number = pr.get("number")
     diff_url = pr.get("diff_url") or pr.get("patch_url") or None
+    print(f"🔗 PR #{pr_number} Diff URL: {diff_url}")
 
-    # ❗ diff_url이 없는 경우 방어 처리
     if not diff_url:
-        print(f"❗ diff_url/patch_url not found in PR #{pr_number}. Full PR payload:")
-        print(pr)  # 로그 찍어서 실제 뭐가 들어오는지 확인
+        print("❗ diff_url/patch_url not found.")
         return "Ignored", 200
 
-
-    # ── 2. Diff 조회
     diff_text = requests.get(diff_url).text
 
-    # ── 3. 전체 요약 (Conversation 탭에 새로 추가)
     summary_prompt = build_summary_prompt(diff_text)
-
     chunks = split_prompt(summary_prompt, max_tokens=8000)
 
     summary_parts = []
@@ -73,7 +72,6 @@ def webhook():
 
     summary_body = "\n\n".join(summary_parts)
 
-    # ── 4. 요약 댓글 업로드
     requests.post(
         f"https://api.github.com/repos/{GITHUB_REPO}/issues/{pr_number}/comments",
         headers={
@@ -85,7 +83,6 @@ def webhook():
         }
     )
 
-    # ── 5. 리뷰 코멘트 추가
     review_comments = generate_review_comments(diff_text)
     for comment in review_comments:
         requests.post(
@@ -100,6 +97,7 @@ def webhook():
         )
 
     return "Review posted", 200
+
 
 
 # ✅컨테이너가 계속 실행되도록 하기 위해선 이 부분이 꼭 필요하다
