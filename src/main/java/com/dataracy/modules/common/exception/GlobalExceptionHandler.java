@@ -1,10 +1,9 @@
 package com.dataracy.modules.common.exception;
 
-import com.dataracy.modules.common.dto.ErrorResponse;
-import com.dataracy.modules.common.lock.LockAcquisitionException;
+import com.dataracy.modules.common.dto.response.ErrorResponse;
 import com.dataracy.modules.common.status.CommonErrorStatus;
-import com.dataracy.modules.common.status.CommonException;
-import com.dataracy.modules.user.status.UserException;
+import com.dataracy.modules.common.support.lock.LockAcquisitionException;
+import com.dataracy.modules.user.domain.exception.UserException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -32,7 +31,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
     // 커스텀 비즈니스(도메인) 예외 처리
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(BusinessException e) {
