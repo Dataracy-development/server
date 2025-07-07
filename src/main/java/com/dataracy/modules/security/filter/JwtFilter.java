@@ -63,6 +63,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
+        log.info("[JWT FILTER DEBUG] Request URI: {}", request.getRequestURI());
+
         return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
                 || path.startsWith("/.well-known")
                 || path.startsWith("/static") || path.equals("/webhook")
