@@ -69,3 +69,7 @@ aws:
     region: ${SES_REGION}
     sender: ${SES_SENDER}
     expire-minutes: ${SES_EXPIRE_MINUTES}
+
+sendgrid:
+  api-key: ${SENDGRID_API_KEY}
+  sender: ${SENDGRID_SENDER}

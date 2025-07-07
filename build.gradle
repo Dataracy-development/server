@@ -64,8 +64,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.security:spring-security-test'
 
-	// SES & MAIL
+	// Send Grid && SES & MAIL
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'com.sendgrid:sendgrid-java:4.9.3'
 	implementation 'com.amazonaws:aws-java-sdk-ses:1.12.3'
 
 	// Redis & Redisson & Kafka
