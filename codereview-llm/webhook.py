@@ -5,7 +5,7 @@ import requests
 from flask import Flask, request, abort
 from reviewer import generate_review_comments
 from prompt_summary import build_summary_prompt
-from utils import call_gpt
+from utils import call_gpt, extract_changed_lines
 
 app = Flask(__name__)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
@@ -35,14 +35,15 @@ def webhook():
     pr_number = pr["number"]
     diff_url = pr["diff_url"]
 
-    if action not in ["opened"]:
+    if action not in ["opened", "synchronize"]:
         return "Ignored", 200
 
     # ── 2. Diff 조회
     diff_text = requests.get(diff_url).text
 
     # ── 3. 전체 요약 (Conversation 탭에 새로 추가)
-    summary_prompt = build_summary_prompt(diff_text)
+    reduced_diff = extract_changed_lines(diff_text)
+    summary_prompt = build_summary_prompt(reduced_diff)
     summary_response = call_gpt(summary_prompt).strip()
 
     requests.post(
