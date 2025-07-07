@@ -31,18 +31,26 @@ def webhook():
         return "Ignored", 200
 
     data = request.json
+
+    # debug 로그 찍기
+    import json
+    with open("payload_debug.json", "w") as f:
+        json.dump(data, f, indent=2)
+
     action = data.get("action")
     if action not in ["opened", "synchronize"]:
         return "Ignored", 200
 
     pr = data.get("pull_request", {})
     pr_number = pr.get("number")
-    diff_url = pr.get("diff_url")
+    diff_url = pr.get("diff_url") or pr.get("patch_url") or None
 
     # ❗ diff_url이 없는 경우 방어 처리
     if not diff_url:
-        print("❗ diff_url not found. Skipping.")
+        print(f"❗ diff_url/patch_url not found in PR #{pr_number}. Full PR payload:")
+        print(pr)  # 로그 찍어서 실제 뭐가 들어오는지 확인
         return "Ignored", 200
+
 
     # ── 2. Diff 조회
     diff_text = requests.get(diff_url).text
