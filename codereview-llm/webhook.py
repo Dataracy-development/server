@@ -5,7 +5,7 @@ import requests
 from flask import Flask, request, abort
 from reviewer import generate_review_comments
 from prompt_summary import build_summary_prompt
-from utils import call_gpt
+from utils import call_gpt, split_prompt
 
 app = Flask(__name__)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
@@ -43,8 +43,22 @@ def webhook():
 
     # ── 3. 전체 요약 (Conversation 탭에 새로 추가)
     summary_prompt = build_summary_prompt(diff_text)
-    summary_response = call_gpt(summary_prompt).strip()
 
+    # 최대 토큰 8000 기준으로 쪼갬
+    chunks = split_prompt(summary_prompt, max_tokens=8000)
+
+    summary_parts = []
+    for idx, chunk in enumerate(chunks, 1):
+        try:
+            response = call_gpt(chunk).strip()
+            summary_parts.append(f"### 📄 파트 {idx}\n{response}")
+        except Exception as e:
+            summary_parts.append(f"❌ 파트 {idx} 처리 실패: {str(e)}")
+            break  # 또는 계속 진행할지 선택 가능
+
+    summary_body = "\n\n".join(summary_parts)
+
+    # GitHub에 전체 요약 코멘트 업로드
     requests.post(
         f"https://api.github.com/repos/{GITHUB_REPO}/issues/{pr_number}/comments",
         headers={
@@ -52,7 +66,7 @@ def webhook():
             "Accept": "application/vnd.github+json",
         },
         json={
-            "body": f"🚀 **GPT PR 전체 요약**\n\n{summary_response}"
+            "body": f"🚀 **GPT PR 전체 요약 (총 {len(chunks)}개 파트)**\n\n{summary_body}"
         }
     )
 

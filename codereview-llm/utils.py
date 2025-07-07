@@ -1,8 +1,29 @@
 import os
 import json
 from openai import OpenAI
+import tiktoken
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+def num_tokens_from_string(string: str, model: str = "gpt-4o") -> int:
+    encoding = tiktoken.encoding_for_model(model)
+    return len(encoding.encode(string))
+
+def split_prompt(prompt: str, max_tokens: int = 8000) -> list[str]:
+    lines = prompt.splitlines()
+    chunks = []
+    current = ""
+
+    for line in lines:
+        if num_tokens_from_string(current + line) > max_tokens:
+            chunks.append(current.strip())
+            current = line + "\n"
+        else:
+            current += line + "\n"
+
+    if current:
+        chunks.append(current.strip())
+    return chunks
 
 def call_gpt(prompt):
     response = client.chat.completions.create(
