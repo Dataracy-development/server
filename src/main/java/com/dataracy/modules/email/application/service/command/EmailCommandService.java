@@ -8,18 +8,27 @@ import com.dataracy.modules.email.domain.exception.EmailException;
 import com.dataracy.modules.email.domain.model.EmailContent;
 import com.dataracy.modules.email.domain.status.EmailErrorStatus;
 import com.dataracy.modules.email.domain.support.EmailContentFactory;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class EmailCommandService implements EmailSendUseCase {
     private final EmailSenderPort emailSenderPort;
     private final EmailRedisPort emailRedisPort;
+
+    // 이메일 인증 방식이 여러개이므로 명시적으로 설정
+    // Qualifier는 생성자 주입시점에 반영되지 않아 필드위에 바로 사용할 수 없다.
+    public EmailCommandService(
+            @Qualifier("emailSendGridAdapter") EmailSenderPort emailSenderPort,
+            EmailRedisPort emailRedisPort
+    ) {
+        this.emailSenderPort = emailSenderPort;
+        this.emailRedisPort = emailRedisPort;
+    }
 
     /**
      * 이메일 인증 코드 전송

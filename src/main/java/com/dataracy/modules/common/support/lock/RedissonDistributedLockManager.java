@@ -54,8 +54,8 @@ public class RedissonDistributedLockManager {
 
             } catch (BusinessException | CommonException e) {
                 log.warn("[LOCK] 비즈니스 예외 발생 - key: {}, message: {}", key, e.getMessage());
-                throw e; // ✅ 비즈니스 예외는 그대로 던짐
-
+                // 비즈니스 예외는 그대로 던짐
+                throw e;
             } catch (RuntimeException e) {
                 // action.get() 내부에서 발생한 비즈니스 예외가 RuntimeException으로 감싸져 들어온 경우 다시 풀어줌
                 Throwable cause = e.getCause();
