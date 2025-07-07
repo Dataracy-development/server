@@ -1,10 +1,17 @@
 package com.dataracy.modules.user.domain.model;
 
-import com.dataracy.modules.user.domain.enums.*;
+import com.dataracy.modules.user.domain.enums.ProviderType;
+import com.dataracy.modules.user.domain.enums.RoleType;
+import com.dataracy.modules.user.domain.model.reference.AuthorLevel;
+import com.dataracy.modules.user.domain.model.reference.Occupation;
+import com.dataracy.modules.user.domain.model.reference.VisitSource;
 import lombok.*;
 
 import java.util.List;
 
+/**
+ * 유저 도메인 모델
+ */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -13,37 +20,37 @@ public class User {
 
     private Long id;
 
-    private ProviderStatusType provider;
+    private ProviderType provider;
     private String providerId;
-    private RoleStatusType role;
+    private RoleType role;
 
     private String email;
     private String password;
 
     private String nickname;
-    private AuthorLevelStatusType authorLevel;
-    private OccupationStatusType occupation;
+    private AuthorLevel authorLevel;
+    private Occupation occupation;
 
-    // 다른 어그리거트 Topic 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
+    // 타 어그리거트인 Topic 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
     private List<Long> topicIds;
 
-    private VisitSourceStatusType visitSource;
+    private VisitSource visitSource;
     private boolean isAdTermsAgreed;
 
     private boolean isDeleted;
 
     public static User toDomain(
             Long id,
-            ProviderStatusType provider,
+            ProviderType provider,
             String providerId,
-            RoleStatusType role,
+            RoleType role,
             String email,
             String password,
             String nickname,
-            AuthorLevelStatusType authorLevel,
-            OccupationStatusType occupation,
+            AuthorLevel authorLevel,
+            Occupation occupation,
             List<Long> topicIds,
-            VisitSourceStatusType visitSource,
+            VisitSource visitSource,
             boolean isAdTermsAgreed,
             boolean isDeleted
     ) {

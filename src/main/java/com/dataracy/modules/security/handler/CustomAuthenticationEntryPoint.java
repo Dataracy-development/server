@@ -1,6 +1,6 @@
 package com.dataracy.modules.security.handler;
 
-import com.dataracy.modules.common.dto.ErrorResponse;
+import com.dataracy.modules.common.dto.response.ErrorResponse;
 import com.dataracy.modules.common.exception.BusinessException;
 import com.dataracy.modules.common.status.BaseErrorCode;
 import com.dataracy.modules.common.status.CommonErrorStatus;
@@ -17,7 +17,7 @@ import java.io.IOException;
 
 /**
  * 서비스와 관련된 에러사항은 ControllerAdvice에서 처리할 수 있지만
- * securityContext내의 에러사항은 시큐리티의 exceptionHandlingp에서 처리하기 때문에
+ * securityContext내의 에러사항은 시큐리티의 exceptionHandling에서 처리하기 때문에
  * CustomAuthenticationEntryPoint를 통해 에러처리를 진행한다.
  */
 @Component
@@ -29,6 +29,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         this.objectMapper = objectMapper;
     }
 
+    // security context 과정에서 일어난 에러르 받아 직접 처리해준다.
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,

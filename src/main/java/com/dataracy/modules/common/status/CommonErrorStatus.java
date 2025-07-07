@@ -7,14 +7,12 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum CommonErrorStatus implements BaseErrorCode {
-
     // Global Errors
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "GLOBAL-500", "서버 내부 오류가 발생했습니다. 관리자에게 문의하세요."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "GLOBAL-400", "잘못된 요청입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "GLOBAL-401", "인증이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "GLOBAL-403", "접근이 금지된 요청입니다."),
     NOT_FOUND_HANDLER(HttpStatus.NOT_FOUND, "GLOBAL-404", "요청 경로를 찾을 수 없습니다."),
-    NOT_FOUND_RESOURCE(HttpStatus.NOT_FOUND, "GLOBAL-404", "요청한 리소스를 찾을 수 없습니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "GLOBAL-405", "허용되지 않는 HTTP 메서드입니다."),
     CONFLICT(HttpStatus.CONFLICT, "GLOBAL-409", "중복된 값입니다."),
     UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "GLOBAL-415", "지원되지 않는 미디어 타입입니다."),
@@ -37,9 +35,9 @@ public enum CommonErrorStatus implements BaseErrorCode {
     CAN_NOT_INSTANTIATE_HEADER_UTILITY_CLASS(HttpStatus.INTERNAL_SERVER_ERROR, "UTIL-002", "HeaderUtil은 인스턴스가 불가능한 클래스입니다."),
     CAN_NOT_INSTANTIATE_FILE_UTILITY_CLASS(HttpStatus.INTERNAL_SERVER_ERROR, "UTIL-003", "FileUtil은 인스턴스가 불가능한 클래스입니다."),
 
+    // Redis Errors
     REDIS_CONNECTION_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS-001", "레디스 연결에 실패했습니다."),
     DATA_ACCESS_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS-002", "네트워크 오류로 데이터 접근에 실패했습니다."),
-
     ;
 
     private final HttpStatus httpStatus;
