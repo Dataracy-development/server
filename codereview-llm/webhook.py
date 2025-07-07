@@ -5,7 +5,8 @@ import requests
 from flask import Flask, request, abort
 from reviewer import generate_review_comments
 from prompt_summary import build_summary_prompt
-from utils import call_gpt, split_prompt
+from utils import call_gpt, split_prompt, save_failed_prompt
+import time
 
 app = Flask(__name__)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
@@ -35,7 +36,7 @@ def webhook():
     pr_number = pr["number"]
     diff_url = pr["diff_url"]
 
-    if action not in ["opened"]:
+    if action not in ["opened", "synchronize"]:
         return "Ignored", 200
 
     # ── 2. Diff 조회
@@ -52,9 +53,11 @@ def webhook():
         try:
             response = call_gpt(chunk).strip()
             summary_parts.append(f"### 📄 파트 {idx}\n{response}")
+            time.sleep(3)  # ✅ 각 요청 사이에 3초 지연 추가 (TPM 제한 회피)
         except Exception as e:
             summary_parts.append(f"❌ 파트 {idx} 처리 실패: {str(e)}")
-            break  # 또는 계속 진행할지 선택 가능
+            save_failed_prompt(chunk, str(e))  # ⬅️ 실패한 프롬프트 저장
+            break
 
     summary_body = "\n\n".join(summary_parts)
 
