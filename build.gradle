@@ -53,6 +53,20 @@ dependencies {
 	// MySQL
 	implementation 'com.mysql:mysql-connector-j'
 
+	// === Kafka ===
+	implementation 'org.springframework.kafka:spring-kafka'
+
+	// === Elasticsearch (Spring Data) ===
+	implementation 'org.springframework.data:spring-data-elasticsearch'
+	implementation 'co.elastic.clients:elasticsearch-java:8.13.0' // 최신 Java 클라이언트 (ES 8.x 이상용)
+
+	// === Jackson (Elasticsearch JSON 처리용) ===
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+	// === 로그 ===
+	implementation 'org.slf4j:slf4j-api'
+	implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
+
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -69,11 +83,10 @@ dependencies {
 	implementation 'com.sendgrid:sendgrid-java:4.9.3'
 	implementation 'com.amazonaws:aws-java-sdk-ses:1.12.3'
 
-	// Redis & Redisson & Kafka
+	// Redis & Redisson
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.redisson:redisson:3.27.0'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
-	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.apache.commons:commons-pool2'
 
 	// AWS S3
