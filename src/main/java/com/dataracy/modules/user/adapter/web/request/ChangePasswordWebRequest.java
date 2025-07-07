@@ -14,5 +14,9 @@ public record ChangePasswordWebRequest(
                 regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,}$",
                 message = "비밀번호는 영문, 숫자, 특수문자가 포함된 8자리 이상 문자열입니다"
         )
-        String password
+        String password,
+
+        @Schema(description = "비밀번호 확인", example = "juuuunny123@")
+        @NotBlank(message = "비밀번호 확인을 입력해주세요")
+        String passwordConfirm
 ) {}

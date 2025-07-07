@@ -193,6 +193,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     @Override
     @Transactional
     public void changePassword(Long userId, ChangePasswordRequest requestDto) {
+        if (!requestDto.password().equals(requestDto.passwordConfirm())) {
+            throw new UserException(UserErrorStatus.NOT_SAME_PASSWORD);
+        }
+
         User savedUser = userRepositoryPort.findUserById(userId);
         switch (savedUser.getProvider()) {
             case GOOGLE -> throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE);

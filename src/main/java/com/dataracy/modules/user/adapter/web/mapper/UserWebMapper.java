@@ -43,7 +43,8 @@ public class UserWebMapper {
     // 비밀번호 변경 웹 요청 DTO -> 비밀번호 변경 도메인 요청 DTO
     public ChangePasswordRequest toApplicationDto(ChangePasswordWebRequest webRequest) {
         return new ChangePasswordRequest(
-                webRequest.password()
+                webRequest.password(),
+                webRequest.passwordConfirm()
         );
     }
 
