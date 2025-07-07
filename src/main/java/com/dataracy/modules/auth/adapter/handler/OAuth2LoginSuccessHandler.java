@@ -56,36 +56,45 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         // 신규 유저 처리
         if (isNewUserUseCase.isNewUser(oAuthUserInfo)) {
-            // 신규 유저일 경우 레지스터 토큰을 발급한다.
-            RegisterTokenResponse registerTokenResponse = handleUserUseCase.handleNewUser(oAuthUserInfo);
-            // 레지스터 토큰을 쿠키에 저장한다.
-            CookieUtil.setCookie(
-                    response,
-                    "registerToken",
-                    registerTokenResponse.registerToken(),
-                    (int) registerTokenResponse.registerTokenExpiration() / 1000);
-            // 소셜 로그인 온보딩 페이지로 리다이렉션
-            getRedirectStrategy().sendRedirect(request, response, jwtProperties.getRedirectOnboarding());
+            handleNewUser(oAuthUserInfo, request, response);
         }
-
         // 기존 유저 처리
         else {
-            // 기존 유저일 경우 리프레시 토큰을 발급한다.
-            RefreshTokenResponse refreshTokenResponseDto = handleUserUseCase.handleExistingUser(oAuthUserInfo);
-            // 리프레시 토큰을 쿠키에 저장한다.
-            CookieUtil.setCookie(
-                    response,
-                    "refreshToken",
-                    refreshTokenResponseDto.refreshToken(),
-                    (int) refreshTokenResponseDto.refreshTokenExpiration() / 1000
-            );
-            // 리프레시 토큰을 레디스에 저장한다.
-            tokenRedisPort.saveRefreshToken(
-                    refreshTokenResponseDto.userId().toString(),
-                    refreshTokenResponseDto.refreshToken()
-            );
-            // 메인페이지로 리다이렉션
-            getRedirectStrategy().sendRedirect(request, response, jwtProperties.getRedirectBase());
+            handleExistingUser(oAuthUserInfo, request, response);
         }
+    }
+
+    // 신규 유저 처리
+    private void handleNewUser(OAuthUserInfo oAuthUserInfo, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 신규 유저일 경우 레지스터 토큰을 발급한다.
+        RegisterTokenResponse registerTokenResponse = handleUserUseCase.handleNewUser(oAuthUserInfo);
+        // 레지스터 토큰을 쿠키에 저장한다.
+        CookieUtil.setCookie(
+                response,
+                "registerToken",
+                registerTokenResponse.registerToken(),
+                (int) registerTokenResponse.registerTokenExpiration() / 1000);
+        // 소셜 로그인 온보딩 페이지로 리다이렉션
+        getRedirectStrategy().sendRedirect(request, response, jwtProperties.getRedirectOnboarding());
+    }
+
+    // 기존 유저 처리
+    private void handleExistingUser(OAuthUserInfo oAuthUserInfo, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 기존 유저일 경우 리프레시 토큰을 발급한다.
+        RefreshTokenResponse refreshTokenResponseDto = handleUserUseCase.handleExistingUser(oAuthUserInfo);
+        // 리프레시 토큰을 쿠키에 저장한다.
+        CookieUtil.setCookie(
+                response,
+                "refreshToken",
+                refreshTokenResponseDto.refreshToken(),
+                (int) refreshTokenResponseDto.refreshTokenExpiration() / 1000
+        );
+        // 리프레시 토큰을 레디스에 저장한다.
+        tokenRedisPort.saveRefreshToken(
+                refreshTokenResponseDto.userId().toString(),
+                refreshTokenResponseDto.refreshToken()
+        );
+        // 메인페이지로 리다이렉션
+        getRedirectStrategy().sendRedirect(request, response, jwtProperties.getRedirectBase());
     }
 }
