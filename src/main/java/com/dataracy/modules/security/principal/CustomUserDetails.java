@@ -1,6 +1,6 @@
 package com.dataracy.modules.security.principal;
 
-import com.dataracy.modules.user.domain.enums.RoleStatusType;
+import com.dataracy.modules.user.domain.enums.RoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,11 +9,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * 인증 유저 정보를 답는 커스텀 정보
+ */
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
     private final Long userId;
-    private final RoleStatusType role;
+    private final RoleType role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -22,7 +25,7 @@ public class CustomUserDetails implements UserDetails {
 
     public Long getUserId() { return userId; }
 
-    public RoleStatusType getRole() { return role; }
+    public RoleType getRole() { return role; }
 
     @Override
     public String getPassword() { return null; }
