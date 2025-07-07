@@ -88,7 +88,7 @@ public class UserEntity extends BaseTimeEntity {
     // 유저의 흥미있는 도메인리스트에 도메인을 추가한다
     public void addUserTopic(UserTopicEntity topicEntity) {
         userTopicEntities.add(topicEntity);
-        topicEntity.setUser(this);
+        topicEntity.assignUser(this);
     }
 
     public static UserEntity toEntity(

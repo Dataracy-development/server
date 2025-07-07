@@ -29,11 +29,11 @@ public class UserTopicEntity {
         UserTopicEntity userTopicEntity = UserTopicEntity.builder()
                 .topicId(topicId)
                 .build();
-        userTopicEntity.setUser(user);
+        userTopicEntity.assignUser(user);
         return userTopicEntity;
     }
 
-    public void setUser(UserEntity user) {
+    public void assignUser(UserEntity user) {
         this.user = user;
     }
 }
