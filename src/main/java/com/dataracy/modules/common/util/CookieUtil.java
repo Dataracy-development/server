@@ -1,7 +1,7 @@
 package com.dataracy.modules.common.util;
 
+import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.status.CommonErrorStatus;
-import com.dataracy.modules.common.status.CommonException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

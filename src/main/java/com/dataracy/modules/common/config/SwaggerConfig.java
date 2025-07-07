@@ -1,6 +1,6 @@
 package com.dataracy.modules.common.config;
 
-import com.dataracy.modules.common.properties.SwaggerProperties;
+import com.dataracy.modules.common.config.properties.SwaggerProperties;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -43,6 +43,7 @@ public class SwaggerConfig {
                 .info(info)
                 .components(components)
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .addServersItem(new Server().url(swaggerProperties.getServerUrl()).description(swaggerProperties.getServerDescription()));
+                .addServersItem(new Server().url(swaggerProperties.getServerUrl())
+                        .description(swaggerProperties.getServerDescription()));
     }
 }
