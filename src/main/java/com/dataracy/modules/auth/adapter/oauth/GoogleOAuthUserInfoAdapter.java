@@ -5,6 +5,7 @@ import com.dataracy.modules.auth.application.port.out.oauth.OAuthUserInfoPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 제공자가 구글일 경우
@@ -17,10 +18,10 @@ public class GoogleOAuthUserInfoAdapter implements OAuthUserInfoPort {
         if (!provider.equals("google")) return null;
 
         return new OAuthUserInfo(
-                (String) attributes.get("email"),
-                (String) attributes.get("name"),
+                Optional.ofNullable(attributes.get("email")).map(Object::toString).orElse(null),
+                Optional.ofNullable(attributes.get("name")).map(Object::toString).orElse(null),
                 "google",
-                (String) attributes.get("sub")
+                Optional.ofNullable(attributes.get("sub")).map(Object::toString).orElse(null)
         );
     }
 }
