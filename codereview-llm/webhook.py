@@ -31,12 +31,17 @@ def webhook():
         return "Ignored", 200
 
     data = request.json
-    action = data["action"]
-    pr = data["pull_request"]
-    pr_number = pr["number"]
-    diff_url = pr["diff_url"]
-
+    action = data.get("action")
     if action not in ["opened", "synchronize"]:
+        return "Ignored", 200
+
+    pr = data.get("pull_request", {})
+    pr_number = pr.get("number")
+    diff_url = pr.get("diff_url")
+
+    # ❗ diff_url이 없는 경우 방어 처리
+    if not diff_url:
+        print("❗ diff_url not found. Skipping.")
         return "Ignored", 200
 
     # ── 2. Diff 조회
@@ -45,7 +50,6 @@ def webhook():
     # ── 3. 전체 요약 (Conversation 탭에 새로 추가)
     summary_prompt = build_summary_prompt(diff_text)
 
-    # 최대 토큰 8000 기준으로 쪼갬
     chunks = split_prompt(summary_prompt, max_tokens=8000)
 
     summary_parts = []
@@ -53,15 +57,15 @@ def webhook():
         try:
             response = call_gpt(chunk).strip()
             summary_parts.append(f"### 📄 파트 {idx}\n{response}")
-            time.sleep(3)  # ✅ 각 요청 사이에 3초 지연 추가 (TPM 제한 회피)
+            time.sleep(3)
         except Exception as e:
             summary_parts.append(f"❌ 파트 {idx} 처리 실패: {str(e)}")
-            save_failed_prompt(chunk, str(e))  # ⬅️ 실패한 프롬프트 저장
+            save_failed_prompt(chunk, str(e))
             break
 
     summary_body = "\n\n".join(summary_parts)
 
-    # GitHub에 전체 요약 코멘트 업로드
+    # ── 4. 요약 댓글 업로드
     requests.post(
         f"https://api.github.com/repos/{GITHUB_REPO}/issues/{pr_number}/comments",
         headers={
@@ -73,7 +77,7 @@ def webhook():
         }
     )
 
-    # ── 4. 파일 리뷰 코멘트들 (Conversation 탭, 줄 번호 없이 body)
+    # ── 5. 리뷰 코멘트 추가
     review_comments = generate_review_comments(diff_text)
     for comment in review_comments:
         requests.post(
@@ -86,6 +90,7 @@ def webhook():
                 "body": comment["body"]
             }
         )
+
     return "Review posted", 200
 
 
