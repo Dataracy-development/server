@@ -31,6 +31,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -59,7 +61,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     @Override
     @Transactional
     @DistributedLock(
-            key = "'lock:nickname:' + #requestDto.nickname()",
+            key = "'lock:email:' + #requestDto.email()",
             waitTime = 300L,
             leaseTime = 2000L,
             retry = 2
@@ -77,6 +79,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
 
         // 패스워드 암호화
         String encodedPassword = passwordEncoder.encode(requestDto.password());
+        String providerId = UUID.randomUUID().toString();
 
         // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
         AuthorLevel authorLevel = findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId());
@@ -92,7 +95,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         User user = User.toDomain(
                 null,
                 ProviderType.LOCAL,
-                null,
+                providerId,
                 RoleType.ROLE_USER,
                 requestDto.email(),
                 encodedPassword,

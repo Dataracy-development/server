@@ -1,7 +1,6 @@
 package com.dataracy.modules.common.support.lock;
 
 import com.dataracy.modules.common.exception.BusinessException;
-import com.dataracy.modules.common.exception.CommonException;
 import io.lettuce.core.dynamic.support.ParameterNameDiscoverer;
 import io.lettuce.core.dynamic.support.StandardReflectionParameterNameDiscoverer;
 import jakarta.annotation.PostConstruct;
@@ -47,24 +46,33 @@ public class DistributedLockAspect {
 
         log.info("[AOP] 분산 락 진입 - method: {}, key: {}", method.getName(), key);
 
-        return lockManager.execute(
-                key,
-                lock.waitTime(),
-                lock.leaseTime(),
-                lock.retry(),
-                () -> proceedSafely(joinPoint, key)
-        );
+        try {
+            return lockManager.execute(
+                    key,
+                    lock.waitTime(),
+                    lock.leaseTime(),
+                    lock.retry(),
+                    () -> {
+                        log.info("[AOP] 분산 락 진입 - method: {}, key: {}", method.getName(), key);
+                        try {
+                            return proceedSafely(joinPoint);
+                        } catch (Throwable e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+        } catch (BusinessException e) {
+            // 커스텀 비즈니스 예외는 그대로 전파
+            log.warn("[AOP] 비즈니스 예외 - key: {}, message: {}", key, e.getMessage());
+            throw e;
+        } catch (Throwable e) {
+            // 시스템 예외만 RuntimeException으로 감싸기
+            log.error("[AOP] 락 내부 로직 예외 - key: {}", key, e);
+            throw new RuntimeException(e);
+        }
     }
 
-    private Object proceedSafely(ProceedingJoinPoint joinPoint, String key) {
-        try {
-            return joinPoint.proceed();
-        } catch (BusinessException | CommonException e) {
-            throw e; // 비즈니스 예외는 그대로 전파
-        } catch (Throwable e) {
-            log.error("[AOP] 락 내부 로직 예외 - key: {}", key, e);
-            throw new LockAcquisitionException("락 내부 비즈니스 로직 수행 중 예외 발생", e);
-        }
+    private Object proceedSafely(ProceedingJoinPoint joinPoint) throws Throwable {
+        return joinPoint.proceed();
     }
 
     // 키 생성

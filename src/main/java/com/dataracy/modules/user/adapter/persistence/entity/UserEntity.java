@@ -33,7 +33,7 @@ import java.util.List;
 public class UserEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -56,11 +56,11 @@ public class UserEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String nickname;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_level_id", nullable = false)
     private AuthorLevelEntity authorLevel;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occupation_id")
     private OccupationEntity occupation;
 
@@ -68,7 +68,7 @@ public class UserEntity extends BaseTimeEntity {
     @Builder.Default
     private List<UserTopicEntity> userTopicEntities = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "visit_source_id")
     private VisitSourceEntity visitSource;
 

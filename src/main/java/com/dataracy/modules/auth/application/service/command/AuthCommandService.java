@@ -73,8 +73,13 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     @DistributedLock(key = "'lock:refresh-reissue:' + #refreshToken", waitTime = 200, leaseTime = 3000)
     public ReIssueTokenResponse reIssueToken(String refreshToken) {
         try {
-            // 레디스의 리프레시 토큰과 입력받은 리프레시 토큰을 비교한다.
+            // 쿠키의 리프레시 토큰으로 유저 아이디를 반환한다.
             Long userId = jwtValidatorPort.getUserIdFromToken(refreshToken);
+            if (userId == null) {
+                throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
+            }
+
+            // 레디스의 리프레시 토큰과 입력받은 리프레시 토큰을 비교한다.
             String savedRefreshToken = tokenRedisPort.getRefreshToken(userId.toString());
             if (!savedRefreshToken.equals(refreshToken)) {
                 throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
