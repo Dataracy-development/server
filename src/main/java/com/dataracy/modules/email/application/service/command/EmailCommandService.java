@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 @Slf4j
 @Service
@@ -55,6 +55,8 @@ public class EmailCommandService implements EmailSendUseCase {
 
     // 6자리 숫자 형식
     private String generateCode() {
-        return String.valueOf(new Random().nextInt(900000) + 100000);
+        SecureRandom random = new SecureRandom();
+        int code = 100000 + random.nextInt(900000);
+        return String.valueOf(code);
     }
 }
