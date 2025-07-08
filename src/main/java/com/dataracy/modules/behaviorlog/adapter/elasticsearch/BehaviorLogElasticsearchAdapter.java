@@ -4,7 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
-import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogRepositoryPort;
+import com.dataracy.modules.behaviorlog.application.port.out.SaveBehaviorLogPort;
 import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPort {
+public class BehaviorLogElasticsearchAdapter implements SaveBehaviorLogPort {
 
     private final ElasticsearchClient elasticsearchClient;
 
