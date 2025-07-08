@@ -18,11 +18,11 @@ public class ElasticsearchClientConfig {
     private String elasticsearchHost;
 
     /**
-     * 연결 설정 및 타임 아웃 설정을 추가한다.
+     * 리소스 누수 방지를 위하여 애플리케이션 종료시 연결을 닫는다
      */
-    @Bean
-    public ElasticsearchClient elasticsearchClient() {
-        RestClient restClient = RestClient.builder(HttpHost.create(elasticsearchHost))
+    @Bean(destroyMethod = "close")
+    public RestClient restClient() {
+        return RestClient.builder(HttpHost.create(elasticsearchHost))
                 .setRequestConfigCallback(requestConfigBuilder ->
                         requestConfigBuilder
                                 .setConnectTimeout(5000)
@@ -31,6 +31,10 @@ public class ElasticsearchClientConfig {
                         httpClientBuilder.setMaxConnTotal(100)
                                 .setMaxConnPerRoute(10))
                 .build();
+    }
+
+    @Bean
+    public ElasticsearchClient elasticsearchClient(RestClient restClient) {
         return new ElasticsearchClient(
                 new RestClientTransport(restClient, new JacksonJsonpMapper())
         );
