@@ -17,7 +17,7 @@ public class BehaviorLogKafkaConsumer {
     private final ObjectMapper objectMapper;
     private final SaveBehaviorLogPort saveBehaviorLogPort;
 
-    @KafkaListener(topics = "behavior-log-topic", groupId = "dataracy-log-consumer")
+    @KafkaListener(topics = "${spring.kafka.consumer.behavior-log.topic}", groupId = "${spring.kafka.consumer.behavior-log.group-id}")
     public void consume(ConsumerRecord<String, String> record) {
         try {
             String message = record.value();

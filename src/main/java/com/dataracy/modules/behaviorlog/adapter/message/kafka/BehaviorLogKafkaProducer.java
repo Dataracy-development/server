@@ -15,7 +15,7 @@ public class BehaviorLogKafkaProducer implements BehaviorLogSendProducerPort {
     private final KafkaTemplate<String, BehaviorLog> kafkaTemplate;
 
     // 토픽 이름
-    @Value("${spring.kafka.behavior-log.topic:behavior-logs}")
+    @Value("${spring.kafka.producer.behavior-log.topic:behavior-logs}")
     private String topic;
 
     /**
