@@ -22,7 +22,8 @@ public class BehaviorLogKafkaConsumer {
     public void consume(ConsumerRecord<String, String> record) {
         try {
             String message = record.value();
-            log.debug("Kafka 수신 로그: {}", message);
+            log.debug("Kafka 메시지 수신 - 토픽: {}, 파티션: {}, 오프셋: {}",
+            record.topic(), record.partition(), record.offset());
 
             BehaviorLog logData = objectMapper.readValue(message, BehaviorLog.class);
             // 필수 필드 검증
