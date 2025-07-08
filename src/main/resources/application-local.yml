@@ -39,6 +39,4 @@ swagger:
 
 elasticsearch:
   host: http://${ELASTIC_SEARCH_HOST}:${ELASTIC_SEARCH_PORT}
-  #  username: elastic # → x-pack 보안 사용 시
-  #  password: your-password
   ssl: false
