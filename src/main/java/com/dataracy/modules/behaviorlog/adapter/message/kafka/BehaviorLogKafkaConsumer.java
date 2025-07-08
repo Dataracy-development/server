@@ -24,6 +24,11 @@ public class BehaviorLogKafkaConsumer {
             log.debug("Kafka 수신 로그: {}", message);
 
             BehaviorLog logData = objectMapper.readValue(message, BehaviorLog.class);
+            // 필수 필드 검증
+            if (logData.getUserId() == null && logData.getAnonymousId() == null) {
+                log.warn("사용자 식별 정보가 없는 로그 메시지 무시: {}", message);
+                return;
+            }
             saveBehaviorLogPort.save(logData);
         } catch (Exception e) {
             log.error("Kafka 행동 로그 소비 중 오류 발생", e);

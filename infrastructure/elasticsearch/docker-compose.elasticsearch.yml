@@ -2,6 +2,8 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: elasticsearch
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -25,3 +27,7 @@ services:
 networks:
   dataracy-network:
     driver: bridge
+
+volumes:
+  elasticsearch-data:
+    driver: local

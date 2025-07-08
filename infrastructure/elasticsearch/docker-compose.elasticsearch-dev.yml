@@ -2,6 +2,8 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: elasticsearch-dev
+    volumes:
+      - elasticsearch-dev-data:/usr/share/elasticsearch/data
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=${ELASTIC_XPACK_ENABLED}
@@ -22,8 +24,12 @@ services:
     networks:
       - dataracy-network
     depends_on:
-      - elasticsearch-dev
+      - elasticsearch
 
 networks:
   dataracy-network:
     external: true
+
+volumes:
+  elasticsearch-dev-data:
+    driver: local
