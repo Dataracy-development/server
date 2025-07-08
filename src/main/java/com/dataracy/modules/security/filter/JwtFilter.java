@@ -69,7 +69,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 || path.startsWith("/.well-known")
                 || path.startsWith("/static") || path.equals("/webhook")
                 || path.equals("/api/v1/base") || path.equals("/api/v1/onboarding")
-                || path.startsWith("/login") || path.startsWith("/oauth2")
+                || path.startsWith("/login") || path.startsWith("/oauth2") || path.startsWith("/test")
                 || path.equals("/")
                 || path.equals("/api/v1/topics") || path.equals("/api/v1/author-levels")
                 || path.equals("/api/v1/occupations") || path.equals("/api/v1/visit-sources")

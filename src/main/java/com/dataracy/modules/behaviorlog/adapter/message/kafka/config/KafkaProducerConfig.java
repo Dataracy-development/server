@@ -1,7 +1,7 @@
 package com.dataracy.modules.behaviorlog.adapter.message.kafka.config;
 
 import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;
-import com.fasterxml.jackson.databind.ser.std.StringSerializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
