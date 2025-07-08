@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 /**
  * Elasticsearch 어댑터 - 행동 로그를 Elasticsearch에 저장하는 역할을 합니다.
@@ -53,8 +54,8 @@ public class BehaviorLogElasticsearchAdapter implements SaveBehaviorLogPort {
             synchronized (this) {
                 // 이중 체크: synchronized 안에서도 한번 더 확인 (다른 스레드가 먼저 갱신했을 수 있음) -> 첫 한 스레드만 락에 들어옴
                 if (cachedDate == null || !cachedDate.equals(today)) {
-                    cachedDate = today;
                     cachedIndexName = "behavior-logs-" + DateTimeFormatter.ofPattern("yyyy.MM").format(today);
+                    cachedDate = today;
                 }
             }
         }
@@ -106,6 +107,8 @@ public class BehaviorLogElasticsearchAdapter implements SaveBehaviorLogPort {
      */
     private boolean isRetryableError(Exception e) {
         return e instanceof ElasticsearchException &&
-                (e.getMessage().contains("timeout") || e.getMessage().contains("connection"));
+                Optional.ofNullable(e.getMessage())
+                    .map(msg -> msg.contains("timeout") || msg.contains("connection"))
+                    .orElse(false);
     }
 }
