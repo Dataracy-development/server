@@ -1,10 +1,10 @@
-package com.dataracy.modules.logging.adapter.elasticsearch;
+package com.dataracy.modules.behaviorlog.adapter.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
-import com.dataracy.modules.logging.application.port.out.BehaviorLogRepositoryPort;
-import com.dataracy.modules.logging.domain.model.BehaviorLog;
+import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogRepositoryPort;
+import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
