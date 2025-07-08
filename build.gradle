@@ -54,8 +54,14 @@ dependencies {
 	// Kafka
 	implementation 'org.springframework.kafka:spring-kafka'
 
-	// ElasticSearch
-	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	// Elasticsearch 공식 Java Client (Spring Data 미사용)
+	implementation 'co.elastic.clients:elasticsearch-java:8.13.4'
+	// RestTransport
+	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+
+	// JSON 처리
+	implementation 'jakarta.json:jakarta.json-api:2.1.1'
+	implementation 'org.glassfish:jakarta.json:2.0.1'
 
 	// OAuth 2.0
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -78,18 +84,10 @@ dependencies {
 	// Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
-	// JSON 처리
-	implementation 'com.fasterxml.jackson.core:jackson-databind'
-
 	// JWT → 최신 버전 사용
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
-
-	// MDC 로깅
-	implementation 'org.slf4j:slf4j-api'
-	runtimeOnly 'org.slf4j:jul-to-slf4j'
-	runtimeOnly 'org.slf4j:log4j-over-slf4j'
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
