@@ -19,7 +19,6 @@ spring:
       url: redis://${REDIS_HOST}:${REDIS_PORT}
       host: localhost
       port : 6380
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -28,6 +27,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER_HOST}:${KAFKA_SERVER_PORT}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.add.type.headers: false
 
 swagger:
   title: Dataracy
@@ -37,4 +43,4 @@ swagger:
   server-description: local server
 
 elasticsearch:
-  host: http://localhost:9200
+  host: http://${ELASTIC_SEARCH_HOST}:${ELASTIC_SEARCH_PORT}

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class BehaviorLogKafkaProducer implements BehaviorLogSendProducerPort {
-
     private final KafkaTemplate<String, BehaviorLog> kafkaTemplate;
 
     // 토픽 이름
