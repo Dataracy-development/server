@@ -3,6 +3,7 @@ package com.dataracy.modules.behaviorlog.adapter.message.kafka.config;
 import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;
 import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -16,6 +17,9 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
     /**
      * Kafka 프로듀서를 위한 ProducerFactory를 생성하여 반환합니다.
      *
@@ -27,7 +31,7 @@ public class KafkaProducerConfig {
     public ProducerFactory<String, BehaviorLog> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         // Docker Kafka 주소
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         return new DefaultKafkaProducerFactory<>(config);
