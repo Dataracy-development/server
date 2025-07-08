@@ -3,6 +3,8 @@ package com.dataracy.modules.behaviorlog.domain.model;
 import com.dataracy.modules.common.support.enums.HttpMethod;
 import lombok.*;
 
+import java.time.Instant;
+
 /**
  * 행동 로그 도메인 모델
  * elasticSearch 구현체로 저장되는 로그 정보
@@ -26,5 +28,5 @@ public class BehaviorLog {
     private long dbLatency;
     // 외부 API 등
     private long externalLatency;
-    private String timestamp;
+    private Instant timestamp;
 }
