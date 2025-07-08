@@ -16,6 +16,13 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
+    /**
+     * Kafka 프로듀서를 위한 ProducerFactory를 생성하여 반환합니다.
+     *
+     * Kafka 서버 주소, 키 직렬화, 값 직렬화 설정이 적용된 ProducerFactory를 제공합니다.
+     *
+     * @return Kafka에 BehaviorLog 메시지를 전송할 수 있는 ProducerFactory 인스턴스
+     */
     @Bean
     public ProducerFactory<String, BehaviorLog> producerFactory() {
         Map<String, Object> config = new HashMap<>();
@@ -26,6 +33,11 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(config);
     }
 
+    /**
+     * KafkaTemplate을 생성하여 Kafka에 BehaviorLog 메시지를 전송할 수 있도록 빈으로 등록합니다.
+     *
+     * @return BehaviorLog 타입의 메시지를 전송하는 KafkaTemplate 인스턴스
+     */
     @Bean
     public KafkaTemplate<String, BehaviorLog> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
