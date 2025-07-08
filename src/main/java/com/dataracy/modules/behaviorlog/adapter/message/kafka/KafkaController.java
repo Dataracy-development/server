@@ -12,7 +12,7 @@ public class KafkaController {
 
     private final BehaviorLogProducerTest producerTest;
 
-    @GetMapping("/test/kafka")
+    @GetMapping("/moniter/kafka")
     public ResponseEntity<Void> sendLog() {
         producerTest.sendTestLog();
         return ResponseEntity.ok().build();
