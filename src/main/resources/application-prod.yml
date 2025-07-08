@@ -57,8 +57,7 @@ swagger:
   server-description: prod server
 
 elasticsearch:
-  host: ${ELASTIC_SEARCH_HOST}
-  port: ${ELASTIC_SEARCH_PORT}
-#  username: elastic # → x-pack 보안 사용 시
-#  password: your-password
+  host: http://${ELASTIC_SEARCH_HOST}:${ELASTIC_SEARCH_PORT}
+  #  username: elastic # → x-pack 보안 사용 시
+  #  password: your-password
   ssl: false
