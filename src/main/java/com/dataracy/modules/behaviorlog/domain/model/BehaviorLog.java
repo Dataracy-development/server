@@ -1,4 +1,4 @@
-package com.dataracy.modules.logging.domain.model;
+package com.dataracy.modules.behaviorlog.domain.model;
 
 import lombok.*;
 
