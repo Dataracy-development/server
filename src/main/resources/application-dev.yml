@@ -27,6 +27,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER_HOST}:${KAFKA_SERVER_PORT}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.add.type.headers: false
 
 swagger:
   title: Dataracy
@@ -34,3 +41,6 @@ swagger:
   version: v1.2.0
   server-url: http://${SERVER_HOST}:8083
   server-description: develop server
+
+elasticsearch:
+  host: http://${ELASTIC_SEARCH_HOST}:${ELASTIC_SEARCH_PORT}

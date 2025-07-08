@@ -73,6 +73,3 @@ aws:
 sendgrid:
   api-key: ${SENDGRID_API_KEY}
   sender: ${SENDGRID_SENDER}
-
-elasticsearch:
-  host: http://localhost:9200
