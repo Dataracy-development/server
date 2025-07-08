@@ -51,6 +51,14 @@ spring:
   web:
     resources:
       static-locations: classpath:/static/
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.add.type.headers: false
+    behavior-log:
+      topic: behavior-logs
 
 logging:
   level:
