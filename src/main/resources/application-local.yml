@@ -7,6 +7,7 @@ spring:
     import: "optional:file:.env[.properties]"
     activate:
       on-profile: local
+
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
@@ -34,3 +35,6 @@ swagger:
   version: v1.2.0
   server-url: http://${SERVER_HOST}:${SERVER_PORT}
   server-description: local server
+
+elasticsearch:
+  host: http://localhost:9200
