@@ -1,6 +1,7 @@
 package com.dataracy.modules.behaviorlog.adapter.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogRepositoryPort;
@@ -63,20 +64,7 @@ public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPor
         try {
             // timestamp가 null일 경우 현재 시간으로 설정
             if (behaviorLog.getTimestamp() == null) {
-                behaviorLog = BehaviorLog.builder()
-                        .userId(behaviorLog.getUserId())
-                        .anonymousId(behaviorLog.getAnonymousId())
-                        .path(behaviorLog.getPath())
-                        .method(behaviorLog.getMethod())
-                        .status(behaviorLog.getStatus())
-                        .responseTime(behaviorLog.getResponseTime())
-                        .userAgent(behaviorLog.getUserAgent())
-                        .ip(behaviorLog.getIp())
-                        .action(behaviorLog.getAction())
-                        .dbLatency(behaviorLog.getDbLatency())
-                        .externalLatency(behaviorLog.getExternalLatency())
-                        .timestamp(Instant.now().toString())
-                        .build();
+                behaviorLog = behaviorLog.withTimestamp(Instant.now());
             }
 
             BehaviorLog finalBehaviorLog = behaviorLog;
@@ -89,6 +77,18 @@ public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPor
             log.debug("BehaviorLog 저장 완료: id={}, result={}", response.id(), response.result());
         } catch (Exception e) {
             log.error("Elasticsearch 저장 실패: {}", e.getMessage(), e);
+            // 메트릭 수집 (예: Micrometer)
+            // meterRegistry.counter("elasticsearch.save.failure").increment();
+            // 중요한 오류의 경우 알림 발송 고려
+            if (isRetryableError(e)) {
+            // 재시도 로직 또는 DLQ로 전송
+            }
         }
+    }
+
+    private boolean isRetryableError(Exception e) {
+        return e instanceof ElasticsearchException &&
+                e.getMessage().contains("timeout") ||
+                e.getMessage().contains("connection");
     }
 }

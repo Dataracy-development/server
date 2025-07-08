@@ -29,4 +29,22 @@ public class BehaviorLog {
     // 외부 API 등
     private long externalLatency;
     private Instant timestamp;
+
+    // 타임스탬프가 없을 때 추가해주는 도메인 로직
+    public BehaviorLog withTimestamp(Instant timestamp) {
+        return BehaviorLog.builder()
+                .userId(this.userId)
+                .anonymousId(this.anonymousId)
+                .path(this.path)
+                .method(this.method)
+                .status(this.status)
+                .responseTime(this.responseTime)
+                .userAgent(this.userAgent)
+                .ip(this.ip)
+                .action(this.action)
+                .dbLatency(this.dbLatency)
+                .externalLatency(this.externalLatency)
+                .timestamp(timestamp)
+                .build();
+    }
 }
