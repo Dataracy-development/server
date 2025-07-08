@@ -21,11 +21,11 @@ public class KafkaProducerConfig {
     private String bootstrapServers;
 
     /**
-     * Kafka 프로듀서를 위한 ProducerFactory를 생성하여 반환합니다.
+     * BehaviorLog 메시지 전송을 위한 Kafka ProducerFactory 빈을 생성합니다.
      *
-     * Kafka 서버 주소, 키 직렬화, 값 직렬화 설정이 적용된 ProducerFactory를 제공합니다.
+     * Kafka 서버 주소와 직렬화 설정이 적용된 ProducerFactory를 반환하며, 이 Factory는 String 타입의 키와 BehaviorLog 타입의 값을 가진 메시지를 Kafka로 전송할 수 있도록 구성됩니다.
      *
-     * @return Kafka에 BehaviorLog 메시지를 전송할 수 있는 ProducerFactory 인스턴스
+     * @return BehaviorLog 메시지 전송이 가능한 ProducerFactory 인스턴스
      */
     @Bean
     public ProducerFactory<String, BehaviorLog> producerFactory() {
@@ -38,9 +38,9 @@ public class KafkaProducerConfig {
     }
 
     /**
-     * KafkaTemplate을 생성하여 Kafka에 BehaviorLog 메시지를 전송할 수 있도록 빈으로 등록합니다.
+     * BehaviorLog 메시지를 Kafka로 전송할 수 있는 KafkaTemplate 빈을 생성합니다.
      *
-     * @return BehaviorLog 타입의 메시지를 전송하는 KafkaTemplate 인스턴스
+     * @return BehaviorLog 객체를 전송하는 KafkaTemplate 인스턴스
      */
     @Bean
     public KafkaTemplate<String, BehaviorLog> kafkaTemplate() {

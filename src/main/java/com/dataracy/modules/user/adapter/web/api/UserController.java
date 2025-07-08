@@ -112,6 +112,13 @@ public class UserController implements UserApi {
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CHANGE_PASSWORD));
     }
 
+    /**
+     * 사용자의 비밀번호를 확인하고 성공 여부를 반환합니다.
+     *
+     * @param userId 비밀번호를 확인할 사용자 ID
+     * @param webRequest 비밀번호 확인 요청 정보
+     * @return 비밀번호 확인 성공 시 200 OK와 함께 성공 응답을 반환합니다.
+     */
     @Override
     public ResponseEntity<SuccessResponse<Void>> confirmPassword(
             Long userId,
@@ -124,6 +131,11 @@ public class UserController implements UserApi {
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CONFIRM_PASSWORD));
     }
 
+    /**
+     * "/onboarding" 경로에 대한 GET 요청을 처리하여 "onboarding" 뷰 이름을 반환합니다.
+     *
+     * @return "onboarding" 뷰 이름
+     */
     @GetMapping("/onboarding")
     public String onboarding(Model model) {
         return "onboarding";

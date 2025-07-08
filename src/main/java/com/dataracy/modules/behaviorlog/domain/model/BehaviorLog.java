@@ -30,17 +30,24 @@ public class BehaviorLog {
     private long externalLatency;
     private Instant timestamp;
 
+    /**
+     * 이 로그 항목이 유효한지 여부를 반환합니다.
+     *
+     * userId 또는 anonymousId 중 하나라도 null이 아니면 true를 반환합니다.
+     *
+     * @return 로그 항목이 유효하면 true, 그렇지 않으면 false
+     */
     public boolean isValid() {
         return userId != null || anonymousId != null;
     }
 
     /**
-     * 주어진 타임스탬프로 새로운 BehaviorLog 인스턴스를 생성합니다.
+     * 주어진 타임스탬프로 timestamp 필드만 변경된 새로운 BehaviorLog 인스턴스를 반환합니다.
      *
-     * 기존 인스턴스의 모든 필드는 그대로 복사되며, timestamp 필드만 전달된 값으로 대체됩니다.
+     * 기존 인스턴스의 모든 필드는 동일하게 복사되며, timestamp만 전달된 값으로 대체됩니다.
      *
      * @param timestamp 새로 설정할 타임스탬프
-     * @return 주어진 타임스탬프가 적용된 새로운 BehaviorLog 인스턴스
+     * @return timestamp가 변경된 새로운 BehaviorLog 인스턴스
      */
     public BehaviorLog withTimestamp(Instant timestamp) {
         return BehaviorLog.builder()
