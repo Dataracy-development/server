@@ -30,6 +30,10 @@ public class BehaviorLog {
     private long externalLatency;
     private Instant timestamp;
 
+    public boolean isValid() {
+        return userId != null || anonymousId != null;
+    }
+
     /**
      * 주어진 타임스탬프로 새로운 BehaviorLog 인스턴스를 생성합니다.
      *
