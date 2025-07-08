@@ -27,6 +27,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER_HOST}:${KAFKA_SERVER_PORT}
 
 logging:
   level:
@@ -53,3 +55,6 @@ swagger:
   version: v1.2.0
   server-url: http://${SERVER_HOST}:${SERVER_PORT}
   server-description: prod server
+
+elasticsearch:
+  host: http://${ELASTIC_SEARCH_HOST}:${ELASTIC_SEARCH_PORT}
