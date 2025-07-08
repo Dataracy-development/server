@@ -1,0 +1,27 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper-dev
+    ports:
+      - "2182:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - dataracy-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-dev
+    ports:
+      - "9093:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-dev:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-dev:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - dataracy-network
+
+networks:
+  dataracy-network:
+    external: true

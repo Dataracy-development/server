@@ -106,6 +106,8 @@ dependencies {
 	// Lombok
 	compileOnly "org.projectlombok:lombok"
 	annotationProcessor "org.projectlombok:lombok"
+	testCompileOnly 'org.projectlombok:lombok:1.18.30'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 
 	// Send Grid && SES & MAIL
 	implementation "org.springframework.boot:spring-boot-starter-mail"
