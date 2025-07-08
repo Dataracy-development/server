@@ -51,10 +51,21 @@ spring:
   web:
     resources:
       static-locations: classpath:/static/
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: dataracy-group
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
-logging:
-  level:
-    root: info
+    data:
+      elasticsearch:
+        cluster-nodes: localhost:9200
+        repositories:
+          enabled: true
+
 
 springdoc:
   swagger-ui:
@@ -73,3 +84,21 @@ aws:
 sendgrid:
   api-key: ${SENDGRID_API_KEY}
   sender: ${SENDGRID_SENDER}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.dataracy: DEBUG
