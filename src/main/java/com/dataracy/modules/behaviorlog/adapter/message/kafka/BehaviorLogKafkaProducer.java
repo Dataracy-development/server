@@ -19,7 +19,7 @@ public class BehaviorLogKafkaProducer implements BehaviorLogSendProducerPort {
     private String topic;
 
     /**
-     * BehaviorLog 객체를 Kafka 토픽으로 비동기 전송합니다.
+     * BehaviorLog 객체를 지정된 Kafka 토픽으로 비동기 전송합니다.
      *
      * @param behaviorLog 전송할 행동 로그 객체
      */
