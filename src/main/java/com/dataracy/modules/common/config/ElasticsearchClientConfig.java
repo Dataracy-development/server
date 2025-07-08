@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class ElasticsearchClientConfig {
 
-    @Value("${elasticsearch.host}")
+    @Value("${elasticsearch.host:http://localhost:9200}")
     private String elasticsearchHost;
 
     @Bean
