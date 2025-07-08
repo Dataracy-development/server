@@ -1,5 +1,6 @@
 package com.dataracy.modules.behaviorlog.domain.model;
 
+import com.dataracy.modules.common.support.enums.HttpMethod;
 import lombok.*;
 
 /**
@@ -15,7 +16,7 @@ public class BehaviorLog {
     private String anonymousId;
     private String path;
     private String method;
-    private int status;
+    private HttpMethod status;
     private long responseTime;
     private String userAgent;
     private String ip;

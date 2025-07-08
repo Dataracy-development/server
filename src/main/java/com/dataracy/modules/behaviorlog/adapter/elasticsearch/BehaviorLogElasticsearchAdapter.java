@@ -24,11 +24,35 @@ public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPor
 
     private final ElasticsearchClient elasticsearchClient;
 
-    // 월별 롤링 인덱스 이름 생성: behavior-logs-2025.07
-    private String getDailyRollingIndexName() {
-        String dateSuffix = DateTimeFormatter.ofPattern("yyyy.MM").format(LocalDate.now());
-        return "behavior-logs-" + dateSuffix;
+    // 캐시된 인덱스 이름 (ex : "behavior-logs-2025.07") -> 현재는 소규모 프로젝트이기에 월별 인덱스로 설정
+    // volatile로 선언해서 멀티스레드 환경에서도 변경된 값을 다른 스레드가 즉시 볼 수 있도록 보장
+    private volatile String cachedIndexName;
+
+    // 캐시된 날짜 (오늘 날짜) -> 매번 요청마다 날짜를 계산하는 작업은 서버에 부하를 오게 할 수 있으므로 캐시로 최적화한다.
+    // 매일 0시에 바뀌므로, 날짜가 바뀌었는지 체크해서 인덱스 캐시를 갱신할 때 사용
+    private volatile LocalDate cachedDate;
+
+    // 월별 인덱스 롤링 -> 추후 프로젝트 규무 확장 시 일별로 변환 예정
+    private String getMonthlyRollingIndexName() {
+        // 오늘 날짜를 구함
+        LocalDate today = LocalDate.now();
+
+        // 캐시된 날짜가 없거나(처음 실행), 오늘과 다르면 인덱스 캐시를 갱신해야 함
+        if (cachedDate == null || !cachedDate.equals(today)) {
+
+            // 멀티 스레드로 동시에 이 블록에 들어오게 될 경우
+            // 한 번만 캐시를 갱신하도록 synchronized(this)로 동기화 (모니터 락)
+            synchronized (this) {
+                // 이중 체크: synchronized 안에서도 한번 더 확인 (다른 스레드가 먼저 갱신했을 수 있음) -> 첫 한 스레드만 락에 들어옴
+                if (cachedDate == null || !cachedDate.equals(today)) {
+                    cachedDate = today;
+                    cachedIndexName = "behavior-logs-" + DateTimeFormatter.ofPattern("yyyy.MM").format(today);
+                }
+            }
+        }
+        return cachedIndexName;
     }
+
 
     /**
      * 도메인에서 전달받은 BehaviorLog를 Elasticsearch에 저장합니다.
@@ -57,7 +81,7 @@ public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPor
 
             BehaviorLog finalBehaviorLog = behaviorLog;
             IndexRequest<BehaviorLog> request = IndexRequest.of(i -> i
-                    .index(getDailyRollingIndexName()) // 월별 인덱스
+                    .index(getMonthlyRollingIndexName()) // 월별 인덱스
                     .document(finalBehaviorLog)
             );
 
