@@ -124,8 +124,6 @@ public class UserController implements UserApi {
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CONFIRM_PASSWORD));
     }
 
-    private final BehaviorLogProducerTest producerTest;
-
     @GetMapping("/onboarding")
     public String onboarding(Model model) {
         return "onboarding";
