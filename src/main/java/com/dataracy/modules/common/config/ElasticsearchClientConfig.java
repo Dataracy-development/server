@@ -3,6 +3,7 @@ package com.dataracy.modules.common.config;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
+import com.dataracy.modules.behaviorlog.adapter.elasticsearch.ElasticSearchProperties;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -13,9 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class ElasticsearchClientConfig {
-
-    @Value("${elasticsearch.host:http://localhost:9200}")
-    private String elasticsearchHost;
+    private final ElasticSearchProperties elasticsearchProperties;
 
     /**
      * Elasticsearch 서버에 연결하기 위한 RestClient 빈을 생성한다.
@@ -26,7 +25,11 @@ public class ElasticsearchClientConfig {
      */
     @Bean(destroyMethod = "close")
     public RestClient restClient() {
-        return RestClient.builder(HttpHost.create(elasticsearchHost))
+        return RestClient.builder(
+                        new org.apache.http.HttpHost(
+                                elasticsearchProperties.getHost(),
+                                Integer.parseInt(elasticsearchProperties.getPort()),
+                                elasticsearchProperties.getProtocol()))
                 .setRequestConfigCallback(requestConfigBuilder ->
                         requestConfigBuilder
                                 .setConnectTimeout(5000)

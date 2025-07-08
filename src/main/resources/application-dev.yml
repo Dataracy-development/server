@@ -38,5 +38,7 @@ swagger:
   server-description: develop server
 
 elasticsearch:
-  host: http://${ELASTIC_SEARCH_HOST}:${ELASTIC_SEARCH_PORT}
+  host: ${ELASTIC_SEARCH_HOST}
+  port: ${ELASTIC_SEARCH_PORT}
+  protocol: http
   ssl: false
