@@ -2,6 +2,7 @@ package com.dataracy.modules.behaviorlog.adapter.message.kafka;
 
 import com.dataracy.modules.behaviorlog.application.port.out.SaveBehaviorLogPort;
 import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,13 +26,18 @@ public class BehaviorLogKafkaConsumer {
 
             BehaviorLog logData = objectMapper.readValue(message, BehaviorLog.class);
             // 필수 필드 검증
-            if (logData.getUserId() == null && logData.getAnonymousId() == null) {
-                log.warn("사용자 식별 정보가 없는 로그 메시지 무시: {}", message);
+            if (!logData.isValid()) {
+                log.warn("유효하지 않은 행동 로그 메시지 무시: userId={}, anonymousId={}",
+                    logData.getUserId(), logData.getAnonymousId()
+                );
                 return;
             }
             saveBehaviorLogPort.save(logData);
+        } catch (JsonProcessingException e) {
+            log.error("JSON 역직렬화 실패 - 메시지 무시: {}", record.value(), e);
         } catch (Exception e) {
-            log.error("Kafka 행동 로그 소비 중 오류 발생", e);
+            log.error("행동 로그 저장 중 오류 발생 - 재시도 가능한 오류일 수 있음", e);
+            throw e; // 재시도를 위해 예외를 다시 던짐
         }
     }
 }
