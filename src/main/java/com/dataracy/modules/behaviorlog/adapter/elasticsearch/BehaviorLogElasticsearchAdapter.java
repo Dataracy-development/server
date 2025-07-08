@@ -86,9 +86,9 @@ public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPor
         }
     }
 
+    // 재시작을 할 수 있을 경우
     private boolean isRetryableError(Exception e) {
         return e instanceof ElasticsearchException &&
-                e.getMessage().contains("timeout") ||
-                e.getMessage().contains("connection");
+                (e.getMessage().contains("timeout") || e.getMessage().contains("connection"));
     }
 }
