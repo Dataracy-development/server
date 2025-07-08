@@ -89,9 +89,8 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-data-redis"
 	implementation "org.redisson:redisson:${redissonVersion}"
 
-	// Prometheus + Actuator
+	// Prometheus
 	implementation "io.micrometer:micrometer-registry-prometheus"
-	implementation "org.springframework.boot:spring-boot-starter-actuator"
 
 	// AWS S3
 	implementation "com.amazonaws:aws-java-sdk-s3:${s3Version}"
