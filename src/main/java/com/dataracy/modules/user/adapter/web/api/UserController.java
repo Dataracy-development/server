@@ -2,8 +2,8 @@ package com.dataracy.modules.user.adapter.web.api;
 
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
+import com.dataracy.modules.behaviorlog.adapter.message.kafka.test.BehaviorLogProducerTest;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
-import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.adapter.web.mapper.UserWebMapper;
 import com.dataracy.modules.user.adapter.web.request.*;
@@ -123,7 +123,6 @@ public class UserController implements UserApi {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CONFIRM_PASSWORD));
     }
-
 
     @GetMapping("/onboarding")
     public String onboarding(Model model) {

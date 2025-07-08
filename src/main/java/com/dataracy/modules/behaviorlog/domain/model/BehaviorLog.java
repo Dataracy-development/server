@@ -30,7 +30,18 @@ public class BehaviorLog {
     private long externalLatency;
     private Instant timestamp;
 
-    // 타임스탬프가 없을 때 추가해주는 도메인 로직
+    public boolean isValid() {
+        return userId != null || anonymousId != null;
+    }
+
+    /**
+     * 주어진 타임스탬프로 새로운 BehaviorLog 인스턴스를 생성합니다.
+     *
+     * 기존 인스턴스의 모든 필드는 그대로 복사되며, timestamp 필드만 전달된 값으로 대체됩니다.
+     *
+     * @param timestamp 새로 설정할 타임스탬프
+     * @return 주어진 타임스탬프가 적용된 새로운 BehaviorLog 인스턴스
+     */
     public BehaviorLog withTimestamp(Instant timestamp) {
         return BehaviorLog.builder()
                 .userId(this.userId)

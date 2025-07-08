@@ -15,10 +15,14 @@ public class BehaviorLogKafkaProducer implements BehaviorLogSendProducerPort {
     private final KafkaTemplate<String, BehaviorLog> kafkaTemplate;
 
     // 토픽 이름
-    @Value("${spring.kafka.behavior-log.topic:behavior-logs}")
+    @Value("${spring.kafka.producer.behavior-log.topic:behavior-logs}")
     private String topic;
 
-    // 카프카 전송
+    /**
+     * BehaviorLog 객체를 Kafka 토픽으로 비동기 전송합니다.
+     *
+     * @param behaviorLog 전송할 행동 로그 객체
+     */
     @Override
     public void send(BehaviorLog behaviorLog) {
         // 익명 id는 비로그인, 로그인 유저 모두 쿠키에 값을 보유하고 있기 때문에 null여부를 요청 시 파악한다.

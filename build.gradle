@@ -53,6 +53,7 @@ ext {
 	swaggerVersion = '2.5.0'
 	jjwtVersion = '0.12.3'
 	commonsPool2Version = '2.11.1'
+	lombokVersion = '1.18.30'
 }
 
 dependencies {
@@ -104,8 +105,10 @@ dependencies {
 	implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
 
 	// Lombok
-	compileOnly "org.projectlombok:lombok"
-	annotationProcessor "org.projectlombok:lombok"
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+	testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+	testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
 	// Send Grid && SES & MAIL
 	implementation "org.springframework.boot:spring-boot-starter-mail"
