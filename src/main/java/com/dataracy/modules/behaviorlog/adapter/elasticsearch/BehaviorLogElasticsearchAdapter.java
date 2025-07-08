@@ -4,7 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
-import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogRepositoryPort;
+import com.dataracy.modules.behaviorlog.application.port.out.SaveBehaviorLogPort;
 import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 /**
  * Elasticsearch 어댑터 - 행동 로그를 Elasticsearch에 저장하는 역할을 합니다.
@@ -21,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPort {
+public class BehaviorLogElasticsearchAdapter implements SaveBehaviorLogPort {
 
     private final ElasticsearchClient elasticsearchClient;
 
@@ -33,7 +34,14 @@ public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPor
     // 매일 0시에 바뀌므로, 날짜가 바뀌었는지 체크해서 인덱스 캐시를 갱신할 때 사용
     private volatile LocalDate cachedDate;
 
-    // 월별 인덱스 롤링 -> 추후 프로젝트 규무 확장 시 일별로 변환 예정
+    /**
+     * 현재 월에 해당하는 Elasticsearch 인덱스 이름을 반환합니다.
+     *
+     * 인덱스 이름은 "behavior-logs-yyyy.MM" 형식이며, 날짜가 변경될 때만 캐시를 갱신하여 성능을 최적화합니다.
+     * 멀티스레드 환경에서 안전하게 동작하도록 동기화 처리되어 있습니다.
+     *
+     * @return 월별 롤링되는 Elasticsearch 인덱스 이름
+     */
     private String getMonthlyRollingIndexName() {
         // 오늘 날짜를 구함
         LocalDate today = LocalDate.now();
@@ -46,8 +54,8 @@ public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPor
             synchronized (this) {
                 // 이중 체크: synchronized 안에서도 한번 더 확인 (다른 스레드가 먼저 갱신했을 수 있음) -> 첫 한 스레드만 락에 들어옴
                 if (cachedDate == null || !cachedDate.equals(today)) {
-                    cachedDate = today;
                     cachedIndexName = "behavior-logs-" + DateTimeFormatter.ofPattern("yyyy.MM").format(today);
+                    cachedDate = today;
                 }
             }
         }
@@ -56,8 +64,11 @@ public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPor
 
 
     /**
-     * 도메인에서 전달받은 BehaviorLog를 Elasticsearch에 저장합니다.
-     * 인덱스는 일별로 롤링되며, 저장 실패 시에도 서비스는 영향을 받지 않도록 로그만 출력합니다.
+     * BehaviorLog 도메인 객체를 Elasticsearch에 저장합니다.
+     *
+     * BehaviorLog의 timestamp가 null인 경우 현재 시각으로 설정하여 저장합니다.
+     * 저장 대상 인덱스는 월별로 롤링되는 인덱스입니다.
+     * 저장 실패 시 예외를 전파하지 않고 오류 로그만 남기며, 서비스 동작에는 영향을 주지 않습니다.
      */
     @Override
     public void save(BehaviorLog behaviorLog) {
@@ -86,9 +97,18 @@ public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPor
         }
     }
 
-    // 재시작을 할 수 있을 경우
+    /**
+     * 주어진 예외가 재시도 가능한 Elasticsearch 오류인지 여부를 반환합니다.
+     *
+     * 예외가 {@link ElasticsearchException} 이고 메시지에 "timeout" 또는 "connection"이 포함된 경우 true를 반환합니다.
+     *
+     * @param e 검사할 예외
+     * @return 재시도 가능한 오류이면 true, 그렇지 않으면 false
+     */
     private boolean isRetryableError(Exception e) {
         return e instanceof ElasticsearchException &&
-                (e.getMessage().contains("timeout") || e.getMessage().contains("connection"));
+                Optional.ofNullable(e.getMessage())
+                    .map(msg -> msg.contains("timeout") || msg.contains("connection"))
+                    .orElse(false);
     }
 }
