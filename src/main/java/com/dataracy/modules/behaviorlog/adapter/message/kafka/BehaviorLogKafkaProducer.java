@@ -18,10 +18,22 @@ public class BehaviorLogKafkaProducer implements BehaviorLogSendProducerPort {
     @Value("${spring.kafka.behavior-log.topic:behavior-logs}")
     private String topic;
 
+    // 카프카 전송
     @Override
     public void send(BehaviorLog behaviorLog) {
-        // 키: 익명 ID
-        kafkaTemplate.send(topic, behaviorLog.getAnonymousId(), behaviorLog);
-        log.debug("[Kafka Producer] 행동 로그 전송됨 - {}", behaviorLog);
+        // 익명 id는 비로그인, 로그인 유저 모두 쿠키에 값을 보유하고 있기 때문에 null여부를 요청 시 파악한다.
+        String key = behaviorLog.getAnonymousId();
+        if (key == null || key.isEmpty()) {
+            key = behaviorLog.getUserId() != null ? behaviorLog.getUserId() : "unknown";
+        }
+
+        kafkaTemplate.send(topic, key, behaviorLog)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("Kafka 메시지 전송 실패", ex);
+                    } else {
+                        log.debug("[Kafka Producer] 행동 로그 전송 완료");
+                    }
+                });
     }
 }
