@@ -16,6 +16,13 @@ public class BehaviorLogKafkaProducer implements BehaviorLogSendProducerPort {
     // 토픽 이름
     private static final String TOPIC = "behavior-logs";
 
+    /**
+     * 주어진 BehaviorLog 객체를 Kafka 토픽 "behavior-logs"로 전송합니다.
+     *
+     * BehaviorLog의 익명 ID를 메시지 키로 사용하여 Kafka에 로그를 발행합니다.
+     *
+     * @param behaviorLog 전송할 행동 로그 객체
+     */
     @Override
     public void send(BehaviorLog behaviorLog) {
         // 키: 익명 ID

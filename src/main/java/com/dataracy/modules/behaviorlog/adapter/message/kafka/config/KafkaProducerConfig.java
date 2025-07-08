@@ -16,6 +16,13 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
+    /**
+     * Kafka 프로듀서를 위한 ProducerFactory 빈을 생성합니다.
+     *
+     * 이 팩토리는 String 타입의 키와 BehaviorLog 객체를 값으로 하여, JSON 직렬화를 사용해 Kafka에 메시지를 전송할 수 있도록 설정됩니다.
+     *
+     * @return Kafka 프로듀서 생성을 위한 ProducerFactory 인스턴스
+     */
     @Bean
     public ProducerFactory<String, BehaviorLog> producerFactory() {
         Map<String, Object> config = new HashMap<>();
@@ -26,6 +33,13 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(config);
     }
 
+    /**
+     * KafkaTemplate을 생성하여 반환합니다.
+     *
+     * 이 템플릿은 String 타입의 키와 BehaviorLog 타입의 값을 JSON으로 직렬화하여 Kafka 토픽에 메시지를 전송할 수 있도록 지원합니다.
+     *
+     * @return Kafka에 메시지를 전송하기 위한 KafkaTemplate 인스턴스
+     */
     @Bean
     public KafkaTemplate<String, BehaviorLog> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());

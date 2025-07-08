@@ -24,15 +24,23 @@ public class BehaviorLogElasticsearchAdapter implements BehaviorLogRepositoryPor
 
     private final ElasticsearchClient elasticsearchClient;
 
-    // 월별 롤링 인덱스 이름 생성: behavior-logs-2025.07
+    /**
+     * 현재 월을 기준으로 "behavior-logs-yyyy.MM" 형식의 Elasticsearch 인덱스 이름을 생성합니다.
+     *
+     * @return 월별 롤링 인덱스 이름
+     */
     private String getDailyRollingIndexName() {
         String dateSuffix = DateTimeFormatter.ofPattern("yyyy.MM").format(LocalDate.now());
         return "behavior-logs-" + dateSuffix;
     }
 
     /**
-     * 도메인에서 전달받은 BehaviorLog를 Elasticsearch에 저장합니다.
-     * 인덱스는 일별로 롤링되며, 저장 실패 시에도 서비스는 영향을 받지 않도록 로그만 출력합니다.
+     * BehaviorLog 도메인 객체를 Elasticsearch에 저장합니다.
+     *
+     * BehaviorLog의 timestamp가 null인 경우 현재 시각으로 설정하여 저장하며, 월별 롤링 인덱스에 기록됩니다.
+     * 저장 과정에서 예외가 발생해도 서비스 동작에는 영향을 주지 않으며, 오류는 로그로만 남깁니다.
+     *
+     * @param behaviorLog 저장할 BehaviorLog 도메인 객체
      */
     @Override
     public void save(BehaviorLog behaviorLog) {
