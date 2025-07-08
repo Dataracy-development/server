@@ -52,13 +52,17 @@ spring:
     resources:
       static-locations: classpath:/static/
   kafka:
+    properties:
+      spring.json.add.type.headers: false
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    properties:
-      spring.json.add.type.headers: false
-    behavior-log:
-      topic: behavior-logs
+      behavior-log:
+        topic: ${KAFKA_PRODUCER_BEHAVIOR_LOG_TOPIC}
+    consumer:
+      behavior-log:
+        topic: ${KAFKA_CONSUMER_BEHAVIOR_LOG_TOPIC}
+        group-id: ${KAFKA_CONSUMER_BEHAVIOR_LOG_GROUP_ID}
 
 logging:
   level:
