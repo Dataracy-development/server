@@ -29,69 +29,93 @@ configurations.all {
 
 jar {
 	enabled = true
+	zip64 = true
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 	from { sourceSets.main.resources.srcDirs }
 }
 
-
-
 repositories {
 	mavenCentral()
 }
 
-dependencies {
-	// Spring Boot
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+ext {
+	springBootVersion = '3.2.5'
+	mysqlConnectorVersion = '8.0.33'
+	elasticsearchVersion = '8.13.4'
+	httpClientVersion = '5.2.1'
+	jakartaJsonApiVersion = '2.1.1'
+	jakartaJsonImplVersion = '2.0.1'
+	redissonVersion = '3.27.0'
+	sendGridVersion = '4.9.3'
+	sesVersion = '1.12.3'
+	s3Version = '1.12.643'
+	swaggerVersion = '2.5.0'
+	jjwtVersion = '0.12.3'
+	commonsPool2Version = '2.11.1'
+}
 
-	// JPA
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+dependencies {
+	// Spring Core
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-aop"
+	implementation "org.springframework.boot:spring-boot-starter-validation"
+	implementation "org.springframework.boot:spring-boot-starter-actuator"
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
 
 	// MySQL
-	implementation 'com.mysql:mysql-connector-j'
+	implementation "com.mysql:mysql-connector-j:${mysqlConnectorVersion}"
 
-	// Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	// Kafka
+	implementation "org.springframework.kafka:spring-kafka"
+
+	// Elasticsearch 공식 Java Client (Spring Data 미사용)
+	implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
+	// RestTransport
+	implementation "org.apache.httpcomponents.client5:httpclient5:${httpClientVersion}"
+
+	// JSON 처리
+	implementation "jakarta.json:jakarta.json-api:${jakartaJsonApiVersion}"
+	implementation "org.glassfish:jakarta.json:${jakartaJsonImplVersion}"
 
 	// OAuth 2.0
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
 
 	// Security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-security-test'
+	implementation "org.springframework.boot:spring-boot-starter-security"
+	testImplementation "org.springframework.security:spring-security-test"
 
-	// Send Grid && SES & MAIL
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'com.sendgrid:sendgrid-java:4.9.3'
-	implementation 'com.amazonaws:aws-java-sdk-ses:1.12.3'
-
-	// Redis & Redisson & Kafka
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.redisson:redisson:3.27.0'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
-	implementation 'org.springframework.kafka:spring-kafka'
-	implementation 'org.apache.commons:commons-pool2'
-
-	// AWS S3
-	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.643'
-
-	// Swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
-
-	// JWT → 최신 버전 사용
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+	// Redis & Redisson
+	implementation "org.springframework.boot:spring-boot-starter-data-redis"
+	implementation "org.redisson:redisson:${redissonVersion}"
 
 	// Prometheus
-	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation "io.micrometer:micrometer-registry-prometheus"
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// AWS S3
+	implementation "com.amazonaws:aws-java-sdk-s3:${s3Version}"
+
+	// Swagger
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${swaggerVersion}"
+
+	// JWT
+	implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+	implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+	implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
+
+	// Lombok
+	compileOnly "org.projectlombok:lombok"
+	annotationProcessor "org.projectlombok:lombok"
+
+	// Send Grid && SES & MAIL
+	implementation "org.springframework.boot:spring-boot-starter-mail"
+	implementation "com.sendgrid:sendgrid-java:${sendGridVersion}"
+	implementation "com.amazonaws:aws-java-sdk-ses:${sesVersion}"
+
+	implementation "org.apache.commons:commons-pool2:${commonsPool2Version}"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()
