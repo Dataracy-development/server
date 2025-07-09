@@ -39,4 +39,18 @@ public class BehaviorLogRedisAdapter implements BehaviorLogMergePort {
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
+
+    @Override
+    public String findMergedUserId(String anonymousId) {
+        try {
+            String key = "behaviorlog:anonymous:" + anonymousId;
+            return redisTemplate.opsForValue().get(key);
+        } catch (RedisConnectionFailureException e) {
+            log.error("Redis connection failure.", e);
+            throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+        } catch (DataAccessException e) {
+            log.error("Data access exception while saving refresh token.", e);
+            throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+        }
+    }
 }
