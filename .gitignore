@@ -38,3 +38,6 @@ out/
 
 .env
 .env.*
+
+logs/
+*.log

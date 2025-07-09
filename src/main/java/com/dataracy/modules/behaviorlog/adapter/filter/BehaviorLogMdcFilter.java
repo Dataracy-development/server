@@ -47,6 +47,10 @@ public class BehaviorLogMdcFilter extends OncePerRequestFilter {
             // sessionId도 anonymousId와 동일하게 사용 가능
             MDC.put(MdcKey.SESSION_ID, anonymousId);
 
+            MDC.put(MdcKey.IP, request.getRemoteAddr());
+            MDC.put(MdcKey.PATH, request.getRequestURI());
+            MDC.put(MdcKey.METHOD, request.getMethod());
+
             filterChain.doFilter(request, response);
         } finally {
             long endTime = System.currentTimeMillis();
@@ -65,11 +69,11 @@ public class BehaviorLogMdcFilter extends OncePerRequestFilter {
                     .anonymousId(MDC.get(MdcKey.ANONYMOUS_ID))                              // 익명 아이디
                     .requestId(MDC.get(MdcKey.REQUEST_ID))                                  // UUID
                     .sessionId(MDC.get(MdcKey.SESSION_ID))                                  // 쿠키 기반 세션 추적 ID
-                    .path(request.getRequestURI())                                          // 현재 요청 경로
-                    .httpMethod(HttpMethod.valueOf(request.getMethod()))                    // 메서드
+                    .path(MDC.get(MdcKey.PATH))                                             // 현재 요청 경로
+                    .httpMethod(HttpMethod.valueOf(MDC.get(MdcKey.METHOD)))                 // 메서드
                     .responseTime(responseTime)                                             // 전체 응답시간
                     .userAgent(request.getHeader("User-Agent"))                          // 디바이스
-                    .ip(request.getRemoteAddr())                                            // 클라이언트 IP
+                    .ip(MDC.get(MdcKey.IP))                                                 // 클라이언트 IP
                     .action(actionType)                                                     // AOP에서 덮어쓸 수도 있음
                     .dbLatency(0)                                                           // 추후 AOP에서 삽입
                     .externalLatency(0)                                                     // 추후 AOP에서 삽입
