@@ -3,6 +3,7 @@ package com.dataracy.modules.behaviorlog.support.aop;
 import com.dataracy.modules.behaviorlog.domain.enums.ActionType;
 import com.dataracy.modules.behaviorlog.support.annotation.TrackClick;
 import com.dataracy.modules.behaviorlog.support.annotation.TrackNavigation;
+import com.dataracy.modules.behaviorlog.support.mdc.MdcKey;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -19,7 +20,7 @@ public class BehaviorLogActionAspect {
      */
     @Before("@annotation(trackClick)")
     public void beforeClick(TrackClick trackClick) {
-        MDC.put("action", ActionType.CLICK.name());
+        MDC.put(MdcKey.ACTION, ActionType.CLICK.name());
         log.debug("[AOP] TrackClick 감지 → MDC.action = CLICK");
     }
 
@@ -28,7 +29,7 @@ public class BehaviorLogActionAspect {
      */
     @Before("@annotation(trackNavigation)")
     public void beforeNavigation(TrackNavigation trackNavigation) {
-        MDC.put("action", ActionType.NAVIGATION.name());
+        MDC.put(MdcKey.ACTION, ActionType.NAVIGATION.name());
         log.debug("[AOP] TrackNavigation 감지 → MDC.action = NAVIGATION");
     }
 }

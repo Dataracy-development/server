@@ -9,9 +9,5 @@ public class MdcKey {
     public static final String SESSION_ID = "sessionId";     // 세션 ID
     public static final String USER_ID = "userId";           // 로그인 유저 ID
     public static final String ANONYMOUS_ID = "anonymousId"; // 익명 유저 ID
-    public static final String PATH = "path";                 // 요청 URI
-    public static final String METHOD = "method";             // HTTP 메서드
-    public static final String IP = "ip";                     // 클라이언트 IP
-    public static final String USER_AGENT = "userAgent";      // User-Agent
-    public static final String REFERRER = "referrer";         // 이전 페이지
+    public static final String ACTION = "action"; // 익명 유저 ID
 }
