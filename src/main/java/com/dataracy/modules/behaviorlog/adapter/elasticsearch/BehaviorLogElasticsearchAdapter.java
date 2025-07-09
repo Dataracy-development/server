@@ -73,15 +73,9 @@ public class BehaviorLogElasticsearchAdapter implements SaveBehaviorLogPort {
     @Override
     public void save(BehaviorLog behaviorLog) {
         try {
-            // timestamp가 null일 경우 현재 시간으로 설정
-            if (behaviorLog.getTimestamp() == null) {
-                behaviorLog = behaviorLog.withTimestamp(Instant.now());
-            }
-
-            BehaviorLog finalBehaviorLog = behaviorLog;
             IndexRequest<BehaviorLog> request = IndexRequest.of(i -> i
                     .index(getMonthlyRollingIndexName()) // 월별 인덱스
-                    .document(finalBehaviorLog)
+                    .document(behaviorLog)
             );
 
             IndexResponse response = elasticsearchClient.index(request);
