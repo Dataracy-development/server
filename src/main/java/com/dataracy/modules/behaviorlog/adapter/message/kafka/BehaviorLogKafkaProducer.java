@@ -25,11 +25,9 @@ public class BehaviorLogKafkaProducer implements BehaviorLogSendProducerPort {
      */
     @Override
     public void send(BehaviorLog behaviorLog) {
-        // 익명 id는 비로그인, 로그인 유저 모두 쿠키에 값을 보유하고 있기 때문에 null여부를 요청 시 파악한다.
-        String key = behaviorLog.getAnonymousId();
-        if (key == null || key.isEmpty()) {
-            key = behaviorLog.getUserId() != null ? behaviorLog.getUserId() : "unknown";
-        }
+        String key = behaviorLog.getUserId() != null
+                ? behaviorLog.getUserId()
+                : behaviorLog.getAnonymousId();
 
         kafkaTemplate.send(topic, key, behaviorLog)
                 .whenComplete((result, ex) -> {
