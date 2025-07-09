@@ -13,5 +13,5 @@ public class MdcKey {
     public static final String IP = "ip"; // 클라이언트 ip
     public static final String PATH = "path"; // 경로
     public static final String METHOD = "method"; // http 메서드
-
+    public static final String DB_LATENCY = "dbLatency"; // http 메서드
 }

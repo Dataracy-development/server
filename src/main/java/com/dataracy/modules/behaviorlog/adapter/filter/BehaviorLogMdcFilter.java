@@ -63,6 +63,9 @@ public class BehaviorLogMdcFilter extends OncePerRequestFilter {
                 actionType = ActionType.valueOf(actionFromMdc);
             }
 
+            // DB 지연
+            Long dbLatency = Long.parseLong(MDC.get(MdcKey.DB_LATENCY));
+
             BehaviorLog behaviorLog = BehaviorLog
                     .builder()
                     .userId(MDC.get(MdcKey.USER_ID))                                        // 유저 아이디
@@ -75,7 +78,7 @@ public class BehaviorLogMdcFilter extends OncePerRequestFilter {
                     .userAgent(request.getHeader("User-Agent"))                          // 디바이스
                     .ip(MDC.get(MdcKey.IP))                                                 // 클라이언트 IP
                     .action(actionType)                                                     // AOP에서 덮어쓸 수도 있음
-                    .dbLatency(0)                                                           // 추후 AOP에서 삽입
+                    .dbLatency(dbLatency > 0 ? dbLatency : 0)                               // 추후 AOP에서 삽입
                     .externalLatency(0)                                                     // 추후 AOP에서 삽입
                     .referrer(request.getHeader("Referer"))                              // 이전 경로
                     .deviceType(DeviceType.resolve(request.getHeader("User-Agent")))     // 모바일/PC 판단
