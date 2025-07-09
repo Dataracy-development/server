@@ -1,16 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+    <!-- MDC 기반 로깅 포맷 정의 (trace 추적용) -->
     <property name="LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
-              [requestId=%X{requestId}] [sessionId=%X{sessionId}] [userId=%X{userId}]
-              [anonymousId=%X{anonymousId}] [ip=%X{ip}] [path=%X{path}] [method=%X{method}]"/>
+[requestId=%X{requestId}] [sessionId=%X{sessionId}] [userId=%X{userId}] [anonymousId=%X{anonymousId}] [ip=%X{ip}] [path=%X{path}] [method=%X{method}]"/>
 
+    <!-- 콘솔 로그 (개발/로컬 환경에서 사용) -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
+    <!-- 운영 로그 파일 (INFO 이상) -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/system.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/system.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>14</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 에러 로그 파일 (ERROR 이상만 분리) -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/system-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/system-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <!-- 루트 로그 설정 -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
     </root>
+
+    <!-- 특정 noisy 로그 줄이기 -->
+    <logger name="org.apache.kafka" level="WARN"/>
+    <logger name="org.apache.catalina" level="WARN"/>
+    <logger name="org.springframework.boot.actuate" level="WARN"/>
+
+    <!-- 우리 프로젝트 DEBUG 추적 (클래스 추적용) -->
+    <logger name="com.dataracy" level="DEBUG"/>
+
 </configuration>
