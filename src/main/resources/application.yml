@@ -61,6 +61,7 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       behavior-log:
         topic: ${KAFKA_PRODUCER_BEHAVIOR_LOG_TOPIC}
+        partitions: 3
     consumer:
       behavior-log:
         topic: ${KAFKA_CONSUMER_BEHAVIOR_LOG_TOPIC}
