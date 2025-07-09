@@ -1,5 +1,7 @@
 # 공통 설정
 spring:
+  application:
+    name: dataracy-backend
   profiles:
     active: local
 
@@ -78,6 +80,18 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 aws:
   ses:
