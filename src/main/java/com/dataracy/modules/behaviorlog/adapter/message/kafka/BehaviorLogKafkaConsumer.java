@@ -18,7 +18,11 @@ public class BehaviorLogKafkaConsumer {
     private final ObjectMapper objectMapper;
     private final SaveBehaviorLogPort saveBehaviorLogPort;
 
-    @KafkaListener(topics = "${spring.kafka.consumer.behavior-log.topic}", groupId = "${spring.kafka.consumer.behavior-log.group-id}")
+    @KafkaListener(
+            topics = "${spring.kafka.consumer.behavior-log.topic}",
+            groupId = "${spring.kafka.consumer.behavior-log.group-id}",
+            containerFactory = "kafkaListenerContainerFactory"
+    )
     public void consume(ConsumerRecord<String, String> record) {
         try {
             String message = record.value();

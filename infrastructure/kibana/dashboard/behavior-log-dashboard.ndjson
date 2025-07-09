@@ -1,0 +1,12 @@
+{
+  "attributes": {
+    "title": "BehaviorLog - 행동 분석",
+    "hits": 0,
+    "description": "사용자 행동 흐름, API 호출량 분석",
+    "panelsJSON": "[...]",
+    "optionsJSON": "{\"darkTheme\":true}",
+    "version": 1
+  },
+  "id": "behavior-log-dashboard",
+  "type": "dashboard"
+}
