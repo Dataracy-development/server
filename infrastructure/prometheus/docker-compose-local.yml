@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus-local
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus-local.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitor
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana-local
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-local-data:/var/lib/grafana
+    networks:
+      - monitor
+
+networks:
+  monitor:
+    driver: bridge
+
+volumes:
+  grafana-local-data:

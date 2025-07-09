@@ -3,6 +3,8 @@ server:
   url: http://${SERVER_HOST}:${SERVER_PORT}
 
 spring:
+  application:
+    name: dataracy-dev
   config:
     activate:
       on-profile: dev
@@ -42,3 +44,11 @@ elasticsearch:
   port: ${ELASTIC_SEARCH_PORT}
   protocol: http
   ssl: false
+
+management:
+  metrics:
+    tags:
+      application: dataracy-dev
+  endpoint:
+    prometheus:
+      enabled: true

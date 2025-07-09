@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'dataracy-backend-dev'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['backend-dev:8083']  # 컨테이너 이름 또는 EC2 내부 도커 네트워크 이름
