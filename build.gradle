@@ -115,6 +115,9 @@ dependencies {
 	implementation "com.sendgrid:sendgrid-java:${sendGridVersion}"
 	implementation "com.amazonaws:aws-java-sdk-ses:${sesVersion}"
 
+	// parser
+	implementation 'com.github.ua-parser:uap-java:1.4.3'
+
 	implementation "org.apache.commons:commons-pool2:${commonsPool2Version}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
