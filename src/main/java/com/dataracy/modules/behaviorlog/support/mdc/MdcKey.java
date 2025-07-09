@@ -1,4 +1,4 @@
-package com.dataracy.modules.behaviorlog.domain.support;
+package com.dataracy.modules.behaviorlog.support.mdc;
 
 /**
  * MDC(Mapped Diagnostic Context)에서 사용하는 키들을 상수로 정의합니다.
