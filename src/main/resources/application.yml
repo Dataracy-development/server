@@ -65,8 +65,13 @@ spring:
         group-id: ${KAFKA_CONSUMER_BEHAVIOR_LOG_GROUP_ID}
 
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+              [requestId=%X{requestId}] [sessionId=%X{sessionId}] [userId=%X{userId}]
+              [anonymousId=%X{anonymousId}] [ip=%X{ip}] [path=%X{path}] [method=%X{method}]"
   level:
     root: info
+    com.dataracy: debug
 
 springdoc:
   swagger-ui:

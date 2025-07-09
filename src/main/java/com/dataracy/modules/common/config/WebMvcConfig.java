@@ -13,7 +13,6 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
-
     private final MultipartJackson2HttpMessageConverter multipartJackson2HttpMessageConverter;
     private final CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
 
