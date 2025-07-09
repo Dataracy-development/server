@@ -1,6 +1,6 @@
 package com.dataracy.modules.behaviorlog.adapter.filter;
 
-import com.dataracy.modules.behaviorlog.domain.support.MdcKey;
+import com.dataracy.modules.behaviorlog.support.mdc.MdcKey;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.security.handler.SecurityContextProvider;
 import jakarta.servlet.*;
