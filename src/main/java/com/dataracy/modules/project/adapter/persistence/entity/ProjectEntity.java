@@ -1,9 +1,6 @@
 package com.dataracy.modules.project.adapter.persistence.entity;
 
 import com.dataracy.modules.common.base.BaseEntity;
-import com.dataracy.modules.reference.adapter.persistence.entity.AnalysisPurposeEntity;
-import com.dataracy.modules.reference.adapter.persistence.entity.DataSourceEntity;
-import com.dataracy.modules.reference.adapter.persistence.entity.AuthorLevelEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,17 +34,14 @@ public class ProjectEntity extends BaseEntity {
     @Column(nullable = false)
     private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "analysis_purpose_id", nullable = false)
-    private AnalysisPurposeEntity analysisPurpose;
+    @Column(nullable = false)
+    private Long analysisPurposeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "data_source_id", nullable = false)
-    private DataSourceEntity dataSource;
+    @Column(nullable = false)
+    private Long dataSourceId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_level_id", nullable = false)
-    private AuthorLevelEntity authorLevel;
+    @Column(nullable = false)
+    private Long authorLevelId;
 
     @Column(nullable = false)
     private Boolean isNew;
@@ -69,11 +63,11 @@ public class ProjectEntity extends BaseEntity {
             String title,
             Long topicId,
             Long userId,
-            AnalysisPurposeEntity analysisPurpose,
-            DataSourceEntity dataSource,
-            AuthorLevelEntity authorLevel,
+            Long analysisPurposeId,
+            Long dataSourceId,
+            Long authorLevelId,
             Boolean isNew,
-            ProjectEntity project,
+            ProjectEntity parentProject,
             String content
     ) {
         return ProjectEntity.builder()
@@ -81,11 +75,11 @@ public class ProjectEntity extends BaseEntity {
                 .title(title)
                 .topicId(topicId)
                 .userId(userId)
-                .analysisPurpose(analysisPurpose)
-                .dataSource(dataSource)
-                .authorLevel(authorLevel)
+                .analysisPurposeId(analysisPurposeId)
+                .dataSourceId(dataSourceId)
+                .authorLevelId(authorLevelId)
                 .isNew(isNew)
-                .parentProject(project)
+                .parentProject(parentProject)
                 .content(content)
                 .build();
     }

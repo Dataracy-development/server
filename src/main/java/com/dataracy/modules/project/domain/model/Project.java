@@ -1,8 +1,5 @@
 package com.dataracy.modules.project.domain.model;
 
-import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
-import com.dataracy.modules.reference.domain.model.DataSource;
-import com.dataracy.modules.reference.domain.model.AuthorLevel;
 import lombok.*;
 
 /**
@@ -18,9 +15,9 @@ public class Project {
     private String title;
     private Long topicId;
     private Long userId;
-    private AnalysisPurpose analysisPurpose;
-    private DataSource dataSource;
-    private AuthorLevel authorLevel;
+    private Long analysisPurposeId;
+    private Long dataSourceId;
+    private Long authorLevelId;
     private Boolean isNew;
     private Project parentProject;
     private String content;
@@ -30,9 +27,9 @@ public class Project {
             String title,
             Long topicId,
             Long userId,
-            AnalysisPurpose analysisPurpose,
-            DataSource dataSource,
-            AuthorLevel authorLevel,
+            Long analysisPurposeId,
+            Long dataSourceId,
+            Long authorLevelId,
             Boolean isNew,
             Project parentProject,
             String content
@@ -42,9 +39,9 @@ public class Project {
                 .title(title)
                 .topicId(topicId)
                 .userId(userId)
-                .analysisPurpose(analysisPurpose)
-                .dataSource(dataSource)
-                .authorLevel(authorLevel)
+                .analysisPurposeId(analysisPurposeId)
+                .dataSourceId(dataSourceId)
+                .authorLevelId(authorLevelId)
                 .isNew(isNew)
                 .parentProject(parentProject)
                 .content(content)
