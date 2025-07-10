@@ -34,7 +34,7 @@ public class BehaviorLogProducerTest {
                 .requestId("1234567")
                 .sessionId("123456")
                 .logType(LogType.ACTION)
-                .timestamp(Instant.now())
+                .timestamp(Instant.now().toString())
                 .build();
 
         kafkaTemplate.send("behavior-logs", log);

@@ -14,4 +14,7 @@ public class MdcKey {
     public static final String PATH = "path"; // 경로
     public static final String METHOD = "method"; // http 메서드
     public static final String DB_LATENCY = "dbLatency"; // http 메서드
+    public static final String REFERRER = "referrer";
+    public static final String STAY_TIME = "stayTime";
+    public static final String NEXT_PATH = "nextPath";
 }

@@ -1,29 +1,21 @@
 package com.dataracy.modules.behaviorlog.support.parser;
 
-import ua_parser.Client;
-import ua_parser.Parser;
+import nl.basjes.parse.useragent.UserAgent;
+import nl.basjes.parse.useragent.UserAgentAnalyzer;
 
-import java.io.IOException;
-
-/**
- * User-Agent를 파싱하여 OS, 브라우저 정보를 추출하는 도우미 클래스
- */
 public class UserAgentParser {
 
-    private static final Parser parser;
-
-    static {
-        try {
-            parser = new Parser();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static final UserAgentAnalyzer analyzer = UserAgentAnalyzer
+            .newBuilder()
+            .hideMatcherLoadStats()
+            .withField("OperatingSystemName")
+            .withField("AgentName") // 브라우저 이름
+            .build();
 
     public static String extractOS(String userAgent) {
         try {
-            Client client = parser.parse(userAgent);
-            return client.os.family; // 예: "Windows", "iOS"
+            UserAgent parsed = analyzer.parse(userAgent);
+            return parsed.getValue("OperatingSystemName");
         } catch (Exception e) {
             return "UNKNOWN";
         }
@@ -31,8 +23,8 @@ public class UserAgentParser {
 
     public static String extractBrowser(String userAgent) {
         try {
-            Client client = parser.parse(userAgent);
-            return client.userAgent.family; // 예: "Chrome", "Safari"
+            UserAgent parsed = analyzer.parse(userAgent);
+            return parsed.getValue("AgentName");
         } catch (Exception e) {
             return "UNKNOWN";
         }
