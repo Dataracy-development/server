@@ -8,6 +8,14 @@ services:
       - ./prometheus-prod.yml:/etc/prometheus/prometheus.yml
     networks:
       - monitor
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
 
   grafana:
     image: grafana/grafana:latest
@@ -21,6 +29,14 @@ services:
       - grafana-prod-data:/var/lib/grafana
     networks:
       - monitor
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
 
 networks:
   monitor:
