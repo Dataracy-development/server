@@ -28,7 +28,8 @@ public class BehaviorLogRedisMergeAdapter implements BehaviorLogMergePort {
         try {
             String key = buildKey(anonymousId);
             redisTemplate.opsForValue().set(key, userId.toString(), TTL);
-            log.info("행동 로그 병합 완료: anonymousId={} → userId={}", anonymousId, userId);
+            log.info("행동 로그 병합 완료: anonymousId={} → userId={}",
+                    anonymousId, userId.toString().replaceAll("\\d(?=\\d{2})", "*"));
         } catch (RedisConnectionFailureException e) {
             log.error("Redis 연결 실패", e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
