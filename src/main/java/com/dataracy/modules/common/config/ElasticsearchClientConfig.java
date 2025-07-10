@@ -3,7 +3,7 @@ package com.dataracy.modules.common.config;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
-import com.dataracy.modules.behaviorlog.adapter.elasticsearch.ElasticSearchProperties;
+import com.dataracy.modules.behaviorlog.adapter.elasticsearch.ElasticsearchConnectionProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class ElasticsearchClientConfig {
-    private final ElasticSearchProperties elasticsearchProperties;
+    private final ElasticsearchConnectionProperties elasticsearchProperties;
 
     @Bean(destroyMethod = "close")
     public RestClient restClient() {
