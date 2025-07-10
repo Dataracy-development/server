@@ -2,9 +2,6 @@ package com.dataracy.modules.project.adapter.persistence.mapper;
 
 import com.dataracy.modules.project.adapter.persistence.entity.ProjectEntity;
 import com.dataracy.modules.project.domain.model.Project;
-import com.dataracy.modules.reference.adapter.persistence.mapper.AnalysisPurposeEntityMapper;
-import com.dataracy.modules.reference.adapter.persistence.mapper.AuthorLevelEntityMapper;
-import com.dataracy.modules.reference.adapter.persistence.mapper.DataSourceEntityMapper;
 
 /**
  * 프로젝트 엔티티와 프로젝트 도메인 모델을 변환하는 매퍼
@@ -17,9 +14,9 @@ public class ProjectEntityMapper {
                 projectEntity.getTitle(),
                 projectEntity.getTopicId(),
                 projectEntity.getUserId(),
-                AnalysisPurposeEntityMapper.toDomain(projectEntity.getAnalysisPurpose()),
-                DataSourceEntityMapper.toDomain(projectEntity.getDataSource()),
-                AuthorLevelEntityMapper.toDomain(projectEntity.getAuthorLevel()),
+                projectEntity.getAnalysisPurposeId(),
+                projectEntity.getDataSourceId(),
+                projectEntity.getAuthorLevelId(),
                 projectEntity.getIsNew(),
                 ProjectEntityMapper.toDomain(projectEntity.getParentProject()),
                 projectEntity.getContent()
@@ -33,9 +30,9 @@ public class ProjectEntityMapper {
                 project.getTitle(),
                 project.getTopicId(),
                 project.getUserId(),
-                AnalysisPurposeEntityMapper.toEntity(project.getAnalysisPurpose()),
-                DataSourceEntityMapper.toEntity(project.getDataSource()),
-                AuthorLevelEntityMapper.toEntity(project.getAuthorLevel()),
+                project.getAnalysisPurposeId(),
+                project.getDataSourceId(),
+                project.getAuthorLevelId(),
                 project.getIsNew(),
                 ProjectEntityMapper.toEntity(project.getParentProject()),
                 project.getContent()
