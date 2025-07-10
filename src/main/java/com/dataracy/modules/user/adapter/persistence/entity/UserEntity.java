@@ -1,9 +1,9 @@
 package com.dataracy.modules.user.adapter.persistence.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
-import com.dataracy.modules.user.adapter.persistence.entity.reference.AuthorLevelEntity;
-import com.dataracy.modules.user.adapter.persistence.entity.reference.OccupationEntity;
-import com.dataracy.modules.user.adapter.persistence.entity.reference.VisitSourceEntity;
+import com.dataracy.modules.reference.adapter.persistence.entity.AuthorLevelEntity;
+import com.dataracy.modules.reference.adapter.persistence.entity.OccupationEntity;
+import com.dataracy.modules.reference.adapter.persistence.entity.VisitSourceEntity;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import jakarta.persistence.*;

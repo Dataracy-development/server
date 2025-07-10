@@ -1,9 +1,9 @@
 package com.dataracy.modules.project.adapter.persistence.entity;
 
 import com.dataracy.modules.common.base.BaseEntity;
-import com.dataracy.modules.project.adapter.persistence.entity.reference.AnalysisPurposeEntity;
-import com.dataracy.modules.project.adapter.persistence.entity.reference.DataSourceEntity;
-import com.dataracy.modules.user.adapter.persistence.entity.reference.AuthorLevelEntity;
+import com.dataracy.modules.reference.adapter.persistence.entity.AnalysisPurposeEntity;
+import com.dataracy.modules.reference.adapter.persistence.entity.DataSourceEntity;
+import com.dataracy.modules.reference.adapter.persistence.entity.AuthorLevelEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

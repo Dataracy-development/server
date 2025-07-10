@@ -2,9 +2,9 @@ package com.dataracy.modules.user.domain.model;
 
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
-import com.dataracy.modules.user.domain.model.reference.AuthorLevel;
-import com.dataracy.modules.user.domain.model.reference.Occupation;
-import com.dataracy.modules.user.domain.model.reference.VisitSource;
+import com.dataracy.modules.reference.domain.model.AuthorLevel;
+import com.dataracy.modules.reference.domain.model.Occupation;
+import com.dataracy.modules.reference.domain.model.VisitSource;
 import lombok.*;
 
 import java.util.List;
