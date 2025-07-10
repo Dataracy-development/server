@@ -1,8 +1,8 @@
 package com.dataracy.modules.project.domain.model;
 
-import com.dataracy.modules.project.domain.model.reference.AnalysisPurpose;
-import com.dataracy.modules.project.domain.model.reference.DataSource;
-import com.dataracy.modules.user.domain.model.reference.AuthorLevel;
+import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
+import com.dataracy.modules.reference.domain.model.DataSource;
+import com.dataracy.modules.reference.domain.model.AuthorLevel;
 import lombok.*;
 
 /**

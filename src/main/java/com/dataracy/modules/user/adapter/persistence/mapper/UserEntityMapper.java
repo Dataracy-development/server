@@ -2,9 +2,9 @@ package com.dataracy.modules.user.adapter.persistence.mapper;
 
 import com.dataracy.modules.user.adapter.persistence.entity.UserEntity;
 import com.dataracy.modules.user.adapter.persistence.entity.UserTopicEntity;
-import com.dataracy.modules.user.adapter.persistence.mapper.reference.AuthorLevelEntityMapper;
-import com.dataracy.modules.user.adapter.persistence.mapper.reference.OccupationEntityMapper;
-import com.dataracy.modules.user.adapter.persistence.mapper.reference.VisitSourceEntityMapper;
+import com.dataracy.modules.reference.adapter.persistence.mapper.AuthorLevelEntityMapper;
+import com.dataracy.modules.reference.adapter.persistence.mapper.OccupationEntityMapper;
+import com.dataracy.modules.reference.adapter.persistence.mapper.VisitSourceEntityMapper;
 import com.dataracy.modules.user.domain.model.User;
 
 import java.util.List;
