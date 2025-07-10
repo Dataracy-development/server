@@ -34,14 +34,19 @@ public class SecurityContextProvider {
         return auth!=null && auth.getPrincipal() instanceof CustomUserDetails;
     }
 
+    // 인증된 사용자의 ID를 추출하는 공통 로직
+    private static Long extractUserId() {
+        Authentication auth = getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) auth.getPrincipal();
+        return customUserDetails.getUserId();
+    }
+
     // 로그인 한 인증 유저의 id 반환 (비로그인일 경우 예외처리)
     public static Long getAuthenticatedUserId() {
         if (!isAuthenticated()) {
             throw new AuthException(AuthErrorStatus.NOT_AUTHENTICATED);
         }
-        Authentication auth = getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) auth.getPrincipal();
-        return customUserDetails.getUserId();
+        return extractUserId();
     }
 
     // 로그인 한 인증 유저의 id 반환 (비로그인일 경우 null 반환)
@@ -49,9 +54,7 @@ public class SecurityContextProvider {
         if (!isAuthenticated()) {
             return null;
         }
-        Authentication auth = getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) auth.getPrincipal();
-        return customUserDetails.getUserId();
+        return extractUserId();
     }
 
     // 로그인 한 인증 유저의 역할 반환
