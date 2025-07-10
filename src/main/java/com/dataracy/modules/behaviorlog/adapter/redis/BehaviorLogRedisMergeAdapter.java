@@ -17,25 +17,22 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class BehaviorLogRedisMergeAdapter implements BehaviorLogMergePort {
 
+    private static final String REDIS_PREFIX = "behaviorlog:anonymous:";
+    private static final Duration TTL = Duration.ofDays(7);
+
     private final StringRedisTemplate redisTemplate;
 
-    /**
-     * 리프레시 토큰 저장.
-     *
-     * @param anonymousId 익명 ID
-     * @param userId 유저 ID
-     */
     @Override
     public void merge(String anonymousId, Long userId) {
         try {
-            String key = "behaviorlog:anonymous:" + anonymousId;
-            redisTemplate.opsForValue().set(key, userId.toString(), Duration.ofDays(7));
-            log.info("익명 → 유저 병합 저장 완료: anonymousId={}, userId={}", anonymousId, userId);
+            String key = buildKey(anonymousId);
+            redisTemplate.opsForValue().set(key, userId.toString(), TTL);
+            log.info("행동 로그 병합 완료: anonymousId={} → userId={}", anonymousId, userId);
         } catch (RedisConnectionFailureException e) {
-            log.error("Redis connection failure.", e);
+            log.error("Redis 연결 실패", e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            log.error("Data access exception while saving refresh token.", e);
+            log.error("Redis 접근 중 예외 발생", e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -43,14 +40,18 @@ public class BehaviorLogRedisMergeAdapter implements BehaviorLogMergePort {
     @Override
     public String findMergedUserId(String anonymousId) {
         try {
-            String key = "behaviorlog:anonymous:" + anonymousId;
+            String key = buildKey(anonymousId);
             return redisTemplate.opsForValue().get(key);
         } catch (RedisConnectionFailureException e) {
-            log.error("Redis connection failure.", e);
+            log.error("Redis 연결 실패", e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            log.error("Data access exception while saving refresh token.", e);
+            log.error("Redis 접근 중 예외 발생", e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
+    }
+
+    private String buildKey(String anonymousId) {
+        return REDIS_PREFIX + anonymousId;
     }
 }
