@@ -30,6 +30,14 @@ public class SecurityConfig {
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
+    /**
+     * Spring Security의 필터 체인을 구성하여 인증 및 인가 정책을 설정합니다.
+     *
+     * CORS, CSRF, 세션 관리, 예외 처리, OAuth2 로그인, JWT 인증 필터, 그리고 다양한 엔드포인트에 대한 접근 권한을 정의합니다.
+     *
+     * @param http Spring Security의 HttpSecurity 객체
+     * @return 구성된 SecurityFilterChain 인스턴스
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
