@@ -1,22 +1,21 @@
 package com.dataracy.modules.common.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
-
 @Configuration
+@RequiredArgsConstructor
 public class JacksonModuleConfig {
 
     private final ObjectMapper objectMapper;
 
-    public JacksonModuleConfig(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
     @PostConstruct
     public void registerModules() {
-        objectMapper.registerModule(new JavaTimeModule());
+        if (!objectMapper.getRegisteredModuleIds().contains(JavaTimeModule.class.getName())) {
+            objectMapper.registerModule(new JavaTimeModule());
+        }
     }
 }

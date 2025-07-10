@@ -32,11 +32,14 @@ public class BehaviorLogKafkaProducerAdapter implements BehaviorLogSendProducerP
         kafkaTemplate.send(topic, key, behaviorLog)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
-                        log.error("Kafka 메시지 전송 실패: {}", ex.getMessage(), ex);
+                        log.error("Kafka 메시지 전송 실패 - topic={}, key={}, error={}",
+                                topic, key, ex.getMessage(), ex);
                     } else {
-                        log.debug("Kafka 메시지 전송 성공 - topic={}, offset={}",
+                        log.trace("Kafka 메시지 전송 성공 - topic={}, partition={}, offset={}, key={}",
                                 result.getRecordMetadata().topic(),
-                                result.getRecordMetadata().offset());
+                                result.getRecordMetadata().partition(),
+                                result.getRecordMetadata().offset(),
+                                key);
                     }
                 });
     }

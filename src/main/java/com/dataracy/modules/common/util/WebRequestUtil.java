@@ -6,6 +6,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class WebRequestUtil {
 
+    private WebRequestUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * 현재 요청 객체를 안전하게 가져옵니다. 없으면 null 반환
      */

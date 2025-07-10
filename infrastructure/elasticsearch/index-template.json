@@ -2,9 +2,11 @@
   "index_patterns": ["behavior-logs-*"],
   "template": {
     "settings": {
-      "number_of_shards": 1,
+      "number_of_shards": 2,
       "number_of_replicas": 1,
-      "index.lifecycle.name": "behaviorlog-ilm-policy"
+      "index.lifecycle.name": "behaviorlog-ilm-policy",
+      "index.refresh_interval": "30s",
+      "index.codec": "best_compression"
     },
     "mappings": {
       "properties": {
@@ -13,11 +15,11 @@
         "path":             { "type": "keyword" },
         "httpMethod":       { "type": "keyword" },
         "ip":               { "type": "ip" },
-        "requestId":        { "type": "keyword" },
+        "requestId":        { "type": "keyword", "index": false },
         "sessionId":        { "type": "keyword" },
-        "userAgent":        { "type": "text" },
-        "referrer":         { "type": "keyword" },
-        "nextPath":         { "type": "keyword" },
+        "userAgent":        { "type": "text", "norms": false },
+        "referrer":         { "type": "keyword", "index": false },
+        "nextPath":         { "type": "keyword", "index": false },
         "action":           { "type": "keyword" },
         "stayTime":         { "type": "long" },
         "responseTime":     { "type": "long" },
@@ -27,7 +29,7 @@
         "browser":          { "type": "keyword" },
         "os":               { "type": "keyword" },
         "logType":          { "type": "keyword" },
-        "timestamp":        { "type": "date" }
+        "timestamp":        { "type": "date", "format": "strict_date_optional_time||epoch_millis" }
       }
     }
   },

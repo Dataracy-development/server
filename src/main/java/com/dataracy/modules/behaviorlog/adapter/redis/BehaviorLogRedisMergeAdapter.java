@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -38,10 +39,11 @@ public class BehaviorLogRedisMergeAdapter implements BehaviorLogMergePort {
     }
 
     @Override
-    public String findMergedUserId(String anonymousId) {
+    public Optional<Long> findMergedUserId(String anonymousId) {
         try {
             String key = buildKey(anonymousId);
-            return redisTemplate.opsForValue().get(key);
+            String value = redisTemplate.opsForValue().get(key);
+            return Optional.ofNullable(value).map(Long::parseLong);
         } catch (RedisConnectionFailureException e) {
             log.error("Redis 연결 실패", e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
