@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-public class ServiceLatencyAspect {
+public class LatencyAspect {
 
-    @Around("execution(* com.dataracy.modules..service..*(..))")
-    public Object trackServiceLatency(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("execution(* com.dataracy.modules..adapter.persistence.repositoryImpl..*(..))")
+    public Object trackDbLatency(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         try {
             return joinPoint.proceed();
