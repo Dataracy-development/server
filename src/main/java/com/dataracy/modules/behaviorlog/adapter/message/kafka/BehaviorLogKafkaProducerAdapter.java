@@ -12,29 +12,31 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class BehaviorLogKafkaProducerAdapter implements BehaviorLogSendProducerPort {
+
     private final KafkaTemplate<String, BehaviorLog> kafkaTemplate;
 
-    // 토픽 이름
     @Value("${spring.kafka.producer.behavior-log.topic:behavior-logs}")
     private String topic;
 
-    /**
-     * BehaviorLog 객체를 Kafka 토픽으로 비동기 전송합니다.
-     *
-     * @param behaviorLog 전송할 행동 로그 객체
-     */
     @Override
     public void send(BehaviorLog behaviorLog) {
         String key = behaviorLog.getUserId() != null
                 ? behaviorLog.getUserId()
                 : behaviorLog.getAnonymousId();
 
+        if (key == null) {
+            log.warn("Kafka 전송 건에 key가 null입니다. 로그 전송 무시됨.");
+            return;
+        }
+
         kafkaTemplate.send(topic, key, behaviorLog)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
-                        log.error("Kafka 메시지 전송 실패", ex);
+                        log.error("Kafka 메시지 전송 실패: {}", ex.getMessage(), ex);
                     } else {
-                        log.debug("[Kafka Producer] 행동 로그 전송 완료");
+                        log.debug("Kafka 메시지 전송 성공 - topic={}, offset={}",
+                                result.getRecordMetadata().topic(),
+                                result.getRecordMetadata().offset());
                     }
                 });
     }
