@@ -48,9 +48,15 @@ public class BehaviorLogActionAspect {
 
         if (redisValue != null && redisValue.contains(",")) {
             String[] parts = redisValue.split(",");
-            lastPath = parts[0];
-            lastTime = Long.parseLong(parts[1]);
-            stayTime = now - lastTime;
+            if (parts.length >= 2) {
+                lastPath = parts[0];
+                try {
+                    lastTime = Long.parseLong(parts[1]);
+                    stayTime = now - lastTime;
+                } catch (NumberFormatException e) {
+                    log.warn("Invalid timestamp in Redis value: {}", parts[1]);
+                }
+            }
         }
 
         // Redis 업데이트
