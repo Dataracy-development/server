@@ -26,6 +26,11 @@ public class BehaviorLogElasticsearchSaveAdapter implements SaveBehaviorLogPort 
     private volatile String cachedIndexName;
     private volatile LocalDate cachedDate;
 
+    /**
+     * BehaviorLog 객체를 Elasticsearch 인덱스에 저장합니다.
+     *
+     * @param behaviorLog 저장할 BehaviorLog 도메인 객체
+     */
     @Override
     public void save(BehaviorLog behaviorLog) {
         try {
@@ -46,6 +51,13 @@ public class BehaviorLogElasticsearchSaveAdapter implements SaveBehaviorLogPort 
         }
     }
 
+    /**
+     * 현재 날짜를 기준으로 Elasticsearch 인덱스 이름을 생성하여 반환합니다.
+     *
+     * 인덱스 이름은 "behavior-logs-yyyy.MM" 형식으로 생성되며, 하루에 한 번만 갱신되어 캐시에 저장됩니다.
+     *
+     * @return 오늘 날짜에 해당하는 인덱스 이름
+     */
     private String resolveIndexName() {
         LocalDate today = LocalDate.now();
 
@@ -61,7 +73,16 @@ public class BehaviorLogElasticsearchSaveAdapter implements SaveBehaviorLogPort 
         return cachedIndexName;
     }
 
-    private boolean isRetryable(Exception e) {
+    /**
+         * 주어진 예외가 재시도 가능한지 여부를 판단합니다.
+         *
+         * 예외가 {@link ConnectException} 또는 {@link SocketTimeoutException}의 인스턴스이거나,
+         * 예외 메시지에 "timeout", "connection", "unavailable" 키워드가 포함되어 있으면 true를 반환합니다.
+         *
+         * @param e 검사할 예외 객체
+         * @return 재시도 가능한 경우 true, 그렇지 않으면 false
+         */
+        private boolean isRetryable(Exception e) {
         // 예외 타입 기반 판단
         if (e instanceof ConnectException || e instanceof SocketTimeoutException) {
             return true;

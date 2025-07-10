@@ -28,20 +28,37 @@ public class SecurityContextProvider {
         return auth.getPrincipal() instanceof AnonymousUser;
     }
 
-    // 실제 로그인 한 유저인지 반환
+    /**
+     * 현재 인증 주체가 실제 로그인한 사용자(CustomUserDetails)인지 여부를 반환합니다.
+     *
+     * @return 로그인한 사용자인 경우 true, 아니면 false
+     */
     public static boolean isAuthenticated() {
         Authentication auth = getAuthentication();
         return auth!=null && auth.getPrincipal() instanceof CustomUserDetails;
     }
 
-    // 인증된 사용자의 ID를 추출하는 공통 로직
+    /**
+     * 현재 인증된 사용자의 ID를 반환합니다.
+     *
+     * 인증 정보가 존재하고, principal이 CustomUserDetails인 경우 해당 사용자의 ID를 반환합니다.
+     *
+     * @return 인증된 사용자의 ID
+     */
     private static Long extractUserId() {
         Authentication auth = getAuthentication();
         CustomUserDetails customUserDetails = (CustomUserDetails) auth.getPrincipal();
         return customUserDetails.getUserId();
     }
 
-    // 로그인 한 인증 유저의 id 반환 (비로그인일 경우 예외처리)
+    /**
+     * 현재 인증된 사용자의 ID를 반환합니다.
+     *
+     * 인증되지 않은 경우 {@code AuthException}이 발생합니다.
+     *
+     * @return 인증된 사용자의 ID
+     * @throws AuthException 사용자가 인증되지 않은 경우 발생
+     */
     public static Long getAuthenticatedUserId() {
         if (!isAuthenticated()) {
             throw new AuthException(AuthErrorStatus.NOT_AUTHENTICATED);
@@ -49,7 +66,13 @@ public class SecurityContextProvider {
         return extractUserId();
     }
 
-    // 로그인 한 인증 유저의 id 반환 (비로그인일 경우 null 반환)
+    /**
+     * 현재 인증된 사용자의 ID를 반환합니다.
+     *
+     * 인증된 사용자가 없는 경우 null을 반환합니다.
+     *
+     * @return 인증된 사용자의 ID 또는 인증되지 않은 경우 null
+     */
     public static Long getUserId() {
         if (!isAuthenticated()) {
             return null;

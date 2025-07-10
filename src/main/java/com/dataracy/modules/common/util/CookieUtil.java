@@ -12,6 +12,11 @@ import java.util.UUID;
 
 public final class CookieUtil {
 
+    /**
+     * 인스턴스화를 방지하기 위해 예외를 발생시키는 private 생성자입니다.
+     *
+     * 이 유틸리티 클래스는 인스턴스화될 수 없습니다.
+     */
     private CookieUtil() {
         throw new CommonException(CommonErrorStatus.CAN_NOT_INSTANTIATE_COOKIE_UTILITY_CLASS);
     }
@@ -37,10 +42,12 @@ public final class CookieUtil {
     }
 
     /**
-     * 쿠키에서 refreshToken에 해당하는 값을 추출합니다.
+     * HTTP 요청의 쿠키에서 "refreshToken" 값을 찾아 반환합니다.
+     *
+     * 요청에 "refreshToken" 쿠키가 없으면 빈 Optional을 반환합니다.
      *
      * @param request HTTP 요청 객체
-     * @return refreshToken 값
+     * @return "refreshToken" 쿠키 값이 존재하면 해당 값을 포함한 Optional, 없으면 빈 Optional
      */
     public static Optional<String> getRefreshTokenFromCookies(HttpServletRequest request) {
         if (request.getCookies() == null) {
@@ -53,11 +60,11 @@ public final class CookieUtil {
     }
 
     /**
-     * 쿠키에서 anonymousId에 해당하는 값을 추출하거나 없을 경우 생성한다.
+     * HTTP 요청에서 "anonymousId" 쿠키 값을 반환하거나, 존재하지 않을 경우 새로 생성하여 응답에 설정한 후 반환합니다.
      *
      * @param request HTTP 요청 객체
      * @param response HTTP 응답 객체
-     * @return anonymousId 값
+     * @return "anonymousId" 쿠키의 기존 값 또는 새로 생성된 UUID 문자열
      */
     public static String getOrCreateAnonymousId(HttpServletRequest request, HttpServletResponse response) {
         // 쿠키에서 익명id 조회 및 조회

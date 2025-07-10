@@ -20,6 +20,11 @@ public class KafkaBehaviorLogProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
+    /**
+     * Kafka 프로듀서 설정을 기반으로 BehaviorLog 객체를 전송하는 ProducerFactory 빈을 생성합니다.
+     *
+     * @return BehaviorLog 메시지 전송을 위한 Kafka ProducerFactory 인스턴스
+     */
     @Bean
     public ProducerFactory<String, BehaviorLog> behaviorLogProducerFactory() {
         Map<String, Object> config = new HashMap<>();
@@ -34,6 +39,11 @@ public class KafkaBehaviorLogProducerConfig {
         return new DefaultKafkaProducerFactory<>(config);
     }
 
+    /**
+     * BehaviorLog 객체를 전송하기 위한 KafkaTemplate 빈을 생성합니다.
+     *
+     * @return BehaviorLog 메시지를 Kafka 토픽으로 전송할 수 있는 KafkaTemplate 인스턴스
+     */
     @Bean
     public KafkaTemplate<String, BehaviorLog> behaviorLogKafkaTemplate() {
         return new KafkaTemplate<>(behaviorLogProducerFactory());
