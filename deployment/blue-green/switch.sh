@@ -92,6 +92,29 @@ else
   }
 fi
 
+# Prometheus 설정 갱신
+PROM_TEMPLATE_PATH="../../infrastructure/prometheus/prometheus-prod.yml.template"
+PROM_CONFIG_PATH="../../infrastructure/prometheus/prometheus-prod.yml"
+
+echo "[INFO] Prometheus 설정 파일 갱신 중..."
+export BACKEND_SERVICE_HOST="$BACKEND_NAME"
+envsubst < "$PROM_TEMPLATE_PATH" > "$PROM_CONFIG_PATH"
+echo "[INFO] Prometheus 설정 완료: 대상 → $BACKEND_SERVICE_HOST"
+
+# Prometheus 컨테이너 재시작
+echo "[INFO] Prometheus 컨테이너 재시작 중..."
+if docker ps -a --format '{{.Names}}' | grep -q '^prometheus-prod$'; then
+  docker restart prometheus-prod || {
+    echo "[ERROR] Prometheus 재시작 실패 → 배포 중단"
+    exit 1
+  }
+else
+  docker compose -f ../prometheus/docker-compose-prod.yml up -d prometheus || {
+    echo "[ERROR] Prometheus 새로 실행 실패 → 배포 중단"
+    exit 1
+  }
+fi
+
 # 이전 컨테이너 종료 (실행 중이면 stop → rm)
 echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}"
 if docker ps --format '{{.Names}}' | grep -q "backend-${CURRENT}"; then
