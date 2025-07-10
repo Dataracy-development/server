@@ -14,4 +14,15 @@ public enum ActionType {
     OTHER("기타");
 
     private final String description;
+
+    public static ActionType fromNullableString(String value) {
+        if (value == null || value.isBlank()) {
+            return ActionType.OTHER; // 또는 DEFAULT, NAVIGATION, CLICK 등
+        }
+        try {
+            return ActionType.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            return ActionType.OTHER;
+        }
+    }
 }

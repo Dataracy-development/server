@@ -4,7 +4,6 @@ import com.dataracy.modules.behaviorlog.domain.enums.ActionType;
 import com.dataracy.modules.behaviorlog.support.annotation.TrackClick;
 import com.dataracy.modules.behaviorlog.support.annotation.TrackNavigation;
 import com.dataracy.modules.behaviorlog.support.mdc.MdcKey;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -13,8 +12,6 @@ import org.aspectj.lang.annotation.Before;
 import org.slf4j.MDC;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.Duration;
 
@@ -37,7 +34,6 @@ public class BehaviorLogActionAspect {
         String actionValue = trackNavigation.value();
         MDC.put(MdcKey.ACTION, actionValue.isEmpty() ? ActionType.NAVIGATION.name() : actionValue);
 
-        HttpServletRequest request = getCurrentRequest();
         String anonymousId = MDC.get(MdcKey.ANONYMOUS_ID);
         String sessionId = MDC.get(MdcKey.SESSION_ID);
         String path = MDC.get(MdcKey.PATH);
@@ -71,10 +67,5 @@ public class BehaviorLogActionAspect {
 
     private String buildRedisKey(String anonymousId, String sessionId) {
         return "behavior:last:" + (anonymousId != null ? anonymousId : sessionId);
-    }
-
-    private HttpServletRequest getCurrentRequest() {
-        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-                .getRequest();
     }
 }

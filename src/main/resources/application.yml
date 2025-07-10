@@ -64,9 +64,14 @@ spring:
         topic: ${KAFKA_PRODUCER_BEHAVIOR_LOG_TOPIC}
         partitions: 3
     consumer:
+      group-id: dataracy-log-consumer
+      auto-offset-reset: earliest
       behavior-log:
         topic: ${KAFKA_CONSUMER_BEHAVIOR_LOG_TOPIC}
         group-id: ${KAFKA_CONSUMER_BEHAVIOR_LOG_GROUP_ID}
+      properties:
+        fetch.max.bytes: 5242880         # 5MB
+        max.poll.records: 500            # 한 번에 가져올 레코드 수
 
 logging:
   pattern:
