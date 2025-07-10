@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BehaviorLogKafkaConsumer {
+public class BehaviorLogKafkaConsumerAdapter {
 
     private final ObjectMapper objectMapper;
     private final SaveBehaviorLogPort saveBehaviorLogPort;
