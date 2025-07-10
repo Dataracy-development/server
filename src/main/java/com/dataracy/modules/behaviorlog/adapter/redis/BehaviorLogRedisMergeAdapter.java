@@ -15,7 +15,7 @@ import java.time.Duration;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BehaviorLogRedisAdapter implements BehaviorLogMergePort {
+public class BehaviorLogRedisMergeAdapter implements BehaviorLogMergePort {
 
     private final StringRedisTemplate redisTemplate;
 
