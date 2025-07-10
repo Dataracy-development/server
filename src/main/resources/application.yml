@@ -1,5 +1,7 @@
 # 공통 설정
 spring:
+  application:
+    name: dataracy-backend
   profiles:
     active: local
 
@@ -54,25 +56,48 @@ spring:
   kafka:
     properties:
       spring.json.add.type.headers: false
+      partitioner.class: org.apache.kafka.clients.producer.internals.DefaultPartitioner
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       behavior-log:
         topic: ${KAFKA_PRODUCER_BEHAVIOR_LOG_TOPIC}
+        partitions: 3
     consumer:
+      group-id: dataracy-log-consumer
+      auto-offset-reset: earliest
       behavior-log:
         topic: ${KAFKA_CONSUMER_BEHAVIOR_LOG_TOPIC}
         group-id: ${KAFKA_CONSUMER_BEHAVIOR_LOG_GROUP_ID}
+      properties:
+        fetch.max.bytes: 5242880         # 5MB
+        max.poll.records: 500            # 한 번에 가져올 레코드 수
 
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg [requestId=%X{requestId}] [userId=%X{userId}] [path=%X{path}]%n"
   level:
-    root: info
+    root: INFO
+    org.apache.kafka: WARN
+    com.dataracy.modules.behaviorlog: DEBUG
 
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 aws:
   ses:

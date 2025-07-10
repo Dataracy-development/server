@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'dataracy-backend-prod'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets:
+          - "${BACKEND_SERVICE_HOST:backend-blue}:8081"  # default는 backend-blue

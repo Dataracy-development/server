@@ -3,6 +3,8 @@ server:
   url: http://${SERVER_HOST}:${SERVER_PORT}
 
 spring:
+  application:
+    name: dataracy-prod
   config:
     activate:
       on-profile: prod
@@ -35,13 +37,18 @@ logging:
     root: warn
 
 management:
+  metrics:
+    tags:
+      application: dataracy-prod
   endpoints:
     web:
       exposure:
-        include: health
+        include: health, prometheus
   endpoint:
     health:
       show-details: always
+    prometheus:
+      enabled: true
 
 springdoc:
   swagger-ui:
@@ -57,9 +64,10 @@ swagger:
   server-description: prod server
 
 elasticsearch:
-  host: ${ELASTIC_SEARCH_HOST}
-  port: ${ELASTIC_SEARCH_PORT}
-  protocol: http
-  username: ${ELASTIC_USERNAME}
-  password: ${ELASTIC_PASSWORD}
-  ssl: false
+  connection:
+    host: ${ELASTIC_SEARCH_HOST}
+    port: ${ELASTIC_SEARCH_PORT}
+    protocol: http
+    username: ${ELASTIC_USERNAME}
+    password: ${ELASTIC_PASSWORD}
+    ssl: false

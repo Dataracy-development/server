@@ -1,0 +1,47 @@
+{
+  "index_patterns": ["behavior-logs-*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 2,
+      "number_of_replicas": 1,
+      "index.lifecycle.name": "behaviorlog-ilm-policy",
+      "index.refresh_interval": "30s",
+      "index.codec": "best_compression"
+    },
+    "mappings": {
+      "properties": {
+        "userId":           { "type": "keyword" },
+        "anonymousId":      { "type": "keyword" },
+        "path":             { "type": "keyword" },
+        "httpMethod":       { "type": "keyword" },
+        "ip":               { "type": "ip" },
+        "requestId":        { "type": "keyword", "index": false, "doc_values": false },
+        "sessionId":        { "type": "keyword" },
+        "userAgent": {
+          "type": "text",
+          "norms": false,
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "referrer":         { "type": "keyword", "index": false, "doc_values": false },
+        "nextPath":         { "type": "keyword", "index": false, "doc_values": false },
+        "action":           { "type": "keyword" },
+        "stayTime":         { "type": "long" },
+        "responseTime":     { "type": "long" },
+        "dbLatency":        { "type": "long" },
+        "externalLatency":  { "type": "long" },
+        "deviceType":       { "type": "keyword" },
+        "browser":          { "type": "keyword" },
+        "os":               { "type": "keyword" },
+        "logType":          { "type": "keyword" },
+        "timestamp":        { "type": "date", "format": "strict_date_optional_time||epoch_millis" }
+      }
+    }
+  },
+  "priority": 500,
+  "data_stream": {}
+}

@@ -10,91 +10,68 @@ import java.time.Instant;
 
 /**
  * 행동 로그 도메인 모델
- * Elasticsearch에 저장되는 로그 데이터로,
- * 사용자 행동 분석 및 시각화를 위해 사용됩니다.
+ *
+ * 사용자 행동 분석 및 시각화를 위한 핵심 로그 객체입니다.
+ * - Kafka 메시지로 전송되며
+ * - Elasticsearch에 저장되고
+ * - Kibana, Grafana에서 시각화됩니다.
  */
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder(toBuilder = true)
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BehaviorLog {
 
-    // 로그인 유저 ID (없을 경우 null)
+    // 사용자 정보
     private String userId;
-
-    // 익명 유저 ID (UUID 기반)
     private String anonymousId;
 
-    // 현재 요청 경로
+    // 요청 정보
     private String path;
-
-    // HTTP 메서드 (GET, POST 등)
     private HttpMethod httpMethod;
-
-    // 전체 응답 소요 시간 (ms)
-    private long responseTime;
-
-    // 브라우저 및 디바이스 정보
-    private String userAgent;
-
-    // 요청한 클라이언트의 IP
     private String ip;
+    private String requestId;
+    private String sessionId;
+    private String userAgent;
+    private String referrer;
+    private String nextPath;
 
-    // 사용자의 행동 종류 (클릭, 이동, 기타)
+    // 행동 정보
     private ActionType action;
+    private Long stayTime;
 
-    // DB 처리 지연 시간
+    // 시스템 처리 지표
+    private long responseTime;
     private long dbLatency;
-
-    // 외부 API 호출 지연 시간
     private long externalLatency;
 
-    // 최초 요청한 referer (없을 수도 있음)
-    private String referrer;
-
-    // User-Agent 기반 디바이스 유형 (모바일/PC 등)
+    // 디바이스 정보
     private DeviceType deviceType;
+    private String os;
+    private String browser;
 
-    // 요청 흐름 전체 추적용 ID (MDC에서 삽입)
-    private String requestId;
-
-    // 같은 세션 내에서의 추적을 위한 ID (쿠키 기반)
-    private String sessionId;
-
-    // 행동 로그 타입 (일반 액션, 에러 등)
+    // 로그 타입 + 시간
     private LogType logType;
-
-    // 타임스탬프 (Elasticsearch 분석용)
-    private Instant timestamp;
+    private String timestamp;
 
     /**
-     * 익명 사용자 또는 로그인 유저 중 최소 1명은 있어야 유효한 로그로 간주
+     * 로그 유효성 체크
+     * - 최소한 userId 또는 anonymousId는 있어야 한다.
      */
     public boolean isValid() {
-        return userId != null || anonymousId != null;
+        return (userId != null && !userId.isBlank())
+                || (anonymousId != null && !anonymousId.isBlank());
     }
 
     /**
-     * 타임스탬프가 없을 경우 외부에서 주입해서 생성 (불변 객체 스타일)
+     * 타임스탬프가 null일 경우 현재 시간으로 설정한 새 객체 반환
      */
-    public BehaviorLog withTimestamp(Instant timestamp) {
-        return BehaviorLog.builder()
-                .userId(this.userId)
-                .anonymousId(this.anonymousId)
-                .path(this.path)
-                .httpMethod(this.httpMethod)
-                .responseTime(this.responseTime)
-                .userAgent(this.userAgent)
-                .ip(this.ip)
-                .action(this.action)
-                .dbLatency(this.dbLatency)
-                .externalLatency(this.externalLatency)
-                .referrer(this.referrer)
-                .deviceType(this.deviceType)
-                .requestId(this.requestId)
-                .sessionId(this.sessionId)
-                .logType(this.logType)
-                .timestamp(timestamp)
+    public BehaviorLog withTimestampIfNull() {
+        if (this.timestamp != null && !this.timestamp.isBlank()) {
+            return this;
+        }
+        return this.toBuilder()
+                .timestamp(Instant.now().toString())
                 .build();
     }
 }
