@@ -54,6 +54,7 @@ ext {
 	jjwtVersion = '0.12.3'
 	commonsPool2Version = '2.11.1'
 	lombokVersion = '1.18.30'
+	parseUserAgentVersion = '6.3'
 }
 
 dependencies {
@@ -117,7 +118,7 @@ dependencies {
 	implementation "com.amazonaws:aws-java-sdk-ses:${sesVersion}"
 
 	// parser
-	implementation 'nl.basjes.parse.useragent:yauaa:6.3'
+	implementation "nl.basjes.parse.useragent:yauaa:${parseUserAgentVersion}"
 
 	implementation "org.apache.commons:commons-pool2:${commonsPool2Version}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
