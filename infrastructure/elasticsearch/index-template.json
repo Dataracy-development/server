@@ -15,11 +15,20 @@
         "path":             { "type": "keyword" },
         "httpMethod":       { "type": "keyword" },
         "ip":               { "type": "ip" },
-        "requestId":        { "type": "keyword", "index": false },
+        "requestId":        { "type": "keyword", "index": false, "doc_values": false },
         "sessionId":        { "type": "keyword" },
-        "userAgent":        { "type": "text", "norms": false },
-        "referrer":         { "type": "keyword", "index": false },
-        "nextPath":         { "type": "keyword", "index": false },
+        "userAgent": {
+          "type": "text",
+          "norms": false,
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "referrer":         { "type": "keyword", "index": false, "doc_values": false },
+        "nextPath":         { "type": "keyword", "index": false, "doc_values": false },
         "action":           { "type": "keyword" },
         "stayTime":         { "type": "long" },
         "responseTime":     { "type": "long" },
