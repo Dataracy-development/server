@@ -1,5 +1,5 @@
 {
-  "index_patterns": ["behavior-log-*"],
+  "index_patterns": ["behavior-logs-*"],
   "template": {
     "settings": {
       "number_of_shards": 1,
@@ -12,22 +12,22 @@
         "anonymousId":      { "type": "keyword" },
         "path":             { "type": "keyword" },
         "httpMethod":       { "type": "keyword" },
-        "responseTime":     { "type": "long" },
-        "userAgent":        { "type": "text" },
         "ip":               { "type": "ip" },
-        "action":           { "type": "keyword" },
-        "dbLatency":        { "type": "long" },
-        "externalLatency":  { "type": "long" },
-        "referrer":         { "type": "keyword" },
-        "deviceType":       { "type": "keyword" },
         "requestId":        { "type": "keyword" },
         "sessionId":        { "type": "keyword" },
-        "logType":          { "type": "keyword" },
-        "timestamp":        { "type": "date" },
+        "userAgent":        { "type": "text" },
+        "referrer":         { "type": "keyword" },
         "nextPath":         { "type": "keyword" },
+        "action":           { "type": "keyword" },
         "stayTime":         { "type": "long" },
+        "responseTime":     { "type": "long" },
+        "dbLatency":        { "type": "long" },
+        "externalLatency":  { "type": "long" },
+        "deviceType":       { "type": "keyword" },
+        "browser":          { "type": "keyword" },
         "os":               { "type": "keyword" },
-        "browser":          { "type": "keyword" }
+        "logType":          { "type": "keyword" },
+        "timestamp":        { "type": "date" }
       }
     }
   },
