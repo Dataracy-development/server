@@ -37,13 +37,18 @@ logging:
     root: warn
 
 management:
+  metrics:
+    tags:
+      application: dataracy-prod
   endpoints:
     web:
       exposure:
-        include: health
+        include: health, prometheus
   endpoint:
     health:
       show-details: always
+    prometheus:
+      enabled: true
 
 springdoc:
   swagger-ui:
@@ -57,17 +62,6 @@ swagger:
   version: v1.2.0
   server-url: http://${SERVER_HOST}:${SERVER_PORT}
   server-description: prod server
-
-  metrics:
-    tags:
-      application: dataracy-prod
-  endpoint:
-    prometheus:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: prometheus
 
 elasticsearch:
   connection:
