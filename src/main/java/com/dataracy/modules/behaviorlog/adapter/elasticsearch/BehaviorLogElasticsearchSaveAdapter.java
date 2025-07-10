@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -22,7 +21,7 @@ import java.util.Optional;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BehaviorLogElasticsearchAdapter implements SaveBehaviorLogPort {
+public class BehaviorLogElasticsearchSaveAdapter implements SaveBehaviorLogPort {
 
     private final ElasticsearchClient elasticsearchClient;
 
