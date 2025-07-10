@@ -4,13 +4,16 @@ import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.common.support.lock.DistributedLock;
+import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.FindOccupationUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.IsExistTopicUseCase;
+import com.dataracy.modules.reference.application.port.in.visitsource.FindVisitSourceUseCase;
+import com.dataracy.modules.reference.domain.model.AuthorLevel;
+import com.dataracy.modules.reference.domain.model.Occupation;
+import com.dataracy.modules.reference.domain.model.VisitSource;
 import com.dataracy.modules.user.application.dto.request.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
-import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
-import com.dataracy.modules.reference.application.port.in.occupation.FindOccupationUseCase;
-import com.dataracy.modules.reference.application.port.in.visitsource.FindVisitSourceUseCase;
 import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.user.ChangePasswordUseCase;
@@ -21,9 +24,6 @@ import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;
-import com.dataracy.modules.reference.domain.model.AuthorLevel;
-import com.dataracy.modules.reference.domain.model.Occupation;
-import com.dataracy.modules.reference.domain.model.VisitSource;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -100,10 +100,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 requestDto.email(),
                 encodedPassword,
                 requestDto.nickname(),
-                authorLevel,
-                occupation,
+                authorLevel.id(),
+                occupation.id(),
                 requestDto.topicIds(),
-                visitSource,
+                visitSource.id(),
                 requestDto.isAdTermsAgreed(),
                 false
         );
@@ -165,10 +165,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 email,
                 null,
                 requestDto.nickname(),
-                authorLevel,
-                occupation,
+                authorLevel.id(),
+                occupation.id(),
                 requestDto.topicIds(),
-                visitSource,
+                visitSource.id(),
                 requestDto.isAdTermsAgreed(),
                 false
         );
