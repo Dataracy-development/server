@@ -40,11 +40,12 @@ swagger:
   server-description: local server
 
 elasticsearch:
-  host: ${ELASTIC_SEARCH_HOST}
-  port: ${ELASTIC_SEARCH_PORT}
-  protocol: http
-  url: http://${ELASTIC_SEARCH_HOST}:${ELASTIC_SEARCH_PORT}
-  ssl: false
+  connection:
+    host: ${ELASTIC_SEARCH_HOST}
+    port: ${ELASTIC_SEARCH_PORT}
+    protocol: http
+    url: http://${ELASTIC_SEARCH_HOST}:${ELASTIC_SEARCH_PORT}
+    ssl: false
 
 management:
   metrics:

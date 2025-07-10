@@ -70,9 +70,10 @@ swagger:
         include: prometheus
 
 elasticsearch:
-  host: ${ELASTIC_SEARCH_HOST}
-  port: ${ELASTIC_SEARCH_PORT}
-  protocol: http
-  username: ${ELASTIC_USERNAME}
-  password: ${ELASTIC_PASSWORD}
-  ssl: false
+  connection:
+    host: ${ELASTIC_SEARCH_HOST}
+    port: ${ELASTIC_SEARCH_PORT}
+    protocol: http
+    username: ${ELASTIC_USERNAME}
+    password: ${ELASTIC_PASSWORD}
+    ssl: false
