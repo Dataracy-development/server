@@ -79,7 +79,6 @@ dependencies {
 	// JSON 처리
 	implementation "jakarta.json:jakarta.json-api:${jakartaJsonApiVersion}"
 	implementation "org.glassfish:jakarta.json:${jakartaJsonImplVersion}"
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
 	// OAuth 2.0
 	implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
