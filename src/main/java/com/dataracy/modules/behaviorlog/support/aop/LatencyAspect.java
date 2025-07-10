@@ -15,12 +15,12 @@ public class LatencyAspect {
 
     @Around("execution(* com.dataracy.modules..adapter.persistence.repositoryImpl..*(..))")
     public Object trackDbLatency(ProceedingJoinPoint joinPoint) throws Throwable {
-        long start = System.currentTimeMillis();
+        long start = System.nanoTime();
         try {
             return joinPoint.proceed();
         } finally {
-            long end = System.currentTimeMillis();
-            long latency = end - start;
+            long end = System.nanoTime();
+            long latency = (end - start) / 1_000_000; // Convert to milliseconds
             MDC.put(MdcKey.DB_LATENCY, String.valueOf(latency));
             log.debug("[DB Latency] {} ms - {}", latency, joinPoint.getSignature());
         }
