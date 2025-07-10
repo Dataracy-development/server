@@ -63,22 +63,21 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        log.info("[JWT FILTER DEBUG] Request URI: {}", request.getRequestURI());
-
-        return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
-                || path.startsWith("/.well-known")
+//        log.info("[JWT FILTER DEBUG] Request URI: {}", request.getRequestURI());
+        return
+                path.startsWith("/swagger") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.equals("/swagger-ui.html")
+                || path.startsWith("/swagger-resources") || path.equals("/swagger-config")
+                || path.startsWith("/webjars") || path.startsWith("/.well-known") || path.equals("/favicon.ico")
                 || path.startsWith("/static") || path.equals("/webhook")
                 || path.equals("/api/v1/base") || path.equals("/api/v1/onboarding")
-                || path.startsWith("/login") || path.startsWith("/oauth2") || path.startsWith("/moniter")
-                || path.equals("/")
+                || path.startsWith("/login") || path.startsWith("/oauth2")
+                || path.equals("/") || path.startsWith("/error")
                 || path.equals("/api/v1/topics") || path.equals("/api/v1/author-levels")
                 || path.equals("/api/v1/occupations") || path.equals("/api/v1/visit-sources")
                 || path.startsWith("/api/v1/email")
                 || path.startsWith("/api/v1/signup")
                 || path.startsWith("/api/v1/auth")
                 || path.equals("/api/v1/nickname/check")
-                || path.equals("/favicon.ico")
-                || path.startsWith("/error")
                 ;
     }
 

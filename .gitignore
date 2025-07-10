@@ -38,3 +38,12 @@ out/
 
 .env
 .env.*
+
+logs/
+*.log
+/logs/
+!/logs/.gitkeep
+
+/infrastructure/elasticsearch/ilm-policy.json
+/infrastructure/elasticsearch/index-template.json
+/infrastructure/kibana/behaviorlog-dashboard.ndjson
