@@ -80,6 +80,7 @@ public class BehaviorLogElasticsearchAdapter implements SaveBehaviorLogPort {
 
             IndexResponse response = elasticsearchClient.index(request);
             log.debug("BehaviorLog 저장 완료: id={}, result={}", response.id(), response.result());
+
         } catch (Exception e) {
             log.error("Elasticsearch 저장 실패: {}", e.getMessage(), e);
             // 메트릭 수집 (예: Micrometer)

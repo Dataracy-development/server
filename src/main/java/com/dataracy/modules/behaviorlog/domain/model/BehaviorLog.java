@@ -6,8 +6,6 @@ import com.dataracy.modules.behaviorlog.domain.enums.LogType;
 import com.dataracy.modules.common.support.enums.HttpMethod;
 import lombok.*;
 
-import java.time.Instant;
-
 /**
  * 행동 로그 도메인 모델
  * Elasticsearch에 저장되는 로그 데이터로,
@@ -65,7 +63,19 @@ public class BehaviorLog {
     private LogType logType;
 
     // 타임스탬프 (Elasticsearch 분석용)
-    private Instant timestamp;
+    private String timestamp;
+
+    // 다음 경로
+    private String nextPath;
+
+    // 페이지 체류 시간 (ms)
+    private Long stayTime;
+
+    // OS
+    private String os;
+
+    // 브라우저
+    private String browser;
 
     /**
      * 익명 사용자 또는 로그인 유저 중 최소 1명은 있어야 유효한 로그로 간주
@@ -77,7 +87,7 @@ public class BehaviorLog {
     /**
      * 타임스탬프가 없을 경우 외부에서 주입해서 생성 (불변 객체 스타일)
      */
-    public BehaviorLog withTimestamp(Instant timestamp) {
+    public BehaviorLog withTimestamp(String timestamp) {
         return BehaviorLog.builder()
                 .userId(this.userId)
                 .anonymousId(this.anonymousId)

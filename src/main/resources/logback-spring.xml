@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- MDC 기반 로깅 포맷 정의 (trace 추적용) -->
+    <!-- ✅ MDC 기반 로깅 포맷 정의 -->
     <property name="LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
-[requestId=%X{requestId}] [sessionId=%X{sessionId}] [userId=%X{userId}] [anonymousId=%X{anonymousId}] [ip=%X{ip}] [path=%X{path}] [method=%X{method}]"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n[requestId=%X{requestId}] [sessionId=%X{sessionId}] [userId=%X{userId}] [anonymousId=%X{anonymousId}] [ip=%X{ip}] [path=%X{path}] [method=%X{method}]"/>
 
-    <!-- 콘솔 로그 (개발/로컬 환경에서 사용) -->
+    <!-- ✅ 콘솔 로그 (개발/로컬 환경) -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <!-- 운영 로그 파일 (INFO 이상) -->
+    <!-- ✅ 운영 로그 파일 (INFO 이상) -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/system.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -25,7 +24,7 @@
         </encoder>
     </appender>
 
-    <!-- 에러 로그 파일 (ERROR 이상만 분리) -->
+    <!-- ✅ 에러 로그 파일 (ERROR 이상) -->
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/system-error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -40,19 +39,47 @@
         </filter>
     </appender>
 
-    <!-- 루트 로그 설정 -->
+    <!-- ✅ 루트 로그 설정 -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="ERROR_FILE"/>
     </root>
 
-    <!-- 특정 noisy 로그 줄이기 -->
+    <!-- ✅ 프로젝트 도메인 디버깅용 -->
+    <logger name="com.dataracy" level="DEBUG"/>
+
+    <!-- ✅ noisy 로그 억제 설정 -->
     <logger name="org.apache.kafka" level="WARN"/>
     <logger name="org.apache.catalina" level="WARN"/>
     <logger name="org.springframework.boot.actuate" level="WARN"/>
 
-    <!-- 우리 프로젝트 DEBUG 추적 (클래스 추적용) -->
-    <logger name="com.dataracy" level="DEBUG"/>
+    <!-- ✅ Hibernate Validator 버전 출력 제거 -->
+    <logger name="org.hibernate.validator" level="WARN"/>
 
+    <!-- ✅ Spring Data Redis repository 판단 로그 제거 -->
+    <logger name="org.springframework.data.redis" level="WARN"/>
+
+    <!-- ✅ Spring Data repository 스캔 로그 억제 -->
+    <logger name="org.springframework.data.repository.config" level="WARN"/>
+
+    <!-- ✅ Hibernate JPA 초기화 로그 줄이기 -->
+    <logger name="org.hibernate" level="WARN"/>
+
+    <!-- ✅ Netty DNS 관련 경고 제거 (Mac 전용) -->
+    <logger name="io.netty" level="ERROR"/>
+
+    <!-- ✅ Redisson 커넥션 로그 줄이기 -->
+    <logger name="org.redisson" level="WARN"/>
+
+    <!-- ✅ Spring Security 로그 줄이기 (선택) -->
+    <logger name="org.springframework.security" level="INFO"/>
+
+    <!-- ✅ 추가로 줄이면 좋은 noisy 로그들 -->
+    <logger name="org.springframework.boot.web" level="WARN"/>
+    <logger name="org.apache.coyote" level="WARN"/>
+    <logger name="org.springframework.web.servlet.DispatcherServlet" level="WARN"/>
+    <logger name="org.springframework.orm" level="WARN"/>
+    <logger name="org.springframework.data.jpa" level="WARN"/>
+    <logger name="nl.basjes.parse.useragent" level="WARN"/>
 </configuration>

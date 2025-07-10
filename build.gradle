@@ -78,6 +78,7 @@ dependencies {
 	// JSON 처리
 	implementation "jakarta.json:jakarta.json-api:${jakartaJsonApiVersion}"
 	implementation "org.glassfish:jakarta.json:${jakartaJsonImplVersion}"
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
 	// OAuth 2.0
 	implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
@@ -116,7 +117,7 @@ dependencies {
 	implementation "com.amazonaws:aws-java-sdk-ses:${sesVersion}"
 
 	// parser
-	implementation 'com.github.ua-parser:uap-java:1.4.3'
+	implementation 'nl.basjes.parse.useragent:yauaa:6.3'
 
 	implementation "org.apache.commons:commons-pool2:${commonsPool2Version}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"

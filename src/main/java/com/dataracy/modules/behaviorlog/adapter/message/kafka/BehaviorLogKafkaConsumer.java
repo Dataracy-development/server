@@ -30,13 +30,6 @@ public class BehaviorLogKafkaConsumer {
             record.topic(), record.partition(), record.offset());
 
             BehaviorLog logData = objectMapper.readValue(message, BehaviorLog.class);
-            // 필수 필드 검증
-            if (!logData.isValid()) {
-                log.warn("유효하지 않은 행동 로그 메시지 무시: userId={}, anonymousId={}",
-                    logData.getUserId(), logData.getAnonymousId()
-                );
-                return;
-            }
             saveBehaviorLogPort.save(logData);
         } catch (JsonProcessingException e) {
             log.error("JSON 역직렬화 실패 - 메시지 무시: {}", record.value(), e);

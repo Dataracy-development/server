@@ -1,24 +1,36 @@
 {
-  "index_patterns": ["behaviorlog-*"],
+  "index_patterns": ["behavior-log-*"],
   "template": {
     "settings": {
-      "index.lifecycle.name": "behaviorlog-ilm-policy",
       "number_of_shards": 1,
-      "number_of_replicas": 1
+      "number_of_replicas": 1,
+      "index.lifecycle.name": "behaviorlog-ilm-policy"
     },
     "mappings": {
       "properties": {
-        "userId": { "type": "keyword" },
-        "anonymousId": { "type": "keyword" },
-        "action": { "type": "keyword" },
-        "path": { "type": "keyword" },
-        "method": { "type": "keyword" },
-        "ip": { "type": "ip" },
-        "referrer": { "type": "keyword" },
-        "deviceType": { "type": "keyword" },
-        "responseTime": { "type": "integer" },
-        "timestamp": { "type": "date" }
+        "userId":           { "type": "keyword" },
+        "anonymousId":      { "type": "keyword" },
+        "path":             { "type": "keyword" },
+        "httpMethod":       { "type": "keyword" },
+        "responseTime":     { "type": "long" },
+        "userAgent":        { "type": "text" },
+        "ip":               { "type": "ip" },
+        "action":           { "type": "keyword" },
+        "dbLatency":        { "type": "long" },
+        "externalLatency":  { "type": "long" },
+        "referrer":         { "type": "keyword" },
+        "deviceType":       { "type": "keyword" },
+        "requestId":        { "type": "keyword" },
+        "sessionId":        { "type": "keyword" },
+        "logType":          { "type": "keyword" },
+        "timestamp":        { "type": "date" },
+        "nextPath":         { "type": "keyword" },
+        "stayTime":         { "type": "long" },
+        "os":               { "type": "keyword" },
+        "browser":          { "type": "keyword" }
       }
     }
-  }
+  },
+  "priority": 500,
+  "data_stream": {}
 }
