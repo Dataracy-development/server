@@ -9,6 +9,7 @@ import com.dataracy.modules.behaviorlog.support.mdc.MdcKey;
 import com.dataracy.modules.behaviorlog.support.parser.UserAgentParser;
 import com.dataracy.modules.common.support.enums.HttpMethod;
 import com.dataracy.modules.common.util.CookieUtil;
+import com.dataracy.modules.common.util.WebRequestUtil;
 import com.dataracy.modules.security.handler.SecurityContextProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,6 +37,10 @@ public class BehaviorLogTrackingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        if (WebRequestUtil.isLogExceptRequest(request)) {
+            chain.doFilter(request, response); // 꼭 체인 호출
+            return;
+        }
 
         long startTime = System.currentTimeMillis();
 
@@ -72,7 +77,9 @@ public class BehaviorLogTrackingFilter extends OncePerRequestFilter {
 
     private BehaviorLog buildBehaviorLog(HttpServletRequest request, long responseTime) {
         String userAgent = request.getHeader("User-Agent");
-        ActionType actionType = ActionType.valueOf(MDC.get(MdcKey.ACTION));
+        String actionRaw = MDC.get(MdcKey.ACTION);
+        ActionType action = ActionType.fromNullableString(actionRaw);
+
         long dbLatency = parseLong(MDC.get(MdcKey.DB_LATENCY));
         long stayTime = parseLong(MDC.get(MdcKey.STAY_TIME));
 
@@ -91,7 +98,7 @@ public class BehaviorLogTrackingFilter extends OncePerRequestFilter {
                 .responseTime(responseTime)
                 .userAgent(userAgent)
                 .ip(MDC.get(MdcKey.IP))
-                .action(actionType)
+                .action(action)
                 .dbLatency(dbLatency)
                 .externalLatency(0) // TODO: 외부 호출 추적 시 채워넣기
                 .referrer(referrer)
