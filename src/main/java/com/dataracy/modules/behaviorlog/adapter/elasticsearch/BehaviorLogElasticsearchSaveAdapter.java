@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -60,8 +62,15 @@ public class BehaviorLogElasticsearchSaveAdapter implements SaveBehaviorLogPort 
     }
 
     private boolean isRetryable(Exception e) {
+        // 예외 타입 기반 판단
+        if (e instanceof ConnectException || e instanceof SocketTimeoutException) {
+            return true;
+        }
+        // 메시지 기반 판단
         return Optional.ofNullable(e.getMessage())
-                .map(msg -> msg.contains("timeout") || msg.contains("connection"))
-                .orElse(false);
-    }
+              .map(msg -> msg.toLowerCase().contains("timeout") ||
+                      msg.toLowerCase().contains("connection") ||
+                      msg.toLowerCase().contains("unavailable"))
+             .orElse(false);
+        }
 }

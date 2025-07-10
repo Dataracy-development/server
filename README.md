@@ -1,6 +1,6 @@
 # 📊 Dataracy - 사용자 행동 로그 기반 관측 시스템
 
-### Real-Time Behavioral Logging & Monitoring with Kafka, Elasticsearch, Redis, Prometheus, Grafana
+## Real-Time Behavioral Logging & Monitoring with Kafka, Elasticsearch, Redis, Prometheus, Grafana
 
 ---
 

@@ -15,11 +15,11 @@ public enum DeviceType {
             return MOBILE;
         }
 
-        if (ua.contains("ipad") || ua.contains("tablet")) {
+        if (ua.contains("ipad") || ua.contains("tablet") || ua.contains("kindle")) {
             return TABLET;
         }
 
-        if (ua.contains("windows") || ua.contains("macintosh") || ua.contains("linux")) {
+        if (ua.contains("windows") || ua.contains("macintosh") || ua.contains("linux") || ua.contains("x11")) {
             return PC;
         }
 

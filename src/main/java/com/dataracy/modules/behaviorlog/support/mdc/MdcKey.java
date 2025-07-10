@@ -3,7 +3,7 @@ package com.dataracy.modules.behaviorlog.support.mdc;
 /**
  * MDC 키 상수 정의
  */
-public class MdcKey {
+public final class MdcKey {
 
     public static final String REQUEST_ID     = "requestId";
     public static final String SESSION_ID     = "sessionId";

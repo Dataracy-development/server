@@ -18,6 +18,8 @@ public class MergeAnonymousUserLogService implements MergeAnonymousUserLogUseCas
 
     @Override
     public void merge(String anonymousId, Long userId) {
+        log.info("익명 사용자 로그 병합 시작: anonymousId={}, userId={}", anonymousId, userId);
         mergePort.merge(anonymousId, userId);
+        log.info("익명 사용자 로그 병합 완료: anonymousId={}, userId={}", anonymousId, userId);
     }
 }
