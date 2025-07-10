@@ -1,10 +1,12 @@
 package com.dataracy.modules.behaviorlog.support.aop;
 
+import com.dataracy.modules.behaviorlog.support.mdc.MdcKey;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.springframework.stereotype.Component;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.MDC;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Aspect
@@ -19,9 +21,8 @@ public class ServiceLatencyAspect {
         } finally {
             long end = System.currentTimeMillis();
             long latency = end - start;
-            MDC.put("dbLatency", String.valueOf(latency));
-            log.debug("[Latency] {} ms - {}", latency, joinPoint.getSignature());
+            MDC.put(MdcKey.DB_LATENCY, String.valueOf(latency));
+            log.debug("[DB Latency] {} ms - {}", latency, joinPoint.getSignature());
         }
     }
 }
-
