@@ -17,7 +17,9 @@ public class AnalysisPurposeController implements AnalysisPurposeApi {
     private final AnalysisPurposeWebMapper analysisPurposeWebMapper;
     private final FindAllAnalysisPurposesUseCase findAllAnalysisPurposesUseCase;
     /**
-     * 전체 분석 목적 목록 조회
+     * 전체 분석 목적 목록을 조회하여 성공 응답으로 반환합니다.
+     *
+     * @return 전체 분석 목적 목록이 포함된 성공 응답 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<AllAnalysisPurposesWebResponse>> allAnalysisPurposes (

@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "Reference", description = "참조 데이터 관련 API")
 @RequestMapping("/api/v1/occupations")
 public interface OccupationApi {
-    /**
-     * 전체 occupation 리스트를 조회한다.
+    /****
+     * 전체 직업 목록을 조회하는 API 엔드포인트입니다.
      *
-     * @return 전체 occupation 리스트
+     * @return 모든 직업 정보를 포함하는 성공 응답 객체
      */
     @Operation(
             summary = "전체 직업 리스트를 조회",

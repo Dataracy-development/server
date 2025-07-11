@@ -24,6 +24,14 @@ public class AwsS3Config {
     @Value("${cloud.aws.region.static}")
     private String region;
 
+    /**
+     * AWS S3 클라이언트(AmazonS3) 빈을 생성하여 반환합니다.
+     *
+     * AWS 접근 키, 시크릿 키, 리전을 기반으로 AmazonS3 클라이언트를 생성하며,
+     * 생성 과정에서 오류가 발생하면 IllegalStateException을 발생시킵니다.
+     *
+     * @return 구성된 AmazonS3 클라이언트 인스턴스
+     */
     @Bean
     public AmazonS3 amazonS3() {
         try {

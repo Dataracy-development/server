@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "Reference", description = "참조 데이터 관련 API")
 @RequestMapping("/api/v1/visit-sources")
 public interface VisitSourceApi {
-    /**
-     * 전체 visitSource 리스트를 조회한다.
+    /****
+     * 모든 방문 경로(visit source)의 목록을 조회한다.
      *
-     * @return 전체 visitSource 리스트
+     * @return 전체 방문 경로 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "전체 방문 경로 리스트를 조회",

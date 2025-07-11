@@ -17,7 +17,9 @@ public class VisitSourceController implements VisitSourceApi {
     private final VisitSourceWebMapper visitSourceWebMapper;
     private final FindAllVisitSourcesUseCase findAllVisitSourcesUseCase;
     /**
-     * 전체 방문 경로 목록 조회
+     * 전체 방문 경로 목록을 조회하여 성공 응답으로 반환합니다.
+     *
+     * @return 전체 방문 경로 목록이 포함된 성공 응답 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<AllVisitSourcesWebResponse>> allVisitSources (

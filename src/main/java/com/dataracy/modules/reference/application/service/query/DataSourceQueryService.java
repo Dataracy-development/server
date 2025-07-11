@@ -24,8 +24,9 @@ public class DataSourceQueryService implements
     private final DataSourceRepositoryPort dataSourceRepositoryPort;
 
     /**
-     * 모든 dataSource 리스트를 조회한다.
-     * @return dataSource 리스트
+     * 모든 데이터 소스의 목록을 조회하여 응답 DTO로 반환한다.
+     *
+     * @return 전체 데이터 소스 정보를 담은 AllDataSourcesResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -35,9 +36,10 @@ public class DataSourceQueryService implements
     }
 
     /**
-     * 데이터 출처 id로 데이터 출처을 조회한다.
-     * @param dataSourceId 데이터 출처 id
-     * @return 데이터 출처
+     * 주어진 ID에 해당하는 데이터 출처 정보를 조회하여 응답 DTO로 반환한다.
+     *
+     * @param dataSourceId 조회할 데이터 출처의 ID
+     * @return 데이터 출처 정보를 담은 응답 DTO
      */
     @Override
     @Transactional(readOnly = true)

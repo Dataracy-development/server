@@ -18,8 +18,9 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
     private final AnalysisPurposeJpaRepository analysisPurposeJpaRepository;
 
     /**
-     * analysisPurpose 엔티티의 모든 데이터셋을 조회한다.
-     * @return analysisPurpose 데이터셋
+     * 모든 분석 목적(AnalysisPurpose) 도메인 객체 목록을 조회한다.
+     *
+     * @return 데이터베이스에 저장된 모든 분석 목적의 도메인 객체 리스트
      */
     @Override
     public List<AnalysisPurpose> allAnalysisPurposes() {
@@ -30,9 +31,11 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
     }
 
     /**
-     * 분석 목적 id에 해당하는 분석 목적이 존재하면 조회한다.
-     * @param analysisPurposeId 분석 목적 아이디
-     * @return 분석 목적
+     * 주어진 ID에 해당하는 분석 목적을 조회한다.
+     *
+     * @param analysisPurposeId 조회할 분석 목적의 ID
+     * @return 해당 ID의 분석 목적 도메인 객체. ID가 null이면 null을 반환한다.
+     * @throws ReferenceException 해당 ID의 분석 목적이 존재하지 않을 경우 발생한다.
      */
     @Override
     public AnalysisPurpose findAnalysisPurposeById(Long analysisPurposeId) {

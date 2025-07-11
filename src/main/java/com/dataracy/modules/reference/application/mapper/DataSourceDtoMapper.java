@@ -11,7 +11,12 @@ import java.util.List;
  */
 @Component
 public class DataSourceDtoMapper {
-    // DataSource 도메인 모델 -> DataSource 도메인 응답 DTO
+    /**
+     * DataSource 도메인 모델 객체를 DataSource 응답 DTO로 변환합니다.
+     *
+     * @param dataSource 변환할 DataSource 도메인 모델 객체
+     * @return 변환된 DataSourceResponse DTO
+     */
     public AllDataSourcesResponse.DataSourceResponse toResponseDto(DataSource dataSource) {
         return new AllDataSourcesResponse.DataSourceResponse(
                 dataSource.id(),
@@ -20,7 +25,12 @@ public class DataSourceDtoMapper {
         );
     }
 
-    // 전체 DataSource 리스트 조회 도메인 모델 -> 전체 DataSource 리스트 조회 도메인 응답 DTO
+    /**
+     * DataSource 도메인 모델 리스트를 AllDataSourcesResponse DTO로 변환합니다.
+     *
+     * @param dataSources 변환할 DataSource 도메인 모델 리스트
+     * @return 변환된 DataSourceResponse DTO 리스트를 포함하는 AllDataSourcesResponse 객체
+     */
     public AllDataSourcesResponse toResponseDto(List<DataSource> dataSources) {
         return new AllDataSourcesResponse(
                 dataSources.stream()

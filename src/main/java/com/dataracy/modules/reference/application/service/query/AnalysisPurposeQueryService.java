@@ -24,8 +24,9 @@ public class AnalysisPurposeQueryService implements
     private final AnalysisPurposeRepositoryPort analysisPurposeRepositoryPort;
 
     /**
-     * 모든 analysisPurpose 리스트를 조회한다.
-     * @return analysisPurpose 리스트
+     * 모든 분석 목적(analysisPurpose) 정보를 조회하여 응답 DTO로 반환한다.
+     *
+     * @return 전체 분석 목적 목록이 포함된 AllAnalysisPurposesResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -35,9 +36,10 @@ public class AnalysisPurposeQueryService implements
     }
 
     /**
-     * 분석 목적 id로 분석 목적을 조회한다.
-     * @param analysisPurposeId 분석 목적 id
-     * @return 분석 목적
+     * 주어진 분석 목적 ID로 해당 분석 목적 정보를 조회하여 반환한다.
+     *
+     * @param analysisPurposeId 조회할 분석 목적의 ID
+     * @return 조회된 분석 목적의 응답 DTO
      */
     @Override
     @Transactional(readOnly = true)

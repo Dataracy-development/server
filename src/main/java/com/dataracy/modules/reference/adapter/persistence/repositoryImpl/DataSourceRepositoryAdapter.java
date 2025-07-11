@@ -18,8 +18,9 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     private final DataSourceJpaRepository dataSourceJpaRepository;
 
     /**
-     * dataSource 엔티티의 모든 데이터셋을 조회한다.
-     * @return dataSource 데이터셋
+     * 모든 데이터 소스 엔티티를 조회하여 도메인 객체 리스트로 반환합니다.
+     *
+     * @return 데이터 소스 도메인 객체의 리스트
      */
     @Override
     public List<DataSource> allDataSources() {
@@ -30,9 +31,11 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     }
 
     /**
-     * 데이터 출처 id에 해당하는 데이터 출처가 존재하면 조회한다.
-     * @param dataSourceId 작성자 유형 아이디
-     * @return 데이터 출처
+     * 주어진 데이터 출처 ID로 데이터 출처를 조회한다.
+     *
+     * @param dataSourceId 조회할 데이터 출처의 ID
+     * @return 데이터 출처 도메인 객체. ID가 null이면 null을 반환한다.
+     * @throws ReferenceException 데이터 출처를 찾을 수 없는 경우 발생
      */
     @Override
     public DataSource findDataSourceById(Long dataSourceId) {
