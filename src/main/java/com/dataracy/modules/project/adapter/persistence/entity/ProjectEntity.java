@@ -60,6 +60,13 @@ public class ProjectEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Column
+    private String thumbnailUrl;
+
+    public void updateFile (String imageUrl) {
+        this.thumbnailUrl = imageUrl;
+    }
+
     /**
      * 주어진 필드 값들로 새로운 ProjectEntity 인스턴스를 생성합니다.
      *
@@ -73,6 +80,7 @@ public class ProjectEntity extends BaseEntity {
      * @param isContinue 프로젝트의 연속 여부
      * @param parentProject 상위 프로젝트 엔티티 (없을 경우 null)
      * @param content 프로젝트 상세 내용
+     * @param thumbnailUrl 썸네일 url
      * @return 생성된 ProjectEntity 객체
      */
     public static ProjectEntity toEntity(
@@ -85,7 +93,8 @@ public class ProjectEntity extends BaseEntity {
             Long authorLevelId,
             Boolean isContinue,
             ProjectEntity parentProject,
-            String content
+            String content,
+            String thumbnailUrl
     ) {
         return ProjectEntity.builder()
                 .id(id)
@@ -98,6 +107,7 @@ public class ProjectEntity extends BaseEntity {
                 .isContinue(isContinue)
                 .parentProject(parentProject)
                 .content(content)
+                .thumbnailUrl(thumbnailUrl)
                 .build();
     }
 }

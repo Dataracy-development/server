@@ -12,10 +12,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Project", description = "프로젝트 관련 API")
 @RequestMapping("/api/v1/projects")
@@ -36,18 +36,15 @@ public interface ProjectApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<SuccessResponse<Void>> uploadProject(
             @Parameter(hidden = true)
             @CurrentUserId
             Long userId,
 
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    description = "저장할 프로젝트 정보",
-                    content = @Content(schema = @Schema(implementation = ProjectUploadWebRequest.class))
-            )
-            @Validated @RequestBody
+            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
+
+            @RequestPart
             ProjectUploadWebRequest webRequest
     );
 }

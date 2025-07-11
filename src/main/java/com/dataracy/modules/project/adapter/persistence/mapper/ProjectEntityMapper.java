@@ -37,7 +37,8 @@ public class ProjectEntityMapper {
                 projectEntity.getAuthorLevelId(),
                 projectEntity.getIsContinue(),
                 parentProject,
-                projectEntity.getContent()
+                projectEntity.getContent(),
+                projectEntity.getThumbnailUrl()
                 );
     }
 
@@ -69,7 +70,8 @@ public class ProjectEntityMapper {
                 project.getAuthorLevelId(),
                 project.getIsContinue(),
                 parentProject,
-                project.getContent()
+                project.getContent(),
+                project.getThumbnailUrl()
         );
     }
 }

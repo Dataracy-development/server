@@ -21,11 +21,13 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
      *
      * @param project 저장할 프로젝트 도메인 객체
      * @throws ProjectException 프로젝트 저장에 실패한 경우 발생
+     * return 업로드된 프로젝트 아이디
      */
     @Override
-    public void saveProject(Project project) {
+    public Long saveProject(Project project) {
         try {
-            projectJpaRepository.save(projectEntityMapper.toEntity(project));
+            ProjectEntity projectEntity = projectJpaRepository.save(projectEntityMapper.toEntity(project));
+            return projectEntity.getId();
         } catch (Exception e) {
             throw new ProjectException(ProjectErrorStatus.FAIL_SAVE_PROJECT);
         }
@@ -45,5 +47,12 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
             return null;
         }
         return projectEntityMapper.toDomain(projectEntity);
+    }
+
+    @Override
+    public void updateFile(Long projectId, String imageUrl) {
+        ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
+                .orElse(null);
+        projectEntity.updateFile(imageUrl);
     }
 }
