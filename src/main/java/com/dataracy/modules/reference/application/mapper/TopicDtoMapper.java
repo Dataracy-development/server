@@ -14,9 +14,9 @@ public class TopicDtoMapper {
     // 토픽 도메인 모델 -> 토픽 도메인 응답 DTO
     public AllTopicsResponse.TopicResponse toResponseDto(Topic topic) {
         return new AllTopicsResponse.TopicResponse(
-                topic.getId(),
-                topic.getValue(),
-                topic.getLabel()
+                topic.id(),
+                topic.value(),
+                topic.label()
         );
     }
 
