@@ -49,7 +49,7 @@ ext {
 	redissonVersion = '3.27.0'
 	sendGridVersion = '4.9.3'
 	sesVersion = '1.12.3'
-	s3Version = '1.12.643'
+	s3Version = '1.12.696'
 	swaggerVersion = '2.5.0'
 	jjwtVersion = '0.12.3'
 	commonsPool2Version = '2.11.1'
@@ -95,6 +95,7 @@ dependencies {
 	implementation "io.micrometer:micrometer-registry-prometheus"
 
 	// AWS S3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation "com.amazonaws:aws-java-sdk-s3:${s3Version}"
 
 	// Swagger
