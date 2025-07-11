@@ -53,6 +53,14 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
     }
 
     private String extractKeyFromUrl(String url) {
-        return url.substring(url.indexOf(bucket) + bucket.length() + 1);
+        int bucketIndex = url.indexOf(bucket);
+        if (bucketIndex == -1) {
+            throw new IllegalArgumentException("Invalid S3 URL format: " + url);
+        }
+        int keyStartIndex = bucketIndex + bucket.length() + 1;
+        if (keyStartIndex >= url.length()) {
+            throw new IllegalArgumentException("No key found in S3 URL: " + url);
+        }
+        return url.substring(keyStartIndex);
     }
 }

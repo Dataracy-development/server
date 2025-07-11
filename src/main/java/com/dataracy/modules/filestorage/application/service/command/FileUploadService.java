@@ -36,15 +36,17 @@ public class FileUploadService implements FileUploadUseCase {
 
     @Override
     public String replaceFile(String directory, MultipartFile newFile, String oldFileUrl) {
+        String newUrl = uploadFile(directory, newFile);
         deleteFile(oldFileUrl);
-        return uploadFile(directory, newFile);
+        return newUrl;
     }
 
-    public void createThumbnail(MultipartFile original, String directory, String fileName, int width, int height) {
+    public String createThumbnail(MultipartFile original, String directory, String fileName, int width, int height) {
         ByteArrayOutputStream baos = thumbnailGenerator.createThumbnail(original, width, height);
         MultipartFile thumb = convertToMultipartFile(baos, fileName, original.getContentType());
         String thumbUrl = fileStoragePort.upload(directory, thumb);
         log.info("[썸네일 업로드 성공] {}", thumbUrl);
+        return thumbUrl;
     }
 
     private MultipartFile convertToMultipartFile(ByteArrayOutputStream baos, String filename, String contentType) {

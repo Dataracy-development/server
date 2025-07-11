@@ -2,9 +2,12 @@ package com.dataracy.modules.filestorage.support.util;
 
 import java.util.UUID;
 
-public class S3KeyGeneratorUtil {
+public final class S3KeyGeneratorUtil {
 
     public static String generateKey(String domain, Long entityId, String originalFilename) {
+        if (domain == null || entityId == null || originalFilename == null) {
+            throw new IllegalArgumentException("파라미터는 null일 수 없습니다");
+        }
         String extension = getExtension(originalFilename);
         String uuid = UUID.randomUUID().toString();
         return String.format("%s/%d/%s.%s", domain, entityId, uuid, extension);

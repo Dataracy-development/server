@@ -12,7 +12,14 @@ import java.io.InputStream;
 public class ThumbnailGenerator {
 
     public ByteArrayOutputStream createThumbnail(MultipartFile originalImage, int width, int height) {
-        try (InputStream is = originalImage.getInputStream(); ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+        if (originalImage == null || originalImage.isEmpty()) {
+            throw new IllegalArgumentException("원본 이미지가 필요합니다");
+        }
+        if (width <= 0 || height <= 0) {
+            throw new IllegalArgumentException("너비와 높이는 양수여야 합니다");
+        }
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try (InputStream is = originalImage.getInputStream()) {
             Thumbnails.of(is).size(width, height).outputFormat("jpg").toOutputStream(os);
             return os;
         } catch (IOException e) {
