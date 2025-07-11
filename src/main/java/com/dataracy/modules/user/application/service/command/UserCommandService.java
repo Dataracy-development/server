@@ -8,9 +8,6 @@ import com.dataracy.modules.reference.application.port.in.author_level.FindAutho
 import com.dataracy.modules.reference.application.port.in.occupation.FindOccupationUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.IsExistTopicUseCase;
 import com.dataracy.modules.reference.application.port.in.visit_source.FindVisitSourceUseCase;
-import com.dataracy.modules.reference.domain.model.AuthorLevel;
-import com.dataracy.modules.reference.domain.model.Occupation;
-import com.dataracy.modules.reference.domain.model.VisitSource;
 import com.dataracy.modules.user.application.dto.request.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
@@ -82,14 +79,22 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         String providerId = UUID.randomUUID().toString();
 
         // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
-        AuthorLevel authorLevel = findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId());
+        Long authorLevelId = requestDto.authorLevelId() == null
+                ? null
+                : findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId()).id();
+
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         requestDto.topicIds()
                 .forEach(isExistTopicUseCase::validateTopicById);
+
         // 직업 id를 통해 직업 조회 및 유효성 검사
-        Occupation occupation = findOccupationUseCase.findOccupation(requestDto.occupationId());
+        Long occupationId = requestDto.occupationId() == null
+                ? null
+                : findOccupationUseCase.findOccupation(requestDto.occupationId()).id();
         // 방문 경로 id를 통해 방문 경로 조회 및 유효성 검사
-        VisitSource visitSource = findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId());
+        Long visitSourceId = requestDto.visitSourceId() == null
+                ? null
+                : findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId()).id();
 
         // 유저 도메인 모델 생성 및 db 저장
         User user = User.toDomain(
@@ -100,10 +105,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 requestDto.email(),
                 encodedPassword,
                 requestDto.nickname(),
-                authorLevel.id(),
-                occupation.id(),
+                authorLevelId,
+                occupationId,
                 requestDto.topicIds(),
-                visitSource.id(),
+                visitSourceId,
                 requestDto.isAdTermsAgreed(),
                 false
         );
@@ -147,14 +152,22 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         duplicateNicknameUseCase.validateDuplicatedNickname(requestDto.nickname());
 
         // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
-        AuthorLevel authorLevel = findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId());
+        Long authorLevelId = requestDto.authorLevelId() == null
+                ? null
+                : findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId()).id();
+
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         requestDto.topicIds()
                 .forEach(isExistTopicUseCase::validateTopicById);
+
         // 직업 id를 통해 직업 조회 및 유효성 검사
-        Occupation occupation = findOccupationUseCase.findOccupation(requestDto.occupationId());
+        Long occupationId = requestDto.occupationId() == null
+                ? null
+                : findOccupationUseCase.findOccupation(requestDto.occupationId()).id();
         // 방문 경로 id를 통해 방문 경로 조회 및 유효성 검사
-        VisitSource visitSource = findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId());
+        Long visitSourceId = requestDto.visitSourceId() == null
+                ? null
+                : findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId()).id();
 
         // 유저 도메인 모델 생성 및 db 저장
         User user = User.toDomain(
@@ -165,10 +178,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 email,
                 null,
                 requestDto.nickname(),
-                authorLevel.id(),
-                occupation.id(),
+                authorLevelId,
+                occupationId,
                 requestDto.topicIds(),
-                visitSource.id(),
+                visitSourceId,
                 requestDto.isAdTermsAgreed(),
                 false
         );
