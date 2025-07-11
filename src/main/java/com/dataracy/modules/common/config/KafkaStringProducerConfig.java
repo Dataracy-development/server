@@ -18,6 +18,13 @@ public class KafkaStringProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
+    /**
+     * Kafka 프로듀서를 위한 String 타입 키와 값을 처리하는 ProducerFactory 빈을 생성합니다.
+     *
+     * Kafka 서버 주소, String 직렬화, 전체 커밋 확인(acks=all), 재시도 횟수(3회) 등의 설정이 적용됩니다.
+     *
+     * @return String 키와 값을 처리하는 Kafka ProducerFactory 인스턴스
+     */
     @Bean
     public ProducerFactory<String, String> stringProducerFactory() {
         Map<String, Object> config = new HashMap<>();
@@ -29,6 +36,11 @@ public class KafkaStringProducerConfig {
         return new DefaultKafkaProducerFactory<>(config);
     }
 
+    /**
+     * 문자열 키와 값을 사용하는 Kafka 메시지 전송을 위한 KafkaTemplate 빈을 생성합니다.
+     *
+     * @return 문자열 키와 값을 처리하는 KafkaTemplate 인스턴스
+     */
     @Bean
     public KafkaTemplate<String, String> stringKafkaTemplate() {
         return new KafkaTemplate<>(stringProducerFactory());

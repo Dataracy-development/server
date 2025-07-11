@@ -24,8 +24,9 @@ public interface ProjectApi {
     /**
      * 프로젝트 정보를 업로드하여 데이터베이스에 저장한다.
      *
-     * @param webRequest 저장할 프로젝트 정보가 담긴 요청 객체
-     * @return 프로젝트 업로드 성공 시 200 응답을 반환한다.
+     * @param imageFile 프로젝트와 연관된 이미지 파일(선택 사항)
+     * @param webRequest 업로드할 프로젝트 정보가 담긴 요청 객체
+     * @return 업로드 성공 시 200 OK와 함께 성공 응답을 반환한다.
      */
     @Operation(
             summary = "프로젝트를 업로드한다.",
