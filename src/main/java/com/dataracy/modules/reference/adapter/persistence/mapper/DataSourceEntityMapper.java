@@ -7,7 +7,12 @@ import com.dataracy.modules.reference.domain.model.DataSource;
  * 데이터 출처 엔티티와 데이터 출처 도메인 모델을 변환하는 매퍼
  */
 public class DataSourceEntityMapper {
-    // DataSource 엔티티 -> DataSource 도메인 모델
+    /**
+     * DataSourceEntity 객체를 DataSource 도메인 모델로 변환합니다.
+     *
+     * @param dataSourceEntity 변환할 DataSourceEntity 객체
+     * @return 변환된 DataSource 도메인 모델 객체, 입력이 null이면 null 반환
+     */
     public static DataSource toDomain(DataSourceEntity dataSourceEntity) {
         if (dataSourceEntity == null) {
             return null;
@@ -20,7 +25,12 @@ public class DataSourceEntityMapper {
         );
     }
 
-    // DataSource 도메인 모델 -> DataSource 엔티티
+    /**
+     * DataSource 도메인 모델을 DataSourceEntity 엔티티로 변환합니다.
+     *
+     * @param dataSource 변환할 DataSource 도메인 모델 객체
+     * @return 변환된 DataSourceEntity 객체, 입력이 null이면 null 반환
+     */
     public static DataSourceEntity toEntity(DataSource dataSource) {
         if (dataSource == null) {
             return null;

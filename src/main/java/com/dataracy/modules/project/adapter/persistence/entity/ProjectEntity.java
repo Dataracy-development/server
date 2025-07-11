@@ -60,6 +60,21 @@ public class ProjectEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    /**
+     * 주어진 필드 값들로 새로운 ProjectEntity 인스턴스를 생성합니다.
+     *
+     * @param id 프로젝트의 고유 식별자
+     * @param title 프로젝트 제목
+     * @param topicId 주제 식별자
+     * @param userId 사용자 식별자
+     * @param analysisPurposeId 분석 목적 식별자
+     * @param dataSourceId 데이터 소스 식별자
+     * @param authorLevelId 작성자 등급 식별자
+     * @param isContinue 프로젝트의 연속 여부
+     * @param parentProject 상위 프로젝트 엔티티 (없을 경우 null)
+     * @param content 프로젝트 상세 내용
+     * @return 생성된 ProjectEntity 객체
+     */
     public static ProjectEntity toEntity(
             Long id,
             String title,

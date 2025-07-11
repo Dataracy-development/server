@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/author-levels")
 public interface AuthorLevelApi {
     /**
-     * 전체 authorLevel 리스트를 조회한다.
+     * 전체 작성자 유형(Author Level) 목록을 조회한다.
      *
-     * @return 전체 authorLevel 리스트
+     * @return 전체 작성자 유형 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "전체 작성자 유형 리스트를 조회",
