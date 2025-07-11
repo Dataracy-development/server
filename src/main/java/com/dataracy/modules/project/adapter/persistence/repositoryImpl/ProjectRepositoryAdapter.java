@@ -53,6 +53,8 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     public void updateFile(Long projectId, String imageUrl) {
         ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
                 .orElse(null);
-        projectEntity.updateFile(imageUrl);
+        if (projectEntity != null) {
+            projectEntity.updateFile(imageUrl);
+        }
     }
 }
