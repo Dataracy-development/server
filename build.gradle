@@ -55,7 +55,7 @@ ext {
 	commonsPool2Version = '2.11.1'
 	lombokVersion = '1.18.30'
 	parseUserAgentVersion = '6.3'
-	thumbnailGenerateVersion = '0.4.14'
+	thumbnailGenerateVersion = '0.4.20'
 }
 
 dependencies {
