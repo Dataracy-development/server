@@ -18,7 +18,7 @@ public class Project {
     private Long analysisPurposeId;
     private Long dataSourceId;
     private Long authorLevelId;
-    private Boolean isNew;
+    private Boolean isContinue;
     private Project parentProject;
     private String content;
 
@@ -30,7 +30,7 @@ public class Project {
             Long analysisPurposeId,
             Long dataSourceId,
             Long authorLevelId,
-            Boolean isNew,
+            Boolean isContinue,
             Project parentProject,
             String content
     ) {
@@ -42,7 +42,7 @@ public class Project {
                 .analysisPurposeId(analysisPurposeId)
                 .dataSourceId(dataSourceId)
                 .authorLevelId(authorLevelId)
-                .isNew(isNew)
+                .isContinue(isContinue)
                 .parentProject(parentProject)
                 .content(content)
                 .build();
