@@ -21,6 +21,11 @@ public class Project {
     private Boolean isContinue;
     private Project parentProject;
     private String content;
+    private String thumbnailUrl;
+
+    public void updateFile(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
 
     /**
      * 주어진 필드 값들로 새로운 Project 도메인 객체를 생성합니다.
@@ -35,6 +40,7 @@ public class Project {
      * @param isContinue 프로젝트의 연속 여부
      * @param parentProject 상위 프로젝트 객체
      * @param content 프로젝트 내용
+     * @param thumbnailUrl 썸네일 url
      * @return 생성된 Project 도메인 객체
      */
     public static Project toDomain(
@@ -47,7 +53,8 @@ public class Project {
             Long authorLevelId,
             Boolean isContinue,
             Project parentProject,
-            String content
+            String content,
+            String thumbnailUrl
     ) {
         return Project.builder()
                 .id(id)
@@ -60,6 +67,7 @@ public class Project {
                 .isContinue(isContinue)
                 .parentProject(parentProject)
                 .content(content)
+                .thumbnailUrl(thumbnailUrl)
                 .build();
     }
 }

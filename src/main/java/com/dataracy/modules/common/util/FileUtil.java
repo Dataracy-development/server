@@ -37,9 +37,9 @@ public final class FileUtil {
     /**
      * 파일이 이미지 일 경우 조건
      */
-    public static void validateProfileImage(MultipartFile file) {
+    public static void validateImageFile(MultipartFile file) {
         if (file == null || file.isEmpty()) return;
-        long maxSize = 10 * 1024 * 1024; // 10MB
+        long maxSize = 5 * 1024 * 1024; // 5MB
         checkFileSize(file, maxSize, CommonErrorStatus.OVER_MAXIMUM_IMAGE_FILE_SIZE);
         checkFileType(file.getOriginalFilename(), "(?i).+\\.(jpg|jpeg|png)$", CommonErrorStatus.BAD_REQUEST_IMAGE_FILE_TYPE);
     }
