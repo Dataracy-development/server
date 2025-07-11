@@ -9,7 +9,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DataSourceWebMapper {
-    // dataSource 조회 도메인 응답 DTO -> dataSource 조회 웹 응답 DTO
+    /**
+     * 도메인 계층의 DataSourceResponse DTO를 웹 계층의 DataSourceWebResponse DTO로 변환합니다.
+     *
+     * @param dataSourceResponse 변환할 도메인 DataSourceResponse 객체
+     * @return 변환된 웹 DataSourceWebResponse 객체
+     */
     public AllDataSourcesWebResponse.DataSourceWebResponse toWebDto(AllDataSourcesResponse.DataSourceResponse dataSourceResponse) {
         return new AllDataSourcesWebResponse.DataSourceWebResponse(
                 dataSourceResponse.id(),
@@ -18,7 +23,12 @@ public class DataSourceWebMapper {
         );
     }
 
-    // 전체 dataSource 리스트 조회 도메인 응답 DTO -> 전체 dataSource 리스트 조회 웹 응답 DTO
+    /**
+     * 도메인 계층의 전체 데이터 소스 응답 DTO를 웹 계층의 전체 데이터 소스 응답 DTO로 변환합니다.
+     *
+     * @param allDataSourcesResponse 변환할 도메인 전체 데이터 소스 응답 DTO
+     * @return 변환된 웹 계층 전체 데이터 소스 응답 DTO
+     */
     public AllDataSourcesWebResponse toWebDto(AllDataSourcesResponse allDataSourcesResponse) {
         return new AllDataSourcesWebResponse(
                 allDataSourcesResponse.dataSources()

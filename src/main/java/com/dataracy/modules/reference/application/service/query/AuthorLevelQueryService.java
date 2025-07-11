@@ -24,8 +24,9 @@ public class AuthorLevelQueryService implements
     private final AuthorLevelRepositoryPort authorLevelRepositoryPort;
 
     /**
-     * 모든 authorLevel 리스트를 조회한다.
-     * @return authorLevel 리스트
+     * 모든 AuthorLevel 엔티티의 목록을 조회하여 응답 DTO로 반환한다.
+     *
+     * @return 전체 AuthorLevel 정보를 담은 AllAuthorLevelsResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -35,9 +36,10 @@ public class AuthorLevelQueryService implements
     }
 
     /**
-     * 작성자 유형 id로 작성자 유형을 조회한다.
-     * @param authorLevelId 작성자 유형 id
-     * @return 작성자 유형
+     * 주어진 작성자 유형 ID로 해당 작성자 유형 정보를 조회하여 반환한다.
+     *
+     * @param authorLevelId 조회할 작성자 유형의 ID
+     * @return 조회된 작성자 유형의 응답 DTO
      */
     @Override
     @Transactional(readOnly = true)
