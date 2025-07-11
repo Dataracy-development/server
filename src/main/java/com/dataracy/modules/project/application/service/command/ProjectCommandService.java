@@ -7,6 +7,7 @@ import com.dataracy.modules.project.domain.model.Project;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -16,8 +17,10 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     private final ProjectRepositoryPort projectRepositoryPort;
 
     @Override
+    @Transactional
     public void upload(Long userId, ProjectUploadRequest requestDto) {
-        // 프로젝트 아이디로 부모 프로젝트 조회
+        log.info("프로젝트 업로드 시작 - userId: {}, title: {}", userId, requestDto.title());
+                // 프로젝트 아이디로 부모 프로젝트 조회
         Project parentProject= projectRepositoryPort.findProjectById(requestDto.parentProjectId());
 
         Project project = Project.builder()
@@ -32,6 +35,8 @@ public class ProjectCommandService implements ProjectUploadUseCase {
                 .parentProject(parentProject)
                 .content(requestDto.content())
                 .build();
+
         projectRepositoryPort.saveProject(project);
+        log.info("프로젝트 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
     }
 }
