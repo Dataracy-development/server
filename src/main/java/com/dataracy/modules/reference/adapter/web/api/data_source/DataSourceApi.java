@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/data-sources")
 public interface DataSourceApi {
     /**
-     * 전체 dataSource 리스트를 조회한다.
+     * 데이터 소스의 전체 목록을 조회한다.
      *
-     * @return 전체 dataSource 리스트
+     * @return 전체 데이터 소스 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "전체 데이터 출처 리스트를 조회",

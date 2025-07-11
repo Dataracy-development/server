@@ -34,9 +34,11 @@ public class TopicUseCaseQueryService implements FindAllTopicsUseCase, IsExistTo
     }
 
     /**
-     * id에 따른 해당 토픽이 존재하는지 여부 확인
-     * 해당 토픽이 존재 하지 않으면 에러 발생
-     * @param topicId 토픽 id
+     * 주어진 토픽 ID에 해당하는 토픽의 존재 여부를 검증합니다.
+     *
+     * 토픽이 존재하지 않을 경우 ReferenceException을 발생시킵니다.
+     *
+     * @param topicId 존재 여부를 확인할 토픽의 ID
      */
     @Override
     @Transactional(readOnly = true)

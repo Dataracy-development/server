@@ -24,8 +24,9 @@ public class VisitSourceQueryService implements
     private final VisitSourceRepositoryPort visitSourceRepositoryPort;
 
     /**
-     * 모든 visitSource 리스트를 조회한다.
-     * @return visitSource 리스트
+     * 모든 방문 소스(VisitSource) 목록을 조회하여 응답 DTO로 반환한다.
+     *
+     * @return 전체 방문 소스 정보를 담은 AllVisitSourcesResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -35,9 +36,10 @@ public class VisitSourceQueryService implements
     }
 
     /**
-     * 방문 경로 id로 방문 경로를 조회한다.
-     * @param visitSourceId 방문 경로 id
-     * @return 방문 경로
+     * 주어진 방문 경로 ID에 해당하는 방문 경로 정보를 조회하여 응답 DTO로 반환한다.
+     *
+     * @param visitSourceId 조회할 방문 경로의 ID
+     * @return 조회된 방문 경로의 응답 DTO
      */
     @Override
     @Transactional(readOnly = true)

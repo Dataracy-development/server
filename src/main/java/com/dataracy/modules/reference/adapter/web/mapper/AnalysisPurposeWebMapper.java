@@ -9,7 +9,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AnalysisPurposeWebMapper {
-    // analysisPurpose 조회 도메인 응답 DTO -> analysisPurpose 조회 웹 응답 DTO
+    /**
+     * 도메인 계층의 AnalysisPurposeResponse 객체를 웹 계층의 AnalysisPurposeWebResponse 객체로 변환합니다.
+     *
+     * @param analysisPurposeResponse 변환할 도메인 AnalysisPurposeResponse 객체
+     * @return 변환된 웹 AnalysisPurposeWebResponse 객체
+     */
     public AllAnalysisPurposesWebResponse.AnalysisPurposeWebResponse toWebDto(AllAnalysisPurposesResponse.AnalysisPurposeResponse analysisPurposeResponse) {
         return new AllAnalysisPurposesWebResponse.AnalysisPurposeWebResponse(
                 analysisPurposeResponse.id(),
@@ -18,7 +23,12 @@ public class AnalysisPurposeWebMapper {
         );
     }
 
-    // 전체 analysisPurpose 리스트 조회 도메인 응답 DTO -> 전체 analysisPurpose 리스트 조회 웹 응답 DTO
+    /**
+     * 도메인 계층의 전체 분석 목적 리스트 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     *
+     * @param allAnalysisPurposesResponse 도메인 계층의 전체 분석 목적 리스트 응답 DTO
+     * @return 변환된 웹 계층의 전체 분석 목적 리스트 응답 DTO
+     */
     public AllAnalysisPurposesWebResponse toWebDto(AllAnalysisPurposesResponse allAnalysisPurposesResponse) {
         return new AllAnalysisPurposesWebResponse(
                 allAnalysisPurposesResponse.analysisPurposes()
