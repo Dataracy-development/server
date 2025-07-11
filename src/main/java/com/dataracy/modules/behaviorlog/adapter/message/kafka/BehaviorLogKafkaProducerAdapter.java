@@ -18,6 +18,11 @@ public class BehaviorLogKafkaProducerAdapter implements BehaviorLogSendProducerP
     @Value("${spring.kafka.producer.behavior-log.topic:behavior-logs}")
     private String topic;
 
+    /**
+     * BehaviorLog 객체를 지정된 Kafka 토픽으로 비동기 전송합니다.
+     *
+     * @param behaviorLog 전송할 행동 로그 객체
+     */
     @Override
     public void send(BehaviorLog behaviorLog) {
         String key = behaviorLog.getUserId() != null

@@ -55,8 +55,11 @@ public class BehaviorLog {
     private String timestamp;
 
     /**
-     * 로그 유효성 체크
-     * - 최소한 userId 또는 anonymousId는 있어야 한다.
+     * 이 로그 항목이 유효한지 여부를 반환합니다.
+     *
+     * userId 또는 anonymousId 중 하나라도 null이 아니면 true를 반환합니다.
+     *
+     * @return 로그 항목이 유효하면 true, 그렇지 않으면 false
      */
     public boolean isValid() {
         return (userId != null && !userId.isBlank())
@@ -64,7 +67,11 @@ public class BehaviorLog {
     }
 
     /**
-     * 타임스탬프가 null일 경우 현재 시간으로 설정한 새 객체 반환
+     * 새 타임스탬프로 timestamp 필드만 변경된 새로운 BehaviorLog 인스턴스를 반환합니다.
+     *
+     * 기존 인스턴스의 모든 필드는 동일하게 복사되며, timestamp만 전달된 값으로 대체됩니다.
+     *
+     * @return timestamp가 변경된 새로운 BehaviorLog 인스턴스
      */
     public BehaviorLog withTimestampIfNull() {
         if (this.timestamp != null && !this.timestamp.isBlank()) {
