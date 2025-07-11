@@ -1,4 +1,4 @@
-package com.dataracy.modules.reference.application.port.in.authorlevel;
+package com.dataracy.modules.reference.application.port.in.author_level;
 
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
 

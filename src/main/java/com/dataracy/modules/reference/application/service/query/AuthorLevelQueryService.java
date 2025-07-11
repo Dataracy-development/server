@@ -2,8 +2,8 @@ package com.dataracy.modules.reference.application.service.query;
 
 import com.dataracy.modules.reference.application.dto.response.AllAuthorLevelsResponse;
 import com.dataracy.modules.reference.application.mapper.AuthorLevelDtoMapper;
-import com.dataracy.modules.reference.application.port.in.authorlevel.FindAllAuthorLevelsUseCase;
-import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
+import com.dataracy.modules.reference.application.port.in.author_level.FindAllAuthorLevelsUseCase;
+import com.dataracy.modules.reference.application.port.in.author_level.FindAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
 import lombok.RequiredArgsConstructor;

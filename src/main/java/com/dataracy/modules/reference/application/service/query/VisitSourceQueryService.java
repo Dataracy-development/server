@@ -2,8 +2,8 @@ package com.dataracy.modules.reference.application.service.query;
 
 import com.dataracy.modules.reference.application.dto.response.AllVisitSourcesResponse;
 import com.dataracy.modules.reference.application.mapper.VisitSourceDtoMapper;
-import com.dataracy.modules.reference.application.port.in.visitsource.FindAllVisitSourcesUseCase;
-import com.dataracy.modules.reference.application.port.in.visitsource.FindVisitSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.visit_source.FindAllVisitSourcesUseCase;
+import com.dataracy.modules.reference.application.port.in.visit_source.FindVisitSourceUseCase;
 import com.dataracy.modules.reference.application.port.out.VisitSourceRepositoryPort;
 import com.dataracy.modules.reference.domain.model.VisitSource;
 import lombok.RequiredArgsConstructor;
