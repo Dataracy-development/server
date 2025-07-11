@@ -5,7 +5,9 @@ import com.dataracy.modules.reference.application.mapper.TopicDtoMapper;
 import com.dataracy.modules.reference.application.port.in.topic.FindAllTopicsUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.IsExistTopicUseCase;
 import com.dataracy.modules.reference.application.port.out.TopicRepositoryPort;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.Topic;
+import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,7 @@ public class TopicUseCaseQueryService implements FindAllTopicsUseCase, IsExistTo
     public void validateTopicById(Long topicId) {
         Boolean isExist = topicRepositoryPort.isExistTopicById(topicId);
         if (!isExist) {
-            throw new TopicException(TopicErrorStatus.NOT_FOUND_TOPIC_NAME);
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
         }
     }
 }
