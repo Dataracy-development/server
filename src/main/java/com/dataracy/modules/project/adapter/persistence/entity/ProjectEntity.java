@@ -44,7 +44,7 @@ public class ProjectEntity extends BaseEntity {
     private Long authorLevelId;
 
     @Column(nullable = false)
-    private Boolean isNew;
+    private Boolean isContinue;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_project_id")
@@ -66,7 +66,7 @@ public class ProjectEntity extends BaseEntity {
             Long analysisPurposeId,
             Long dataSourceId,
             Long authorLevelId,
-            Boolean isNew,
+            Boolean isContinue,
             ProjectEntity parentProject,
             String content
     ) {
@@ -78,7 +78,7 @@ public class ProjectEntity extends BaseEntity {
                 .analysisPurposeId(analysisPurposeId)
                 .dataSourceId(dataSourceId)
                 .authorLevelId(authorLevelId)
-                .isNew(isNew)
+                .isContinue(isContinue)
                 .parentProject(parentProject)
                 .content(content)
                 .build();

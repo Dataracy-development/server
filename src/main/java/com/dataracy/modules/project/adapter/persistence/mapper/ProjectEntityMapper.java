@@ -17,7 +17,7 @@ public class ProjectEntityMapper {
                 projectEntity.getAnalysisPurposeId(),
                 projectEntity.getDataSourceId(),
                 projectEntity.getAuthorLevelId(),
-                projectEntity.getIsNew(),
+                projectEntity.getIsContinue(),
                 ProjectEntityMapper.toDomain(projectEntity.getParentProject()),
                 projectEntity.getContent()
                 );
@@ -33,7 +33,7 @@ public class ProjectEntityMapper {
                 project.getAnalysisPurposeId(),
                 project.getDataSourceId(),
                 project.getAuthorLevelId(),
-                project.getIsNew(),
+                project.getIsContinue(),
                 ProjectEntityMapper.toEntity(project.getParentProject()),
                 project.getContent()
         );
