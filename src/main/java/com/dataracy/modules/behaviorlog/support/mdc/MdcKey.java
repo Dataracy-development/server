@@ -18,6 +18,9 @@ public final class MdcKey {
     public static final String STAY_TIME      = "stayTime";
     public static final String NEXT_PATH      = "nextPath";
 
+    /**
+     * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
     private MdcKey() {
     }
 }

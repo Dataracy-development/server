@@ -19,9 +19,10 @@ public class BehaviorLogKafkaProducerAdapter implements BehaviorLogSendProducerP
     private String topic;
 
     /**
-     * BehaviorLog 객체를 지정된 Kafka 토픽으로 비동기 전송합니다.
+     * BehaviorLog 객체를 Kafka 토픽으로 비동기 전송합니다.
      *
-     * @param behaviorLog 전송할 행동 로그 객체
+     * behaviorLog의 userId가 존재하면 이를 메시지 키로 사용하고, 없을 경우 anonymousId를 키로 사용합니다.
+     * 두 값 모두 null인 경우 로그를 남기고 전송을 수행하지 않습니다.
      */
     @Override
     public void send(BehaviorLog behaviorLog) {

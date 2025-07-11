@@ -16,6 +16,12 @@ public class MergeAnonymousUserLogService implements MergeAnonymousUserLogUseCas
 
     private final BehaviorLogMergePort mergePort;
 
+    /**
+     * 익명 사용자의 행동 로그를 지정된 사용자 계정으로 병합합니다.
+     *
+     * @param anonymousId 병합할 익명 사용자의 식별자
+     * @param userId 병합 대상이 되는 등록된 사용자 ID
+     */
     @Override
     public void merge(String anonymousId, Long userId) {
         log.info("익명 사용자 로그 병합 시작: anonymousId={}, userId={}", anonymousId, userId);
