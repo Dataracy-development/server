@@ -1,9 +1,7 @@
 package com.dataracy.modules.reference.application.mapper;
 
 import com.dataracy.modules.reference.application.dto.response.AllAnalysisPurposesResponse;
-import com.dataracy.modules.reference.application.dto.response.AllAuthorLevelsResponse;
 import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
-import com.dataracy.modules.reference.domain.model.AuthorLevel;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
