@@ -3,7 +3,27 @@ package com.dataracy.modules.filestorage.application.port.in;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileUploadUseCase {
-    String uploadFile(String directory, MultipartFile file);
-    void deleteFile(String fileUrl);
-    String replaceFile(String directory, MultipartFile newFile, String oldFileUrl);
+    /**
+ * 지정된 디렉터리에 MultipartFile을 업로드하고 업로드된 파일의 URL 또는 식별자를 반환합니다.
+ *
+ * @param directory 파일을 저장할 디렉터리 경로
+ * @param file 업로드할 MultipartFile 객체
+ * @return 업로드된 파일의 URL 또는 식별자
+ */
+String uploadFile(String directory, MultipartFile file);
+    /**
+ * 지정된 파일 URL에 해당하는 파일을 삭제합니다.
+ *
+ * @param fileUrl 삭제할 파일의 URL
+ */
+void deleteFile(String fileUrl);
+    /**
+ * 지정된 디렉터리에 새로운 파일을 업로드하고, 기존 파일을 대체한 후 새 파일의 위치 또는 URL을 반환합니다.
+ *
+ * @param directory 파일이 업로드될 디렉터리 경로
+ * @param newFile   대체할 새 Multipart 파일
+ * @param oldFileUrl 기존에 대체될 파일의 URL 또는 위치
+ * @return 새로 업로드된 파일의 위치 또는 URL
+ */
+String replaceFile(String directory, MultipartFile newFile, String oldFileUrl);
 }

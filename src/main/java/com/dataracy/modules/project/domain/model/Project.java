@@ -23,12 +23,17 @@ public class Project {
     private String content;
     private String thumbnailUrl;
 
+    /**
+     * 프로젝트의 썸네일 URL을 업데이트합니다.
+     *
+     * @param thumbnailUrl 새로 설정할 썸네일 URL
+     */
     public void updateFile(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
     }
 
     /**
-     * 주어진 필드 값들로 새로운 Project 도메인 객체를 생성합니다.
+     * 주어진 값들로 새로운 Project 도메인 객체를 생성합니다.
      *
      * @param id 프로젝트의 고유 식별자
      * @param title 프로젝트 제목
@@ -40,8 +45,8 @@ public class Project {
      * @param isContinue 프로젝트의 연속 여부
      * @param parentProject 상위 프로젝트 객체
      * @param content 프로젝트 내용
-     * @param thumbnailUrl 썸네일 url
-     * @return 생성된 Project 도메인 객체
+     * @param thumbnailUrl 프로젝트 썸네일 URL
+     * @return 생성된 Project 객체
      */
     public static Project toDomain(
             Long id,
