@@ -17,11 +17,11 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     private final ProjectJpaRepository projectJpaRepository;
 
     /**
-     * 프로젝트 도메인 객체를 영속성 계층에 저장한다.
+     * 프로젝트 도메인 객체를 영속성 계층에 저장하고 저장된 프로젝트의 ID를 반환한다.
      *
      * @param project 저장할 프로젝트 도메인 객체
+     * @return 저장된 프로젝트의 ID
      * @throws ProjectException 프로젝트 저장에 실패한 경우 발생
-     * return 업로드된 프로젝트 아이디
      */
     @Override
     public Long saveProject(Project project) {
@@ -34,10 +34,10 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     }
 
     /**
-     * 주어진 프로젝트 ID로 프로젝트를 조회하여 도메인 객체로 반환합니다.
+     * 프로젝트 ID로 프로젝트를 조회하여 도메인 Project 객체로 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID
-     * @return 프로젝트가 존재하면 Project 도메인 객체, 없으면 null
+     * @return 프로젝트가 존재하면 Project 객체, 존재하지 않으면 null
      */
     @Override
     public Project findProjectById(Long projectId) {
@@ -49,6 +49,12 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
         return projectEntityMapper.toDomain(projectEntity);
     }
 
+    /**
+     * 프로젝트 ID에 해당하는 프로젝트의 파일(이미지) URL을 업데이트합니다.
+     *
+     * @param projectId 파일 URL을 업데이트할 프로젝트의 ID
+     * @param imageUrl 새로 설정할 파일(이미지) URL
+     */
     @Override
     public void updateFile(Long projectId, String imageUrl) {
         ProjectEntity projectEntity = projectJpaRepository.findById(projectId)

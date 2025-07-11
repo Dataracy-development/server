@@ -13,6 +13,11 @@ public class FileDeleteConsumer {
 
     private final FileStoragePort fileStoragePort;
 
+    /**
+     * Kafka에서 전달된 파일 URL을 받아 해당 파일을 삭제합니다.
+     *
+     * @param fileUrl 삭제할 파일의 URL
+     */
     @KafkaListener(topics = "file-delete-topic", groupId = "file-delete-consumer")
     public void consume(String fileUrl) {
         try {
