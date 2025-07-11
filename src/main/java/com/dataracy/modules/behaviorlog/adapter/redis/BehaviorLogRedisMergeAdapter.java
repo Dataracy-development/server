@@ -23,6 +23,13 @@ public class BehaviorLogRedisMergeAdapter implements BehaviorLogMergePort {
 
     private final StringRedisTemplate redisTemplate;
 
+    /**
+     * 익명 사용자의 행동 로그를 지정된 userId와 병합하여 Redis에 저장합니다.
+     *
+     * @param anonymousId 병합할 익명 사용자의 식별자
+     * @param userId 병합 대상 사용자 ID
+     * @throws CommonException Redis 연결 실패 또는 데이터 접근 예외 발생 시
+     */
     @Override
     public void merge(String anonymousId, Long userId) {
         try {
@@ -38,6 +45,12 @@ public class BehaviorLogRedisMergeAdapter implements BehaviorLogMergePort {
         }
     }
 
+    /**
+     * 주어진 익명 ID에 매핑된 사용자 ID를 Redis에서 조회하여 반환합니다.
+     *
+     * @param anonymousId 익명 사용자 식별자
+     * @return 익명 ID에 매핑된 사용자 ID가 존재하면 해당 값을 포함하는 Optional, 없으면 Optional.empty()
+     */
     @Override
     public Optional<Long> findMergedUserId(String anonymousId) {
         try {
@@ -53,6 +66,12 @@ public class BehaviorLogRedisMergeAdapter implements BehaviorLogMergePort {
         }
     }
 
+    /**
+     * 주어진 익명 ID에 대한 Redis 키를 생성합니다.
+     *
+     * @param anonymousId 익명 사용자 식별자
+     * @return Redis에 저장될 키 문자열
+     */
     private String buildKey(String anonymousId) {
         return REDIS_PREFIX + anonymousId;
     }
