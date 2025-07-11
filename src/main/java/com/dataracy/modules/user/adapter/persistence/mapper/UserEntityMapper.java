@@ -2,9 +2,6 @@ package com.dataracy.modules.user.adapter.persistence.mapper;
 
 import com.dataracy.modules.user.adapter.persistence.entity.UserEntity;
 import com.dataracy.modules.user.adapter.persistence.entity.UserTopicEntity;
-import com.dataracy.modules.user.adapter.persistence.mapper.reference.AuthorLevelEntityMapper;
-import com.dataracy.modules.user.adapter.persistence.mapper.reference.OccupationEntityMapper;
-import com.dataracy.modules.user.adapter.persistence.mapper.reference.VisitSourceEntityMapper;
 import com.dataracy.modules.user.domain.model.User;
 
 import java.util.List;
@@ -27,10 +24,10 @@ public class UserEntityMapper {
                 userEntity.getEmail(),
                 userEntity.getPassword(),
                 userEntity.getNickname(),
-                AuthorLevelEntityMapper.toDomain(userEntity.getAuthorLevel()),
-                OccupationEntityMapper.toDomain(userEntity.getOccupation()),
+                userEntity.getAuthorLevelId(),
+                userEntity.getOccupationId(),
                 topicIds,
-                VisitSourceEntityMapper.toDomain(userEntity.getVisitSource()),
+                userEntity.getVisitSourceId(),
                 userEntity.isAdTermsAgreed(),
                 userEntity.isDeleted()
         );
@@ -46,9 +43,9 @@ public class UserEntityMapper {
                 user.getEmail(),
                 user.getPassword(),
                 user.getNickname(),
-                AuthorLevelEntityMapper.toEntity(user.getAuthorLevel()),
-                OccupationEntityMapper.toEntity(user.getOccupation()),
-                VisitSourceEntityMapper.toEntity(user.getVisitSource()),
+                user.getAuthorLevelId(),
+                user.getOccupationId(),
+                user.getVisitSourceId(),
                 user.isAdTermsAgreed(),
                 user.isDeleted()
         );

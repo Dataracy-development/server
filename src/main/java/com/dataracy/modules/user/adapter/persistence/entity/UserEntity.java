@@ -1,9 +1,6 @@
 package com.dataracy.modules.user.adapter.persistence.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
-import com.dataracy.modules.user.adapter.persistence.entity.reference.AuthorLevelEntity;
-import com.dataracy.modules.user.adapter.persistence.entity.reference.OccupationEntity;
-import com.dataracy.modules.user.adapter.persistence.entity.reference.VisitSourceEntity;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import jakarta.persistence.*;
@@ -56,21 +53,18 @@ public class UserEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String nickname;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_level_id", nullable = false)
-    private AuthorLevelEntity authorLevel;
+    @Column(nullable = false)
+    private Long authorLevelId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "occupation_id")
-    private OccupationEntity occupation;
+    @Column
+    private Long occupationId;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     @Builder.Default
     private List<UserTopicEntity> userTopicEntities = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_source_id")
-    private VisitSourceEntity visitSource;
+    @Column
+    private Long visitSourceId;
 
     @Column(nullable = false)
     @Builder.Default
@@ -99,9 +93,9 @@ public class UserEntity extends BaseTimeEntity {
             String email,
             String password,
             String nickname,
-            AuthorLevelEntity authorLevelEntity,
-            OccupationEntity occupationEntity,
-            VisitSourceEntity visitSourceEntity,
+            Long authorLevelId,
+            Long occupationId,
+            Long visitSourceId,
             Boolean isAdTermsAgreed,
             Boolean isDeleted
     ) {
@@ -113,9 +107,9 @@ public class UserEntity extends BaseTimeEntity {
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .authorLevel(authorLevelEntity)
-                .occupation(occupationEntity)
-                .visitSource(visitSourceEntity)
+                .authorLevelId(authorLevelId)
+                .occupationId(occupationId)
+                .visitSourceId(visitSourceId)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)
                 .build();
