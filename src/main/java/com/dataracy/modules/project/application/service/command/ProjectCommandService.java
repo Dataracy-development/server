@@ -23,10 +23,13 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     private final FileUploadUseCase fileUploadUseCase;
 
     /**
-     * 주어진 사용자 ID와 프로젝트 업로드 요청 정보를 기반으로 새로운 프로젝트를 생성하여 저장합니다.
+     * 주어진 사용자 ID와 프로젝트 업로드 요청 정보를 기반으로 새로운 프로젝트를 생성하고, 썸네일 이미지 파일이 제공된 경우 외부 저장소에 업로드합니다.
+     *
+     * 프로젝트 정보는 데이터베이스에 저장되며, 썸네일 이미지 파일이 존재하면 업로드 후 프로젝트에 이미지 URL을 반영합니다.
+     * 파일 업로드에 실패할 경우 트랜잭션이 롤백됩니다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
-     * @param imageFile 썸네일 이미지 파일
+     * @param imageFile 프로젝트 썸네일로 사용할 이미지 파일
      * @param requestDto 프로젝트 생성에 필요한 정보가 담긴 요청 객체
      */
     @Override
