@@ -29,8 +29,7 @@ public interface ProjectApi {
      */
     @Operation(
             summary = "프로젝트를 업로드한다.",
-            description = "제공받은 웹 요청 DTO의 프로젝트 정보를 통해 프로젝트 정보를 db에 저장한다",
-            security = {}
+            description = "제공받은 웹 요청 DTO의 프로젝트 정보를 통해 프로젝트 정보를 db에 저장한다"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "프로젝트 업로드에 성공했습니다.",

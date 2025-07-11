@@ -33,7 +33,6 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     /**
      * 프로젝트 아이디를 통해 프로젝트 조회
      * @param projectId 프로젝트 아이디
-     * @return 조회된 프로젝트
      */
     @Override
     public Project findProjectById(Long projectId) {
