@@ -35,11 +35,17 @@ public final class FileUtil {
     }
 
     /**
-     * 파일이 이미지 일 경우 조건
+     * 이미지 파일의 유효성을 검사합니다.
+     *
+     * 파일이 null이거나 비어 있으면 검사를 수행하지 않습니다.  
+     * 파일이 5MB를 초과하거나 확장자가 jpg, jpeg, png(대소문자 무관)가 아니면 예외를 발생시킵니다.
+     *
+     * @param file 검사할 이미지 파일
+     * @throws CommonException 파일 크기 또는 확장자가 허용되지 않을 경우 발생합니다.
      */
-    public static void validateProfileImage(MultipartFile file) {
+    public static void validateImageFile(MultipartFile file) {
         if (file == null || file.isEmpty()) return;
-        long maxSize = 10 * 1024 * 1024; // 10MB
+        long maxSize = 5 * 1024 * 1024; // 5MB
         checkFileSize(file, maxSize, CommonErrorStatus.OVER_MAXIMUM_IMAGE_FILE_SIZE);
         checkFileType(file.getOriginalFilename(), "(?i).+\\.(jpg|jpeg|png)$", CommonErrorStatus.BAD_REQUEST_IMAGE_FILE_TYPE);
     }
