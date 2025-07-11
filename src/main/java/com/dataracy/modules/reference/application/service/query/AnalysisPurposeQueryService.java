@@ -41,7 +41,8 @@ public class AnalysisPurposeQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public AnalysisPurpose findAnalysisPurpose(Long analysisPurposeId) {
-        return analysisPurposeRepositoryPort.findAnalysisPurposeById(analysisPurposeId);
+    public AllAnalysisPurposesResponse.AnalysisPurposeResponse findAnalysisPurpose(Long analysisPurposeId) {
+        AnalysisPurpose analysisPurpose = analysisPurposeRepositoryPort.findAnalysisPurposeById(analysisPurposeId);
+        return analysisPurposeDtoMapper.toResponseDto(analysisPurpose);
     }
 }

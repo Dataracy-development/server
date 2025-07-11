@@ -41,7 +41,8 @@ public class OccupationQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public Occupation findOccupation(Long occupationId) {
-        return occupationRepositoryPort.findOccupationById(occupationId);
+    public AllOccupationsResponse.OccupationResponse findOccupation(Long occupationId) {
+        Occupation occupation = occupationRepositoryPort.findOccupationById(occupationId);
+        return occupationDtoMapper.toResponseDto(occupation);
     }
 }

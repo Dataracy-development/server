@@ -41,7 +41,8 @@ public class DataSourceQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public DataSource findDataSource(Long dataSourceId) {
-        return dataSourceRepositoryPort.findDataSourceById(dataSourceId);
+    public AllDataSourcesResponse.DataSourceResponse findDataSource(Long dataSourceId) {
+        DataSource dataSource = dataSourceRepositoryPort.findDataSourceById(dataSourceId);
+        return dataSourceDtoMapper.toResponseDto(dataSource);
     }
 }
