@@ -31,7 +31,6 @@ public record ProjectUploadWebRequest(
         Boolean isContinue,
 
         @Schema(description = "이어가기 프로젝트", example = "3")
-        @NotNull(message = "이어가기 할 프로젝트를 입력해주세요")
         Long parentProjectId,
 
         @Schema(description = "내용", example = "지금 데이터 출처에 대해서 ~~.")
