@@ -12,16 +12,9 @@ import java.io.InputStream;
 public class ThumbnailGenerator {
 
     public ByteArrayOutputStream createThumbnail(MultipartFile originalImage, int width, int height) {
-        try (InputStream inputStream = originalImage.getInputStream();
-             ByteArrayOutputStream thumbnailOutput = new ByteArrayOutputStream()) {
-
-            Thumbnails.of(inputStream)
-                    .size(width, height)
-                    .outputFormat("jpg")
-                    .toOutputStream(thumbnailOutput);
-
-            return thumbnailOutput;
-
+        try (InputStream is = originalImage.getInputStream(); ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            Thumbnails.of(is).size(width, height).outputFormat("jpg").toOutputStream(os);
+            return os;
         } catch (IOException e) {
             throw new RuntimeException("썸네일 생성 실패", e);
         }
