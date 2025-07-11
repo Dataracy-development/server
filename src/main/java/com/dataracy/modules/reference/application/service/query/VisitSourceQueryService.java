@@ -41,7 +41,8 @@ public class VisitSourceQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public VisitSource findVisitSource(Long visitSourceId) {
-        return visitSourceRepositoryPort.findVisitSourceById(visitSourceId);
+    public AllVisitSourcesResponse.VisitSourceResponse findVisitSource(Long visitSourceId) {
+        VisitSource visitSource = visitSourceRepositoryPort.findVisitSourceById(visitSourceId);
+        return visitSourceDtoMapper.toResponseDto(visitSource);
     }
 }

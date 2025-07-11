@@ -1,10 +1,10 @@
 package com.dataracy.modules.reference.application.port.in.data_source;
 
-import com.dataracy.modules.reference.domain.model.DataSource;
+import com.dataracy.modules.reference.application.dto.response.AllDataSourcesResponse;
 
 /**
  * DataSource 조회 유스케이스
  */
 public interface FindDataSourceUseCase {
-    DataSource findDataSource(Long dataSourceId);
+    AllDataSourcesResponse.DataSourceResponse findDataSource(Long dataSourceId);
 }
