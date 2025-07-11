@@ -1,10 +1,10 @@
-package com.dataracy.modules.reference.adapter.web.api.authorlevel;
+package com.dataracy.modules.reference.adapter.web.api.author_level;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.reference.adapter.web.mapper.AuthorLevelWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.AllAuthorLevelsWebResponse;
 import com.dataracy.modules.reference.application.dto.response.AllAuthorLevelsResponse;
-import com.dataracy.modules.reference.application.port.in.authorlevel.FindAllAuthorLevelsUseCase;
+import com.dataracy.modules.reference.application.port.in.author_level.FindAllAuthorLevelsUseCase;
 import com.dataracy.modules.reference.domain.status.ReferenceSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

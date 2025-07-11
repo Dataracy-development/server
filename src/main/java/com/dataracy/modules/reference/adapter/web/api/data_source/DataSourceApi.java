@@ -1,7 +1,7 @@
-package com.dataracy.modules.reference.adapter.web.api.authorlevel;
+package com.dataracy.modules.reference.adapter.web.api.data_source;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
-import com.dataracy.modules.reference.adapter.web.response.AllAuthorLevelsWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.AllDataSourcesWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,23 +13,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "Reference", description = "참조 데이터 관련 API")
-@RequestMapping("/api/v1/author-levels")
-public interface AuthorLevelApi {
+@RequestMapping("/api/v1/data-sources")
+public interface DataSourceApi {
     /**
-     * 전체 authorLevel 리스트를 조회한다.
+     * 전체 dataSource 리스트를 조회한다.
      *
-     * @return 전체 authorLevel 리스트
+     * @return 전체 dataSource 리스트
      */
     @Operation(
-            summary = "전체 작성자 유형 리스트를 조회",
-            description = "DB에서 전체 작성자 유형 리스트를 조회한다..",
+            summary = "전체 데이터 출처 리스트를 조회",
+            description = "DB에서 전체 데이터 출처 리스트를 조회한다..",
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 작성자 유형 리스트 조회",
+            @ApiResponse(responseCode = "200", description = "전체 데이터 출처 리스트 조회",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
     @GetMapping
-    ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> allAuthorLevels();
+    ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> allDataSources();
 }

@@ -1,4 +1,4 @@
-package com.dataracy.modules.reference.application.port.in.visitsource;
+package com.dataracy.modules.reference.application.port.in.visit_source;
 
 import com.dataracy.modules.reference.application.dto.response.AllVisitSourcesResponse;
 

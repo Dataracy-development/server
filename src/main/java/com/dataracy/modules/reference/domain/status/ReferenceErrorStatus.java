@@ -12,6 +12,8 @@ public enum ReferenceErrorStatus implements BaseErrorCode {
     NOT_FOUND_AUTHOR_LEVEL(HttpStatus.NOT_FOUND, "REFERENCE-001", "해당 작성자 유형이 존재하지 않습니다."),
     NOT_FOUND_OCCUPATION(HttpStatus.NOT_FOUND, "REFERENCE-002", "해당 직업이 존재하지 않습니다."),
     NOT_FOUND_VISIT_SOURCE(HttpStatus.NOT_FOUND, "REFERENCE-003", "해당 방문 경로가 존재하지 않습니다."),
+    NOT_FOUND_ANALYSIS_PURPOSE(HttpStatus.NOT_FOUND, "REFERENCE-003", "해당 분석 목적이 존재하지 않습니다."),
+    NOT_FOUND_DATA_SOURCE(HttpStatus.NOT_FOUND, "REFERENCE-003", "해당 데이터 출처가 존재하지 않습니다."),
     ;
 
     private final HttpStatus httpStatus;

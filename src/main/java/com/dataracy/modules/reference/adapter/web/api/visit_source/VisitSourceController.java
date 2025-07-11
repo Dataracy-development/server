@@ -1,10 +1,10 @@
-package com.dataracy.modules.reference.adapter.web.api.visitsource;
+package com.dataracy.modules.reference.adapter.web.api.visit_source;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.reference.adapter.web.mapper.VisitSourceWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.AllVisitSourcesWebResponse;
 import com.dataracy.modules.reference.application.dto.response.AllVisitSourcesResponse;
-import com.dataracy.modules.reference.application.port.in.visitsource.FindAllVisitSourcesUseCase;
+import com.dataracy.modules.reference.application.port.in.visit_source.FindAllVisitSourcesUseCase;
 import com.dataracy.modules.reference.domain.status.ReferenceSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
