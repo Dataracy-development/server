@@ -55,6 +55,7 @@ ext {
 	commonsPool2Version = '2.11.1'
 	lombokVersion = '1.18.30'
 	parseUserAgentVersion = '6.3'
+	thumnailGenerateVersion = '0.4.14'
 }
 
 dependencies {
@@ -118,6 +119,9 @@ dependencies {
 
 	// parser
 	implementation "nl.basjes.parse.useragent:yauaa:${parseUserAgentVersion}"
+
+	// thumnail
+	implementation "net.coobird:thumbnailator:${thumnailGenerateVersion}"
 
 	implementation "org.apache.commons:commons-pool2:${commonsPool2Version}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
