@@ -1,11 +1,11 @@
-package com.dataracy.modules.imagestorage.adapter.s3;
+package com.dataracy.modules.filestorage.adapter.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.dataracy.modules.imagestorage.application.port.out.ImageStoragePort;
-import com.dataracy.modules.imagestorage.domain.exception.S3UploadException;
+import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
+import com.dataracy.modules.filestorage.domain.exception.S3UploadException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class AwsS3ImageStorageAdapter implements ImageStoragePort {
+public class AwsS3FileStorageAdapter implements FileStoragePort {
 
     private final AmazonS3 amazonS3;
 
