@@ -59,7 +59,14 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    // 필터를 적용하지 않을 경로 설정
+    /**
+     * 특정 경로에 대해 JWT 필터를 적용하지 않도록 설정합니다.
+     *
+     * Swagger, API 문서, 정적 리소스, 웹훅, 로그인, OAuth2, 모니터링, 루트, 공개 API, 파비콘, 에러 등 인증이 필요 없는 요청 경로에 대해 필터를 건너뜁니다.
+     *
+     * @param request 현재 HTTP 요청
+     * @return 필터를 적용하지 않아야 하면 true, 그렇지 않으면 false
+     */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();

@@ -7,11 +7,11 @@ import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.adapter.web.mapper.UserWebMapper;
 import com.dataracy.modules.user.adapter.web.request.*;
 import com.dataracy.modules.user.application.dto.request.*;
+import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
+import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.user.ChangePasswordUseCase;
 import com.dataracy.modules.user.application.port.in.user.ConfirmPasswordUseCase;
 import com.dataracy.modules.user.application.port.in.user.DuplicateNicknameUseCase;
-import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
-import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -111,6 +111,13 @@ public class UserController implements UserApi {
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CHANGE_PASSWORD));
     }
 
+    /**
+     * 사용자의 비밀번호를 확인하고 성공 여부를 반환합니다.
+     *
+     * @param userId 비밀번호를 확인할 사용자 ID
+     * @param webRequest 비밀번호 확인 요청 정보
+     * @return 비밀번호 확인 성공 시 200 OK와 함께 성공 응답을 반환합니다.
+     */
     @Override
     public ResponseEntity<SuccessResponse<Void>> confirmPassword(
             Long userId,
@@ -123,13 +130,23 @@ public class UserController implements UserApi {
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CONFIRM_PASSWORD));
     }
 
+    /**
+     * "/onboarding" 경로에 대한 GET 요청을 처리하여 "onboarding" 뷰 이름을 반환합니다.
+     *
+     * @return "onboarding" 뷰 이름
+     */
     @GetMapping("/onboarding")
     public String onboarding(Model model) {
         return "onboarding";
     }
 
+    /**
+     * "/base" 경로에 대한 GET 요청을 처리하여 "base" 뷰 이름을 반환합니다.
+     *
+     * @return "base" 뷰 이름
+     */
     @GetMapping("/base")
     public String base(Model model) {
-        return "base";  // base.html 반환
+        return "base";
     }
 }
