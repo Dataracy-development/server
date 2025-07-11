@@ -24,8 +24,9 @@ public class OccupationQueryService implements
     private final OccupationRepositoryPort occupationRepositoryPort;
 
     /**
-     * 모든 occupation 리스트를 조회한다.
-     * @return occupation 리스트
+     * 모든 직업(occupation) 목록을 조회하여 응답 DTO로 반환한다.
+     *
+     * @return 전체 직업 목록이 포함된 AllOccupationsResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -35,9 +36,10 @@ public class OccupationQueryService implements
     }
 
     /**
-     * 경험 id로 경험을 조회한다.
-     * @param occupationId 경험 id
-     * @return 경험
+     * 주어진 직업 ID로 직업 정보를 조회하여 응답 DTO로 반환한다.
+     *
+     * @param occupationId 조회할 직업의 ID
+     * @return 해당 ID에 해당하는 직업의 응답 DTO
      */
     @Override
     @Transactional(readOnly = true)

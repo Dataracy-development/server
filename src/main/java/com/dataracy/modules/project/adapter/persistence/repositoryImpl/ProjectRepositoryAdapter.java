@@ -17,9 +17,10 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     private final ProjectJpaRepository projectJpaRepository;
 
     /**
-     * 프로젝트 저장
-     * @param project 프로젝트
-     * @return 저장된 프로젝트
+     * 프로젝트 도메인 객체를 영속성 계층에 저장한다.
+     *
+     * @param project 저장할 프로젝트 도메인 객체
+     * @throws ProjectException 프로젝트 저장에 실패한 경우 발생
      */
     @Override
     public void saveProject(Project project) {
@@ -31,8 +32,10 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     }
 
     /**
-     * 프로젝트 아이디를 통해 프로젝트 조회
-     * @param projectId 프로젝트 아이디
+     * 주어진 프로젝트 ID로 프로젝트를 조회하여 도메인 객체로 반환합니다.
+     *
+     * @param projectId 조회할 프로젝트의 ID
+     * @return 프로젝트가 존재하면 Project 도메인 객체, 없으면 null
      */
     @Override
     public Project findProjectById(Long projectId) {

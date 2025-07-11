@@ -16,6 +16,12 @@ public class ProjectCommandService implements ProjectUploadUseCase {
 
     private final ProjectRepositoryPort projectRepositoryPort;
 
+    /**
+     * 주어진 사용자 ID와 프로젝트 업로드 요청 정보를 기반으로 새로운 프로젝트를 생성하여 저장합니다.
+     *
+     * @param userId 프로젝트를 업로드하는 사용자의 ID
+     * @param requestDto 프로젝트 생성에 필요한 정보가 담긴 요청 객체
+     */
     @Override
     @Transactional
     public void upload(Long userId, ProjectUploadRequest requestDto) {

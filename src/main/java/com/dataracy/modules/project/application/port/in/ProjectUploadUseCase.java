@@ -6,5 +6,11 @@ import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest
  * 프로젝트 업로드 유스케이스
  */
 public interface ProjectUploadUseCase {
-    void upload(Long userId, ProjectUploadRequest requestDto);
+    /**
+ * 지정된 사용자의 프로젝트를 업로드합니다.
+ *
+ * @param userId 프로젝트를 업로드할 사용자 ID
+ * @param requestDto 업로드할 프로젝트의 정보가 담긴 요청 객체
+ */
+void upload(Long userId, ProjectUploadRequest requestDto);
 }
