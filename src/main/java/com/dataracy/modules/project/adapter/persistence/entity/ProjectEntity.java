@@ -3,6 +3,7 @@ package com.dataracy.modules.project.adapter.persistence.entity;
 import com.dataracy.modules.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,8 @@ public class ProjectEntity extends BaseEntity {
     @JoinColumn(name = "parent_project_id")
     private ProjectEntity parentProject;
 
-    @OneToMany(mappedBy = "parentProject")
+    @OneToMany(mappedBy = "parentProject", cascade = CascadeType.PERSIST)
+    @BatchSize(size = 10)
     @Builder.Default
     private List<ProjectEntity> childProjects = new ArrayList<>();
 
