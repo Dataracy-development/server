@@ -49,11 +49,6 @@ public class AuthController implements AuthApi {
                 responseDto.refreshToken(),
                 (int) responseDto.refreshTokenExpiration() / 1000
         );
-        // 리프레시 토큰 레디스 저장
-        tokenRedisUseCase.saveRefreshToken(
-                responseDto.userId().toString(),
-                responseDto.refreshToken()
-        );
         return ResponseEntity.ok(SuccessResponse.of(AuthSuccessStatus.OK_SELF_LOGIN));
     }
 
@@ -73,8 +68,6 @@ public class AuthController implements AuthApi {
         ReIssueTokenResponse responseDto = reIssueTokenUseCase.reIssueToken(refreshToken);
         // 어세스 토큰, 어세스 토큰 만료기간, 리프레시 토큰 쿠키 저장
         setResponseHeaders(response, responseDto);
-        // 리프레시 토큰 레디스 저장
-        tokenRedisUseCase.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(AuthSuccessStatus.OK_RE_ISSUE_TOKEN));
     }

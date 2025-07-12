@@ -89,11 +89,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 refreshTokenResponseDto.refreshToken(),
                 (int) refreshTokenResponseDto.refreshTokenExpiration() / 1000
         );
-        // 리프레시 토큰을 레디스에 저장한다.
-        tokenRedisPort.saveRefreshToken(
-                refreshTokenResponseDto.userId().toString(),
-                refreshTokenResponseDto.refreshToken()
-        );
         // 메인페이지로 리다이렉션
         getRedirectStrategy().sendRedirect(request, response, jwtProperties.getRedirectBase());
     }

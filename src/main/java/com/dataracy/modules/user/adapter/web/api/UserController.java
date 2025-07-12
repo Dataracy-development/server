@@ -52,8 +52,6 @@ public class UserController implements UserApi {
         // 리프레시 토큰을 쿠키에 저장
         CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(),
                 (int) responseDto.refreshTokenExpiration() / 1000);
-        // 리프레시 토큰을 레디스에 저장
-        tokenRedisUseCase.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
         return ResponseEntity.status(HttpStatus.CREATED).body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
     }
 
@@ -76,8 +74,6 @@ public class UserController implements UserApi {
         // 리프레시 토큰을 쿠키에 저장
         CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(),
                 (int) responseDto.refreshTokenExpiration() / 1000);
-        // 리프레시 토큰을 레디스에 저장
-        tokenRedisUseCase.saveRefreshToken(responseDto.userId().toString(), responseDto.refreshToken());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
     }
