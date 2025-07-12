@@ -1,7 +1,7 @@
 package com.dataracy.modules.security.principal;
 
 import com.dataracy.modules.security.status.SecurityErrorStatus;
-import com.dataracy.modules.security.status.SecurityException;
+import com.dataracy.modules.security.exception.SecurityException;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
