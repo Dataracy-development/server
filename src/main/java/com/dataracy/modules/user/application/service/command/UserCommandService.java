@@ -3,6 +3,7 @@ package com.dataracy.modules.user.application.service.command;
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.reference.application.port.in.author_level.FindAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.FindOccupationUseCase;
@@ -47,6 +48,8 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
 
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
     private final DuplicateEmailUseCase duplicateEmailUseCase;
+
+    private final TokenRedisUseCase tokenRedisUseCase;
 
     /**
      * 클라이언트로부터 받은 유저 정보를 토대로 자체 회원가입을 진행한다.(이메일, 닉네임, 비밀번호, 성별)
@@ -117,8 +120,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 리프레시 토큰 발급
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(savedUser.getId(), RoleType.ROLE_USER);
 
+        tokenRedisUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
+
         log.info("자체 회원가입 성공: {}", user.getEmail());
-        return new RefreshTokenResponse(savedUser.getId(),
+        return new RefreshTokenResponse(
                 refreshToken,
                 jwtValidateUseCase.getRefreshTokenExpirationTime()
         );
@@ -190,8 +195,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 리프레시 토큰 발급
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(savedUser.getId(), RoleType.ROLE_USER);
 
+        tokenRedisUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
+
         log.info("소셜 회원가입 성공: {}", email);
-        return new RefreshTokenResponse(savedUser.getId(),
+        return new RefreshTokenResponse(
                 refreshToken,
                 jwtValidateUseCase.getRefreshTokenExpirationTime()
         );

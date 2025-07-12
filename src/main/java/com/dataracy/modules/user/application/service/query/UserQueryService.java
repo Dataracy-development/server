@@ -5,6 +5,7 @@ import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponse;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.user.application.dto.request.ConfirmPasswordRequest;
 import com.dataracy.modules.user.application.port.in.auth.HandleUserUseCase;
 import com.dataracy.modules.user.application.port.in.auth.IsNewUserUseCase;
@@ -31,6 +32,7 @@ public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, Is
 
     private final PasswordEncoder passwordEncoder;
 
+    private final TokenRedisUseCase tokenRedisUseCase;
     /**
      * OAuth2 사용자 신규 여부 확인.
      *
@@ -71,8 +73,11 @@ public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, Is
         User existUser = userRepositoryPort.findUserByProviderId(oAuthUserInfo.providerId());
         long refreshTokenExpirationTime = jwtValidateUseCase.getRefreshTokenExpirationTime();
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(existUser.getId(), existUser.getRole());
+
+        // 리프레시 토큰 레디스 저장
+        tokenRedisUseCase.saveRefreshToken(existUser.getId().toString(), refreshToken);
         log.info("기존 사용자 처리 완료: {}", existUser.getId());
-        return new RefreshTokenResponse(existUser.getId(), refreshToken, refreshTokenExpirationTime);
+        return new RefreshTokenResponse(refreshToken, refreshTokenExpirationTime);
     }
 
     /**
