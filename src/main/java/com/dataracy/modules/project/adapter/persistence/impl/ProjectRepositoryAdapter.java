@@ -15,7 +15,6 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
-    private final ProjectEntityMapper projectEntityMapper;
     private final ProjectJpaRepository projectJpaRepository;
 
     /**
@@ -28,8 +27,8 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     @Override
     public Project saveProject(Project project) {
         try {
-            ProjectEntity projectEntity = projectJpaRepository.save(projectEntityMapper.toEntity(project));
-            return projectEntityMapper.toDomain(projectEntity);
+            ProjectEntity projectEntity = projectJpaRepository.save(ProjectEntityMapper.toEntity(project));
+            return ProjectEntityMapper.toDomain(projectEntity);
         } catch (Exception e) {
             throw new ProjectException(ProjectErrorStatus.FAIL_SAVE_PROJECT);
         }
@@ -44,7 +43,7 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     @Override
     public Optional<Project> findProjectById(Long projectId) {
         return projectJpaRepository.findById(projectId)
-                .map(projectEntityMapper::toDomain);
+                .map(ProjectEntityMapper::toDomain);
     }
 
     /**

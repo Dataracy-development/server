@@ -6,7 +6,10 @@ import com.dataracy.modules.reference.domain.model.AuthorLevel;
 /**
  * AuthorLevel 엔티티와 AuthorLevel 도메인 모델을 변환하는 매퍼
  */
-public class AuthorLevelEntityMapper {
+public final class AuthorLevelEntityMapper {
+    private AuthorLevelEntityMapper() {
+    }
+
     // AuthorLevel 엔티티 -> AuthorLevel 도메인 모델
     public static AuthorLevel toDomain(AuthorLevelEntity authorLevelEntity) {
         if (authorLevelEntity == null) {
