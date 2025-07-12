@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.application.service.query;
 
 import com.dataracy.modules.reference.application.dto.response.allview.AllAuthorLevelsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.AuthorLevelResponse;
 import com.dataracy.modules.reference.application.mapper.AuthorLevelDtoMapper;
 import com.dataracy.modules.reference.application.port.in.author_level.FindAllAuthorLevelsUseCase;
 import com.dataracy.modules.reference.application.port.in.author_level.FindAuthorLevelUseCase;
@@ -45,7 +46,7 @@ public class AuthorLevelQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public AllAuthorLevelsResponse.AuthorLevelResponse findAuthorLevel(Long authorLevelId) {
+    public AuthorLevelResponse findAuthorLevel(Long authorLevelId) {
         AuthorLevel authorLevel = authorLevelRepositoryPort.findAuthorLevelById(authorLevelId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL));
         return authorLevelDtoMapper.toResponseDto(authorLevel);

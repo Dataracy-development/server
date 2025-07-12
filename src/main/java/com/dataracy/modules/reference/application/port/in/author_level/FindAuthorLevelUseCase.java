@@ -1,6 +1,6 @@
 package com.dataracy.modules.reference.application.port.in.author_level;
 
-import com.dataracy.modules.reference.application.dto.response.allview.AllAuthorLevelsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.AuthorLevelResponse;
 
 /**
  * 작성자 유형 조회 유스케이스
@@ -12,5 +12,5 @@ public interface FindAuthorLevelUseCase {
      * @param authorLevelId 조회할 저자 등급의 ID
      * @return 해당 저자 등급의 상세 정보
      */
-    AllAuthorLevelsResponse.AuthorLevelResponse findAuthorLevel(Long authorLevelId);
+    AuthorLevelResponse findAuthorLevel(Long authorLevelId);
 }

@@ -1,6 +1,6 @@
 package com.dataracy.modules.reference.application.port.in.data_source;
 
-import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.DataSourceResponse;
 
 /**
  * DataSource 조회 유스케이스
@@ -12,5 +12,5 @@ public interface FindDataSourceUseCase {
      * @param dataSourceId 조회할 데이터 소스의 고유 식별자
      * @return 데이터 소스의 상세 정보를 담은 DataSourceResponse 객체
      */
-    AllDataSourcesResponse.DataSourceResponse findDataSource(Long dataSourceId);
+    DataSourceResponse findDataSource(Long dataSourceId);
 }

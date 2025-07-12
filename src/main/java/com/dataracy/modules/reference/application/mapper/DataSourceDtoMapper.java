@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.application.mapper;
 
 import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.DataSourceResponse;
 import com.dataracy.modules.reference.domain.model.DataSource;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +18,8 @@ public class DataSourceDtoMapper {
      * @param dataSource 변환할 DataSource 도메인 모델 객체
      * @return 변환된 DataSourceResponse DTO
      */
-    public AllDataSourcesResponse.DataSourceResponse toResponseDto(DataSource dataSource) {
-        return new AllDataSourcesResponse.DataSourceResponse(
+    public DataSourceResponse toResponseDto(DataSource dataSource) {
+        return new DataSourceResponse(
                 dataSource.id(),
                 dataSource.value(),
                 dataSource.label()

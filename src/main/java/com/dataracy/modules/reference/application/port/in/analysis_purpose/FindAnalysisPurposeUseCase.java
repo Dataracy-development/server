@@ -1,6 +1,6 @@
 package com.dataracy.modules.reference.application.port.in.analysis_purpose;
 
-import com.dataracy.modules.reference.application.dto.response.allview.AllAnalysisPurposesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.AnalysisPurposeResponse;
 
 /**
  * AnalysisPurpose 조회 유스케이스
@@ -12,5 +12,5 @@ public interface FindAnalysisPurposeUseCase {
      * @param analysisPurposeId 조회할 분석 목적의 ID
      * @return 해당 ID에 대한 분석 목적 응답 객체
      */
-    AllAnalysisPurposesResponse.AnalysisPurposeResponse findAnalysisPurpose(Long analysisPurposeId);
+    AnalysisPurposeResponse findAnalysisPurpose(Long analysisPurposeId);
 }
