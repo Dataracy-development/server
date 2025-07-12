@@ -1,11 +1,14 @@
 package com.dataracy.modules.reference.application.service.query;
 
-import com.dataracy.modules.reference.application.dto.response.AllAuthorLevelsResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllAuthorLevelsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.AuthorLevelResponse;
 import com.dataracy.modules.reference.application.mapper.AuthorLevelDtoMapper;
 import com.dataracy.modules.reference.application.port.in.author_level.FindAllAuthorLevelsUseCase;
 import com.dataracy.modules.reference.application.port.in.author_level.FindAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
+import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,16 +39,17 @@ public class AuthorLevelQueryService implements
     }
 
     /**
-     * 주어진 작성자 유형 ID로 해당 작성자 유형 정보를 조회하여 반환한다.
+     * 주어진 ID에 해당하는 작성자 유형 정보를 조회하여 반환한다.
      *
      * @param authorLevelId 조회할 작성자 유형의 ID
-     * @return 조회된 작성자 유형의 응답 DTO
+     * @return 조회된 작성자 유형 정보를 담은 AuthorLevelResponse 객체
+     * @throws ReferenceException 해당 ID의 작성자 유형이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
-    public AllAuthorLevelsResponse.AuthorLevelResponse findAuthorLevel(Long authorLevelId) {
-        AuthorLevel authorLevel = authorLevelRepositoryPort.findAuthorLevelById(authorLevelId);
-        return authorLevelDtoMapper
-                .toResponseDto(authorLevel);
+    public AuthorLevelResponse findAuthorLevel(Long authorLevelId) {
+        AuthorLevel authorLevel = authorLevelRepositoryPort.findAuthorLevelById(authorLevelId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL));
+        return authorLevelDtoMapper.toResponseDto(authorLevel);
     }
 }

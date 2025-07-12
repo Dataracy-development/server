@@ -1,7 +1,7 @@
 package com.dataracy.modules.reference.adapter.web.api.data_source;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
-import com.dataracy.modules.reference.adapter.web.response.AllDataSourcesWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllDataSourcesWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

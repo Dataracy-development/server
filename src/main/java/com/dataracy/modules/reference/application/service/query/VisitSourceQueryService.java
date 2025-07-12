@@ -1,11 +1,14 @@
 package com.dataracy.modules.reference.application.service.query;
 
-import com.dataracy.modules.reference.application.dto.response.AllVisitSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllVisitSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.VisitSourceResponse;
 import com.dataracy.modules.reference.application.mapper.VisitSourceDtoMapper;
 import com.dataracy.modules.reference.application.port.in.visit_source.FindAllVisitSourcesUseCase;
 import com.dataracy.modules.reference.application.port.in.visit_source.FindVisitSourceUseCase;
 import com.dataracy.modules.reference.application.port.out.VisitSourceRepositoryPort;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.VisitSource;
+import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,15 +39,19 @@ public class VisitSourceQueryService implements
     }
 
     /**
-     * 주어진 방문 경로 ID에 해당하는 방문 경로 정보를 조회하여 응답 DTO로 반환한다.
+     * 주어진 ID에 해당하는 방문 경로 정보를 조회하여 VisitSourceResponse DTO로 반환한다.
+     *
+     * 방문 경로가 존재하지 않을 경우 ReferenceException이 발생한다.
      *
      * @param visitSourceId 조회할 방문 경로의 ID
-     * @return 조회된 방문 경로의 응답 DTO
+     * @return 조회된 방문 경로의 정보가 담긴 VisitSourceResponse DTO
+     * @throws ReferenceException 방문 경로를 찾을 수 없는 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
-    public AllVisitSourcesResponse.VisitSourceResponse findVisitSource(Long visitSourceId) {
-        VisitSource visitSource = visitSourceRepositoryPort.findVisitSourceById(visitSourceId);
+    public VisitSourceResponse findVisitSource(Long visitSourceId) {
+        VisitSource visitSource = visitSourceRepositoryPort.findVisitSourceById(visitSourceId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE));
         return visitSourceDtoMapper.toResponseDto(visitSource);
     }
 }

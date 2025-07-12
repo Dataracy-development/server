@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.application.mapper;
 
-import com.dataracy.modules.reference.application.dto.response.AllTopicsResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllTopicsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.TopicResponse;
 import com.dataracy.modules.reference.domain.model.Topic;
 import org.springframework.stereotype.Component;
 
@@ -12,13 +13,13 @@ import java.util.List;
 @Component
 public class TopicDtoMapper {
     /**
-     * 단일 토픽 도메인 모델을 토픽 응답 DTO로 변환합니다.
+     * 단일 Topic 도메인 모델을 TopicResponse DTO로 변환합니다.
      *
-     * @param topic 변환할 토픽 도메인 모델
-     * @return 변환된 토픽 응답 DTO
+     * @param topic 변환할 Topic 도메인 객체
+     * @return 변환된 TopicResponse DTO
      */
-    public AllTopicsResponse.TopicResponse toResponseDto(Topic topic) {
-        return new AllTopicsResponse.TopicResponse(
+    public TopicResponse toResponseDto(Topic topic) {
+        return new TopicResponse(
                 topic.id(),
                 topic.value(),
                 topic.label()

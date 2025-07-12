@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.application.dto.response;
+package com.dataracy.modules.reference.application.dto.response.allview;
+
+import com.dataracy.modules.reference.application.dto.response.singleview.DataSourceResponse;
 
 import java.util.List;
 
@@ -7,6 +9,4 @@ import java.util.List;
  * @param dataSources dataSources 리스트
  */
 public record AllDataSourcesResponse(List<DataSourceResponse> dataSources) {
-    public record DataSourceResponse(Long id, String value, String label
-    ) {}
 }

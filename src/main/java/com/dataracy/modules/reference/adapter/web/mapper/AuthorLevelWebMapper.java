@@ -1,7 +1,9 @@
 package com.dataracy.modules.reference.adapter.web.mapper;
 
-import com.dataracy.modules.reference.adapter.web.response.AllAuthorLevelsWebResponse;
-import com.dataracy.modules.reference.application.dto.response.AllAuthorLevelsResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllAuthorLevelsWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.singleview.AuthorLevelWebResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllAuthorLevelsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.AuthorLevelResponse;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,9 +11,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AuthorLevelWebMapper {
-    // authorLevel 조회 도메인 응답 DTO -> authorLevel 조회 웹 응답 DTO
-    public AllAuthorLevelsWebResponse.AuthorLevelWebResponse toWebDto(AllAuthorLevelsResponse.AuthorLevelResponse authorLevelResponse) {
-        return new AllAuthorLevelsWebResponse.AuthorLevelWebResponse(
+    /**
+     * 도메인 계층의 AuthorLevelResponse 객체를 웹 계층의 AuthorLevelWebResponse 객체로 변환합니다.
+     *
+     * @param authorLevelResponse 변환할 도메인 응답 DTO
+     * @return 변환된 웹 응답 DTO
+     */
+    public AuthorLevelWebResponse toWebDto(AuthorLevelResponse authorLevelResponse) {
+        return new AuthorLevelWebResponse(
                 authorLevelResponse.id(),
                 authorLevelResponse.value(),
                 authorLevelResponse.label()

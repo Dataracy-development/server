@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.application.dto.response;
+package com.dataracy.modules.reference.application.dto.response.allview;
+
+import com.dataracy.modules.reference.application.dto.response.singleview.AnalysisPurposeResponse;
 
 import java.util.List;
 
@@ -7,6 +9,4 @@ import java.util.List;
  * @param analysisPurposes analysisPurposes 리스트
  */
 public record AllAnalysisPurposesResponse(List<AnalysisPurposeResponse> analysisPurposes) {
-    public record AnalysisPurposeResponse(Long id, String value, String label
-    ) {}
 }

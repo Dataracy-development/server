@@ -2,8 +2,8 @@ package com.dataracy.modules.reference.adapter.web.api.topic;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.reference.adapter.web.mapper.TopicWebMapper;
-import com.dataracy.modules.reference.adapter.web.response.AllTopicsWebResponse;
-import com.dataracy.modules.reference.application.dto.response.AllTopicsResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllTopicsWebResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllTopicsResponse;
 import com.dataracy.modules.reference.application.port.in.topic.FindAllTopicsUseCase;
 import com.dataracy.modules.reference.domain.status.ReferenceSuccessStatus;
 import lombok.RequiredArgsConstructor;

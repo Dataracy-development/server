@@ -9,4 +9,4 @@ package com.dataracy.modules.user.application.dto.request;
 public record ChangePasswordRequest(
         String password,
         String passwordConfirm
-) {}
+) implements PasswordConfirmable {}
