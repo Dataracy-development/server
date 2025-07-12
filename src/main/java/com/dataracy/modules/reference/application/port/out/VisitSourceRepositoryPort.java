@@ -15,7 +15,7 @@ public interface VisitSourceRepositoryPort {
  *
  * @return 모든 VisitSource 엔티티의 리스트
  */
-    List<VisitSource> allVisitSources();
+    List<VisitSource> findAllVisitSources();
 
     /**
  * 주어진 ID에 해당하는 VisitSource 엔티티를 조회합니다.

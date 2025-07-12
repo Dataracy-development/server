@@ -29,7 +29,7 @@ public class TopicUseCaseQueryService implements FindAllTopicsUseCase, IsExistTo
     @Override
     @Transactional(readOnly = true)
     public AllTopicsResponse allTopics() {
-        List<Topic> topics = topicRepositoryPort.allTopics();
+        List<Topic> topics = topicRepositoryPort.findAllTopics();
         return topicDtoMapper.toResponseDto(topics);
     }
 

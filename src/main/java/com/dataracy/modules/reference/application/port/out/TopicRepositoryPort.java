@@ -14,7 +14,7 @@ public interface TopicRepositoryPort {
  *
  * @return 모든 토픽의 리스트
  */
-    List<Topic> allTopics();
+    List<Topic> findAllTopics();
 
     /**
  * 주어진 ID에 해당하는 Topic이 데이터베이스에 존재하는지 여부를 반환합니다.

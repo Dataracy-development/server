@@ -15,7 +15,7 @@ public interface AuthorLevelRepositoryPort {
  *
  * @return 저장된 모든 AuthorLevel 엔티티의 리스트
  */
-    List<AuthorLevel> allAuthorLevels();
+    List<AuthorLevel> findAllAuthorLevels();
 
     /**
  * 주어진 ID에 해당하는 AuthorLevel 엔티티를 조회합니다.

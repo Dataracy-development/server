@@ -22,7 +22,7 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
      * @return 데이터 소스 도메인 객체의 리스트
      */
     @Override
-    public List<DataSource> allDataSources() {
+    public List<DataSource> findAllDataSources() {
         List<DataSourceEntity> dataSourceEntities = dataSourceJpaRepository.findAll();
         return dataSourceEntities.stream()
                 .map(DataSourceEntityMapper::toDomain)

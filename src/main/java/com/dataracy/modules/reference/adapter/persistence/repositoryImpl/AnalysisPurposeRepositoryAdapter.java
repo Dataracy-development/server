@@ -22,7 +22,7 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
      * @return 데이터베이스에 저장된 모든 분석 목적의 도메인 객체 리스트
      */
     @Override
-    public List<AnalysisPurpose> allAnalysisPurposes() {
+    public List<AnalysisPurpose> findAllAnalysisPurposes() {
         List<AnalysisPurposeEntity> analysisPurposeEntities = analysisPurposeJpaRepository.findAll();
         return analysisPurposeEntities.stream()
                 .map(AnalysisPurposeEntityMapper::toDomain)

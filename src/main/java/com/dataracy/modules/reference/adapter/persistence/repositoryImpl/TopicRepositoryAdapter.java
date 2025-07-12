@@ -20,7 +20,7 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
      * @return 토픽 데이터셋
      */
     @Override
-    public List<Topic> allTopics() {
+    public List<Topic> findAllTopics() {
         List<TopicEntity> topicEntities = topicJpaRepository.findAll();
         return topicEntities.stream()
                 .map(TopicEntityMapper::toDomain)

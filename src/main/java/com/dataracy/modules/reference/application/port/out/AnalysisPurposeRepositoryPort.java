@@ -15,7 +15,7 @@ public interface AnalysisPurposeRepositoryPort {
  *
  * @return 전체 분석 목적 엔티티의 리스트
  */
-    List<AnalysisPurpose> allAnalysisPurposes();
+    List<AnalysisPurpose> findAllAnalysisPurposes();
 
     /**
  * 주어진 ID에 해당하는 AnalysisPurpose 엔티티를 조회합니다.
