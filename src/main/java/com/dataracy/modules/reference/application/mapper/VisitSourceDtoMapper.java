@@ -1,6 +1,6 @@
 package com.dataracy.modules.reference.application.mapper;
 
-import com.dataracy.modules.reference.application.dto.response.AllVisitSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllVisitSourcesResponse;
 import com.dataracy.modules.reference.domain.model.VisitSource;
 import org.springframework.stereotype.Component;
 

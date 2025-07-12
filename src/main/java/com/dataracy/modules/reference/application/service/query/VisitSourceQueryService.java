@@ -1,11 +1,13 @@
 package com.dataracy.modules.reference.application.service.query;
 
-import com.dataracy.modules.reference.application.dto.response.AllVisitSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllVisitSourcesResponse;
 import com.dataracy.modules.reference.application.mapper.VisitSourceDtoMapper;
 import com.dataracy.modules.reference.application.port.in.visit_source.FindAllVisitSourcesUseCase;
 import com.dataracy.modules.reference.application.port.in.visit_source.FindVisitSourceUseCase;
 import com.dataracy.modules.reference.application.port.out.VisitSourceRepositoryPort;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.VisitSource;
+import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,8 @@ public class VisitSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AllVisitSourcesResponse.VisitSourceResponse findVisitSource(Long visitSourceId) {
-        VisitSource visitSource = visitSourceRepositoryPort.findVisitSourceById(visitSourceId);
+        VisitSource visitSource = visitSourceRepositoryPort.findVisitSourceById(visitSourceId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE));
         return visitSourceDtoMapper.toResponseDto(visitSource);
     }
 }

@@ -1,7 +1,9 @@
 package com.dataracy.modules.reference.adapter.web.mapper;
 
-import com.dataracy.modules.reference.adapter.web.response.AllAnalysisPurposesWebResponse;
-import com.dataracy.modules.reference.application.dto.response.AllAnalysisPurposesResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllAnalysisPurposesWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.singleview.AnalysisPurposeWebResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllAnalysisPurposesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.AnalysisPurposeResponse;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,8 +17,8 @@ public class AnalysisPurposeWebMapper {
      * @param analysisPurposeResponse 변환할 도메인 AnalysisPurposeResponse 객체
      * @return 변환된 웹 AnalysisPurposeWebResponse 객체
      */
-    public AllAnalysisPurposesWebResponse.AnalysisPurposeWebResponse toWebDto(AllAnalysisPurposesResponse.AnalysisPurposeResponse analysisPurposeResponse) {
-        return new AllAnalysisPurposesWebResponse.AnalysisPurposeWebResponse(
+    public AnalysisPurposeWebResponse toWebDto(AnalysisPurposeResponse analysisPurposeResponse) {
+        return new AnalysisPurposeWebResponse(
                 analysisPurposeResponse.id(),
                 analysisPurposeResponse.value(),
                 analysisPurposeResponse.label()

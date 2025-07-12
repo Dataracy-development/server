@@ -4,13 +4,12 @@ import com.dataracy.modules.reference.adapter.persistence.entity.AnalysisPurpose
 import com.dataracy.modules.reference.adapter.persistence.mapper.AnalysisPurposeEntityMapper;
 import com.dataracy.modules.reference.adapter.persistence.repository.AnalysisPurposeJpaRepository;
 import com.dataracy.modules.reference.application.port.out.AnalysisPurposeRepositoryPort;
-import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
-import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,16 +34,10 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
      *
      * @param analysisPurposeId 조회할 분석 목적의 ID
      * @return 해당 ID의 분석 목적 도메인 객체. ID가 null이면 null을 반환한다.
-     * @throws ReferenceException 해당 ID의 분석 목적이 존재하지 않을 경우 발생한다.
      */
     @Override
-    public AnalysisPurpose findAnalysisPurposeById(Long analysisPurposeId) {
-        if (analysisPurposeId == null) {
-            return null;
-        }
-
-        AnalysisPurposeEntity analysisPurposeEntity = analysisPurposeJpaRepository.findById(analysisPurposeId)
-                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE));
-        return AnalysisPurposeEntityMapper.toDomain(analysisPurposeEntity);
+    public Optional<AnalysisPurpose> findAnalysisPurposeById(Long analysisPurposeId) {
+        return analysisPurposeJpaRepository.findById(analysisPurposeId)
+                .map(AnalysisPurposeEntityMapper::toDomain);
     }
 }

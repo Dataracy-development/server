@@ -1,11 +1,13 @@
 package com.dataracy.modules.reference.application.service.query;
 
-import com.dataracy.modules.reference.application.dto.response.AllOccupationsResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllOccupationsResponse;
 import com.dataracy.modules.reference.application.mapper.OccupationDtoMapper;
 import com.dataracy.modules.reference.application.port.in.occupation.FindAllOccupationsUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.FindOccupationUseCase;
 import com.dataracy.modules.reference.application.port.out.OccupationRepositoryPort;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.Occupation;
+import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,8 @@ public class OccupationQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AllOccupationsResponse.OccupationResponse findOccupation(Long occupationId) {
-        Occupation occupation = occupationRepositoryPort.findOccupationById(occupationId);
+        Occupation occupation = occupationRepositoryPort.findOccupationById(occupationId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION));
         return occupationDtoMapper.toResponseDto(occupation);
     }
 }

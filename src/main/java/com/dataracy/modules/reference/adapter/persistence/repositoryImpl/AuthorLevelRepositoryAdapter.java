@@ -4,13 +4,12 @@ import com.dataracy.modules.reference.adapter.persistence.entity.AuthorLevelEnti
 import com.dataracy.modules.reference.adapter.persistence.mapper.AuthorLevelEntityMapper;
 import com.dataracy.modules.reference.adapter.persistence.repository.AuthorLevelJpaRepository;
 import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
-import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
-import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,13 +34,8 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
      * @return 작성자 유형
      */
     @Override
-    public AuthorLevel findAuthorLevelById(Long authorLevelId) {
-        if (authorLevelId == null) {
-            return null;
-        }
-
-        AuthorLevelEntity authorLevelEntity = authorLevelJpaRepository.findById(authorLevelId)
-                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL));
-        return AuthorLevelEntityMapper.toDomain(authorLevelEntity);
+    public Optional<AuthorLevel> findAuthorLevelById(Long authorLevelId) {
+        return authorLevelJpaRepository.findById(authorLevelId)
+                .map(AuthorLevelEntityMapper::toDomain);
     }
 }

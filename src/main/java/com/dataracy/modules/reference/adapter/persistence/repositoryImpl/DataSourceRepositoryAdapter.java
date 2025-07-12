@@ -4,13 +4,12 @@ import com.dataracy.modules.reference.adapter.persistence.entity.DataSourceEntit
 import com.dataracy.modules.reference.adapter.persistence.mapper.DataSourceEntityMapper;
 import com.dataracy.modules.reference.adapter.persistence.repository.DataSourceJpaRepository;
 import com.dataracy.modules.reference.application.port.out.DataSourceRepositoryPort;
-import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.DataSource;
-import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,16 +34,10 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
      *
      * @param dataSourceId 조회할 데이터 출처의 ID
      * @return 데이터 출처 도메인 객체. ID가 null이면 null을 반환한다.
-     * @throws ReferenceException 데이터 출처를 찾을 수 없는 경우 발생
      */
     @Override
-    public DataSource findDataSourceById(Long dataSourceId) {
-        if (dataSourceId == null) {
-            return null;
-        }
-
-        DataSourceEntity dataSourceEntity = dataSourceJpaRepository.findById(dataSourceId)
-                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE));
-        return DataSourceEntityMapper.toDomain(dataSourceEntity);
+    public Optional<DataSource> findDataSourceById(Long dataSourceId) {
+        return dataSourceJpaRepository.findById(dataSourceId)
+                .map(DataSourceEntityMapper::toDomain);
     }
 }

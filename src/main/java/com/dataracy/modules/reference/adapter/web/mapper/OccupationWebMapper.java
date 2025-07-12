@@ -1,7 +1,9 @@
 package com.dataracy.modules.reference.adapter.web.mapper;
 
-import com.dataracy.modules.reference.adapter.web.response.AllOccupationsWebResponse;
-import com.dataracy.modules.reference.application.dto.response.AllOccupationsResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllOccupationsWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.singleview.OccupationWebResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllOccupationsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.OccupationResponse;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,8 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class OccupationWebMapper {
     // occupation 조회 도메인 응답 DTO -> occupation 조회 웹 응답 DTO
-    public AllOccupationsWebResponse.OccupationWebResponse toWebDto(AllOccupationsResponse.OccupationResponse occupationResponse) {
-        return new AllOccupationsWebResponse.OccupationWebResponse(
+    public OccupationWebResponse toWebDto(OccupationResponse occupationResponse) {
+        return new OccupationWebResponse(
                 occupationResponse.id(),
                 occupationResponse.value(),
                 occupationResponse.label()
