@@ -9,7 +9,6 @@ import java.util.Optional;
 /**
  * VisitSource db에 접근하는 포트
  */
-@Repository
 public interface VisitSourceRepositoryPort {
     /**
  * 데이터베이스에 저장된 모든 방문 경로(VisitSource) 엔티티의 목록을 반환합니다.
