@@ -15,9 +15,8 @@ import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
 import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.user.ChangePasswordUseCase;
-import com.dataracy.modules.user.application.port.in.user.DuplicateEmailUseCase;
-import com.dataracy.modules.user.application.port.in.user.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
+import com.dataracy.modules.user.application.service.query.UserValidationService;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.exception.UserException;
@@ -35,19 +34,18 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase, ChangePasswordUseCase {
+    private final PasswordEncoder passwordEncoder;
+
     private final UserRepositoryPort userRepositoryPort;
+    private final UserValidationService userValidationService;
 
     private final JwtGenerateUseCase jwtGenerateUseCase;
     private final JwtValidateUseCase jwtValidateUseCase;
-    private final IsExistTopicUseCase isExistTopicUseCase;
-    private final PasswordEncoder passwordEncoder;
 
+    private final IsExistTopicUseCase isExistTopicUseCase;
     private final FindAuthorLevelUseCase findAuthorLevelUseCase;
     private final FindOccupationUseCase findOccupationUseCase;
     private final FindVisitSourceUseCase findVisitSourceUseCase;
-
-    private final DuplicateNicknameUseCase duplicateNicknameUseCase;
-    private final DuplicateEmailUseCase duplicateEmailUseCase;
 
     private final TokenRedisUseCase tokenRedisUseCase;
 
@@ -56,7 +54,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
      * 리프레시 토큰 분산락 처리
      *
      * @param requestDto 자체 회원가입을 위한 요청 Dto
-     * @return LoginResponseDto (컨트롤러에서 리프레시 토큰 쿠키 저장을 위한 response)
+     * @return RefreshTokenResponseDto (컨트롤러에서 리프레시 토큰 쿠키 저장을 위한 response)
      */
     @Override
     @Transactional
@@ -67,15 +65,13 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
             retry = 2
     )
     public RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto) {
-        // 이메일 중복 체크
-        duplicateEmailUseCase.validateDuplicatedEmail(requestDto.email());
-        // 닉네임 중복 체크
-        duplicateNicknameUseCase.validateDuplicatedNickname(requestDto.nickname());
+        // 비밀번호 - 비밀번호 확인 검증
+        requestDto.validatePasswordMatch();
 
-        // 비밀번호와 비밀번호 확인이 다를 경우
-        if (!requestDto.password().equals(requestDto.passwordConfirm())) {
-            throw new UserException(UserErrorStatus.NOT_SAME_PASSWORD);
-        }
+        // 이메일 중복 체크
+        userValidationService.validateDuplicatedEmail(requestDto.email());
+        // 닉네임 중복 체크
+        userValidationService.validateDuplicatedNickname(requestDto.nickname());
 
         // 패스워드 암호화
         String encodedPassword = passwordEncoder.encode(requestDto.password());
@@ -120,6 +116,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 리프레시 토큰 발급
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(savedUser.getId(), RoleType.ROLE_USER);
 
+        // 리프레시 토큰 레디스 저장
         tokenRedisUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
 
         log.info("자체 회원가입 성공: {}", user.getEmail());
@@ -152,9 +149,9 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         String email = jwtValidateUseCase.getEmailFromRegisterToken(registerToken);
 
         // 이메일 중복 체크
-        duplicateEmailUseCase.validateDuplicatedEmail(email);
+        userValidationService.validateDuplicatedEmail(email);
         // 닉네임 중복 체크
-        duplicateNicknameUseCase.validateDuplicatedNickname(requestDto.nickname());
+        userValidationService.validateDuplicatedNickname(requestDto.nickname());
 
         // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
         Long authorLevelId = requestDto.authorLevelId() == null
@@ -195,6 +192,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 리프레시 토큰 발급
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(savedUser.getId(), RoleType.ROLE_USER);
 
+        // 리프레시 토큰 레디스 저장
         tokenRedisUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
 
         log.info("소셜 회원가입 성공: {}", email);
@@ -213,11 +211,11 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     @Override
     @Transactional
     public void changePassword(Long userId, ChangePasswordRequest requestDto) {
-        if (!requestDto.password().equals(requestDto.passwordConfirm())) {
-            throw new UserException(UserErrorStatus.NOT_SAME_PASSWORD);
-        }
+        // 비밀번호 - 비밀번호 확인 검증
+        requestDto.validatePasswordMatch();
 
-        User savedUser = userRepositoryPort.findUserById(userId);
+        User savedUser = userRepositoryPort.findUserById(userId)
+                .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
         switch (savedUser.getProvider()) {
             case GOOGLE -> throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE);
             case KAKAO -> throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO);

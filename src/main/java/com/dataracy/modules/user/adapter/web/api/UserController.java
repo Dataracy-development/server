@@ -30,10 +30,9 @@ public class UserController implements UserApi {
     private final OAuthSignUpUseCase oauthSignUpUseCase;
 
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
+
     private final ChangePasswordUseCase changePasswordUseCase;
     private final ConfirmPasswordUseCase confirmPasswordUseCase;
-
-    private final TokenRedisUseCase tokenRedisUseCase;
 
     /**
      * 자체 회원가입을 진행한다.
@@ -52,7 +51,8 @@ public class UserController implements UserApi {
         // 리프레시 토큰을 쿠키에 저장
         CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(),
                 (int) responseDto.refreshTokenExpiration() / 1000);
-        return ResponseEntity.status(HttpStatus.CREATED).body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
     }
 
     /**
@@ -60,6 +60,7 @@ public class UserController implements UserApi {
      *
      * @param registerToken 쿠키로부터 받은 레지스터 토큰
      * @param webRequest 닉네임
+     * @param response 웹 응답
      * @return void
      */
     @Override
@@ -89,7 +90,6 @@ public class UserController implements UserApi {
             DuplicateNicknameWebRequest webRequest
     ) {
         DuplicateNicknameRequest requestDto = userWebMapper.toApplicationDto(webRequest);
-        // 닉네임 중복 체크
         duplicateNicknameUseCase.validateDuplicatedNickname(requestDto.nickname());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_NOT_DUPLICATED_NICKNAME));
@@ -101,7 +101,6 @@ public class UserController implements UserApi {
             ChangePasswordWebRequest webRequest
     ) {
         ChangePasswordRequest requestDto = userWebMapper.toApplicationDto(webRequest);
-
         changePasswordUseCase.changePassword(userId, requestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CHANGE_PASSWORD));
@@ -120,7 +119,6 @@ public class UserController implements UserApi {
             ConfirmPasswordWebRequest webRequest
     ) {
         ConfirmPasswordRequest requestDto = userWebMapper.toApplicationDto(webRequest);
-
         confirmPasswordUseCase.confirmPassword(userId, requestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CONFIRM_PASSWORD));

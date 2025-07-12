@@ -14,6 +14,7 @@ import com.dataracy.modules.user.application.port.in.user.IsLoginPossibleUseCase
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;
+import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,14 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, IsLoginPossibleUseCase, ConfirmPasswordUseCase {
+    private final PasswordEncoder passwordEncoder;
+
     private final UserRepositoryPort userRepositoryPort;
 
     private final JwtValidateUseCase jwtValidateUseCase;
     private final JwtGenerateUseCase jwtGenerateUseCase;
-
-    private final PasswordEncoder passwordEncoder;
-
     private final TokenRedisUseCase tokenRedisUseCase;
+
     /**
      * OAuth2 사용자 신규 여부 확인.
      *
@@ -42,13 +43,13 @@ public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, Is
     @Override
     @Transactional(readOnly = true)
     public boolean isNewUser(OAuthUserInfo oAuthUserInfo) {
-        return userRepositoryPort.findUserByProviderId(oAuthUserInfo.providerId()) == null;
+        return userRepositoryPort.findUserByProviderId(oAuthUserInfo.providerId()).isEmpty();
     }
 
     /**
      * 신규 사용자 처리.
      *
-     * @param oAuthUserInfo    OAuth2 유저정보
+     * @param oAuthUserInfo OAuth2 유저정보
      */
     @Override
     public RegisterTokenResponse handleNewUser(OAuthUserInfo oAuthUserInfo) {
@@ -65,30 +66,48 @@ public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, Is
      * 기존 사용자 처리.
      * oAuth2UserInfo의 providerId를 토대로 기존유저의 정보를 반환한다.
      *
-     * @param oAuthUserInfo    OAuth2 유저정보
+     * @param oAuthUserInfo OAuth2 유저정보
      */
     @Override
     @Transactional(readOnly = true)
     public RefreshTokenResponse handleExistingUser(OAuthUserInfo oAuthUserInfo) {
-        User existUser = userRepositoryPort.findUserByProviderId(oAuthUserInfo.providerId());
+        User existUser = userRepositoryPort.findUserByProviderId(oAuthUserInfo.providerId()).get();
+
         long refreshTokenExpirationTime = jwtValidateUseCase.getRefreshTokenExpirationTime();
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(existUser.getId(), existUser.getRole());
 
         // 리프레시 토큰 레디스 저장
         tokenRedisUseCase.saveRefreshToken(existUser.getId().toString(), refreshToken);
+
         log.info("기존 사용자 처리 완료: {}", existUser.getId());
         return new RefreshTokenResponse(refreshToken, refreshTokenExpirationTime);
     }
 
     /**
-     * 이메일이 일치하는 유저를 db에서 찾는다.
-     * @param email 이메일
-     * @return 유저
+     * 이메일이 일치하는 유저를 db에서 찾아 로그인이 가능한 유저인지 확인한다.
+     * @param email 로그인시 입력받은 이메일
+     * @param password 로그인 시 입력받은 패스워드
+     * @return 유저 정보
      */
     @Override
     @Transactional(readOnly = true)
-    public User findUserByEmail(String email) {
-        return userRepositoryPort.findUserByEmail(email);
+    public UserInfo isLogin(String email, String password) {
+        User user = userRepositoryPort.findUserByEmail(email)
+                .orElseThrow(() -> new UserException(UserErrorStatus.BAD_REQUEST_LOGIN));
+
+        if (!user.isPasswordMatch(passwordEncoder, password)) {
+            throw new UserException(UserErrorStatus.BAD_REQUEST_LOGIN);
+        }
+        return new UserInfo(
+                user.getId(),
+                user.getRole(),
+                user.getEmail(),
+                user.getNickname(),
+                user.getAuthorLevelId(),
+                user.getOccupationId(),
+                user.getTopicIds(),
+                user.getVisitSourceId()
+        );
     }
 
     /**
@@ -100,8 +119,10 @@ public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, Is
     @Override
     @Transactional(readOnly = true)
     public void confirmPassword(Long userId, ConfirmPasswordRequest requestDto) {
-        User user = userRepositoryPort.findUserById(userId);
-        boolean isMatched = passwordEncoder.matches(requestDto.password(), user.getPassword());
+        User user = userRepositoryPort.findUserById(userId)
+                .orElseThrow(() -> new UserException(UserErrorStatus.BAD_REQUEST_LOGIN));
+
+        boolean isMatched = user.isPasswordMatch(passwordEncoder, requestDto.password());
         if (!isMatched) {
             throw new UserException(UserErrorStatus.FAIL_CONFIRM_PASSWORD);
         }

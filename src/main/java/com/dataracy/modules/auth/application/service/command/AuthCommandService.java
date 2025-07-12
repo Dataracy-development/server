@@ -10,14 +10,14 @@ import com.dataracy.modules.auth.application.port.out.jwt.JwtGeneratorPort;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtValidatorPort;
 import com.dataracy.modules.auth.application.port.out.redis.TokenRedisPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
+import com.dataracy.modules.auth.domain.model.vo.AuthUser;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.user.application.port.in.user.IsLoginPossibleUseCase;
 import com.dataracy.modules.user.domain.enums.RoleType;
-import com.dataracy.modules.user.domain.model.User;
+import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase {
+    private final JwtProperties jwtProperties;
     private final JwtGeneratorPort jwtGeneratorPort;
     private final JwtValidatorPort jwtValidatorPort;
-    private final JwtProperties jwtProperties;
-
     private final TokenRedisPort tokenRedisPort;
 
     private final IsLoginPossibleUseCase isLoginPossibleUseCase;
-    private final PasswordEncoder passwordEncoder;
 
     /**
      * 클라이언트로부터 받은 이메일과 비밀번호로 로그인을 진행한다.
@@ -44,20 +42,15 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     @Transactional(readOnly = true)
     public RefreshTokenResponse login(SelfLoginRequest requestDto) {
         // 유저 db로부터 이메일이 일치하는 유저를 조회한다.
-        User user = isLoginPossibleUseCase.findUserByEmail(requestDto.email());
-
-        // 이메일 또는 패스워드가 일치하지 않을 경우
-        if (user == null || !passwordEncoder.matches(requestDto.password(), user.getPassword())) {
-            throw new AuthException(AuthErrorStatus.BAD_REQUEST_LOGIN);
-        }
+        UserInfo userInfo = isLoginPossibleUseCase.isLogin(requestDto.email(), requestDto.password());
+        AuthUser authUser = AuthUser.from(userInfo);
 
         // 로그인 가능한 경우이므로 리프레시 토큰 발급
-        String refreshToken = jwtGeneratorPort.generateRefreshToken(user.getId(), user.getRole());
-        log.info("자체 로그인 성공: {}", user.getEmail());
-
+        String refreshToken = jwtGeneratorPort.generateRefreshToken(authUser.userId(), authUser.role());
         // 레디스에 리프레시 토큰 저장
-        tokenRedisPort.saveRefreshToken(user.getId().toString(), refreshToken);
+        tokenRedisPort.saveRefreshToken(authUser.userId().toString(), refreshToken);
 
+        log.info("자체 로그인 성공: {}", authUser.email());
         // 리프레시 토큰 반환
         return new RefreshTokenResponse(
                 refreshToken,

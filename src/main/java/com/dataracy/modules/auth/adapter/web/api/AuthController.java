@@ -25,8 +25,6 @@ public class AuthController implements AuthApi {
     private final SelfLoginUseCase selfLoginUseCase;
     private final ReIssueTokenUseCase reIssueTokenUseCase;
 
-    private final TokenRedisUseCase tokenRedisUseCase;
-
     /**
      * 자체로그인을 통해 로그인을 진행한다.
      *
