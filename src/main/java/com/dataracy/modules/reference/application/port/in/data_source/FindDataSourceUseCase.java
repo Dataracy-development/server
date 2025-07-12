@@ -6,11 +6,11 @@ import com.dataracy.modules.reference.application.dto.response.singleview.DataSo
  * DataSource 조회 유스케이스
  */
 public interface FindDataSourceUseCase {
-    /**
-     * 주어진 데이터 소스 ID에 해당하는 데이터 소스 정보를 조회합니다.
-     *
-     * @param dataSourceId 조회할 데이터 소스의 고유 식별자
-     * @return 데이터 소스의 상세 정보를 담은 DataSourceResponse 객체
-     */
+    /****
+ * 주어진 데이터 소스 ID로 해당 데이터 소스의 상세 정보를 반환합니다.
+ *
+ * @param dataSourceId 조회할 데이터 소스의 고유 ID
+ * @return 데이터 소스의 상세 정보를 포함하는 DataSourceResponse 객체
+ */
     DataSourceResponse findDataSource(Long dataSourceId);
 }

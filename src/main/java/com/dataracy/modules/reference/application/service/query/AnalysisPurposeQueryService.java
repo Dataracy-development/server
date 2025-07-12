@@ -39,10 +39,12 @@ public class AnalysisPurposeQueryService implements
     }
 
     /**
-     * 주어진 분석 목적 ID로 해당 분석 목적 정보를 조회하여 반환한다.
+     * 주어진 ID에 해당하는 분석 목적 정보를 조회하여 응답 DTO로 반환한다.
+     *
+     * 분석 목적이 존재하지 않을 경우 ReferenceException이 발생한다.
      *
      * @param analysisPurposeId 조회할 분석 목적의 ID
-     * @return 조회된 분석 목적의 응답 DTO
+     * @return 분석 목적의 상세 정보를 담은 응답 DTO
      */
     @Override
     @Transactional(readOnly = true)

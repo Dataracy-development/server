@@ -18,9 +18,10 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     private final UserJpaRepository userJpaRepository;
 
     /**
-     * 유저 아이디로 유저 조회
-     * @param userId 유저 id
-     * @return 유저
+     * 주어진 사용자 ID로 사용자를 조회하여 Optional로 반환합니다.
+     *
+     * @param userId 조회할 사용자의 ID
+     * @return 사용자가 존재하면 해당 User 객체를, 없으면 빈 Optional을 반환합니다.
      */
     @Override
     public Optional<User> findUserById(Long userId) {
@@ -29,9 +30,10 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     /**
-     * 소셜 제공자 유저 id로 유저 저회
-     * @param providerId 소셜 제공자 유저 id
-     * @return 유저
+     * 소셜 제공자 ID로 사용자를 조회하여 Optional로 반환합니다.
+     *
+     * @param providerId 소셜 제공자에서 발급한 사용자 ID
+     * @return 해당 providerId에 해당하는 사용자가 존재하면 Optional<User>, 없으면 Optional.empty()
      */
     @Override
     public Optional<User> findUserByProviderId(String providerId) {
@@ -40,9 +42,10 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     /**
-     * 이메일로 유저 조회
-     * @param email 이메일
-     * @return 유저
+     * 이메일을 기준으로 사용자를 조회하여 Optional로 반환합니다.
+     *
+     * @param email 조회할 사용자의 이메일 주소
+     * @return 해당 이메일을 가진 사용자가 존재하면 Optional<User>, 없으면 Optional.empty()
      */
     @Override
     public Optional<User> findUserByEmail(String email) {
@@ -51,9 +54,10 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     /**
-     * 이메일로 유저 존재하는지 여부 확인
-     * @param email 이메일
-     * @return 유저
+     * 주어진 이메일을 가진 사용자가 존재하는지 여부를 반환합니다.
+     *
+     * @param email 확인할 이메일 주소
+     * @return 사용자가 존재하면 true, 그렇지 않으면 false
      */
     @Override
     public boolean existsByEmail(String email) {
@@ -61,9 +65,10 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     /**
-     * 닉네임으로 유저 존재하는지 여부 확인
-     * @param nickname 닉네임
-     * @return 유저
+     * 주어진 닉네임을 가진 사용자가 존재하는지 여부를 반환합니다.
+     *
+     * @param nickname 확인할 닉네임
+     * @return 사용자가 존재하면 true, 그렇지 않으면 false
      */
     @Override
     public boolean existsByNickname(String nickname) {
@@ -92,7 +97,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
      * 유저 탈퇴
      * @param userId 유저 아이디
      */
-    // @Override
+    /**
+     * 지정된 사용자 ID에 해당하는 사용자를 탈퇴 처리합니다.
+     *
+     * @param userId 탈퇴할 사용자의 ID
+     */
     public void withdrawalUser(Long userId) {
         userJpaRepository.withdrawalUser(userId);
     }

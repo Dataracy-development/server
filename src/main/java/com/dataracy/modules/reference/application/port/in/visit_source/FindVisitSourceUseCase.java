@@ -7,10 +7,10 @@ import com.dataracy.modules.reference.application.dto.response.singleview.VisitS
  */
 public interface FindVisitSourceUseCase {
     /**
-     * 지정된 방문 출처 ID에 해당하는 방문 출처 정보를 조회합니다.
-     *
-     * @param visitSourceId 조회할 방문 출처의 고유 식별자
-     * @return 방문 출처 정보 응답 객체
-     */
+ * 주어진 방문 출처 ID로 해당 방문 출처의 상세 정보를 반환합니다.
+ *
+ * @param visitSourceId 조회할 방문 출처의 고유 ID
+ * @return 지정된 ID에 해당하는 방문 출처 정보
+ */
     VisitSourceResponse findVisitSource(Long visitSourceId);
 }
