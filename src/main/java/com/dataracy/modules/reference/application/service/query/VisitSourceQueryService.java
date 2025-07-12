@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.application.service.query;
 
 import com.dataracy.modules.reference.application.dto.response.allview.AllVisitSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.VisitSourceResponse;
 import com.dataracy.modules.reference.application.mapper.VisitSourceDtoMapper;
 import com.dataracy.modules.reference.application.port.in.visit_source.FindAllVisitSourcesUseCase;
 import com.dataracy.modules.reference.application.port.in.visit_source.FindVisitSourceUseCase;
@@ -45,7 +46,7 @@ public class VisitSourceQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public AllVisitSourcesResponse.VisitSourceResponse findVisitSource(Long visitSourceId) {
+    public VisitSourceResponse findVisitSource(Long visitSourceId) {
         VisitSource visitSource = visitSourceRepositoryPort.findVisitSourceById(visitSourceId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE));
         return visitSourceDtoMapper.toResponseDto(visitSource);

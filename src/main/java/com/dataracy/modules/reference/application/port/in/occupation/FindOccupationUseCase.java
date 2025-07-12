@@ -1,6 +1,6 @@
 package com.dataracy.modules.reference.application.port.in.occupation;
 
-import com.dataracy.modules.reference.application.dto.response.allview.AllOccupationsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.OccupationResponse;
 
 /**
  * 직업 조회 유스케이스
@@ -12,5 +12,5 @@ public interface FindOccupationUseCase {
      * @param occupationId 조회할 직업의 고유 ID
      * @return 해당 ID에 대한 직업 정보 응답 객체
      */
-    AllOccupationsResponse.OccupationResponse findOccupation(Long occupationId);
+    OccupationResponse findOccupation(Long occupationId);
 }

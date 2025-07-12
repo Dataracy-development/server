@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.application.mapper;
 
 import com.dataracy.modules.reference.application.dto.response.allview.AllAnalysisPurposesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.AnalysisPurposeResponse;
 import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +18,8 @@ public class AnalysisPurposeDtoMapper {
      * @param analysisPurpose 변환할 AnalysisPurpose 도메인 객체
      * @return 변환된 AnalysisPurposeResponse DTO
      */
-    public AllAnalysisPurposesResponse.AnalysisPurposeResponse toResponseDto(AnalysisPurpose analysisPurpose) {
-        return new AllAnalysisPurposesResponse.AnalysisPurposeResponse(
+    public AnalysisPurposeResponse toResponseDto(AnalysisPurpose analysisPurpose) {
+        return new AnalysisPurposeResponse(
                 analysisPurpose.id(),
                 analysisPurpose.value(),
                 analysisPurpose.label()

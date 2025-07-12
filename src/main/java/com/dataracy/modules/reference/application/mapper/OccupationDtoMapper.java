@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.application.mapper;
 
 import com.dataracy.modules.reference.application.dto.response.allview.AllOccupationsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.OccupationResponse;
 import com.dataracy.modules.reference.domain.model.Occupation;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +13,8 @@ import java.util.List;
 @Component
 public class OccupationDtoMapper {
     // Occupation 도메인 모델 -> Occupation 도메인 응답 DTO
-    public AllOccupationsResponse.OccupationResponse toResponseDto(Occupation occupation) {
-        return new AllOccupationsResponse.OccupationResponse (
+    public OccupationResponse toResponseDto(Occupation occupation) {
+        return new OccupationResponse (
                 occupation.id(),
                 occupation.value(),
                 occupation.label()

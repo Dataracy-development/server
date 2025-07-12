@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.application.service.query;
 
 import com.dataracy.modules.reference.application.dto.response.allview.AllAnalysisPurposesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.AnalysisPurposeResponse;
 import com.dataracy.modules.reference.application.mapper.AnalysisPurposeDtoMapper;
 import com.dataracy.modules.reference.application.port.in.analysis_purpose.FindAllAnalysisPurposesUseCase;
 import com.dataracy.modules.reference.application.port.in.analysis_purpose.FindAnalysisPurposeUseCase;
@@ -45,7 +46,7 @@ public class AnalysisPurposeQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public AllAnalysisPurposesResponse.AnalysisPurposeResponse findAnalysisPurpose(Long analysisPurposeId) {
+    public AnalysisPurposeResponse findAnalysisPurpose(Long analysisPurposeId) {
         AnalysisPurpose analysisPurpose = analysisPurposeRepositoryPort.findAnalysisPurposeById(analysisPurposeId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE));
         return analysisPurposeDtoMapper.toResponseDto(analysisPurpose);
