@@ -12,6 +12,10 @@ import java.util.List;
 public class UserEntityMapper {
     // 유저 엔티티 -> 유저 도메인 모델
     public static User toDomain(UserEntity userEntity) {
+        if (userEntity == null) {
+            return null;
+        }
+
         List<Long> topicIds = userEntity.getUserTopicEntities().stream()
                 .map(UserTopicEntity::getTopicId)
                 .toList();
@@ -35,6 +39,10 @@ public class UserEntityMapper {
 
     // 유저 도메인 모델 -> 유저 엔티티
     public static UserEntity toEntity(User user) {
+        if (user == null) {
+            return null;
+        }
+
         UserEntity userEntity =  UserEntity.toEntity(
                 user.getId(),
                 user.getProvider(),
