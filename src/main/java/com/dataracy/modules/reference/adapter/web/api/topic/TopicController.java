@@ -25,7 +25,7 @@ public class TopicController implements TopicApi {
     @Override
     public ResponseEntity<SuccessResponse<AllTopicsWebResponse>> findAllTopics (
     ) {
-        AllTopicsResponse allTopicsResponse = findAllTopicsUseCase.allTopics();
+        AllTopicsResponse allTopicsResponse = findAllTopicsUseCase.findAllTopics();
         AllTopicsWebResponse allTopicsWebResponse = topicWebMapper.toWebDto(allTopicsResponse);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_TOPIC_LIST, allTopicsWebResponse));

@@ -11,5 +11,5 @@ public interface FindAllVisitSourcesUseCase {
  *
  * @return 전체 방문 소스 목록을 담은 AllVisitSourcesResponse 객체
  */
-    AllVisitSourcesResponse allVisitSources();
+    AllVisitSourcesResponse findAllVisitSources();
 }

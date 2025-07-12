@@ -33,7 +33,7 @@ public class VisitSourceQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public AllVisitSourcesResponse allVisitSources() {
+    public AllVisitSourcesResponse findAllVisitSources() {
         List<VisitSource> visitSources = visitSourceRepositoryPort.findAllVisitSources();
         return visitSourceDtoMapper.toResponseDto(visitSources);
     }

@@ -28,7 +28,7 @@ public class TopicUseCaseQueryService implements FindAllTopicsUseCase, IsExistTo
      */
     @Override
     @Transactional(readOnly = true)
-    public AllTopicsResponse allTopics() {
+    public AllTopicsResponse findAllTopics() {
         List<Topic> topics = topicRepositoryPort.findAllTopics();
         return topicDtoMapper.toResponseDto(topics);
     }

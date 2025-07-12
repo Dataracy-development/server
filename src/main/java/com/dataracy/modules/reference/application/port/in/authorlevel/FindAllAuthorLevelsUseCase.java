@@ -11,5 +11,5 @@ public interface FindAllAuthorLevelsUseCase {
  *
  * @return 전체 저자 레벨 정보를 포함하는 응답 객체
  */
-    AllAuthorLevelsResponse allAuthorLevels();
+    AllAuthorLevelsResponse findAllAuthorLevels();
 }

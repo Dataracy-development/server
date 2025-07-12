@@ -24,7 +24,7 @@ public class VisitSourceController implements VisitSourceApi {
     @Override
     public ResponseEntity<SuccessResponse<AllVisitSourcesWebResponse>> findAllVisitSources (
     ) {
-        AllVisitSourcesResponse allVisitSourcesResponse = findAllVisitSourcesUseCase.allVisitSources();
+        AllVisitSourcesResponse allVisitSourcesResponse = findAllVisitSourcesUseCase.findAllVisitSources();
         AllVisitSourcesWebResponse allVisitSourcesWebResponse = visitSourceWebMapper.toWebDto(allVisitSourcesResponse);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_VISIT_SOURCE_LIST, allVisitSourcesWebResponse));

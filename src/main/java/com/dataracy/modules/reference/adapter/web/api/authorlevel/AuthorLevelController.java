@@ -26,7 +26,7 @@ public class AuthorLevelController implements AuthorLevelApi {
     @Override
     public ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> findAllAuthorLevels (
     ) {
-        AllAuthorLevelsResponse allAuthorLevelsResponse = findAllAuthorLevelsUseCase.allAuthorLevels();
+        AllAuthorLevelsResponse allAuthorLevelsResponse = findAllAuthorLevelsUseCase.findAllAuthorLevels();
         AllAuthorLevelsWebResponse allAuthorLevelsWebResponse = authorLevelWebMapper.toWebDto(allAuthorLevelsResponse);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_AUTHOR_LEVEL_LIST, allAuthorLevelsWebResponse));

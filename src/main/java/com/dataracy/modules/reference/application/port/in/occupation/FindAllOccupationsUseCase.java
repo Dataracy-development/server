@@ -11,5 +11,5 @@ public interface FindAllOccupationsUseCase {
  *
  * @return 전체 직업 목록을 포함하는 AllOccupationsResponse 객체
  */
-    AllOccupationsResponse allOccupations();
+    AllOccupationsResponse findAllOccupations();
 }

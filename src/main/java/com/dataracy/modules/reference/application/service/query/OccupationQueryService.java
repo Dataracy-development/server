@@ -33,7 +33,7 @@ public class OccupationQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public AllOccupationsResponse allOccupations() {
+    public AllOccupationsResponse findAllOccupations() {
         List<Occupation> occupations = occupationRepositoryPort.findAllOccupations();
         return occupationDtoMapper.toResponseDto(occupations);
     }
