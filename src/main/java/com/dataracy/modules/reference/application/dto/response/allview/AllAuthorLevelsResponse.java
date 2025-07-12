@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.application.dto.response;
+package com.dataracy.modules.reference.application.dto.response.allview;
+
+import com.dataracy.modules.reference.application.dto.response.singleview.AuthorLevelResponse;
 
 import java.util.List;
 
@@ -7,6 +9,4 @@ import java.util.List;
  * @param authorLevels authorLevels 리스트
  */
 public record AllAuthorLevelsResponse(List<AuthorLevelResponse> authorLevels) {
-    public record AuthorLevelResponse(Long id, String value, String label
-    ) {}
 }

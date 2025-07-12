@@ -2,8 +2,8 @@ package com.dataracy.modules.reference.adapter.web.api.occupation;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.reference.adapter.web.mapper.OccupationWebMapper;
-import com.dataracy.modules.reference.adapter.web.response.AllOccupationsWebResponse;
-import com.dataracy.modules.reference.application.dto.response.AllOccupationsResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllOccupationsWebResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllOccupationsResponse;
 import com.dataracy.modules.reference.application.port.in.occupation.FindAllOccupationsUseCase;
 import com.dataracy.modules.reference.domain.status.ReferenceSuccessStatus;
 import lombok.RequiredArgsConstructor;

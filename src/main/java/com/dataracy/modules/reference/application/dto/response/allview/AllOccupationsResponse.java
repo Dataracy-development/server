@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.application.dto.response;
+package com.dataracy.modules.reference.application.dto.response.allview;
+
+import com.dataracy.modules.reference.application.dto.response.singleview.OccupationResponse;
 
 import java.util.List;
 
@@ -7,6 +9,4 @@ import java.util.List;
  * @param occupations occupation 리스트
  */
 public record AllOccupationsResponse(List<OccupationResponse> occupations) {
-    public record OccupationResponse(Long id, String value, String label
-    ) {}
 }

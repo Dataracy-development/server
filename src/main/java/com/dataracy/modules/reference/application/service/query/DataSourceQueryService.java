@@ -1,11 +1,13 @@
 package com.dataracy.modules.reference.application.service.query;
 
-import com.dataracy.modules.reference.application.dto.response.AllDataSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
 import com.dataracy.modules.reference.application.mapper.DataSourceDtoMapper;
 import com.dataracy.modules.reference.application.port.in.data_source.FindAllDataSourcesUseCase;
 import com.dataracy.modules.reference.application.port.in.data_source.FindDataSourceUseCase;
 import com.dataracy.modules.reference.application.port.out.DataSourceRepositoryPort;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.DataSource;
+import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,8 @@ public class DataSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AllDataSourcesResponse.DataSourceResponse findDataSource(Long dataSourceId) {
-        DataSource dataSource = dataSourceRepositoryPort.findDataSourceById(dataSourceId);
+        DataSource dataSource = dataSourceRepositoryPort.findDataSourceById(dataSourceId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE));
         return dataSourceDtoMapper.toResponseDto(dataSource);
     }
 }

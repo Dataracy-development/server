@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.adapter.web.response;
+package com.dataracy.modules.reference.adapter.web.response.allview;
+
+import com.dataracy.modules.reference.adapter.web.response.singleview.AnalysisPurposeWebResponse;
 
 import java.util.List;
 
@@ -7,9 +9,4 @@ import java.util.List;
  * @param analysisPurposes analysisPurpose 리스트
  */
 public record AllAnalysisPurposesWebResponse(List<AnalysisPurposeWebResponse> analysisPurposes) {
-    public record AnalysisPurposeWebResponse(
-            Long id,
-            String value,
-            String label
-    ) {}
 }

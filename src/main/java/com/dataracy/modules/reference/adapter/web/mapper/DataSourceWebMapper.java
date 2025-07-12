@@ -1,7 +1,9 @@
 package com.dataracy.modules.reference.adapter.web.mapper;
 
-import com.dataracy.modules.reference.adapter.web.response.AllDataSourcesWebResponse;
-import com.dataracy.modules.reference.application.dto.response.AllDataSourcesResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllDataSourcesWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.singleview.DataSourceWebResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.DataSourceResponse;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,8 +17,8 @@ public class DataSourceWebMapper {
      * @param dataSourceResponse 변환할 도메인 DataSourceResponse 객체
      * @return 변환된 웹 DataSourceWebResponse 객체
      */
-    public AllDataSourcesWebResponse.DataSourceWebResponse toWebDto(AllDataSourcesResponse.DataSourceResponse dataSourceResponse) {
-        return new AllDataSourcesWebResponse.DataSourceWebResponse(
+    public DataSourceWebResponse toWebDto(DataSourceResponse dataSourceResponse) {
+        return new DataSourceWebResponse(
                 dataSourceResponse.id(),
                 dataSourceResponse.value(),
                 dataSourceResponse.label()

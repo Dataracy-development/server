@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.adapter.web.response;
+package com.dataracy.modules.reference.adapter.web.response.allview;
+
+import com.dataracy.modules.reference.adapter.web.response.singleview.DataSourceWebResponse;
 
 import java.util.List;
 
@@ -7,9 +9,4 @@ import java.util.List;
  * @param dataSources dataSource 리스트
  */
 public record AllDataSourcesWebResponse(List<DataSourceWebResponse> dataSources) {
-    public record DataSourceWebResponse(
-            Long id,
-            String value,
-            String label
-    ) {}
 }

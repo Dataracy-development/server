@@ -2,8 +2,8 @@ package com.dataracy.modules.reference.adapter.web.api.data_source;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.reference.adapter.web.mapper.DataSourceWebMapper;
-import com.dataracy.modules.reference.adapter.web.response.AllDataSourcesWebResponse;
-import com.dataracy.modules.reference.application.dto.response.AllDataSourcesResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllDataSourcesWebResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
 import com.dataracy.modules.reference.application.port.in.data_source.FindAllDataSourcesUseCase;
 import com.dataracy.modules.reference.domain.status.ReferenceSuccessStatus;
 import lombok.RequiredArgsConstructor;
