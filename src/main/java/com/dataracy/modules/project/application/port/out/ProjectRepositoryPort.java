@@ -2,6 +2,8 @@ package com.dataracy.modules.project.application.port.out;
 
 import com.dataracy.modules.project.domain.model.Project;
 
+import java.util.Optional;
+
 /**
  * 프로젝트 db 포트
  */
@@ -13,7 +15,7 @@ public interface ProjectRepositoryPort {
  * @param project 저장할 프로젝트 객체
  * @return 저장된 프로젝트의 식별자
  */
-    Long saveProject(Project project);
+    Project saveProject(Project project);
 
     /**
  * 주어진 프로젝트 ID로 프로젝트 엔티티를 조회합니다.
@@ -21,7 +23,7 @@ public interface ProjectRepositoryPort {
  * @param projectId 조회할 프로젝트의 고유 ID
  * @return 해당 ID에 해당하는 Project 객체
  */
-    Project findProjectById(Long projectId);
+    Optional<Project> findProjectById(Long projectId);
 
     /**
  * 지정된 프로젝트의 파일(이미지 URL) 정보를 업데이트합니다.

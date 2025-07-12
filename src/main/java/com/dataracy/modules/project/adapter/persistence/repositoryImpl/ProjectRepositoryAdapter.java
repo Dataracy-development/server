@@ -10,6 +10,8 @@ import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
@@ -20,14 +22,14 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
      * 프로젝트 도메인 객체를 영속성 계층에 저장하고 저장된 프로젝트의 ID를 반환한다.
      *
      * @param project 저장할 프로젝트 도메인 객체
-     * @return 저장된 프로젝트의 ID
+     * @return 저장된 프로젝트
      * @throws ProjectException 프로젝트 저장에 실패한 경우 발생
      */
     @Override
-    public Long saveProject(Project project) {
+    public Project saveProject(Project project) {
         try {
             ProjectEntity projectEntity = projectJpaRepository.save(projectEntityMapper.toEntity(project));
-            return projectEntity.getId();
+            return projectEntityMapper.toDomain(projectEntity);
         } catch (Exception e) {
             throw new ProjectException(ProjectErrorStatus.FAIL_SAVE_PROJECT);
         }
@@ -36,17 +38,13 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     /**
      * 프로젝트 ID로 프로젝트를 조회하여 도메인 Project 객체로 반환합니다.
      *
-     * @param projectId 조회할 프로젝트의 ID
+     * @param projectId 조회할 프로젝트
      * @return 프로젝트가 존재하면 Project 객체, 존재하지 않으면 null
      */
     @Override
-    public Project findProjectById(Long projectId) {
-        ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
-                .orElse(null);
-        if (projectEntity == null) {
-            return null;
-        }
-        return projectEntityMapper.toDomain(projectEntity);
+    public Optional<Project> findProjectById(Long projectId) {
+        return projectJpaRepository.findById(projectId)
+                .map(projectEntityMapper::toDomain);
     }
 
     /**
@@ -57,10 +55,7 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
      */
     @Override
     public void updateFile(Long projectId, String imageUrl) {
-        ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
-                .orElse(null);
-        if (projectEntity != null) {
-            projectEntity.updateFile(imageUrl);
-        }
+        Optional<ProjectEntity> projectEntity = projectJpaRepository.findById(projectId);
+        projectEntity.ifPresent(project -> project.updateFile(imageUrl));
     }
 }

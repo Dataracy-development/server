@@ -19,6 +19,10 @@ public class ProjectEntityMapper {
      * @return 변환된 Project 도메인 모델 객체
      */
     public Project toDomain(ProjectEntity projectEntity) {
+        if (projectEntity == null) {
+            return null;
+        }
+
         // 재귀 방지를 위해 아이디, 제목만 추출하여 저장
         Project parentProject = projectEntity.getParentProject() != null
                 ? Project
@@ -52,6 +56,10 @@ public class ProjectEntityMapper {
      * @return 변환된 프로젝트 엔티티
      */
     public ProjectEntity toEntity(Project project) {
+        if (project == null) {
+            return null;
+        }
+
         // 재귀 방지를 위해 아이디, 제목만 추출하여 저장
         ProjectEntity parentProject = project.getParentProject() != null
                 ? ProjectEntity
