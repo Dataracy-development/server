@@ -15,7 +15,7 @@ public interface OccupationRepositoryPort {
  *
  * @return 모든 직업 객체의 리스트
  */
-    List<Occupation> allOccupations();
+    List<Occupation> findAllOccupations();
 
     /**
  * 주어진 ID에 해당하는 직업 정보를 Optional로 반환합니다.

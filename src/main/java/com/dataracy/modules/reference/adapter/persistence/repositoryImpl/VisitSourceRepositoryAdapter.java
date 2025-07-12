@@ -21,7 +21,7 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
      * @return visitSource 데이터셋
      */
     @Override
-    public List<VisitSource> allVisitSources() {
+    public List<VisitSource> findAllVisitSources() {
         List<VisitSourceEntity> visitSourceEntities = visitSourceJpaRepository.findAll();
         return visitSourceEntities.stream()
                 .map(VisitSourceEntityMapper::toDomain)

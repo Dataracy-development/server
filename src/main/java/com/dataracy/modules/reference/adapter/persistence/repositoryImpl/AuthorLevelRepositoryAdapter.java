@@ -21,7 +21,7 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
      * @return authorLevel 데이터셋
      */
     @Override
-    public List<AuthorLevel> allAuthorLevels() {
+    public List<AuthorLevel> findAllAuthorLevels() {
         List<AuthorLevelEntity> authorLevelEntities = authorLevelJpaRepository.findAll();
         return authorLevelEntities.stream()
                 .map(AuthorLevelEntityMapper::toDomain)

@@ -15,7 +15,7 @@ public interface DataSourceRepositoryPort {
  *
  * @return 데이터 소스 객체들의 리스트
  */
-    List<DataSource> allDataSources();
+    List<DataSource> findAllDataSources();
 
     /**
  * 주어진 ID에 해당하는 DataSource 객체를 조회합니다.

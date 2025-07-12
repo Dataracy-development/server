@@ -21,7 +21,7 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
      * @return occupation 데이터셋
      */
     @Override
-    public List<Occupation> allOccupations() {
+    public List<Occupation> findAllOccupations() {
         List<OccupationEntity> occupationEntities = occupationJpaRepository.findAll();
         return occupationEntities.stream()
                 .map(OccupationEntityMapper::toDomain)
