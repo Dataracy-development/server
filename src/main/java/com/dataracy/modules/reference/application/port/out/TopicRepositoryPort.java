@@ -22,5 +22,5 @@ public interface TopicRepositoryPort {
  * @param topicId 확인할 Topic의 고유 식별자
  * @return Topic이 존재하면 true, 존재하지 않으면 false
  */
-    Boolean isExistTopicById(Long topicId);
+    Boolean existsTopicById(Long topicId);
 }
