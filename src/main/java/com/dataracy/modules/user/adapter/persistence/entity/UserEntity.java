@@ -86,7 +86,6 @@ public class UserEntity extends BaseTimeEntity {
     }
 
     public static UserEntity toEntity(
-            Long id,
             ProviderType provider,
             String providerId,
             RoleType role,
@@ -100,7 +99,6 @@ public class UserEntity extends BaseTimeEntity {
             Boolean isDeleted
     ) {
         return UserEntity.builder()
-                .id(id)
                 .provider(provider)
                 .providerId(providerId)
                 .role(role)

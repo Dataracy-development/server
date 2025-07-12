@@ -32,18 +32,15 @@ public class AnalysisPurposeEntity {
     /**
      * 주어진 id, value, label 값을 사용하여 AnalysisPurposeEntity 인스턴스를 생성합니다.
      *
-     * @param id    엔터티의 식별자
      * @param value 분석 목적의 고유 값
      * @param label 분석 목적의 표시 이름
      * @return 생성된 AnalysisPurposeEntity 객체
      */
     public static AnalysisPurposeEntity toEntity(
-            Long id,
             String value,
             String label
     ) {
         return AnalysisPurposeEntity.builder()
-                .id(id)
                 .value(value)
                 .label(label)
                 .build();

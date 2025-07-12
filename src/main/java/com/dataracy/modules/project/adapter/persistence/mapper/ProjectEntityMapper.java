@@ -69,7 +69,6 @@ public class ProjectEntityMapper {
                 : null;
 
         return ProjectEntity.toEntity(
-                project.getId(),
                 project.getTitle(),
                 project.getTopicId(),
                 project.getUserId(),

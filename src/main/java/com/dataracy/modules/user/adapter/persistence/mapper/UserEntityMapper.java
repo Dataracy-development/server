@@ -56,7 +56,6 @@ public class UserEntityMapper {
         }
 
         UserEntity userEntity =  UserEntity.toEntity(
-                user.getId(),
                 user.getProvider(),
                 user.getProviderId(),
                 user.getRole(),

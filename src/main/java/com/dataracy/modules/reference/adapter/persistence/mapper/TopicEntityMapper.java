@@ -37,7 +37,6 @@ public class TopicEntityMapper {
         }
 
         return TopicEntity.toEntity(
-                topic.id(),
                 topic.value(),
                 topic.label()
         );
