@@ -6,6 +6,8 @@ import com.dataracy.modules.reference.application.dto.response.allview.AllTopics
 import com.dataracy.modules.reference.application.dto.response.singleview.TopicResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * 토픽 웹 DTO와 토픽 도메인 DTO를 변환하는 매퍼
  */
@@ -27,6 +29,10 @@ public class TopicWebMapper {
 
     // 전체 토픽 리스트 조회 도메인 응답 DTO -> 전체 토픽 리스트 조회 웹 응답 DTO
     public AllTopicsWebResponse toWebDto(AllTopicsResponse allTopicsResponse) {
+        if (allTopicsResponse == null || allTopicsResponse.topics() == null) {
+            return new AllTopicsWebResponse(List.of());
+        }
+
         return new AllTopicsWebResponse(
                 allTopicsResponse.topics()
                         .stream()

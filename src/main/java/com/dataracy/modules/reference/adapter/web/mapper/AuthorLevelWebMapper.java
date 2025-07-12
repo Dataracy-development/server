@@ -6,6 +6,8 @@ import com.dataracy.modules.reference.application.dto.response.allview.AllAuthor
 import com.dataracy.modules.reference.application.dto.response.singleview.AuthorLevelResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * authorLevel 웹 DTO와 authorLevel 도메인 DTO를 변환하는 매퍼
  */
@@ -27,6 +29,10 @@ public class AuthorLevelWebMapper {
 
     // 전체 authorLevel 리스트 조회 도메인 응답 DTO -> 전체 authorLevel 리스트 조회 웹 응답 DTO
     public AllAuthorLevelsWebResponse toWebDto(AllAuthorLevelsResponse allAuthorLevelsResponse) {
+        if (allAuthorLevelsResponse == null || allAuthorLevelsResponse.authorLevels() == null) {
+            return new AllAuthorLevelsWebResponse(List.of());
+        }
+
         return new AllAuthorLevelsWebResponse(
                 allAuthorLevelsResponse.authorLevels()
                         .stream()
