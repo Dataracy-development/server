@@ -39,10 +39,13 @@ public class VisitSourceQueryService implements
     }
 
     /**
-     * 주어진 방문 경로 ID에 해당하는 방문 경로 정보를 조회하여 응답 DTO로 반환한다.
+     * 주어진 ID에 해당하는 방문 경로 정보를 조회하여 VisitSourceResponse DTO로 반환한다.
+     *
+     * 방문 경로가 존재하지 않을 경우 ReferenceException이 발생한다.
      *
      * @param visitSourceId 조회할 방문 경로의 ID
-     * @return 조회된 방문 경로의 응답 DTO
+     * @return 조회된 방문 경로의 정보가 담긴 VisitSourceResponse DTO
+     * @throws ReferenceException 방문 경로를 찾을 수 없는 경우 발생
      */
     @Override
     @Transactional(readOnly = true)

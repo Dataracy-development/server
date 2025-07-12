@@ -13,10 +13,10 @@ import java.util.List;
 @Component
 public class TopicDtoMapper {
     /**
-     * 단일 토픽 도메인 모델을 토픽 응답 DTO로 변환합니다.
+     * 단일 Topic 도메인 모델을 TopicResponse DTO로 변환합니다.
      *
-     * @param topic 변환할 토픽 도메인 모델
-     * @return 변환된 토픽 응답 DTO
+     * @param topic 변환할 Topic 도메인 객체
+     * @return 변환된 TopicResponse DTO
      */
     public TopicResponse toResponseDto(Topic topic) {
         return new TopicResponse(

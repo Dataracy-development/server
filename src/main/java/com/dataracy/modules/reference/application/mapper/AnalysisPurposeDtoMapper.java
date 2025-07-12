@@ -13,10 +13,10 @@ import java.util.List;
 @Component
 public class AnalysisPurposeDtoMapper {
     /**
-     * AnalysisPurpose 도메인 모델을 AnalysisPurposeResponse DTO로 변환합니다.
+     * AnalysisPurpose 도메인 객체를 AnalysisPurposeResponse DTO로 변환합니다.
      *
-     * @param analysisPurpose 변환할 AnalysisPurpose 도메인 객체
-     * @return 변환된 AnalysisPurposeResponse DTO
+     * @param analysisPurpose 변환 대상이 되는 AnalysisPurpose 도메인 객체
+     * @return id, value, label 정보를 포함하는 AnalysisPurposeResponse DTO
      */
     public AnalysisPurposeResponse toResponseDto(AnalysisPurpose analysisPurpose) {
         return new AnalysisPurposeResponse(

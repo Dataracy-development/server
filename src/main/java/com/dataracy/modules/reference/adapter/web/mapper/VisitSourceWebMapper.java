@@ -11,7 +11,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class VisitSourceWebMapper {
-    // visitSource 조회 도메인 응답 DTO -> visitSource 조회 웹 응답 DTO
+    /**
+     * 도메인 계층의 방문 소스 응답 DTO를 웹 계층의 방문 소스 응답 DTO로 변환합니다.
+     *
+     * @param visitSourceResponse 변환할 도메인 방문 소스 응답 DTO
+     * @return 변환된 웹 방문 소스 응답 DTO
+     */
     public VisitSourceWebResponse toWebDto(VisitSourceResponse visitSourceResponse) {
         return new VisitSourceWebResponse(
                 visitSourceResponse.id(),

@@ -7,10 +7,10 @@ import com.dataracy.modules.reference.application.dto.response.singleview.Author
  */
 public interface FindAuthorLevelUseCase {
     /**
-     * 주어진 저자 등급 ID에 해당하는 저자 등급 정보를 조회합니다.
-     *
-     * @param authorLevelId 조회할 저자 등급의 ID
-     * @return 해당 저자 등급의 상세 정보
-     */
+ * 주어진 저자 등급 ID로 해당 저자 등급의 상세 정보를 반환합니다.
+ *
+ * @param authorLevelId 조회할 저자 등급의 고유 식별자
+ * @return 조회된 저자 등급의 상세 정보
+ */
     AuthorLevelResponse findAuthorLevel(Long authorLevelId);
 }

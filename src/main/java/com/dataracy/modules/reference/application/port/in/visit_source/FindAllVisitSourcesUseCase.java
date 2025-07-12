@@ -7,9 +7,9 @@ import com.dataracy.modules.reference.application.dto.response.allview.AllVisitS
  */
 public interface FindAllVisitSourcesUseCase {
     /**
-     * 모든 방문 소스 정보를 조회합니다.
-     *
-     * @return 전체 방문 소스 목록이 포함된 응답 객체
-     */
+ * 모든 방문 소스 정보를 조회하여 반환합니다.
+ *
+ * @return 전체 방문 소스 목록을 담은 AllVisitSourcesResponse 객체
+ */
     AllVisitSourcesResponse allVisitSources();
 }

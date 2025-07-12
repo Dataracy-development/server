@@ -39,10 +39,11 @@ public class OccupationQueryService implements
     }
 
     /**
-     * 주어진 직업 ID로 직업 정보를 조회하여 응답 DTO로 반환한다.
+     * 주어진 직업 ID로 직업 정보를 조회하여 OccupationResponse DTO로 반환한다.
      *
      * @param occupationId 조회할 직업의 ID
-     * @return 해당 ID에 해당하는 직업의 응답 DTO
+     * @return 조회된 직업 정보를 담은 OccupationResponse DTO
+     * @throws ReferenceException 해당 ID의 직업이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
