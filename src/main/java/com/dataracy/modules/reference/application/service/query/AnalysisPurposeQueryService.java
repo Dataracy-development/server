@@ -33,7 +33,7 @@ public class AnalysisPurposeQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public AllAnalysisPurposesResponse allAnalysisPurposes() {
+    public AllAnalysisPurposesResponse findAllAnalysisPurposes() {
         List<AnalysisPurpose> analysisPurposes = analysisPurposeRepositoryPort.findAllAnalysisPurposes();
         return analysisPurposeDtoMapper.toResponseDto(analysisPurposes);
     }

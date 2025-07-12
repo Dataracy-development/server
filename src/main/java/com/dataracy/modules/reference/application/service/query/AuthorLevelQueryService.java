@@ -33,7 +33,7 @@ public class AuthorLevelQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public AllAuthorLevelsResponse allAuthorLevels() {
+    public AllAuthorLevelsResponse findAllAuthorLevels() {
         List<AuthorLevel> authorLevels = authorLevelRepositoryPort.findAllAuthorLevels();
         return authorLevelDtoMapper.toResponseDto(authorLevels);
     }

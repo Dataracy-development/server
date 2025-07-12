@@ -24,7 +24,7 @@ public class AnalysisPurposeController implements AnalysisPurposeApi {
     @Override
     public ResponseEntity<SuccessResponse<AllAnalysisPurposesWebResponse>> findAllAnalysisPurposes (
     ) {
-        AllAnalysisPurposesResponse allAnalysisPurposesResponse = findAllAnalysisPurposesUseCase.allAnalysisPurposes();
+        AllAnalysisPurposesResponse allAnalysisPurposesResponse = findAllAnalysisPurposesUseCase.findAllAnalysisPurposes();
         AllAnalysisPurposesWebResponse allAnalysisPurposesWebResponse = analysisPurposeWebMapper.toWebDto(allAnalysisPurposesResponse);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_ANALYSIS_PURPOSE_LIST, allAnalysisPurposesWebResponse));

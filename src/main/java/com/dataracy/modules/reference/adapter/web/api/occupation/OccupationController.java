@@ -24,7 +24,7 @@ public class OccupationController implements OccupationApi {
     @Override
     public ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> findAllOccupations (
     ) {
-        AllOccupationsResponse allOccupationsResponse = findAllOccupationsUseCase.allOccupations();
+        AllOccupationsResponse allOccupationsResponse = findAllOccupationsUseCase.findAllOccupations();
         AllOccupationsWebResponse allOccupationsWebResponse = occupationWebMapper.toWebDto(allOccupationsResponse);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_OCCUPATION_LIST, allOccupationsWebResponse));

@@ -33,7 +33,7 @@ public class DataSourceQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public AllDataSourcesResponse allDataSources() {
+    public AllDataSourcesResponse findAllDataSources() {
         List<DataSource> dataSources = dataSourceRepositoryPort.findAllDataSources();
         return dataSourceDtoMapper.toResponseDto(dataSources);
     }

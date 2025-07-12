@@ -27,7 +27,7 @@ public class DataSourceController implements DataSourceApi {
     @Override
     public ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> findAllDataSources (
     ) {
-        AllDataSourcesResponse allDataSourcesResponse = findAllDataSourcesUseCase.allDataSources();
+        AllDataSourcesResponse allDataSourcesResponse = findAllDataSourcesUseCase.findAllDataSources();
         AllDataSourcesWebResponse allDataSourcesWebResponse = dataSourceWebMapper.toWebDto(allDataSourcesResponse);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_DATA_SOURCE_LIST, allDataSourcesWebResponse));

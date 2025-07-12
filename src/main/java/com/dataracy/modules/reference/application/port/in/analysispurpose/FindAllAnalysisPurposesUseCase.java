@@ -11,5 +11,5 @@ public interface FindAllAnalysisPurposesUseCase {
  *
  * @return 전체 분석 목적 정보를 담은 AllAnalysisPurposesResponse 객체
  */
-    AllAnalysisPurposesResponse allAnalysisPurposes();
+    AllAnalysisPurposesResponse findAllAnalysisPurposes();
 }
