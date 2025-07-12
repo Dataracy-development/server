@@ -10,18 +10,18 @@ import java.util.Optional;
 public interface ProjectRepositoryPort {
 
     /**
- * 프로젝트 엔티티를 영속 저장소에 저장하고, 저장된 프로젝트의 식별자를 반환합니다.
+ * 프로젝트 엔티티를 영속 저장소에 저장하고, 저장된 프로젝트 객체를 반환합니다.
  *
  * @param project 저장할 프로젝트 객체
- * @return 저장된 프로젝트의 식별자
+ * @return 저장된 프로젝트 엔티티
  */
     Project saveProject(Project project);
 
     /**
- * 주어진 프로젝트 ID로 프로젝트 엔티티를 조회합니다.
+ * 주어진 프로젝트 ID로 프로젝트를 조회합니다.
  *
- * @param projectId 조회할 프로젝트의 고유 ID
- * @return 해당 ID에 해당하는 Project 객체
+ * @param projectId 조회할 프로젝트의 고유 식별자
+ * @return 프로젝트가 존재하면 해당 Project를 포함하는 Optional, 존재하지 않으면 빈 Optional
  */
     Optional<Project> findProjectById(Long projectId);
 
