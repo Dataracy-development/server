@@ -43,7 +43,7 @@ public class TopicUseCaseQueryService implements FindAllTopicsUseCase, IsExistTo
     @Override
     @Transactional(readOnly = true)
     public void validateTopicById(Long topicId) {
-        Boolean isExist = topicRepositoryPort.isExistTopicById(topicId);
+        Boolean isExist = topicRepositoryPort.existsTopicById(topicId);
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
         }

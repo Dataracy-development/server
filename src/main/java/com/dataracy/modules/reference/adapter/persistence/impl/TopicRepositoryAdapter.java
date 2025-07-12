@@ -33,7 +33,7 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
      * @return 존재 유무
      */
     @Override
-    public Boolean isExistTopicById(Long topicId) {
+    public Boolean existsTopicById(Long topicId) {
         return topicJpaRepository.existsById(topicId);
     }
 }
