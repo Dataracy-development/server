@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 /**
  * 유효성 검사 중복 체크 서비스
  */
@@ -40,9 +42,9 @@ public class UserValidationService implements DuplicateNicknameUseCase, Duplicat
     @Override
     @Transactional(readOnly = true)
     public void validateDuplicatedEmail(String email) {
-        User duplicatedUser = userDuplicateValidator.duplicateEmail(email);
-        if (duplicatedUser != null) {
-            ProviderType providerType = duplicatedUser.getProvider();
+        Optional<User> duplicatedUser = userDuplicateValidator.duplicateEmail(email);
+        if (duplicatedUser.isPresent()) {
+            ProviderType providerType = duplicatedUser.get().getProvider();
             switch (providerType) {
                 case GOOGLE -> throw new UserException(UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
                 case KAKAO -> throw new UserException(UserErrorStatus.DUPLICATED_KAKAO_EMAIL);

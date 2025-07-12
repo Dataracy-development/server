@@ -3,6 +3,7 @@ package com.dataracy.modules.user.domain.model;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -35,6 +36,10 @@ public class User {
 
     private boolean isAdTermsAgreed;
     private boolean isDeleted;
+
+    public boolean isPasswordMatch(PasswordEncoder encoder, String rawPassword) {
+        return encoder.matches(rawPassword, this.password);
+    }
 
     public static User toDomain(
             Long id,

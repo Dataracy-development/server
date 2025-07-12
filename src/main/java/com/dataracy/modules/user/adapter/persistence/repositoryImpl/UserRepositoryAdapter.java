@@ -9,7 +9,8 @@ import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,10 +23,9 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
      * @return 유저
      */
     @Override
-    public User findUserById(Long userId) {
-        UserEntity userEntity = userJpaRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
-        return UserEntityMapper.toDomain(userEntity);
+    public Optional<User> findUserById(Long userId) {
+        return userJpaRepository.findById(userId)
+                .map(UserEntityMapper::toDomain);
     }
 
     /**
@@ -34,12 +34,9 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
      * @return 유저
      */
     @Override
-    public User findUserByProviderId(String providerId) {
-        UserEntity userEntity = userJpaRepository.findByProviderId(providerId);
-        if (userEntity == null) {
-            return null;
-        }
-        return UserEntityMapper.toDomain(userEntity);
+    public Optional<User> findUserByProviderId(String providerId) {
+        return userJpaRepository.findByProviderId(providerId)
+                .map(UserEntityMapper::toDomain);
     }
 
     /**
@@ -48,12 +45,9 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
      * @return 유저
      */
     @Override
-    public User findUserByEmail(String email) {
-        UserEntity userEntity = userJpaRepository.findByEmail(email);
-        if (userEntity == null) {
-            return null;
-        }
-        return UserEntityMapper.toDomain(userEntity);
+    public Optional<User> findUserByEmail(String email) {
+        return userJpaRepository.findByEmail(email)
+                .map(UserEntityMapper::toDomain);
     }
 
     /**
@@ -62,7 +56,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
      * @return 유저
      */
     @Override
-    public Boolean existsByEmail(String email) {
+    public boolean existsByEmail(String email) {
         return userJpaRepository.existsByEmail(email);
     }
 
@@ -72,7 +66,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
      * @return 유저
      */
     @Override
-    public Boolean existsByNickname(String nickname) {
+    public boolean existsByNickname(String nickname) {
         return userJpaRepository.existsByNickname(nickname);
     }
 
@@ -98,7 +92,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
      * 유저 탈퇴
      * @param userId 유저 아이디
      */
-//    @Override
+    // @Override
     public void withdrawalUser(Long userId) {
         userJpaRepository.withdrawalUser(userId);
     }

@@ -24,4 +24,4 @@ public record SelfSignUpRequest(
         List<Long> topicIds,
         Long visitSourceId,
         Boolean isAdTermsAgreed
-) {}
+) implements PasswordConfirmable {}

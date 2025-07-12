@@ -5,7 +5,6 @@ import com.dataracy.modules.auth.application.dto.response.OAuthUserInfo;
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponse;
 import com.dataracy.modules.auth.application.port.out.oauth.SelectSocialProviderPort;
-import com.dataracy.modules.auth.application.port.out.redis.TokenRedisPort;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.application.port.in.auth.HandleUserUseCase;
 import com.dataracy.modules.user.application.port.in.auth.IsNewUserUseCase;
@@ -29,16 +28,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final SelectSocialProviderPort selectSocialProviderPort;
+
     private final IsNewUserUseCase isNewUserUseCase;
     private final HandleUserUseCase handleUserUseCase;
-
-    private final TokenRedisPort tokenRedisPort;
     private final JwtProperties jwtProperties;
 
     /**
      * OAuth2 로그인 성공 후 처리.
-     * 쿠키 설정, 레디스 설정 등 외부 I/O 부수 효과는 실패/성공 보장이 다르므로
-     * 컨트롤러 또는 핸들러에서 처리해야한다.
+     * 쿠키 설정 등 웹 관련은 컨트롤러 또는 핸들러에서 담당한다.
      *
      * @param request HttpServletRequest
      * @param response HttpServletResponse

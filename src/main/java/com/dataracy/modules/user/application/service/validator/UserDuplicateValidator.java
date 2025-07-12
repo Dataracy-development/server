@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * 유효성, 중복 확인
  */
@@ -32,7 +34,7 @@ public class UserDuplicateValidator {
      * @param email 이메일
      * @return 유저 도메인 객체
      */
-    public User duplicateEmail(String email) {
+    public Optional<User> duplicateEmail(String email) {
         return userRepositoryPort.findUserByEmail(email);
     }
 }
