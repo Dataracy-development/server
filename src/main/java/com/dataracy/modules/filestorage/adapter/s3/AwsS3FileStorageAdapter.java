@@ -8,6 +8,7 @@ import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import com.dataracy.modules.filestorage.domain.exception.S3UploadException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AwsS3FileStorageAdapter implements FileStoragePort {
@@ -58,7 +60,12 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
     @Override
     public void delete(String fileUrl) {
         String key = extractKeyFromUrl(fileUrl);
-        amazonS3.deleteObject(bucket, key);
+        try {
+            amazonS3.deleteObject(bucket, key);
+        } catch (Exception e) {
+            log.warn("S3 파일 삭제 실패: {}", fileUrl, e);
+            // 비즈니스 요구사항에 따라 예외를 던질지 결정
+        }
     }
 
     /**
