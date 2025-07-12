@@ -35,7 +35,7 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
      */
     @Override
     public String upload(String directory, MultipartFile file) {
-        String key = directory + "/" + UUID.randomUUID();
+        String key = generateKey(directory, file);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
@@ -96,5 +96,13 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
         if (bucket.isBlank()) {
             throw new IllegalStateException("AWS S3 버켓 설정이 올바르지 않습니다.");
         }
+    }
+
+    private String generateKey(String directory, MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename != null && originalFilename.contains(".")
+                ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                : "";
+        return directory + "/" + UUID.randomUUID() + extension;
     }
 }
