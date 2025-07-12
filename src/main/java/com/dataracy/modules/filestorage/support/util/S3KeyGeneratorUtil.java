@@ -3,6 +3,8 @@ package com.dataracy.modules.filestorage.support.util;
 import java.util.UUID;
 
 public final class S3KeyGeneratorUtil {
+    private S3KeyGeneratorUtil() {
+    }
 
     /**
      * S3에 저장할 파일의 키를 생성합니다.

@@ -1,7 +1,8 @@
 package com.dataracy.modules.common.config;
 
-import org.apache.kafka.common.serialization.StringSerializer;
+import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,7 @@ import java.util.Map;
 @Configuration
 public class KafkaStringProducerConfig {
 
-    @Value("${spring.kafka.bootstrap-servers}")
+    @Value("${spring.kafka.bootstrap-servers:}")
     private String bootstrapServers;
 
     /**
@@ -44,5 +45,12 @@ public class KafkaStringProducerConfig {
     @Bean
     public KafkaTemplate<String, String> stringKafkaTemplate() {
         return new KafkaTemplate<>(stringProducerFactory());
+    }
+
+    @PostConstruct
+    public void validateProperties() {
+        if (bootstrapServers.isBlank()) {
+            throw new IllegalStateException("Kafka Producer 설정이 올바르지 않습니다.");
+        }
     }
 }

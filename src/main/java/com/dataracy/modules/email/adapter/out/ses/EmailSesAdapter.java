@@ -3,6 +3,7 @@ package com.dataracy.modules.email.adapter.out.ses;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
 import com.dataracy.modules.email.application.port.out.EmailSenderPort;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ public class EmailSesAdapter implements EmailSenderPort {
 
     private final AmazonSimpleEmailService ses;
 
-    @Value("${aws.ses.sender}")
+    @Value("${aws.ses.sender:}")
     private String sender;
 
     @Override
@@ -28,5 +29,12 @@ public class EmailSesAdapter implements EmailSenderPort {
                         .withBody(new Body().withText(new Content().withCharset("UTF-8").withData(body))))
                 .withSource(sender);
         ses.sendEmail(request);
+    }
+
+    @PostConstruct
+    public void validateProperties() {
+        if (sender.isBlank()) {
+            throw new IllegalStateException("Ses sender 설정이 올바르지 않습니다.");
+        }
     }
 }

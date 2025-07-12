@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class EmailRedisAdapter implements EmailRedisPort {
     private final StringRedisTemplate redisTemplate;
 
-    @Value("${aws.ses.expire-minutes}")
+    @Value("${aws.ses.expire-minutes:5}")
     private long EXPIRE_MINUTES;
 
     /**

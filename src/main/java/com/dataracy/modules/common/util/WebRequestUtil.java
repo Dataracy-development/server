@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-public class WebRequestUtil {
+public final class WebRequestUtil {
     /**
      * 인스턴스 생성을 방지하기 위해 예외를 발생시키는 private 생성자입니다.
      */
