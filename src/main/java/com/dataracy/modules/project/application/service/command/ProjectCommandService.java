@@ -13,23 +13,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProjectCommandService implements ProjectUploadUseCase {
-
     private final ProjectRepositoryPort projectRepositoryPort;
 
     private final FileUploadUseCase fileUploadUseCase;
 
     /**
-     * 주어진 사용자 ID와 프로젝트 업로드 요청 정보를 기반으로 새로운 프로젝트를 생성하고, 썸네일 이미지 파일이 제공된 경우 외부 저장소에 업로드합니다.
+     * 사용자 ID와 프로젝트 요청 정보를 바탕으로 새 프로젝트를 생성하고, 썸네일 이미지가 제공되면 외부 저장소에 업로드합니다.
      *
-     * 프로젝트 정보는 데이터베이스에 저장되며, 썸네일 이미지 파일이 존재하면 업로드 후 프로젝트에 이미지 URL을 반영합니다.
-     * 파일 업로드에 실패할 경우 트랜잭션이 롤백됩니다.
+     * 프로젝트 정보는 데이터베이스에 저장되며, 이미지 파일이 존재할 경우 업로드 후 해당 이미지 URL을 프로젝트에 반영합니다.
+     * 파일 업로드에 실패하면 전체 트랜잭션이 롤백됩니다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
-     * @param imageFile 프로젝트 썸네일로 사용할 이미지 파일
+     * @param imageFile 프로젝트 썸네일로 사용할 이미지 파일 (선택적)
      * @param requestDto 프로젝트 생성에 필요한 정보가 담긴 요청 객체
      */
     @Override
@@ -41,7 +42,12 @@ public class ProjectCommandService implements ProjectUploadUseCase {
         FileUtil.validateImageFile(imageFile);
 
         // 부모 프로젝트 조회
-        Project parentProject = projectRepositoryPort.findProjectById(requestDto.parentProjectId());
+        Project parentProject = null;
+        Optional<Project> savedProject = projectRepositoryPort.findProjectById(requestDto.parentProjectId());
+        if (savedProject.isPresent()) {
+            parentProject = savedProject.get();
+        }
+
 
         // 프로젝트 업로드 DB 저장
         Project project = Project.builder()
@@ -55,16 +61,16 @@ public class ProjectCommandService implements ProjectUploadUseCase {
                 .parentProject(parentProject)
                 .content(requestDto.content())
                 .build();
-        Long projectId = projectRepositoryPort.saveProject(project);
+        Project saveProject = projectRepositoryPort.saveProject(project);
 
         // DB 저장 성공 후 파일 업로드 시도, 외부 서비스로 트랜잭션의 영향을 받지 않는다.
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
-                String key = S3KeyGeneratorUtil.generateKey("project", projectId, imageFile.getOriginalFilename());
+                String key = S3KeyGeneratorUtil.generateKey("project", saveProject.getId(), imageFile.getOriginalFilename());
                 String imageUrl = fileUploadUseCase.uploadFile(key, imageFile);
                 log.info("프로젝트 썸네일 업로드 성공 - url={}", imageUrl);
 
-                // 업데이트
+                // 이미지 업로드 저장
                 project.updateFile(imageUrl);
                 projectRepositoryPort.updateFile(project.getId(), imageUrl);
             } catch (Exception e) {
@@ -73,6 +79,5 @@ public class ProjectCommandService implements ProjectUploadUseCase {
             }
         }
         log.info("프로젝트 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
-
     }
 }
