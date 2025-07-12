@@ -25,7 +25,7 @@ public class DataSourceController implements DataSourceApi {
      * @return 전체 데이터 출처 목록이 포함된 성공 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> allDataSources (
+    public ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> findAllDataSources (
     ) {
         AllDataSourcesResponse allDataSourcesResponse = findAllDataSourcesUseCase.allDataSources();
         AllDataSourcesWebResponse allDataSourcesWebResponse = dataSourceWebMapper.toWebDto(allDataSourcesResponse);

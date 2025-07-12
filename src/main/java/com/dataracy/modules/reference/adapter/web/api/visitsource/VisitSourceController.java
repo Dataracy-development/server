@@ -22,7 +22,7 @@ public class VisitSourceController implements VisitSourceApi {
      * @return 전체 방문 경로 목록이 포함된 성공 응답 객체
      */
     @Override
-    public ResponseEntity<SuccessResponse<AllVisitSourcesWebResponse>> allVisitSources (
+    public ResponseEntity<SuccessResponse<AllVisitSourcesWebResponse>> findAllVisitSources (
     ) {
         AllVisitSourcesResponse allVisitSourcesResponse = findAllVisitSourcesUseCase.allVisitSources();
         AllVisitSourcesWebResponse allVisitSourcesWebResponse = visitSourceWebMapper.toWebDto(allVisitSourcesResponse);

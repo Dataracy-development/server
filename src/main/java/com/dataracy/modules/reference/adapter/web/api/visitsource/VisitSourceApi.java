@@ -31,5 +31,5 @@ public interface VisitSourceApi {
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
     @GetMapping
-    ResponseEntity<SuccessResponse<AllVisitSourcesWebResponse>> allVisitSources();
+    ResponseEntity<SuccessResponse<AllVisitSourcesWebResponse>> findAllVisitSources();
 }

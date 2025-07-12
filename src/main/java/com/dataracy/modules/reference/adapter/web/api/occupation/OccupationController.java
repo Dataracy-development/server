@@ -22,7 +22,7 @@ public class OccupationController implements OccupationApi {
      * @return 전체 직업 목록이 포함된 성공 응답 객체
      */
     @Override
-    public ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> allOccupations (
+    public ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> findAllOccupations (
     ) {
         AllOccupationsResponse allOccupationsResponse = findAllOccupationsUseCase.allOccupations();
         AllOccupationsWebResponse allOccupationsWebResponse = occupationWebMapper.toWebDto(allOccupationsResponse);

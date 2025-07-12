@@ -24,7 +24,7 @@ public class AuthorLevelController implements AuthorLevelApi {
      * @return 전체 작성자 레벨 목록이 포함된 성공 응답의 HTTP 200 ResponseEntity
      */
     @Override
-    public ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> allAuthorLevels (
+    public ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> findAllAuthorLevels (
     ) {
         AllAuthorLevelsResponse allAuthorLevelsResponse = findAllAuthorLevelsUseCase.allAuthorLevels();
         AllAuthorLevelsWebResponse allAuthorLevelsWebResponse = authorLevelWebMapper.toWebDto(allAuthorLevelsResponse);

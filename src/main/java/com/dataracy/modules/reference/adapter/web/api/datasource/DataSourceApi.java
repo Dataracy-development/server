@@ -31,5 +31,5 @@ public interface DataSourceApi {
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
     @GetMapping
-    ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> allDataSources();
+    ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> findAllDataSources();
 }
