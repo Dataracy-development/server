@@ -27,7 +27,6 @@ public class AuthorLevelEntityMapper {
         }
 
         return AuthorLevelEntity.toEntity(
-                authorLevel.id(),
                 authorLevel.value(),
                 authorLevel.label()
         );

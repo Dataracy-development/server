@@ -27,7 +27,6 @@ public class VisitSourceEntityMapper {
         }
 
         return VisitSourceEntity.toEntity(
-                visitSource.id(),
                 visitSource.value(),
                 visitSource.label()
         );

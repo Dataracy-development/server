@@ -27,7 +27,6 @@ public class OccupationEntityMapper {
         }
 
         return OccupationEntity.toEntity(
-                occupation.id(),
                 occupation.value(),
                 occupation.label()
         );

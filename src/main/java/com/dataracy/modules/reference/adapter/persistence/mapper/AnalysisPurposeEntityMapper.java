@@ -37,7 +37,6 @@ public class AnalysisPurposeEntityMapper {
         }
 
         return AnalysisPurposeEntity.toEntity(
-                analysisPurpose.id(),
                 analysisPurpose.value(),
                 analysisPurpose.label()
         );

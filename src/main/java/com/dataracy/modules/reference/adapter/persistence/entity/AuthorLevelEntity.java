@@ -30,12 +30,10 @@ public class AuthorLevelEntity {
     private String label;
 
     public static AuthorLevelEntity toEntity(
-            Long id,
             String value,
             String label
     ) {
         return AuthorLevelEntity.builder()
-                .id(id)
                 .value(value)
                 .label(label)
                 .build();

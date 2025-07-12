@@ -37,7 +37,6 @@ public class DataSourceEntityMapper {
         }
 
         return DataSourceEntity.toEntity(
-                dataSource.id(),
                 dataSource.value(),
                 dataSource.label()
         );

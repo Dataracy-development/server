@@ -30,12 +30,10 @@ public class OccupationEntity {
     private String label;
 
     public static OccupationEntity toEntity(
-            Long id,
             String value,
             String label
     ) {
         return OccupationEntity.builder()
-                .id(id)
                 .value(value)
                 .label(label)
                 .build();

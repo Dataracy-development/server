@@ -30,12 +30,10 @@ public class VisitSourceEntity {
     private String label;
 
     public static VisitSourceEntity toEntity(
-            Long id,
             String value,
             String label
     ) {
         return VisitSourceEntity.builder()
-                .id(id)
                 .value(value)
                 .label(label)
                 .build();
