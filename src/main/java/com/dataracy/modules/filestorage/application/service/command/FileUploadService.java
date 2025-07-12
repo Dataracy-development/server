@@ -90,7 +90,7 @@ public class FileUploadService implements FileUploadUseCase {
     private MultipartFile convertToMultipartFile(ByteArrayOutputStream baos, String filename, String contentType) {
         return new CustomMultipartFile(
                 baos.toByteArray(),
-                filename,
+                "thumbnail",
                 filename,
                 contentType
         );
