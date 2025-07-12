@@ -39,10 +39,11 @@ public class DataSourceQueryService implements
     }
 
     /**
-     * 주어진 ID에 해당하는 데이터 출처 정보를 조회하여 응답 DTO로 반환한다.
+     * 주어진 ID로 데이터 출처를 조회하여 응답 DTO로 반환한다.
+     * 데이터 출처가 존재하지 않을 경우 ReferenceException을 발생시킨다.
      *
      * @param dataSourceId 조회할 데이터 출처의 ID
-     * @return 데이터 출처 정보를 담은 응답 DTO
+     * @return 데이터 출처 정보를 담은 DataSourceResponse DTO
      */
     @Override
     @Transactional(readOnly = true)

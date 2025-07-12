@@ -29,9 +29,10 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
     }
 
     /**
-     * 방문 경로 id에 해당하는 방문 경로가 존재하면 방문 경로를 조회한다.
-     * @param visitSourceId 방문 경로 id
-     * @return 방문 경로
+     * 주어진 방문 경로 ID에 해당하는 방문 경로를 조회하여 Optional로 반환한다.
+     *
+     * @param visitSourceId 조회할 방문 경로의 ID
+     * @return 방문 경로가 존재하면 해당 도메인 객체를 포함한 Optional, 존재하지 않으면 빈 Optional
      */
     @Override
     public Optional<VisitSource> findVisitSourceById(Long visitSourceId) {

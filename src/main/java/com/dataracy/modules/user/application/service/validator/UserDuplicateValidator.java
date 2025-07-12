@@ -30,9 +30,10 @@ public class UserDuplicateValidator {
     }
 
     /**
-     * 이메일이 중복되어 있는지 여부를 판단하여 중복된 유저를 반환한다.
-     * @param email 이메일
-     * @return 유저 도메인 객체
+     * 주어진 이메일로 등록된 사용자가 있는지 확인하여, 중복된 경우 해당 사용자를 반환한다.
+     *
+     * @param email 중복 여부를 확인할 이메일 주소
+     * @return 이메일이 중복된 경우 해당 사용자를 포함하는 Optional, 중복이 없으면 빈 Optional
      */
     public Optional<User> duplicateEmail(String email) {
         return userRepositoryPort.findUserByEmail(email);

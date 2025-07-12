@@ -33,10 +33,10 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     private final IsLoginPossibleUseCase isLoginPossibleUseCase;
 
     /**
-     * 클라이언트로부터 받은 이메일과 비밀번호로 로그인을 진행한다.
+     * 이메일과 비밀번호로 사용자의 로그인을 수행하고 리프레시 토큰을 발급한다.
      *
-     * @param requestDto 자체 로그인을 위한 Dto
-     * @return LoginResponseDto (컨트롤러에서 리프레시 토큰 쿠키 저장을 위한 response)
+     * @param requestDto 로그인 요청 정보(이메일, 비밀번호 등)
+     * @return 발급된 리프레시 토큰과 만료 시간 정보가 포함된 응답 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -59,11 +59,13 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     }
 
     /**
-     * Refresh Token 검증 및 새로운 토큰 발급.
-     * 리프레시 토큰 분산락을 적용한다.
+     * 리프레시 토큰을 검증하고 새로운 액세스 토큰과 리프레시 토큰을 발급합니다.
      *
-     * @param refreshToken 클라이언트로부터 받은 리프레시 토큰
-     * @return 새로 생성된 Access Token과 Refresh Token
+     * 분산 락을 적용하여 동일한 리프레시 토큰으로의 동시 재발급을 방지합니다.
+     * 저장된 리프레시 토큰과 입력된 토큰이 일치하는지 확인 후, 새로운 토큰을 생성하여 반환합니다.
+     *
+     * @param refreshToken 클라이언트가 제공한 리프레시 토큰
+     * @return 새로 발급된 액세스 토큰과 리프레시 토큰, 각 만료 시간 정보가 포함된 응답 객체
      */
     @Override
     @DistributedLock(key = "'lock:refresh-reissue:' + #refreshToken", waitTime = 200, leaseTime = 3000)

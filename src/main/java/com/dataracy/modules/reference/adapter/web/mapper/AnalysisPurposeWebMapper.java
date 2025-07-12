@@ -15,7 +15,7 @@ public class AnalysisPurposeWebMapper {
      * 도메인 계층의 AnalysisPurposeResponse 객체를 웹 계층의 AnalysisPurposeWebResponse 객체로 변환합니다.
      *
      * @param analysisPurposeResponse 변환할 도메인 AnalysisPurposeResponse 객체
-     * @return 변환된 웹 AnalysisPurposeWebResponse 객체
+     * @return 변환된 AnalysisPurposeWebResponse 객체
      */
     public AnalysisPurposeWebResponse toWebDto(AnalysisPurposeResponse analysisPurposeResponse) {
         return new AnalysisPurposeWebResponse(

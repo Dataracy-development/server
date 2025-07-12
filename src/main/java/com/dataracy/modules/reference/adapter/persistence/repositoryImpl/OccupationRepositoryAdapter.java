@@ -29,9 +29,10 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
     }
 
     /**
-     * 직업 id에 해당하는 직업이 존재할 경우 조회한다.
-     * @param occupationId 직업 아이디
-     * @return 직업
+     * 주어진 직업 ID에 해당하는 직업 정보를 조회하여 반환한다.
+     *
+     * @param occupationId 조회할 직업의 ID
+     * @return 직업이 존재하면 해당 직업의 Optional, 존재하지 않으면 Optional.empty()
      */
     @Override
     public Optional<Occupation> findOccupationById(Long occupationId) {

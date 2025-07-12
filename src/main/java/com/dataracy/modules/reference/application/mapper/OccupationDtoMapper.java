@@ -12,7 +12,12 @@ import java.util.List;
  */
 @Component
 public class OccupationDtoMapper {
-    // Occupation 도메인 모델 -> Occupation 도메인 응답 DTO
+    /**
+     * Occupation 도메인 모델을 OccupationResponse DTO로 변환합니다.
+     *
+     * @param occupation 변환할 Occupation 도메인 객체
+     * @return OccupationResponse DTO 객체
+     */
     public OccupationResponse toResponseDto(Occupation occupation) {
         return new OccupationResponse (
                 occupation.id(),

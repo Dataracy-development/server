@@ -11,7 +11,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AuthorLevelWebMapper {
-    // authorLevel 조회 도메인 응답 DTO -> authorLevel 조회 웹 응답 DTO
+    /**
+     * 도메인 계층의 AuthorLevelResponse 객체를 웹 계층의 AuthorLevelWebResponse 객체로 변환합니다.
+     *
+     * @param authorLevelResponse 변환할 도메인 응답 DTO
+     * @return 변환된 웹 응답 DTO
+     */
     public AuthorLevelWebResponse toWebDto(AuthorLevelResponse authorLevelResponse) {
         return new AuthorLevelWebResponse(
                 authorLevelResponse.id(),

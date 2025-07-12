@@ -50,11 +50,13 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     private final TokenRedisUseCase tokenRedisUseCase;
 
     /**
-     * 클라이언트로부터 받은 유저 정보를 토대로 자체 회원가입을 진행한다.(이메일, 닉네임, 비밀번호, 성별)
-     * 리프레시 토큰 분산락 처리
+     * 자체 회원가입 요청을 처리하여 새로운 사용자를 등록하고 리프레시 토큰을 발급한다.
      *
-     * @param requestDto 자체 회원가입을 위한 요청 Dto
-     * @return RefreshTokenResponseDto (컨트롤러에서 리프레시 토큰 쿠키 저장을 위한 response)
+     * 이메일, 닉네임, 비밀번호, 성별 등 클라이언트가 제공한 정보를 검증 및 저장하며, 중복 가입 방지를 위해 이메일 기준 분산 락을 적용한다.
+     * 회원가입 성공 시 리프레시 토큰을 생성하여 Redis에 저장하고, 토큰과 만료 시간을 반환한다.
+     *
+     * @param requestDto 자체 회원가입 요청 정보
+     * @return 리프레시 토큰과 만료 시간이 포함된 응답 객체
      */
     @Override
     @Transactional
@@ -127,11 +129,15 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     }
 
     /**
-     * 회원가입 처리.
-     * 닉네임 동시성 분산락 처리
+     * OAuth 기반 회원가입을 처리하고 리프레시 토큰을 발급합니다.
      *
-     * @param registerToken 회원가입 토큰
-     * @param requestDto    회원가입 요청 정보
+     * 소셜 로그인(구글, 카카오 등)에서 발급된 회원가입 토큰과 온보딩 정보를 검증 및 저장하며,
+     * 이메일과 닉네임의 중복을 방지하기 위해 분산락을 적용합니다.
+     * 회원 정보 저장 후 리프레시 토큰을 생성하여 Redis에 저장하고, 토큰과 만료 시간을 반환합니다.
+     *
+     * @param registerToken 소셜 회원가입 토큰
+     * @param requestDto    온보딩 요청 정보
+     * @return 발급된 리프레시 토큰과 만료 시간 정보
      */
     @Override
     @Transactional
@@ -203,10 +209,12 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     }
 
     /**
-     * 유저의 비밀번호를 변경한다.
+     * 주어진 유저의 비밀번호를 새 비밀번호로 변경한다.
      *
-     * @param userId 유저 id
-     * @param requestDto 비밀번호를 담은 dto
+     * Google 또는 Kakao 계정으로 가입한 유저는 비밀번호 변경이 불가하며, 존재하지 않는 유저 ID일 경우 예외가 발생한다.
+     *
+     * @param userId 비밀번호를 변경할 유저의 ID
+     * @param requestDto 새 비밀번호 및 확인값이 포함된 요청 DTO
      */
     @Override
     @Transactional
