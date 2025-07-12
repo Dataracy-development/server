@@ -9,6 +9,7 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +27,7 @@ public class EmailSendGridAdapter implements EmailSenderPort {
 
     private final SendGrid sendGrid;
 
-    @Value("${sendgrid.sender}")
+    @Value("${sendgrid.sender:}")
     private String sender;
 
     @Override
@@ -63,6 +64,13 @@ public class EmailSendGridAdapter implements EmailSenderPort {
             }
         } catch (IOException e) {
             throw new RuntimeException("SendGrid 전송 중 IOException 발생", e);
+        }
+    }
+
+    @PostConstruct
+    public void validateProperties() {
+        if (sender.isBlank()) {
+            throw new IllegalStateException("Sendgrid sender 설정이 올바르지 않습니다.");
         }
     }
 }

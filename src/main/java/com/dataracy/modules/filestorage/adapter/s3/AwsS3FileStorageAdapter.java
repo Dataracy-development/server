@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import com.dataracy.modules.filestorage.domain.exception.S3UploadException;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
 
     private final AmazonS3 amazonS3;
 
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket:}")
     private String bucket;
 
     /**
@@ -88,5 +89,12 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
             throw new IllegalArgumentException("No key found in S3 URL: " + url);
         }
         return url.substring(keyStartIndex);
+    }
+
+    @PostConstruct
+    public void validateProperties() {
+        if (bucket.isBlank()) {
+            throw new IllegalStateException("AWS S3 버켓 설정이 올바르지 않습니다.");
+        }
     }
 }

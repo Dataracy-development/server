@@ -4,6 +4,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,13 +16,13 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class AwsS3Config {
 
-    @Value("${cloud.aws.credentials.access-key}")
+    @Value("${cloud.aws.credentials.access-key:}")
     private String accessKey;
 
-    @Value("${cloud.aws.credentials.secret-key}")
+    @Value("${cloud.aws.credentials.secret-key:}")
     private String secretKey;
 
-    @Value("${cloud.aws.region.static}")
+    @Value("${cloud.aws.region.static:}")
     private String region;
 
     /**
@@ -44,5 +45,12 @@ public class AwsS3Config {
                 log.error("AWS S3 클라이언트 생성 실패", e);
                 throw new IllegalStateException("AWS S3 클라이언트를 생성할 수 없습니다.", e);
             }
+    }
+
+    @PostConstruct
+    public void validateProperties() {
+        if (accessKey.isBlank() || secretKey.isBlank() || region.isBlank()) {
+            throw new IllegalStateException("AWS 설정이 올바르지 않습니다.");
+        }
     }
 }
