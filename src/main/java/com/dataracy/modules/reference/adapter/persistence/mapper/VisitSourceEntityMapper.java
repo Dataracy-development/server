@@ -6,7 +6,10 @@ import com.dataracy.modules.reference.domain.model.VisitSource;
 /**
  * VisitSource 엔티티와 VisitSource 도메인 모델을 변환하는 매퍼
  */
-public class VisitSourceEntityMapper {
+public final class VisitSourceEntityMapper {
+    private VisitSourceEntityMapper() {
+    }
+
     // VisitSource 엔티티 -> VisitSource 도메인 모델
     public static VisitSource toDomain(VisitSourceEntity visitSourceEntity) {
         if (visitSourceEntity == null) {

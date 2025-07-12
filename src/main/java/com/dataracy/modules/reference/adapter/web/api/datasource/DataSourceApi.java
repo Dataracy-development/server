@@ -22,7 +22,7 @@ public interface DataSourceApi {
      */
     @Operation(
             summary = "전체 데이터 출처 리스트를 조회",
-            description = "DB에서 전체 데이터 출처 리스트를 조회한다..",
+            description = "DB에서 전체 데이터 출처 리스트를 조회한다.",
             security = {}
     )
     @ApiResponses(value = {

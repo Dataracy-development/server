@@ -22,7 +22,7 @@ public interface TopicApi {
      */
     @Operation(
             summary = "전체 토픽 리스트를 조회",
-            description = "DB에서 전체 토픽 리스트를 조회한다..",
+            description = "DB에서 전체 토픽 리스트를 조회한다.",
             security = {}
     )
     @ApiResponses(value = {

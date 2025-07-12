@@ -6,7 +6,10 @@ import com.dataracy.modules.reference.domain.model.Occupation;
 /**
  * Occupation 엔티티와 Occupation 도메인 모델을 변환하는 매퍼
  */
-public class OccupationEntityMapper {
+public final class OccupationEntityMapper {
+    private OccupationEntityMapper() {
+    }
+
     // Occupation 엔티티 -> Occupation 도메인 모델
     public static Occupation toDomain(OccupationEntity occupationEntity) {
         if (occupationEntity == null) {

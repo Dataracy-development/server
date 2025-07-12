@@ -22,7 +22,7 @@ public interface AuthorLevelApi {
      */
     @Operation(
             summary = "전체 작성자 유형 리스트를 조회",
-            description = "DB에서 전체 작성자 유형 리스트를 조회한다..",
+            description = "DB에서 전체 작성자 유형 리스트를 조회한다.",
             security = {}
     )
     @ApiResponses(value = {

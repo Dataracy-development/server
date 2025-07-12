@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 /**
  * 프로젝트 엔티티와 프로젝트 도메인 모델을 변환하는 매퍼
  */
-@Component
-public class ProjectEntityMapper {
+public final class ProjectEntityMapper {
+    private ProjectEntityMapper() {
+    }
+
     /**
      * ProjectEntity 객체를 Project 도메인 모델로 변환합니다.
      *
@@ -17,7 +19,7 @@ public class ProjectEntityMapper {
      * @param projectEntity 변환할 ProjectEntity 객체
      * @return 변환된 Project 도메인 모델 객체 또는 입력이 null일 경우 null
      */
-    public Project toDomain(ProjectEntity projectEntity) {
+    public static Project toDomain(ProjectEntity projectEntity) {
         if (projectEntity == null) {
             return null;
         }
@@ -54,7 +56,7 @@ public class ProjectEntityMapper {
      * @param project 변환할 Project 도메인 모델
      * @return 변환된 ProjectEntity 인스턴스. 입력이 null이면 null을 반환합니다.
      */
-    public ProjectEntity toEntity(Project project) {
+    public static ProjectEntity toEntity(Project project) {
         if (project == null) {
             return null;
         }

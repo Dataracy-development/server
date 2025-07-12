@@ -6,7 +6,10 @@ import com.dataracy.modules.reference.domain.model.Topic;
 /**
  * 토픽 엔티티와 토픽 도메인 모델을 변환하는 매퍼
  */
-public class TopicEntityMapper {
+public final class TopicEntityMapper {
+    private TopicEntityMapper() {
+    }
+
     /**
      * TopicEntity 객체를 Topic 도메인 모델로 변환합니다.
      *
