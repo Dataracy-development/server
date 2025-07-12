@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 public class DataSourceDtoMapper {
     /**
-     * DataSource 도메인 모델 객체를 DataSource 응답 DTO로 변환합니다.
+     * DataSource 도메인 모델 객체를 DataSourceResponse DTO로 변환합니다.
      *
      * @param dataSource 변환할 DataSource 도메인 모델 객체
      * @return 변환된 DataSourceResponse DTO

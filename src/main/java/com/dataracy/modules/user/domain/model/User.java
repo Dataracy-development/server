@@ -37,10 +37,21 @@ public class User {
     private boolean isAdTermsAgreed;
     private boolean isDeleted;
 
+    /**
+     * 주어진 원시 비밀번호가 저장된 암호화된 비밀번호와 일치하는지 확인합니다.
+     *
+     * @param rawPassword 사용자가 입력한 원시 비밀번호
+     * @return 비밀번호가 일치하면 true, 그렇지 않으면 false
+     */
     public boolean isPasswordMatch(PasswordEncoder encoder, String rawPassword) {
         return encoder.matches(rawPassword, this.password);
     }
 
+    /**
+     * 주어진 사용자 속성 값들로 새로운 User 도메인 객체를 생성합니다.
+     *
+     * @return 생성된 User 객체
+     */
     public static User toDomain(
             Long id,
             ProviderType provider,

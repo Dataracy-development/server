@@ -30,10 +30,10 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     }
 
     /**
-     * 주어진 데이터 출처 ID로 데이터 출처를 조회한다.
+     * 주어진 ID에 해당하는 데이터 출처를 조회하여 Optional로 반환한다.
      *
      * @param dataSourceId 조회할 데이터 출처의 ID
-     * @return 데이터 출처 도메인 객체. ID가 null이면 null을 반환한다.
+     * @return 데이터 출처 도메인 객체의 Optional. 해당 ID가 없거나 null인 경우 빈 Optional을 반환한다.
      */
     @Override
     public Optional<DataSource> findDataSourceById(Long dataSourceId) {

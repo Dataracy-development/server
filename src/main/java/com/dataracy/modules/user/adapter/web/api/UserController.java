@@ -35,10 +35,11 @@ public class UserController implements UserApi {
     private final ConfirmPasswordUseCase confirmPasswordUseCase;
 
     /**
-     * 자체 회원가입을 진행한다.
+     * 자체 회원가입 요청을 처리하고, 성공 시 리프레시 토큰을 쿠키에 저장한다.
      *
-     * @param webRequest 자체 회원가입 정보
-     * @return 회원가입에 성공하여 리프레시 토큰을 쿠키에 저장된다.
+     * @param webRequest 자체 회원가입 요청 데이터
+     * @param response HTTP 응답 객체
+     * @return 회원가입 성공 시 201 Created 상태와 성공 응답을 반환한다.
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> signUpUserSelf(
@@ -56,12 +57,12 @@ public class UserController implements UserApi {
     }
 
     /**
-     * 레지스터 토큰에서 추출한 정보들과 닉네임으로 회원가입을 진행한다.
+     * OAuth 레지스터 토큰과 닉네임 정보를 사용하여 회원가입을 처리하고, 리프레시 토큰을 쿠키에 저장한다.
      *
-     * @param registerToken 쿠키로부터 받은 레지스터 토큰
-     * @param webRequest 닉네임
-     * @param response 웹 응답
-     * @return void
+     * @param registerToken OAuth 회원가입을 위한 레지스터 토큰
+     * @param webRequest 닉네임 등 온보딩 정보가 담긴 요청 객체
+     * @param response 리프레시 토큰을 쿠키로 설정할 HTTP 응답 객체
+     * @return 회원가입 성공 시 201(Created) 상태와 성공 응답을 반환
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> signUpUserOAuth(
@@ -80,10 +81,10 @@ public class UserController implements UserApi {
     }
 
     /**
-     * 닉네임 중복유무를 확인한다.
+     * 닉네임의 중복 여부를 검사하여 중복이 아닐 경우 성공 응답을 반환한다.
      *
-     * @param webRequest 유저 닉네임
-     * @return void
+     * @param webRequest 중복 검사를 요청하는 닉네임 정보가 포함된 객체
+     * @return 닉네임이 중복되지 않을 경우 성공 상태를 담은 HTTP 200 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> duplicateNickname(
@@ -95,6 +96,13 @@ public class UserController implements UserApi {
                 .body(SuccessResponse.of(UserSuccessStatus.OK_NOT_DUPLICATED_NICKNAME));
     }
 
+    /**
+     * 사용자의 비밀번호를 변경한다.
+     *
+     * @param userId 비밀번호를 변경할 사용자 ID
+     * @param webRequest 비밀번호 변경 요청 정보
+     * @return 비밀번호 변경 성공 시 200 OK와 성공 응답을 반환
+     */
     @Override
     public ResponseEntity<SuccessResponse<Void>> changePassword(
             Long userId,
@@ -107,11 +115,11 @@ public class UserController implements UserApi {
     }
 
     /**
-     * 사용자의 비밀번호를 확인하고 성공 여부를 반환합니다.
+     * 사용자의 비밀번호를 확인한 후 성공 응답을 반환합니다.
      *
-     * @param userId 비밀번호를 확인할 사용자 ID
-     * @param webRequest 비밀번호 확인 요청 정보
-     * @return 비밀번호 확인 성공 시 200 OK와 함께 성공 응답을 반환합니다.
+     * @param userId 비밀번호를 확인할 대상 사용자의 ID
+     * @param webRequest 비밀번호 확인 요청 데이터
+     * @return 비밀번호가 올바른 경우 200 OK와 함께 성공 응답을 반환합니다.
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> confirmPassword(

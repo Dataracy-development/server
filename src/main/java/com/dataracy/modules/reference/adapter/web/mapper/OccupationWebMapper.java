@@ -11,7 +11,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class OccupationWebMapper {
-    // occupation 조회 도메인 응답 DTO -> occupation 조회 웹 응답 DTO
+    /**
+     * 단일 직업 도메인 응답 DTO를 웹 응답 DTO로 변환합니다.
+     *
+     * @param occupationResponse 변환할 직업 도메인 응답 DTO
+     * @return 변환된 직업 웹 응답 DTO
+     */
     public OccupationWebResponse toWebDto(OccupationResponse occupationResponse) {
         return new OccupationWebResponse(
                 occupationResponse.id(),

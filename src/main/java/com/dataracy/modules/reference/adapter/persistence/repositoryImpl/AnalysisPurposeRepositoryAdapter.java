@@ -30,10 +30,10 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
     }
 
     /**
-     * 주어진 ID에 해당하는 분석 목적을 조회한다.
+     * 주어진 ID에 해당하는 분석 목적 도메인 객체를 Optional로 반환한다.
      *
      * @param analysisPurposeId 조회할 분석 목적의 ID
-     * @return 해당 ID의 분석 목적 도메인 객체. ID가 null이면 null을 반환한다.
+     * @return 해당 ID의 분석 목적이 존재하면 Optional로 감싸서 반환하며, 없으면 Optional.empty()를 반환한다.
      */
     @Override
     public Optional<AnalysisPurpose> findAnalysisPurposeById(Long analysisPurposeId) {

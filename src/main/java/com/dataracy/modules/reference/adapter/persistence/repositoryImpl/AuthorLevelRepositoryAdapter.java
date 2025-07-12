@@ -29,9 +29,10 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
     }
 
     /**
-     * 작성자 유형 id에 해당하는 작성자 유형이 존재하면 조회한다.
-     * @param authorLevelId 작성자 유형  아이디
-     * @return 작성자 유형
+     * 주어진 작성자 유형 ID에 해당하는 작성자 유형을 조회하여 반환한다.
+     *
+     * @param authorLevelId 조회할 작성자 유형의 ID
+     * @return 작성자 유형이 존재하면 해당 도메인 객체를 포함하는 Optional, 존재하지 않으면 빈 Optional
      */
     @Override
     public Optional<AuthorLevel> findAuthorLevelById(Long authorLevelId) {

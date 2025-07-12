@@ -7,10 +7,10 @@ import com.dataracy.modules.reference.application.dto.response.singleview.Analys
  */
 public interface FindAnalysisPurposeUseCase {
     /**
-     * 주어진 분석 목적 ID에 해당하는 분석 목적 정보를 조회합니다.
-     *
-     * @param analysisPurposeId 조회할 분석 목적의 ID
-     * @return 해당 ID에 대한 분석 목적 응답 객체
-     */
+ * 주어진 ID에 해당하는 분석 목적 정보를 반환합니다.
+ *
+ * @param analysisPurposeId 조회할 분석 목적의 ID
+ * @return 분석 목적 정보가 담긴 응답 객체
+ */
     AnalysisPurposeResponse findAnalysisPurpose(Long analysisPurposeId);
 }

@@ -10,7 +10,12 @@ import java.util.List;
  * 유저 엔티티와 유저 도메인 모델을 변환하는 매퍼
  */
 public class UserEntityMapper {
-    // 유저 엔티티 -> 유저 도메인 모델
+    /**
+     * UserEntity 객체를 User 도메인 모델로 변환합니다.
+     *
+     * @param userEntity 변환할 UserEntity 객체
+     * @return 변환된 User 도메인 모델 객체, 입력이 null이면 null 반환
+     */
     public static User toDomain(UserEntity userEntity) {
         if (userEntity == null) {
             return null;
@@ -37,7 +42,14 @@ public class UserEntityMapper {
         );
     }
 
-    // 유저 도메인 모델 -> 유저 엔티티
+    /**
+     * 유저 도메인 모델을 유저 엔티티로 변환합니다.
+     *
+     * 입력된 User 객체의 정보를 기반으로 UserEntity를 생성하고, 관련 토픽 ID 목록을 UserTopicEntity로 변환하여 연결합니다.
+     *
+     * @param user 변환할 유저 도메인 모델
+     * @return 변환된 UserEntity 객체, 입력이 null인 경우 null 반환
+     */
     public static UserEntity toEntity(User user) {
         if (user == null) {
             return null;
