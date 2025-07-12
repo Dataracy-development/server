@@ -31,5 +31,5 @@ public interface AuthorLevelApi {
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
     @GetMapping
-    ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> allAuthorLevels();
+    ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> findAllAuthorLevels();
 }

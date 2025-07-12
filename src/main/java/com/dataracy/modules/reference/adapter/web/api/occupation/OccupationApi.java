@@ -31,5 +31,5 @@ public interface OccupationApi {
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
     @GetMapping
-    ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> allOccupations();
+    ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> findAllOccupations();
 }

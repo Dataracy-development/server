@@ -31,5 +31,5 @@ public interface AnalysisPurposeApi {
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
     @GetMapping
-    ResponseEntity<SuccessResponse<AllAnalysisPurposesWebResponse>> allAnalysisPurposes();
+    ResponseEntity<SuccessResponse<AllAnalysisPurposesWebResponse>> findAllAnalysisPurposes();
 }

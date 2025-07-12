@@ -31,5 +31,5 @@ public interface TopicApi {
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
     @GetMapping
-    ResponseEntity<SuccessResponse<AllTopicsWebResponse>> allTopics();
+    ResponseEntity<SuccessResponse<AllTopicsWebResponse>> findAllTopics();
 }

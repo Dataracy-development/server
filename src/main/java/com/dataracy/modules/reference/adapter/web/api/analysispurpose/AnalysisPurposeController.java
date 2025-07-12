@@ -22,7 +22,7 @@ public class AnalysisPurposeController implements AnalysisPurposeApi {
      * @return 전체 분석 목적 목록이 포함된 성공 응답 객체
      */
     @Override
-    public ResponseEntity<SuccessResponse<AllAnalysisPurposesWebResponse>> allAnalysisPurposes (
+    public ResponseEntity<SuccessResponse<AllAnalysisPurposesWebResponse>> findAllAnalysisPurposes (
     ) {
         AllAnalysisPurposesResponse allAnalysisPurposesResponse = findAllAnalysisPurposesUseCase.allAnalysisPurposes();
         AllAnalysisPurposesWebResponse allAnalysisPurposesWebResponse = analysisPurposeWebMapper.toWebDto(allAnalysisPurposesResponse);
