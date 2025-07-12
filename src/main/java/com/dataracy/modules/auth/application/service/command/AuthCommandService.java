@@ -84,8 +84,9 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
             }
 
             // 어세스 토큰과 리프레시 토큰을 발급후 반환한다.
-            String newAccessToken = jwtGeneratorPort.generateAccessToken(userId, RoleType.ROLE_USER);
-            String newRefreshToken = jwtGeneratorPort.generateRefreshToken(userId, RoleType.ROLE_USER);
+            RoleType userRole = jwtValidatorPort.getRoleFromToken(refreshToken);
+            String newAccessToken = jwtGeneratorPort.generateAccessToken(userId, userRole);
+            String newRefreshToken = jwtGeneratorPort.generateRefreshToken(userId, userRole);
 
             // 레디스에 리프레시 토큰 저장
             tokenRedisPort.saveRefreshToken(userId.toString(), newRefreshToken);
