@@ -1,11 +1,14 @@
 package com.dataracy.modules.reference.application.service.query;
 
-import com.dataracy.modules.reference.application.dto.response.AllDataSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.DataSourceResponse;
 import com.dataracy.modules.reference.application.mapper.DataSourceDtoMapper;
 import com.dataracy.modules.reference.application.port.in.data_source.FindAllDataSourcesUseCase;
 import com.dataracy.modules.reference.application.port.in.data_source.FindDataSourceUseCase;
 import com.dataracy.modules.reference.application.port.out.DataSourceRepositoryPort;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.DataSource;
+import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,15 +39,17 @@ public class DataSourceQueryService implements
     }
 
     /**
-     * 주어진 ID에 해당하는 데이터 출처 정보를 조회하여 응답 DTO로 반환한다.
+     * 주어진 ID로 데이터 출처를 조회하여 응답 DTO로 반환한다.
+     * 데이터 출처가 존재하지 않을 경우 ReferenceException을 발생시킨다.
      *
      * @param dataSourceId 조회할 데이터 출처의 ID
-     * @return 데이터 출처 정보를 담은 응답 DTO
+     * @return 데이터 출처 정보를 담은 DataSourceResponse DTO
      */
     @Override
     @Transactional(readOnly = true)
-    public AllDataSourcesResponse.DataSourceResponse findDataSource(Long dataSourceId) {
-        DataSource dataSource = dataSourceRepositoryPort.findDataSourceById(dataSourceId);
+    public DataSourceResponse findDataSource(Long dataSourceId) {
+        DataSource dataSource = dataSourceRepositoryPort.findDataSourceById(dataSourceId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE));
         return dataSourceDtoMapper.toResponseDto(dataSource);
     }
 }

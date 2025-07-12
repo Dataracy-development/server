@@ -2,8 +2,8 @@ package com.dataracy.modules.reference.adapter.web.api.analysis_purpose;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.reference.adapter.web.mapper.AnalysisPurposeWebMapper;
-import com.dataracy.modules.reference.adapter.web.response.AllAnalysisPurposesWebResponse;
-import com.dataracy.modules.reference.application.dto.response.AllAnalysisPurposesResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllAnalysisPurposesWebResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllAnalysisPurposesResponse;
 import com.dataracy.modules.reference.application.port.in.analysis_purpose.FindAllAnalysisPurposesUseCase;
 import com.dataracy.modules.reference.domain.status.ReferenceSuccessStatus;
 import lombok.RequiredArgsConstructor;

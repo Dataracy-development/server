@@ -4,13 +4,12 @@ import com.dataracy.modules.reference.adapter.persistence.entity.OccupationEntit
 import com.dataracy.modules.reference.adapter.persistence.mapper.OccupationEntityMapper;
 import com.dataracy.modules.reference.adapter.persistence.repository.OccupationJpaRepository;
 import com.dataracy.modules.reference.application.port.out.OccupationRepositoryPort;
-import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.Occupation;
-import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,18 +29,14 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
     }
 
     /**
-     * 직업 id에 해당하는 직업이 존재할 경우 조회한다.
-     * @param occupationId 직업 아이디
-     * @return 직업
+     * 주어진 직업 ID에 해당하는 직업 정보를 조회하여 반환한다.
+     *
+     * @param occupationId 조회할 직업의 ID
+     * @return 직업이 존재하면 해당 직업의 Optional, 존재하지 않으면 Optional.empty()
      */
     @Override
-    public Occupation findOccupationById(Long occupationId) {
-        if (occupationId == null) {
-            return null;
-        }
-
-        OccupationEntity occupationEntity = occupationJpaRepository.findById(occupationId)
-                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION));
-        return OccupationEntityMapper.toDomain(occupationEntity);
+    public Optional<Occupation> findOccupationById(Long occupationId) {
+        return occupationJpaRepository.findById(occupationId)
+                .map(OccupationEntityMapper::toDomain);
     }
 }

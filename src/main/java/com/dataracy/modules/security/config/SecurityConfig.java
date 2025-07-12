@@ -23,9 +23,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final CorsConfigurationSource corsConfigurationSource;
 
     private final JwtValidateUseCase jwtValidateUseCase;
-    private final CorsConfigurationSource corsConfigurationSource;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;

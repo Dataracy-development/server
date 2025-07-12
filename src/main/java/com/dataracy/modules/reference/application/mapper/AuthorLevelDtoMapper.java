@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.application.mapper;
 
-import com.dataracy.modules.reference.application.dto.response.AllAuthorLevelsResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllAuthorLevelsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.AuthorLevelResponse;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +12,14 @@ import java.util.List;
  */
 @Component
 public class AuthorLevelDtoMapper {
-    // AuthorLevel 도메인 모델 -> AuthorLevel 도메인 응답 DTO
-    public AllAuthorLevelsResponse.AuthorLevelResponse toResponseDto(AuthorLevel authorLevel) {
-        return new AllAuthorLevelsResponse.AuthorLevelResponse(
+    /**
+     * AuthorLevel 도메인 모델을 AuthorLevelResponse DTO로 변환합니다.
+     *
+     * @param authorLevel 변환할 AuthorLevel 도메인 객체
+     * @return 변환된 AuthorLevelResponse DTO
+     */
+    public AuthorLevelResponse toResponseDto(AuthorLevel authorLevel) {
+        return new AuthorLevelResponse(
                 authorLevel.id(),
                 authorLevel.value(),
                 authorLevel.label()

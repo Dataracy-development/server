@@ -1,7 +1,9 @@
 package com.dataracy.modules.reference.adapter.web.mapper;
 
-import com.dataracy.modules.reference.adapter.web.response.AllTopicsWebResponse;
-import com.dataracy.modules.reference.application.dto.response.AllTopicsResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllTopicsWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.singleview.TopicWebResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllTopicsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.TopicResponse;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,9 +11,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TopicWebMapper {
-    // 토픽 조회 도메인 응답 DTO -> 토픽 조회 웹 응답 DTO
-    public AllTopicsWebResponse.TopicWebResponse toWebDto(AllTopicsResponse.TopicResponse topicResponse) {
-        return new AllTopicsWebResponse.TopicWebResponse(
+    /**
+     * 도메인 토픽 응답 DTO를 웹 응답 DTO로 변환합니다.
+     *
+     * @param topicResponse 변환할 도메인 토픽 응답 DTO
+     * @return 변환된 토픽 웹 응답 DTO
+     */
+    public TopicWebResponse toWebDto(TopicResponse topicResponse) {
+        return new TopicWebResponse(
                 topicResponse.id(),
                 topicResponse.value(),
                 topicResponse.label()

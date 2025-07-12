@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.adapter.web.response;
+package com.dataracy.modules.reference.adapter.web.response.allview;
+
+import com.dataracy.modules.reference.adapter.web.response.singleview.TopicWebResponse;
 
 import java.util.List;
 
@@ -7,6 +9,4 @@ import java.util.List;
  * @param topics 토픽 리스트
  */
 public record AllTopicsWebResponse(List<TopicWebResponse> topics) {
-    public record TopicWebResponse(Long id, String value, String label
-    ) {}
 }

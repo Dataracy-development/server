@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.application.dto.response;
+package com.dataracy.modules.reference.application.dto.response.allview;
+
+import com.dataracy.modules.reference.application.dto.response.singleview.VisitSourceResponse;
 
 import java.util.List;
 
@@ -7,6 +9,4 @@ import java.util.List;
  * @param visitSources visitSource 리스트
  */
 public record AllVisitSourcesResponse(List<VisitSourceResponse> visitSources) {
-    public record VisitSourceResponse(Long id, String value, String label
-    ) {}
 }

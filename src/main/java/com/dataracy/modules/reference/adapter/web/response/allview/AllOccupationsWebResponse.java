@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.adapter.web.response;
+package com.dataracy.modules.reference.adapter.web.response.allview;
+
+import com.dataracy.modules.reference.adapter.web.response.singleview.OccupationWebResponse;
 
 import java.util.List;
 
@@ -7,9 +9,4 @@ import java.util.List;
  * @param occupations occupation 리스트
  */
 public record AllOccupationsWebResponse(List<OccupationWebResponse> occupations) {
-    public record OccupationWebResponse(
-            Long id,
-            String value,
-            String label
-    ) {}
 }

@@ -1,6 +1,6 @@
 package com.dataracy.modules.reference.application.service.query;
 
-import com.dataracy.modules.reference.application.dto.response.AllTopicsResponse;
+import com.dataracy.modules.reference.application.dto.response.allview.AllTopicsResponse;
 import com.dataracy.modules.reference.application.mapper.TopicDtoMapper;
 import com.dataracy.modules.reference.application.port.in.topic.FindAllTopicsUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.IsExistTopicUseCase;

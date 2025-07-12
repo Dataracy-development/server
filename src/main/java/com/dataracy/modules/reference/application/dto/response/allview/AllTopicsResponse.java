@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.application.dto.response;
+package com.dataracy.modules.reference.application.dto.response.allview;
+
+import com.dataracy.modules.reference.application.dto.response.singleview.TopicResponse;
 
 import java.util.List;
 
@@ -7,6 +9,4 @@ import java.util.List;
  * @param topics 토픽 리스트
  */
 public record AllTopicsResponse(List<TopicResponse> topics) {
-    public record TopicResponse(Long id, String value, String label
-    ) {}
 }

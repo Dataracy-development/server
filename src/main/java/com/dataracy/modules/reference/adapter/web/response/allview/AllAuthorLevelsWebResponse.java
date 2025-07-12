@@ -1,4 +1,6 @@
-package com.dataracy.modules.reference.adapter.web.response;
+package com.dataracy.modules.reference.adapter.web.response.allview;
+
+import com.dataracy.modules.reference.adapter.web.response.singleview.AuthorLevelWebResponse;
 
 import java.util.List;
 
@@ -7,9 +9,4 @@ import java.util.List;
  * @param authorLevels authorLevel 리스트
  */
 public record AllAuthorLevelsWebResponse(List<AuthorLevelWebResponse> authorLevels) {
-    public record AuthorLevelWebResponse(
-            Long id,
-            String value,
-            String label
-    ) {}
 }

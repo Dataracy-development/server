@@ -5,7 +5,6 @@ import com.dataracy.modules.auth.application.dto.response.OAuthUserInfo;
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponse;
 import com.dataracy.modules.auth.application.port.out.oauth.SelectSocialProviderPort;
-import com.dataracy.modules.auth.application.port.out.redis.TokenRedisPort;
 import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.application.port.in.auth.HandleUserUseCase;
 import com.dataracy.modules.user.application.port.in.auth.IsNewUserUseCase;
@@ -29,16 +28,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final SelectSocialProviderPort selectSocialProviderPort;
+
     private final IsNewUserUseCase isNewUserUseCase;
     private final HandleUserUseCase handleUserUseCase;
-
-    private final TokenRedisPort tokenRedisPort;
     private final JwtProperties jwtProperties;
 
     /**
      * OAuth2 로그인 성공 후 처리.
-     * 쿠키 설정, 레디스 설정 등 외부 I/O 부수 효과는 실패/성공 보장이 다르므로
-     * 컨트롤러 또는 핸들러에서 처리해야한다.
+     * 쿠키 설정 등 웹 관련은 컨트롤러 또는 핸들러에서 담당한다.
      *
      * @param request HttpServletRequest
      * @param response HttpServletResponse
@@ -78,7 +75,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         getRedirectStrategy().sendRedirect(request, response, jwtProperties.getRedirectOnboarding());
     }
 
-    // 기존 유저 처리
+    /**
+     * 기존 유저에게 리프레시 토큰을 발급하고 쿠키에 저장한 후 메인 페이지로 리다이렉트합니다.
+     *
+     * @param oAuthUserInfo OAuth2 인증을 통해 추출된 사용자 정보
+     * @param request 현재 HTTP 요청
+     * @param response 현재 HTTP 응답
+     * @throws IOException 리다이렉트 중 입출력 오류가 발생한 경우
+     */
     private void handleExistingUser(OAuthUserInfo oAuthUserInfo, HttpServletRequest request, HttpServletResponse response) throws IOException {
         // 기존 유저일 경우 리프레시 토큰을 발급한다.
         RefreshTokenResponse refreshTokenResponseDto = handleUserUseCase.handleExistingUser(oAuthUserInfo);
@@ -88,11 +92,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 "refreshToken",
                 refreshTokenResponseDto.refreshToken(),
                 (int) refreshTokenResponseDto.refreshTokenExpiration() / 1000
-        );
-        // 리프레시 토큰을 레디스에 저장한다.
-        tokenRedisPort.saveRefreshToken(
-                refreshTokenResponseDto.userId().toString(),
-                refreshTokenResponseDto.refreshToken()
         );
         // 메인페이지로 리다이렉션
         getRedirectStrategy().sendRedirect(request, response, jwtProperties.getRedirectBase());
