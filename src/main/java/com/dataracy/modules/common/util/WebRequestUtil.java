@@ -1,8 +1,11 @@
 package com.dataracy.modules.common.util;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.List;
 
 public final class WebRequestUtil {
     private WebRequestUtil() {
@@ -15,6 +18,7 @@ public final class WebRequestUtil {
      *
      * @return 현재 요청의 HttpServletRequest 객체 또는 요청이 없을 경우 null
      */
+    @Nullable
     public static HttpServletRequest getCurrentRequestSafely() {
         try {
             return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -35,16 +39,16 @@ public final class WebRequestUtil {
     public static boolean isLogExceptRequest(HttpServletRequest request) {
         if (request == null) return false;
         String uri = request.getRequestURI();
-        return uri.startsWith("/swagger")
-                || uri.startsWith("/v3/api-docs")
-                || uri.startsWith("/swagger-ui")
-                || uri.startsWith("/swagger-resources")
-                || uri.startsWith("/.well-known")
-                || uri.startsWith("/webjars")
-                || uri.startsWith("/static")
-                || uri.startsWith("/error")
-                || uri.equals("/swagger-ui.html")
-                || uri.equals("/favicon.ico")
-                ;
+        return EXCLUDED_PREFIXES.stream().anyMatch(uri::startsWith)
+                || EXCLUDED_EQUALS.stream().anyMatch(uri::equals);
     }
+
+    private static final List<String> EXCLUDED_PREFIXES = List.of(
+            "/swagger", "/v3/api-docs", "/swagger-ui", "/swagger-resources",
+            "/.well-known", "/webjars", "/static", "/error"
+    );
+
+    private static final List<String> EXCLUDED_EQUALS = List.of(
+            "/swagger-ui.html", "/favicon.ico"
+    );
 }
