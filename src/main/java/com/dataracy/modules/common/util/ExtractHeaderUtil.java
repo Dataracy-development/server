@@ -1,15 +1,11 @@
 package com.dataracy.modules.common.util;
 
-import com.dataracy.modules.common.status.CommonErrorStatus;
-import com.dataracy.modules.common.exception.CommonException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Optional;
 
 public final class ExtractHeaderUtil {
-
     private ExtractHeaderUtil() {
-        throw new CommonException(CommonErrorStatus.CAN_NOT_INSTANTIATE_HEADER_UTILITY_CLASS);
     }
 
     /**

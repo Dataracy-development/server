@@ -6,6 +6,8 @@ import com.dataracy.modules.reference.application.dto.response.allview.AllAnalys
 import com.dataracy.modules.reference.application.dto.response.singleview.AnalysisPurposeResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * analysisPurpose 웹 DTO와 analysisPurpose 도메인 DTO를 변환하는 매퍼
  */
@@ -32,6 +34,10 @@ public class AnalysisPurposeWebMapper {
      * @return 변환된 웹 계층의 전체 분석 목적 리스트 응답 DTO
      */
     public AllAnalysisPurposesWebResponse toWebDto(AllAnalysisPurposesResponse allAnalysisPurposesResponse) {
+        if (allAnalysisPurposesResponse == null || allAnalysisPurposesResponse.analysisPurposes() == null) {
+            return new AllAnalysisPurposesWebResponse(List.of());
+        }
+
         return new AllAnalysisPurposesWebResponse(
                 allAnalysisPurposesResponse.analysisPurposes()
                         .stream()

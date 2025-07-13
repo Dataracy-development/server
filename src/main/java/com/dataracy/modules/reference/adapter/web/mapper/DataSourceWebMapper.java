@@ -6,6 +6,8 @@ import com.dataracy.modules.reference.application.dto.response.allview.AllDataSo
 import com.dataracy.modules.reference.application.dto.response.singleview.DataSourceResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * dataSource 웹 DTO와 dataSource 도메인 DTO를 변환하는 매퍼
  */
@@ -32,6 +34,10 @@ public class DataSourceWebMapper {
      * @return 변환된 웹 계층 전체 데이터 소스 응답 DTO
      */
     public AllDataSourcesWebResponse toWebDto(AllDataSourcesResponse allDataSourcesResponse) {
+        if (allDataSourcesResponse == null || allDataSourcesResponse.dataSources() == null) {
+            return new AllDataSourcesWebResponse(List.of());
+        }
+
         return new AllDataSourcesWebResponse(
                 allDataSourcesResponse.dataSources()
                         .stream()

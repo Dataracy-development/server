@@ -6,6 +6,8 @@ import com.dataracy.modules.reference.application.dto.response.allview.AllVisitS
 import com.dataracy.modules.reference.application.dto.response.singleview.VisitSourceResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * visitSource 웹 DTO와 visitSource 도메인 DTO를 변환하는 매퍼
  */
@@ -27,6 +29,10 @@ public class VisitSourceWebMapper {
 
     // 전체 visitSource 리스트 조회 도메인 응답 DTO -> 전체 visitSource 리스트 조회 웹 응답 DTO
     public AllVisitSourcesWebResponse toWebDto(AllVisitSourcesResponse allVisitSourcesResponse) {
+        if (allVisitSourcesResponse == null || allVisitSourcesResponse.visitSources() == null) {
+            return new AllVisitSourcesWebResponse(List.of());
+        }
+
         return new AllVisitSourcesWebResponse(
                 allVisitSourcesResponse.visitSources()
                         .stream()

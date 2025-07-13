@@ -22,7 +22,7 @@ public interface OccupationApi {
      */
     @Operation(
             summary = "전체 직업 리스트를 조회",
-            description = "DB에서 전체 직업 리스트를 조회한다..",
+            description = "DB에서 전체 직업 리스트를 조회한다.",
             security = {}
     )
     @ApiResponses(value = {
@@ -31,5 +31,5 @@ public interface OccupationApi {
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
     @GetMapping
-    ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> allOccupations();
+    ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> findAllOccupations();
 }

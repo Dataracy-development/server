@@ -54,6 +54,8 @@ spring:
     resources:
       static-locations: classpath:/static/
   kafka:
+    topic:
+      file-delete: file-delete-topic
     properties:
       spring.json.add.type.headers: false
       partitioner.class: org.apache.kafka.clients.producer.internals.DefaultPartitioner

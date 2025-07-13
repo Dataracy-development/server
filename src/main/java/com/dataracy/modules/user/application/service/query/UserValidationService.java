@@ -5,14 +5,11 @@ import com.dataracy.modules.user.application.port.in.user.DuplicateNicknameUseCa
 import com.dataracy.modules.user.application.service.validator.UserDuplicateValidator;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.exception.UserException;
-import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * 유효성 검사 중복 체크 서비스
@@ -46,14 +43,14 @@ public class UserValidationService implements DuplicateNicknameUseCase, Duplicat
     @Override
     @Transactional(readOnly = true)
     public void validateDuplicatedEmail(String email) {
-        Optional<User> duplicatedUser = userDuplicateValidator.duplicateEmail(email);
-        if (duplicatedUser.isPresent()) {
-            ProviderType providerType = duplicatedUser.get().getProvider();
-            switch (providerType) {
-                case GOOGLE -> throw new UserException(UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
-                case KAKAO -> throw new UserException(UserErrorStatus.DUPLICATED_KAKAO_EMAIL);
-                case LOCAL -> throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
-            }
-        }
+        userDuplicateValidator.duplicateEmail(email)
+                .ifPresent(user -> {
+                    ProviderType providerType = user.getProvider();
+                    switch (providerType) {
+                        case GOOGLE -> throw new UserException(UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
+                        case KAKAO -> throw new UserException(UserErrorStatus.DUPLICATED_KAKAO_EMAIL);
+                        case LOCAL -> throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
+                    }
+                });
     }
 }

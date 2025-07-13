@@ -23,9 +23,9 @@ public class TopicController implements TopicApi {
      * @return 모든 토픽 정보를 포함한 성공 응답 객체의 HTTP 200 OK 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<AllTopicsWebResponse>> allTopics (
+    public ResponseEntity<SuccessResponse<AllTopicsWebResponse>> findAllTopics (
     ) {
-        AllTopicsResponse allTopicsResponse = findAllTopicsUseCase.allTopics();
+        AllTopicsResponse allTopicsResponse = findAllTopicsUseCase.findAllTopics();
         AllTopicsWebResponse allTopicsWebResponse = topicWebMapper.toWebDto(allTopicsResponse);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_TOPIC_LIST, allTopicsWebResponse));

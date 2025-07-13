@@ -6,6 +6,8 @@ import com.dataracy.modules.reference.application.dto.response.allview.AllOccupa
 import com.dataracy.modules.reference.application.dto.response.singleview.OccupationResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * occupation 웹 DTO와 occupation 도메인 DTO를 변환하는 매퍼
  */
@@ -27,6 +29,10 @@ public class OccupationWebMapper {
 
     // 전체 occupation 리스트 조회 도메인 응답 DTO -> 전체 occupation 리스트 조회 웹 응답 DTO
     public AllOccupationsWebResponse toWebDto(AllOccupationsResponse allOccupationsResponse) {
+        if (allOccupationsResponse == null || allOccupationsResponse.occupations() == null) {
+            return new AllOccupationsWebResponse(List.of());
+        }
+
         return new AllOccupationsWebResponse(
                 allOccupationsResponse.occupations()
                         .stream()

@@ -3,8 +3,8 @@ package com.dataracy.modules.reference.application.service.query;
 import com.dataracy.modules.reference.application.dto.response.allview.AllAuthorLevelsResponse;
 import com.dataracy.modules.reference.application.dto.response.singleview.AuthorLevelResponse;
 import com.dataracy.modules.reference.application.mapper.AuthorLevelDtoMapper;
-import com.dataracy.modules.reference.application.port.in.author_level.FindAllAuthorLevelsUseCase;
-import com.dataracy.modules.reference.application.port.in.author_level.FindAuthorLevelUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.FindAllAuthorLevelsUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
@@ -33,8 +33,8 @@ public class AuthorLevelQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public AllAuthorLevelsResponse allAuthorLevels() {
-        List<AuthorLevel> authorLevels = authorLevelRepositoryPort.allAuthorLevels();
+    public AllAuthorLevelsResponse findAllAuthorLevels() {
+        List<AuthorLevel> authorLevels = authorLevelRepositoryPort.findAllAuthorLevels();
         return authorLevelDtoMapper.toResponseDto(authorLevels);
     }
 

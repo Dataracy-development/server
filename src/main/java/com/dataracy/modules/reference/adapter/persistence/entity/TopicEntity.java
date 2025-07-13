@@ -30,12 +30,10 @@ public class TopicEntity {
     private String label;
 
     public static TopicEntity toEntity(
-            Long id,
             String value,
             String label
     ) {
         return TopicEntity.builder()
-                .id(id)
                 .value(value)
                 .label(label)
                 .build();

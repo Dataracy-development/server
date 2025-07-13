@@ -11,5 +11,5 @@ public interface FindAllTopicsUseCase {
  *
  * @return 전체 토픽 정보를 담은 AllTopicsResponse 객체
  */
-    AllTopicsResponse allTopics();
+    AllTopicsResponse findAllTopics();
 }
