@@ -85,8 +85,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 : findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId()).id();
 
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
-        requestDto.topicIds()
-                .forEach(isExistTopicUseCase::validateTopicById);
+        if (requestDto.topicIds() != null) {
+            requestDto.topicIds()
+                    .forEach(isExistTopicUseCase::validateTopicById);
+        }
 
         // 직업 id를 통해 직업 조회 및 유효성 검사
         Long occupationId = requestDto.occupationId() == null
@@ -165,8 +167,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 : findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId()).id();
 
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
-        requestDto.topicIds()
-                .forEach(isExistTopicUseCase::validateTopicById);
+        if (requestDto.topicIds() != null) {
+            requestDto.topicIds()
+                    .forEach(isExistTopicUseCase::validateTopicById);
+        }
 
         // 직업 id를 통해 직업 조회 및 유효성 검사
         Long occupationId = requestDto.occupationId() == null

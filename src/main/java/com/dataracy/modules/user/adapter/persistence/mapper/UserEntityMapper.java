@@ -4,7 +4,9 @@ import com.dataracy.modules.user.adapter.persistence.entity.UserEntity;
 import com.dataracy.modules.user.adapter.persistence.entity.UserTopicEntity;
 import com.dataracy.modules.user.domain.model.User;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 유저 엔티티와 유저 도메인 모델을 변환하는 매퍼
@@ -73,10 +75,12 @@ public final class UserEntityMapper {
         );
 
         // topicIds → userTopicEntities 변환 후 연결
-        List<UserTopicEntity> userTopicEntities = user.getTopicIds().stream()
+        List<UserTopicEntity> userTopicEntities = Optional.ofNullable(user.getTopicIds())
+                .orElseGet(Collections::emptyList)
+                .stream()
                 .map(topicId -> UserTopicEntity.of(userEntity, topicId))
+                .peek(userEntity::addUserTopic)
                 .toList();
-
         userTopicEntities.forEach(userEntity::addUserTopic);
 
         return userEntity;
