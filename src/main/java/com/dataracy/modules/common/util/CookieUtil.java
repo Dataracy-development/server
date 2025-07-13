@@ -1,7 +1,5 @@
 package com.dataracy.modules.common.util;
 
-import com.dataracy.modules.common.exception.CommonException;
-import com.dataracy.modules.common.status.CommonErrorStatus;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,14 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public final class CookieUtil {
-
-    /**
-     * 인스턴스화를 방지하기 위해 예외를 발생시키는 private 생성자입니다.
-     *
-     * 이 유틸리티 클래스는 인스턴스화될 수 없습니다.
-     */
     private CookieUtil() {
-        throw new CommonException(CommonErrorStatus.CAN_NOT_INSTANTIATE_COOKIE_UTILITY_CLASS);
     }
 
     private static final String ANONYMOUS_ID_COOKIE_NAME = "anonymousId";
