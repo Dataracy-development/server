@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TopicUseCaseQueryService implements FindAllTopicsUseCase, IsExistTopicUseCase {
+public class TopicQueryService implements FindAllTopicsUseCase, IsExistTopicUseCase {
     private final TopicDtoMapper topicDtoMapper;
     private final TopicRepositoryPort topicRepositoryPort;
 
