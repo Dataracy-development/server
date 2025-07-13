@@ -44,7 +44,7 @@ public final class ProjectEntityMapper {
                 projectEntity.getIsContinue(),
                 parentProject,
                 projectEntity.getContent(),
-                projectEntity.getThumbnailUrl()
+                projectEntity.getFileUrl()
                 );
     }
 
@@ -80,7 +80,7 @@ public final class ProjectEntityMapper {
                 project.getIsContinue(),
                 parentProject,
                 project.getContent(),
-                project.getThumbnailUrl()
+                project.getFileUrl()
         );
     }
 }

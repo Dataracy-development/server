@@ -61,15 +61,15 @@ public class ProjectEntity extends BaseEntity {
     private String content;
 
     @Column
-    private String thumbnailUrl;
+    private String fileUrl;
 
     /**
      * 프로젝트의 썸네일 이미지 URL을 업데이트합니다.
      *
-     * @param imageUrl 새로 설정할 썸네일 이미지의 URL
+     * @param fileUrl 새로 설정할 썸네일 이미지의 URL
      */
-    public void updateFile (String imageUrl) {
-        this.thumbnailUrl = imageUrl;
+    public void updateFile (String fileUrl) {
+        this.fileUrl = fileUrl;
     }
 
     /**
@@ -84,7 +84,7 @@ public class ProjectEntity extends BaseEntity {
      * @param isContinue 프로젝트의 연속 여부
      * @param parentProject 상위 프로젝트 엔티티, 없으면 null
      * @param content 프로젝트 상세 내용
-     * @param thumbnailUrl 썸네일 이미지의 URL, 없으면 null
+     * @param fileUrl 파일의 URL, 없으면 null
      * @return 생성된 ProjectEntity 객체
      */
     public static ProjectEntity toEntity(
@@ -97,7 +97,7 @@ public class ProjectEntity extends BaseEntity {
             Boolean isContinue,
             ProjectEntity parentProject,
             String content,
-            String thumbnailUrl
+            String fileUrl
     ) {
         return ProjectEntity.builder()
                 .title(title)
@@ -109,7 +109,7 @@ public class ProjectEntity extends BaseEntity {
                 .isContinue(isContinue)
                 .parentProject(parentProject)
                 .content(content)
-                .thumbnailUrl(thumbnailUrl)
+                .fileUrl(fileUrl)
                 .build();
     }
 }
