@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,16 +30,16 @@ public class ProjectCommandService implements ProjectUploadUseCase {
      * 파일 업로드에 실패하면 전체 트랜잭션이 롤백됩니다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
-     * @param imageFile 프로젝트 썸네일로 사용할 이미지 파일 (선택적)
+     * @param file 프로젝트 썸네일로 사용할 이미지 파일 (선택적)
      * @param requestDto 프로젝트 생성에 필요한 정보가 담긴 요청 객체
      */
     @Override
     @Transactional
-    public void upload(Long userId, MultipartFile imageFile, ProjectUploadRequest requestDto) {
+    public void upload(Long userId, MultipartFile file, ProjectUploadRequest requestDto) {
         log.info("프로젝트 업로드 시작 - userId: {}, title: {}", userId, requestDto.title());
 
-        // 유효성 검사
-        FileUtil.validateImageFile(imageFile);
+        // 파일 유효성 검사
+        FileUtil.validateImageFile(file);
 
         // 부모 프로젝트 조회
         Project parentProject = null;
@@ -65,17 +63,17 @@ public class ProjectCommandService implements ProjectUploadUseCase {
         Project saveProject = projectRepositoryPort.saveProject(project);
 
         // DB 저장 성공 후 파일 업로드 시도, 외부 서비스로 트랜잭션의 영향을 받지 않는다.
-        if (imageFile != null && !imageFile.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             try {
-                String key = S3KeyGeneratorUtil.generateKey("project", saveProject.getId(), imageFile.getOriginalFilename());
-                String imageUrl = fileUploadUseCase.uploadFile(key, imageFile);
-                log.info("프로젝트 썸네일 업로드 성공 - url={}", imageUrl);
+                String key = S3KeyGeneratorUtil.generateKey("project", saveProject.getId(), file.getOriginalFilename());
+                String fileUrl = fileUploadUseCase.uploadFile(key, file);
+                log.info("프로젝트 파일 업로드 성공 - url={}", fileUrl);
 
                 // 이미지 업로드 저장
-                project.updateFile(imageUrl);
-                projectRepositoryPort.updateFile(project.getId(), imageUrl);
+                project.updateFile(fileUrl);
+                projectRepositoryPort.updateFile(project.getId(), fileUrl);
             } catch (Exception e) {
-                log.error("프로젝트 썸네일 업로드 실패. 프로젝트 ID={}, 에러={}", project.getId(), e.getMessage());
+                log.error("프로젝트 파일 업로드 실패. 프로젝트 ID={}, 에러={}", project.getId(), e.getMessage());
                 throw new RuntimeException("파일 업로드 실패", e); // rollback 유도
             }
         }

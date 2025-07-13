@@ -21,15 +21,15 @@ public class Project {
     private Boolean isContinue;
     private Project parentProject;
     private String content;
-    private String thumbnailUrl;
+    private String fileUrl;
 
     /**
      * 프로젝트의 썸네일 URL을 업데이트합니다.
      *
-     * @param thumbnailUrl 새로 설정할 썸네일 URL
+     * @param fileUrl 새로 설정할 썸네일 URL
      */
-    public void updateFile(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
+    public void updateFile(String fileUrl) {
+        this.fileUrl = fileUrl;
     }
 
     /**
@@ -45,7 +45,7 @@ public class Project {
      * @param isContinue 프로젝트의 연속 여부
      * @param parentProject 상위 프로젝트 객체
      * @param content 프로젝트 내용
-     * @param thumbnailUrl 프로젝트 썸네일 URL
+     * @param fileUrl 프로젝트 썸네일 URL
      * @return 생성된 Project 객체
      */
     public static Project toDomain(
@@ -59,7 +59,7 @@ public class Project {
             Boolean isContinue,
             Project parentProject,
             String content,
-            String thumbnailUrl
+            String fileUrl
     ) {
         return Project.builder()
                 .id(id)
@@ -72,7 +72,7 @@ public class Project {
                 .isContinue(isContinue)
                 .parentProject(parentProject)
                 .content(content)
-                .thumbnailUrl(thumbnailUrl)
+                .fileUrl(fileUrl)
                 .build();
     }
 }

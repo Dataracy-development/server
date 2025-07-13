@@ -29,7 +29,7 @@ public interface ProjectRepositoryPort {
  * 지정된 프로젝트의 파일(이미지 URL) 정보를 업데이트합니다.
  *
  * @param projectId 파일 정보를 변경할 프로젝트의 식별자
- * @param imageUrl 새로 저장할 이미지 URL
+ * @param fileUrl 새로 저장할 이미지 URL
  */
-void updateFile(Long projectId, String imageUrl);
+void updateFile(Long projectId, String fileUrl);
 }
