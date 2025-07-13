@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "Reference", description = "참조 데이터 관련 API")
-@RequestMapping("/api/v1/occupations")
+@RequestMapping("/api/v1/references")
 public interface OccupationApi {
     /****
      * 전체 직업 목록을 조회하는 API 엔드포인트입니다.
@@ -30,6 +30,6 @@ public interface OccupationApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
-    @GetMapping
+    @GetMapping("/occupations")
     ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> findAllOccupations();
 }

@@ -55,7 +55,9 @@
     <!-- ✅ 개발 환경 (DEBUG, 콘솔 우선) -->
     <springProfile name="local,dev">
         <logger name="com.dataracy" level="DEBUG"/>
-        <logger name="org.springframework" level="DEBUG"/>
+
+        <!-- Spring 전체 디버그 제거 -->
+        <logger name="org.springframework" level="INFO"/>
 
         <!-- 너무 verbose한 Kafka 로그는 INFO로 제한 -->
         <logger name="org.springframework.kafka" level="INFO"/>

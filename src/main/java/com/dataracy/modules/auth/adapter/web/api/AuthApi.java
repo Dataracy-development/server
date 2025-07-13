@@ -79,7 +79,7 @@ public interface AuthApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PostMapping(value = "/token/re-issue", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/token/re-issue")
     ResponseEntity<SuccessResponse<Void>> reIssueToken(
             @Parameter(
                     in = ParameterIn.COOKIE,
