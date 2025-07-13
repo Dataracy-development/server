@@ -71,9 +71,9 @@ public class ProjectCommandService implements ProjectUploadUseCase {
 
                 // 이미지 업로드 저장
                 project.updateFile(fileUrl);
-                projectRepositoryPort.updateFile(project.getId(), fileUrl);
+                projectRepositoryPort.updateFile(saveProject.getId(), fileUrl);
             } catch (Exception e) {
-                log.error("프로젝트 파일 업로드 실패. 프로젝트 ID={}, 에러={}", project.getId(), e.getMessage());
+                log.error("프로젝트 파일 업로드 실패. 프로젝트 ID={}, 에러={}", saveProject.getId(), e.getMessage());
                 throw new RuntimeException("파일 업로드 실패", e); // rollback 유도
             }
         }
