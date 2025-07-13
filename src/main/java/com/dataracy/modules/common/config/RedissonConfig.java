@@ -33,5 +33,8 @@ public class RedissonConfig {
         if (redisHost.isBlank()) {
             throw new IllegalStateException("Redisson 설정이 올바르지 않습니다.");
         }
+        if (redisPort <= 0 || redisPort > 65535) {
+            throw new IllegalStateException("Redis 포트 설정이 올바르지 않습니다.");
+        }
     }
 }

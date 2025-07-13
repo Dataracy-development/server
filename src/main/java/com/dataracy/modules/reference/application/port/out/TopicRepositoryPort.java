@@ -1,7 +1,6 @@
 package com.dataracy.modules.reference.application.port.out;
 
 import com.dataracy.modules.reference.domain.model.Topic;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

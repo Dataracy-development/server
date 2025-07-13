@@ -50,7 +50,7 @@ public class AwsS3Config {
     @PostConstruct
     public void validateProperties() {
         if (accessKey.isBlank() || secretKey.isBlank() || region.isBlank()) {
-            throw new IllegalStateException("AWS 설정이 올바르지 않습니다.");
+            throw new IllegalStateException("AWS S3 클라이언트 초기화에 필요한 설정이 누락되었습니다.");
         }
     }
 }
