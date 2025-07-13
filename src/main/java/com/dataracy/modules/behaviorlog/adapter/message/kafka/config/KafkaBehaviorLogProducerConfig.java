@@ -56,7 +56,7 @@ public class KafkaBehaviorLogProducerConfig {
     @PostConstruct
     public void validateProperties() {
         if (bootstrapServers.isBlank()) {
-            throw new IllegalStateException("Kafka Producer 설정이 올바르지 않습니다.");
+            throw new IllegalStateException("Kafka bootstrap servers 설정이 누락되었습니다. spring.kafka.bootstrap-servers 프로퍼티를 확인해주세요.");
         }
     }
 }
