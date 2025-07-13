@@ -24,13 +24,13 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     private final FileUploadUseCase fileUploadUseCase;
 
     /**
-     * 사용자 ID와 프로젝트 요청 정보를 바탕으로 새 프로젝트를 생성하고, 썸네일 이미지가 제공되면 외부 저장소에 업로드합니다.
+     * 사용자 ID와 프로젝트 요청 정보를 기반으로 새 프로젝트를 생성하고, 선택적으로 썸네일 이미지를 업로드합니다.
      *
-     * 프로젝트 정보는 데이터베이스에 저장되며, 이미지 파일이 존재할 경우 업로드 후 해당 이미지 URL을 프로젝트에 반영합니다.
+     * 프로젝트 정보는 데이터베이스에 저장되며, 이미지 파일이 제공된 경우 외부 저장소에 업로드 후 해당 URL을 프로젝트에 반영합니다.
      * 파일 업로드에 실패하면 전체 트랜잭션이 롤백됩니다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
-     * @param file 프로젝트 썸네일로 사용할 이미지 파일 (선택적)
+     * @param file 프로젝트 썸네일로 사용할 이미지 파일 (선택 사항)
      * @param requestDto 프로젝트 생성에 필요한 정보가 담긴 요청 객체
      */
     @Override
@@ -71,9 +71,9 @@ public class ProjectCommandService implements ProjectUploadUseCase {
 
                 // 이미지 업로드 저장
                 project.updateFile(fileUrl);
-                projectRepositoryPort.updateFile(project.getId(), fileUrl);
+                projectRepositoryPort.updateFile(saveProject.getId(), fileUrl);
             } catch (Exception e) {
-                log.error("프로젝트 파일 업로드 실패. 프로젝트 ID={}, 에러={}", project.getId(), e.getMessage());
+                log.error("프로젝트 파일 업로드 실패. 프로젝트 ID={}, 에러={}", saveProject.getId(), e.getMessage());
                 throw new RuntimeException("파일 업로드 실패", e); // rollback 유도
             }
         }
