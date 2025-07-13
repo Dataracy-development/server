@@ -6,7 +6,9 @@ import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
+import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
+import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,11 +45,10 @@ public class ProjectCommandService implements ProjectUploadUseCase {
 
         // 부모 프로젝트 조회
         Project parentProject = null;
-        Optional<Project> savedProject = projectRepositoryPort.findProjectById(requestDto.parentProjectId());
-        if (savedProject.isPresent()) {
-            parentProject = savedProject.get();
+        if (requestDto.parentProjectId() != null) {
+            parentProject = projectRepositoryPort.findProjectById(requestDto.parentProjectId())
+                    .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
         }
-
 
         // 프로젝트 업로드 DB 저장
         Project project = Project.builder()

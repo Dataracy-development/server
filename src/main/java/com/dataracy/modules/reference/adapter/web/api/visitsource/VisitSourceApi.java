@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "Reference", description = "참조 데이터 관련 API")
-@RequestMapping("/api/v1/visit-sources")
+@RequestMapping("/api/v1/references")
 public interface VisitSourceApi {
     /****
      * 모든 방문 경로(visit source)의 목록을 조회한다.
@@ -30,6 +30,6 @@ public interface VisitSourceApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
-    @GetMapping
+    @GetMapping("/visit-sources")
     ResponseEntity<SuccessResponse<AllVisitSourcesWebResponse>> findAllVisitSources();
 }

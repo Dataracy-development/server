@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "Reference", description = "참조 데이터 관련 API")
-@RequestMapping("/api/v1/author-levels")
+@RequestMapping("/api/v1/references")
 public interface AuthorLevelApi {
     /**
      * 전체 작성자 유형(Author Level) 목록을 조회한다.
@@ -30,6 +30,6 @@ public interface AuthorLevelApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
-    @GetMapping
+    @GetMapping("/author-levels")
     ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> findAllAuthorLevels();
 }

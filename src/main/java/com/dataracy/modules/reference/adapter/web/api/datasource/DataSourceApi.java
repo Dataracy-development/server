@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "Reference", description = "참조 데이터 관련 API")
-@RequestMapping("/api/v1/data-sources")
+@RequestMapping("/api/v1/references")
 public interface DataSourceApi {
     /**
      * 데이터 소스의 전체 목록을 조회한다.
@@ -30,6 +30,6 @@ public interface DataSourceApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
-    @GetMapping
+    @GetMapping("/data-sources")
     ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> findAllDataSources();
 }
