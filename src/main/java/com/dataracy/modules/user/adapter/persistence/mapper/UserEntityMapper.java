@@ -9,7 +9,10 @@ import java.util.List;
 /**
  * 유저 엔티티와 유저 도메인 모델을 변환하는 매퍼
  */
-public class UserEntityMapper {
+public final class UserEntityMapper {
+    private UserEntityMapper() {
+    }
+
     /**
      * UserEntity 객체를 User 도메인 모델로 변환합니다.
      *
@@ -56,7 +59,6 @@ public class UserEntityMapper {
         }
 
         UserEntity userEntity =  UserEntity.toEntity(
-                user.getId(),
                 user.getProvider(),
                 user.getProviderId(),
                 user.getRole(),

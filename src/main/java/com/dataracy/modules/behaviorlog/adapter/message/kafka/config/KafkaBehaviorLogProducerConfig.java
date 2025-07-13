@@ -1,6 +1,7 @@
 package com.dataracy.modules.behaviorlog.adapter.message.kafka.config;
 
 import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;
+import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +18,7 @@ import java.util.Map;
 @Configuration
 public class KafkaBehaviorLogProducerConfig {
 
-    @Value("${spring.kafka.bootstrap-servers}")
+    @Value("${spring.kafka.bootstrap-servers:}")
     private String bootstrapServers;
 
     /**
@@ -50,5 +51,12 @@ public class KafkaBehaviorLogProducerConfig {
     @Bean
     public KafkaTemplate<String, BehaviorLog> behaviorLogKafkaTemplate() {
         return new KafkaTemplate<>(behaviorLogProducerFactory());
+    }
+
+    @PostConstruct
+    public void validateProperties() {
+        if (bootstrapServers.isBlank()) {
+            throw new IllegalStateException("Kafka bootstrap servers 설정이 누락되었습니다. spring.kafka.bootstrap-servers 프로퍼티를 확인해주세요.");
+        }
     }
 }

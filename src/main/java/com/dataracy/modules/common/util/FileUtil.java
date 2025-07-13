@@ -5,9 +5,7 @@ import com.dataracy.modules.common.status.CommonErrorStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 public final class FileUtil {
-
     private FileUtil() {
-        throw new CommonException(CommonErrorStatus.CAN_NOT_INSTANTIATE_FILE_UTILITY_CLASS);
     }
 
     /**

@@ -6,7 +6,10 @@ import com.dataracy.modules.reference.domain.model.DataSource;
 /**
  * 데이터 출처 엔티티와 데이터 출처 도메인 모델을 변환하는 매퍼
  */
-public class DataSourceEntityMapper {
+public final class DataSourceEntityMapper {
+    private DataSourceEntityMapper() {
+    }
+
     /**
      * DataSourceEntity 객체를 DataSource 도메인 모델로 변환합니다.
      *
@@ -37,7 +40,6 @@ public class DataSourceEntityMapper {
         }
 
         return DataSourceEntity.toEntity(
-                dataSource.id(),
                 dataSource.value(),
                 dataSource.label()
         );

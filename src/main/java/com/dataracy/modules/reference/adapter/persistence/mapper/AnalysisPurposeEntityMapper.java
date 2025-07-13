@@ -6,7 +6,10 @@ import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
 /**
  * 분석 목적 엔티티와 분석 목적 도메인 모델을 변환하는 매퍼
  */
-public class AnalysisPurposeEntityMapper {
+public final class AnalysisPurposeEntityMapper {
+    private AnalysisPurposeEntityMapper() {
+    }
+
     /**
      * AnalysisPurposeEntity 객체를 AnalysisPurpose 도메인 모델로 변환합니다.
      *
@@ -37,7 +40,6 @@ public class AnalysisPurposeEntityMapper {
         }
 
         return AnalysisPurposeEntity.toEntity(
-                analysisPurpose.id(),
                 analysisPurpose.value(),
                 analysisPurpose.label()
         );

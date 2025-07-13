@@ -75,7 +75,6 @@ public class ProjectEntity extends BaseEntity {
     /**
      * 주어진 값들로 새로운 ProjectEntity 인스턴스를 생성합니다.
      *
-     * @param id 프로젝트의 고유 식별자
      * @param title 프로젝트 제목
      * @param topicId 주제 식별자
      * @param userId 사용자 식별자
@@ -89,7 +88,6 @@ public class ProjectEntity extends BaseEntity {
      * @return 생성된 ProjectEntity 객체
      */
     public static ProjectEntity toEntity(
-            Long id,
             String title,
             Long topicId,
             Long userId,
@@ -102,7 +100,6 @@ public class ProjectEntity extends BaseEntity {
             String thumbnailUrl
     ) {
         return ProjectEntity.builder()
-                .id(id)
                 .title(title)
                 .topicId(topicId)
                 .userId(userId)

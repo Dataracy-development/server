@@ -6,7 +6,9 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import com.dataracy.modules.filestorage.domain.exception.S3UploadException;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,13 +17,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AwsS3FileStorageAdapter implements FileStoragePort {
 
     private final AmazonS3 amazonS3;
 
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket:}")
     private String bucket;
 
     /**
@@ -34,7 +37,7 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
      */
     @Override
     public String upload(String directory, MultipartFile file) {
-        String key = directory + "/" + UUID.randomUUID();
+        String key = generateKey(directory, file);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
@@ -57,7 +60,12 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
     @Override
     public void delete(String fileUrl) {
         String key = extractKeyFromUrl(fileUrl);
-        amazonS3.deleteObject(bucket, key);
+        try {
+            amazonS3.deleteObject(bucket, key);
+        } catch (Exception e) {
+            log.warn("S3 파일 삭제 실패: {}", fileUrl, e);
+            // 비즈니스 요구사항에 따라 예외를 던질지 결정
+        }
     }
 
     /**
@@ -88,5 +96,20 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
             throw new IllegalArgumentException("No key found in S3 URL: " + url);
         }
         return url.substring(keyStartIndex);
+    }
+
+    @PostConstruct
+    public void validateProperties() {
+        if (bucket.isBlank()) {
+            throw new IllegalStateException("AWS S3 버켓 설정이 올바르지 않습니다.");
+        }
+    }
+
+    private String generateKey(String directory, MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename != null && originalFilename.contains(".")
+                ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                : "";
+        return directory + "/" + UUID.randomUUID() + extension;
     }
 }
