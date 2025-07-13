@@ -30,21 +30,19 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
     /**
      * 지정된 디렉터리에 파일을 업로드하고 S3에 저장된 파일의 공개 URL을 반환합니다.
      *
-     * @param directory S3에 파일을 저장할 디렉터리 경로
+     * @param key S3에 파일을 저장할 디렉터리 경로
      * @param file 업로드할 파일
      * @return 업로드된 파일의 S3 공개 URL
      * @throws S3UploadException 파일 업로드 중 입출력 오류가 발생한 경우
      */
     @Override
-    public String upload(String directory, MultipartFile file) {
-        String key = generateKey(directory, file);
+    public String upload(String key, MultipartFile file) {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
 
         try (InputStream inputStream = file.getInputStream()) {
-            amazonS3.putObject(new PutObjectRequest(bucket, key, inputStream, metadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            amazonS3.putObject(new PutObjectRequest(bucket, key, inputStream, metadata));
         } catch (IOException e) {
             throw new S3UploadException("S3 업로드 실패", e);
         }
@@ -87,29 +85,23 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
      * @throws IllegalArgumentException URL에 버킷명이 없거나 키가 존재하지 않을 경우 발생합니다.
      */
     private String extractKeyFromUrl(String url) {
-        int bucketIndex = url.indexOf(bucket);
-        if (bucketIndex == -1) {
-            throw new IllegalArgumentException("Invalid S3 URL format: " + url);
+        // https://bucket.s3.region.amazonaws.com/key... 에서 key 부분만 추출
+        try {
+            String hostPrefix = amazonS3.getUrl(bucket, "").toString(); // 끝에 "/" 있음
+            if (!url.startsWith(hostPrefix)) {
+                throw new IllegalArgumentException("S3 URL 형식이 잘못되었습니다: " + url);
+            }
+            return url.substring(hostPrefix.length());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("S3 URL 추출 실패: " + url, e);
         }
-        int keyStartIndex = bucketIndex + bucket.length() + 1;
-        if (keyStartIndex >= url.length()) {
-            throw new IllegalArgumentException("No key found in S3 URL: " + url);
-        }
-        return url.substring(keyStartIndex);
     }
+
 
     @PostConstruct
     public void validateProperties() {
         if (bucket.isBlank()) {
             throw new IllegalStateException("AWS S3 버켓 설정이 올바르지 않습니다.");
         }
-    }
-
-    private String generateKey(String directory, MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
-        String extension = originalFilename != null && originalFilename.contains(".")
-                ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                : "";
-        return directory + "/" + UUID.randomUUID() + extension;
     }
 }
