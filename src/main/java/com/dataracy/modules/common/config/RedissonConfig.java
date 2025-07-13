@@ -31,10 +31,10 @@ public class RedissonConfig {
     @PostConstruct
     public void validateProperties() {
         if (redisHost.isBlank()) {
-            throw new IllegalStateException("Redisson 설정이 올바르지 않습니다.");
+            throw new IllegalStateException("Redis host 설정이 누락되었습니다. spring.data.redis.host 값을 확인해주세요.");
         }
         if (redisPort <= 0 || redisPort > 65535) {
-            throw new IllegalStateException("Redis 포트 설정이 올바르지 않습니다.");
+            throw new IllegalStateException("Redis 포트 설정이 올바르지 않습니다. 유효한 포트 범위(1-65535)를 설정해주세요. 현재 값: " + redisPort);
         }
     }
 }
