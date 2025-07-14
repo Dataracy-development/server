@@ -7,12 +7,6 @@ import com.dataracy.modules.data.application.port.out.DataRepositoryPort;
 import com.dataracy.modules.data.domain.model.Data;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
-import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
-import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
-import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
-import com.dataracy.modules.project.domain.exception.ProjectException;
-import com.dataracy.modules.project.domain.model.Project;
-import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,7 +29,7 @@ public class DataCommandService implements DataUploadUseCase {
         // 데이터셋 파일 유효성 검사
         FileUtil.validateGeneralFile(dataFile);
         // 썸네일 파일 유효성 검사
-        FileUtil.validateImageFile(thumnailFile);
+        FileUtil.validateImageFile(thumbnailFile);
 
         // 프로젝트 업로드 DB 저장
         Data data = Data.toDomain(
@@ -84,6 +78,11 @@ public class DataCommandService implements DataUploadUseCase {
                 throw new RuntimeException("썸네일 파일 업로드 실패", e); // rollback 유도
             }
         }
+
+        // 다운로드 api 호출
+
+        // 데이터셋 파일 파싱 후 통계 저장
+
         log.info("프로젝트 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
         return saveData.getId();
     }
