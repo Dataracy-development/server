@@ -26,8 +26,8 @@ public class Data {
     private String analysisGuide;
     private String dataFileUrl;
     private String thumbnailUrl;
-    private Long downloadCount;
-    private Long recentWeekDownloadCount;
+    private int downloadCount;
+    private int recentWeekDownloadCount;
     private DataMetadataEntity metadata;
 
     public static Data toDomain(
@@ -43,8 +43,8 @@ public class Data {
             String analysisGuide,
             String dataFileUrl,
             String thumbnailUrl,
-            Long downloadCount,
-            Long recentWeekDownloadCount,
+            int downloadCount,
+            int recentWeekDownloadCount,
             DataMetadataEntity metadata
     ) {
         return Data.builder()
