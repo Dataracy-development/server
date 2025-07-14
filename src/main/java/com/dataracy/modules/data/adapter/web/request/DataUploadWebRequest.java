@@ -1,8 +1,11 @@
 package com.dataracy.modules.data.adapter.web.request;
 
+import com.dataracy.modules.data.adapter.persistence.entity.DataMetadataEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDate;
 
 @Schema(description = "프로젝트 업로드 요청 DTO")
 public record DataUploadWebRequest(
@@ -21,6 +24,12 @@ public record DataUploadWebRequest(
         @Schema(description = "작성자 유형", example = "3")
         @NotNull(message = "작성자 유형을 입력해주세요")
         Long authorLevelId,
+
+        @Schema(description = "데이터 수집 시작일", example = "2025-01-01")
+        LocalDate startDate,
+
+        @Schema(description = "데이터 수집 종료일", example = "2025-2-01")
+        LocalDate endDate,
 
         @Schema(description = "설명", example = "지금 이 데이터는 ~~.")
         @NotBlank(message = "설명을 입력해주세요")

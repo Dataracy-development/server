@@ -1,6 +1,6 @@
 package com.dataracy.modules.data.application.port.in;
 
-import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
+import com.dataracy.modules.data.application.dto.request.DataUploadRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
