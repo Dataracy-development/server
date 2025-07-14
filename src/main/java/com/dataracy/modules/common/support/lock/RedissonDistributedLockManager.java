@@ -22,6 +22,22 @@ public class RedissonDistributedLockManager {
 
     private final RedissonClient redissonClient;
 
+    /**
+     * 지정된 키에 대해 분산 락을 획득하고, 성공 시 주어진 작업을 실행한 후 결과를 반환합니다.
+     *
+     * 락 획득을 위해 최대 재시도 횟수만큼 시도하며, 각 시도마다 지정된 대기 시간과 임대 시간을 적용합니다.
+     * 락 획득에 실패하거나, 실행 중 예외가 발생할 경우 적절한 예외를 발생시킵니다.
+     *
+     * @param key        분산 락을 식별하는 키
+     * @param waitTime   락 획득을 위해 대기할 최대 시간(밀리초)
+     * @param leaseTime  락을 소유할 임대 시간(밀리초)
+     * @param retryCount 락 획득 재시도 횟수
+     * @param action     락 획득 후 실행할 작업
+     * @return           작업 실행 결과
+     * @throws LockAcquisitionException 락 획득 실패 또는 시스템 예외 발생 시
+     * @throws BusinessException        비즈니스 예외 발생 시
+     * @throws CommonException          공통 예외 발생 시
+     */
     public <T> T execute(String key, long waitTime, long leaseTime, int retryCount, Supplier<T> action) {
         log.info("[LOCK DEBUG] 진입 확인 - key: {}", key);
         RLock lock = redissonClient.getLock(key);
@@ -37,7 +53,7 @@ public class RedissonDistributedLockManager {
 
                 if (acquired) {
                     try {
-                        return action.get(); // 🔥 여기서 예외 발생 가능
+                        return action.get(); // 여기서 예외 발생 가능
                     } finally {
                         releaseLock(key, lock);
                     }

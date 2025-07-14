@@ -1,8 +1,13 @@
 package com.dataracy.modules.common.exception;
 
+import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.common.dto.response.ErrorResponse;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.support.lock.LockAcquisitionException;
+import com.dataracy.modules.email.domain.exception.EmailException;
+import com.dataracy.modules.project.domain.exception.ProjectException;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
+import com.dataracy.modules.security.exception.SecurityException;
 import com.dataracy.modules.user.domain.exception.UserException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +36,29 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    // 커스텀 비즈니스(도메인) 예외 처리
+    /**
+     * 비즈니스(도메인) 예외 및 그 하위 예외들을 처리하여 적절한 HTTP 상태 코드와 표준화된 에러 응답을 반환합니다.
+     *
+     * @param e 처리할 비즈니스 예외 객체
+     * @return 예외에 해당하는 HTTP 상태 코드와 에러 코드가 포함된 ErrorResponse
+     */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(BusinessException e) {
         if (e instanceof UserException) {
             String errorMessage = "유저 도메인 예외입니다: " + e.getMessage();
             logException("UserException", errorMessage, e);
+        } else if (e instanceof AuthException) {
+            String errorMessage = "인증 도메인 예외입니다: " + e.getMessage();
+            logException("AUTHException", errorMessage, e);
+        } else if (e instanceof ReferenceException) {
+            String errorMessage = "참조 테이블 예외입니다: " + e.getMessage();
+            logException("ReferenceException", errorMessage, e);
+        } else if (e instanceof EmailException) {
+            String errorMessage = "이메일 도메인 예외입니다: " + e.getMessage();
+            logException("EmailException", errorMessage, e);
+        } else if (e instanceof ProjectException) {
+            String errorMessage = "프로젝트 도메인 예외입니다: " + e.getMessage();
+            logException("ProjectException", errorMessage, e);
         } else {
             String errorMessage = "공통 예외입니다: " + e.getMessage();
             logException("CustomException", errorMessage, e);
