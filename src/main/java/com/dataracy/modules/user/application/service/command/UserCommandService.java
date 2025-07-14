@@ -134,7 +134,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
      * OAuth 기반 회원가입을 처리하고 리프레시 토큰을 발급합니다.
      *
      * 소셜 로그인(구글, 카카오 등)에서 발급된 회원가입 토큰과 온보딩 정보를 검증 및 저장하며,
-     * 닉네임의 중복을 방지하기 위해 분산락을 적용합니다.
+     * 중복 가입 방지를 위해 이메일 기준 분산 락을 적용한다.
      * 회원 정보 저장 후 리프레시 토큰을 생성하여 Redis에 저장하고, 토큰과 만료 시간을 반환합니다.
      *
      * @param registerToken 소셜 회원가입 토큰

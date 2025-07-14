@@ -45,9 +45,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         } else if (e instanceof AuthException) {
             String errorMessage = "인증 도메인 예외입니다: " + e.getMessage();
             logException("AUTHException", errorMessage, e);
-        } else if (e instanceof SecurityException) {
-            String errorMessage = "시큐리티 도메인 예외입니다: " + e.getMessage();
-            logException("SecurityException", errorMessage, e);
         } else if (e instanceof ReferenceException) {
             String errorMessage = "참조 테이블 예외입니다: " + e.getMessage();
             logException("ReferenceException", errorMessage, e);

@@ -61,13 +61,17 @@ public class CustomMultipartFile implements MultipartFile {
      *
      * @return 파일 데이터의 복제된 바이트 배열
      */
-    @Override public byte[] getBytes() { return content.clone(); }
+    @Override public byte[] getBytes() {
+        return content.clone();
+    }
     /**
      * 파일 내용을 읽을 수 있는 새로운 입력 스트림을 반환합니다.
      *
      * @return 파일 데이터에 대한 ByteArrayInputStream 인스턴스
      */
-    @Override public InputStream getInputStream() { return new ByteArrayInputStream(content); }
+    @Override public InputStream getInputStream() {
+        return new ByteArrayInputStream(content);
+    }
     /**
      * 파일의 내용을 지정된 파일로 복사합니다.
      *

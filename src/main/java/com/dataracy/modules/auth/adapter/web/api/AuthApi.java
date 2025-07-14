@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Auth", description = "인증 관련 API")
 @RequestMapping("/api/v1/auth")
-public interface  AuthApi {
+public interface AuthApi {
     /**
      * 자체로그인을 통해 로그인을 진행한다.
      *
