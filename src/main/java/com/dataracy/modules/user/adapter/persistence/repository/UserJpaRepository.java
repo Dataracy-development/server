@@ -24,19 +24,20 @@ Optional<UserEntity> findByProviderId(String providerId);
 Optional<UserEntity> findByEmail(String email);
 
     /**
- * 지정한 이메일을 가진 사용자가 존재하는지 여부를 반환합니다.
- *
- * @param email 확인할 이메일 주소
- * @return 사용자가 존재하면 true, 그렇지 않으면 false
- */
-boolean existsByEmail(String email);
+     * 지정한 이메일을 가진 사용자가 존재하는지 여부를 반환합니다.
+     *
+     * @param email 확인할 이메일 주소
+     * @return 사용자가 존재하면 true, 그렇지 않으면 false
+     */
+    boolean existsByEmail(String email);
+
     /**
- * 주어진 닉네임을 가진 사용자가 존재하는지 여부를 반환합니다.
- *
- * @param nickname 확인할 사용자 닉네임
- * @return 닉네임을 가진 사용자가 존재하면 true, 그렇지 않으면 false
- */
-boolean existsByNickname(String nickname);
+     * 주어진 닉네임을 가진 사용자가 존재하는지 여부를 반환합니다.
+     *
+     * @param nickname 확인할 사용자 닉네임
+     * @return 닉네임을 가진 사용자가 존재하면 true, 그렇지 않으면 false
+     */
+    boolean existsByNickname(String nickname);
 
     /**
      * 지정된 사용자 ID에 해당하는 사용자를 탈퇴 처리하여 삭제 상태로 표시합니다.

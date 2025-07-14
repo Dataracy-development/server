@@ -33,13 +33,13 @@ public class EmailSendGridAdapter implements EmailSenderPort {
     @Override
     public void send(String email, String subject, String body) {
         // SendGrid API 호출
-        log.info("📨 [이메일 전송 시도 전] to={}, subject={}, content={}",1,2,3);
+        log.info("[이메일 전송 시도 전] to={}, subject={}, content={}",1,2,3);
 
         Email from = new Email(sender);
         Email to = new Email(email);
         Content content = new Content("text/plain", body);
         Mail mail = new Mail();
-        log.info("📨 [이메일 전송 시도 전] to={}, subject={}, content={}", to, subject, content);
+        log.info("[이메일 전송 시도 전] to={}, subject={}, content={}", to, subject, content);
 
         mail.setFrom(from);
         mail.setSubject(subject);
@@ -47,7 +47,7 @@ public class EmailSendGridAdapter implements EmailSenderPort {
         mail.addPersonalization(new Personalization() {{
             addTo(to);
         }});
-        log.info("✅ [SendGrid 전송] status={}, body={}", 1,2);
+        log.info("[SendGrid 전송] status={}, body={}", 1,2);
 
         Request request = new Request();
         try {
@@ -56,7 +56,7 @@ public class EmailSendGridAdapter implements EmailSenderPort {
             request.setBody(mail.build());
 
             Response response = sendGrid.api(request);
-            log.info("✅ [SendGrid 응답] status={}, body={}", response.getStatusCode(), response.getBody());
+            log.info("[SendGrid 응답] status={}, body={}", response.getStatusCode(), response.getBody());
 
             if (response.getStatusCode() >= 400) {
                 log.error("SendGrid 전송 실패 - status: {}, body: {}", response.getStatusCode(), response.getBody());

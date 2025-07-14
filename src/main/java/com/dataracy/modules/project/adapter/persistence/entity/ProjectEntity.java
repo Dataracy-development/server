@@ -64,9 +64,9 @@ public class ProjectEntity extends BaseEntity {
     private String fileUrl;
 
     /**
-     * 프로젝트의 썸네일 이미지 URL을 업데이트합니다.
+     * 프로젝트의 파일 URL을 업데이트합니다.
      *
-     * @param fileUrl 새로 설정할 썸네일 이미지의 URL
+     * @param fileUrl 새로 설정할 파일의 URL
      */
     public void updateFile (String fileUrl) {
         this.fileUrl = fileUrl;

@@ -37,7 +37,7 @@ public class RedissonDistributedLockManager {
 
                 if (acquired) {
                     try {
-                        return action.get(); // 🔥 여기서 예외 발생 가능
+                        return action.get(); // 여기서 예외 발생 가능
                     } finally {
                         releaseLock(key, lock);
                     }
