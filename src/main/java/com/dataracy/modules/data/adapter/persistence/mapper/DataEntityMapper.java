@@ -1,85 +1,59 @@
 package com.dataracy.modules.data.adapter.persistence.mapper;
 
 import com.dataracy.modules.data.adapter.persistence.entity.DataEntity;
-import com.dataracy.modules.project.domain.model.Project;
+import com.dataracy.modules.data.domain.model.Data;
 
 /**
- * 프로젝트 엔티티와 프로젝트 도메인 모델을 변환하는 매퍼
+ * 데이터 엔티티와 데이터 도메인 모델을 변환하는 매퍼
  */
 public final class DataEntityMapper {
     private DataEntityMapper() {
     }
 
-    /**
-     * ProjectEntity 객체를 Project 도메인 모델로 변환합니다.
-     *
-     * 입력이 null이면 null을 반환합니다. 부모 프로젝트가 존재할 경우, 순환 참조를 방지하기 위해 부모의 ID와 제목만 포함한 Project 객체로 매핑합니다. 프로젝트의 콘텐츠와 썸네일 URL 정보도 함께 변환됩니다.
-     *
-     * @param projectEntity 변환할 ProjectEntity 객체
-     * @return 변환된 Project 도메인 모델 객체 또는 입력이 null일 경우 null
-     */
-    public static Project toDomain(DataEntity projectEntity) {
-        if (projectEntity == null) {
+    public static Data toDomain(DataEntity dataEntity) {
+        if (dataEntity == null) {
             return null;
         }
 
-        // 재귀 방지를 위해 아이디, 제목만 추출하여 저장
-        Project parentProject = projectEntity.getParentProject() != null
-                ? Project
-                .builder()
-                .id(projectEntity.getParentProject().getId())
-                .title(projectEntity.getParentProject().getTitle())
-                .build()
-                : null;
-
-        return Project.toDomain(
-                projectEntity.getId(),
-                projectEntity.getTitle(),
-                projectEntity.getTopicId(),
-                projectEntity.getUserId(),
-                projectEntity.getAnalysisPurposeId(),
-                projectEntity.getDataSourceId(),
-                projectEntity.getAuthorLevelId(),
-                projectEntity.getIsContinue(),
-                parentProject,
-                projectEntity.getContent(),
-                projectEntity.getFileUrl()
+        return Data.toDomain(
+                dataEntity.getId(),
+                dataEntity.getTitle(),
+                dataEntity.getTopicId(),
+                dataEntity.getUserId(),
+                dataEntity.getDataSourceId(),
+                dataEntity.getAuthorLevelId(),
+                dataEntity.getStartDate(),
+                dataEntity.getEndDate(),
+                dataEntity.getDescription(),
+                dataEntity.getAnalysisGuide(),
+                dataEntity.getDataFileUrl(),
+                dataEntity.getThumbnailUrl(),
+                dataEntity.getDownloadCount(),
+                dataEntity.getRecentWeekDownloadCount(),
+                dataEntity.getMetadata()
                 );
     }
 
-    /**
-     * Project 도메인 모델을 ProjectEntity로 변환합니다.
-     *
-     * 부모 프로젝트가 존재할 경우, 순환 참조를 방지하기 위해 부모의 ID와 제목만 포함한 엔티티로 매핑합니다.
-     *
-     * @param project 변환할 Project 도메인 모델
-     * @return 변환된 ProjectEntity 인스턴스. 입력이 null이면 null을 반환합니다.
-     */
-    public static DataEntity toEntity(Project project) {
-        if (project == null) {
+    public static DataEntity toEntity(Data data) {
+        if (data == null) {
             return null;
         }
 
-        // 재귀 방지를 위해 아이디, 제목만 추출하여 저장
-        DataEntity parentProject = project.getParentProject() != null
-                ? DataEntity
-                .builder()
-                .id(project.getParentProject().getId())
-                .title(project.getParentProject().getTitle())
-                .build()
-                : null;
-
         return DataEntity.toEntity(
-                project.getTitle(),
-                project.getTopicId(),
-                project.getUserId(),
-                project.getAnalysisPurposeId(),
-                project.getDataSourceId(),
-                project.getAuthorLevelId(),
-                project.getIsContinue(),
-                parentProject,
-                project.getContent(),
-                project.getFileUrl()
+                data.getTitle(),
+                data.getTopicId(),
+                data.getUserId(),
+                data.getDataSourceId(),
+                data.getAuthorLevelId(),
+                data.getStartDate(),
+                data.getEndDate(),
+                data.getDescription(),
+                data.getAnalysisGuide(),
+                data.getDataFileUrl(),
+                data.getThumbnailUrl(),
+                data.getDownloadCount(),
+                data.getRecentWeekDownloadCount(),
+                data.getMetadata()
         );
     }
 }

@@ -7,5 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
  * 프로젝트 업로드 유스케이스
  */
 public interface DataUploadUseCase {
-    Long upload(Long userId, MultipartFile file, DataUploadRequest requestDto);
+    Long upload(Long userId, MultipartFile dataFile, MultipartFile thumbnailFile, DataUploadRequest requestDto);
 }

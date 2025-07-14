@@ -52,9 +52,9 @@ public class DataEntity extends BaseEntity {
     private String thumbnailUrl;
 
     // 캐싱 필드
-    @Column(nullable = false)
+    @Column
     private int downloadCount;
-    @Column(nullable = false)
+    @Column
     private int recentWeekDownloadCount;
 
     // 메타데이터 FK (1:1)
