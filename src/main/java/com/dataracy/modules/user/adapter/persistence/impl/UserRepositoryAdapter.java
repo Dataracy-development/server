@@ -86,6 +86,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         return UserEntityMapper.toDomain(savedUser);
     }
 
+    /**
+     * 비밀번호 변경
+     * @param userId 비밀번호를 변경할 사용자의 고유 ID
+     * @param encodePassword 새로 설정할 인코딩된 비밀번호
+     */
     @Override
     public void changePassword(Long userId, String encodePassword) {
         UserEntity userEntity = userJpaRepository.findById(userId)
@@ -93,10 +98,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         userEntity.changePassword(encodePassword);
     }
 
-    /**
-     * 유저 탈퇴
-     * @param userId 유저 아이디
-     */
+
     /**
      * 지정된 사용자 ID에 해당하는 사용자를 탈퇴 처리합니다.
      *

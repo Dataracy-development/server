@@ -27,47 +27,47 @@ public class CustomMultipartFile implements MultipartFile {
     }
 
     /**
- * 파일의 이름을 반환합니다.
- *
- * @return 파일의 이름
- */
-@Override public String getName() { return name; }
+     * 파일의 이름을 반환합니다.
+     *
+     * @return 파일의 이름
+     */
+    @Override public String getName() { return name; }
     /**
- * 업로드된 파일의 원본 파일명을 반환합니다.
- *
- * @return 파일의 원본 이름
- */
-@Override public String getOriginalFilename() { return originalFilename; }
+     * 업로드된 파일의 원본 파일명을 반환합니다.
+     *
+     * @return 파일의 원본 이름
+     */
+    @Override public String getOriginalFilename() { return originalFilename; }
     /**
- * 파일의 MIME 콘텐츠 타입을 반환합니다.
- *
- * @return 파일의 MIME 타입 문자열
- */
-@Override public String getContentType() { return contentType; }
+     * 파일의 MIME 콘텐츠 타입을 반환합니다.
+     *
+     * @return 파일의 MIME 타입 문자열
+     */
+    @Override public String getContentType() { return contentType; }
     /**
- * 파일의 내용이 비어 있는지 여부를 반환합니다.
- *
- * @return 파일 내용이 없으면 true, 그렇지 않으면 false
- */
-@Override public boolean isEmpty() { return content.length == 0; }
+     * 파일의 내용이 비어 있는지 여부를 반환합니다.
+     *
+     * @return 파일 내용이 없으면 true, 그렇지 않으면 false
+     */
+    @Override public boolean isEmpty() { return content.length == 0; }
     /**
- * 파일의 크기를 바이트 단위로 반환합니다.
- *
- * @return 파일 내용의 바이트 크기
- */
-@Override public long getSize() { return content.length; }
+     * 파일의 크기를 바이트 단위로 반환합니다.
+     *
+     * @return 파일 내용의 바이트 크기
+     */
+    @Override public long getSize() { return content.length; }
     /**
- * 파일의 내용을 복제된 바이트 배열로 반환합니다.
- *
- * @return 파일 데이터의 복제된 바이트 배열
- */
-@Override public byte[] getBytes() { return content.clone(); }
+     * 파일의 내용을 복제된 바이트 배열로 반환합니다.
+     *
+     * @return 파일 데이터의 복제된 바이트 배열
+     */
+    @Override public byte[] getBytes() { return content.clone(); }
     /**
- * 파일 내용을 읽을 수 있는 새로운 입력 스트림을 반환합니다.
- *
- * @return 파일 데이터에 대한 ByteArrayInputStream 인스턴스
- */
-@Override public InputStream getInputStream() { return new ByteArrayInputStream(content); }
+     * 파일 내용을 읽을 수 있는 새로운 입력 스트림을 반환합니다.
+     *
+     * @return 파일 데이터에 대한 ByteArrayInputStream 인스턴스
+     */
+    @Override public InputStream getInputStream() { return new ByteArrayInputStream(content); }
     /**
      * 파일의 내용을 지정된 파일로 복사합니다.
      *

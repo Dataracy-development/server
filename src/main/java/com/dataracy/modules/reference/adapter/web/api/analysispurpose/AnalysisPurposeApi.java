@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "Reference", description = "참조 데이터 관련 API")
 @RequestMapping("/api/v1/references")
 public interface AnalysisPurposeApi {
-    /****
+    /**
      * 전체 분석 목적(analysis purpose) 목록을 조회한다.
      *
      * @return 전체 분석 목적 목록이 포함된 성공 응답

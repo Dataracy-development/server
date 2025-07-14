@@ -29,7 +29,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         this.objectMapper = objectMapper;
     }
 
-    // security context 과정에서 일어난 에러르 받아 직접 처리해준다.
+    // security context 과정에서 일어난 에러를 받아 직접 처리해준다.
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,

@@ -1,8 +1,13 @@
 package com.dataracy.modules.common.exception;
 
+import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.common.dto.response.ErrorResponse;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.support.lock.LockAcquisitionException;
+import com.dataracy.modules.email.domain.exception.EmailException;
+import com.dataracy.modules.project.domain.exception.ProjectException;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
+import com.dataracy.modules.security.exception.SecurityException;
 import com.dataracy.modules.user.domain.exception.UserException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +42,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         if (e instanceof UserException) {
             String errorMessage = "유저 도메인 예외입니다: " + e.getMessage();
             logException("UserException", errorMessage, e);
+        } else if (e instanceof AuthException) {
+            String errorMessage = "인증 도메인 예외입니다: " + e.getMessage();
+            logException("AUTHException", errorMessage, e);
+        } else if (e instanceof SecurityException) {
+            String errorMessage = "시큐리티 도메인 예외입니다: " + e.getMessage();
+            logException("SecurityException", errorMessage, e);
+        } else if (e instanceof ReferenceException) {
+            String errorMessage = "참조 테이블 예외입니다: " + e.getMessage();
+            logException("ReferenceException", errorMessage, e);
+        } else if (e instanceof EmailException) {
+            String errorMessage = "이메일 도메인 예외입니다: " + e.getMessage();
+            logException("EmailException", errorMessage, e);
+        } else if (e instanceof ProjectException) {
+            String errorMessage = "프로젝트 도메인 예외입니다: " + e.getMessage();
+            logException("ProjectException", errorMessage, e);
         } else {
             String errorMessage = "공통 예외입니다: " + e.getMessage();
             logException("CustomException", errorMessage, e);
