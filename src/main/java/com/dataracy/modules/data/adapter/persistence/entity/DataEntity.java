@@ -53,9 +53,9 @@ public class DataEntity extends BaseEntity {
 
     // 캐싱 필드
     @Column(nullable = false)
-    private Long downloadCount;
+    private int downloadCount;
     @Column(nullable = false)
-    private Long recentWeekDownloadCount;
+    private int recentWeekDownloadCount;
 
     // 메타데이터 FK (1:1)
     @OneToOne(mappedBy = "data", cascade = CascadeType.PERSIST)
@@ -90,8 +90,8 @@ public class DataEntity extends BaseEntity {
             String analysisGuide,
             String dataFileUrl,
             String thumbnailUrl,
-            Long downloadCount,
-            Long recentWeekDownloadCount,
+            int downloadCount,
+            int recentWeekDownloadCount,
             DataMetadataEntity metadata
     ) {
         return DataEntity.builder()
