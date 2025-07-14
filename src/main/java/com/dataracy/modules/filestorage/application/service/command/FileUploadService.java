@@ -15,7 +15,6 @@ import java.io.ByteArrayOutputStream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class FileUploadService implements FileUploadUseCase {
 
     private final FileStoragePort fileStoragePort;

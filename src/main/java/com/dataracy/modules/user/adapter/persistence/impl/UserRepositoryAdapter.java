@@ -76,9 +76,10 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     /**
-     * 유저 저장
-     * @param user 유저
-     * @return 저장된 유저
+     * 주어진 유저 정보를 저장하고 저장된 유저 도메인 객체를 반환합니다.
+     *
+     * @param user 저장할 유저 도메인 객체
+     * @return 저장된 유저 도메인 객체
      */
     @Override
     public User saveUser(User user) {
@@ -86,6 +87,13 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         return UserEntityMapper.toDomain(savedUser);
     }
 
+    /**
+     * 지정한 사용자의 비밀번호를 새로운 인코딩된 값으로 변경합니다.
+     *
+     * @param userId 비밀번호를 변경할 사용자의 고유 ID
+     * @param encodePassword 새로 설정할 인코딩된 비밀번호
+     * @throws UserException 사용자를 찾을 수 없는 경우 발생합니다.
+     */
     @Override
     public void changePassword(Long userId, String encodePassword) {
         UserEntity userEntity = userJpaRepository.findById(userId)
@@ -93,10 +101,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         userEntity.changePassword(encodePassword);
     }
 
-    /**
-     * 유저 탈퇴
-     * @param userId 유저 아이디
-     */
+
     /**
      * 지정된 사용자 ID에 해당하는 사용자를 탈퇴 처리합니다.
      *
