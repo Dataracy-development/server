@@ -1,8 +1,8 @@
 package com.dataracy.modules.data.adapter.persistence.impl;
 
 import com.dataracy.modules.data.adapter.persistence.entity.DataEntity;
-import com.dataracy.modules.data.adapter.persistence.mapper.ProjectEntityMapper;
-import com.dataracy.modules.data.adapter.persistence.repository.ProjectJpaRepository;
+import com.dataracy.modules.data.adapter.persistence.mapper.DataEntityMapper;
+import com.dataracy.modules.data.adapter.persistence.repository.DataJpaRepository;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
@@ -14,8 +14,8 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
-    private final ProjectJpaRepository projectJpaRepository;
+public class DataRepositoryAdapter implements ProjectRepositoryPort {
+    private final DataJpaRepository projectJpaRepository;
 
     /**
      * 프로젝트 도메인 객체를 영속성 계층에 저장하고, 저장된 프로젝트 도메인 객체를 반환한다.
@@ -27,8 +27,8 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     @Override
     public Project saveProject(Project project) {
         try {
-            DataEntity projectEntity = projectJpaRepository.save(ProjectEntityMapper.toEntity(project));
-            return ProjectEntityMapper.toDomain(projectEntity);
+            DataEntity projectEntity = projectJpaRepository.save(DataEntityMapper.toEntity(project));
+            return DataEntityMapper.toDomain(projectEntity);
         } catch (Exception e) {
             throw new ProjectException(ProjectErrorStatus.FAIL_SAVE_PROJECT);
         }
@@ -43,7 +43,7 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     @Override
     public Optional<Project> findProjectById(Long projectId) {
         return projectJpaRepository.findById(projectId)
-                .map(ProjectEntityMapper::toDomain);
+                .map(DataEntityMapper::toDomain);
     }
 
     /**

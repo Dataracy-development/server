@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "프로젝트 업로드 요청 DTO")
-public record ProjectUploadWebRequest(
+public record DataUploadWebRequest(
         @Schema(description = "제목", example = "프로젝트명")
         @NotBlank(message = "제목을 입력해주세요")
         String title,
@@ -13,10 +13,6 @@ public record ProjectUploadWebRequest(
         @Schema(description = "도메인", example = "2")
         @NotNull(message = "도메인을 입력해주세요")
         Long topicId,
-
-        @Schema(description = "목적", example = "2")
-        @NotNull(message = "목적을 입력해주세요")
-        Long analysisPurposeId,
 
         @Schema(description = "데이터 출처", example = "3")
         @NotNull(message = "데이터 출처를 입력해주세요")
@@ -26,14 +22,11 @@ public record ProjectUploadWebRequest(
         @NotNull(message = "작성자 유형을 입력해주세요")
         Long authorLevelId,
 
-        @Schema(description = "이어가기 선택", example = "true")
-        @NotNull(message = "이어가기 유무를 입력해주세요")
-        Boolean isContinue,
+        @Schema(description = "설명", example = "지금 이 데이터는 ~~.")
+        @NotBlank(message = "설명을 입력해주세요")
+        String description,
 
-        @Schema(description = "이어가기 프로젝트", example = "3")
-        Long parentProjectId,
-
-        @Schema(description = "내용", example = "지금 데이터 출처에 대해서 ~~.")
-        @NotBlank(message = "내용을 입력해주세요")
-        String content
+        @Schema(description = "설명", example = "지금 이 데이터는 ~~.")
+        @NotBlank(message = "설명을 입력해주세요")
+        String analysisGuide
 ) {}

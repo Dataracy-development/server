@@ -6,8 +6,8 @@ import com.dataracy.modules.project.domain.model.Project;
 /**
  * 프로젝트 엔티티와 프로젝트 도메인 모델을 변환하는 매퍼
  */
-public final class ProjectEntityMapper {
-    private ProjectEntityMapper() {
+public final class DataEntityMapper {
+    private DataEntityMapper() {
     }
 
     /**

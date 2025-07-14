@@ -11,7 +11,7 @@ package com.dataracy.modules.data.application.dto.request;
  * @param parentProjectId 이어가기 프로젝트 아이디
  * @param content 내용
  */
-public record ProjectUploadRequest(
+public record DataUploadRequest(
         String title,
         Long topicId,
         Long analysisPurposeId,

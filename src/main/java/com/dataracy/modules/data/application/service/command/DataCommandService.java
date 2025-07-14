@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProjectCommandService implements ProjectUploadUseCase {
+public class DataCommandService implements ProjectUploadUseCase {
     private final ProjectRepositoryPort projectRepositoryPort;
 
     private final FileUploadUseCase fileUploadUseCase;

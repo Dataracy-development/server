@@ -7,7 +7,7 @@ import java.util.Optional;
 /**
  * 프로젝트 db 포트
  */
-public interface ProjectRepositoryPort {
+public interface DataRepositoryPort {
 
     /**
  * 프로젝트 엔티티를 영속 저장소에 저장하고, 저장된 프로젝트 객체를 반환합니다.

@@ -2,7 +2,7 @@ package com.dataracy.modules.data.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
-import com.dataracy.modules.data.adapter.web.request.ProjectUploadWebRequest;
+import com.dataracy.modules.data.adapter.web.request.DataUploadWebRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Project", description = "프로젝트 관련 API")
 @RequestMapping("/api/v1/projects")
-public interface ProjectApi {
+public interface DataApi {
 
     /**
      * 프로젝트 정보를 업로드하여 데이터베이스에 저장한다.
@@ -46,6 +46,6 @@ public interface ProjectApi {
             @RequestPart(value = "file", required = false) MultipartFile file,
 
             @RequestPart
-            ProjectUploadWebRequest webRequest
+            DataUploadWebRequest webRequest
     );
 }
