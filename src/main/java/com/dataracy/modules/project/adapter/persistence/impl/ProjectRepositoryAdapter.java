@@ -47,7 +47,9 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     }
 
     /**
-     * 지정한 프로젝트 ID에 해당하는 프로젝트의 파일 URL을 새로운 값으로 업데이트합니다.
+     * 주어진 프로젝트 ID에 해당하는 프로젝트의 파일 URL을 새로운 값으로 변경합니다.
+     *
+     * 프로젝트가 존재하지 않을 경우 {@code ProjectException}이 발생합니다.
      *
      * @param projectId 파일 URL을 변경할 프로젝트의 ID
      * @param fileUrl 새로 설정할 파일 URL
