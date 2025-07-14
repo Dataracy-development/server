@@ -12,12 +12,12 @@ public class CustomMultipartFile implements MultipartFile {
     private final String contentType;
 
     /**
-     * 새로운 파일 데이터와 메타데이터로 CustomMultipartFile 인스턴스를 생성합니다.
+     * 주어진 파일 데이터와 메타데이터로 메모리 기반의 CustomMultipartFile 객체를 생성합니다.
      *
-     * @param content           파일의 바이트 배열 데이터. null이면 빈 배열로 초기화됩니다.
-     * @param name              파일의 이름. null이면 빈 문자열로 설정됩니다.
-     * @param originalFilename  원본 파일명. null이면 빈 문자열로 설정됩니다.
-     * @param contentType       MIME 타입. null이면 "application/octet-stream"으로 설정됩니다.
+     * @param content           파일의 바이트 배열 데이터. null일 경우 빈 배열로 대체됩니다.
+     * @param name              파일의 이름. null일 경우 빈 문자열로 대체됩니다.
+     * @param originalFilename  업로드된 원본 파일명. null일 경우 빈 문자열로 대체됩니다.
+     * @param contentType       파일의 MIME 타입. null일 경우 "application/octet-stream"으로 대체됩니다.
      */
     public CustomMultipartFile(byte[] content, String name, String originalFilename, String contentType) {
         this.content = content != null ? content.clone() : new byte[0];
@@ -27,16 +27,16 @@ public class CustomMultipartFile implements MultipartFile {
     }
 
     /**
-     * 파일의 이름을 반환합니다.
-     *
-     * @return 파일의 이름
-     */
+ * 이 파일의 이름을 반환합니다.
+ *
+ * @return 파일의 이름
+ */
     @Override public String getName() { return name; }
     /**
-     * 업로드된 파일의 원본 파일명을 반환합니다.
-     *
-     * @return 파일의 원본 이름
-     */
+ * 업로드된 파일의 원본 파일명을 반환합니다.
+ *
+ * @return 업로드 시 사용된 원본 파일명
+ */
     @Override public String getOriginalFilename() { return originalFilename; }
     /**
      * 파일의 MIME 콘텐츠 타입을 반환합니다.
@@ -45,30 +45,30 @@ public class CustomMultipartFile implements MultipartFile {
      */
     @Override public String getContentType() { return contentType; }
     /**
-     * 파일의 내용이 비어 있는지 여부를 반환합니다.
-     *
-     * @return 파일 내용이 없으면 true, 그렇지 않으면 false
-     */
+ * 파일의 내용이 비어 있는지 확인합니다.
+ *
+ * @return 파일 내용이 없으면 true, 그렇지 않으면 false입니다.
+ */
     @Override public boolean isEmpty() { return content.length == 0; }
     /**
-     * 파일의 크기를 바이트 단위로 반환합니다.
-     *
-     * @return 파일 내용의 바이트 크기
-     */
+ * 파일의 크기를 바이트 단위로 반환합니다.
+ *
+ * @return 파일 데이터의 총 바이트 수
+ */
     @Override public long getSize() { return content.length; }
     /**
-     * 파일의 내용을 복제된 바이트 배열로 반환합니다.
-     *
-     * @return 파일 데이터의 복제된 바이트 배열
-     */
+         * 파일의 내용을 복제된 바이트 배열로 반환합니다.
+         *
+         * @return 파일 데이터의 복제본 바이트 배열
+         */
     @Override public byte[] getBytes() {
         return content.clone();
     }
     /**
-     * 파일 내용을 읽을 수 있는 새로운 입력 스트림을 반환합니다.
-     *
-     * @return 파일 데이터에 대한 ByteArrayInputStream 인스턴스
-     */
+         * 파일 데이터에 대한 새로운 ByteArrayInputStream을 반환합니다.
+         *
+         * @return 파일 내용을 읽기 위한 입력 스트림
+         */
     @Override public InputStream getInputStream() {
         return new ByteArrayInputStream(content);
     }

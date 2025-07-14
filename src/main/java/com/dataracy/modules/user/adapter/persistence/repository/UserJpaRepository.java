@@ -15,28 +15,28 @@ public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
  * @return providerId에 해당하는 사용자가 존재하면 Optional<UserEntity>, 없으면 Optional.empty()
  */
 Optional<UserEntity> findByProviderId(String providerId);
-    /****
- * 주어진 이메일 주소로 사용자를 조회합니다.
+    /**
+ * 이메일 주소로 사용자 엔티티를 조회합니다.
  *
  * @param email 조회할 사용자의 이메일 주소
- * @return 해당 이메일을 가진 사용자가 존재하면 Optional<UserEntity>를 반환하며, 없으면 빈 Optional을 반환합니다.
+ * @return 해당 이메일을 가진 사용자가 존재하면 Optional<UserEntity>, 없으면 빈 Optional
  */
 Optional<UserEntity> findByEmail(String email);
 
     /**
-     * 지정한 이메일을 가진 사용자가 존재하는지 여부를 반환합니다.
-     *
-     * @param email 확인할 이메일 주소
-     * @return 사용자가 존재하면 true, 그렇지 않으면 false
-     */
+ * 주어진 이메일 주소를 가진 사용자가 존재하는지 확인합니다.
+ *
+ * @param email 존재 여부를 확인할 이메일 주소
+ * @return 사용자가 존재하면 true, 존재하지 않으면 false
+ */
     boolean existsByEmail(String email);
 
     /**
-     * 주어진 닉네임을 가진 사용자가 존재하는지 여부를 반환합니다.
-     *
-     * @param nickname 확인할 사용자 닉네임
-     * @return 닉네임을 가진 사용자가 존재하면 true, 그렇지 않으면 false
-     */
+ * 지정한 닉네임을 가진 사용자가 존재하는지 확인합니다.
+ *
+ * @param nickname 존재 여부를 확인할 사용자 닉네임
+ * @return 사용자가 존재하면 true, 존재하지 않으면 false
+ */
     boolean existsByNickname(String nickname);
 
     /**
