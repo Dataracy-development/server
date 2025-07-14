@@ -63,10 +63,10 @@ public class ProjectEntity extends BaseEntity {
     @Column
     private String fileUrl;
 
-    /**
-     * 프로젝트의 파일 URL을 업데이트합니다.
+    /****
+     * 프로젝트의 파일 URL을 새로운 값으로 변경합니다.
      *
-     * @param fileUrl 새로 설정할 파일의 URL
+     * @param fileUrl 새로 지정할 파일의 URL
      */
     public void updateFile (String fileUrl) {
         this.fileUrl = fileUrl;

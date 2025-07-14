@@ -36,7 +36,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    // 커스텀 비즈니스(도메인) 예외 처리
+    /**
+     * 비즈니스(도메인) 예외 및 그 하위 예외들을 처리하여 적절한 HTTP 상태 코드와 표준화된 에러 응답을 반환합니다.
+     *
+     * @param e 처리할 비즈니스 예외 객체
+     * @return 예외에 해당하는 HTTP 상태 코드와 에러 코드가 포함된 ErrorResponse
+     */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(BusinessException e) {
         if (e instanceof UserException) {
