@@ -33,8 +33,6 @@ public class EmailSendGridAdapter implements EmailSenderPort {
     @Override
     public void send(String email, String subject, String body) {
         // SendGrid API 호출
-        log.info("[이메일 전송 시도 전] to={}, subject={}, content={}",1,2,3);
-
         Email from = new Email(sender);
         Email to = new Email(email);
         Content content = new Content("text/plain", body);
@@ -47,7 +45,7 @@ public class EmailSendGridAdapter implements EmailSenderPort {
         mail.addPersonalization(new Personalization() {{
             addTo(to);
         }});
-        log.info("[SendGrid 전송] status={}, body={}", 1,2);
+        log.info("[SendGrid 요청 준비] to={}, subject={}", to, subject);
 
         Request request = new Request();
         try {
