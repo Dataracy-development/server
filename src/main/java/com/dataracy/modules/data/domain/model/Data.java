@@ -1,0 +1,78 @@
+package com.dataracy.modules.data.domain.model;
+
+import lombok.*;
+
+/**
+ * 데이터 도메인 모델
+ */
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+public class Data {
+
+    private Long id;
+    private String title;
+    private Long topicId;
+    private Long userId;
+    private Long analysisPurposeId;
+    private Long dataSourceId;
+    private Long authorLevelId;
+    private Boolean isContinue;
+    private Data parentProject;
+    private String content;
+    private String fileUrl;
+
+    /**
+     * 프로젝트의 썸네일 URL을 업데이트합니다.
+     *
+     * @param fileUrl 새로 설정할 썸네일 URL
+     */
+    public void updateFile(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+
+    /**
+     * 주어진 값들로 새로운 Project 도메인 객체를 생성합니다.
+     *
+     * @param id 프로젝트의 고유 식별자
+     * @param title 프로젝트 제목
+     * @param topicId 주제 식별자
+     * @param userId 사용자 식별자
+     * @param analysisPurposeId 분석 목적 식별자
+     * @param dataSourceId 데이터 소스 식별자
+     * @param authorLevelId 작성자 등급 식별자
+     * @param isContinue 프로젝트의 연속 여부
+     * @param parentProject 상위 프로젝트 객체
+     * @param content 프로젝트 내용
+     * @param fileUrl 프로젝트 썸네일 URL
+     * @return 생성된 Project 객체
+     */
+    public static Data toDomain(
+            Long id,
+            String title,
+            Long topicId,
+            Long userId,
+            Long analysisPurposeId,
+            Long dataSourceId,
+            Long authorLevelId,
+            Boolean isContinue,
+            Data parentProject,
+            String content,
+            String fileUrl
+    ) {
+        return Data.builder()
+                .id(id)
+                .title(title)
+                .topicId(topicId)
+                .userId(userId)
+                .analysisPurposeId(analysisPurposeId)
+                .dataSourceId(dataSourceId)
+                .authorLevelId(authorLevelId)
+                .isContinue(isContinue)
+                .parentProject(parentProject)
+                .content(content)
+                .fileUrl(fileUrl)
+                .build();
+    }
+}
