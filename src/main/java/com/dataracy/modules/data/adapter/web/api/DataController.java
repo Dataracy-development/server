@@ -1,8 +1,8 @@
 package com.dataracy.modules.data.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
-import com.dataracy.modules.data.adapter.web.mapper.ProjectWebMapper;
-import com.dataracy.modules.data.adapter.web.request.ProjectUploadWebRequest;
+import com.dataracy.modules.data.adapter.web.mapper.DataWebMapper;
+import com.dataracy.modules.data.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
@@ -14,8 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-public class ProjectController implements ProjectApi {
-    private final ProjectWebMapper projectWebMapper;
+public class DataController implements DataApi {
+    private final DataWebMapper projectWebMapper;
 
     private final ProjectUploadUseCase projectUploadUseCase;
 
@@ -31,7 +31,7 @@ public class ProjectController implements ProjectApi {
     public ResponseEntity<SuccessResponse<Void>> uploadProject(
             Long userId,
             MultipartFile file,
-            ProjectUploadWebRequest webRequest
+            DataUploadWebRequest webRequest
     ) {
         ProjectUploadRequest requestDto = projectWebMapper.toApplicationDto(webRequest);
         projectUploadUseCase.upload(userId, file, requestDto);
