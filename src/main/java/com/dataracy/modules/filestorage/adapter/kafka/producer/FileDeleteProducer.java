@@ -1,4 +1,4 @@
-package com.dataracy.modules.filestorage.adapter.message.producer;
+package com.dataracy.modules.filestorage.adapter.kafka.producer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

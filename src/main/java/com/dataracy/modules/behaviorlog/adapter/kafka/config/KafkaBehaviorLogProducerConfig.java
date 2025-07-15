@@ -1,6 +1,6 @@
-package com.dataracy.modules.data.adapter.message.kafka.config;
+package com.dataracy.modules.behaviorlog.adapter.kafka.config;
 
-import com.dataracy.modules.data.domain.model.event.DataUploadEvent;
+import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;
 import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -16,13 +16,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaDataUploadProducerConfig {
+public class KafkaBehaviorLogProducerConfig {
 
     @Value("${spring.kafka.bootstrap-servers:}")
     private String bootstrapServers;
 
+    /**
+     * BehaviorLog 메시지 전송을 위한 Kafka ProducerFactory 빈을 생성합니다.
+     *
+     * Kafka 서버 주소와 직렬화 설정이 적용된 ProducerFactory를 반환하며,
+     * 이 Factory는 String 타입의 키와 BehaviorLog 타입의 값을 가진 메시지를 Kafka로 전송할 수 있도록 구성됩니다.
+     *
+     * @return BehaviorLog 메시지 전송이 가능한 ProducerFactory 인스턴스
+     */
     @Bean
-    public ProducerFactory<String, DataUploadEvent> dataUploadEventProducerFactory() {
+    public ProducerFactory<String, BehaviorLog> behaviorLogProducerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -35,9 +43,14 @@ public class KafkaDataUploadProducerConfig {
         return new DefaultKafkaProducerFactory<>(config);
     }
 
+    /**
+     * BehaviorLog 메시지를 Kafka로 전송할 수 있는 KafkaTemplate 빈을 생성합니다.
+     *
+     * @return BehaviorLog 객체를 전송하는 KafkaTemplate 인스턴스
+     */
     @Bean
-    public KafkaTemplate<String, DataUploadEvent> dataUploadEventKafkaTemplate() {
-        return new KafkaTemplate<>(dataUploadEventProducerFactory());
+    public KafkaTemplate<String, BehaviorLog> behaviorLogKafkaTemplate() {
+        return new KafkaTemplate<>(behaviorLogProducerFactory());
     }
 
     @PostConstruct

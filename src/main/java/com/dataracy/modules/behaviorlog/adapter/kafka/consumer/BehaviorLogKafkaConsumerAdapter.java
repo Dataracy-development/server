@@ -1,4 +1,4 @@
-package com.dataracy.modules.behaviorlog.adapter.message.kafka;
+package com.dataracy.modules.behaviorlog.adapter.kafka.consumer;
 
 import com.dataracy.modules.behaviorlog.application.port.out.SaveBehaviorLogPort;
 import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;

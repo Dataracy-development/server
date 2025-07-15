@@ -1,4 +1,4 @@
-package com.dataracy.modules.filestorage.adapter.message.consumer;
+package com.dataracy.modules.filestorage.adapter.kafka.consumer;
 
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import lombok.RequiredArgsConstructor;
