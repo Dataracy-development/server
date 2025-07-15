@@ -37,6 +37,7 @@ public class DataMetadataEntity {
 
     public void updateData(DataEntity data) {
         this.data = data;
+        data.updateMetadata(this);
     }
 
     public static DataMetadataEntity toEntity(
