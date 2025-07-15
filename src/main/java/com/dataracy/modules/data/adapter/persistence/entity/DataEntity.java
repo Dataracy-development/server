@@ -78,6 +78,10 @@ public class DataEntity extends BaseEntity {
         this.thumbnailUrl = thumbnailUrl;
     }
 
+    public void updateMetadata (DataMetadataEntity metadata) {
+        this.metadata = metadata;
+    }
+
     public static DataEntity toEntity(
             String title,
             Long topicId,
