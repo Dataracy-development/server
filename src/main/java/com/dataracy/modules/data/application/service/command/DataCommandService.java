@@ -3,6 +3,7 @@ package com.dataracy.modules.data.application.service.command;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.data.application.dto.request.DataUploadRequest;
 import com.dataracy.modules.data.application.port.in.DataUploadUseCase;
+import com.dataracy.modules.data.application.port.out.DataKafkaProducerPort;
 import com.dataracy.modules.data.application.port.out.DataRepositoryPort;
 import com.dataracy.modules.data.domain.model.Data;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class DataCommandService implements DataUploadUseCase {
     private final DataRepositoryPort dataRepositoryPort;
+    private final DataKafkaProducerPort kafkaProducerPort;
 
     private final FileUploadUseCase fileUploadUseCase;
 
@@ -79,9 +81,8 @@ public class DataCommandService implements DataUploadUseCase {
             }
         }
 
-        // 다운로드 api 호출
-
         // 데이터셋 파일 파싱 후 통계 저장
+        kafkaProducerPort.sendUploadEvent(saveData.getId(), saveData.getDataFileUrl(), dataFile.getOriginalFilename());
 
         log.info("프로젝트 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
         return saveData.getId();
