@@ -29,8 +29,7 @@ public class MetadataParseService implements MetadataParseUseCase {
                     null,
                     response.rowCount(),
                     response.columnCount(),
-                    response.previewJson(),
-                    response.qualityScore()
+                    response.previewJson()
             );
 
             metadataRepositoryPort.saveMetadata(request.dataId(), metadata);

@@ -19,8 +19,7 @@ public final class DataMetadataEntityMapper {
                 dataMetadataEntity.getId(),
                 dataMetadataEntity.getRowCount(),
                 dataMetadataEntity.getColumnCount(),
-                dataMetadataEntity.getPreviewJson(),
-                dataMetadataEntity.getQualityScore()
+                dataMetadataEntity.getPreviewJson()
                 );
     }
 
@@ -32,8 +31,7 @@ public final class DataMetadataEntityMapper {
         return DataMetadataEntity.toEntity(
                 dataMetadata.getRowCount(),
                 dataMetadata.getColumnCount(),
-                dataMetadata.getPreviewJson(),
-                dataMetadata.getQualityScore()
+                dataMetadata.getPreviewJson()
         );
     }
 }
