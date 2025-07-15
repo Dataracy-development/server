@@ -1,6 +1,5 @@
 package com.dataracy.modules.data.domain.model;
 
-import com.dataracy.modules.data.adapter.persistence.entity.DataMetadataEntity;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -28,7 +27,7 @@ public class Data {
     private String thumbnailUrl;
     private int downloadCount;
     private int recentWeekDownloadCount;
-    private DataMetadataEntity metadata;
+    private DataMetadata metadata;
 
     public static Data toDomain(
             Long id,
@@ -45,7 +44,7 @@ public class Data {
             String thumbnailUrl,
             int downloadCount,
             int recentWeekDownloadCount,
-            DataMetadataEntity metadata
+            DataMetadata metadata
     ) {
         return Data.builder()
                 .id(id)
