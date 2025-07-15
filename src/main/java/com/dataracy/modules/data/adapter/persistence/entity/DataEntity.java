@@ -46,7 +46,7 @@ public class DataEntity extends BaseEntity {
     @Column(nullable = false)
     private String analysisGuide;
 
-    @Column(nullable = false)
+    @Column
     private String dataFileUrl;
     @Column
     private String thumbnailUrl;
