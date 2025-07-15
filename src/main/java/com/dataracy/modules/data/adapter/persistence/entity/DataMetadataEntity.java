@@ -21,13 +21,14 @@ public class DataMetadataEntity {
     @Column(name = "data_metadata_id")
     private Long id;
 
-    @Column(nullable = false)
-    private Long row;
-    @Column(nullable = false)
-    private Long column;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "data_id", nullable = false)
+    private DataEntity data;
 
     @Column(nullable = false)
-    private String license;
+    private Integer rowCount;
+    @Column(nullable = false)
+    private Integer columnCount;
 
     // 미리보기 (N행) JSON 문자열
     @Lob
@@ -38,16 +39,14 @@ public class DataMetadataEntity {
     private Integer qualityScore;
 
     public static DataMetadataEntity toEntity(
-            Long row,
-            Long column,
-            String license,
+            Integer rowCount,
+            Integer columnCount,
             String previewJson,
             Integer qualityScore
     ) {
         return DataMetadataEntity.builder()
-                .row(row)
-                .column(column)
-                .license(license)
+                .rowCount(rowCount)
+                .columnCount(columnCount)
                 .previewJson(previewJson)
                 .qualityScore(qualityScore)
                 .build();

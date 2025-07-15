@@ -123,6 +123,14 @@ dependencies {
 	// thumnail
 	implementation "net.coobird:thumbnailator:${thumbnailGenerateVersion}"
 
+	// CSV 파싱
+	implementation 'org.apache.commons:commons-csv:1.10.0'
+
+	// 엑셀 파싱
+	implementation 'org.apache.poi:poi:5.2.5'
+	implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
+
 	implementation "org.apache.commons:commons-pool2:${commonsPool2Version}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 }

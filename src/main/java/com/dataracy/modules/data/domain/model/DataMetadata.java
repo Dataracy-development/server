@@ -11,25 +11,22 @@ import lombok.*;
 @Builder
 public class DataMetadata {
     private Long id;
-    private Long row;
-    private Long column;
-    private String license;
+    private Integer rowCount;
+    private Integer columnCount;
     private String previewJson;
     private Integer qualityScore;
 
     public static DataMetadata toDomain(
             Long id,
-            Long row,
-            Long column,
-            String license,
+            Integer rowCount,
+            Integer columnCount,
             String previewJson,
             Integer qualityScore
     ) {
         return DataMetadata.builder()
                 .id(id)
-                .row(row)
-                .column(column)
-                .license(license)
+                .rowCount(rowCount)
+                .columnCount(columnCount)
                 .previewJson(previewJson)
                 .qualityScore(qualityScore)
                 .build();

@@ -3,6 +3,7 @@ package com.dataracy.modules.filestorage.adapter.s3;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import com.dataracy.modules.filestorage.domain.exception.S3UploadException;
 import jakarta.annotation.PostConstruct;
@@ -48,6 +49,18 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
         return getUrl(key);
     }
 
+    @Override
+    public InputStream download(String fileUrl) {
+        try {
+            String key = extractKeyFromUrl(fileUrl);
+            S3Object s3Object = amazonS3.getObject(bucket, key);
+            return s3Object.getObjectContent();
+        } catch (Exception e) {
+            log.error("S3 파일 다운로드 실패 - url: {}", fileUrl, e);
+            throw new S3UploadException("S3 다운로드 실패", e);
+        }
+    }
+
     /**
      * 주어진 파일 URL에서 S3 오브젝트 키를 추출하여 해당 파일을 S3 버킷에서 삭제합니다.
      *
@@ -87,14 +100,13 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
         try {
             String hostPrefix = amazonS3.getUrl(bucket, "").toString(); // 끝에 "/" 있음
             if (!url.startsWith(hostPrefix)) {
-                throw new IllegalArgumentException("S3 URL 형식이 잘못되었습니다: " + url);
+                throw new S3UploadException("S3 URL 형식이 잘못되었습니다: " + url);
             }
             return url.substring(hostPrefix.length());
         } catch (Exception e) {
-            throw new IllegalArgumentException("S3 URL 추출 실패: " + url, e);
+            throw new S3UploadException("S3 URL 추출 실패: " + url, e);
         }
     }
-
 
     /**
      * S3 버킷 이름이 올바르게 설정되었는지 검증합니다.
@@ -106,7 +118,7 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
     @PostConstruct
     public void validateProperties() {
         if (bucket.isBlank()) {
-            throw new IllegalStateException("AWS S3 버켓 설정이 올바르지 않습니다.");
+            throw new S3UploadException("AWS S3 버켓 설정이 올바르지 않습니다.");
         }
     }
 }
