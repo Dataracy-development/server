@@ -35,8 +35,9 @@ public class DataMetadataEntity {
     @Column(columnDefinition = "TEXT")
     private String previewJson;
 
-    @Column
-    private Integer qualityScore;
+    public void updateData(DataEntity data) {
+        this.data = data;
+    }
 
     public static DataMetadataEntity toEntity(
             Integer rowCount,

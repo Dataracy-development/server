@@ -30,7 +30,7 @@ public final class DataEntityMapper {
                 dataEntity.getThumbnailUrl(),
                 dataEntity.getDownloadCount(),
                 dataEntity.getRecentWeekDownloadCount(),
-                dataEntity.getMetadata()
+                DataMetadataEntityMapper.toDomain(dataEntity.getMetadata())
                 );
     }
 
@@ -53,7 +53,7 @@ public final class DataEntityMapper {
                 data.getThumbnailUrl(),
                 data.getDownloadCount(),
                 data.getRecentWeekDownloadCount(),
-                data.getMetadata()
+                DataMetadataEntityMapper.toEntity(data.getMetadata())
         );
     }
 }
