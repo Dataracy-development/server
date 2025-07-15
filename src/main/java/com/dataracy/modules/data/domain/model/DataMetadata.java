@@ -14,21 +14,18 @@ public class DataMetadata {
     private Integer rowCount;
     private Integer columnCount;
     private String previewJson;
-    private Integer qualityScore;
 
     public static DataMetadata toDomain(
             Long id,
             Integer rowCount,
             Integer columnCount,
-            String previewJson,
-            Integer qualityScore
+            String previewJson
     ) {
         return DataMetadata.builder()
                 .id(id)
                 .rowCount(rowCount)
                 .columnCount(columnCount)
                 .previewJson(previewJson)
-                .qualityScore(qualityScore)
                 .build();
     }
 }

@@ -41,14 +41,12 @@ public class DataMetadataEntity {
     public static DataMetadataEntity toEntity(
             Integer rowCount,
             Integer columnCount,
-            String previewJson,
-            Integer qualityScore
+            String previewJson
     ) {
         return DataMetadataEntity.builder()
                 .rowCount(rowCount)
                 .columnCount(columnCount)
                 .previewJson(previewJson)
-                .qualityScore(qualityScore)
                 .build();
     }
 }
