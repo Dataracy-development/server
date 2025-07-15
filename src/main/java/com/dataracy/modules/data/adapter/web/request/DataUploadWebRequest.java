@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
-@Schema(description = "프로젝트 업로드 요청 DTO")
+@Schema(description = "데이터셋 업로드 요청 DTO")
 public record DataUploadWebRequest(
-        @Schema(description = "제목", example = "프로젝트명")
+        @Schema(description = "제목", example = "데이터셋 제목명")
         @NotBlank(message = "제목을 입력해주세요")
         String title,
 
