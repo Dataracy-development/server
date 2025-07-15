@@ -1,4 +1,4 @@
-package com.dataracy.modules.data.adapter.message.kafka;
+package com.dataracy.modules.data.adapter.kafka.consumer;
 
 import com.dataracy.modules.data.application.dto.request.MetadataParseRequest;
 import com.dataracy.modules.data.application.port.in.MetadataParseUseCase;

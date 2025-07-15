@@ -1,4 +1,4 @@
-package com.dataracy.modules.data.adapter.message.kafka;
+package com.dataracy.modules.data.adapter.kafka.provider;
 
 import com.dataracy.modules.data.application.port.out.DataKafkaProducerPort;
 import com.dataracy.modules.data.domain.model.event.DataUploadEvent;
