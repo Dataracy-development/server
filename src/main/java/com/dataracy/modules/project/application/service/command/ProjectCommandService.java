@@ -9,6 +9,10 @@ import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
+import com.dataracy.modules.reference.application.port.in.analysispurpose.ValidateAnalysisPurposeUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
+import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,10 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     private final ProjectRepositoryPort projectRepositoryPort;
 
     private final FileUploadUseCase fileUploadUseCase;
+    private final ValidateTopicUseCase validateTopicUseCase;
+    private final ValidateAnalysisPurposeUseCase validateAnalysisPurposeUseCase;
+    private final ValidateDataSourceUseCase validateDataSourceUseCase;;
+    private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
 
     /**
      * 사용자 ID와 프로젝트 요청 정보를 기반으로 새 프로젝트를 생성하고, 선택적으로 썸네일 이미지를 업로드합니다.
@@ -37,6 +45,12 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     @Transactional
     public void upload(Long userId, MultipartFile file, ProjectUploadRequest requestDto) {
         log.info("프로젝트 업로드 시작 - userId: {}, title: {}", userId, requestDto.title());
+
+        // 유효성 검사
+        validateTopicUseCase.validateTopic(requestDto.topicId());
+        validateAnalysisPurposeUseCase.validateAnalysisPurpose(requestDto.analysisPurposeId());
+        validateDataSourceUseCase.validateDataSource(requestDto.dataSourceId());
+        validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
 
         // 파일 유효성 검사
         FileUtil.validateImageFile(file);
