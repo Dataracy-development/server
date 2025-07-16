@@ -20,7 +20,7 @@ public class FileDeleteConsumer {
      */
     @KafkaListener(
             topics = "${spring.kafka.consumer.file-delete.topic:file-delete-topic}",
-            groupId = "${spring.kafka.consumer.file-delete.group-id:file-delete-consumer}"
+            groupId = "${spring.kafka.consumer.file-delete.group-id:file-delete-consumer-group}"
     )
     public void consume(String fileUrl) {
         try {

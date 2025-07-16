@@ -24,13 +24,12 @@ public class KafkaDataUploadConsumerConfig {
     public ConsumerFactory<String, DataUploadEvent> dataUploadConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "metadata-consumer-group");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "data-upload-metadata-consumer-group");
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
         JsonDeserializer<DataUploadEvent> valueDeserializer = new JsonDeserializer<>(DataUploadEvent.class);
-        valueDeserializer.addTrustedPackages("*");
+        valueDeserializer.addTrustedPackages("com.dataracy.modules.data.domain.model.event.DataUploadEvent");
 
         return new DefaultKafkaConsumerFactory<>(
                 config,
@@ -39,7 +38,7 @@ public class KafkaDataUploadConsumerConfig {
         );
     }
 
-    @Bean(name = "dataUploadLogKafkaListenerContainerFactory")
+    @Bean(name = "dataUploadEventKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, DataUploadEvent> dataUploadEventKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, DataUploadEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();

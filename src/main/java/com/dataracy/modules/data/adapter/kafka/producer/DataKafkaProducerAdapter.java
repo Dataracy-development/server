@@ -1,4 +1,4 @@
-package com.dataracy.modules.data.adapter.kafka.provider;
+package com.dataracy.modules.data.adapter.kafka.producer;
 
 import com.dataracy.modules.data.application.port.out.DataKafkaProducerPort;
 import com.dataracy.modules.data.domain.model.event.DataUploadEvent;
@@ -24,6 +24,15 @@ public class DataKafkaProducerAdapter implements DataKafkaProducerPort {
         DataUploadEvent event = new DataUploadEvent(dataId, fileUrl, originalFilename);
         kafkaTemplate.send(topic, String.valueOf(dataId), event);
         log.info("[Kafka] 데이터 업로드 이벤트 발송: {}", event);
+        kafkaTemplate.send(topic, String.valueOf(dataId), event)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("[Kafka] 데이터 업로드 이벤트 발송 실패: {}", event, ex);
+                        // 필요시 재시도 로직 또는 예외 처리
+                    } else {
+                        log.info("[Kafka] 데이터 업로드 이벤트 발송 성공: {}", event);
+                    }
+                });
     }
 
     @PostConstruct

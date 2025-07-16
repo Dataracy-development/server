@@ -24,13 +24,12 @@ public class KafkaBehaviorLogConsumerConfig {
     public ConsumerFactory<String, BehaviorLog> behaviorLogConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "behavior-log-consumer");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "behavior-log-consumer-group");
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
-        JsonDeserializer<BehaviorLog> valueDeserializer = new JsonDeserializer<>(BehaviorLog.class);
-        valueDeserializer.addTrustedPackages("*");
+        JsonDeserializer<BehaviorLog> valueDeserializer = new JsonDeserializer<>(BehaviorLog.class, false);
+        valueDeserializer.addTrustedPackages("com.dataracy.modules.behaviorlog.domain.model");
 
         return new DefaultKafkaConsumerFactory<>(
                 config,

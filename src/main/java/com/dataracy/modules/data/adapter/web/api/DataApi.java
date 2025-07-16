@@ -27,7 +27,7 @@ public interface DataApi {
             description = "제공받은 웹 요청 DTO의 데이터셋 정보를 통해 데이터셋 정보를 db에 저장한다"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "데이터셋 업로드에 성공했습니다.",
+            @ApiResponse(responseCode = "201", description = "데이터셋 업로드에 성공했습니다.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
