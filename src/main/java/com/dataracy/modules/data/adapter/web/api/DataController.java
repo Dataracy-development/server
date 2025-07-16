@@ -5,7 +5,7 @@ import com.dataracy.modules.data.adapter.web.mapper.DataWebMapper;
 import com.dataracy.modules.data.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.data.application.dto.request.DataUploadRequest;
 import com.dataracy.modules.data.application.port.in.DataUploadUseCase;
-import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
+import com.dataracy.modules.data.domain.status.DataSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +29,6 @@ public class DataController implements DataApi {
         DataUploadRequest requestDto = dataWebMapper.toApplicationDto(webRequest);
         dataUploadUseCase.upload(userId, dataFile, thumbnailFile, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(SuccessResponse.of(ProjectSuccessStatus.CREATED_PROJECT));
+                .body(SuccessResponse.of(DataSuccessStatus.CREATED_DATASET));
     }
 }

@@ -93,7 +93,7 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
      *
      * @param url S3 파일의 전체 URL
      * @return S3 객체 키
-     * @throws IllegalArgumentException URL이 올바른 S3 버킷 경로로 시작하지 않거나 키 추출에 실패한 경우 발생합니다.
+     * @throws S3UploadException URL이 올바른 S3 버킷 경로로 시작하지 않거나 키 추출에 실패한 경우 발생합니다.
      */
     private String extractKeyFromUrl(String url) {
         // https://bucket.s3.region.amazonaws.com/key... 에서 key 부분만 추출

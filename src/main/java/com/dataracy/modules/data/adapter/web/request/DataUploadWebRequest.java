@@ -1,11 +1,13 @@
 package com.dataracy.modules.data.adapter.web.request;
 
+import com.dataracy.modules.data.support.annotation.ValidDateRange;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
+@ValidDateRange
 @Schema(description = "데이터셋 업로드 요청 DTO")
 public record DataUploadWebRequest(
         @Schema(description = "제목", example = "데이터셋 제목명")
