@@ -12,6 +12,7 @@ import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,9 @@ public class DataCommandService implements DataUploadUseCase {
     private final DataKafkaProducerPort kafkaProducerPort;
 
     private final FileUploadUseCase fileUploadUseCase;
+
+    @Value("${default.image.url:}")
+    private String defaultImageUrl;
 
     /**
      * 데이터셋과 썸네일 파일을 업로드하고, 관련 정보를 저장 및 이벤트를 발행합니다.
@@ -64,7 +68,7 @@ public class DataCommandService implements DataUploadUseCase {
                 requestDto.description(),
                 requestDto.analysisGuide(),
                 null,
-                null,
+                defaultImageUrl,
                 0,
                 0,
                 null
