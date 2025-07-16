@@ -83,36 +83,43 @@ public class FileParsingUtil {
     }
 
     private static MetadataParseResponse parseXlsx(InputStream is) throws IOException {
-        var wb = WorkbookFactory.create(is);
-        var sheet = wb.getSheetAt(SHEET_INDEX);
-        int rowCount = sheet.getPhysicalNumberOfRows();
-        if (rowCount == 0) {
-            return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
-        }
-        var firstRow = sheet.getRow(0);
-        if (firstRow == null) {
-            return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
-        }
-        int colCount = firstRow.getPhysicalNumberOfCells();
+//        var wb = WorkbookFactory.create(is);
+//        var sheet = wb.getSheetAt(SHEET_INDEX);
 
-        List<Map<String, String>> preview = new ArrayList<>();
-        for (int i = 1; i <= Math.min(PREVIEW_LIMIT, rowCount - 1); i++) {
-            var row = sheet.getRow(i);
-            if (row == null) continue; // null row 방어
-
-            Map<String, String> map = new LinkedHashMap<>();
-            for (int j = 0; j < colCount; j++) {
-                var cell = row.getCell(j);
-                map.put(COL_PREFIX + j, cell != null ? cell.toString() : "");
+        try (var wb = WorkbookFactory.create(is)) {
+            var sheet = wb.getSheetAt(SHEET_INDEX);
+            // ... 기존 로직 ...
+            int rowCount = sheet.getPhysicalNumberOfRows();
+            if (rowCount == 0) {
+                return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
             }
-            preview.add(map);
+            var firstRow = sheet.getRow(0);
+            if (firstRow == null) {
+                return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
+            }
+            int colCount = firstRow.getPhysicalNumberOfCells();
+
+            List<Map<String, String>> preview = new ArrayList<>();
+            for (int i = 1; i <= Math.min(PREVIEW_LIMIT, rowCount - 1); i++) {
+                var row = sheet.getRow(i);
+                if (row == null) continue; // null row 방어
+
+                Map<String, String> map = new LinkedHashMap<>();
+                for (int j = 0; j < colCount; j++) {
+                    var cell = row.getCell(j);
+                    map.put(COL_PREFIX + j, cell != null ? cell.toString() : "");
+                }
+                preview.add(map);
+            }
+
+            return new MetadataParseResponse(
+                    rowCount - 1, // header 제외
+                    colCount,
+                    toJson(preview)
+            );
         }
 
-        return new MetadataParseResponse(
-                rowCount - 1, // header 제외
-                colCount,
-                toJson(preview)
-        );
+
     }
 
     private static MetadataParseResponse parseJson(InputStream is) throws IOException {
@@ -175,6 +182,14 @@ public class FileParsingUtil {
         String encoding = detector.getDetectedCharset();
         is.reset(); // 다시 원위치로 되돌림
 
-        return encoding != null ? Charset.forName(encoding) : StandardCharsets.UTF_8;
+        if (encoding != null) {
+            try {
+                return Charset.forName(encoding);
+            } catch (Exception e) {
+                // 지원하지 않는 인코딩인 경우 기본값 사용
+                return StandardCharsets.UTF_8;
+            }
+        }
+        return StandardCharsets.UTF_8;
     }
 }
