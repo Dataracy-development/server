@@ -34,7 +34,7 @@ public class Data {
     }
 
     public void updateThumbnailFileUrl (String thumbnailFileUrl) {
-        this.thumbnailUrl = dataFileUrl;
+        this.thumbnailUrl = thumbnailFileUrl;
     }
 
     public static Data toDomain(

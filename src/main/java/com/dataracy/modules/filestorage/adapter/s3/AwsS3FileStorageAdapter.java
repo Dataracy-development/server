@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -54,7 +55,10 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
         try {
             String key = extractKeyFromUrl(fileUrl);
             S3Object s3Object = amazonS3.getObject(bucket, key);
-            return s3Object.getObjectContent();
+            // S3Object의 내용을 완전히 읽어서 별도의 InputStream으로 반환
+            try (InputStream s3InputStream = s3Object.getObjectContent()) {
+                return new ByteArrayInputStream(s3InputStream.readAllBytes());
+            }
         } catch (Exception e) {
             log.error("S3 파일 다운로드 실패 - url: {}", fileUrl, e);
             throw new S3UploadException("S3 다운로드 실패", e);

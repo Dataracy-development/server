@@ -20,8 +20,17 @@ import java.util.Map;
 public class FileParsingUtil {
 
     private static final int PREVIEW_LIMIT = 5;
+    private static final String COL_PREFIX = "col";
+    private static final int SHEET_INDEX = 0;
 
     public static MetadataParseResponse parse(InputStream inputStream, String filename) throws IOException {
+        if (inputStream == null) {
+            throw new IllegalArgumentException("입력 스트림은 null일 수 없습니다.");
+        }
+        if (filename == null || filename.trim().isEmpty()) {
+            throw new IllegalArgumentException("파일명은 null이거나 비어있을 수 없습니다.");
+        }
+
         String lowerName = filename.toLowerCase();
         if (lowerName.endsWith(".csv")) {
             return parseCsv(inputStream);
@@ -75,9 +84,16 @@ public class FileParsingUtil {
 
     private static MetadataParseResponse parseXlsx(InputStream is) throws IOException {
         var wb = WorkbookFactory.create(is);
-        var sheet = wb.getSheetAt(0);
+        var sheet = wb.getSheetAt(SHEET_INDEX);
         int rowCount = sheet.getPhysicalNumberOfRows();
-        int colCount = sheet.getRow(0).getPhysicalNumberOfCells();
+        if (rowCount == 0) {
+            return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
+        }
+        var firstRow = sheet.getRow(0);
+        if (firstRow == null) {
+            return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
+        }
+        int colCount = firstRow.getPhysicalNumberOfCells();
 
         List<Map<String, String>> preview = new ArrayList<>();
         for (int i = 1; i <= Math.min(PREVIEW_LIMIT, rowCount - 1); i++) {
@@ -87,7 +103,7 @@ public class FileParsingUtil {
             Map<String, String> map = new LinkedHashMap<>();
             for (int j = 0; j < colCount; j++) {
                 var cell = row.getCell(j);
-                map.put("col" + j, cell != null ? cell.toString() : "");
+                map.put(COL_PREFIX + j, cell != null ? cell.toString() : "");
             }
             preview.add(map);
         }
@@ -108,7 +124,10 @@ public class FileParsingUtil {
         }
 
         int rowCount = node.size();
-        int colCount = node.get(0).size();
+        int colCount = 0;
+        if (rowCount > 0) {
+            colCount = node.get(0).size();
+        }
 
         List<Map<String, Object>> preview = new ArrayList<>();
         for (int i = 0; i < Math.min(PREVIEW_LIMIT, rowCount); i++) {

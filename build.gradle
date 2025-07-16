@@ -57,6 +57,8 @@ ext {
 	parseUserAgentVersion = '6.3'
 	thumbnailGenerateVersion = '0.4.20'
 	juniversalchardet= '1.0.3'
+	commonsCsvVersion = '1.14.0'
+	apachePoiVersion  = '5.2.3'
 }
 
 dependencies {
@@ -125,11 +127,11 @@ dependencies {
 	implementation "net.coobird:thumbnailator:${thumbnailGenerateVersion}"
 
 	// CSV 파싱
-	implementation 'org.apache.commons:commons-csv:1.10.0'
+	implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
 
 	// 엑셀 파싱
-	implementation 'org.apache.poi:poi:5.2.5'
-	implementation 'org.apache.poi:poi-ooxml:5.2.5'
+	implementation "org.apache.poi:poi:${apachePoiVersion}"
+	implementation "org.apache.poi:poi-ooxml:${apachePoiVersion}"
 
 	implementation "com.googlecode.juniversalchardet:juniversalchardet:${juniversalchardet}"
 

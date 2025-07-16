@@ -26,12 +26,14 @@ public class FileDeleteProducer {
             log.warn("파일 URL이 비어있어 삭제 이벤트를 전송하지 않습니다.");
             return;
         }
-        try {
-            kafkaTemplate.send(fileDeleteTopic, fileUrl);
-            log.debug("파일 삭제 이벤트 전송 완료: {}", fileUrl);
-        } catch (Exception e) {
-            log.error("파일 삭제 이벤트 전송 실패: {}", fileUrl, e);
-            throw e;
-        }
+        kafkaTemplate.send(fileDeleteTopic, fileUrl)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("파일 삭제 이벤트 전송 실패: {}", fileUrl, ex);
+                        // 필요시 재시도 로직 또는 예외 처리
+                    } else {
+                        log.info("파일 삭제 이벤트 전송 완료: {}", fileUrl);
+                    }
+                });
     }
 }

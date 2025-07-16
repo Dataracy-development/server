@@ -17,7 +17,8 @@ public class DataKafkaConsumerAdapter {
 
     @KafkaListener(
             topics = "${spring.kafka.consumer.extract-metadata.topic:data-uploaded}",
-            groupId = "${spring.kafka.consumer.extract-metadata.group-id:metadata-consumer}"
+            groupId = "${spring.kafka.consumer.extract-metadata.group-id:data-upload-metadata-consumer-group}",
+            containerFactory = "dataUploadEventKafkaListenerContainerFactory"
     )
     public void consume(DataUploadEvent event) {
         log.info("[Kafka] 업로드 이벤트 수신됨: {}", event);
