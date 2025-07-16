@@ -54,26 +54,39 @@ spring:
     resources:
       static-locations: classpath:/static/
   kafka:
-    topic:
-      file-delete: file-delete-topic
     properties:
       spring.json.add.type.headers: false
       partitioner.class: org.apache.kafka.clients.producer.internals.DefaultPartitioner
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
       behavior-log:
-        topic: ${KAFKA_PRODUCER_BEHAVIOR_LOG_TOPIC}
-        partitions: 3
+        topic: behavior-logs
+      file-delete:
+        topic: file-delete-topic
+      extract-metadata:
+        topic: data-uploaded
+
     consumer:
-      group-id: dataracy-log-consumer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: earliest
-      behavior-log:
-        topic: ${KAFKA_CONSUMER_BEHAVIOR_LOG_TOPIC}
-        group-id: ${KAFKA_CONSUMER_BEHAVIOR_LOG_GROUP_ID}
+      group-id: dataracy-default-consumer
+
       properties:
         fetch.max.bytes: 5242880         # 5MB
         max.poll.records: 500            # 한 번에 가져올 레코드 수
+
+      behavior-log:
+        topic: behavior-logs
+        group-id: behavior-log-consumer-group
+      file-delete:
+        topic: file-delete-topic
+        group-id: file-delete-consumer-group
+      extract-metadata:
+        topic: data-uploaded
+        group-id: data-upload-metadata-consumer-group
 
 logging:
   pattern:
@@ -122,3 +135,4 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket: ${AWS_S3_BUCKET_NAME}
+

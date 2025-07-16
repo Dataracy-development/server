@@ -1,4 +1,4 @@
-package com.dataracy.modules.behaviorlog.adapter.message.kafka;
+package com.dataracy.modules.behaviorlog.adapter.kafka.producer;
 
 import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
 import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;

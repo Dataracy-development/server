@@ -1,4 +1,4 @@
-package com.dataracy.modules.filestorage.adapter.message.consumer;
+package com.dataracy.modules.filestorage.adapter.kafka.consumer;
 
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +14,17 @@ public class FileDeleteConsumer {
     private final FileStoragePort fileStoragePort;
 
     /**
-     * Kafka에서 전달된 파일 URL을 받아 해당 파일을 삭제합니다.
+     * Kafka 메시지로 전달된 파일 URL을 받아 해당 파일을 삭제합니다.
      *
      * @param fileUrl 삭제할 파일의 URL
+     *                (Kafka 토픽에서 수신)
+     * 
+     * 파일 삭제에 실패할 경우 예외를 처리하고, 메시지는 Dead Letter Queue(DLQ)로 이동됩니다.
      */
-    @KafkaListener(topics = "file-delete-topic", groupId = "file-delete-consumer")
+    @KafkaListener(
+            topics = "${spring.kafka.consumer.file-delete.topic:file-delete-topic}",
+            groupId = "${spring.kafka.consumer.file-delete.group-id:file-delete-consumer-group}"
+    )
     public void consume(String fileUrl) {
         try {
             fileStoragePort.delete(fileUrl);
