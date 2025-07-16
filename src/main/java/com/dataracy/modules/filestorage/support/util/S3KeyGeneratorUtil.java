@@ -37,6 +37,9 @@ public final class S3KeyGeneratorUtil {
      * @return 생성된 썸네일 S3 키 문자열
      */
     public static String generateThumbnailKey(String domain, Long entityId, String originalFilename) {
+        if (domain == null || entityId == null || originalFilename == null) {
+            throw new IllegalArgumentException("파라미터는 null일 수 없습니다");
+        }
         String extension = getExtension(originalFilename);
         String uuid = UUID.randomUUID().toString();
         return String.format("%s/%d/thumb/%s.%s", domain, entityId, uuid, extension);

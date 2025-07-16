@@ -83,9 +83,6 @@ public class FileParsingUtil {
     }
 
     private static MetadataParseResponse parseXlsx(InputStream is) throws IOException {
-//        var wb = WorkbookFactory.create(is);
-//        var sheet = wb.getSheetAt(SHEET_INDEX);
-
         try (var wb = WorkbookFactory.create(is)) {
             var sheet = wb.getSheetAt(SHEET_INDEX);
             // ... 기존 로직 ...
@@ -104,10 +101,19 @@ public class FileParsingUtil {
                 var row = sheet.getRow(i);
                 if (row == null) continue; // null row 방어
 
+                // 헤더 행 처리 추가
+                List<String> headers = new ArrayList<>();
+                for (int j = 0; j < colCount; j++) {
+                    var headerCell = firstRow.getCell(j);
+                    String headerValue = headerCell != null ? headerCell.toString() : COL_PREFIX + j;
+                    headers.add(headerValue);
+                }
+
+                // 데이터 행 처리 시 헤더 사용
                 Map<String, String> map = new LinkedHashMap<>();
                 for (int j = 0; j < colCount; j++) {
                     var cell = row.getCell(j);
-                    map.put(COL_PREFIX + j, cell != null ? cell.toString() : "");
+                    map.put(headers.get(j), cell != null ? cell.toString() : "");
                 }
                 preview.add(map);
             }
