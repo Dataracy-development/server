@@ -40,4 +40,9 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
         return dataSourceJpaRepository.findById(dataSourceId)
                 .map(DataSourceEntityMapper::toDomain);
     }
+
+    @Override
+    public Boolean existsDataSourceById(Long dataSourceId) {
+        return dataSourceJpaRepository.existsById(dataSourceId);
+    }
 }

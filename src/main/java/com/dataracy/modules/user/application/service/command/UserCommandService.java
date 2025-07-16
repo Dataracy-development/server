@@ -7,7 +7,7 @@ import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.FindOccupationUseCase;
-import com.dataracy.modules.reference.application.port.in.topic.IsExistTopicUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import com.dataracy.modules.reference.application.port.in.visitsource.FindVisitSourceUseCase;
 import com.dataracy.modules.user.application.dto.request.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
@@ -42,7 +42,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     private final JwtGenerateUseCase jwtGenerateUseCase;
     private final JwtValidateUseCase jwtValidateUseCase;
 
-    private final IsExistTopicUseCase isExistTopicUseCase;
+    private final ValidateTopicUseCase validateTopicUseCase;
     private final FindAuthorLevelUseCase findAuthorLevelUseCase;
     private final FindOccupationUseCase findOccupationUseCase;
     private final FindVisitSourceUseCase findVisitSourceUseCase;
@@ -87,7 +87,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         if (requestDto.topicIds() != null) {
             requestDto.topicIds()
-                    .forEach(isExistTopicUseCase::validateTopicById);
+                    .forEach(validateTopicUseCase::validateTopic);
         }
 
         // 직업 id를 통해 직업 조회 및 유효성 검사
@@ -169,7 +169,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         if (requestDto.topicIds() != null) {
             requestDto.topicIds()
-                    .forEach(isExistTopicUseCase::validateTopicById);
+                    .forEach(validateTopicUseCase::validateTopic);
         }
 
         // 직업 id를 통해 직업 조회 및 유효성 검사

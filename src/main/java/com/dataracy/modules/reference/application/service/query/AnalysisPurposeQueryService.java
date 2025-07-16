@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.Analys
 import com.dataracy.modules.reference.application.mapper.AnalysisPurposeDtoMapper;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.FindAllAnalysisPurposesUseCase;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.FindAnalysisPurposeUseCase;
+import com.dataracy.modules.reference.application.port.in.analysispurpose.ValidateAnalysisPurposeUseCase;
 import com.dataracy.modules.reference.application.port.out.AnalysisPurposeRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
@@ -21,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnalysisPurposeQueryService implements
         FindAllAnalysisPurposesUseCase,
-        FindAnalysisPurposeUseCase
+        FindAnalysisPurposeUseCase,
+        ValidateAnalysisPurposeUseCase
 {
     private final AnalysisPurposeDtoMapper analysisPurposeDtoMapper;
     private final AnalysisPurposeRepositoryPort analysisPurposeRepositoryPort;
@@ -52,5 +54,14 @@ public class AnalysisPurposeQueryService implements
         AnalysisPurpose analysisPurpose = analysisPurposeRepositoryPort.findAnalysisPurposeById(analysisPurposeId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE));
         return analysisPurposeDtoMapper.toResponseDto(analysisPurpose);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateAnalysisPurpose(Long analysisPurposeId) {
+        Boolean isExist = analysisPurposeRepositoryPort.existsAnalysisPurposeById(analysisPurposeId);
+        if (!isExist) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
+        }
     }
 }

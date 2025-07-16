@@ -39,4 +39,9 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
         return occupationJpaRepository.findById(occupationId)
                 .map(OccupationEntityMapper::toDomain);
     }
+
+    @Override
+    public Boolean existsOccupationById(Long occupationId) {
+        return occupationJpaRepository.existsById(occupationId);
+    }
 }

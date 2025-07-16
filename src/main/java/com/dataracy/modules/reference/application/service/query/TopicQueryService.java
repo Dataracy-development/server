@@ -1,9 +1,11 @@
 package com.dataracy.modules.reference.application.service.query;
 
 import com.dataracy.modules.reference.application.dto.response.allview.AllTopicsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.TopicResponse;
 import com.dataracy.modules.reference.application.mapper.TopicDtoMapper;
 import com.dataracy.modules.reference.application.port.in.topic.FindAllTopicsUseCase;
-import com.dataracy.modules.reference.application.port.in.topic.IsExistTopicUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.FindTopicUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import com.dataracy.modules.reference.application.port.out.TopicRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.Topic;
@@ -18,7 +20,11 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TopicQueryService implements FindAllTopicsUseCase, IsExistTopicUseCase {
+public class TopicQueryService implements
+        FindAllTopicsUseCase,
+        FindTopicUseCase,
+        ValidateTopicUseCase
+{
     private final TopicDtoMapper topicDtoMapper;
     private final TopicRepositoryPort topicRepositoryPort;
 
@@ -33,6 +39,14 @@ public class TopicQueryService implements FindAllTopicsUseCase, IsExistTopicUseC
         return topicDtoMapper.toResponseDto(topics);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public TopicResponse findTopic(Long topicId) {
+        Topic topic = topicRepositoryPort.findTopicById(topicId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME));
+        return topicDtoMapper.toResponseDto(topic);
+    }
+
     /**
      * 주어진 토픽 ID에 해당하는 토픽의 존재 여부를 검증합니다.
      *
@@ -42,7 +56,7 @@ public class TopicQueryService implements FindAllTopicsUseCase, IsExistTopicUseC
      */
     @Override
     @Transactional(readOnly = true)
-    public void validateTopicById(Long topicId) {
+    public void validateTopic(Long topicId) {
         Boolean isExist = topicRepositoryPort.existsTopicById(topicId);
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);

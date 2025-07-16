@@ -23,4 +23,6 @@ public interface DataTypeRepositoryPort {
  * @return 해당 ID의 DataType가 존재하면 Optional에 담아 반환하며, 없으면 빈 Optional을 반환합니다.
  */
     Optional<DataType> findDataTypeById(Long dataTypeId);
+
+    Boolean existsDataTypeById(Long dataTypeId);
 }

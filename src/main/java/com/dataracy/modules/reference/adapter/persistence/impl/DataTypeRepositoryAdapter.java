@@ -40,4 +40,9 @@ public class DataTypeRepositoryAdapter implements DataTypeRepositoryPort {
         return dataTypeJpaRepository.findById(dataTypeId)
                 .map(DataTypeEntityMapper::toDomain);
     }
+
+    @Override
+    public Boolean existsDataTypeById(Long dataTypeId) {
+        return dataTypeJpaRepository.existsById(dataTypeId);
+    }
 }

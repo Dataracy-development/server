@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.Author
 import com.dataracy.modules.reference.application.mapper.AuthorLevelDtoMapper;
 import com.dataracy.modules.reference.application.port.in.authorlevel.FindAllAuthorLevelsUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
@@ -21,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthorLevelQueryService implements
         FindAllAuthorLevelsUseCase,
-        FindAuthorLevelUseCase
+        FindAuthorLevelUseCase,
+        ValidateAuthorLevelUseCase
 {
     private final AuthorLevelDtoMapper authorLevelDtoMapper;
     private final AuthorLevelRepositoryPort authorLevelRepositoryPort;
@@ -51,5 +53,14 @@ public class AuthorLevelQueryService implements
         AuthorLevel authorLevel = authorLevelRepositoryPort.findAuthorLevelById(authorLevelId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL));
         return authorLevelDtoMapper.toResponseDto(authorLevel);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateAuthorLevel(Long authorLevelId) {
+        Boolean isExist = authorLevelRepositoryPort.existsAuthorLevelById(authorLevelId);
+        if (!isExist) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);
+        }
     }
 }

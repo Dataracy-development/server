@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,6 +26,12 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
         return topicEntities.stream()
                 .map(TopicEntityMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Optional<Topic> findTopicById(Long topicId) {
+        return topicJpaRepository.findById(topicId)
+                .map(TopicEntityMapper::toDomain);
     }
 
     /**

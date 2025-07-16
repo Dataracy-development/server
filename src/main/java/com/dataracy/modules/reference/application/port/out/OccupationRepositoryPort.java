@@ -1,7 +1,6 @@
 package com.dataracy.modules.reference.application.port.out;
 
 import com.dataracy.modules.reference.domain.model.Occupation;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +23,6 @@ public interface OccupationRepositoryPort {
  * @return 해당 ID의 직업이 존재하면 Occupation을 포함한 Optional, 존재하지 않으면 빈 Optional
  */
     Optional<Occupation> findOccupationById(Long occupationId);
+
+    Boolean existsOccupationById(Long occupationId);
 }

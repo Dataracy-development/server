@@ -40,4 +40,9 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
         return analysisPurposeJpaRepository.findById(analysisPurposeId)
                 .map(AnalysisPurposeEntityMapper::toDomain);
     }
+
+    @Override
+    public Boolean existsAnalysisPurposeById(Long analysisPurposeId) {
+        return analysisPurposeJpaRepository.existsById(analysisPurposeId);
+    }
 }

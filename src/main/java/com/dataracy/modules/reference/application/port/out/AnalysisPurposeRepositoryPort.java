@@ -1,7 +1,6 @@
 package com.dataracy.modules.reference.application.port.out;
 
 import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +23,6 @@ public interface AnalysisPurposeRepositoryPort {
  * @return 해당 ID의 AnalysisPurpose가 존재하면 Optional에 담아 반환하며, 없으면 빈 Optional을 반환합니다.
  */
     Optional<AnalysisPurpose> findAnalysisPurposeById(Long analysisPurposeId);
+
+    Boolean existsAnalysisPurposeById(Long analysisPurposeId);
 }

@@ -39,4 +39,9 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
         return visitSourceJpaRepository.findById(visitSourceId)
                 .map(VisitSourceEntityMapper::toDomain);
     }
+
+    @Override
+    public Boolean existsVisitSourceById(Long visitSourceId) {
+        return visitSourceJpaRepository.existsById(visitSourceId);
+    }
 }
