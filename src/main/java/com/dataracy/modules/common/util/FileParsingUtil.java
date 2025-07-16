@@ -62,19 +62,22 @@ public class FileParsingUtil {
      * @throws IOException 스트림 읽기 또는 파싱 중 오류가 발생한 경우
      */
     private static MetadataParseResponse parseCsv(InputStream originalInputStream) throws IOException {
-        // InputStream 복사: 두 번 읽기 위함
-        byte[] data = originalInputStream.readAllBytes();
-        InputStream encodingStream = new ByteArrayInputStream(data);
-        InputStream parseStream = new ByteArrayInputStream(data);
+        // BufferedInputStream으로 wrap하여 mark/reset 지원
+        if (!originalInputStream.markSupported()) {
+            originalInputStream = new BufferedInputStream(originalInputStream);
+        }
 
-        Charset charset = detectEncoding(encodingStream);
+        // 인코딩 감지를 위한 mark 설정
+        originalInputStream.mark(8192);
+        Charset charset = detectEncoding(originalInputStream);
+        originalInputStream.reset();
 
         CSVFormat format = CSVFormat.Builder.create()
                 .setHeader()
                 .setSkipHeaderRecord(true)
                 .build();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(parseStream, charset));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(originalInputStream, charset));
              CSVParser parser = format.parse(reader)) {
 
             List<Map<String, String>> preview = new ArrayList<>();
