@@ -18,7 +18,10 @@ public class FileDeleteConsumer {
      *
      * @param fileUrl 삭제할 파일의 URL
      */
-    @KafkaListener(topics = "file-delete-topic", groupId = "file-delete-consumer")
+    @KafkaListener(
+            topics = "${spring.kafka.consumer.file-delete.topic:file-delete-topic}",
+            groupId = "${spring.kafka.consumer.file-delete.group-id:file-delete-consumer}"
+    )
     public void consume(String fileUrl) {
         try {
             fileStoragePort.delete(fileUrl);
