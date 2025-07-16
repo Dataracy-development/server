@@ -62,7 +62,7 @@ public class DataCommandService implements DataUploadUseCase {
         // 데이터셋 파일 업로드 시도
         if (dataFile != null && !dataFile.isEmpty()) {
             try {
-                String key = S3KeyGeneratorUtil.generateThumbnailKey("data", saveData.getId(), thumbnailFile.getOriginalFilename());
+                String key = S3KeyGeneratorUtil.generateKey("data", saveData.getId(), dataFile.getOriginalFilename());
                 String dataFileUrl = fileUploadUseCase.uploadFile(key, dataFile);
                 log.info("데이터셋 파일 업로드 성공 - url={}", dataFileUrl);
 
@@ -76,7 +76,7 @@ public class DataCommandService implements DataUploadUseCase {
         // 썸네일 파일 업로드 시도
         if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
             try {
-                String key = S3KeyGeneratorUtil.generateKey("data", saveData.getId(), thumbnailFile.getOriginalFilename());
+                String key = S3KeyGeneratorUtil.generateThumbnailKey("data", saveData.getId(), thumbnailFile.getOriginalFilename());
                 String thumbnailFileUrl = fileUploadUseCase.uploadFile(key, thumbnailFile);
                 log.info("썸네일 파일 업로드 성공 - url={}", thumbnailFileUrl);
 
