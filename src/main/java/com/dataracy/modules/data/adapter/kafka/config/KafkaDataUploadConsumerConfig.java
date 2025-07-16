@@ -20,6 +20,14 @@ public class KafkaDataUploadConsumerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
+    /**
+     * DataUploadEvent 메시지를 처리하기 위한 Kafka ConsumerFactory 빈을 생성합니다.
+     *
+     * Kafka bootstrap 서버, consumer group ID, key/value deserializer 등 필요한 설정을 적용하여
+     * DataUploadEvent 객체를 안전하게 역직렬화할 수 있도록 구성된 ConsumerFactory를 반환합니다.
+     *
+     * @return DataUploadEvent 메시지 소비를 위한 ConsumerFactory 인스턴스
+     */
     @Bean
     public ConsumerFactory<String, DataUploadEvent> dataUploadConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
@@ -38,6 +46,11 @@ public class KafkaDataUploadConsumerConfig {
         );
     }
 
+    /**
+     * Kafka 리스너에서 DataUploadEvent 메시지를 병렬로 처리할 수 있도록 설정된 KafkaListenerContainerFactory 빈을 생성합니다.
+     *
+     * @return DataUploadEvent 메시지 처리를 위한 ConcurrentKafkaListenerContainerFactory 인스턴스
+     */
     @Bean(name = "dataUploadEventKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, DataUploadEvent> dataUploadEventKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, DataUploadEvent> factory =

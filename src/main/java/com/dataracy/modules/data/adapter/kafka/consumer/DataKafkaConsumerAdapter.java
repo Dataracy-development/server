@@ -15,6 +15,11 @@ public class DataKafkaConsumerAdapter {
 
     private final MetadataParseUseCase metadataParseUseCase;
 
+    /**
+     * Kafka에서 데이터 업로드 이벤트를 수신하여 메타데이터 파싱 및 저장을 트리거합니다.
+     *
+     * @param event 수신된 데이터 업로드 이벤트 객체
+     */
     @KafkaListener(
             topics = "${spring.kafka.consumer.extract-metadata.topic:data-uploaded}",
             groupId = "${spring.kafka.consumer.extract-metadata.group-id:data-upload-metadata-consumer-group}",
