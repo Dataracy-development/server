@@ -14,6 +14,7 @@ public enum ReferenceErrorStatus implements BaseErrorCode {
     NOT_FOUND_VISIT_SOURCE(HttpStatus.NOT_FOUND, "REFERENCE-004", "해당 방문 경로가 존재하지 않습니다."),
     NOT_FOUND_ANALYSIS_PURPOSE(HttpStatus.NOT_FOUND, "REFERENCE-005", "해당 분석 목적이 존재하지 않습니다."),
     NOT_FOUND_DATA_SOURCE(HttpStatus.NOT_FOUND, "REFERENCE-006", "해당 데이터 출처가 존재하지 않습니다."),
+    NOT_FOUND_DATA_TYPE(HttpStatus.NOT_FOUND, "REFERENCE-007", "해당 데이터 유형이 존재하지 않습니다."),
     ;
 
     private final HttpStatus httpStatus;
