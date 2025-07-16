@@ -2,6 +2,7 @@ package com.dataracy.modules.data.adapter.kafka.provider;
 
 import com.dataracy.modules.data.application.port.out.DataKafkaProducerPort;
 import com.dataracy.modules.data.domain.model.event.DataUploadEvent;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,5 +24,12 @@ public class DataKafkaProducerAdapter implements DataKafkaProducerPort {
         DataUploadEvent event = new DataUploadEvent(dataId, fileUrl, originalFilename);
         kafkaTemplate.send(topic, String.valueOf(dataId), event);
         log.info("[Kafka] 데이터 업로드 이벤트 발송: {}", event);
+    }
+
+    @PostConstruct
+    public void validateTopic() {
+        if (topic.isBlank()) {
+            throw new IllegalStateException("Kafka topic이 올바르게 설정되지 않았습니다.");
+        }
     }
 }

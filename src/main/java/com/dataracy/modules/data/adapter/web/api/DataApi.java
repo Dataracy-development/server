@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -38,7 +39,7 @@ public interface DataApi {
 
             @RequestPart(value = "dataFile") MultipartFile dataFile,
             @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
-            @RequestPart
+            @RequestPart @Validated
             DataUploadWebRequest webRequest
     );
 }
