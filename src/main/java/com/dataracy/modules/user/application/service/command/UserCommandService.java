@@ -5,10 +5,10 @@ import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.common.support.lock.DistributedLock;
-import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
-import com.dataracy.modules.reference.application.port.in.occupation.FindOccupationUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.ValidateOccupationUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
-import com.dataracy.modules.reference.application.port.in.visitsource.FindVisitSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.visitsource.ValidateVisitSourceUseCase;
 import com.dataracy.modules.user.application.dto.request.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
@@ -43,9 +43,9 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     private final JwtValidateUseCase jwtValidateUseCase;
 
     private final ValidateTopicUseCase validateTopicUseCase;
-    private final FindAuthorLevelUseCase findAuthorLevelUseCase;
-    private final FindOccupationUseCase findOccupationUseCase;
-    private final FindVisitSourceUseCase findVisitSourceUseCase;
+    private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
+    private final ValidateOccupationUseCase validateOccupationUseCase;
+    private final ValidateVisitSourceUseCase validateVisitSourceUseCase;
 
     private final TokenRedisUseCase tokenRedisUseCase;
 
@@ -79,25 +79,16 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         String encodedPassword = passwordEncoder.encode(requestDto.password());
         String providerId = UUID.randomUUID().toString();
 
-        // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
-        Long authorLevelId = requestDto.authorLevelId() == null
-                ? null
-                : findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId()).id();
+        // 유효성 검사
+        validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
+        validateOccupationUseCase.validateOccupation(requestDto.occupationId());
+        validateVisitSourceUseCase.validateVisitSource(requestDto.visitSourceId());
 
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         if (requestDto.topicIds() != null) {
             requestDto.topicIds()
                     .forEach(validateTopicUseCase::validateTopic);
         }
-
-        // 직업 id를 통해 직업 조회 및 유효성 검사
-        Long occupationId = requestDto.occupationId() == null
-                ? null
-                : findOccupationUseCase.findOccupation(requestDto.occupationId()).id();
-        // 방문 경로 id를 통해 방문 경로 조회 및 유효성 검사
-        Long visitSourceId = requestDto.visitSourceId() == null
-                ? null
-                : findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId()).id();
 
         // 유저 도메인 모델 생성 및 db 저장
         User user = User.toDomain(
@@ -108,10 +99,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 requestDto.email(),
                 encodedPassword,
                 requestDto.nickname(),
-                authorLevelId,
-                occupationId,
+                requestDto.authorLevelId(),
+                requestDto.occupationId(),
                 requestDto.topicIds(),
-                visitSourceId,
+                requestDto.visitSourceId(),
                 requestDto.isAdTermsAgreed(),
                 false
         );
@@ -161,25 +152,16 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 닉네임 중복 체크
         userValidationService.validateDuplicatedNickname(requestDto.nickname());
 
-        // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
-        Long authorLevelId = requestDto.authorLevelId() == null
-                ? null
-                : findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId()).id();
+        // 유효성 검사
+        validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
+        validateOccupationUseCase.validateOccupation(requestDto.occupationId());
+        validateVisitSourceUseCase.validateVisitSource(requestDto.visitSourceId());
 
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         if (requestDto.topicIds() != null) {
             requestDto.topicIds()
                     .forEach(validateTopicUseCase::validateTopic);
         }
-
-        // 직업 id를 통해 직업 조회 및 유효성 검사
-        Long occupationId = requestDto.occupationId() == null
-                ? null
-                : findOccupationUseCase.findOccupation(requestDto.occupationId()).id();
-        // 방문 경로 id를 통해 방문 경로 조회 및 유효성 검사
-        Long visitSourceId = requestDto.visitSourceId() == null
-                ? null
-                : findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId()).id();
 
         // 유저 도메인 모델 생성 및 db 저장
         User user = User.toDomain(
@@ -190,10 +172,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 email,
                 null,
                 requestDto.nickname(),
-                authorLevelId,
-                occupationId,
+                requestDto.authorLevelId(),
+                requestDto.occupationId(),
                 requestDto.topicIds(),
-                visitSourceId,
+                requestDto.visitSourceId(),
                 requestDto.isAdTermsAgreed(),
                 false
         );
