@@ -79,10 +79,16 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         String encodedPassword = passwordEncoder.encode(requestDto.password());
         String providerId = UUID.randomUUID().toString();
 
-        // 유효성 검사
+        // 작성자 유형 유효성 검사(필수 컬럼)
         validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
-        validateOccupationUseCase.validateOccupation(requestDto.occupationId());
-        validateVisitSourceUseCase.validateVisitSource(requestDto.visitSourceId());
+        // 직업 유효성 검사(선택 컬럼)
+        if (requestDto.occupationId() != null) {
+            validateOccupationUseCase.validateOccupation(requestDto.occupationId());
+        }
+        // 방문 경로 유효성 검사(선택 컬럼)
+        if (requestDto.visitSourceId() != null) {
+            validateVisitSourceUseCase.validateVisitSource(requestDto.visitSourceId());
+        }
 
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         if (requestDto.topicIds() != null) {
@@ -152,10 +158,16 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 닉네임 중복 체크
         userValidationService.validateDuplicatedNickname(requestDto.nickname());
 
-        // 유효성 검사
+        // 작성자 유형 유효성 검사(필수 컬럼)
         validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
-        validateOccupationUseCase.validateOccupation(requestDto.occupationId());
-        validateVisitSourceUseCase.validateVisitSource(requestDto.visitSourceId());
+        // 직업 유효성 검사(선택 컬럼)
+        if (requestDto.occupationId() != null) {
+            validateOccupationUseCase.validateOccupation(requestDto.occupationId());
+        }
+        // 방문 경로 유효성 검사(선택 컬럼)
+        if (requestDto.visitSourceId() != null) {
+            validateVisitSourceUseCase.validateVisitSource(requestDto.visitSourceId());
+        }
 
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         if (requestDto.topicIds() != null) {
