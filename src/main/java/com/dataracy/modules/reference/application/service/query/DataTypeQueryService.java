@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.DataTy
 import com.dataracy.modules.reference.application.mapper.DataTypeDtoMapper;
 import com.dataracy.modules.reference.application.port.in.datatype.FindAllDataTypesUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.FindDataTypeUseCase;
+import com.dataracy.modules.reference.application.port.in.datatype.ValidateDataTypeUseCase;
 import com.dataracy.modules.reference.application.port.out.DataTypeRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.DataType;
@@ -21,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DataTypeQueryService implements
         FindAllDataTypesUseCase,
-        FindDataTypeUseCase
+        FindDataTypeUseCase,
+        ValidateDataTypeUseCase
 {
     private final DataTypeDtoMapper dataTypeDtoMapper;
     private final DataTypeRepositoryPort dataTypeRepositoryPort;
@@ -51,5 +53,14 @@ public class DataTypeQueryService implements
         DataType dataType = dataTypeRepositoryPort.findDataTypeById(dataTypeId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_TYPE));
         return dataTypeDtoMapper.toResponseDto(dataType);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateDataType(Long dataTypeId) {
+        Boolean isExist = dataTypeRepositoryPort.existsDataTypeById(dataTypeId);
+        if (!isExist) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_TYPE);
+        }
     }
 }

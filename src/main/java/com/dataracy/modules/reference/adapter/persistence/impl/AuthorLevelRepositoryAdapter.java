@@ -39,4 +39,9 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
         return authorLevelJpaRepository.findById(authorLevelId)
                 .map(AuthorLevelEntityMapper::toDomain);
     }
+
+    @Override
+    public Boolean existsAuthorLevelById(Long authorLevelId) {
+        return authorLevelJpaRepository.existsById(authorLevelId);
+    }
 }

@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.Occupa
 import com.dataracy.modules.reference.application.mapper.OccupationDtoMapper;
 import com.dataracy.modules.reference.application.port.in.occupation.FindAllOccupationsUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.FindOccupationUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.ValidateOccupationUseCase;
 import com.dataracy.modules.reference.application.port.out.OccupationRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.Occupation;
@@ -21,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OccupationQueryService implements
         FindAllOccupationsUseCase,
-        FindOccupationUseCase
+        FindOccupationUseCase,
+        ValidateOccupationUseCase
 {
     private final OccupationDtoMapper occupationDtoMapper;
     private final OccupationRepositoryPort occupationRepositoryPort;
@@ -51,5 +53,14 @@ public class OccupationQueryService implements
         Occupation occupation = occupationRepositoryPort.findOccupationById(occupationId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION));
         return occupationDtoMapper.toResponseDto(occupation);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateOccupation(Long occupationId) {
+        Boolean isExist = occupationRepositoryPort.existsOccupationById(occupationId);
+        if (!isExist) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION);
+        }
     }
 }

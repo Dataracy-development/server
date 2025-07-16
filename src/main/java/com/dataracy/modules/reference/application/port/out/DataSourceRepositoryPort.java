@@ -1,7 +1,6 @@
 package com.dataracy.modules.reference.application.port.out;
 
 import com.dataracy.modules.reference.domain.model.DataSource;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +23,6 @@ public interface DataSourceRepositoryPort {
  * @return 해당 ID의 DataSource가 존재하면 Optional에 담아 반환하며, 없으면 빈 Optional을 반환합니다.
  */
     Optional<DataSource> findDataSourceById(Long dataSourceId);
+
+    Boolean existsDataSourceById(Long dataSourceId);
 }

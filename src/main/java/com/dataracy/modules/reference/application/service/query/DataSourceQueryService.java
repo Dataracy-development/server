@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.DataSo
 import com.dataracy.modules.reference.application.mapper.DataSourceDtoMapper;
 import com.dataracy.modules.reference.application.port.in.datasource.FindAllDataSourcesUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.FindDataSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
 import com.dataracy.modules.reference.application.port.out.DataSourceRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.DataSource;
@@ -21,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DataSourceQueryService implements
         FindAllDataSourcesUseCase,
-        FindDataSourceUseCase
+        FindDataSourceUseCase,
+        ValidateDataSourceUseCase
 {
     private final DataSourceDtoMapper dataSourceDtoMapper;
     private final DataSourceRepositoryPort dataSourceRepositoryPort;
@@ -51,5 +53,14 @@ public class DataSourceQueryService implements
         DataSource dataSource = dataSourceRepositoryPort.findDataSourceById(dataSourceId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE));
         return dataSourceDtoMapper.toResponseDto(dataSource);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateDataSource(Long dataSourceId) {
+        Boolean isExist = dataSourceRepositoryPort.existsDataSourceById(dataSourceId);
+        if (!isExist) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE);
+        }
     }
 }

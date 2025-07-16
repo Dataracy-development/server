@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.VisitS
 import com.dataracy.modules.reference.application.mapper.VisitSourceDtoMapper;
 import com.dataracy.modules.reference.application.port.in.visitsource.FindAllVisitSourcesUseCase;
 import com.dataracy.modules.reference.application.port.in.visitsource.FindVisitSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.visitsource.ValidateVisitSourceUseCase;
 import com.dataracy.modules.reference.application.port.out.VisitSourceRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.VisitSource;
@@ -21,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VisitSourceQueryService implements
         FindAllVisitSourcesUseCase,
-        FindVisitSourceUseCase
+        FindVisitSourceUseCase,
+        ValidateVisitSourceUseCase
 {
     private final VisitSourceDtoMapper visitSourceDtoMapper;
     private final VisitSourceRepositoryPort visitSourceRepositoryPort;
@@ -53,5 +55,14 @@ public class VisitSourceQueryService implements
         VisitSource visitSource = visitSourceRepositoryPort.findVisitSourceById(visitSourceId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE));
         return visitSourceDtoMapper.toResponseDto(visitSource);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateVisitSource(Long visitSourceId) {
+        Boolean isExist = visitSourceRepositoryPort.existsVisitSourceById(visitSourceId);
+        if (!isExist) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE);
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.dataracy.modules.reference.application.port.out;
 
 import com.dataracy.modules.reference.domain.model.VisitSource;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +23,6 @@ public interface VisitSourceRepositoryPort {
  * @return 해당 ID에 해당하는 VisitSource가 존재하면 Optional로 반환하며, 없으면 빈 Optional을 반환합니다.
  */
     Optional<VisitSource> findVisitSourceById(Long visitSourceId);
+
+    Boolean existsVisitSourceById(Long visitSourceId);
 }
