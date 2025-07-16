@@ -7,10 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.mozilla.universalchardet.UniversalDetector;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -33,14 +33,22 @@ public class FileParsingUtil {
         throw new IllegalArgumentException("지원하지 않는 파일 형식: " + filename);
     }
 
-    private static MetadataParseResponse parseCsv(InputStream is) throws IOException {
+    private static MetadataParseResponse parseCsv(InputStream originalInputStream) throws IOException {
+        // InputStream 복사: 두 번 읽기 위함
+        byte[] data = originalInputStream.readAllBytes();
+        InputStream encodingStream = new ByteArrayInputStream(data);
+        InputStream parseStream = new ByteArrayInputStream(data);
+
+        Charset charset = detectEncoding(encodingStream);
+
         CSVFormat format = CSVFormat.Builder.create()
                 .setHeader()
                 .setSkipHeaderRecord(true)
                 .build();
 
-        // 인코딩 명시 (UTF-8)
-        try (CSVParser parser = format.parse(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(parseStream, charset));
+             CSVParser parser = format.parse(reader)) {
+
             List<Map<String, String>> preview = new ArrayList<>();
             int rowCount = 0;
             int colCount = parser.getHeaderMap().size();
@@ -64,7 +72,6 @@ public class FileParsingUtil {
             );
         }
     }
-
 
     private static MetadataParseResponse parseXlsx(InputStream is) throws IOException {
         var wb = WorkbookFactory.create(is);
@@ -123,7 +130,32 @@ public class FileParsingUtil {
         return new ObjectMapper().writeValueAsString(obj);
     }
 
-    private static int score(int rowCount) {
-        return Math.min(100, rowCount / 10); // 10줄 당 1점
+    /**
+     * 파일 인코딩을 자동 감지하여 Charset을 반환합니다.
+     *
+     * @param is 인코딩을 감지할 InputStream (주의: markSupported)
+     * @return 감지된 Charset 또는 기본 UTF-8
+     */
+    public static Charset detectEncoding(InputStream is) throws IOException {
+        // mark/reset을 위해 InputStream이 지원되어야 함
+        if (!is.markSupported()) {
+            is = new BufferedInputStream(is);
+        }
+
+        is.mark(4096);
+
+        byte[] buf = new byte[4096];
+        UniversalDetector detector = new UniversalDetector(null);
+
+        int read;
+        while ((read = is.read(buf)) > 0 && !detector.isDone()) {
+            detector.handleData(buf, 0, read);
+        }
+        detector.dataEnd();
+
+        String encoding = detector.getDetectedCharset();
+        is.reset(); // 다시 원위치로 되돌림
+
+        return encoding != null ? Charset.forName(encoding) : StandardCharsets.UTF_8;
     }
 }
