@@ -22,7 +22,6 @@ public class DataKafkaProducerAdapter implements DataKafkaProducerPort {
     @Override
     public void sendUploadEvent(Long dataId, String fileUrl, String originalFilename) {
         DataUploadEvent event = new DataUploadEvent(dataId, fileUrl, originalFilename);
-        kafkaTemplate.send(topic, String.valueOf(dataId), event);
         log.info("[Kafka] 데이터 업로드 이벤트 발송: {}", event);
         kafkaTemplate.send(topic, String.valueOf(dataId), event)
                 .whenComplete((result, ex) -> {
@@ -30,7 +29,7 @@ public class DataKafkaProducerAdapter implements DataKafkaProducerPort {
                         log.error("[Kafka] 데이터 업로드 이벤트 발송 실패: {}", event, ex);
                         // 필요시 재시도 로직 또는 예외 처리
                     } else {
-                        log.info("[Kafka] 데이터 업로드 이벤트 발송 성공: {}", event);
+                        log.trace("[Kafka] 데이터 업로드 이벤트 발송 성공: {}", event);
                     }
                 });
     }
