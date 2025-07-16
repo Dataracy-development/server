@@ -2,13 +2,11 @@ package com.dataracy.modules.data.adapter.persistence.impl;
 
 import com.dataracy.modules.data.adapter.persistence.entity.DataEntity;
 import com.dataracy.modules.data.adapter.persistence.entity.DataMetadataEntity;
-import com.dataracy.modules.data.adapter.persistence.mapper.DataEntityMapper;
 import com.dataracy.modules.data.adapter.persistence.mapper.DataMetadataEntityMapper;
 import com.dataracy.modules.data.adapter.persistence.repository.DataJpaRepository;
 import com.dataracy.modules.data.adapter.persistence.repository.DataMetadataJpaRepository;
 import com.dataracy.modules.data.application.port.out.DataMetadataRepositoryPort;
 import com.dataracy.modules.data.domain.exception.DataException;
-import com.dataracy.modules.data.domain.model.Data;
 import com.dataracy.modules.data.domain.model.DataMetadata;
 import com.dataracy.modules.data.domain.status.DataErrorStatus;
 import lombok.RequiredArgsConstructor;

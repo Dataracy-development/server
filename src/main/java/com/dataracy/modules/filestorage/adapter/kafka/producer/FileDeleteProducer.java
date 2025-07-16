@@ -13,7 +13,7 @@ public class FileDeleteProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Value("${spring.kafka.topic.file-delete:file-delete-topic}")
+    @Value("${spring.kafka.producer.file-delete.topic:file-delete-topic}")
     private String fileDeleteTopic;
 
     /**

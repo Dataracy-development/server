@@ -15,7 +15,7 @@ public class DataKafkaProducerAdapter implements DataKafkaProducerPort {
 
     private final KafkaTemplate<String, DataUploadEvent> kafkaTemplate;
 
-    @Value("${spring.kafka.topic.extract-metadata:data.uploaded}")
+    @Value("${spring.kafka.producer.extract-metadata.topic:data-uploaded}")
     private String topic;
 
     @Override

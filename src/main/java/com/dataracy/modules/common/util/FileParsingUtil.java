@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,11 +35,12 @@ public class FileParsingUtil {
 
     private static MetadataParseResponse parseCsv(InputStream is) throws IOException {
         CSVFormat format = CSVFormat.Builder.create()
-                .setHeader()               // 첫 줄을 헤더로 인식
-                .setSkipHeaderRecord(true) // 데이터 시작은 두 번째 줄부터
+                .setHeader()
+                .setSkipHeaderRecord(true)
                 .build();
 
-        try (CSVParser parser = format.parse(new InputStreamReader(is))) {
+        // 인코딩 명시 (UTF-8)
+        try (CSVParser parser = format.parse(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             List<Map<String, String>> preview = new ArrayList<>();
             int rowCount = 0;
             int colCount = parser.getHeaderMap().size();
@@ -62,6 +64,7 @@ public class FileParsingUtil {
             );
         }
     }
+
 
     private static MetadataParseResponse parseXlsx(InputStream is) throws IOException {
         var wb = WorkbookFactory.create(is);

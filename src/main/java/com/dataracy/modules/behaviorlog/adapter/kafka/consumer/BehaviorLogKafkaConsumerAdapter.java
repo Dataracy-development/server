@@ -22,9 +22,8 @@ public class BehaviorLogKafkaConsumerAdapter {
      *
      */
     @KafkaListener(
-            topics = "${spring.kafka.consumer.behavior-log.topic}",
-            groupId = "${spring.kafka.consumer.behavior-log.group-id}",
-            containerFactory = "kafkaListenerContainerFactory"
+            topics = "${spring.kafka.consumer.behavior-log.topic:behavior-logs}",
+            groupId = "${spring.kafka.consumer.behavior-log.group-id:dataracy-log-consumer}"
     )
     public void consume(BehaviorLog behaviorLog) {
 

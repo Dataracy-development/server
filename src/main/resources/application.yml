@@ -54,31 +54,41 @@ spring:
     resources:
       static-locations: classpath:/static/
   kafka:
-    topic:
-      file-delete: file-delete-topic
-      extract-metadata: data.uploaded
     properties:
       spring.json.add.type.headers: false
       partitioner.class: org.apache.kafka.clients.producer.internals.DefaultPartitioner
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
       behavior-log:
-        topic: ${KAFKA_PRODUCER_BEHAVIOR_LOG_TOPIC}
-        partitions: 3
+        topic: behavior-logs
+      file-delete:
+        topic: file-delete-topic
+      extract-metadata:
+        topic: data-uploaded
+
     consumer:
-#      auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      group-id: dataracy-log-consumer
       auto-offset-reset: earliest
-      behavior-log:
-        topic: ${KAFKA_CONSUMER_BEHAVIOR_LOG_TOPIC}
-        group-id: ${KAFKA_CONSUMER_BEHAVIOR_LOG_GROUP_ID}
+      group-id: dataracy-default-consumer
+
       properties:
         spring.json.trusted.packages: "com.dataracy.modules.*"
         fetch.max.bytes: 5242880         # 5MB
         max.poll.records: 500            # 한 번에 가져올 레코드 수
+
+      behavior-log:
+        topic: behavior-logs
+        group-id: dataracy-log-consumer
+      file-delete:
+        topic: file-delete-topic
+        group-id: file-delete-consumer
+      extract-metadata:
+        topic: data-uploaded
+        group-id: metadata-consumer
 
 logging:
   pattern:
