@@ -21,11 +21,12 @@ public class FileParsingUtil {
     private static final int PREVIEW_LIMIT = 5;
 
     public static MetadataParseResponse parse(InputStream inputStream, String filename) throws IOException {
-        if (filename.endsWith(".csv")) {
+        String lowerName = filename.toLowerCase();
+        if (lowerName.endsWith(".csv")) {
             return parseCsv(inputStream);
-        } else if (filename.endsWith(".xlsx")) {
+        } else if (lowerName.endsWith(".xlsx")) {
             return parseXlsx(inputStream);
-        } else if (filename.endsWith(".json")) {
+        } else if (lowerName.endsWith(".json")) {
             return parseJson(inputStream);
         }
         throw new IllegalArgumentException("지원하지 않는 파일 형식: " + filename);
