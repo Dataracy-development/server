@@ -29,14 +29,29 @@ public class Data {
     private int recentWeekDownloadCount;
     private DataMetadata metadata;
 
+    /**
+     * 데이터 파일 URL을 갱신합니다.
+     *
+     * @param dataFileUrl 새로 설정할 데이터 파일의 URL
+     */
     public void updateDataFileUrl (String dataFileUrl) {
         this.dataFileUrl = dataFileUrl;
     }
 
+    /**
+     * 데이터의 썸네일 파일 URL을 업데이트합니다.
+     *
+     * @param thumbnailFileUrl 새로 설정할 썸네일 파일의 URL
+     */
     public void updateThumbnailFileUrl (String thumbnailFileUrl) {
         this.thumbnailUrl = thumbnailFileUrl;
     }
 
+    /**
+     * 주어진 모든 필드 값을 사용하여 새로운 Data 도메인 객체를 생성합니다.
+     *
+     * @return 생성된 Data 객체
+     */
     public static Data toDomain(
             Long id,
             String title,

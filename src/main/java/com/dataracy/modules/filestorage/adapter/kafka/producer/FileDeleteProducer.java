@@ -17,9 +17,9 @@ public class FileDeleteProducer {
     private String fileDeleteTopic;
 
     /**
-     * 지정된 파일 URL을 Kafka의 "file-delete-topic" 토픽에 삭제 이벤트 메시지로 전송합니다.
+     * 파일 삭제 이벤트를 지정된 Kafka 토픽에 비동기적으로 전송합니다.
      *
-     * @param fileUrl 삭제할 파일의 URL
+     * @param fileUrl 삭제 대상 파일의 URL. 값이 null이거나 비어 있으면 이벤트를 전송하지 않습니다.
      */
     public void sendDeleteEvent(String fileUrl) {
         if (fileUrl == null || fileUrl.trim().isEmpty()) {

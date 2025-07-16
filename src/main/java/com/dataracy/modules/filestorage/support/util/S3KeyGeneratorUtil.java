@@ -27,13 +27,13 @@ public final class S3KeyGeneratorUtil {
     }
 
     /**
-     * S3에 저장할 썸네일 파일의 키를 생성합니다.
+     * 도메인, 엔티티 ID, 원본 파일명을 기반으로 S3에 저장할 썸네일 파일의 고유 키를 생성합니다.
      *
-     * 도메인, 엔티티 ID, 원본 파일명을 기반으로 `domain/entityId/thumb/uuid.extension` 형식의 S3 키를 반환합니다.
+     * 반환되는 키는 `domain/entityId/thumb/uuid.extension` 형식이며, 파일 확장자는 원본 파일명에서 추출됩니다. 입력값이 null인 경우 예외가 발생합니다.
      *
      * @param domain S3 경로에 포함될 도메인 이름
-     * @param entityId S3 경로에 포함될 엔티티의 ID
-     * @param originalFilename 원본 파일명 (확장자 추출에 사용)
+     * @param entityId S3 경로에 포함될 엔티티 ID
+     * @param originalFilename 확장자 추출에 사용되는 원본 파일명
      * @return 생성된 썸네일 S3 키 문자열
      */
     public static String generateThumbnailKey(String domain, Long entityId, String originalFilename) {

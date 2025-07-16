@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/v1/projects")
 public interface ProjectApi {
 
-    /**
+    /****
      * 프로젝트 정보를 업로드하여 데이터베이스에 저장한다.
      *
      * @param file 프로젝트와 연관된 파일(선택 사항)

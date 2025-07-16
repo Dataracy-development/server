@@ -19,6 +19,13 @@ public class DataKafkaProducerAdapter implements DataKafkaProducerPort {
     @Value("${spring.kafka.producer.extract-metadata.topic:data-uploaded}")
     private String topic;
 
+    /**
+     * 지정된 데이터 ID, 파일 URL, 원본 파일명을 기반으로 데이터 업로드 이벤트를 생성하여 Kafka 토픽에 비동기적으로 발송합니다.
+     *
+     * @param dataId 업로드된 데이터의 고유 식별자
+     * @param fileUrl 업로드된 파일의 저장 위치 URL
+     * @param originalFilename 업로드된 파일의 원본 파일명
+     */
     @Override
     public void sendUploadEvent(Long dataId, String fileUrl, String originalFilename) {
         DataUploadEvent event = new DataUploadEvent(dataId, fileUrl, originalFilename);
@@ -34,6 +41,11 @@ public class DataKafkaProducerAdapter implements DataKafkaProducerPort {
                 });
     }
 
+    /**
+     * Kafka 토픽 설정이 비어 있는지 검증합니다.
+     *
+     * 토픽이 비어 있으면 {@code IllegalStateException}을 발생시킵니다.
+     */
     @PostConstruct
     public void validateTopic() {
         if (topic.isBlank()) {
