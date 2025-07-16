@@ -17,7 +17,7 @@ public class DataWebMapper {
                 webRequest.title(),
                 webRequest.topicId(),
                 webRequest.dataSourceId(),
-                webRequest.authorLevelId(),
+                webRequest.dataTypeId(),
                 webRequest.startDate(),
                 webRequest.endDate(),
                 webRequest.description(),

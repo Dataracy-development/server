@@ -34,7 +34,7 @@ public class DataEntity extends BaseEntity {
     @Column(nullable = false)
     private Long dataSourceId;
     @Column(nullable = false)
-    private Long authorLevelId;
+    private Long dataTypeId;
 
     @Column
     private LocalDate startDate;
@@ -102,7 +102,7 @@ public class DataEntity extends BaseEntity {
      * @param topicId 주제 ID
      * @param userId 사용자 ID
      * @param dataSourceId 데이터 소스 ID
-     * @param authorLevelId 작성자 등급 ID
+     * @param dataTypeId 데이터 유형 ID
      * @param startDate 데이터셋의 시작 날짜 (옵션)
      * @param endDate 데이터셋의 종료 날짜 (옵션)
      * @param description 데이터셋 설명
@@ -119,7 +119,7 @@ public class DataEntity extends BaseEntity {
             Long topicId,
             Long userId,
             Long dataSourceId,
-            Long authorLevelId,
+            Long dataTypeId,
             LocalDate startDate,
             LocalDate endDate,
             String description,
@@ -135,7 +135,7 @@ public class DataEntity extends BaseEntity {
                 .topicId(topicId)
                 .userId(userId)
                 .dataSourceId(dataSourceId)
-                .authorLevelId(authorLevelId)
+                .dataTypeId(dataTypeId)
                 .startDate(startDate)
                 .endDate(endDate)
                 .description(description)
