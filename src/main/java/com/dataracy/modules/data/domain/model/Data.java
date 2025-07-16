@@ -18,7 +18,7 @@ public class Data {
     private Long topicId;
     private Long userId;
     private Long dataSourceId;
-    private Long authorLevelId;
+    private Long dataTypeId;
     private LocalDate startDate;
     private LocalDate endDate;
     private String description;
@@ -58,7 +58,7 @@ public class Data {
             Long topicId,
             Long userId,
             Long dataSourceId,
-            Long authorLevelId,
+            Long dataTypeId,
             LocalDate startDate,
             LocalDate endDate,
             String description,
@@ -75,7 +75,7 @@ public class Data {
                 .topicId(topicId)
                 .userId(userId)
                 .dataSourceId(dataSourceId)
-                .authorLevelId(authorLevelId)
+                .dataTypeId(dataTypeId)
                 .startDate(startDate)
                 .endDate(endDate)
                 .description(description)

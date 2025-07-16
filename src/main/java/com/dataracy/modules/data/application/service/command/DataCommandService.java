@@ -10,6 +10,8 @@ import com.dataracy.modules.data.domain.model.Data;
 import com.dataracy.modules.data.domain.status.DataErrorStatus;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
+import com.dataracy.modules.reference.application.port.in.datasource.FindDataSourceUseCase;
+import com.dataracy.modules.reference.domain.model.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,7 @@ public class DataCommandService implements DataUploadUseCase {
     private final DataKafkaProducerPort kafkaProducerPort;
 
     private final FileUploadUseCase fileUploadUseCase;
+    private final FindDataSourceUseCase findDataSourceUseCase;
 
     @Value("${default.image.url:}")
     private String defaultImageUrl;
@@ -55,14 +58,14 @@ public class DataCommandService implements DataUploadUseCase {
         // 썸네일 파일 유효성 검사
         FileUtil.validateImageFile(thumbnailFile);
 
-        // 프로젝트 업로드 DB 저장
+        // 데이터셋 업로드 DB 저장
         Data data = Data.toDomain(
                 null,
                 requestDto.title(),
                 requestDto.topicId(),
                 userId,
                 requestDto.dataSourceId(),
-                requestDto.authorLevelId(),
+                requestDto.dataTypeId(),
                 requestDto.startDate(),
                 requestDto.endDate(),
                 requestDto.description(),
@@ -109,6 +112,7 @@ public class DataCommandService implements DataUploadUseCase {
         if (dataFile != null && !dataFile.isEmpty()) {
             kafkaProducerPort.sendUploadEvent(saveData.getId(), saveData.getDataFileUrl(), dataFile.getOriginalFilename());
         }
+
         log.info("데이터셋 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
         return saveData.getId();
     }
