@@ -10,8 +10,9 @@ import com.dataracy.modules.data.domain.model.Data;
 import com.dataracy.modules.data.domain.status.DataErrorStatus;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
-import com.dataracy.modules.reference.application.port.in.datasource.FindDataSourceUseCase;
-import com.dataracy.modules.reference.domain.model.DataSource;
+import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.datatype.ValidateDataTypeUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +28,9 @@ public class DataCommandService implements DataUploadUseCase {
     private final DataKafkaProducerPort kafkaProducerPort;
 
     private final FileUploadUseCase fileUploadUseCase;
-    private final FindDataSourceUseCase findDataSourceUseCase;
+    private final ValidateTopicUseCase validateTopicUseCase;
+    private final ValidateDataSourceUseCase validateDataSourceUseCase;
+    private final ValidateDataTypeUseCase validateDataTypeUseCase;
 
     @Value("${default.image.url:}")
     private String defaultImageUrl;
@@ -57,6 +60,11 @@ public class DataCommandService implements DataUploadUseCase {
         FileUtil.validateGeneralFile(dataFile);
         // 썸네일 파일 유효성 검사
         FileUtil.validateImageFile(thumbnailFile);
+
+        // 유효성 검사
+        validateTopicUseCase.validateTopic(requestDto.topicId());
+        validateDataSourceUseCase.validateDataSource(requestDto.dataSourceId());
+        validateDataTypeUseCase.validateDataType(requestDto.dataTypeId());
 
         // 데이터셋 업로드 DB 저장
         Data data = Data.toDomain(
