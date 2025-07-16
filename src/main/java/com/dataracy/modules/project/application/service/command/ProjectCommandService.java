@@ -15,6 +15,7 @@ import com.dataracy.modules.reference.application.port.in.datasource.ValidateDat
 import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,9 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     private final ValidateAnalysisPurposeUseCase validateAnalysisPurposeUseCase;
     private final ValidateDataSourceUseCase validateDataSourceUseCase;;
     private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
+
+    @Value("${default.image.url:}")
+    private String defaultImageUrl;
 
     /**
      * 사용자 ID와 프로젝트 요청 정보를 기반으로 새 프로젝트를 생성하고, 선택적으로 썸네일 이미지를 업로드합니다.
@@ -63,17 +67,19 @@ public class ProjectCommandService implements ProjectUploadUseCase {
         }
 
         // 프로젝트 업로드 DB 저장
-        Project project = Project.builder()
-                .title(requestDto.title())
-                .topicId(requestDto.topicId())
-                .userId(userId)
-                .analysisPurposeId(requestDto.analysisPurposeId())
-                .dataSourceId(requestDto.dataSourceId())
-                .authorLevelId(requestDto.authorLevelId())
-                .isContinue(requestDto.isContinue())
-                .parentProject(parentProject)
-                .content(requestDto.content())
-                .build();
+        Project project = Project.toDomain(
+                null,
+                requestDto.title(),
+                requestDto.topicId(),
+                userId,
+                requestDto.analysisPurposeId(),
+                requestDto.dataSourceId(),
+                requestDto.authorLevelId(),
+                requestDto.isContinue(),
+                parentProject,
+                requestDto.content(),
+                defaultImageUrl
+                );
         Project saveProject = projectRepositoryPort.saveProject(project);
 
         // DB 저장 성공 후 파일 업로드 시도, 외부 서비스로 트랜잭션의 영향을 받지 않는다.
