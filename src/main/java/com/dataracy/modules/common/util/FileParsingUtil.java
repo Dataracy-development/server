@@ -23,6 +23,15 @@ public class FileParsingUtil {
     private static final String COL_PREFIX = "col";
     private static final int SHEET_INDEX = 0;
 
+    /****
+     * 입력 스트림과 파일명을 기반으로 파일 형식을 자동으로 감지하여(CSV, XLSX, JSON) 메타데이터와 미리보기 데이터를 추출합니다.
+     *
+     * @param inputStream 파일 데이터가 포함된 입력 스트림
+     * @param filename 파일명(확장자를 포함하여 파일 형식 판별에 사용)
+     * @return 행 수, 열 수, 미리보기 데이터를 포함하는 MetadataParseResponse 객체
+     * @throws IllegalArgumentException 입력값이 null이거나 비어 있거나, 지원하지 않는 파일 형식일 때 발생
+     * @throws IOException 파일 파싱 중 입출력 오류가 발생할 경우 발생
+     */
     public static MetadataParseResponse parse(InputStream inputStream, String filename) throws IOException {
         if (inputStream == null) {
             throw new IllegalArgumentException("입력 스트림은 null일 수 없습니다.");
@@ -42,6 +51,16 @@ public class FileParsingUtil {
         throw new IllegalArgumentException("지원하지 않는 파일 형식: " + filename);
     }
 
+    /**
+     * CSV 파일의 입력 스트림을 파싱하여 전체 행 수, 컬럼 수, 미리보기 데이터를 추출합니다.
+     *
+     * 입력 스트림의 인코딩을 자동 감지한 후, 첫 번째 행을 헤더로 인식하여 데이터를 파싱합니다.
+     * 최대 5개의 미리보기 행을 헤더-값 쌍의 리스트로 반환합니다.
+     *
+     * @param originalInputStream CSV 파일의 입력 스트림
+     * @return 전체 행 수, 컬럼 수, 미리보기 데이터(JSON 문자열)를 포함한 MetadataParseResponse 객체
+     * @throws IOException 스트림 읽기 또는 파싱 중 오류가 발생한 경우
+     */
     private static MetadataParseResponse parseCsv(InputStream originalInputStream) throws IOException {
         // InputStream 복사: 두 번 읽기 위함
         byte[] data = originalInputStream.readAllBytes();
@@ -82,6 +101,16 @@ public class FileParsingUtil {
         }
     }
 
+    /**
+     * XLSX 파일의 첫 번째 시트를 파싱하여 행 수, 열 수, 미리보기 데이터를 추출합니다.
+     *
+     * 첫 번째 행을 헤더로 간주하며, 헤더가 없는 셀은 기본 컬럼명으로 대체합니다.
+     * 미리보기 데이터는 최대 5개의 데이터 행(헤더 제외)으로 구성되며, 각 행은 헤더명을 키로 하는 맵 형태입니다.
+     *
+     * @param is XLSX 파일의 입력 스트림
+     * @return 행 수(헤더 제외), 열 수, 미리보기 데이터(JSON 문자열)가 포함된 MetadataParseResponse 객체
+     * @throws IOException 파일 읽기 또는 파싱 중 오류가 발생한 경우
+     */
     private static MetadataParseResponse parseXlsx(InputStream is) throws IOException {
         try (var wb = WorkbookFactory.create(is)) {
             var sheet = wb.getSheetAt(SHEET_INDEX);
@@ -128,6 +157,16 @@ public class FileParsingUtil {
 
     }
 
+    /**
+     * JSON 형식의 입력 스트림을 파싱하여 행 수, 열 수, 미리보기 데이터를 추출합니다.
+     *
+     * 입력 스트림의 루트 노드는 반드시 배열이어야 하며, 각 요소는 Map으로 변환되어 최대 5개까지 미리보기로 제공됩니다.
+     * 
+     * @param is JSON 데이터를 포함하는 입력 스트림
+     * @return 행 수, 열 수, 미리보기 데이터(JSON 문자열)를 포함하는 MetadataParseResponse 객체
+     * @throws IOException 입력 스트림을 읽거나 파싱할 때 오류가 발생한 경우
+     * @throws IllegalArgumentException 루트 노드가 배열이 아닌 경우
+     */
     private static MetadataParseResponse parseJson(InputStream is) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(is);
@@ -158,15 +197,26 @@ public class FileParsingUtil {
         );
     }
 
+    /**
+     * 주어진 객체를 JSON 문자열로 변환합니다.
+     *
+     * @param obj JSON으로 직렬화할 객체
+     * @return 변환된 JSON 문자열
+     * @throws IOException 직렬화 중 입출력 오류가 발생한 경우
+     */
     private static String toJson(Object obj) throws IOException {
         return new ObjectMapper().writeValueAsString(obj);
     }
 
     /**
-     * 파일 인코딩을 자동 감지하여 Charset을 반환합니다.
+     * 입력 스트림의 문자 인코딩을 자동으로 감지하여 Charset을 반환합니다.
      *
-     * @param is 인코딩을 감지할 InputStream (주의: markSupported)
-     * @return 감지된 Charset 또는 기본 UTF-8
+     * 입력 스트림에서 최대 4096바이트를 읽어 UniversalDetector로 인코딩을 감지하며,
+     * 감지에 실패하거나 지원하지 않는 인코딩일 경우 기본값으로 UTF-8을 반환합니다.
+     *
+     * @param is 인코딩을 감지할 InputStream (mark/reset 지원 필요)
+     * @return 감지된 Charset, 감지 실패 또는 미지원 시 UTF-8
+     * @throws IOException 스트림 읽기 또는 reset 중 오류가 발생한 경우
      */
     public static Charset detectEncoding(InputStream is) throws IOException {
         // mark/reset을 위해 InputStream이 지원되어야 함

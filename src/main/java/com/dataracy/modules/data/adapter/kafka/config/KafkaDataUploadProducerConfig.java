@@ -21,6 +21,13 @@ public class KafkaDataUploadProducerConfig {
     @Value("${spring.kafka.bootstrap-servers:}")
     private String bootstrapServers;
 
+    /**
+     * DataUploadEvent 메시지를 전송하기 위한 Kafka ProducerFactory 빈을 생성합니다.
+     *
+     * Kafka 프로듀서의 부트스트랩 서버, 직렬화 방식, ack, 재시도, 배치 크기 등 주요 설정을 포함합니다.
+     *
+     * @return DataUploadEvent 타입의 메시지를 처리하는 ProducerFactory 인스턴스
+     */
     @Bean
     public ProducerFactory<String, DataUploadEvent> dataUploadEventProducerFactory() {
         Map<String, Object> config = new HashMap<>();
@@ -35,11 +42,23 @@ public class KafkaDataUploadProducerConfig {
         return new DefaultKafkaProducerFactory<>(config);
     }
 
+    /**
+     * DataUploadEvent 메시지를 전송하기 위한 KafkaTemplate 빈을 생성합니다.
+     *
+     * @return DataUploadEvent 타입의 메시지를 전송할 수 있는 KafkaTemplate 인스턴스
+     */
     @Bean
     public KafkaTemplate<String, DataUploadEvent> dataUploadEventKafkaTemplate() {
         return new KafkaTemplate<>(dataUploadEventProducerFactory());
     }
 
+    /**
+     * Kafka bootstrap 서버 설정이 비어 있는지 검증하며, 누락 시 예외를 발생시킵니다.
+     *
+     * Kafka 프로듀서가 정상적으로 동작하기 위해 필수적인 spring.kafka.bootstrap-servers 프로퍼티가 설정되어 있는지 확인합니다.
+     *
+     * @throws IllegalStateException spring.kafka.bootstrap-servers 프로퍼티가 비어 있거나 누락된 경우 발생합니다.
+     */
     @PostConstruct
     public void validateProperties() {
         if (bootstrapServers.isBlank()) {

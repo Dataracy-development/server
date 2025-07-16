@@ -25,6 +25,19 @@ public class DataCommandService implements DataUploadUseCase {
 
     private final FileUploadUseCase fileUploadUseCase;
 
+    /**
+     * 데이터셋과 썸네일 파일을 업로드하고, 관련 정보를 저장 및 이벤트를 발행합니다.
+     *
+     * 데이터셋 메타데이터와 파일, 썸네일 파일을 검증한 후, 데이터베이스에 저장하고 파일 스토리지에 업로드합니다.
+     * 업로드가 완료되면 데이터셋 업로드 이벤트를 발행합니다. 시작일이 종료일보다 이후인 경우 예외가 발생하며,
+     * 파일 업로드 실패 시 트랜잭션이 롤백됩니다.
+     *
+     * @param userId 데이터셋을 업로드하는 사용자 ID
+     * @param dataFile 업로드할 데이터셋 파일
+     * @param thumbnailFile 업로드할 썸네일 파일
+     * @param requestDto 데이터셋 메타데이터 요청 정보
+     * @return 저장된 데이터셋의 ID
+     */
     @Override
     @Transactional
     public Long upload(Long userId, MultipartFile dataFile, MultipartFile thumbnailFile, DataUploadRequest requestDto) {

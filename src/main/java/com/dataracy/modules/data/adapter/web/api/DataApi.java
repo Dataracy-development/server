@@ -22,6 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/v1/datasets")
 public interface DataApi {
 
+    /****
+     * 데이터셋 파일과 메타데이터를 업로드하여 데이터셋 정보를 저장한다.
+     *
+     * @param dataFile 업로드할 데이터셋 파일
+     * @param thumbnailFile 데이터셋 썸네일 이미지 파일 (선택 사항)
+     * @param webRequest 데이터셋 메타데이터 및 추가 정보가 담긴 요청 객체
+     * @return 업로드 성공 여부를 나타내는 성공 응답
+     */
     @Operation(
             summary = "데이터셋을 업로드한다.",
             description = "제공받은 웹 요청 DTO의 데이터셋 정보를 통해 데이터셋 정보를 db에 저장한다"
