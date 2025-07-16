@@ -37,10 +37,7 @@ public class MetadataParseService implements MetadataParseUseCase {
                     response.previewJson()
             );
 
-            Data data = dataRepositoryPort.findDataById(request.dataId())
-                            .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
-
-            metadataRepositoryPort.saveMetadata(data, metadata);
+            metadataRepositoryPort.saveMetadata(request.dataId(), metadata);
             log.info("메타데이터 저장 완료: dataId={}, row={}, column={}",
                     request.dataId(), response.rowCount(), response.columnCount());
 

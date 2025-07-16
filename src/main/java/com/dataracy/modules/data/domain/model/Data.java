@@ -29,6 +29,14 @@ public class Data {
     private int recentWeekDownloadCount;
     private DataMetadata metadata;
 
+    public void updateDataFileUrl (String dataFileUrl) {
+        this.dataFileUrl = dataFileUrl;
+    }
+
+    public void updateThumbnailFileUrl (String thumbnailFileUrl) {
+        this.thumbnailUrl = dataFileUrl;
+    }
+
     public static Data toDomain(
             Long id,
             String title,

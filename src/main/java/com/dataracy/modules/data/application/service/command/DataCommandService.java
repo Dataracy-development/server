@@ -61,6 +61,7 @@ public class DataCommandService implements DataUploadUseCase {
                 String dataFileUrl = fileUploadUseCase.uploadFile(key, dataFile);
                 log.info("데이터셋 파일 업로드 성공 - url={}", dataFileUrl);
 
+                saveData.updateDataFileUrl(dataFileUrl);
                 dataRepositoryPort.updateDataFile(saveData.getId(), dataFileUrl);
             } catch (Exception e) {
                 log.error("데이터셋 파일 업로드 실패. 프로젝트 ID={}, 에러={}", saveData.getId(), e.getMessage());
@@ -74,6 +75,7 @@ public class DataCommandService implements DataUploadUseCase {
                 String thumbnailFileUrl = fileUploadUseCase.uploadFile(key, thumbnailFile);
                 log.info("썸네일 파일 업로드 성공 - url={}", thumbnailFileUrl);
 
+                saveData.updateThumbnailFileUrl(thumbnailFileUrl);
                 dataRepositoryPort.updateThumbnailFile(saveData.getId(), thumbnailFileUrl);
             } catch (Exception e) {
                 log.error("썸네일 파일 업로드 실패. 프로젝트 ID={}, 에러={}", saveData.getId(), e.getMessage());
