@@ -24,5 +24,5 @@ public interface DataSourceRepositoryPort {
  */
     Optional<DataSource> findDataSourceById(Long dataSourceId);
 
-    Boolean existsDataSourceById(Long dataSourceId);
+    boolean existsDataSourceById(Long dataSourceId);
 }

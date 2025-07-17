@@ -24,5 +24,5 @@ public interface OccupationRepositoryPort {
  */
     Optional<Occupation> findOccupationById(Long occupationId);
 
-    Boolean existsOccupationById(Long occupationId);
+    boolean existsOccupationById(Long occupationId);
 }

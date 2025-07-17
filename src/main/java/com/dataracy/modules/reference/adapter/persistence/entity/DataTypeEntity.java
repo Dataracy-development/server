@@ -32,8 +32,8 @@ public class DataTypeEntity {
     /**
      * 주어진 id, value, label 값을 사용하여 DataTypeEntity 인스턴스를 생성합니다.
      *
-     * @param value 분석 목적의 고유 값
-     * @param label 분석 목적의 표시 이름
+     * @param value 데이터 유형의 고유 값
+     * @param label 데이터 유형의 표시 이름
      * @return 생성된 DataTypeEntity 객체
      */
     public static DataTypeEntity toEntity(

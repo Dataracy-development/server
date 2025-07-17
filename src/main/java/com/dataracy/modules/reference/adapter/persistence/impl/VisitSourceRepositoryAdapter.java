@@ -41,7 +41,7 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
     }
 
     @Override
-    public Boolean existsVisitSourceById(Long visitSourceId) {
+    public boolean existsVisitSourceById(Long visitSourceId) {
         return visitSourceJpaRepository.existsById(visitSourceId);
     }
 }

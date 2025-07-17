@@ -42,7 +42,7 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     }
 
     @Override
-    public Boolean existsDataSourceById(Long dataSourceId) {
+    public boolean existsDataSourceById(Long dataSourceId) {
         return dataSourceJpaRepository.existsById(dataSourceId);
     }
 }

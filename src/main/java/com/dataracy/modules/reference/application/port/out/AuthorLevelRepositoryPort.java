@@ -24,5 +24,5 @@ public interface AuthorLevelRepositoryPort {
  */
     Optional<AuthorLevel> findAuthorLevelById(Long authorLevelId);
 
-    Boolean existsAuthorLevelById(Long authorLevelId);
+    boolean existsAuthorLevelById(Long authorLevelId);
 }

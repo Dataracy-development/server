@@ -42,7 +42,7 @@ public class DataTypeRepositoryAdapter implements DataTypeRepositoryPort {
     }
 
     @Override
-    public Boolean existsDataTypeById(Long dataTypeId) {
+    public boolean existsDataTypeById(Long dataTypeId) {
         return dataTypeJpaRepository.existsById(dataTypeId);
     }
 }
