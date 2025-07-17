@@ -10,6 +10,7 @@ import com.dataracy.modules.user.application.dto.request.ConfirmPasswordRequest;
 import com.dataracy.modules.user.application.port.in.auth.HandleUserUseCase;
 import com.dataracy.modules.user.application.port.in.auth.IsNewUserUseCase;
 import com.dataracy.modules.user.application.port.in.user.ConfirmPasswordUseCase;
+import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import com.dataracy.modules.user.application.port.in.user.IsLoginPossibleUseCase;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
@@ -25,7 +26,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, IsLoginPossibleUseCase, ConfirmPasswordUseCase {
+public class UserQueryService implements
+        IsNewUserUseCase,
+        HandleUserUseCase,
+        IsLoginPossibleUseCase,
+        ConfirmPasswordUseCase,
+        FindUsernameUseCase
+{
     private final PasswordEncoder passwordEncoder;
 
     private final UserRepositoryPort userRepositoryPort;
@@ -128,11 +135,18 @@ public class UserQueryService implements IsNewUserUseCase, HandleUserUseCase, Is
     @Transactional(readOnly = true)
     public void confirmPassword(Long userId, ConfirmPasswordRequest requestDto) {
         User user = userRepositoryPort.findUserById(userId)
-                .orElseThrow(() -> new UserException(UserErrorStatus.BAD_REQUEST_LOGIN));
+                .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
 
         boolean isMatched = user.isPasswordMatch(passwordEncoder, requestDto.password());
         if (!isMatched) {
             throw new UserException(UserErrorStatus.FAIL_CONFIRM_PASSWORD);
         }
+    }
+
+    @Override
+    public String findUsernameById(Long userId) {
+        User user = userRepositoryPort.findUserById(userId)
+                .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
+        return user.getNickname();
     }
 }
