@@ -30,11 +30,11 @@ public class DataTypeEntity {
     private String label;
 
     /**
-     * 주어진 id, value, label 값을 사용하여 DataTypeEntity 인스턴스를 생성합니다.
+     * 주어진 value와 label을 사용하여 새로운 DataTypeEntity 인스턴스를 생성합니다.
      *
-     * @param value 데이터 유형의 고유 값
-     * @param label 데이터 유형의 표시 이름
-     * @return 생성된 DataTypeEntity 객체
+     * @param value 데이터 타입의 고유 값
+     * @param label 데이터 타입의 표시 이름
+     * @return value와 label이 설정된 DataTypeEntity 인스턴스
      */
     public static DataTypeEntity toEntity(
             String value,

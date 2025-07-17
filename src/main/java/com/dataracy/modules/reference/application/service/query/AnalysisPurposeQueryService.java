@@ -41,12 +41,12 @@ public class AnalysisPurposeQueryService implements
     }
 
     /**
-     * 주어진 ID에 해당하는 분석 목적 정보를 조회하여 응답 DTO로 반환한다.
+     * 주어진 ID로 분석 목적을 조회하여 상세 응답 DTO로 반환한다.
      *
-     * 분석 목적이 존재하지 않을 경우 ReferenceException이 발생한다.
+     * 분석 목적이 존재하지 않으면 ReferenceException을 발생시킨다.
      *
      * @param analysisPurposeId 조회할 분석 목적의 ID
-     * @return 분석 목적의 상세 정보를 담은 응답 DTO
+     * @return 조회된 분석 목적의 상세 정보를 담은 응답 DTO
      */
     @Override
     @Transactional(readOnly = true)
@@ -56,6 +56,14 @@ public class AnalysisPurposeQueryService implements
         return analysisPurposeDtoMapper.toResponseDto(analysisPurpose);
     }
 
+    /**
+     * 주어진 ID의 분석 목적(AnalysisPurpose)이 존재하는지 검증합니다.
+     *
+     * 존재하지 않을 경우 {@link ReferenceException}을 발생시킵니다.
+     *
+     * @param analysisPurposeId 검증할 분석 목적의 ID
+     * @throws ReferenceException 분석 목적이 존재하지 않을 때 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public void validateAnalysisPurpose(Long analysisPurposeId) {

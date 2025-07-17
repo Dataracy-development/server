@@ -7,10 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataWebMapper {
     /**
-     * DataUploadWebRequest 객체를 DataUploadRequest 애플리케이션 DTO로 변환합니다.
+     * DataUploadWebRequest 객체를 DataUploadRequest DTO로 매핑합니다.
      *
-     * @param webRequest 변환할 웹 요청 객체
-     * @return 변환된 DataUploadRequest 객체
+     * 웹 요청에서 전달된 데이터 업로드 정보를 애플리케이션 계층에서 사용하는 DataUploadRequest 객체로 변환합니다.
+     *
+     * @param webRequest 변환할 데이터 업로드 웹 요청 객체
+     * @return 매핑된 DataUploadRequest 객체
      */
     public DataUploadRequest toApplicationDto(DataUploadWebRequest webRequest) {
         return new DataUploadRequest(

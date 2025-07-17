@@ -17,12 +17,18 @@ public interface AnalysisPurposeRepositoryPort {
     List<AnalysisPurpose> findAllAnalysisPurposes();
 
     /**
- * 주어진 ID에 해당하는 AnalysisPurpose 엔티티를 조회합니다.
+ * 주어진 ID로 AnalysisPurpose 엔티티를 조회합니다.
  *
- * @param analysisPurposeId 조회할 AnalysisPurpose의 고유 식별자
- * @return 해당 ID의 AnalysisPurpose가 존재하면 Optional에 담아 반환하며, 없으면 빈 Optional을 반환합니다.
+ * @param analysisPurposeId 조회할 AnalysisPurpose의 고유 ID
+ * @return 해당 ID의 AnalysisPurpose가 존재하면 Optional로 반환하며, 존재하지 않으면 빈 Optional을 반환합니다.
  */
     Optional<AnalysisPurpose> findAnalysisPurposeById(Long analysisPurposeId);
 
-    boolean existsAnalysisPurposeById(Long analysisPurposeId);
+    /**
+ * 지정된 ID를 가진 AnalysisPurpose 엔티티가 데이터베이스에 존재하는지 여부를 반환합니다.
+ *
+ * @param analysisPurposeId 존재 여부를 확인할 AnalysisPurpose의 고유 식별자
+ * @return 엔티티가 존재하면 true, 존재하지 않으면 false
+ */
+boolean existsAnalysisPurposeById(Long analysisPurposeId);
 }

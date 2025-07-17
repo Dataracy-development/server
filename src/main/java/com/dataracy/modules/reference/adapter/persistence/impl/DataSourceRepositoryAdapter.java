@@ -30,10 +30,10 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     }
 
     /**
-     * 주어진 ID에 해당하는 데이터 출처를 조회하여 Optional로 반환한다.
+     * 주어진 ID로 데이터 출처를 조회하여 도메인 객체로 변환한 후 Optional로 반환한다.
      *
      * @param dataSourceId 조회할 데이터 출처의 ID
-     * @return 데이터 출처 도메인 객체의 Optional. 해당 ID가 없거나 null인 경우 빈 Optional을 반환한다.
+     * @return 데이터 출처 도메인 객체의 Optional. 해당 ID가 없거나 null이면 빈 Optional을 반환한다.
      */
     @Override
     public Optional<DataSource> findDataSourceById(Long dataSourceId) {
@@ -41,6 +41,12 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
                 .map(DataSourceEntityMapper::toDomain);
     }
 
+    /**
+     * 주어진 ID를 가진 데이터 소스가 존재하는지 여부를 반환합니다.
+     *
+     * @param dataSourceId 데이터 소스의 고유 식별자
+     * @return 데이터 소스가 존재하면 true, 그렇지 않으면 false
+     */
     @Override
     public boolean existsDataSourceById(Long dataSourceId) {
         return dataSourceJpaRepository.existsById(dataSourceId);

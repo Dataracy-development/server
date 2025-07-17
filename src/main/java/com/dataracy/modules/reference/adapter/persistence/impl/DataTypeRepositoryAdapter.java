@@ -17,7 +17,7 @@ public class DataTypeRepositoryAdapter implements DataTypeRepositoryPort {
     private final DataTypeJpaRepository dataTypeJpaRepository;
 
     /**
-     * 모든 데이터 유형 엔티티를 조회하여 도메인 객체 리스트로 반환합니다.
+     * 모든 데이터 유형을 조회하여 도메인 객체 리스트로 반환합니다.
      *
      * @return 데이터 유형 도메인 객체의 리스트
      */
@@ -30,10 +30,10 @@ public class DataTypeRepositoryAdapter implements DataTypeRepositoryPort {
     }
 
     /**
-     * 주어진 ID에 해당하는 데이터 유형를 조회하여 Optional로 반환한다.
+     * 주어진 ID로 데이터 유형을 조회하여 Optional로 반환한다.
      *
      * @param dataTypeId 조회할 데이터 유형의 ID
-     * @return 데이터 유형 도메인 객체의 Optional. 해당 ID가 없거나 null인 경우 빈 Optional을 반환한다.
+     * @return 데이터 유형 도메인 객체의 Optional. ID가 없거나 null인 경우 빈 Optional을 반환한다.
      */
     @Override
     public Optional<DataType> findDataTypeById(Long dataTypeId) {
@@ -41,6 +41,12 @@ public class DataTypeRepositoryAdapter implements DataTypeRepositoryPort {
                 .map(DataTypeEntityMapper::toDomain);
     }
 
+    /**
+     * 주어진 ID를 가진 데이터 타입 엔티티가 존재하는지 여부를 반환합니다.
+     *
+     * @param dataTypeId 존재 여부를 확인할 데이터 타입의 ID
+     * @return 해당 ID의 데이터 타입이 존재하면 true, 그렇지 않으면 false
+     */
     @Override
     public boolean existsDataTypeById(Long dataTypeId) {
         return dataTypeJpaRepository.existsById(dataTypeId);

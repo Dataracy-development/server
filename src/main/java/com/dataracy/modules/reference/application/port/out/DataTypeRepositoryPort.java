@@ -17,12 +17,18 @@ public interface DataTypeRepositoryPort {
     List<DataType> findAllDataTypes();
 
     /**
- * 주어진 ID에 해당하는 DataType 객체를 조회합니다.
+ * 데이터 유형의 고유 ID로 DataType 객체를 조회합니다.
  *
- * @param dataTypeId 조회할 데이터 유형의 고유 식별자
- * @return 해당 ID의 DataType가 존재하면 Optional에 담아 반환하며, 없으면 빈 Optional을 반환합니다.
+ * @param dataTypeId 조회할 데이터 유형의 ID
+ * @return 해당 ID의 DataType이 존재하면 Optional로 반환하며, 없으면 빈 Optional을 반환합니다.
  */
     Optional<DataType> findDataTypeById(Long dataTypeId);
 
-    boolean existsDataTypeById(Long dataTypeId);
+    /**
+ * 지정된 ID를 가진 DataType 엔티티가 데이터베이스에 존재하는지 확인합니다.
+ *
+ * @param dataTypeId 존재 여부를 확인할 DataType의 고유 식별자
+ * @return 해당 ID의 DataType이 존재하면 true, 그렇지 않으면 false
+ */
+boolean existsDataTypeById(Long dataTypeId);
 }
