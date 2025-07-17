@@ -18,9 +18,9 @@ public class DataTypeController implements DataTypeApi {
     private final FindAllDataTypesUseCase findAllDataTypesUseCase;
 
     /**
-     * 데이터베이스에 저장된 모든 데이터 유형 목록을 조회하여 반환합니다.
+     * 데이터베이스에 저장된 모든 데이터 유형 목록을 조회하여 성공 응답으로 반환합니다.
      *
-     * @return 모든 데이터 유형 정보를 포함한 성공 응답 객체의 HTTP 200 OK 응답
+     * @return 전체 데이터 유형 정보를 포함하는 성공 응답의 HTTP 200 OK 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<AllDataTypesWebResponse>> findAllDataTypes (

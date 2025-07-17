@@ -41,11 +41,11 @@ public class AuthorLevelQueryService implements
     }
 
     /**
-     * 주어진 ID에 해당하는 작성자 유형 정보를 조회하여 반환한다.
+     * 주어진 ID로 작성자 등급 정보를 조회하여 반환한다.
      *
-     * @param authorLevelId 조회할 작성자 유형의 ID
-     * @return 조회된 작성자 유형 정보를 담은 AuthorLevelResponse 객체
-     * @throws ReferenceException 해당 ID의 작성자 유형이 존재하지 않을 경우 발생
+     * @param authorLevelId 조회할 작성자 등급의 ID
+     * @return 해당 ID의 작성자 등급 정보를 담은 AuthorLevelResponse 객체
+     * @throws ReferenceException 작성자 등급이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -55,6 +55,14 @@ public class AuthorLevelQueryService implements
         return authorLevelDtoMapper.toResponseDto(authorLevel);
     }
 
+    /**
+     * 주어진 ID의 저자 등급이 존재하는지 검증합니다.
+     *
+     * 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     *
+     * @param authorLevelId 검증할 저자 등급의 ID
+     * @throws ReferenceException 저자 등급이 존재하지 않을 때 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public void validateAuthorLevel(Long authorLevelId) {

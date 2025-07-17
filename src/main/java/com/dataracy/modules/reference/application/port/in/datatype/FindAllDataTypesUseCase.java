@@ -7,9 +7,9 @@ import com.dataracy.modules.reference.application.dto.response.allview.AllDataTy
  */
 public interface FindAllDataTypesUseCase {
     /**
- * 모든 데이터 유형을 조회하여 전체 목록을 반환합니다.
+ * 시스템에 등록된 모든 데이터 유형의 목록을 조회합니다.
  *
- * @return 모든 데이터 유형 정보를 포함하는 AllDataTypesResponse 객체
+ * @return 전체 데이터 유형 정보를 담은 AllDataTypesResponse 객체
  */
     AllDataTypesResponse findAllDataTypes();
 }
