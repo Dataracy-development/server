@@ -39,4 +39,15 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
         return visitSourceJpaRepository.findById(visitSourceId)
                 .map(VisitSourceEntityMapper::toDomain);
     }
+
+    /**
+     * 지정된 ID를 가진 방문 소스(VisitSource)가 데이터베이스에 존재하는지 여부를 반환합니다.
+     *
+     * @param visitSourceId 존재 여부를 확인할 방문 소스의 ID
+     * @return 해당 ID의 방문 소스가 존재하면 true, 그렇지 않으면 false
+     */
+    @Override
+    public boolean existsVisitSourceById(Long visitSourceId) {
+        return visitSourceJpaRepository.existsById(visitSourceId);
+    }
 }

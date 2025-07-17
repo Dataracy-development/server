@@ -9,8 +9,13 @@ import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
+import com.dataracy.modules.reference.application.port.in.analysispurpose.ValidateAnalysisPurposeUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
+import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,11 +27,18 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     private final ProjectRepositoryPort projectRepositoryPort;
 
     private final FileUploadUseCase fileUploadUseCase;
+    private final ValidateTopicUseCase validateTopicUseCase;
+    private final ValidateAnalysisPurposeUseCase validateAnalysisPurposeUseCase;
+    private final ValidateDataSourceUseCase validateDataSourceUseCase;;
+    private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
+
+    @Value("${default.image.url:}")
+    private String defaultImageUrl;
 
     /**
      * 사용자 ID와 프로젝트 요청 정보를 기반으로 새 프로젝트를 생성하고, 선택적으로 썸네일 이미지를 업로드합니다.
      *
-     * 프로젝트 정보는 데이터베이스에 저장되며, 이미지 파일이 제공된 경우 외부 저장소에 업로드 후 해당 URL을 프로젝트에 반영합니다.
+     * 프로젝트 정보는 데이터베이스에 저장되며, 이미지 파일이 제공된 경우 외부 저장소에 업로드 후 해당 URL이 프로젝트에 반영됩니다.
      * 파일 업로드에 실패하면 전체 트랜잭션이 롤백됩니다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
@@ -37,6 +49,12 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     @Transactional
     public void upload(Long userId, MultipartFile file, ProjectUploadRequest requestDto) {
         log.info("프로젝트 업로드 시작 - userId: {}, title: {}", userId, requestDto.title());
+
+        // 유효성 검사
+        validateTopicUseCase.validateTopic(requestDto.topicId());
+        validateAnalysisPurposeUseCase.validateAnalysisPurpose(requestDto.analysisPurposeId());
+        validateDataSourceUseCase.validateDataSource(requestDto.dataSourceId());
+        validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
 
         // 파일 유효성 검사
         FileUtil.validateImageFile(file);
@@ -49,17 +67,19 @@ public class ProjectCommandService implements ProjectUploadUseCase {
         }
 
         // 프로젝트 업로드 DB 저장
-        Project project = Project.builder()
-                .title(requestDto.title())
-                .topicId(requestDto.topicId())
-                .userId(userId)
-                .analysisPurposeId(requestDto.analysisPurposeId())
-                .dataSourceId(requestDto.dataSourceId())
-                .authorLevelId(requestDto.authorLevelId())
-                .isContinue(requestDto.isContinue())
-                .parentProject(parentProject)
-                .content(requestDto.content())
-                .build();
+        Project project = Project.toDomain(
+                null,
+                requestDto.title(),
+                requestDto.topicId(),
+                userId,
+                requestDto.analysisPurposeId(),
+                requestDto.dataSourceId(),
+                requestDto.authorLevelId(),
+                requestDto.isContinue(),
+                parentProject,
+                requestDto.content(),
+                defaultImageUrl
+                );
         Project saveProject = projectRepositoryPort.saveProject(project);
 
         // DB 저장 성공 후 파일 업로드 시도, 외부 서비스로 트랜잭션의 영향을 받지 않는다.

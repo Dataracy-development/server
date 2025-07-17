@@ -49,17 +49,16 @@ public final class FileUtil {
     }
 
     /**
-     * 일반 파일 업로드 시 파일 크기와 확장자를 검증합니다.
+     * 일반 파일 업로드 시 파일의 크기와 확장자를 검증합니다.
      *
-     * 파일이 null이거나 비어 있으면 검증을 수행하지 않습니다.
-     * 파일 크기가 50MB를 초과하거나, 확장자가 xlsx, csv, json이 아닌 경우 예외가 발생합니다.
+     * 파일이 null이거나 비어 있으면 검증을 건너뜁니다. 파일 크기가 10MB를 초과하거나 확장자가 xlsx, csv, json이 아닌 경우 {@code CommonException}이 발생합니다.
      *
-     * @param file 업로드할 일반 파일
-     * @throws CommonException 파일 크기 초과 또는 허용되지 않은 확장자일 경우 발생
+     * @param file 업로드할 파일
+     * @throws CommonException 파일 크기가 10MB를 초과하거나 허용되지 않은 확장자인 경우 발생
      */
     public static void validateGeneralFile(MultipartFile file) {
         if (file == null || file.isEmpty()) return;
-        long maxSize = 50 * 1024 * 1024; // 50MB
+        long maxSize = 10 * 1024 * 1024; // 10MB
         checkFileSize(file, maxSize, CommonErrorStatus.OVER_MAXIMUM_FILE_SIZE);
         checkFileType(file.getOriginalFilename(), "(?i).+\\.(xlsx|csv|json)$", CommonErrorStatus.BAD_REQUEST_FILE_TYPE);
     }

@@ -5,10 +5,10 @@ import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.common.support.lock.DistributedLock;
-import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
-import com.dataracy.modules.reference.application.port.in.occupation.FindOccupationUseCase;
-import com.dataracy.modules.reference.application.port.in.topic.IsExistTopicUseCase;
-import com.dataracy.modules.reference.application.port.in.visitsource.FindVisitSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.ValidateOccupationUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
+import com.dataracy.modules.reference.application.port.in.visitsource.ValidateVisitSourceUseCase;
 import com.dataracy.modules.user.application.dto.request.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.SelfSignUpRequest;
@@ -42,18 +42,18 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     private final JwtGenerateUseCase jwtGenerateUseCase;
     private final JwtValidateUseCase jwtValidateUseCase;
 
-    private final IsExistTopicUseCase isExistTopicUseCase;
-    private final FindAuthorLevelUseCase findAuthorLevelUseCase;
-    private final FindOccupationUseCase findOccupationUseCase;
-    private final FindVisitSourceUseCase findVisitSourceUseCase;
+    private final ValidateTopicUseCase validateTopicUseCase;
+    private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
+    private final ValidateOccupationUseCase validateOccupationUseCase;
+    private final ValidateVisitSourceUseCase validateVisitSourceUseCase;
 
     private final TokenRedisUseCase tokenRedisUseCase;
 
     /**
      * 자체 회원가입 요청을 처리하여 새로운 사용자를 등록하고 리프레시 토큰을 발급한다.
      *
-     * 이메일, 닉네임, 비밀번호, 성별 등 클라이언트가 제공한 정보를 검증 및 저장하며, 중복 가입 방지를 위해 이메일 기준 분산 락을 적용한다.
-     * 회원가입 성공 시 리프레시 토큰을 생성하여 Redis에 저장하고, 토큰과 만료 시간을 반환한다.
+     * 이메일, 닉네임, 비밀번호 등 필수 정보를 검증하고, 작성자 유형, 직업, 방문 경로, 토픽 등 선택 정보를 유효성 검사 후 사용자 계정을 생성한다.
+     * 중복 가입 방지를 위해 이메일 기준 분산 락을 적용하며, 회원가입 성공 시 리프레시 토큰을 생성하여 Redis에 저장하고 토큰과 만료 시간을 반환한다.
      *
      * @param requestDto 자체 회원가입 요청 정보
      * @return 리프레시 토큰과 만료 시간이 포함된 응답 객체
@@ -79,25 +79,22 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         String encodedPassword = passwordEncoder.encode(requestDto.password());
         String providerId = UUID.randomUUID().toString();
 
-        // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
-        Long authorLevelId = requestDto.authorLevelId() == null
-                ? null
-                : findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId()).id();
+        // 작성자 유형 유효성 검사(필수 컬럼)
+        validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
+        // 직업 유효성 검사(선택 컬럼)
+        if (requestDto.occupationId() != null) {
+            validateOccupationUseCase.validateOccupation(requestDto.occupationId());
+        }
+        // 방문 경로 유효성 검사(선택 컬럼)
+        if (requestDto.visitSourceId() != null) {
+            validateVisitSourceUseCase.validateVisitSource(requestDto.visitSourceId());
+        }
 
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         if (requestDto.topicIds() != null) {
             requestDto.topicIds()
-                    .forEach(isExistTopicUseCase::validateTopicById);
+                    .forEach(validateTopicUseCase::validateTopic);
         }
-
-        // 직업 id를 통해 직업 조회 및 유효성 검사
-        Long occupationId = requestDto.occupationId() == null
-                ? null
-                : findOccupationUseCase.findOccupation(requestDto.occupationId()).id();
-        // 방문 경로 id를 통해 방문 경로 조회 및 유효성 검사
-        Long visitSourceId = requestDto.visitSourceId() == null
-                ? null
-                : findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId()).id();
 
         // 유저 도메인 모델 생성 및 db 저장
         User user = User.toDomain(
@@ -108,10 +105,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 requestDto.email(),
                 encodedPassword,
                 requestDto.nickname(),
-                authorLevelId,
-                occupationId,
+                requestDto.authorLevelId(),
+                requestDto.occupationId(),
                 requestDto.topicIds(),
-                visitSourceId,
+                requestDto.visitSourceId(),
                 requestDto.isAdTermsAgreed(),
                 false
         );
@@ -131,14 +128,14 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     }
 
     /**
-     * OAuth 기반 회원가입을 처리하고 리프레시 토큰을 발급합니다.
+     * OAuth 기반 회원가입 요청을 처리하고 리프레시 토큰을 발급합니다.
      *
-     * 소셜 로그인(구글, 카카오 등)에서 발급된 회원가입 토큰과 온보딩 정보를 검증 및 저장하며,
-     * 중복 가입 방지를 위해 이메일 기준 분산 락을 적용한다.
-     * 회원 정보 저장 후 리프레시 토큰을 생성하여 Redis에 저장하고, 토큰과 만료 시간을 반환합니다.
+     * 소셜 로그인에서 발급된 회원가입 토큰과 온보딩 정보를 검증하여 신규 사용자를 등록합니다.
+     * 이메일 및 닉네임 중복을 방지하고, 필수 및 선택 온보딩 항목의 유효성을 확인합니다.
+     * 회원 정보 저장 후 리프레시 토큰을 생성하여 Redis에 저장하며, 토큰과 만료 시간을 반환합니다.
      *
      * @param registerToken 소셜 회원가입 토큰
-     * @param requestDto    온보딩 요청 정보
+     * @param requestDto 온보딩 요청 정보
      * @return 발급된 리프레시 토큰과 만료 시간 정보
      */
     @Override
@@ -161,25 +158,22 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         // 닉네임 중복 체크
         userValidationService.validateDuplicatedNickname(requestDto.nickname());
 
-        // 작성자 유형 id를 통해 작성자 유형 조회 및 유효성 검사
-        Long authorLevelId = requestDto.authorLevelId() == null
-                ? null
-                : findAuthorLevelUseCase.findAuthorLevel(requestDto.authorLevelId()).id();
+        // 작성자 유형 유효성 검사(필수 컬럼)
+        validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
+        // 직업 유효성 검사(선택 컬럼)
+        if (requestDto.occupationId() != null) {
+            validateOccupationUseCase.validateOccupation(requestDto.occupationId());
+        }
+        // 방문 경로 유효성 검사(선택 컬럼)
+        if (requestDto.visitSourceId() != null) {
+            validateVisitSourceUseCase.validateVisitSource(requestDto.visitSourceId());
+        }
 
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
         if (requestDto.topicIds() != null) {
             requestDto.topicIds()
-                    .forEach(isExistTopicUseCase::validateTopicById);
+                    .forEach(validateTopicUseCase::validateTopic);
         }
-
-        // 직업 id를 통해 직업 조회 및 유효성 검사
-        Long occupationId = requestDto.occupationId() == null
-                ? null
-                : findOccupationUseCase.findOccupation(requestDto.occupationId()).id();
-        // 방문 경로 id를 통해 방문 경로 조회 및 유효성 검사
-        Long visitSourceId = requestDto.visitSourceId() == null
-                ? null
-                : findVisitSourceUseCase.findVisitSource(requestDto.visitSourceId()).id();
 
         // 유저 도메인 모델 생성 및 db 저장
         User user = User.toDomain(
@@ -190,10 +184,10 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 email,
                 null,
                 requestDto.nickname(),
-                authorLevelId,
-                occupationId,
+                requestDto.authorLevelId(),
+                requestDto.occupationId(),
                 requestDto.topicIds(),
-                visitSourceId,
+                requestDto.visitSourceId(),
                 requestDto.isAdTermsAgreed(),
                 false
         );

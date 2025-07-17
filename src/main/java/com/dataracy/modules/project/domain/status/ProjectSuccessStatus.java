@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ProjectSuccessStatus implements BaseSuccessCode {
 
-    CREATED_PROJECT(HttpStatus.CREATED, "201", "프로젝트 업로드에 성공했습니다"),
+    CREATED_PROJECT(HttpStatus.CREATED, "201", "제출이 완료되었습니다"),
     ;
 
     private final HttpStatus httpStatus;

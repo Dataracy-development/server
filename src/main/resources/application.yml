@@ -136,3 +136,6 @@ cloud:
     s3:
       bucket: ${AWS_S3_BUCKET_NAME}
 
+default:
+  image:
+    url: ${DEFAULT_IMAGE_FILE_URL}

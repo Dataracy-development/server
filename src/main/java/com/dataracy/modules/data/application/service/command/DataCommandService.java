@@ -10,8 +10,12 @@ import com.dataracy.modules.data.domain.model.Data;
 import com.dataracy.modules.data.domain.status.DataErrorStatus;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
+import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.datatype.ValidateDataTypeUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,13 +28,19 @@ public class DataCommandService implements DataUploadUseCase {
     private final DataKafkaProducerPort kafkaProducerPort;
 
     private final FileUploadUseCase fileUploadUseCase;
+    private final ValidateTopicUseCase validateTopicUseCase;
+    private final ValidateDataSourceUseCase validateDataSourceUseCase;
+    private final ValidateDataTypeUseCase validateDataTypeUseCase;
+
+    @Value("${default.image.url:}")
+    private String defaultImageUrl;
 
     /**
-     * 데이터셋과 썸네일 파일을 업로드하고, 관련 정보를 저장 및 이벤트를 발행합니다.
+     * 데이터셋 파일과 썸네일 파일을 검증 및 업로드하고, 데이터셋 정보를 저장한 뒤 업로드 이벤트를 발행합니다.
      *
-     * 데이터셋 메타데이터와 파일, 썸네일 파일을 검증한 후, 데이터베이스에 저장하고 파일 스토리지에 업로드합니다.
-     * 업로드가 완료되면 데이터셋 업로드 이벤트를 발행합니다. 시작일이 종료일보다 이후인 경우 예외가 발생하며,
-     * 파일 업로드 실패 시 트랜잭션이 롤백됩니다.
+     * 데이터셋 메타데이터와 파일의 유효성을 검사하고, 주제/데이터소스/데이터유형 ID를 각각 검증합니다.
+     * 데이터셋 정보는 데이터베이스에 저장되며, 파일 업로드가 성공하면 해당 URL이 데이터셋에 반영됩니다.
+     * 파일 업로드 실패 시 트랜잭션이 롤백되며, 데이터셋 파일 업로드가 완료되면 업로드 이벤트가 발행됩니다.
      *
      * @param userId 데이터셋을 업로드하는 사용자 ID
      * @param dataFile 업로드할 데이터셋 파일
@@ -51,20 +61,25 @@ public class DataCommandService implements DataUploadUseCase {
         // 썸네일 파일 유효성 검사
         FileUtil.validateImageFile(thumbnailFile);
 
-        // 프로젝트 업로드 DB 저장
+        // 유효성 검사
+        validateTopicUseCase.validateTopic(requestDto.topicId());
+        validateDataSourceUseCase.validateDataSource(requestDto.dataSourceId());
+        validateDataTypeUseCase.validateDataType(requestDto.dataTypeId());
+
+        // 데이터셋 업로드 DB 저장
         Data data = Data.toDomain(
                 null,
                 requestDto.title(),
                 requestDto.topicId(),
                 userId,
                 requestDto.dataSourceId(),
-                requestDto.authorLevelId(),
+                requestDto.dataTypeId(),
                 requestDto.startDate(),
                 requestDto.endDate(),
                 requestDto.description(),
                 requestDto.analysisGuide(),
                 null,
-                null,
+                defaultImageUrl,
                 0,
                 0,
                 null
@@ -105,6 +120,7 @@ public class DataCommandService implements DataUploadUseCase {
         if (dataFile != null && !dataFile.isEmpty()) {
             kafkaProducerPort.sendUploadEvent(saveData.getId(), saveData.getDataFileUrl(), dataFile.getOriginalFilename());
         }
+
         log.info("데이터셋 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
         return saveData.getId();
     }
