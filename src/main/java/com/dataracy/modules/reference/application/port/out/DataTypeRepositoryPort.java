@@ -24,5 +24,5 @@ public interface DataTypeRepositoryPort {
  */
     Optional<DataType> findDataTypeById(Long dataTypeId);
 
-    Boolean existsDataTypeById(Long dataTypeId);
+    boolean existsDataTypeById(Long dataTypeId);
 }

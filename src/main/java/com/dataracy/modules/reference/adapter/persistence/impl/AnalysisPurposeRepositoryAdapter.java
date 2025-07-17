@@ -42,7 +42,7 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
     }
 
     @Override
-    public Boolean existsAnalysisPurposeById(Long analysisPurposeId) {
+    public boolean existsAnalysisPurposeById(Long analysisPurposeId) {
         return analysisPurposeJpaRepository.existsById(analysisPurposeId);
     }
 }

@@ -24,5 +24,5 @@ public interface AnalysisPurposeRepositoryPort {
  */
     Optional<AnalysisPurpose> findAnalysisPurposeById(Long analysisPurposeId);
 
-    Boolean existsAnalysisPurposeById(Long analysisPurposeId);
+    boolean existsAnalysisPurposeById(Long analysisPurposeId);
 }

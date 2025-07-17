@@ -41,7 +41,7 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
     }
 
     @Override
-    public Boolean existsOccupationById(Long occupationId) {
+    public boolean existsOccupationById(Long occupationId) {
         return occupationJpaRepository.existsById(occupationId);
     }
 }

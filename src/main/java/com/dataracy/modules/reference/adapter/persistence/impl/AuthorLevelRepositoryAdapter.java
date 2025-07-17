@@ -41,7 +41,7 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
     }
 
     @Override
-    public Boolean existsAuthorLevelById(Long authorLevelId) {
+    public boolean existsAuthorLevelById(Long authorLevelId) {
         return authorLevelJpaRepository.existsById(authorLevelId);
     }
 }

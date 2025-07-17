@@ -24,5 +24,5 @@ public interface VisitSourceRepositoryPort {
  */
     Optional<VisitSource> findVisitSourceById(Long visitSourceId);
 
-    Boolean existsVisitSourceById(Long visitSourceId);
+    boolean existsVisitSourceById(Long visitSourceId);
 }
