@@ -17,12 +17,18 @@ public interface VisitSourceRepositoryPort {
     List<VisitSource> findAllVisitSources();
 
     /**
- * 주어진 ID에 해당하는 VisitSource 엔티티를 조회합니다.
+ * 주어진 ID로 VisitSource 엔티티를 조회합니다.
  *
  * @param visitSourceId 조회할 VisitSource의 고유 식별자
- * @return 해당 ID에 해당하는 VisitSource가 존재하면 Optional로 반환하며, 없으면 빈 Optional을 반환합니다.
+ * @return VisitSource가 존재하면 해당 엔티티를 포함한 Optional, 존재하지 않으면 빈 Optional
  */
     Optional<VisitSource> findVisitSourceById(Long visitSourceId);
 
-    boolean existsVisitSourceById(Long visitSourceId);
+    /**
+ * 지정된 ID를 가진 VisitSource 엔티티가 데이터베이스에 존재하는지 여부를 반환합니다.
+ *
+ * @param visitSourceId 존재 여부를 확인할 VisitSource의 고유 식별자
+ * @return VisitSource가 존재하면 true, 존재하지 않으면 false
+ */
+boolean existsVisitSourceById(Long visitSourceId);
 }

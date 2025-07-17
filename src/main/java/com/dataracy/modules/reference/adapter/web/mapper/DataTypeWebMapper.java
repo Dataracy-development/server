@@ -14,9 +14,9 @@ import java.util.List;
 @Component
 public class DataTypeWebMapper {
     /**
-     * 도메인 데이터 유형 응답 DTO를 웹 응답 DTO로 변환합니다.
+     * 단일 도메인 데이터 유형 응답 객체를 웹 응답 DTO로 변환합니다.
      *
-     * @param dataTypeResponse 변환할 도메인 데이터 유형 응답 DTO
+     * @param dataTypeResponse 변환할 도메인 데이터 유형 응답 객체
      * @return 변환된 데이터 유형 웹 응답 DTO
      */
     public DataTypeWebResponse toWebDto(DataTypeResponse dataTypeResponse) {
@@ -27,7 +27,12 @@ public class DataTypeWebMapper {
         );
     }
 
-    // 전체 데이터 유형 리스트 조회 도메인 응답 DTO -> 전체 데이터 유형 리스트 조회 웹 응답 DTO
+    /**
+     * 도메인 전체 데이터 유형 응답 DTO를 웹 전체 데이터 유형 응답 DTO로 변환합니다.
+     *
+     * @param allDataTypesResponse 변환할 도메인 전체 데이터 유형 응답 DTO
+     * @return 변환된 웹 전체 데이터 유형 응답 DTO. 입력값이나 내부 리스트가 null인 경우 빈 리스트를 포함합니다.
+     */
     public AllDataTypesWebResponse toWebDto(AllDataTypesResponse allDataTypesResponse) {
         if (allDataTypesResponse == null || allDataTypesResponse.dataTypes() == null) {
             return new AllDataTypesWebResponse(List.of());

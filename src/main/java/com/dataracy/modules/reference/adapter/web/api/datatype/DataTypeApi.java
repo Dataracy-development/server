@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/references")
 public interface DataTypeApi {
     /**
-     * 전체 데이터 유형 리스트를 조회한다.
+     * 모든 데이터 유형의 목록을 조회하는 REST API 엔드포인트입니다.
      *
-     * @return 전체 데이터 유형 리스트
+     * @return 전체 데이터 유형 정보를 포함하는 성공 응답
      */
     @Operation(
             summary = "전체 데이터 유형 리스트를 조회",

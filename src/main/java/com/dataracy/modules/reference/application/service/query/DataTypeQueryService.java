@@ -29,9 +29,9 @@ public class DataTypeQueryService implements
     private final DataTypeRepositoryPort dataTypeRepositoryPort;
 
     /**
-     * 모든 데이터 유형의 목록을 조회하여 응답 DTO로 반환한다.
+     * 모든 데이터 유형을 조회하여 AllDataTypesResponse DTO로 반환한다.
      *
-     * @return 전체 데이터 유형 정보를 담은 AllDataTypesResponse 객체
+     * @return 전체 데이터 유형 정보를 포함하는 AllDataTypesResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -41,11 +41,12 @@ public class DataTypeQueryService implements
     }
 
     /**
-     * 주어진 ID로 데이터 유형을 조회하여 응답 DTO로 반환한다.
-     * 데이터 유형이 존재하지 않을 경우 ReferenceException을 발생시킨다.
+     * 주어진 ID에 해당하는 데이터 유형을 조회하여 DataTypeResponse DTO로 반환한다.
+     * 데이터 유형이 존재하지 않으면 ReferenceException을 발생시킨다.
      *
      * @param dataTypeId 조회할 데이터 유형의 ID
-     * @return 데이터 유형 정보를 담은 DataTypeResponse DTO
+     * @return 조회된 데이터 유형 정보를 담은 DataTypeResponse DTO
+     * @throws ReferenceException 데이터 유형이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -55,6 +56,14 @@ public class DataTypeQueryService implements
         return dataTypeDtoMapper.toResponseDto(dataType);
     }
 
+    /**
+     * 주어진 데이터 타입 ID가 존재하는지 검증합니다.
+     *
+     * 데이터 타입이 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     *
+     * @param dataTypeId 검증할 데이터 타입의 ID
+     * @throws ReferenceException 데이터 타입이 존재하지 않을 때 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public void validateDataType(Long dataTypeId) {

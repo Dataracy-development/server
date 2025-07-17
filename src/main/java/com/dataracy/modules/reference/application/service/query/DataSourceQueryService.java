@@ -41,11 +41,13 @@ public class DataSourceQueryService implements
     }
 
     /**
-     * 주어진 ID로 데이터 출처를 조회하여 응답 DTO로 반환한다.
-     * 데이터 출처가 존재하지 않을 경우 ReferenceException을 발생시킨다.
+     * 주어진 ID에 해당하는 데이터 출처 정보를 조회하여 DataSourceResponse DTO로 반환한다.
+     *
+     * 데이터 출처가 존재하지 않으면 ReferenceException이 발생한다.
      *
      * @param dataSourceId 조회할 데이터 출처의 ID
-     * @return 데이터 출처 정보를 담은 DataSourceResponse DTO
+     * @return 조회된 데이터 출처 정보를 담은 DataSourceResponse DTO
+     * @throws ReferenceException 데이터 출처가 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -55,6 +57,14 @@ public class DataSourceQueryService implements
         return dataSourceDtoMapper.toResponseDto(dataSource);
     }
 
+    /**
+     * 주어진 데이터 소스 ID가 존재하는지 검증합니다.
+     *
+     * 데이터 소스가 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     *
+     * @param dataSourceId 검증할 데이터 소스의 ID
+     * @throws ReferenceException 데이터 소스를 찾을 수 없는 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public void validateDataSource(Long dataSourceId) {

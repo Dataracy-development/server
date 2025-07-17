@@ -29,10 +29,10 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
     }
 
     /**
-     * 주어진 작성자 유형 ID에 해당하는 작성자 유형을 조회하여 반환한다.
+     * 주어진 ID에 해당하는 작성자 유형 도메인 객체를 Optional로 반환한다.
      *
      * @param authorLevelId 조회할 작성자 유형의 ID
-     * @return 작성자 유형이 존재하면 해당 도메인 객체를 포함하는 Optional, 존재하지 않으면 빈 Optional
+     * @return 해당 ID의 작성자 유형이 존재하면 도메인 객체를 포함하는 Optional, 존재하지 않으면 빈 Optional
      */
     @Override
     public Optional<AuthorLevel> findAuthorLevelById(Long authorLevelId) {
@@ -40,6 +40,12 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
                 .map(AuthorLevelEntityMapper::toDomain);
     }
 
+    /**
+     * 주어진 ID를 가진 AuthorLevel 엔티티가 존재하는지 여부를 반환합니다.
+     *
+     * @param authorLevelId 확인할 AuthorLevel의 ID
+     * @return 해당 ID의 AuthorLevel이 존재하면 true, 그렇지 않으면 false
+     */
     @Override
     public boolean existsAuthorLevelById(Long authorLevelId) {
         return authorLevelJpaRepository.existsById(authorLevelId);
