@@ -18,7 +18,7 @@ public class Data {
     private Long topicId;
     private Long userId;
     private Long dataSourceId;
-    private Long authorLevelId;
+    private Long dataTypeId;
     private LocalDate startDate;
     private LocalDate endDate;
     private String description;
@@ -48,9 +48,9 @@ public class Data {
     }
 
     /**
-     * 주어진 모든 필드 값을 사용하여 새로운 Data 도메인 객체를 생성합니다.
+     * 모든 필드 값을 지정하여 새로운 Data 도메인 객체를 생성합니다.
      *
-     * @return 생성된 Data 객체
+     * @return 지정된 값들로 초기화된 Data 객체
      */
     public static Data toDomain(
             Long id,
@@ -58,7 +58,7 @@ public class Data {
             Long topicId,
             Long userId,
             Long dataSourceId,
-            Long authorLevelId,
+            Long dataTypeId,
             LocalDate startDate,
             LocalDate endDate,
             String description,
@@ -75,7 +75,7 @@ public class Data {
                 .topicId(topicId)
                 .userId(userId)
                 .dataSourceId(dataSourceId)
-                .authorLevelId(authorLevelId)
+                .dataTypeId(dataTypeId)
                 .startDate(startDate)
                 .endDate(endDate)
                 .description(description)

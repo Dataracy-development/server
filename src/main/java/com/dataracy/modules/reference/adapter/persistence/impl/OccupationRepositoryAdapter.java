@@ -29,14 +29,25 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
     }
 
     /**
-     * 주어진 직업 ID에 해당하는 직업 정보를 조회하여 반환한다.
+     * 주어진 ID에 해당하는 직업 정보를 조회하여 Optional로 반환한다.
      *
      * @param occupationId 조회할 직업의 ID
-     * @return 직업이 존재하면 해당 직업의 Optional, 존재하지 않으면 Optional.empty()
+     * @return 직업이 존재하면 해당 직업의 도메인 객체를 담은 Optional, 존재하지 않으면 Optional.empty()
      */
     @Override
     public Optional<Occupation> findOccupationById(Long occupationId) {
         return occupationJpaRepository.findById(occupationId)
                 .map(OccupationEntityMapper::toDomain);
+    }
+
+    /**
+     * 주어진 직업 ID에 해당하는 직업이 존재하는지 여부를 반환합니다.
+     *
+     * @param occupationId 존재 여부를 확인할 직업의 ID
+     * @return 직업이 존재하면 true, 그렇지 않으면 false
+     */
+    @Override
+    public boolean existsOccupationById(Long occupationId) {
+        return occupationJpaRepository.existsById(occupationId);
     }
 }

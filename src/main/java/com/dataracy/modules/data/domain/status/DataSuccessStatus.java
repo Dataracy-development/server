@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum DataSuccessStatus implements BaseSuccessCode {
 
-    CREATED_DATASET(HttpStatus.CREATED, "201", "데이터셋 업로드에 성공했습니다"),
+    CREATED_DATASET(HttpStatus.CREATED, "201", "제출이 완료되었습니다"),
     ;
 
     private final HttpStatus httpStatus;

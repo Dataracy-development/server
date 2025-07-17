@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.Analys
 import com.dataracy.modules.reference.application.mapper.AnalysisPurposeDtoMapper;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.FindAllAnalysisPurposesUseCase;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.FindAnalysisPurposeUseCase;
+import com.dataracy.modules.reference.application.port.in.analysispurpose.ValidateAnalysisPurposeUseCase;
 import com.dataracy.modules.reference.application.port.out.AnalysisPurposeRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
@@ -21,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnalysisPurposeQueryService implements
         FindAllAnalysisPurposesUseCase,
-        FindAnalysisPurposeUseCase
+        FindAnalysisPurposeUseCase,
+        ValidateAnalysisPurposeUseCase
 {
     private final AnalysisPurposeDtoMapper analysisPurposeDtoMapper;
     private final AnalysisPurposeRepositoryPort analysisPurposeRepositoryPort;
@@ -39,12 +41,12 @@ public class AnalysisPurposeQueryService implements
     }
 
     /**
-     * 주어진 ID에 해당하는 분석 목적 정보를 조회하여 응답 DTO로 반환한다.
+     * 주어진 ID로 분석 목적을 조회하여 상세 응답 DTO로 반환한다.
      *
-     * 분석 목적이 존재하지 않을 경우 ReferenceException이 발생한다.
+     * 분석 목적이 존재하지 않으면 ReferenceException을 발생시킨다.
      *
      * @param analysisPurposeId 조회할 분석 목적의 ID
-     * @return 분석 목적의 상세 정보를 담은 응답 DTO
+     * @return 조회된 분석 목적의 상세 정보를 담은 응답 DTO
      */
     @Override
     @Transactional(readOnly = true)
@@ -52,5 +54,22 @@ public class AnalysisPurposeQueryService implements
         AnalysisPurpose analysisPurpose = analysisPurposeRepositoryPort.findAnalysisPurposeById(analysisPurposeId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE));
         return analysisPurposeDtoMapper.toResponseDto(analysisPurpose);
+    }
+
+    /**
+     * 주어진 ID의 분석 목적(AnalysisPurpose)이 존재하는지 검증합니다.
+     *
+     * 존재하지 않을 경우 {@link ReferenceException}을 발생시킵니다.
+     *
+     * @param analysisPurposeId 검증할 분석 목적의 ID
+     * @throws ReferenceException 분석 목적이 존재하지 않을 때 발생
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public void validateAnalysisPurpose(Long analysisPurposeId) {
+        Boolean isExist = analysisPurposeRepositoryPort.existsAnalysisPurposeById(analysisPurposeId);
+        if (!isExist) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
+        }
     }
 }

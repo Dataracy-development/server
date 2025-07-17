@@ -6,7 +6,7 @@ public record DataUploadRequest(
         String title,
         Long topicId,
         Long dataSourceId,
-        Long authorLevelId,
+        Long dataTypeId,
         LocalDate startDate,
         LocalDate endDate,
         String description,

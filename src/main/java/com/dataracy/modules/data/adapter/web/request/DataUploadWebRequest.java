@@ -20,9 +20,9 @@ public record DataUploadWebRequest(
         @NotNull(message = "데이터 출처를 입력해주세요")
         Long dataSourceId,
 
-        @Schema(description = "작성자 유형", example = "3")
-        @NotNull(message = "작성자 유형을 입력해주세요")
-        Long authorLevelId,
+        @Schema(description = "데이터 유형", example = "3")
+        @NotNull(message = "데이터 유형을 입력해주세요")
+        Long dataTypeId,
 
         @Schema(description = "데이터 수집 시작일", example = "2025-01-01")
         LocalDate startDate,
