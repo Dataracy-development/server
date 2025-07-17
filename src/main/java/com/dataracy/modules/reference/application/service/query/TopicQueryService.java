@@ -29,8 +29,9 @@ public class TopicQueryService implements
     private final TopicRepositoryPort topicRepositoryPort;
 
     /**
-     * 모든 토픽 리스트를 조회한다.
-     * @return 토픽 리스트
+     * 모든 토픽을 조회하여 응답 DTO로 반환한다.
+     *
+     * @return 전체 토픽 정보를 담은 AllTopicsResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -39,6 +40,13 @@ public class TopicQueryService implements
         return topicDtoMapper.toResponseDto(topics);
     }
 
+    /**
+     * 주어진 ID에 해당하는 토픽을 조회하여 응답 DTO로 반환합니다.
+     *
+     * @param topicId 조회할 토픽의 ID
+     * @return 조회된 토픽의 응답 DTO
+     * @throws ReferenceException 해당 ID의 토픽이 존재하지 않을 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public TopicResponse findTopic(Long topicId) {
@@ -48,9 +56,9 @@ public class TopicQueryService implements
     }
 
     /**
-     * 주어진 토픽 ID에 해당하는 토픽의 존재 여부를 검증합니다.
+     * 주어진 토픽 ID에 해당하는 토픽이 존재하는지 확인합니다.
      *
-     * 토픽이 존재하지 않을 경우 ReferenceException을 발생시킵니다.
+     * 토픽이 존재하지 않으면 ReferenceException을 발생시킵니다.
      *
      * @param topicId 존재 여부를 확인할 토픽의 ID
      */

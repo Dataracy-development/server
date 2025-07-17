@@ -13,10 +13,10 @@ import java.util.List;
 @Component
 public class DataTypeDtoMapper {
     /**
-     * 단일 DataType 도메인 모델을 DataTypeResponse DTO로 변환합니다.
+     * 단일 DataType 도메인 객체를 DataTypeResponse DTO로 변환합니다.
      *
      * @param dataType 변환할 DataType 도메인 객체
-     * @return 변환된 DataTypeResponse DTO
+     * @return DataType의 id, value, label 정보를 포함하는 DataTypeResponse DTO
      */
     public DataTypeResponse toResponseDto(DataType dataType) {
         return new DataTypeResponse(
@@ -26,7 +26,12 @@ public class DataTypeDtoMapper {
         );
     }
 
-    // 전체 데이터 유형 리스트 조회 도메인 모델 -> 전체 데이터 유형 리스트 조회 도메인 응답 DTO
+    /**
+     * 데이터 유형 도메인 객체 리스트를 전체 데이터 유형 응답 DTO로 변환합니다.
+     *
+     * @param dataTypes 변환할 데이터 유형 도메인 객체 리스트
+     * @return 변환된 데이터 유형 응답 DTO
+     */
     public AllDataTypesResponse toResponseDto(List<DataType> dataTypes) {
         return new AllDataTypesResponse(
                 dataTypes.stream()
