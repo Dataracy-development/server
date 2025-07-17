@@ -3,8 +3,10 @@ package com.dataracy.modules.project.application.service.command;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
+import com.dataracy.modules.project.adapter.index.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
+import com.dataracy.modules.project.application.port.out.ProjectIndexingPort;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
@@ -13,6 +15,7 @@ import com.dataracy.modules.reference.application.port.in.analysispurpose.Valida
 import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
+import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ProjectCommandService implements ProjectUploadUseCase {
     private final ProjectRepositoryPort projectRepositoryPort;
+    private final ProjectIndexingPort projectIndexingPort;
 
+    private final FindUsernameUseCase findUsernameUseCase;
     private final FileUploadUseCase fileUploadUseCase;
     private final ValidateTopicUseCase validateTopicUseCase;
     private final ValidateAnalysisPurposeUseCase validateAnalysisPurposeUseCase;
@@ -97,6 +102,11 @@ public class ProjectCommandService implements ProjectUploadUseCase {
                 throw new RuntimeException("파일 업로드 실패", e); // rollback 유도
             }
         }
+
+        // 검색을 위해 elasticSearch에 프로젝트를 등록한다.
+        String username = findUsernameUseCase.findUsernameById(userId);
+        projectIndexingPort.index(ProjectSearchDocument.from(saveProject, username));
+
         log.info("프로젝트 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
     }
 }
