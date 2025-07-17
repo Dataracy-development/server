@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum ProjectSuccessStatus implements BaseSuccessCode {
 
     CREATED_PROJECT(HttpStatus.CREATED, "201", "제출이 완료되었습니다"),
+    FIND_REAL_TIME_PROJECTS(HttpStatus.OK, "200", "실시간 프로젝트 리스트를 조회하였습니다."),
     ;
 
     private final HttpStatus httpStatus;

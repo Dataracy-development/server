@@ -1,9 +1,13 @@
 package com.dataracy.modules.project.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.project.adapter.web.mapper.ProjectSearchWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectWebMapper;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
+import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
+import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
+import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +16,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class ProjectController implements ProjectApi {
     private final ProjectWebMapper projectWebMapper;
+    private final ProjectSearchWebMapper projectSearchWebMapper;
 
     private final ProjectUploadUseCase projectUploadUseCase;
+    private final ProjectRealTimeSearchUseCase projectRealTimeSearchUseCase;
 
     /**
      * 사용자의 프로젝트 업로드 요청을 처리하여 프로젝트를 생성한다.
@@ -37,5 +45,16 @@ public class ProjectController implements ProjectApi {
         projectUploadUseCase.upload(userId, file, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(ProjectSuccessStatus.CREATED_PROJECT));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> search(String keyword, int size) {
+        List<ProjectRealTimeSearchResponse> responseDto = projectRealTimeSearchUseCase.search(keyword, size);
+        List<ProjectRealTimeSearchWebResponse> webResponse = responseDto.stream()
+                .map(projectSearchWebMapper::toWeb)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.FIND_REAL_TIME_PROJECTS, webResponse));
     }
 }
