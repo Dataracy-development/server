@@ -1,4 +1,4 @@
-package com.dataracy.modules.project.adapter.query;
+package com.dataracy.modules.project.adapter.index.query;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.SortOrder;

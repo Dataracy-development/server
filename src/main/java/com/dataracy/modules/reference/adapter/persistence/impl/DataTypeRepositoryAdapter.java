@@ -2,7 +2,7 @@ package com.dataracy.modules.reference.adapter.persistence.impl;
 
 import com.dataracy.modules.reference.adapter.persistence.entity.DataTypeEntity;
 import com.dataracy.modules.reference.adapter.persistence.mapper.DataTypeEntityMapper;
-import com.dataracy.modules.reference.adapter.persistence.repository.DataTypeJpaRepository;
+import com.dataracy.modules.reference.adapter.persistence.repository.jpa.DataTypeJpaRepository;
 import com.dataracy.modules.reference.application.port.out.DataTypeRepositoryPort;
 import com.dataracy.modules.reference.domain.model.DataType;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.dataracy.modules.reference.adapter.persistence.impl;
 
 import com.dataracy.modules.reference.adapter.persistence.entity.OccupationEntity;
 import com.dataracy.modules.reference.adapter.persistence.mapper.OccupationEntityMapper;
-import com.dataracy.modules.reference.adapter.persistence.repository.OccupationJpaRepository;
+import com.dataracy.modules.reference.adapter.persistence.repository.jpa.OccupationJpaRepository;
 import com.dataracy.modules.reference.application.port.out.OccupationRepositoryPort;
 import com.dataracy.modules.reference.domain.model.Occupation;
 import lombok.RequiredArgsConstructor;
