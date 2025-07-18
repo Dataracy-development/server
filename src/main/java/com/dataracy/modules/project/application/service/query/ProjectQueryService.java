@@ -39,7 +39,7 @@ public class ProjectQueryService implements
     }
 
     @Override
-    public List<ProjectSimilarSearchResponse> findSimilarProjects(Long projectId, int size) {
+    public List<ProjectSimilarSearchResponse> search(Long projectId, int size) {
         Project project = projectRepositoryPort.findProjectById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
 

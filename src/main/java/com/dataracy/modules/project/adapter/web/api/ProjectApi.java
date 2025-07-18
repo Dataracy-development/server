@@ -70,7 +70,7 @@ public interface ProjectApi {
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
     @GetMapping("/search/real-time")
-    ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> search(
+    ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> searchRealTimeProjects(
             @RequestParam(name = "keyword")
             String keyword,
 
