@@ -3,6 +3,8 @@ package com.dataracy.modules.project.adapter.index.document;
 import com.dataracy.modules.project.domain.model.Project;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 @Builder
 public record ProjectSearchDocument(
         Long id,
@@ -15,7 +17,8 @@ public record ProjectSearchDocument(
         Long dataSourceId,
         Long authorLevelId,
         Boolean isContinue,
-        String fileUrl
+        String fileUrl,
+        LocalDateTime createdAt
 ) {
     /**
      * 주어진 Project 객체와 사용자 이름을 기반으로 ProjectSearchDocument 인스턴스를 생성합니다.
@@ -37,6 +40,7 @@ public record ProjectSearchDocument(
                 .authorLevelId(project.getAuthorLevelId())
                 .isContinue(project.getIsContinue())
                 .fileUrl(project.getFileUrl())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 }

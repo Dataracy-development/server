@@ -35,6 +35,12 @@ public class ElasticProjectSearchAdapter implements ProjectSearchQueryPort {
             SearchResponse<ProjectSearchDocument> response = client.search(s -> s
                             .index("project")
                             .size(size)
+                            .sort(sort -> sort
+                                    .field(f -> f
+                                            .field("createdAt")
+                                            .order(co.elastic.clients.elasticsearch._types.SortOrder.Desc)
+                                    )
+                            )
                             .query(q -> q
                                     .multiMatch(m -> m
                                             .fields("title^3", "username^2")
