@@ -25,6 +25,13 @@ public class ProjectDataEntity {
     @Column(nullable = false)
     private Long dataId;
 
+    /**
+     * 주어진 프로젝트와 데이터 ID를 연결하는 ProjectDataEntity 인스턴스를 생성합니다.
+     *
+     * @param project 연결할 ProjectEntity 객체
+     * @param dataId 연결할 데이터의 식별자
+     * @return 프로젝트와 데이터 간의 관계를 나타내는 ProjectDataEntity 인스턴스
+     */
     public static ProjectDataEntity of(ProjectEntity project, Long dataId) {
         ProjectDataEntity projectDataEntity = ProjectDataEntity.builder()
                 .dataId(dataId)
@@ -33,6 +40,11 @@ public class ProjectDataEntity {
         return projectDataEntity;
     }
 
+    /**
+     * 주어진 프로젝트 엔티티를 이 엔티티에 할당합니다.
+     *
+     * @param project 할당할 프로젝트 엔티티
+     */
     public void assignProject(ProjectEntity project) {
         this.project = project;
     }

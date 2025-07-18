@@ -52,6 +52,22 @@ public class Data {
     /**
      * 모든 필드 값을 지정하여 새로운 Data 도메인 객체를 생성합니다.
      *
+     * @param id 데이터의 고유 식별자
+     * @param title 데이터 제목
+     * @param topicId 주제 식별자
+     * @param userId 사용자 식별자
+     * @param dataSourceId 데이터 소스 식별자
+     * @param dataTypeId 데이터 타입 식별자
+     * @param startDate 데이터의 시작 날짜
+     * @param endDate 데이터의 종료 날짜
+     * @param description 데이터 설명
+     * @param analysisGuide 데이터 분석 가이드
+     * @param dataFileUrl 데이터 파일의 URL
+     * @param thumbnailUrl 썸네일 이미지의 URL
+     * @param downloadCount 전체 다운로드 횟수
+     * @param recentWeekDownloadCount 최근 1주일간 다운로드 횟수
+     * @param metadata 데이터 메타정보
+     * @param createdAt 데이터 생성 시각
      * @return 지정된 값들로 초기화된 Data 객체
      */
     public static Data toDomain(

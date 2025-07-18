@@ -16,6 +16,13 @@ import java.util.Optional;
 @Configuration
 @EnableJpaAuditing
 public class JpaConfig {
+    /**
+     * 현재 인증된 사용자의 ID를 반환하여 JPA 감사(Auditing) 기능에 사용합니다.
+     *
+     * 인증된 사용자가 없거나 익명 사용자일 경우 빈 Optional을 반환합니다.
+     *
+     * @return 현재 인증된 사용자의 ID(Long) 또는 사용자가 없을 경우 빈 Optional
+     */
     @Bean
     public AuditorAware<Long> auditorProvider() {
         return () -> {
