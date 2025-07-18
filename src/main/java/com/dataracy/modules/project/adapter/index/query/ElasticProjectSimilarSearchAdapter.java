@@ -25,6 +25,14 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
 
     private final ElasticsearchClient client;
 
+    /**
+     * 주어진 프로젝트와 유사한 프로젝트를 Elasticsearch에서 검색하여 추천 결과 목록을 반환합니다.
+     *
+     * @param project 기준이 되는 프로젝트 객체
+     * @param size 반환할 유사 프로젝트의 최대 개수
+     * @return 유사 프로젝트 추천 결과의 리스트
+     * @throws ProjectException 유사 프로젝트 검색에 실패한 경우 발생
+     */
     @Override
     public List<ProjectSimilarSearchResponse> recommendSimilarProjects(Project project, int size) {
         try {
@@ -48,6 +56,16 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
         }
     }
 
+    /**
+     * 주어진 프로젝트를 기반으로 유사 프로젝트 추천을 위한 Elasticsearch 쿼리를 생성합니다.
+     *
+     * 프로젝트의 제목과 내용을 활용한 유사 문서 검색, 주제 ID 및 분석 목적 ID의 가중치 부여, 
+     * 그리고 동일 프로젝트 제외 조건을 포함한 불리언 쿼리를 구성합니다.
+     *
+     * @param q       쿼리 빌더 객체
+     * @param project 유사 프로젝트 추천 기준이 되는 프로젝트
+     * @return 유사 프로젝트 추천을 위한 Elasticsearch 쿼리 빌더
+     */
     private ObjectBuilder<Query> buildRecommendationQuery(Query.Builder q, Project project) {
         return q.bool(b -> b
                 .should(sb -> sb.moreLikeThis(mlt -> mlt
@@ -73,6 +91,12 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
         );
     }
 
+    /**
+     * ProjectSearchDocument 객체를 ProjectSimilarSearchResponse 객체로 변환합니다.
+     *
+     * @param doc 변환할 프로젝트 검색 문서
+     * @return 변환된 유사 프로젝트 응답 객체
+     */
     private ProjectSimilarSearchResponse mapToSimilarResponse(ProjectSearchDocument doc) {
         return new ProjectSimilarSearchResponse(
                 doc.id(),

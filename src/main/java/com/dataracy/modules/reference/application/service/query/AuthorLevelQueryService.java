@@ -59,11 +59,11 @@ public class AuthorLevelQueryService implements
     }
 
     /**
-     * 주어진 ID의 저자 등급이 존재하는지 검증합니다.
+     * 주어진 ID에 해당하는 저자 등급의 존재 여부를 검증합니다.
      *
-     * 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 저자 등급이 존재하지 않으면 {@code ReferenceException}을 발생시킵니다.
      *
-     * @param authorLevelId 검증할 저자 등급의 ID
+     * @param authorLevelId 존재 여부를 확인할 저자 등급 ID
      * @throws ReferenceException 저자 등급이 존재하지 않을 때 발생
      */
     @Override
@@ -75,6 +75,13 @@ public class AuthorLevelQueryService implements
         }
     }
 
+    /**
+     * 주어진 작가 등급 ID에 해당하는 라벨을 반환합니다.
+     *
+     * @param authorLevelId 조회할 작가 등급의 ID
+     * @return 해당 작가 등급의 라벨 문자열
+     * @throws ReferenceException 해당 ID의 작가 등급이 존재하지 않을 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long authorLevelId) {
