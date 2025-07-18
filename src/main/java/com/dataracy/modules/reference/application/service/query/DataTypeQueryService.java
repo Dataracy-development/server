@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.DataTy
 import com.dataracy.modules.reference.application.mapper.DataTypeDtoMapper;
 import com.dataracy.modules.reference.application.port.in.datatype.FindAllDataTypesUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.FindDataTypeUseCase;
+import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.ValidateDataTypeUseCase;
 import com.dataracy.modules.reference.application.port.out.DataTypeRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +25,8 @@ import java.util.List;
 public class DataTypeQueryService implements
         FindAllDataTypesUseCase,
         FindDataTypeUseCase,
-        ValidateDataTypeUseCase
+        ValidateDataTypeUseCase,
+        GetDataTypeLabelFromIdUseCase
 {
     private final DataTypeDtoMapper dataTypeDtoMapper;
     private final DataTypeRepositoryPort dataTypeRepositoryPort;
@@ -71,5 +74,14 @@ public class DataTypeQueryService implements
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_TYPE);
         }
+    }
+
+    @Override
+    public String getLabelById(Long dataTypeId) {
+        Optional<String> label = dataTypeRepositoryPort.getLabelById(dataTypeId);
+        if (label.isEmpty()) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_TYPE);
+        }
+        return label.get();
     }
 }

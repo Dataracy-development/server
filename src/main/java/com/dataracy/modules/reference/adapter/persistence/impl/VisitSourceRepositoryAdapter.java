@@ -50,4 +50,10 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
     public boolean existsVisitSourceById(Long visitSourceId) {
         return visitSourceJpaRepository.existsById(visitSourceId);
     }
+
+    @Override
+    public Optional<String> getLabelById(Long visitSourceId) {
+        return visitSourceJpaRepository.findById(visitSourceId)
+                .map(VisitSourceEntity::getLabel);
+    }
 }

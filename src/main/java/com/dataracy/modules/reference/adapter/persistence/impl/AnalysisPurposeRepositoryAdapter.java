@@ -51,4 +51,10 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
     public boolean existsAnalysisPurposeById(Long analysisPurposeId) {
         return analysisPurposeJpaRepository.existsById(analysisPurposeId);
     }
+
+    @Override
+    public Optional<String> getLabelById(Long analysisPurposeId) {
+        return analysisPurposeJpaRepository.findById(analysisPurposeId)
+                .map(AnalysisPurposeEntity::getLabel);
+    }
 }

@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.Author
 import com.dataracy.modules.reference.application.mapper.AuthorLevelDtoMapper;
 import com.dataracy.modules.reference.application.port.in.authorlevel.FindAllAuthorLevelsUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +25,8 @@ import java.util.List;
 public class AuthorLevelQueryService implements
         FindAllAuthorLevelsUseCase,
         FindAuthorLevelUseCase,
-        ValidateAuthorLevelUseCase
+        ValidateAuthorLevelUseCase,
+        GetAuthorLevelLabelFromIdUseCase
 {
     private final AuthorLevelDtoMapper authorLevelDtoMapper;
     private final AuthorLevelRepositoryPort authorLevelRepositoryPort;
@@ -70,5 +73,14 @@ public class AuthorLevelQueryService implements
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);
         }
+    }
+
+    @Override
+    public String getLabelById(Long authorLevelId) {
+        Optional<String> label = authorLevelRepositoryPort.getLabelById(authorLevelId);
+        if (label.isEmpty()) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);
+        }
+        return label.get();
     }
 }

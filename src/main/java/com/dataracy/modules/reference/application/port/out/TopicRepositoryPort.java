@@ -31,4 +31,6 @@ Optional<Topic> findTopicById(Long topicId);
  * @return Topic이 존재하면 true, 존재하지 않으면 false
  */
     boolean existsTopicById(Long topicId);
+
+    Optional<String> getLabelById(Long topicId);
 }

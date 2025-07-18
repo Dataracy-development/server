@@ -34,7 +34,7 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
                             .sort(sort -> sort
                                     .field(f -> f.field("createdAt").order(SortOrder.Desc))
                             )
-                            .query(q -> buildRecommendationQuery(q, project)), // 💡 핵심 수정
+                            .query(q -> buildRecommendationQuery(q, project)),
                     ProjectSearchDocument.class
             );
 
@@ -48,9 +48,6 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
         }
     }
 
-    /**
-     * 유사도 검색 쿼리 구성
-     */
     private ObjectBuilder<Query> buildRecommendationQuery(Query.Builder q, Project project) {
         return q.bool(b -> b
                 .should(sb -> sb.moreLikeThis(mlt -> mlt
@@ -67,7 +64,7 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
                 .should(sb -> sb.term(t -> t
                         .field("analysisPurposeId")
                         .value(project.getAnalysisPurposeId())
-                        .boost(1.2f)
+                        .boost(1.3f)
                 ))
                 .mustNot(mn -> mn.term(t -> t
                         .field("id")
