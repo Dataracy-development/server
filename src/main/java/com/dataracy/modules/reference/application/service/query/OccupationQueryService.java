@@ -76,6 +76,7 @@ public class OccupationQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getLabelById(Long occupationId) {
         Optional<String> label = occupationRepositoryPort.getLabelById(occupationId);
         if (label.isEmpty()) {

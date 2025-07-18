@@ -77,6 +77,7 @@ public class DataTypeQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getLabelById(Long dataTypeId) {
         Optional<String> label = dataTypeRepositoryPort.getLabelById(dataTypeId);
         if (label.isEmpty()) {

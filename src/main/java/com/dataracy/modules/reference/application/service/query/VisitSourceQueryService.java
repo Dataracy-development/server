@@ -78,6 +78,7 @@ public class VisitSourceQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getLabelById(Long visitSourceId) {
         Optional<String> label = visitSourceRepositoryPort.getLabelById(visitSourceId);
         if (label.isEmpty()) {

@@ -76,6 +76,7 @@ public class AuthorLevelQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getLabelById(Long authorLevelId) {
         Optional<String> label = authorLevelRepositoryPort.getLabelById(authorLevelId);
         if (label.isEmpty()) {

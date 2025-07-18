@@ -75,6 +75,7 @@ public class TopicQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getLabelById(Long topicId) {
         Optional<String> label = topicRepositoryPort.getLabelById(topicId);
         if (label.isEmpty()) {

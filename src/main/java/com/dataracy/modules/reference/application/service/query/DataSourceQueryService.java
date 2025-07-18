@@ -78,6 +78,7 @@ public class DataSourceQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getLabelById(Long dataSourceId) {
         Optional<String> label = dataSourceRepositoryPort.getLabelById(dataSourceId);
         if (label.isEmpty()) {
