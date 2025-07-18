@@ -16,6 +16,14 @@ public class DataQueryService implements ValidateDataUseCase {
 
     private final DataRepositoryPort dataRepositoryPort;
 
+    /**
+     * 주어진 데이터 ID에 해당하는 데이터가 존재하는지 검증합니다.
+     *
+     * 데이터가 존재하지 않을 경우 {@code DataException}을 발생시키며, 오류 상태는 {@code NOT_FOUND_DATA}입니다.
+     *
+     * @param dataId 존재 여부를 확인할 데이터의 ID
+     * @throws DataException 데이터가 존재하지 않을 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public void validateData(Long dataId) {
