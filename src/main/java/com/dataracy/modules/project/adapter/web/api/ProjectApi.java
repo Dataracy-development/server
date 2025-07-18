@@ -4,6 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
 import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
+import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -72,6 +73,26 @@ public interface ProjectApi {
     ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> search(
             @RequestParam(name = "keyword")
             String keyword,
+
+            @RequestParam(name = "size")
+            @Min(1)
+            int size
+    );
+
+    @Operation(
+            summary = "유사 프로젝트 리스트를 조회한다.",
+            description = "해당하는 프로젝트와 유사한 프로젝트 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "유사 프로젝트 리스트 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/search/similar")
+    ResponseEntity<SuccessResponse<List<ProjectSimilarSearchWebResponse>>> searchSimilarProjects(
+            @RequestParam(name = "projectId")
+            @Min(1)
+            Long projectId,
 
             @RequestParam(name = "size")
             @Min(1)

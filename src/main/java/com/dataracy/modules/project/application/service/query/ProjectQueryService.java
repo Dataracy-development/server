@@ -3,7 +3,7 @@ package com.dataracy.modules.project.application.service.query;
 import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
 import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectSimilarRecommendationUseCase;
+import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.query.ProjectRealTimeSearchPort;
 import com.dataracy.modules.project.application.port.query.ProjectSimilarSearchPort;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectQueryService implements
         ProjectRealTimeSearchUseCase,
-        ProjectSimilarRecommendationUseCase
+        ProjectSimilarSearchUseCase
 {
     private final ProjectRepositoryPort projectRepositoryPort;
     private final ProjectRealTimeSearchPort projectRealTimeSearchPort;
