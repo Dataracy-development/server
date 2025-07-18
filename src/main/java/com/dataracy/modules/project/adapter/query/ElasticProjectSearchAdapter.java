@@ -21,6 +21,14 @@ public class ElasticProjectSearchAdapter implements ProjectSearchQueryPort {
 
     private final ElasticsearchClient client;
 
+    /**
+     * 주어진 키워드로 Elasticsearch에서 프로젝트를 실시간으로 검색하여 결과 목록을 반환합니다.
+     *
+     * @param keyword 검색에 사용할 키워드
+     * @param size 반환할 최대 결과 개수
+     * @return 검색된 프로젝트 정보를 담은 ProjectRealTimeSearchResponse 리스트
+     * @throws ProjectException 실시간 프로젝트 검색에 실패한 경우 발생
+     */
     @Override
     public List<ProjectRealTimeSearchResponse> search(String keyword, int size) {
         try {

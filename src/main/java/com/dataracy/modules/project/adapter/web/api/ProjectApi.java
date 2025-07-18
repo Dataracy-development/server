@@ -24,12 +24,12 @@ import java.util.List;
 @RequestMapping("/api/v1/projects")
 public interface ProjectApi {
 
-    /****
-     * 프로젝트 정보를 업로드하여 데이터베이스에 저장한다.
+    /**
+     * 프로젝트 정보를 업로드하고 데이터베이스에 저장한다.
      *
      * @param file 프로젝트와 연관된 파일(선택 사항)
      * @param webRequest 업로드할 프로젝트 정보가 담긴 요청 객체
-     * @return 업로드 성공 시 200 OK와 함께 성공 응답을 반환한다.
+     * @return 업로드 성공 시 201 Created와 함께 성공 응답을 반환한다.
      */
     @Operation(
             summary = "프로젝트를 업로드한다.",
@@ -52,6 +52,13 @@ public interface ProjectApi {
             ProjectUploadWebRequest webRequest
     );
 
+    /**
+     * 주어진 키워드와 결과 개수 제한을 기준으로 실시간 프로젝트 리스트를 조회합니다.
+     *
+     * @param keyword 검색에 사용할 키워드
+     * @param size 반환할 프로젝트 리스트의 최대 개수 (1 이상)
+     * @return 실시간 검색 결과로 조회된 프로젝트 리스트가 포함된 성공 응답
+     */
     @Operation(
             summary = "실시간으로 프로젝트 리스트를 조회한다.",
             description = "제공받은 키워드와 사이즈를 토대로 실시간으로 프로젝트 리스트를 조회한다."

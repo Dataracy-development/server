@@ -124,9 +124,9 @@ public class UserQueryService implements
     }
 
     /**
-     * 주어진 사용자 ID와 비밀번호로 사용자의 비밀번호 일치 여부를 검증한다.
+     * 주어진 사용자 ID와 비밀번호로 비밀번호가 정확한지 확인한다.
      *
-     * 비밀번호가 일치하지 않으면 {@code UserException}을 발생시킨다.
+     * 사용자가 존재하지 않거나 비밀번호가 일치하지 않으면 {@code UserException}이 발생한다.
      *
      * @param userId 비밀번호를 확인할 사용자 ID
      * @param requestDto 확인할 비밀번호가 포함된 요청 객체
@@ -143,6 +143,13 @@ public class UserQueryService implements
         }
     }
 
+    /**
+     * 주어진 사용자 ID로 사용자를 조회하여 닉네임을 반환합니다.
+     *
+     * @param userId 조회할 사용자의 ID
+     * @return 사용자의 닉네임
+     * @throws UserException 사용자를 찾을 수 없는 경우 발생합니다.
+     */
     @Override
     public String findUsernameById(Long userId) {
         User user = userRepositoryPort.findUserById(userId)
