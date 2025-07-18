@@ -2,7 +2,7 @@ package com.dataracy.modules.project.adapter.persistence.impl;
 
 import com.dataracy.modules.project.adapter.persistence.entity.ProjectEntity;
 import com.dataracy.modules.project.adapter.persistence.mapper.ProjectEntityMapper;
-import com.dataracy.modules.project.adapter.persistence.repository.ProjectJpaRepository;
+import com.dataracy.modules.project.adapter.persistence.repository.jpa.ProjectJpaRepository;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
@@ -18,11 +18,11 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     private final ProjectJpaRepository projectJpaRepository;
 
     /**
-     * 프로젝트 도메인 객체를 영속성 계층에 저장하고, 저장된 프로젝트 도메인 객체를 반환한다.
+     * 프로젝트 도메인 객체를 저장하고 저장된 객체를 반환한다.
      *
      * @param project 저장할 프로젝트 도메인 객체
      * @return 저장된 프로젝트 도메인 객체
-     * @throws ProjectException 프로젝트 저장에 실패한 경우 발생
+     * @throws ProjectException 저장에 실패한 경우 발생
      */
     @Override
     public Project saveProject(Project project) {
@@ -35,15 +35,14 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     }
 
     /**
-     * 주어진 프로젝트 ID로 프로젝트를 조회하여, 존재할 경우 도메인 Project 객체를 Optional로 반환합니다.
+     * 주어진 프로젝트 ID로 프로젝트를 조회하여 Optional로 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID
-     * @return 프로젝트가 존재하면 Project 객체를 포함한 Optional, 존재하지 않으면 빈 Optional
+     * @return 프로젝트가 존재하면 해당 Project 객체를, 없으면 빈 Optional을 반환합니다.
      */
     @Override
     public Optional<Project> findProjectById(Long projectId) {
-        return projectJpaRepository.findById(projectId)
-                .map(ProjectEntityMapper::toDomain);
+        return projectJpaRepository.findProjectById(projectId);
     }
 
     /**

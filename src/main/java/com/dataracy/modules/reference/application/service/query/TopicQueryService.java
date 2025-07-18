@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.TopicR
 import com.dataracy.modules.reference.application.mapper.TopicDtoMapper;
 import com.dataracy.modules.reference.application.port.in.topic.FindAllTopicsUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.FindTopicUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import com.dataracy.modules.reference.application.port.out.TopicRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +25,8 @@ import java.util.List;
 public class TopicQueryService implements
         FindAllTopicsUseCase,
         FindTopicUseCase,
-        ValidateTopicUseCase
+        ValidateTopicUseCase,
+        GetTopicLabelFromIdUseCase
 {
     private final TopicDtoMapper topicDtoMapper;
     private final TopicRepositoryPort topicRepositoryPort;
@@ -56,9 +59,9 @@ public class TopicQueryService implements
     }
 
     /**
-     * 주어진 토픽 ID에 해당하는 토픽이 존재하는지 확인합니다.
+     * 주어진 토픽 ID에 해당하는 토픽의 존재 여부를 검증합니다.
      *
-     * 토픽이 존재하지 않으면 ReferenceException을 발생시킵니다.
+     * 토픽이 존재하지 않을 경우 ReferenceException을 발생시킵니다.
      *
      * @param topicId 존재 여부를 확인할 토픽의 ID
      */
@@ -69,5 +72,22 @@ public class TopicQueryService implements
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
         }
+    }
+
+    /**
+     * 주어진 토픽 ID에 해당하는 라벨을 조회합니다.
+     *
+     * @param topicId 조회할 토픽의 ID
+     * @return 토픽의 라벨 문자열
+     * @throws ReferenceException 해당 토픽의 라벨이 존재하지 않을 경우 발생
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String getLabelById(Long topicId) {
+        Optional<String> label = topicRepositoryPort.getLabelById(topicId);
+        if (label.isEmpty()) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
+        }
+        return label.get();
     }
 }

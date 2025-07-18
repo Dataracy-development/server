@@ -2,7 +2,7 @@ package com.dataracy.modules.user.adapter.persistence.impl;
 
 import com.dataracy.modules.user.adapter.persistence.entity.UserEntity;
 import com.dataracy.modules.user.adapter.persistence.mapper.UserEntityMapper;
-import com.dataracy.modules.user.adapter.persistence.repository.UserJpaRepository;
+import com.dataracy.modules.user.adapter.persistence.repository.jpa.UserJpaRepository;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;

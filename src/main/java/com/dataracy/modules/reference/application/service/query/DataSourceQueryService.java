@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.DataSo
 import com.dataracy.modules.reference.application.mapper.DataSourceDtoMapper;
 import com.dataracy.modules.reference.application.port.in.datasource.FindAllDataSourcesUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.FindDataSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
 import com.dataracy.modules.reference.application.port.out.DataSourceRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +25,8 @@ import java.util.List;
 public class DataSourceQueryService implements
         FindAllDataSourcesUseCase,
         FindDataSourceUseCase,
-        ValidateDataSourceUseCase
+        ValidateDataSourceUseCase,
+        GetDataSourceLabelFromIdUseCase
 {
     private final DataSourceDtoMapper dataSourceDtoMapper;
     private final DataSourceRepositoryPort dataSourceRepositoryPort;
@@ -58,12 +61,12 @@ public class DataSourceQueryService implements
     }
 
     /**
-     * 주어진 데이터 소스 ID가 존재하는지 검증합니다.
+     * 데이터 소스 ID의 존재 여부를 검증합니다.
      *
-     * 데이터 소스가 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 데이터 소스가 존재하지 않으면 {@code ReferenceException}을 발생시킵니다.
      *
-     * @param dataSourceId 검증할 데이터 소스의 ID
-     * @throws ReferenceException 데이터 소스를 찾을 수 없는 경우 발생
+     * @param dataSourceId 존재 여부를 확인할 데이터 소스의 ID
+     * @throws ReferenceException 데이터 소스를 찾을 수 없는 경우
      */
     @Override
     @Transactional(readOnly = true)
@@ -72,5 +75,24 @@ public class DataSourceQueryService implements
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE);
         }
+    }
+
+    /**
+     * 주어진 데이터 소스 ID에 해당하는 라벨을 반환합니다.
+     *
+     * 데이터 소스가 존재하지 않으면 ReferenceException을 발생시킵니다.
+     *
+     * @param dataSourceId 조회할 데이터 소스의 ID
+     * @return 데이터 소스의 라벨 문자열
+     * @throws ReferenceException 데이터 소스를 찾을 수 없는 경우 발생
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String getLabelById(Long dataSourceId) {
+        Optional<String> label = dataSourceRepositoryPort.getLabelById(dataSourceId);
+        if (label.isEmpty()) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE);
+        }
+        return label.get();
     }
 }

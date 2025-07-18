@@ -25,10 +25,18 @@ public interface OccupationRepositoryPort {
     Optional<Occupation> findOccupationById(Long occupationId);
 
     /**
- * 주어진 ID를 가진 직업이 데이터베이스에 존재하는지 여부를 반환합니다.
+ * 주어진 ID에 해당하는 직업이 데이터베이스에 존재하는지 확인합니다.
  *
- * @param occupationId 존재 여부를 확인할 직업의 ID
- * @return 직업이 존재하면 true, 그렇지 않으면 false
+ * @param occupationId 존재 여부를 확인할 직업의 고유 식별자
+ * @return 직업이 존재하면 true, 존재하지 않으면 false
  */
 boolean existsOccupationById(Long occupationId);
+
+    /**
+ * 주어진 직업 ID에 해당하는 직업의 라벨(이름 또는 설명)을 조회합니다.
+ *
+ * @param occupationId 조회할 직업의 고유 ID
+ * @return 직업이 존재하면 라벨을 포함한 Optional, 존재하지 않으면 빈 Optional
+ */
+Optional<String> getLabelById(Long occupationId);
 }

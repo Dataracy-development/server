@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.Occupa
 import com.dataracy.modules.reference.application.mapper.OccupationDtoMapper;
 import com.dataracy.modules.reference.application.port.in.occupation.FindAllOccupationsUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.FindOccupationUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.ValidateOccupationUseCase;
 import com.dataracy.modules.reference.application.port.out.OccupationRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +25,8 @@ import java.util.List;
 public class OccupationQueryService implements
         FindAllOccupationsUseCase,
         FindOccupationUseCase,
-        ValidateOccupationUseCase
+        ValidateOccupationUseCase,
+        GetOccupationLabelFromIdUseCase
 {
     private final OccupationDtoMapper occupationDtoMapper;
     private final OccupationRepositoryPort occupationRepositoryPort;
@@ -56,12 +59,12 @@ public class OccupationQueryService implements
     }
 
     /**
-     * 주어진 직업 ID에 해당하는 직업이 존재하는지 검증합니다.
+     * 주어진 직업 ID에 해당하는 직업의 존재 여부를 확인합니다.
      *
-     * 직업이 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 직업이 존재하지 않으면 {@code ReferenceException}을 발생시킵니다.
      *
-     * @param occupationId 검증할 직업의 ID
-     * @throws ReferenceException 직업이 존재하지 않을 때 발생
+     * @param occupationId 존재 여부를 확인할 직업의 ID
+     * @throws ReferenceException 직업이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -70,5 +73,22 @@ public class OccupationQueryService implements
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION);
         }
+    }
+
+    /**
+     * 주어진 직업 ID에 해당하는 직업명을 반환합니다.
+     *
+     * @param occupationId 조회할 직업의 ID
+     * @return 해당 직업의 이름(라벨)
+     * @throws ReferenceException 직업이 존재하지 않을 경우 NOT_FOUND_OCCUPATION 상태로 예외가 발생합니다.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String getLabelById(Long occupationId) {
+        Optional<String> label = occupationRepositoryPort.getLabelById(occupationId);
+        if (label.isEmpty()) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION);
+        }
+        return label.get();
     }
 }

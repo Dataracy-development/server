@@ -2,7 +2,7 @@ package com.dataracy.modules.reference.adapter.persistence.impl;
 
 import com.dataracy.modules.reference.adapter.persistence.entity.TopicEntity;
 import com.dataracy.modules.reference.adapter.persistence.mapper.TopicEntityMapper;
-import com.dataracy.modules.reference.adapter.persistence.repository.TopicJpaRepository;
+import com.dataracy.modules.reference.adapter.persistence.repository.jpa.TopicJpaRepository;
 import com.dataracy.modules.reference.application.port.out.TopicRepositoryPort;
 import com.dataracy.modules.reference.domain.model.Topic;
 import lombok.RequiredArgsConstructor;
@@ -42,13 +42,25 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
     }
 
     /**
-     * 주어진 토픽 ID에 해당하는 토픽이 데이터베이스에 존재하는지 확인한다.
+     * 주어진 토픽 ID에 해당하는 토픽의 존재 여부를 반환한다.
      *
-     * @param topicId 확인할 토픽의 ID
+     * @param topicId 존재 여부를 확인할 토픽의 ID
      * @return 토픽이 존재하면 true, 존재하지 않으면 false
      */
     @Override
     public boolean existsTopicById(Long topicId) {
         return topicJpaRepository.existsById(topicId);
+    }
+
+    /**
+     * 주어진 토픽 ID에 해당하는 토픽의 라벨을 조회합니다.
+     *
+     * @param topicId 조회할 토픽의 ID
+     * @return 토픽이 존재하면 라벨을 포함한 Optional, 없으면 빈 Optional
+     */
+    @Override
+    public Optional<String> getLabelById(Long topicId) {
+        return topicJpaRepository.findById(topicId)
+                .map(TopicEntity::getLabel);
     }
 }
