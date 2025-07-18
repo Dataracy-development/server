@@ -17,7 +17,7 @@ import java.util.Optional;
 @EnableJpaAuditing
 public class JpaConfig {
     @Bean
-    public AuditorAware<String> auditorProvider() {
+    public AuditorAware<Long> auditorProvider() {
         return () -> {
 
             Authentication authentication = SecurityContextProvider.getAuthentication();
@@ -31,7 +31,7 @@ public class JpaConfig {
             Object principal = authentication.getPrincipal();
 
             if (principal instanceof CustomUserDetails userDetails) {
-                return Optional.of(String.valueOf(userDetails.getUserId()));
+                return Optional.of(userDetails.getUserId());
             }
 
             return Optional.empty();

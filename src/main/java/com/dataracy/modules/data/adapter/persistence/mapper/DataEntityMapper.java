@@ -41,7 +41,8 @@ public final class DataEntityMapper {
                 dataEntity.getThumbnailUrl(),
                 dataEntity.getDownloadCount(),
                 dataEntity.getRecentWeekDownloadCount(),
-                DataMetadataEntityMapper.toDomain(dataEntity.getMetadata())
+                DataMetadataEntityMapper.toDomain(dataEntity.getMetadata()),
+                dataEntity.getCreatedAt()
                 );
     }
 

@@ -21,6 +21,7 @@ public class DataQueryService implements ValidateDataUseCase {
     public void validateData(Long dataId) {
         boolean isExist = dataRepositoryPort.existsDataById(dataId);
         if (!isExist) {
+            log.warn("데이터 ID가 존재하지 않습니다: {}", dataId);
             throw new DataException(DataErrorStatus.NOT_FOUND_DATA);
         }
     }

@@ -53,7 +53,8 @@ public final class ProjectEntityMapper {
                 parentProject,
                 projectEntity.getContent(),
                 projectEntity.getFileUrl(),
-                dataIds
+                dataIds,
+                projectEntity.getCreatedAt()
                 );
     }
 

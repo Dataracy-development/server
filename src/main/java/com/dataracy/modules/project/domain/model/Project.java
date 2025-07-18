@@ -2,6 +2,7 @@ package com.dataracy.modules.project.domain.model;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -26,6 +27,7 @@ public class Project {
     private String fileUrl;
     // 타 어그리거트인 Data 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
     private List<Long> dataIds;
+    private LocalDateTime createdAt;
 
     /**
      * 프로젝트의 썸네일 URL을 업데이트합니다.
@@ -65,7 +67,8 @@ public class Project {
             Project parentProject,
             String content,
             String fileUrl,
-            List<Long> dataIds
+            List<Long> dataIds,
+            LocalDateTime createdAt
     ) {
         return Project.builder()
                 .id(id)
@@ -80,6 +83,7 @@ public class Project {
                 .content(content)
                 .fileUrl(fileUrl)
                 .dataIds(dataIds)
+                .createdAt(createdAt)
                 .build();
     }
 }

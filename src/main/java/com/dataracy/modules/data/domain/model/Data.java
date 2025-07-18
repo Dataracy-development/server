@@ -3,6 +3,7 @@ package com.dataracy.modules.data.domain.model;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 데이터 도메인 모델
@@ -28,6 +29,7 @@ public class Data {
     private int downloadCount;
     private int recentWeekDownloadCount;
     private DataMetadata metadata;
+    private LocalDateTime createdAt;
 
     /**
      * 데이터 파일 URL을 갱신합니다.
@@ -67,7 +69,8 @@ public class Data {
             String thumbnailUrl,
             int downloadCount,
             int recentWeekDownloadCount,
-            DataMetadata metadata
+            DataMetadata metadata,
+            LocalDateTime createdAt
     ) {
         return Data.builder()
                 .id(id)
@@ -85,6 +88,7 @@ public class Data {
                 .downloadCount(downloadCount)
                 .recentWeekDownloadCount(recentWeekDownloadCount)
                 .metadata(metadata)
+                .createdAt(createdAt)
                 .build();
     }
 }
