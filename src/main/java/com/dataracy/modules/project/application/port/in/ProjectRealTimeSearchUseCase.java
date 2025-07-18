@@ -12,5 +12,5 @@ public interface ProjectRealTimeSearchUseCase {
  * @param size 반환할 최대 결과 개수
  * @return 검색된 프로젝트의 실시간 검색 응답 객체 리스트
  */
-List<ProjectRealTimeSearchResponse> search(String keyword, int size);
+List<ProjectRealTimeSearchResponse> searchByKeyword(String keyword, int size);
 }

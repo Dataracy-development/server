@@ -34,13 +34,13 @@ public class ProjectQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public List<ProjectRealTimeSearchResponse> search(String keyword, int size) {
+    public List<ProjectRealTimeSearchResponse> searchByKeyword(String keyword, int size) {
         return projectRealTimeSearchPort.search(keyword, size);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProjectSimilarSearchResponse> search(Long projectId, int size) {
+    public List<ProjectSimilarSearchResponse> findSimilarProjects(Long projectId, int size) {
         Project project = projectRepositoryPort.findProjectById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
 
