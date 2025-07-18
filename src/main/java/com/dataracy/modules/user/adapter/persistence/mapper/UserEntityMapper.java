@@ -48,12 +48,12 @@ public final class UserEntityMapper {
     }
 
     /**
-     * 유저 도메인 모델을 유저 엔티티로 변환합니다.
+     * 유저 도메인 모델 객체를 UserEntity로 변환합니다.
      *
-     * 입력된 User 객체의 정보를 기반으로 UserEntity를 생성하고, 관련 토픽 ID 목록을 UserTopicEntity로 변환하여 연결합니다.
+     * User 객체의 필드와 토픽 ID 목록을 기반으로 UserEntity와 연관된 UserTopicEntity 목록을 생성하여 연결합니다.
      *
-     * @param user 변환할 유저 도메인 모델
-     * @return 변환된 UserEntity 객체, 입력이 null인 경우 null 반환
+     * @param user 변환할 유저 도메인 모델 객체
+     * @return 변환된 UserEntity 객체, 입력이 null이면 null을 반환합니다.
      */
     public static UserEntity toEntity(User user) {
         if (user == null) {

@@ -39,7 +39,7 @@ public class Project {
     }
 
     /**
-     * 주어진 값들로 새로운 Project 도메인 객체를 생성합니다.
+     * 주어진 값들로 새로운 Project 도메인 객체를 생성하여 반환합니다.
      *
      * @param id 프로젝트의 고유 식별자
      * @param title 프로젝트 제목
@@ -51,8 +51,9 @@ public class Project {
      * @param isContinue 프로젝트의 연속 여부
      * @param parentProject 상위 프로젝트 객체
      * @param content 프로젝트 내용
-     * @param fileUrl 프로젝트 썸네일 URL
-     * @param dataIds 데이터셋 아이디 리스트
+     * @param fileUrl 프로젝트 썸네일 또는 파일 URL
+     * @param dataIds 연관된 데이터셋의 식별자 리스트
+     * @param createdAt 프로젝트 생성 시각
      * @return 생성된 Project 객체
      */
     public static Project toDomain(
