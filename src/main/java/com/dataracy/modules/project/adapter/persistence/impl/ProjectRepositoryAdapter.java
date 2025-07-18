@@ -42,7 +42,7 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
      */
     @Override
     public Optional<Project> findProjectById(Long projectId) {
-        return projectJpaRepository.findById(projectId)
+        return projectJpaRepository.findProjectById(projectId)
                 .map(ProjectEntityMapper::toDomain);
     }
 
