@@ -59,7 +59,7 @@ public class ProjectController implements ProjectApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> searchRealTimeProjects(String keyword, int size) {
-        List<ProjectRealTimeSearchResponse> responseDto = projectRealTimeSearchUseCase.search(keyword, size);
+        List<ProjectRealTimeSearchResponse> responseDto = projectRealTimeSearchUseCase.searchByKeyword(keyword, size);
         List<ProjectRealTimeSearchWebResponse> webResponse = responseDto.stream()
                 .map(projectSearchWebMapper::toWeb)
                 .toList();
@@ -70,7 +70,7 @@ public class ProjectController implements ProjectApi {
 
     @Override
     public ResponseEntity<SuccessResponse<List<ProjectSimilarSearchWebResponse>>> searchSimilarProjects(Long projectId, int size){
-        List<ProjectSimilarSearchResponse> responseDto = projectSimilarSearchUseCase.search(projectId, size);
+        List<ProjectSimilarSearchResponse> responseDto = projectSimilarSearchUseCase.findSimilarProjects(projectId, size);
         List<ProjectSimilarSearchWebResponse> webResponse = responseDto.stream()
                 .map(projectSearchWebMapper::toWeb)
                 .toList();
