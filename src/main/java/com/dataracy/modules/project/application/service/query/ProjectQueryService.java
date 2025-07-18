@@ -1,8 +1,14 @@
 package com.dataracy.modules.project.application.service.query;
 
 import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
+import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
 import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
+import com.dataracy.modules.project.application.port.in.ProjectSimilarRecommendationUseCase;
+import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.query.ProjectSearchQueryPort;
+import com.dataracy.modules.project.domain.exception.ProjectException;
+import com.dataracy.modules.project.domain.model.Project;
+import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +17,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProjectQueryService implements ProjectRealTimeSearchUseCase {
+public class ProjectQueryService implements
+        ProjectRealTimeSearchUseCase,
+        ProjectSimilarRecommendationUseCase
+{
     private final ProjectSearchQueryPort projectSearchQueryPort;
-
+    private final ProjectRepositoryPort projectRepositoryPort;
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
      *
@@ -25,5 +34,13 @@ public class ProjectQueryService implements ProjectRealTimeSearchUseCase {
     @Transactional(readOnly = true)
     public List<ProjectRealTimeSearchResponse> search(String keyword, int size) {
         return projectSearchQueryPort.search(keyword, size);
+    }
+
+    @Override
+    public List<ProjectSimilarSearchResponse> findSimilarProjects(Long projectId, int size) {
+        Project project = projectRepositoryPort.findProjectById(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
+
+        return projectSearchQueryPort.recommendSimilarProjects(project, size);
     }
 }
