@@ -1,4 +1,4 @@
-package com.dataracy.modules.project.adapter.persistence.repository;
+package com.dataracy.modules.project.adapter.persistence.repository.jpa;
 
 import com.dataracy.modules.project.adapter.persistence.entity.ProjectEntity;
 import com.dataracy.modules.project.adapter.persistence.repository.query.ProjectQueryRepository;

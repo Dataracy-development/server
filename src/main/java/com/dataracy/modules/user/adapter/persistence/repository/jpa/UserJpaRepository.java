@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.adapter.persistence.repository;
+package com.dataracy.modules.user.adapter.persistence.repository.jpa;
 
 import com.dataracy.modules.user.adapter.persistence.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

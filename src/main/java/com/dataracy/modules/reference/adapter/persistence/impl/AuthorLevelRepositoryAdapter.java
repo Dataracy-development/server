@@ -2,7 +2,7 @@ package com.dataracy.modules.reference.adapter.persistence.impl;
 
 import com.dataracy.modules.reference.adapter.persistence.entity.AuthorLevelEntity;
 import com.dataracy.modules.reference.adapter.persistence.mapper.AuthorLevelEntityMapper;
-import com.dataracy.modules.reference.adapter.persistence.repository.AuthorLevelJpaRepository;
+import com.dataracy.modules.reference.adapter.persistence.repository.jpa.AuthorLevelJpaRepository;
 import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
 import lombok.RequiredArgsConstructor;

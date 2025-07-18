@@ -1,10 +1,8 @@
-package com.dataracy.modules.project.adapter.index;
+package com.dataracy.modules.project.adapter.index.indexer;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.dataracy.modules.project.adapter.index.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.port.out.ProjectIndexingPort;
-import com.dataracy.modules.project.domain.exception.ProjectException;
-import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
