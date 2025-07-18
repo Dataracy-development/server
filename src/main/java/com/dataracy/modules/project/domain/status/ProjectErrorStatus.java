@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 public enum ProjectErrorStatus implements BaseErrorCode {
 
     FAIL_SAVE_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-001", "프로젝트 업로드에 실패했습니다."),
-    NOT_FOUND_PROJECT(HttpStatus.NOT_FOUND, "PROJECT-002", "해당 프로젝트 리소스가 존재하지 않습니다.")
+    NOT_FOUND_PROJECT(HttpStatus.NOT_FOUND, "PROJECT-002", "해당 프로젝트 리소스가 존재하지 않습니다."),
+    FAIL_REAL_TIME_SEARCH_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-003", "프로젝트 실시간 검색 실패"),
+    FAIL_INDEXING_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-004", "Elasticsearch 색인 실패")
     ;
     private final HttpStatus httpStatus;
     private final String code;

@@ -3,8 +3,10 @@ package com.dataracy.modules.project.application.service.command;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
+import com.dataracy.modules.project.adapter.index.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
+import com.dataracy.modules.project.application.port.out.ProjectIndexingPort;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
@@ -13,6 +15,7 @@ import com.dataracy.modules.reference.application.port.in.analysispurpose.Valida
 import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
+import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ProjectCommandService implements ProjectUploadUseCase {
     private final ProjectRepositoryPort projectRepositoryPort;
+    private final ProjectIndexingPort projectIndexingPort;
 
+    private final FindUsernameUseCase findUsernameUseCase;
     private final FileUploadUseCase fileUploadUseCase;
     private final ValidateTopicUseCase validateTopicUseCase;
     private final ValidateAnalysisPurposeUseCase validateAnalysisPurposeUseCase;
@@ -36,10 +41,9 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     private String defaultImageUrl;
 
     /**
-     * 사용자 ID와 프로젝트 요청 정보를 기반으로 새 프로젝트를 생성하고, 선택적으로 썸네일 이미지를 업로드합니다.
+     * 사용자 ID와 프로젝트 요청 정보를 기반으로 새 프로젝트를 생성하고, 썸네일 이미지가 제공된 경우 외부 저장소에 업로드합니다.
      *
-     * 프로젝트 정보는 데이터베이스에 저장되며, 이미지 파일이 제공된 경우 외부 저장소에 업로드 후 해당 URL이 프로젝트에 반영됩니다.
-     * 파일 업로드에 실패하면 전체 트랜잭션이 롤백됩니다.
+     * 프로젝트 정보는 데이터베이스에 저장되며, 이미지 파일 업로드에 실패할 경우 전체 트랜잭션이 롤백됩니다. 프로젝트 저장 후, 검색 시스템에 프로젝트가 색인되어 외부 검색이 가능해집니다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
      * @param file 프로젝트 썸네일로 사용할 이미지 파일 (선택 사항)
@@ -97,6 +101,11 @@ public class ProjectCommandService implements ProjectUploadUseCase {
                 throw new RuntimeException("파일 업로드 실패", e); // rollback 유도
             }
         }
+
+        // 검색을 위해 elasticSearch에 프로젝트를 등록한다.
+        String username = findUsernameUseCase.findUsernameById(userId);
+        projectIndexingPort.index(ProjectSearchDocument.from(saveProject, username));
+
         log.info("프로젝트 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
     }
 }
