@@ -41,16 +41,22 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
     }
 
     /**
-     * 지정된 ID를 가진 방문 소스(VisitSource)가 데이터베이스에 존재하는지 여부를 반환합니다.
+     * 주어진 ID의 방문 소스가 데이터베이스에 존재하는지 확인합니다.
      *
      * @param visitSourceId 존재 여부를 확인할 방문 소스의 ID
-     * @return 해당 ID의 방문 소스가 존재하면 true, 그렇지 않으면 false
+     * @return 방문 소스가 존재하면 true, 존재하지 않으면 false
      */
     @Override
     public boolean existsVisitSourceById(Long visitSourceId) {
         return visitSourceJpaRepository.existsById(visitSourceId);
     }
 
+    /**
+     * 주어진 ID에 해당하는 방문 소스의 라벨을 Optional로 반환합니다.
+     *
+     * @param visitSourceId 조회할 방문 소스의 ID
+     * @return 방문 소스가 존재하면 라벨을, 없으면 빈 Optional을 반환합니다.
+     */
     @Override
     public Optional<String> getLabelById(Long visitSourceId) {
         return visitSourceJpaRepository.findById(visitSourceId)

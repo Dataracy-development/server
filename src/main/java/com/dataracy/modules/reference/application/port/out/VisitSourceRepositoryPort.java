@@ -25,12 +25,18 @@ public interface VisitSourceRepositoryPort {
     Optional<VisitSource> findVisitSourceById(Long visitSourceId);
 
     /**
- * 지정된 ID를 가진 VisitSource 엔티티가 데이터베이스에 존재하는지 여부를 반환합니다.
+ * 주어진 ID의 VisitSource 엔티티가 데이터베이스에 존재하는지 확인합니다.
  *
- * @param visitSourceId 존재 여부를 확인할 VisitSource의 고유 식별자
+ * @param visitSourceId 존재 여부를 확인할 VisitSource의 고유 ID
  * @return VisitSource가 존재하면 true, 존재하지 않으면 false
  */
 boolean existsVisitSourceById(Long visitSourceId);
 
-    Optional<String> getLabelById(Long visitSourceId);
+    /**
+ * 지정된 방문 소스 ID에 해당하는 라벨을 조회합니다.
+ *
+ * @param visitSourceId 조회할 방문 소스의 고유 ID
+ * @return 라벨이 존재하면 해당 값을 포함한 Optional, 없으면 빈 Optional
+ */
+Optional<String> getLabelById(Long visitSourceId);
 }
