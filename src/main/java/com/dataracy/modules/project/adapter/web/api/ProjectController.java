@@ -28,12 +28,12 @@ public class ProjectController implements ProjectApi {
     private final ProjectRealTimeSearchUseCase projectRealTimeSearchUseCase;
 
     /**
-     * 사용자의 프로젝트 업로드 요청을 처리하여 프로젝트를 생성한다.
+     * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
      * @param file 프로젝트 썸네일 이미지 파일
      * @param webRequest 업로드할 프로젝트 정보가 담긴 요청 객체
-     * @return 프로젝트가 성공적으로 생성되었음을 알리는 201 Created 응답
+     * @return 프로젝트 생성 성공 시 201 Created 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> uploadProject(
@@ -47,6 +47,13 @@ public class ProjectController implements ProjectApi {
                 .body(SuccessResponse.of(ProjectSuccessStatus.CREATED_PROJECT));
     }
 
+    /**
+     * 실시간 프로젝트 검색을 수행하여 결과 목록을 반환합니다.
+     *
+     * @param keyword 검색할 키워드
+     * @param size 반환할 결과의 최대 개수
+     * @return 실시간 프로젝트 검색 결과 목록이 포함된 성공 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> search(String keyword, int size) {
         List<ProjectRealTimeSearchResponse> responseDto = projectRealTimeSearchUseCase.search(keyword, size);
