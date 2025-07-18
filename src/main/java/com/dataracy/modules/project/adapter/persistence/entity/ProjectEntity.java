@@ -68,7 +68,11 @@ public class ProjectEntity extends BaseTimeEntity {
     @Builder.Default
     private List<ProjectDataEntity> projectDataEntities = new ArrayList<>();
 
-    // 프로젝트에 데이터셋을 추가한다
+    /**
+     * 프로젝트에 ProjectDataEntity를 추가하고 해당 데이터 엔티티의 프로젝트 참조를 이 프로젝트로 설정합니다.
+     *
+     * @param dataEntity 추가할 ProjectDataEntity 인스턴스
+     */
     public void addProjectData(ProjectDataEntity dataEntity) {
         projectDataEntities.add(dataEntity);
         dataEntity.assignProject(this);
