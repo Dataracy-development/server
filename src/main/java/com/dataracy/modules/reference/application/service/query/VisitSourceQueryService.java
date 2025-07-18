@@ -61,12 +61,10 @@ public class VisitSourceQueryService implements
     }
 
     /**
-     * 주어진 방문 출처 ID의 존재 여부를 검증합니다.
+     * 방문 출처 ID의 존재 여부를 확인하고, 존재하지 않으면 예외를 발생시킵니다.
      *
-     * 방문 출처가 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
-     *
-     * @param visitSourceId 검증할 방문 출처의 ID
-     * @throws ReferenceException 방문 출처가 존재하지 않을 때 발생
+     * @param visitSourceId 확인할 방문 출처의 ID
+     * @throws ReferenceException 방문 출처가 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -77,6 +75,15 @@ public class VisitSourceQueryService implements
         }
     }
 
+    /**
+     * 주어진 방문 출처 ID에 해당하는 라벨을 반환합니다.
+     *
+     * 방문 출처가 존재하지 않을 경우 {@code ReferenceException}이 발생합니다.
+     *
+     * @param visitSourceId 조회할 방문 출처의 ID
+     * @return 방문 출처의 라벨 문자열
+     * @throws ReferenceException 방문 출처를 찾을 수 없는 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long visitSourceId) {

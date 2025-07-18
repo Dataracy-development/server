@@ -54,11 +54,11 @@ public interface ProjectApi {
     );
 
     /**
-     * 주어진 키워드와 결과 개수 제한을 기준으로 실시간 프로젝트 리스트를 조회합니다.
+     * 키워드와 개수 제한을 기준으로 실시간 프로젝트 목록을 조회합니다.
      *
-     * @param keyword 검색에 사용할 키워드
-     * @param size 반환할 프로젝트 리스트의 최대 개수 (1 이상)
-     * @return 실시간 검색 결과로 조회된 프로젝트 리스트가 포함된 성공 응답
+     * @param keyword 프로젝트 검색에 사용할 키워드
+     * @param size 반환할 프로젝트 최대 개수 (1 이상)
+     * @return 실시간 검색 결과로 조회된 프로젝트 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "실시간으로 프로젝트 리스트를 조회한다.",
@@ -79,6 +79,13 @@ public interface ProjectApi {
             int size
     );
 
+    /**
+     * 지정한 프로젝트와 유사한 프로젝트들의 리스트를 조회합니다.
+     *
+     * @param projectId 기준이 되는 프로젝트의 ID
+     * @param size 반환할 유사 프로젝트의 최대 개수
+     * @return 유사한 프로젝트 목록이 포함된 성공 응답
+     */
     @Operation(
             summary = "유사 프로젝트 리스트를 조회한다.",
             description = "해당하는 프로젝트와 유사한 프로젝트 리스트를 조회한다."

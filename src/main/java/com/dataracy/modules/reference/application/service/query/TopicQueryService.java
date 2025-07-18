@@ -59,9 +59,9 @@ public class TopicQueryService implements
     }
 
     /**
-     * 주어진 토픽 ID에 해당하는 토픽이 존재하는지 확인합니다.
+     * 주어진 토픽 ID에 해당하는 토픽의 존재 여부를 검증합니다.
      *
-     * 토픽이 존재하지 않으면 ReferenceException을 발생시킵니다.
+     * 토픽이 존재하지 않을 경우 ReferenceException을 발생시킵니다.
      *
      * @param topicId 존재 여부를 확인할 토픽의 ID
      */
@@ -74,6 +74,13 @@ public class TopicQueryService implements
         }
     }
 
+    /**
+     * 주어진 토픽 ID에 해당하는 라벨을 조회합니다.
+     *
+     * @param topicId 조회할 토픽의 ID
+     * @return 토픽의 라벨 문자열
+     * @throws ReferenceException 해당 토픽의 라벨이 존재하지 않을 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long topicId) {

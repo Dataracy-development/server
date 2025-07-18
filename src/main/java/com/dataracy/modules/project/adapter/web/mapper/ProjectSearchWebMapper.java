@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjectSearchWebMapper {
     /**
-     * ProjectRealTimeSearchResponse 객체를 웹 응답 객체인 ProjectRealTimeSearchWebResponse로 변환합니다.
+     * ProjectRealTimeSearchResponse DTO를 ProjectRealTimeSearchWebResponse 웹 응답 객체로 변환합니다.
      *
-     * @param responseDto 변환할 프로젝트 실시간 검색 응답 DTO
+     * @param responseDto 변환할 실시간 프로젝트 검색 응답 DTO
      * @return 변환된 웹 응답 객체
      */
     public ProjectRealTimeSearchWebResponse toWeb(ProjectRealTimeSearchResponse responseDto) {
@@ -23,6 +23,12 @@ public class ProjectSearchWebMapper {
         );
     }
 
+    /**
+     * ProjectSimilarSearchResponse DTO를 ProjectSimilarSearchWebResponse 웹 응답 객체로 변환합니다.
+     *
+     * @param responseDto 변환할 ProjectSimilarSearchResponse DTO
+     * @return 변환된 ProjectSimilarSearchWebResponse 객체
+     */
     public ProjectSimilarSearchWebResponse toWeb(ProjectSimilarSearchResponse responseDto) {
         return new ProjectSimilarSearchWebResponse(
                 responseDto.id(),

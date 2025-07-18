@@ -30,7 +30,7 @@ public class ProjectQueryService implements
      *
      * @param keyword 검색에 사용할 키워드
      * @param size 반환할 최대 결과 개수
-     * @return 검색된 프로젝트의 실시간 응답 객체 리스트
+     * @return 키워드에 매칭되는 프로젝트의 실시간 검색 응답 객체 리스트
      */
     @Override
     @Transactional(readOnly = true)
@@ -38,6 +38,14 @@ public class ProjectQueryService implements
         return projectRealTimeSearchPort.search(keyword, size);
     }
 
+    /**
+     * 지정한 프로젝트와 유사한 프로젝트 목록을 조회합니다.
+     *
+     * @param projectId 유사한 프로젝트를 찾을 기준이 되는 프로젝트의 ID
+     * @param size 반환할 유사 프로젝트의 최대 개수
+     * @return 유사한 프로젝트 정보를 담은 응답 객체 리스트
+     * @throws ProjectException 프로젝트가 존재하지 않을 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ProjectSimilarSearchResponse> findSimilarProjects(Long projectId, int size) {
