@@ -115,7 +115,14 @@ public class ProjectCommandService implements ProjectUploadUseCase {
 
         // 검색을 위해 elasticSearch에 프로젝트를 등록한다.
         String username = findUsernameUseCase.findUsernameById(userId);
-        projectIndexingPort.index(ProjectSearchDocument.from(saveProject, topicLabel, analysisPurposeLabel, dataSourceLabel, authorLevelLabel, username));
+        projectIndexingPort.index(ProjectSearchDocument.from(
+                saveProject,
+                topicLabel,
+                analysisPurposeLabel,
+                dataSourceLabel,
+                authorLevelLabel,
+                username
+        ));
 
         log.info("프로젝트 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
     }
