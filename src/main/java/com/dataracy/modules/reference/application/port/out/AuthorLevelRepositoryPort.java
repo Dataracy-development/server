@@ -32,5 +32,11 @@ public interface AuthorLevelRepositoryPort {
  */
 boolean existsAuthorLevelById(Long authorLevelId);
 
-    Optional<String> getLabelById(Long authorLevelId);
+    /**
+ * 주어진 ID에 해당하는 AuthorLevel 엔티티의 라벨을 조회합니다.
+ *
+ * @param authorLevelId 조회할 AuthorLevel의 고유 식별자
+ * @return 라벨이 존재하면 해당 값을 포함한 Optional, 없으면 빈 Optional
+ */
+Optional<String> getLabelById(Long authorLevelId);
 }

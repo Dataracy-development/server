@@ -25,12 +25,18 @@ public interface DataSourceRepositoryPort {
     Optional<DataSource> findDataSourceById(Long dataSourceId);
 
     /**
- * 지정된 ID를 가진 데이터 소스가 데이터베이스에 존재하는지 여부를 반환합니다.
+ * 지정된 ID의 데이터 소스가 데이터베이스에 존재하는지 확인합니다.
  *
  * @param dataSourceId 데이터 소스의 고유 식별자
- * @return 데이터 소스가 존재하면 true, 그렇지 않으면 false
+ * @return 데이터 소스가 존재하면 true, 존재하지 않으면 false
  */
 boolean existsDataSourceById(Long dataSourceId);
 
-    Optional<String> getLabelById(Long dataSourceId);
+    /**
+ * 지정된 ID를 가진 데이터 소스의 라벨을 조회합니다.
+ *
+ * @param dataSourceId 조회할 데이터 소스의 고유 식별자
+ * @return 데이터 소스의 라벨이 존재하면 해당 문자열을 포함한 Optional, 없으면 빈 Optional
+ */
+Optional<String> getLabelById(Long dataSourceId);
 }

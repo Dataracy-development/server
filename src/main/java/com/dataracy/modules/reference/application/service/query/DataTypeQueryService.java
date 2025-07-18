@@ -60,12 +60,12 @@ public class DataTypeQueryService implements
     }
 
     /**
-     * 주어진 데이터 타입 ID가 존재하는지 검증합니다.
+     * 주어진 데이터 타입 ID가 존재하는지 확인합니다.
      *
-     * 데이터 타입이 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 데이터 타입이 존재하지 않으면 {@code ReferenceException}을 발생시킵니다.
      *
-     * @param dataTypeId 검증할 데이터 타입의 ID
-     * @throws ReferenceException 데이터 타입이 존재하지 않을 때 발생
+     * @param dataTypeId 존재 여부를 확인할 데이터 타입의 ID
+     * @throws ReferenceException 데이터 타입이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -76,6 +76,15 @@ public class DataTypeQueryService implements
         }
     }
 
+    /**
+     * 주어진 데이터 타입 ID에 해당하는 라벨을 반환합니다.
+     *
+     * 데이터 타입이 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     *
+     * @param dataTypeId 조회할 데이터 타입의 ID
+     * @return 데이터 타입의 라벨 문자열
+     * @throws ReferenceException 데이터 타입을 찾을 수 없는 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long dataTypeId) {

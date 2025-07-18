@@ -42,16 +42,22 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
     }
 
     /**
-     * 주어진 ID를 가진 분석 목적(AnalysisPurpose)이 데이터베이스에 존재하는지 확인합니다.
+     * 주어진 ID에 해당하는 분석 목적(AnalysisPurpose)이 데이터베이스에 존재하는지 반환합니다.
      *
      * @param analysisPurposeId 존재 여부를 확인할 분석 목적의 ID
-     * @return 해당 ID의 분석 목적이 존재하면 true, 그렇지 않으면 false
+     * @return 해당 ID의 분석 목적이 존재하면 true, 존재하지 않으면 false
      */
     @Override
     public boolean existsAnalysisPurposeById(Long analysisPurposeId) {
         return analysisPurposeJpaRepository.existsById(analysisPurposeId);
     }
 
+    /**
+     * 주어진 ID에 해당하는 분석 목적(AnalysisPurpose)의 라벨을 조회합니다.
+     *
+     * @param analysisPurposeId 조회할 분석 목적의 ID
+     * @return 해당 ID의 분석 목적이 존재하면 라벨을 포함한 Optional, 존재하지 않으면 빈 Optional
+     */
     @Override
     public Optional<String> getLabelById(Long analysisPurposeId) {
         return analysisPurposeJpaRepository.findById(analysisPurposeId)
