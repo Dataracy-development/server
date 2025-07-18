@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -79,10 +78,7 @@ public class AnalysisPurposeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long analysisPurposeId) {
-        Optional<String> label = analysisPurposeRepositoryPort.getLabelById(analysisPurposeId);
-        if (label.isEmpty()) {
-            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
-        }
-        return label.get();
+        return analysisPurposeRepositoryPort.getLabelById(analysisPurposeId)
+                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE));
     }
 }
