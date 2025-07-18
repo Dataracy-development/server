@@ -2,7 +2,7 @@ package com.dataracy.modules.data.adapter.persistence.impl;
 
 import com.dataracy.modules.data.adapter.persistence.entity.DataEntity;
 import com.dataracy.modules.data.adapter.persistence.mapper.DataEntityMapper;
-import com.dataracy.modules.data.adapter.persistence.repository.DataJpaRepository;
+import com.dataracy.modules.data.adapter.persistence.repository.jpa.DataJpaRepository;
 import com.dataracy.modules.data.application.port.out.DataRepositoryPort;
 import com.dataracy.modules.data.domain.exception.DataException;
 import com.dataracy.modules.data.domain.model.Data;

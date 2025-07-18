@@ -2,7 +2,7 @@ package com.dataracy.modules.reference.adapter.persistence.impl;
 
 import com.dataracy.modules.reference.adapter.persistence.entity.DataSourceEntity;
 import com.dataracy.modules.reference.adapter.persistence.mapper.DataSourceEntityMapper;
-import com.dataracy.modules.reference.adapter.persistence.repository.DataSourceJpaRepository;
+import com.dataracy.modules.reference.adapter.persistence.repository.jpa.DataSourceJpaRepository;
 import com.dataracy.modules.reference.application.port.out.DataSourceRepositoryPort;
 import com.dataracy.modules.reference.domain.model.DataSource;
 import lombok.RequiredArgsConstructor;
@@ -42,13 +42,25 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     }
 
     /**
-     * 주어진 ID를 가진 데이터 소스가 존재하는지 여부를 반환합니다.
+     * 지정된 ID의 데이터 소스가 존재하는지 확인합니다.
      *
-     * @param dataSourceId 데이터 소스의 고유 식별자
-     * @return 데이터 소스가 존재하면 true, 그렇지 않으면 false
+     * @param dataSourceId 확인할 데이터 소스의 ID
+     * @return 데이터 소스가 존재하면 true, 존재하지 않으면 false
      */
     @Override
     public boolean existsDataSourceById(Long dataSourceId) {
         return dataSourceJpaRepository.existsById(dataSourceId);
+    }
+
+    /**
+     * 지정된 ID에 해당하는 데이터 소스의 라벨을 조회합니다.
+     *
+     * @param dataSourceId 조회할 데이터 소스의 ID
+     * @return 데이터 소스가 존재하면 라벨을 포함한 Optional, 존재하지 않으면 빈 Optional
+     */
+    @Override
+    public Optional<String> getLabelById(Long dataSourceId) {
+        return dataSourceJpaRepository.findById(dataSourceId)
+                .map(DataSourceEntity::getLabel);
     }
 }

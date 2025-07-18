@@ -2,7 +2,7 @@ package com.dataracy.modules.reference.adapter.persistence.impl;
 
 import com.dataracy.modules.reference.adapter.persistence.entity.OccupationEntity;
 import com.dataracy.modules.reference.adapter.persistence.mapper.OccupationEntityMapper;
-import com.dataracy.modules.reference.adapter.persistence.repository.OccupationJpaRepository;
+import com.dataracy.modules.reference.adapter.persistence.repository.jpa.OccupationJpaRepository;
 import com.dataracy.modules.reference.application.port.out.OccupationRepositoryPort;
 import com.dataracy.modules.reference.domain.model.Occupation;
 import lombok.RequiredArgsConstructor;
@@ -41,13 +41,25 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
     }
 
     /**
-     * 주어진 직업 ID에 해당하는 직업이 존재하는지 여부를 반환합니다.
+     * 주어진 직업 ID에 해당하는 직업의 존재 여부를 확인합니다.
      *
      * @param occupationId 존재 여부를 확인할 직업의 ID
-     * @return 직업이 존재하면 true, 그렇지 않으면 false
+     * @return 직업이 존재하면 true, 존재하지 않으면 false
      */
     @Override
     public boolean existsOccupationById(Long occupationId) {
         return occupationJpaRepository.existsById(occupationId);
+    }
+
+    /**
+     * 주어진 직업 ID에 해당하는 직업의 라벨을 조회합니다.
+     *
+     * @param occupationId 조회할 직업의 ID
+     * @return 직업 라벨이 존재하면 해당 값을 포함한 Optional, 없으면 Optional.empty()
+     */
+    @Override
+    public Optional<String> getLabelById(Long occupationId) {
+        return occupationJpaRepository.findById(occupationId)
+                .map(OccupationEntity::getLabel);
     }
 }

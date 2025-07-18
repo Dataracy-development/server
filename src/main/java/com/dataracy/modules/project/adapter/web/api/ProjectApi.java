@@ -4,6 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
 import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
+import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -53,11 +54,11 @@ public interface ProjectApi {
     );
 
     /**
-     * 주어진 키워드와 결과 개수 제한을 기준으로 실시간 프로젝트 리스트를 조회합니다.
+     * 키워드와 개수 제한을 기준으로 실시간 프로젝트 목록을 조회합니다.
      *
-     * @param keyword 검색에 사용할 키워드
-     * @param size 반환할 프로젝트 리스트의 최대 개수 (1 이상)
-     * @return 실시간 검색 결과로 조회된 프로젝트 리스트가 포함된 성공 응답
+     * @param keyword 프로젝트 검색에 사용할 키워드
+     * @param size 반환할 프로젝트 최대 개수 (1 이상)
+     * @return 실시간 검색 결과로 조회된 프로젝트 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "실시간으로 프로젝트 리스트를 조회한다.",
@@ -69,9 +70,36 @@ public interface ProjectApi {
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
     @GetMapping("/search/real-time")
-    ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> search(
+    ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> searchRealTimeProjects(
             @RequestParam(name = "keyword")
             String keyword,
+
+            @RequestParam(name = "size")
+            @Min(1)
+            int size
+    );
+
+    /**
+     * 지정한 프로젝트와 유사한 프로젝트들의 리스트를 조회합니다.
+     *
+     * @param projectId 기준이 되는 프로젝트의 ID
+     * @param size 반환할 유사 프로젝트의 최대 개수
+     * @return 유사한 프로젝트 목록이 포함된 성공 응답
+     */
+    @Operation(
+            summary = "유사 프로젝트 리스트를 조회한다.",
+            description = "해당하는 프로젝트와 유사한 프로젝트 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "유사 프로젝트 리스트 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/search/similar")
+    ResponseEntity<SuccessResponse<List<ProjectSimilarSearchWebResponse>>> searchSimilarProjects(
+            @RequestParam(name = "projectId")
+            @Min(1)
+            Long projectId,
 
             @RequestParam(name = "size")
             @Min(1)

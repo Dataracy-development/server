@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.Author
 import com.dataracy.modules.reference.application.mapper.AuthorLevelDtoMapper;
 import com.dataracy.modules.reference.application.port.in.authorlevel.FindAllAuthorLevelsUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +25,8 @@ import java.util.List;
 public class AuthorLevelQueryService implements
         FindAllAuthorLevelsUseCase,
         FindAuthorLevelUseCase,
-        ValidateAuthorLevelUseCase
+        ValidateAuthorLevelUseCase,
+        GetAuthorLevelLabelFromIdUseCase
 {
     private final AuthorLevelDtoMapper authorLevelDtoMapper;
     private final AuthorLevelRepositoryPort authorLevelRepositoryPort;
@@ -56,11 +59,11 @@ public class AuthorLevelQueryService implements
     }
 
     /**
-     * 주어진 ID의 저자 등급이 존재하는지 검증합니다.
+     * 주어진 ID에 해당하는 저자 등급의 존재 여부를 검증합니다.
      *
-     * 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 저자 등급이 존재하지 않으면 {@code ReferenceException}을 발생시킵니다.
      *
-     * @param authorLevelId 검증할 저자 등급의 ID
+     * @param authorLevelId 존재 여부를 확인할 저자 등급 ID
      * @throws ReferenceException 저자 등급이 존재하지 않을 때 발생
      */
     @Override
@@ -70,5 +73,22 @@ public class AuthorLevelQueryService implements
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);
         }
+    }
+
+    /**
+     * 주어진 작가 등급 ID에 해당하는 라벨을 반환합니다.
+     *
+     * @param authorLevelId 조회할 작가 등급의 ID
+     * @return 해당 작가 등급의 라벨 문자열
+     * @throws ReferenceException 해당 ID의 작가 등급이 존재하지 않을 경우 발생
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String getLabelById(Long authorLevelId) {
+        Optional<String> label = authorLevelRepositoryPort.getLabelById(authorLevelId);
+        if (label.isEmpty()) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);
+        }
+        return label.get();
     }
 }

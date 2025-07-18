@@ -2,7 +2,7 @@ package com.dataracy.modules.reference.adapter.persistence.impl;
 
 import com.dataracy.modules.reference.adapter.persistence.entity.AuthorLevelEntity;
 import com.dataracy.modules.reference.adapter.persistence.mapper.AuthorLevelEntityMapper;
-import com.dataracy.modules.reference.adapter.persistence.repository.AuthorLevelJpaRepository;
+import com.dataracy.modules.reference.adapter.persistence.repository.jpa.AuthorLevelJpaRepository;
 import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
 import lombok.RequiredArgsConstructor;
@@ -41,13 +41,25 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
     }
 
     /**
-     * 주어진 ID를 가진 AuthorLevel 엔티티가 존재하는지 여부를 반환합니다.
+     * 지정된 ID를 가진 AuthorLevel 엔티티의 존재 여부를 확인합니다.
      *
-     * @param authorLevelId 확인할 AuthorLevel의 ID
-     * @return 해당 ID의 AuthorLevel이 존재하면 true, 그렇지 않으면 false
+     * @param authorLevelId 존재 여부를 확인할 AuthorLevel의 ID
+     * @return 엔티티가 존재하면 true, 존재하지 않으면 false
      */
     @Override
     public boolean existsAuthorLevelById(Long authorLevelId) {
         return authorLevelJpaRepository.existsById(authorLevelId);
+    }
+
+    /**
+     * 주어진 ID에 해당하는 AuthorLevel 엔티티의 라벨을 조회합니다.
+     *
+     * @param authorLevelId 조회할 AuthorLevel의 ID
+     * @return 라벨 문자열을 포함하는 Optional, 엔티티가 없으면 빈 Optional 반환
+     */
+    @Override
+    public Optional<String> getLabelById(Long authorLevelId) {
+        return authorLevelJpaRepository.findById(authorLevelId)
+                .map(AuthorLevelEntity::getLabel);
     }
 }

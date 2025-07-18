@@ -59,6 +59,7 @@ ext {
 	juniversalchardet= '1.0.3'
 	commonsCsvVersion = '1.14.0'
 	apachePoiVersion  = '5.2.3'
+	queryDslVersion = '5.0.0'
 }
 
 dependencies {
@@ -133,12 +134,38 @@ dependencies {
 	implementation "org.apache.poi:poi:${apachePoiVersion}"
 	implementation "org.apache.poi:poi-ooxml:${apachePoiVersion}"
 
+	// Querydsl
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
 	implementation "com.googlecode.juniversalchardet:juniversalchardet:${juniversalchardet}"
 
 	implementation "org.apache.commons:commons-pool2:${commonsPool2Version}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
 
+tasks.named('compileJava', JavaCompile).configure {
+	options.annotationProcessorGeneratedSourcesDirectory = file("$build/generated/sources/annotationProcessor/java/main")
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs += "$build/generated/sources/annotationProcessor/java/main"
+		}
+	}
+}
+
+tasks.named('compileJava') {
+	doFirst {
+		def generatedDir = file("$build/generated/sources/annotationProcessor/java/main")
+		if (generatedDir.exists()) {
+			generatedDir.deleteDir()
+		}
+	}
+}
 
 tasks.named('test') {
 	useJUnitPlatform()
