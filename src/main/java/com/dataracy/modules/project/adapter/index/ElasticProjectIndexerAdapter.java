@@ -3,11 +3,15 @@ package com.dataracy.modules.project.adapter.index;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.dataracy.modules.project.adapter.index.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.port.out.ProjectIndexingPort;
+import com.dataracy.modules.project.domain.exception.ProjectException;
+import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ElasticProjectIndexerAdapter implements ProjectIndexingPort {
@@ -17,13 +21,17 @@ public class ElasticProjectIndexerAdapter implements ProjectIndexingPort {
     @Override
     public void index(ProjectSearchDocument doc) {
         try {
+            log.info("프로젝트 인덱싱 시작: projectId={}", doc.id());
             client.index(i -> i
                     .index("project")
                     .id(doc.id().toString())
                     .document(doc)
             );
+            log.info("프로젝트 인덱싱 완료: projectId={}", doc.id());
         } catch (IOException e) {
-            throw new RuntimeException("Elasticsearch 색인 실패", e);
+            log.error("프로젝트 인덱싱 실패: projectId={}", doc.id(), e);
+            // 인덱싱 실패가 프로젝트 업로드 실패를 이끌지 않도록 한다.
+//            throw new ProjectException(ProjectErrorStatus.FAIL_INDEXING_PROJECT);
         }
     }
 }
