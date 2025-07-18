@@ -77,6 +77,7 @@ public class AnalysisPurposeQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String getLabelById(Long analysisPurposeId) {
         Optional<String> label = analysisPurposeRepositoryPort.getLabelById(analysisPurposeId);
         if (label.isEmpty()) {
