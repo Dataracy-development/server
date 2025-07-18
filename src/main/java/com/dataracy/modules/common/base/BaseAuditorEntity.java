@@ -20,9 +20,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public abstract class BaseAuditorEntity {
     @CreatedBy
     @Column(updatable = false, nullable = false)
-    private String createdBy;
+    private Long createdBy;
 
     @LastModifiedBy
     @Column(nullable = false)
-    private String modifiedBy;
+    private Long modifiedBy;
 }

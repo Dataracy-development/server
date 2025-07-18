@@ -1,5 +1,7 @@
 package com.dataracy.modules.project.application.dto.request;
 
+import java.util.List;
+
 /**
  * 프로젝트 업로드 도메인 요청 DTO
  * @param title 제목
@@ -10,6 +12,7 @@ package com.dataracy.modules.project.application.dto.request;
  * @param isContinue 이어가기 유무
  * @param parentProjectId 이어가기 프로젝트 아이디
  * @param content 내용
+ * @param dataIds 데이터셋 리스트
  */
 public record ProjectUploadRequest(
         String title,
@@ -19,5 +22,6 @@ public record ProjectUploadRequest(
         Long authorLevelId,
         Boolean isContinue,
         Long parentProjectId,
-        String content
+        String content,
+        List<Long> dataIds
 ) {}

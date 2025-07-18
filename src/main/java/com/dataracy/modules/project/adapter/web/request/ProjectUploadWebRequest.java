@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 @Schema(description = "프로젝트 업로드 요청 DTO")
 public record ProjectUploadWebRequest(
         @Schema(description = "제목", example = "프로젝트명")
@@ -35,5 +37,9 @@ public record ProjectUploadWebRequest(
 
         @Schema(description = "내용", example = "지금 데이터 출처에 대해서 ~~.")
         @NotBlank(message = "내용을 입력해주세요")
-        String content
+        String content,
+
+        @Schema(description = "데이터셋 리스트", example = "[1, 3]")
+        @NotNull(message = "데이터셋 리스트에 null은 올 수 없습니다.")
+        List<Long> dataIds
 ) {}

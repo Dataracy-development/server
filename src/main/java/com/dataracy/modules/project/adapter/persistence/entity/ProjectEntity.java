@@ -1,6 +1,7 @@
 package com.dataracy.modules.project.adapter.persistence.entity;
 
 import com.dataracy.modules.common.base.BaseEntity;
+import com.dataracy.modules.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
@@ -19,7 +20,7 @@ import java.util.List;
 @Table(
         name = "project"
 )
-public class ProjectEntity extends BaseEntity {
+public class ProjectEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
@@ -63,7 +64,21 @@ public class ProjectEntity extends BaseEntity {
     @Column
     private String fileUrl;
 
-    /****
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
+    @Builder.Default
+    private List<ProjectDataEntity> projectDataEntities = new ArrayList<>();
+
+    /**
+     * 프로젝트에 ProjectDataEntity를 추가하고 해당 데이터 엔티티의 프로젝트 참조를 이 프로젝트로 설정합니다.
+     *
+     * @param dataEntity 추가할 ProjectDataEntity 인스턴스
+     */
+    public void addProjectData(ProjectDataEntity dataEntity) {
+        projectDataEntities.add(dataEntity);
+        dataEntity.assignProject(this);
+    }
+
+    /**
      * 프로젝트의 파일 URL을 새로운 값으로 변경합니다.
      *
      * @param fileUrl 새로 지정할 파일의 URL
