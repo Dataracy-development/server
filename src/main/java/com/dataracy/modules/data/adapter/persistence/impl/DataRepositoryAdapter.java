@@ -74,4 +74,9 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
         dataEntity.updateThumbnailFile(thumbnailFileUrl);
     }
+
+    @Override
+    public boolean existsDataById(Long dataId) {
+        return dataJpaRepository.existsById(dataId);
+    }
 }

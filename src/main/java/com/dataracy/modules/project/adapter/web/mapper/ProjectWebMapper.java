@@ -21,7 +21,8 @@ public class ProjectWebMapper {
                 webRequest.authorLevelId(),
                 webRequest.isContinue(),
                 webRequest.parentProjectId(),
-                webRequest.content()
+                webRequest.content(),
+                webRequest.dataIds()
         );
     }
 }

@@ -1,8 +1,12 @@
 package com.dataracy.modules.project.adapter.persistence.mapper;
 
+import com.dataracy.modules.project.adapter.persistence.entity.ProjectDataEntity;
 import com.dataracy.modules.project.adapter.persistence.entity.ProjectEntity;
 import com.dataracy.modules.project.domain.model.Project;
-import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 프로젝트 엔티티와 프로젝트 도메인 모델을 변환하는 매퍼
@@ -33,6 +37,10 @@ public final class ProjectEntityMapper {
                 .build()
                 : null;
 
+        List<Long> dataIds = projectEntity.getProjectDataEntities().stream()
+                .map(ProjectDataEntity::getDataId)
+                .toList();
+
         return Project.toDomain(
                 projectEntity.getId(),
                 projectEntity.getTitle(),
@@ -44,7 +52,8 @@ public final class ProjectEntityMapper {
                 projectEntity.getIsContinue(),
                 parentProject,
                 projectEntity.getContent(),
-                projectEntity.getFileUrl()
+                projectEntity.getFileUrl(),
+                dataIds
                 );
     }
 
@@ -70,7 +79,7 @@ public final class ProjectEntityMapper {
                 .build()
                 : null;
 
-        return ProjectEntity.toEntity(
+        ProjectEntity projectEntity = ProjectEntity.toEntity(
                 project.getTitle(),
                 project.getTopicId(),
                 project.getUserId(),
@@ -82,5 +91,15 @@ public final class ProjectEntityMapper {
                 project.getContent(),
                 project.getFileUrl()
         );
+
+        // dataIds → projectDataEntities 변환 후 연결
+        List<ProjectDataEntity> projectDataEntities = Optional.ofNullable(project.getDataIds())
+                .orElseGet(Collections::emptyList)
+                .stream()
+                .map(dataId -> ProjectDataEntity.of(projectEntity, dataId))
+                .toList();
+        projectDataEntities.forEach(projectEntity::addProjectData);
+
+        return projectEntity;
     }
 }

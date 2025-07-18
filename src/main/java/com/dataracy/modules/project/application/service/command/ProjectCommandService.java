@@ -1,6 +1,7 @@
 package com.dataracy.modules.project.application.service.command;
 
 import com.dataracy.modules.common.util.FileUtil;
+import com.dataracy.modules.data.application.port.in.ValidateDataUseCase;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.adapter.index.document.ProjectSearchDocument;
@@ -36,6 +37,7 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     private final ValidateAnalysisPurposeUseCase validateAnalysisPurposeUseCase;
     private final ValidateDataSourceUseCase validateDataSourceUseCase;;
     private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
+    private final ValidateDataUseCase validateDataUseCase;
 
     @Value("${default.image.url:}")
     private String defaultImageUrl;
@@ -60,6 +62,12 @@ public class ProjectCommandService implements ProjectUploadUseCase {
         validateDataSourceUseCase.validateDataSource(requestDto.dataSourceId());
         validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
 
+        // 데이터셋 id를 통해 데이터셋 존재 유효성 검사를 시행한다.
+        if (requestDto.dataIds() != null) {
+            requestDto.dataIds()
+                    .forEach(validateDataUseCase::validateData);
+        }
+
         // 파일 유효성 검사
         FileUtil.validateImageFile(file);
 
@@ -82,7 +90,8 @@ public class ProjectCommandService implements ProjectUploadUseCase {
                 requestDto.isContinue(),
                 parentProject,
                 requestDto.content(),
-                defaultImageUrl
+                defaultImageUrl,
+                requestDto.dataIds()
                 );
         Project saveProject = projectRepositoryPort.saveProject(project);
 
