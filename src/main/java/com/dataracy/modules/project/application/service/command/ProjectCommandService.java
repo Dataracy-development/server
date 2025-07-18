@@ -1,6 +1,7 @@
 package com.dataracy.modules.project.application.service.command;
 
 import com.dataracy.modules.common.util.FileUtil;
+import com.dataracy.modules.data.application.port.in.ValidateDataUseCase;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.adapter.index.document.ProjectSearchDocument;
@@ -36,14 +37,15 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     private final ValidateAnalysisPurposeUseCase validateAnalysisPurposeUseCase;
     private final ValidateDataSourceUseCase validateDataSourceUseCase;;
     private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
+    private final ValidateDataUseCase validateDataUseCase;
 
     @Value("${default.image.url:}")
     private String defaultImageUrl;
 
     /**
-     * 사용자 ID와 프로젝트 요청 정보를 기반으로 새 프로젝트를 생성하고, 썸네일 이미지가 제공된 경우 외부 저장소에 업로드합니다.
+     * 사용자 ID와 프로젝트 요청 정보를 바탕으로 새 프로젝트를 생성하고, 선택적으로 썸네일 이미지를 외부 저장소에 업로드합니다.
      *
-     * 프로젝트 정보는 데이터베이스에 저장되며, 이미지 파일 업로드에 실패할 경우 전체 트랜잭션이 롤백됩니다. 프로젝트 저장 후, 검색 시스템에 프로젝트가 색인되어 외부 검색이 가능해집니다.
+     * 프로젝트 정보는 데이터베이스에 저장되며, 데이터셋 ID, 주제, 분석 목적, 데이터 소스, 저자 레벨 등 주요 필드에 대한 유효성 검사가 수행됩니다. 부모 프로젝트가 지정된 경우 존재 여부를 확인합니다. 이미지 파일이 제공되면 업로드 후 프로젝트 정보에 반영하며, 업로드 실패 시 전체 트랜잭션이 롤백됩니다. 프로젝트 저장 후 검색 시스템에 색인되어 외부 검색이 가능해집니다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
      * @param file 프로젝트 썸네일로 사용할 이미지 파일 (선택 사항)
@@ -59,6 +61,12 @@ public class ProjectCommandService implements ProjectUploadUseCase {
         validateAnalysisPurposeUseCase.validateAnalysisPurpose(requestDto.analysisPurposeId());
         validateDataSourceUseCase.validateDataSource(requestDto.dataSourceId());
         validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
+
+        // 데이터셋 id를 통해 데이터셋 존재 유효성 검사를 시행한다.
+        if (requestDto.dataIds() != null) {
+            requestDto.dataIds()
+                    .forEach(validateDataUseCase::validateData);
+        }
 
         // 파일 유효성 검사
         FileUtil.validateImageFile(file);
@@ -82,7 +90,9 @@ public class ProjectCommandService implements ProjectUploadUseCase {
                 requestDto.isContinue(),
                 parentProject,
                 requestDto.content(),
-                defaultImageUrl
+                defaultImageUrl,
+                requestDto.dataIds(),
+                null
                 );
         Project saveProject = projectRepositoryPort.saveProject(project);
 

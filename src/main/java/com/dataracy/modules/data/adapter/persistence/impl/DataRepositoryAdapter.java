@@ -62,16 +62,27 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
     }
 
     /**
-     * 지정된 데이터 ID에 해당하는 데이터의 썸네일 파일 URL을 업데이트합니다.
+     * 데이터 ID에 해당하는 데이터의 썸네일 파일 URL을 새 값으로 변경합니다.
      *
-     * @param dataId 업데이트할 데이터의 ID
-     * @param thumbnailFileUrl 새 썸네일 파일 URL
-     * @throws DataException 데이터가 존재하지 않을 경우 발생
+     * @param dataId 썸네일 파일 URL을 변경할 데이터의 ID
+     * @param thumbnailFileUrl 변경할 새 썸네일 파일 URL
+     * @throws DataException 데이터가 존재하지 않을 경우 발생합니다.
      */
     @Override
     public void updateThumbnailFile(Long dataId, String thumbnailFileUrl) {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
         dataEntity.updateThumbnailFile(thumbnailFileUrl);
+    }
+
+    /**
+     * 지정된 ID를 가진 데이터 엔티티가 저장소에 존재하는지 여부를 반환합니다.
+     *
+     * @param dataId 존재 여부를 확인할 데이터의 ID
+     * @return 데이터가 존재하면 true, 그렇지 않으면 false
+     */
+    @Override
+    public boolean existsDataById(Long dataId) {
+        return dataJpaRepository.existsById(dataId);
     }
 }

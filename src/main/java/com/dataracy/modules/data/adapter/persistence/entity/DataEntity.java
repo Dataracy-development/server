@@ -1,6 +1,6 @@
 package com.dataracy.modules.data.adapter.persistence.entity;
 
-import com.dataracy.modules.common.base.BaseEntity;
+import com.dataracy.modules.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Table(
         name = "data"
 )
-public class DataEntity extends BaseEntity {
+public class DataEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "data_id")
