@@ -4,7 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import com.dataracy.modules.project.adapter.index.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
-import com.dataracy.modules.project.application.port.query.ProjectSearchQueryPort;
+import com.dataracy.modules.project.application.port.query.ProjectRealTimeSearchPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ElasticProjectSearchAdapter implements ProjectSearchQueryPort {
+public class ElasticProjectRealTimeSearchAdapter implements ProjectRealTimeSearchPort {
 
     private final ElasticsearchClient client;
 
