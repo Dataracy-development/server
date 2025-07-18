@@ -12,10 +12,10 @@ import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
-import com.dataracy.modules.reference.application.port.in.analysispurpose.ValidateAnalysisPurposeUseCase;
-import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
-import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
-import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
+import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAnalysisPurposeLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +33,11 @@ public class ProjectCommandService implements ProjectUploadUseCase {
 
     private final FindUsernameUseCase findUsernameUseCase;
     private final FileUploadUseCase fileUploadUseCase;
-    private final ValidateTopicUseCase validateTopicUseCase;
-    private final ValidateAnalysisPurposeUseCase validateAnalysisPurposeUseCase;
-    private final ValidateDataSourceUseCase validateDataSourceUseCase;;
-    private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
+
+    private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
+    private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
+    private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
+    private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final ValidateDataUseCase validateDataUseCase;
 
     @Value("${default.image.url:}")
@@ -56,11 +57,11 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     public void upload(Long userId, MultipartFile file, ProjectUploadRequest requestDto) {
         log.info("프로젝트 업로드 시작 - userId: {}, title: {}", userId, requestDto.title());
 
-        // 유효성 검사
-        validateTopicUseCase.validateTopic(requestDto.topicId());
-        validateAnalysisPurposeUseCase.validateAnalysisPurpose(requestDto.analysisPurposeId());
-        validateDataSourceUseCase.validateDataSource(requestDto.dataSourceId());
-        validateAuthorLevelUseCase.validateAuthorLevel(requestDto.authorLevelId());
+        // 해당 id가 존재하는지 내부 유효성 검사 및 라벨 값 반환
+        String topicLabel = getTopicLabelFromIdUseCase.getLabelById(requestDto.topicId());
+        String analysisPurposeLabel = getAnalysisPurposeLabelFromIdUseCase.getLabelById(requestDto.analysisPurposeId());
+        String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(requestDto.dataSourceId());
+        String authorLevelLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(requestDto.authorLevelId());
 
         // 데이터셋 id를 통해 데이터셋 존재 유효성 검사를 시행한다.
         if (requestDto.dataIds() != null) {
@@ -114,7 +115,7 @@ public class ProjectCommandService implements ProjectUploadUseCase {
 
         // 검색을 위해 elasticSearch에 프로젝트를 등록한다.
         String username = findUsernameUseCase.findUsernameById(userId);
-        projectIndexingPort.index(ProjectSearchDocument.from(saveProject, username));
+        projectIndexingPort.index(ProjectSearchDocument.from(saveProject, topicLabel, analysisPurposeLabel, dataSourceLabel, authorLevelLabel, username));
 
         log.info("프로젝트 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
     }

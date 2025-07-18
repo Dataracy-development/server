@@ -31,4 +31,6 @@ public interface DataTypeRepositoryPort {
  * @return 해당 ID의 DataType이 존재하면 true, 그렇지 않으면 false
  */
 boolean existsDataTypeById(Long dataTypeId);
+
+    Optional<String> getLabelById(Long dataTypeId);
 }

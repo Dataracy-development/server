@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.Analys
 import com.dataracy.modules.reference.application.mapper.AnalysisPurposeDtoMapper;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.FindAllAnalysisPurposesUseCase;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.FindAnalysisPurposeUseCase;
+import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAnalysisPurposeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.ValidateAnalysisPurposeUseCase;
 import com.dataracy.modules.reference.application.port.out.AnalysisPurposeRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +25,8 @@ import java.util.List;
 public class AnalysisPurposeQueryService implements
         FindAllAnalysisPurposesUseCase,
         FindAnalysisPurposeUseCase,
-        ValidateAnalysisPurposeUseCase
+        ValidateAnalysisPurposeUseCase,
+        GetAnalysisPurposeLabelFromIdUseCase
 {
     private final AnalysisPurposeDtoMapper analysisPurposeDtoMapper;
     private final AnalysisPurposeRepositoryPort analysisPurposeRepositoryPort;
@@ -71,5 +74,14 @@ public class AnalysisPurposeQueryService implements
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
         }
+    }
+
+    @Override
+    public String getLabelById(Long analysisPurposeId) {
+        Optional<String> label = analysisPurposeRepositoryPort.getLabelById(analysisPurposeId);
+        if (label.isEmpty()) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
+        }
+        return label.get();
     }
 }

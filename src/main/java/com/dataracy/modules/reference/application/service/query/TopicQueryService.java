@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.TopicR
 import com.dataracy.modules.reference.application.mapper.TopicDtoMapper;
 import com.dataracy.modules.reference.application.port.in.topic.FindAllTopicsUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.FindTopicUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import com.dataracy.modules.reference.application.port.out.TopicRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +25,8 @@ import java.util.List;
 public class TopicQueryService implements
         FindAllTopicsUseCase,
         FindTopicUseCase,
-        ValidateTopicUseCase
+        ValidateTopicUseCase,
+        GetTopicLabelFromIdUseCase
 {
     private final TopicDtoMapper topicDtoMapper;
     private final TopicRepositoryPort topicRepositoryPort;
@@ -69,5 +72,14 @@ public class TopicQueryService implements
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
         }
+    }
+
+    @Override
+    public String getLabelById(Long topicId) {
+        Optional<String> label = topicRepositoryPort.getLabelById(topicId);
+        if (label.isEmpty()) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
+        }
+        return label.get();
     }
 }

@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.DataSo
 import com.dataracy.modules.reference.application.mapper.DataSourceDtoMapper;
 import com.dataracy.modules.reference.application.port.in.datasource.FindAllDataSourcesUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.FindDataSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
 import com.dataracy.modules.reference.application.port.out.DataSourceRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +25,8 @@ import java.util.List;
 public class DataSourceQueryService implements
         FindAllDataSourcesUseCase,
         FindDataSourceUseCase,
-        ValidateDataSourceUseCase
+        ValidateDataSourceUseCase,
+        GetDataSourceLabelFromIdUseCase
 {
     private final DataSourceDtoMapper dataSourceDtoMapper;
     private final DataSourceRepositoryPort dataSourceRepositoryPort;
@@ -72,5 +75,14 @@ public class DataSourceQueryService implements
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE);
         }
+    }
+
+    @Override
+    public String getLabelById(Long dataSourceId) {
+        Optional<String> label = dataSourceRepositoryPort.getLabelById(dataSourceId);
+        if (label.isEmpty()) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE);
+        }
+        return label.get();
     }
 }

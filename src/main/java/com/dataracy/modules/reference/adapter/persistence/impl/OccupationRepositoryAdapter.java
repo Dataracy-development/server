@@ -50,4 +50,10 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
     public boolean existsOccupationById(Long occupationId) {
         return occupationJpaRepository.existsById(occupationId);
     }
+
+    @Override
+    public Optional<String> getLabelById(Long occupationId) {
+        return occupationJpaRepository.findById(occupationId)
+                .map(OccupationEntity::getLabel);
+    }
 }

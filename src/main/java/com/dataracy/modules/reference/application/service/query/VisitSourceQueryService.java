@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.dto.response.singleview.VisitS
 import com.dataracy.modules.reference.application.mapper.VisitSourceDtoMapper;
 import com.dataracy.modules.reference.application.port.in.visitsource.FindAllVisitSourcesUseCase;
 import com.dataracy.modules.reference.application.port.in.visitsource.FindVisitSourceUseCase;
+import com.dataracy.modules.reference.application.port.in.visitsource.GetVisitSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.visitsource.ValidateVisitSourceUseCase;
 import com.dataracy.modules.reference.application.port.out.VisitSourceRepositoryPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +25,8 @@ import java.util.List;
 public class VisitSourceQueryService implements
         FindAllVisitSourcesUseCase,
         FindVisitSourceUseCase,
-        ValidateVisitSourceUseCase
+        ValidateVisitSourceUseCase,
+        GetVisitSourceLabelFromIdUseCase
 {
     private final VisitSourceDtoMapper visitSourceDtoMapper;
     private final VisitSourceRepositoryPort visitSourceRepositoryPort;
@@ -72,5 +75,14 @@ public class VisitSourceQueryService implements
         if (!isExist) {
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE);
         }
+    }
+
+    @Override
+    public String getLabelById(Long visitSourceId) {
+        Optional<String> label = visitSourceRepositoryPort.getLabelById(visitSourceId);
+        if (label.isEmpty()) {
+            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE);
+        }
+        return label.get();
     }
 }

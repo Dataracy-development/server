@@ -51,4 +51,10 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
     public boolean existsTopicById(Long topicId) {
         return topicJpaRepository.existsById(topicId);
     }
+
+    @Override
+    public Optional<String> getLabelById(Long topicId) {
+        return topicJpaRepository.findById(topicId)
+                .map(TopicEntity::getLabel);
+    }
 }

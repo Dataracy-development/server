@@ -50,4 +50,10 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
     public boolean existsAuthorLevelById(Long authorLevelId) {
         return authorLevelJpaRepository.existsById(authorLevelId);
     }
+
+    @Override
+    public Optional<String> getLabelById(Long authorLevelId) {
+        return authorLevelJpaRepository.findById(authorLevelId)
+                .map(AuthorLevelEntity::getLabel);
+    }
 }

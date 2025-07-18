@@ -31,4 +31,6 @@ public interface VisitSourceRepositoryPort {
  * @return VisitSource가 존재하면 true, 존재하지 않으면 false
  */
 boolean existsVisitSourceById(Long visitSourceId);
+
+    Optional<String> getLabelById(Long visitSourceId);
 }

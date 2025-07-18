@@ -31,4 +31,6 @@ public interface AuthorLevelRepositoryPort {
  * @return 엔티티가 존재하면 true, 존재하지 않으면 false
  */
 boolean existsAuthorLevelById(Long authorLevelId);
+
+    Optional<String> getLabelById(Long authorLevelId);
 }

@@ -31,4 +31,6 @@ public interface DataSourceRepositoryPort {
  * @return 데이터 소스가 존재하면 true, 그렇지 않으면 false
  */
 boolean existsDataSourceById(Long dataSourceId);
+
+    Optional<String> getLabelById(Long dataSourceId);
 }

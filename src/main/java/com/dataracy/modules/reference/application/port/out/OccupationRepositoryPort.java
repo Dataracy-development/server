@@ -31,4 +31,6 @@ public interface OccupationRepositoryPort {
  * @return 직업이 존재하면 true, 그렇지 않으면 false
  */
 boolean existsOccupationById(Long occupationId);
+
+    Optional<String> getLabelById(Long occupationId);
 }

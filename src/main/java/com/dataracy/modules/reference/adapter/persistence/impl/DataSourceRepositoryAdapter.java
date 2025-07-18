@@ -51,4 +51,10 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     public boolean existsDataSourceById(Long dataSourceId) {
         return dataSourceJpaRepository.existsById(dataSourceId);
     }
+
+    @Override
+    public Optional<String> getLabelById(Long dataSourceId) {
+        return dataSourceJpaRepository.findById(dataSourceId)
+                .map(DataSourceEntity::getLabel);
+    }
 }

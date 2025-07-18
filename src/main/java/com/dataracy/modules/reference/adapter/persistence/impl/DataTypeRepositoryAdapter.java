@@ -51,4 +51,10 @@ public class DataTypeRepositoryAdapter implements DataTypeRepositoryPort {
     public boolean existsDataTypeById(Long dataTypeId) {
         return dataTypeJpaRepository.existsById(dataTypeId);
     }
+
+    @Override
+    public Optional<String> getLabelById(Long dataTypeId) {
+        return dataTypeJpaRepository.findById(dataTypeId)
+                .map(DataTypeEntity::getLabel);
+    }
 }
