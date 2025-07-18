@@ -26,7 +26,6 @@ public class ProjectQueryRepositoryImpl implements ProjectQueryRepository {
                 .distinct()
                 .leftJoin(projectEntity.parentProject).fetchJoin()
                 .leftJoin(projectEntity.projectDataEntities, projectDataEntity).fetchJoin()
-                .fetchJoin()
                 .where(ProjectPredicateFactory.projectIdEq(projectId))
                 .fetchOne();
 
