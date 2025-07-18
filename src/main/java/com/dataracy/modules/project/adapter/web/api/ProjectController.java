@@ -58,7 +58,7 @@ public class ProjectController implements ProjectApi {
      * @return 실시간 프로젝트 검색 결과 목록이 포함된 성공 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> search(String keyword, int size) {
+    public ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> searchRealTimeProjects(String keyword, int size) {
         List<ProjectRealTimeSearchResponse> responseDto = projectRealTimeSearchUseCase.search(keyword, size);
         List<ProjectRealTimeSearchWebResponse> webResponse = responseDto.stream()
                 .map(projectSearchWebMapper::toWeb)
@@ -70,7 +70,7 @@ public class ProjectController implements ProjectApi {
 
     @Override
     public ResponseEntity<SuccessResponse<List<ProjectSimilarSearchWebResponse>>> searchSimilarProjects(Long projectId, int size){
-        List<ProjectSimilarSearchResponse> responseDto = projectSimilarSearchUseCase.findSimilarProjects(projectId, size);
+        List<ProjectSimilarSearchResponse> responseDto = projectSimilarSearchUseCase.search(projectId, size);
         List<ProjectSimilarSearchWebResponse> webResponse = responseDto.stream()
                 .map(projectSearchWebMapper::toWeb)
                 .toList();
