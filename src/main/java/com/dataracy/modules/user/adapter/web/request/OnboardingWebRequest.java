@@ -21,6 +21,7 @@ public record OnboardingWebRequest(
         Long occupationId,
 
         @Schema(description = "흥미 도메인", example = "[1, 3]")
+        @NotNull(message = "흥미있는 도메인 리스트에 null은 올 수 없습니다.")
         List<Long> topicIds,
 
         @Schema(description = "방문 경로", example = "3")

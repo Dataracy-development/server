@@ -40,7 +40,7 @@ public record ProjectSearchDocument(
                 .authorLevelId(project.getAuthorLevelId())
                 .isContinue(project.getIsContinue())
                 .fileUrl(project.getFileUrl())
-                .createdAt(LocalDateTime.now())
+                .createdAt(project.getCreatedAt())
                 .build();
     }
 }

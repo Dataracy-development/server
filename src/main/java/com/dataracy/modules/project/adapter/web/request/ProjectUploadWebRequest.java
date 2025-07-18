@@ -40,5 +40,6 @@ public record ProjectUploadWebRequest(
         String content,
 
         @Schema(description = "데이터셋 리스트", example = "[1, 3]")
+        @NotNull(message = "데이터셋 리스트에 null은 올 수 없습니다.")
         List<Long> dataIds
 ) {}

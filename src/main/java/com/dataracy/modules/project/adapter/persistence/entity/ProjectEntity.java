@@ -1,6 +1,7 @@
 package com.dataracy.modules.project.adapter.persistence.entity;
 
 import com.dataracy.modules.common.base.BaseEntity;
+import com.dataracy.modules.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
@@ -19,7 +20,7 @@ import java.util.List;
 @Table(
         name = "project"
 )
-public class ProjectEntity extends BaseEntity {
+public class ProjectEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")

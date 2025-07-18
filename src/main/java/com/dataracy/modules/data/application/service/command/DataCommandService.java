@@ -82,6 +82,7 @@ public class DataCommandService implements DataUploadUseCase {
                 defaultImageUrl,
                 0,
                 0,
+                null,
                 null
         );
 
