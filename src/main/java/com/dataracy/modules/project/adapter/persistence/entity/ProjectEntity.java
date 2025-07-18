@@ -63,7 +63,17 @@ public class ProjectEntity extends BaseEntity {
     @Column
     private String fileUrl;
 
-    /****
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
+    @Builder.Default
+    private List<ProjectDataEntity> projectDataEntities = new ArrayList<>();
+
+    // 프로젝트에 데이터셋을 추가한다
+    public void addProjectData(ProjectDataEntity dataEntity) {
+        projectDataEntities.add(dataEntity);
+        dataEntity.assignProject(this);
+    }
+
+    /**
      * 프로젝트의 파일 URL을 새로운 값으로 변경합니다.
      *
      * @param fileUrl 새로 지정할 파일의 URL

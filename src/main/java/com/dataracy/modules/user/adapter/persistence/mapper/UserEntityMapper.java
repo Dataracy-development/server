@@ -79,7 +79,6 @@ public final class UserEntityMapper {
                 .orElseGet(Collections::emptyList)
                 .stream()
                 .map(topicId -> UserTopicEntity.of(userEntity, topicId))
-                .peek(userEntity::addUserTopic)
                 .toList();
         userTopicEntities.forEach(userEntity::addUserTopic);
 

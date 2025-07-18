@@ -2,6 +2,8 @@ package com.dataracy.modules.project.domain.model;
 
 import lombok.*;
 
+import java.util.List;
+
 /**
  * 프로젝트 도메인 모델
  */
@@ -22,6 +24,8 @@ public class Project {
     private Project parentProject;
     private String content;
     private String fileUrl;
+    // 타 어그리거트인 Data 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
+    private List<Long> dataIds;
 
     /**
      * 프로젝트의 썸네일 URL을 업데이트합니다.
@@ -46,6 +50,7 @@ public class Project {
      * @param parentProject 상위 프로젝트 객체
      * @param content 프로젝트 내용
      * @param fileUrl 프로젝트 썸네일 URL
+     * @param dataIds 데이터셋 아이디 리스트
      * @return 생성된 Project 객체
      */
     public static Project toDomain(
@@ -59,7 +64,8 @@ public class Project {
             Boolean isContinue,
             Project parentProject,
             String content,
-            String fileUrl
+            String fileUrl,
+            List<Long> dataIds
     ) {
         return Project.builder()
                 .id(id)
@@ -73,6 +79,7 @@ public class Project {
                 .parentProject(parentProject)
                 .content(content)
                 .fileUrl(fileUrl)
+                .dataIds(dataIds)
                 .build();
     }
 }
