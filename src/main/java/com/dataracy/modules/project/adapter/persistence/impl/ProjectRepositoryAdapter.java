@@ -34,16 +34,9 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
         }
     }
 
-    /**
-     * 주어진 프로젝트 ID로 프로젝트를 조회하여, 존재할 경우 도메인 Project 객체를 Optional로 반환합니다.
-     *
-     * @param projectId 조회할 프로젝트의 ID
-     * @return 프로젝트가 존재하면 Project 객체를 포함한 Optional, 존재하지 않으면 빈 Optional
-     */
     @Override
     public Optional<Project> findProjectById(Long projectId) {
-        return projectJpaRepository.findProjectById(projectId)
-                .map(ProjectEntityMapper::toDomain);
+        return projectJpaRepository.findProjectById(projectId);
     }
 
     /**
