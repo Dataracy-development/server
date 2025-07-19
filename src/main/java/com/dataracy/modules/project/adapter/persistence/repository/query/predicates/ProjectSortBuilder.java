@@ -1,5 +1,6 @@
 package com.dataracy.modules.project.adapter.persistence.repository.query.predicates;
 
+import com.dataracy.modules.project.adapter.persistence.entity.QProjectEntity;
 import com.querydsl.core.types.OrderSpecifier;
 
 import static com.dataracy.modules.project.adapter.persistence.entity.QProjectEntity.projectEntity;
@@ -33,5 +34,14 @@ private ProjectSortBuilder() {}
 //          case "VIEWS_DESC" -> new OrderSpecifier[]{projectEntity.viewCount.desc()};
             default -> new OrderSpecifier[]{projectEntity.createdAt.desc()};
         };
+    }
+
+    public static OrderSpecifier<?> popularOrder() {
+        QProjectEntity p = QProjectEntity.projectEntity;
+
+        return p.likeCount.multiply(2)
+                .add(p.commentCount.multiply(1.5))
+                .add(p.viewCount)
+                .desc();
     }
 }

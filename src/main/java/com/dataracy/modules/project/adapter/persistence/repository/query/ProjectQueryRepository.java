@@ -2,6 +2,7 @@ package com.dataracy.modules.project.adapter.persistence.repository.query;
 
 import com.dataracy.modules.project.domain.model.Project;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ProjectQueryRepository {
@@ -12,4 +13,6 @@ public interface ProjectQueryRepository {
  * @return 해당 ID에 해당하는 프로젝트가 존재하면 Optional에 담아 반환하며, 없으면 빈 Optional을 반환합니다.
  */
 Optional<Project> findProjectById(Long projectId);
+
+List<Project> findPopularProjects(int size);
 }
