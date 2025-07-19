@@ -43,7 +43,7 @@ public class LikeEntity extends BaseTimeEntity {
      * @param userId 좋아요를 누른 사용자의 ID
      * @return 생성된 LikeEntity 객체
      */
-    public static LikeEntity toEntity(
+    public static LikeEntity of(
             Long targetId,
             TargetType targetType,
             Long userId

@@ -29,7 +29,7 @@ public final class OccupationEntityMapper {
             return null;
         }
 
-        return OccupationEntity.toEntity(
+        return OccupationEntity.of(
                 occupation.value(),
                 occupation.label()
         );

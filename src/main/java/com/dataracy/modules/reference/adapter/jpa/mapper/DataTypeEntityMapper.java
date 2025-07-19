@@ -44,7 +44,7 @@ public final class DataTypeEntityMapper {
             return null;
         }
 
-        return DataTypeEntity.toEntity(
+        return DataTypeEntity.of(
                 dataType.value(),
                 dataType.label()
         );

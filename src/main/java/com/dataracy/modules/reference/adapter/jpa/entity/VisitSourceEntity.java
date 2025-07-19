@@ -29,7 +29,7 @@ public class VisitSourceEntity {
     @Column(nullable = false)
     private String label;
 
-    public static VisitSourceEntity toEntity(
+    public static VisitSourceEntity of(
             String value,
             String label
     ) {

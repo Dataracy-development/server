@@ -43,7 +43,7 @@ public class ViewEntity extends BaseTimeEntity {
      * @param userAgent 접속한 사용자의 User-Agent 문자열
      * @return 생성된 ViewEntity 객체
      */
-    public static ViewEntity toEntity(
+    public static ViewEntity of(
             Long projectId,
             Long userId,
             String anonymousId,

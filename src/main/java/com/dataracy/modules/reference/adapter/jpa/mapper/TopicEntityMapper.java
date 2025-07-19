@@ -39,7 +39,7 @@ public final class TopicEntityMapper {
             return null;
         }
 
-        return TopicEntity.toEntity(
+        return TopicEntity.of(
                 topic.value(),
                 topic.label()
         );

@@ -26,7 +26,7 @@ public final class DataEntityMapper {
             return null;
         }
 
-        return Data.toDomain(
+        return Data.of(
                 dataEntity.getId(),
                 dataEntity.getTitle(),
                 dataEntity.getTopicId(),
@@ -59,7 +59,7 @@ public final class DataEntityMapper {
             return null;
         }
 
-        return DataEntity.toEntity(
+        return DataEntity.of(
                 data.getTitle(),
                 data.getTopicId(),
                 data.getUserId(),

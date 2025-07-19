@@ -97,7 +97,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         }
 
         // 유저 도메인 모델 생성 및 db 저장
-        User user = User.toDomain(
+        User user = User.of(
                 null,
                 ProviderType.LOCAL,
                 providerId,
@@ -176,7 +176,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         }
 
         // 유저 도메인 모델 생성 및 db 저장
-        User user = User.toDomain(
+        User user = User.of(
                 null,
                 ProviderType.of(provider),
                 providerId,

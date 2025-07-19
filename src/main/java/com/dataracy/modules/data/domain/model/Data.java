@@ -70,7 +70,7 @@ public class Data {
      * @param createdAt 데이터 생성 시각
      * @return 지정된 값들로 초기화된 Data 객체
      */
-    public static Data toDomain(
+    public static Data of(
             Long id,
             String title,
             Long topicId,

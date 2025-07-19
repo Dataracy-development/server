@@ -155,7 +155,7 @@ public class ProjectEntity extends BaseTimeEntity {
      * @param fileUrl 파일의 URL, 없으면 null
      * @return 생성된 ProjectEntity 객체
      */
-    public static ProjectEntity toEntity(
+    public static ProjectEntity of(
             String title,
             Long topicId,
             Long userId,

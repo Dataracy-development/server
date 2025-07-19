@@ -53,7 +53,7 @@ public class DataMetadataEntity {
      * @param previewJson  데이터 미리보기 정보를 담은 JSON 문자열
      * @return             생성된 DataMetadataEntity 객체
      */
-    public static DataMetadataEntity toEntity(
+    public static DataMetadataEntity of(
             Integer rowCount,
             Integer columnCount,
             String previewJson

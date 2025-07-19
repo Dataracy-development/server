@@ -81,7 +81,7 @@ public class ProjectCommandService implements ProjectUploadUseCase {
         }
 
         // 프로젝트 업로드 DB 저장
-        Project project = Project.toDomain(
+        Project project = Project.of(
                 null,
                 requestDto.title(),
                 requestDto.topicId(),

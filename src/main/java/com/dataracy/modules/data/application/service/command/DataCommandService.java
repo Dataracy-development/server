@@ -65,7 +65,7 @@ public class DataCommandService implements DataUploadUseCase {
         validateDataTypeUseCase.validateDataType(requestDto.dataTypeId());
 
         // 데이터셋 업로드 DB 저장
-        Data data = Data.toDomain(
+        Data data = Data.of(
                 null,
                 requestDto.title(),
                 requestDto.topicId(),

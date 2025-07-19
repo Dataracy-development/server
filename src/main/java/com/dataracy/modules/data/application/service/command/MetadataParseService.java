@@ -32,7 +32,7 @@ public class MetadataParseService implements MetadataParseUseCase {
     public void parseAndSaveMetadata(MetadataParseRequest request) {
         try (InputStream inputStream = fileStoragePort.download(request.fileUrl())) {
             MetadataParseResponse response = FileParsingUtil.parse(inputStream, request.originalFilename());
-            DataMetadata metadata = DataMetadata.toDomain(
+            DataMetadata metadata = DataMetadata.of(
                     null,
                     response.rowCount(),
                     response.columnCount(),

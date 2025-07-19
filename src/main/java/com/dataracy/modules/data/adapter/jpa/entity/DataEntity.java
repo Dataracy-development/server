@@ -114,7 +114,7 @@ public class DataEntity extends BaseTimeEntity {
      * @param metadata 데이터 메타데이터 엔티티
      * @return 생성된 DataEntity 인스턴스
      */
-    public static DataEntity toEntity(
+    public static DataEntity of(
             String title,
             Long topicId,
             Long userId,

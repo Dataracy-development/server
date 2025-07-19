@@ -29,7 +29,7 @@ public class AuthorLevelEntity {
     @Column(nullable = false)
     private String label;
 
-    public static AuthorLevelEntity toEntity(
+    public static AuthorLevelEntity of(
             String value,
             String label
     ) {
