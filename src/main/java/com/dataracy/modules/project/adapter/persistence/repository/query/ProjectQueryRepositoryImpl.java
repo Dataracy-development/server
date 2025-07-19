@@ -3,11 +3,13 @@ package com.dataracy.modules.project.adapter.persistence.repository.query;
 import com.dataracy.modules.project.adapter.persistence.entity.ProjectEntity;
 import com.dataracy.modules.project.adapter.persistence.mapper.ProjectEntityMapper;
 import com.dataracy.modules.project.adapter.persistence.repository.query.predicates.ProjectPredicateFactory;
+import com.dataracy.modules.project.adapter.persistence.repository.query.predicates.ProjectSortBuilder;
 import com.dataracy.modules.project.domain.model.Project;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.dataracy.modules.project.adapter.persistence.entity.QProjectDataEntity.projectDataEntity;
@@ -39,5 +41,17 @@ public class ProjectQueryRepositoryImpl implements ProjectQueryRepository {
                 .fetchOne();
 
         return Optional.ofNullable(ProjectEntityMapper.toDomain(entity));
+    }
+
+    @Override
+    public List<Project> findPopularProjects(int size) {
+        return queryFactory
+                .selectFrom(projectEntity)
+                .orderBy(ProjectSortBuilder.popularOrder())
+                .limit(size)
+                .fetch()
+                .stream()
+                .map(ProjectEntityMapper::toDomain)
+                .toList();
     }
 }
