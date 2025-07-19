@@ -1,5 +1,8 @@
 package com.dataracy.modules.reference.application.port.in.datatype;
 
+import java.util.List;
+import java.util.Map;
+
 public interface GetDataTypeLabelFromIdUseCase {
     /**
  * 주어진 데이터 타입 ID에 해당하는 라벨을 반환합니다.
@@ -8,4 +11,6 @@ public interface GetDataTypeLabelFromIdUseCase {
  * @return 해당 데이터 타입의 라벨 문자열
  */
 String getLabelById(Long dataTypeId);
+
+    Map<Long, String> getLabelsByIds(List<Long> dataTypeIds);
 }

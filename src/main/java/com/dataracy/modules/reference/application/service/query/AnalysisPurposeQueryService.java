@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -87,5 +88,11 @@ public class AnalysisPurposeQueryService implements
     public String getLabelById(Long analysisPurposeId) {
         return analysisPurposeRepositoryPort.getLabelById(analysisPurposeId)
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, String> getLabelsByIds(List<Long> analysisPurposeIds) {
+        return analysisPurposeRepositoryPort.getLabelsByIds(analysisPurposeIds);
     }
 }

@@ -3,6 +3,7 @@ package com.dataracy.modules.reference.application.port.out;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,4 +40,6 @@ boolean existsAuthorLevelById(Long authorLevelId);
  * @return 라벨이 존재하면 해당 값을 포함한 Optional, 없으면 빈 Optional
  */
 Optional<String> getLabelById(Long authorLevelId);
+
+    Map<Long, String> getLabelsByIds(List<Long> authorLevelIds);
 }

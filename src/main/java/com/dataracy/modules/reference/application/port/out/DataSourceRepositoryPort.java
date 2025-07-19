@@ -3,6 +3,7 @@ package com.dataracy.modules.reference.application.port.out;
 import com.dataracy.modules.reference.domain.model.DataSource;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,4 +40,6 @@ boolean existsDataSourceById(Long dataSourceId);
  * @return 데이터 소스의 라벨이 존재하면 해당 문자열을 포함한 Optional, 없으면 빈 Optional
  */
 Optional<String> getLabelById(Long dataSourceId);
+
+    Map<Long, String> getLabelsByIds(List<Long> dataSourceIds);
 }
