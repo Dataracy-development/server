@@ -93,6 +93,9 @@ public class AnalysisPurposeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> analysisPurposeIds) {
+        if (analysisPurposeIds == null || analysisPurposeIds.isEmpty()) {
+            return Map.of();
+        }
         return analysisPurposeRepositoryPort.getLabelsByIds(analysisPurposeIds);
     }
 }

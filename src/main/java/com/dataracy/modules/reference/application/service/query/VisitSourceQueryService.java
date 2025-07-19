@@ -98,6 +98,9 @@ public class VisitSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> visitSourceIds) {
+        if (visitSourceIds == null || visitSourceIds.isEmpty()) {
+            return Map.of();
+        }
         return visitSourceRepositoryPort.getLabelsByIds(visitSourceIds);
     }
 }

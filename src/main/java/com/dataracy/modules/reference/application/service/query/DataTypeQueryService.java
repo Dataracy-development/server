@@ -99,6 +99,9 @@ public class DataTypeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> dataTypeIds) {
+        if (dataTypeIds == null || dataTypeIds.isEmpty()) {
+            return Map.of();
+        }
         return dataTypeRepositoryPort.getLabelsByIds(dataTypeIds);
     }
 }
