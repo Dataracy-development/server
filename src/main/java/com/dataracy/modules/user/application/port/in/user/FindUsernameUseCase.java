@@ -11,6 +11,5 @@ public interface FindUsernameUseCase {
  * @return 해당 ID에 연결된 사용자 이름
  */
 String findUsernameById(Long userId);
-    List<Long> findUsernamesByIds();
     Map<Long, String> findUsernamesByIds(List<Long> userIds);
 }
