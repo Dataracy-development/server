@@ -35,7 +35,7 @@ public class CommentEntity extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Builder.Default
-    private Boolean isDeleted = false;
+    private boolean isDeleted = false;
 
     // 대댓글 관계 (자기 자신을 부모로 가짐)
     @ManyToOne(fetch = FetchType.LAZY)
