@@ -29,7 +29,7 @@ public class OccupationEntity {
     @Column(nullable = false)
     private String label;
 
-    public static OccupationEntity toEntity(
+    public static OccupationEntity of(
             String value,
             String label
     ) {

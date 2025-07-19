@@ -39,7 +39,7 @@ public final class AnalysisPurposeEntityMapper {
             return null;
         }
 
-        return AnalysisPurposeEntity.toEntity(
+        return AnalysisPurposeEntity.of(
                 analysisPurpose.value(),
                 analysisPurpose.label()
         );

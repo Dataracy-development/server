@@ -30,7 +30,7 @@ public final class UserEntityMapper {
                 .map(UserTopicEntity::getTopicId)
                 .toList();
 
-        return User.toDomain(
+        return User.of(
                 userEntity.getId(),
                 userEntity.getProvider(),
                 userEntity.getProviderId(),
@@ -60,7 +60,7 @@ public final class UserEntityMapper {
             return null;
         }
 
-        UserEntity userEntity =  UserEntity.toEntity(
+        UserEntity userEntity =  UserEntity.of(
                 user.getProvider(),
                 user.getProviderId(),
                 user.getRole(),

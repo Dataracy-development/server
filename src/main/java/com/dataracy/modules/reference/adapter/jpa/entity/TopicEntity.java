@@ -29,7 +29,7 @@ public class TopicEntity {
     @Column(nullable = false)
     private String label;
 
-    public static TopicEntity toEntity(
+    public static TopicEntity of(
             String value,
             String label
     ) {

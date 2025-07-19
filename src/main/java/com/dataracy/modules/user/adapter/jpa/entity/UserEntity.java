@@ -85,7 +85,7 @@ public class UserEntity extends BaseTimeEntity {
         topicEntity.assignUser(this);
     }
 
-    public static UserEntity toEntity(
+    public static UserEntity of(
             ProviderType provider,
             String providerId,
             RoleType role,

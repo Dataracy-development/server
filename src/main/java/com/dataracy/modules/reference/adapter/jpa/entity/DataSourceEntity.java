@@ -36,7 +36,7 @@ public class DataSourceEntity {
      * @param label 데이터 소스의 라벨
      * @return 생성된 DataSourceEntity 객체
      */
-    public static DataSourceEntity toEntity(
+    public static DataSourceEntity of(
             String value,
             String label
     ) {

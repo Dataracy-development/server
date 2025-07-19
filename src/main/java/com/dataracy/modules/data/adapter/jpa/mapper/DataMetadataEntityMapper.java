@@ -24,7 +24,7 @@ public final class DataMetadataEntityMapper {
             return null;
         }
 
-        return DataMetadata.toDomain(
+        return DataMetadata.of(
                 dataMetadataEntity.getId(),
                 dataMetadataEntity.getRowCount(),
                 dataMetadataEntity.getColumnCount(),
@@ -43,7 +43,7 @@ public final class DataMetadataEntityMapper {
             return null;
         }
 
-        return DataMetadataEntity.toEntity(
+        return DataMetadataEntity.of(
                 dataMetadata.getRowCount(),
                 dataMetadata.getColumnCount(),
                 dataMetadata.getPreviewJson()

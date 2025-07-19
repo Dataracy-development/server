@@ -24,7 +24,7 @@ public class DataMetadata {
      * @param previewJson 데이터 미리보기 정보를 담은 JSON 문자열
      * @return 생성된 DataMetadata 객체
      */
-    public static DataMetadata toDomain(
+    public static DataMetadata of(
             Long id,
             Integer rowCount,
             Integer columnCount,

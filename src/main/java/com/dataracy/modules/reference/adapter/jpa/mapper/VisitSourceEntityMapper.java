@@ -29,7 +29,7 @@ public final class VisitSourceEntityMapper {
             return null;
         }
 
-        return VisitSourceEntity.toEntity(
+        return VisitSourceEntity.of(
                 visitSource.value(),
                 visitSource.label()
         );

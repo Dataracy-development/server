@@ -82,7 +82,7 @@ public class CommentEntity extends BaseTimeEntity {
      * @param parent    부모 댓글 엔티티(대댓글인 경우), 없으면 null
      * @return 생성된 CommentEntity 객체
      */
-    public static CommentEntity toEntity(
+    public static CommentEntity of(
             Long id,
             Long projectId,
             Long userId,

@@ -52,7 +52,7 @@ public class User {
      *
      * @return 생성된 User 객체
      */
-    public static User toDomain(
+    public static User of(
             Long id,
             ProviderType provider,
             String providerId,

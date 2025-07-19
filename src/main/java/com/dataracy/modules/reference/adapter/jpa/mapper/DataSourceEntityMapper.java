@@ -39,7 +39,7 @@ public final class DataSourceEntityMapper {
             return null;
         }
 
-        return DataSourceEntity.toEntity(
+        return DataSourceEntity.of(
                 dataSource.value(),
                 dataSource.label()
         );

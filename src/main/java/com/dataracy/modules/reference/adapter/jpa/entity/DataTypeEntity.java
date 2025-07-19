@@ -36,7 +36,7 @@ public class DataTypeEntity {
      * @param label 데이터 타입의 표시 이름
      * @return value와 label이 설정된 DataTypeEntity 인스턴스
      */
-    public static DataTypeEntity toEntity(
+    public static DataTypeEntity of(
             String value,
             String label
     ) {

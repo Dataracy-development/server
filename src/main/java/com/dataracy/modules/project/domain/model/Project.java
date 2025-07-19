@@ -66,7 +66,7 @@ public class Project {
      * @param isDeleted 삭제 여부
      * @return 생성된 Project 객체
      */
-    public static Project toDomain(
+    public static Project of(
             Long id,
             String title,
             Long topicId,

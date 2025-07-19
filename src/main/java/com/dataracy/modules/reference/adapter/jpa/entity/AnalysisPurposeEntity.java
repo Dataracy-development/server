@@ -36,7 +36,7 @@ public class AnalysisPurposeEntity {
      * @param label 분석 목적의 표시 이름
      * @return 생성된 AnalysisPurposeEntity 객체
      */
-    public static AnalysisPurposeEntity toEntity(
+    public static AnalysisPurposeEntity of(
             String value,
             String label
     ) {

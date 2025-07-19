@@ -29,7 +29,7 @@ public final class AuthorLevelEntityMapper {
             return null;
         }
 
-        return AuthorLevelEntity.toEntity(
+        return AuthorLevelEntity.of(
                 authorLevel.value(),
                 authorLevel.label()
         );

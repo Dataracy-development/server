@@ -43,7 +43,7 @@ public final class ProjectEntityMapper {
                 .map(ProjectDataEntity::getDataId)
                 .toList();
 
-        return Project.toDomain(
+        return Project.of(
                 projectEntity.getId(),
                 projectEntity.getTitle(),
                 projectEntity.getTopicId(),
@@ -87,7 +87,7 @@ public final class ProjectEntityMapper {
                 .build()
                 : null;
 
-        ProjectEntity projectEntity = ProjectEntity.toEntity(
+        ProjectEntity projectEntity = ProjectEntity.of(
                 project.getTitle(),
                 project.getTopicId(),
                 project.getUserId(),
