@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@Table(name = "view")
+@Table(name = "project_view")
 public class ViewEntity extends BaseTimeEntity {
 
     @Id

@@ -34,7 +34,8 @@ public class CommentEntity extends BaseTimeEntity {
     private String content;
 
     @Column(nullable = false)
-    private Boolean isDeleted;
+    @Builder.Default
+    private Boolean isDeleted = false;
 
     // 대댓글 관계 (자기 자신을 부모로 가짐)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,7 +47,8 @@ public class CommentEntity extends BaseTimeEntity {
     private List<CommentEntity> children = new ArrayList<>();
 
     @Column(nullable = false)
-    private Long likeCount;
+    @Builder.Default
+    private Long likeCount = 0L;
 
     // 답글 여부
     public boolean isReply() {
@@ -65,8 +67,7 @@ public class CommentEntity extends BaseTimeEntity {
             Long projectId,
             Long userId,
             String content,
-            CommentEntity parent,
-            Long likeCount
+            CommentEntity parent
     ) {
         return CommentEntity.builder()
                 .id(id)
@@ -74,7 +75,6 @@ public class CommentEntity extends BaseTimeEntity {
                 .userId(userId)
                 .content(content)
                 .parent(parent)
-                .likeCount(likeCount)
                 .build();
     }
 }
