@@ -50,18 +50,38 @@ public class CommentEntity extends BaseTimeEntity {
     @Builder.Default
     private Long likeCount = 0L;
 
-    // 답글 여부
+    /**
+     * 이 댓글이 답글(부모 댓글이 있는 경우)인지 여부를 반환합니다.
+     *
+     * @return 부모 댓글이 존재하면 true, 그렇지 않으면 false
+     */
     public boolean isReply() {
         return parent != null;
     }
 
+    /**
+     * 댓글의 좋아요 수를 1 증가시킵니다.
+     */
     public void increaseLikeCount() {
         this.likeCount++;
     }
+    /**
+     * 댓글의 좋아요 수를 1 감소시킵니다. 좋아요 수는 0 미만으로 내려가지 않습니다.
+     */
     public void decreaseLikeCount() {
         this.likeCount = Math.max(0, this.likeCount - 1);
     }
 
+    /**
+     * 지정된 값으로 새로운 CommentEntity 인스턴스를 생성합니다.
+     *
+     * @param id        댓글의 고유 식별자
+     * @param projectId 댓글이 속한 프로젝트의 식별자
+     * @param userId    댓글 작성자의 식별자
+     * @param content   댓글 내용
+     * @param parent    부모 댓글 엔티티(대댓글인 경우), 없으면 null
+     * @return 생성된 CommentEntity 객체
+     */
     public static CommentEntity toEntity(
             Long id,
             Long projectId,

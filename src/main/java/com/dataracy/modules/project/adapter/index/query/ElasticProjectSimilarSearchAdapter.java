@@ -92,10 +92,10 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
     }
 
     /**
-     * ProjectSearchDocument 객체를 ProjectSimilarSearchResponse 객체로 변환합니다.
+     * ProjectSearchDocument를 ProjectSimilarSearchResponse로 변환하여 프로젝트의 주요 정보와 함께 댓글 수, 좋아요 수, 조회 수를 포함합니다.
      *
      * @param doc 변환할 프로젝트 검색 문서
-     * @return 변환된 유사 프로젝트 응답 객체
+     * @return 프로젝트의 상세 정보와 통계가 포함된 유사 프로젝트 응답 객체
      */
     private ProjectSimilarSearchResponse mapToSimilarResponse(ProjectSearchDocument doc) {
         return new ProjectSimilarSearchResponse(
