@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QAnalysisPurposeEntity extends EntityPathBase<AnalysisPurposeEntity> {
 
-    private static final long serialVersionUID = 1888257220L;
+    private static final long serialVersionUID = -1730293752L;
 
     public static final QAnalysisPurposeEntity analysisPurposeEntity = new QAnalysisPurposeEntity("analysisPurposeEntity");
 

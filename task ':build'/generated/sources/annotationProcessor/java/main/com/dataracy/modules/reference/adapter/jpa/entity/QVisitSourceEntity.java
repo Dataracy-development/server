@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QVisitSourceEntity extends EntityPathBase<VisitSourceEntity> {
 
-    private static final long serialVersionUID = -1231803416L;
+    private static final long serialVersionUID = 280344876L;
 
     public static final QVisitSourceEntity visitSourceEntity = new QVisitSourceEntity("visitSourceEntity");
 
