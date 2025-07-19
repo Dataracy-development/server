@@ -3,6 +3,7 @@ package com.dataracy.modules.project.adapter.web.api;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
+import com.dataracy.modules.project.adapter.web.response.ProjectPopularSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -101,6 +102,22 @@ public interface ProjectApi {
             @Min(1)
             Long projectId,
 
+            @RequestParam(name = "size")
+            @Min(1)
+            int size
+    );
+
+    @Operation(
+            summary = "인기있는 프로젝트 리스트를 조회한다.",
+            description = "좋아요, 댓글, 조회수를 기준으로 프로젝트 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인기있는 프로젝트 리스트 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/search/popular")
+    ResponseEntity<SuccessResponse<List<ProjectPopularSearchWebResponse>>> searchPopularProjects(
             @RequestParam(name = "size")
             @Min(1)
             int size

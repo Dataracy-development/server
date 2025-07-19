@@ -1,7 +1,9 @@
 package com.dataracy.modules.project.adapter.web.mapper;
 
+import com.dataracy.modules.project.adapter.web.response.ProjectPopularSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
+import com.dataracy.modules.project.application.dto.response.ProjectPopularSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
 import org.springframework.stereotype.Component;
@@ -33,6 +35,23 @@ public class ProjectSearchWebMapper {
      */
     public ProjectSimilarSearchWebResponse toWeb(ProjectSimilarSearchResponse responseDto) {
         return new ProjectSimilarSearchWebResponse(
+                responseDto.id(),
+                responseDto.title(),
+                responseDto.content(),
+                responseDto.username(),
+                responseDto.fileUrl(),
+                responseDto.topicLabel(),
+                responseDto.analysisPurposeLabel(),
+                responseDto.dataSourceLabel(),
+                responseDto.authorLevelLabel(),
+                responseDto.commentCount(),
+                responseDto.likeCount(),
+                responseDto.viewCount()
+        );
+    }
+
+    public ProjectPopularSearchWebResponse toWeb(ProjectPopularSearchResponse responseDto) {
+        return new ProjectPopularSearchWebResponse(
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.content(),
