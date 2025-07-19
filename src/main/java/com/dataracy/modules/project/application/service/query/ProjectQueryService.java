@@ -1,15 +1,23 @@
 package com.dataracy.modules.project.application.service.query;
 
+import com.dataracy.modules.project.application.dto.response.ProjectPopularSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
+import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
+import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
+import com.dataracy.modules.project.application.port.elasticsearch.ProjectSimilarSearchPort;
+import com.dataracy.modules.project.application.port.in.ProjectPopularSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
-import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
-import com.dataracy.modules.project.application.port.query.ProjectRealTimeSearchPort;
-import com.dataracy.modules.project.application.port.query.ProjectSimilarSearchPort;
+import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
+import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAnalysisPurposeLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +28,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectQueryService implements
         ProjectRealTimeSearchUseCase,
-        ProjectSimilarSearchUseCase
+        ProjectSimilarSearchUseCase,
+        ProjectPopularSearchUseCase
 {
-    private final ProjectRepositoryPort projectRepositoryPort;
+    private final PopularProjectsDtoMapper popularProjectsDtoMapper;
+
     private final ProjectRealTimeSearchPort projectRealTimeSearchPort;
     private final ProjectSimilarSearchPort projectSimilarSearchPort;
+    private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
+
+    private final FindUsernameUseCase findUsernameUseCase;
+    private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
+    private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
+    private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
+    private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
      *
@@ -49,9 +67,34 @@ public class ProjectQueryService implements
     @Override
     @Transactional(readOnly = true)
     public List<ProjectSimilarSearchResponse> findSimilarProjects(Long projectId, int size) {
-        Project project = projectRepositoryPort.findProjectById(projectId)
+        Project project = projectQueryRepositoryPort.findProjectById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
 
         return projectSimilarSearchPort.recommendSimilarProjects(project, size);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    List<ProjectPopularSearchResponse> findPopularProjects(int size) {
+        List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
+        List<ProjectPopularSearchResponse> responseDto = savedProjects.stream()
+                .map(project -> {
+                    String username = findUsernameUseCase.findUsernameById(project.getUserId());
+                    String topicLabel = getTopicLabelFromIdUseCase.getLabelById(project.getTopicId());
+                    String analysisPurposeLabel = getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId());
+                    String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId());
+                    String authorLevelLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(project.getAuthorLevelId());
+
+                    return popularProjectsDtoMapper.toResponseDto(
+                            project,
+                            username,
+                            topicLabel,
+                            analysisPurposeLabel,
+                            dataSourceLabel,
+                            authorLevelLabel
+                    );
+                })
+                .toList();
+        return responseDto;
     }
 }
