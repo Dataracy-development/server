@@ -108,7 +108,7 @@ public class BehaviorLogTrackingFilter extends OncePerRequestFilter {
         String actionRaw = MDC.get(MdcKey.ACTION);
         ActionType action = ActionType.fromNullableString(actionRaw);
 
-        long dbLatency = parseLong(MDC.get(MdcKey.DB_LATENCY));
+        long dbLatency = parseLong(MDC.get(MdcKey.DATA_ACCESS_LATENCY));
         long stayTime = parseLong(MDC.get(MdcKey.STAY_TIME));
 
         String referrer = MDC.get(MdcKey.REFERRER) != null
