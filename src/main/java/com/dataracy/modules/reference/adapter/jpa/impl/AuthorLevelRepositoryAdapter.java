@@ -70,8 +70,7 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
         if (authorLevelId == null) {
             return Optional.empty();
         }
-        return authorLevelJpaRepository.findById(authorLevelId)
-                .map(AuthorLevelEntity::getLabel);
+        return authorLevelJpaRepository.findLabelById(authorLevelId);
     }
 
     @Override

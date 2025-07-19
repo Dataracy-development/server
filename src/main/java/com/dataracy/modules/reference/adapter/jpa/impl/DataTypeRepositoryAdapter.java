@@ -71,8 +71,7 @@ public class DataTypeRepositoryAdapter implements DataTypeRepositoryPort {
         if (dataTypeId == null) {
             return Optional.empty();
         }
-        return dataTypeJpaRepository.findById(dataTypeId)
-                .map(DataTypeEntity::getLabel);
+        return dataTypeJpaRepository.findLabelById(dataTypeId);
     }
 
     @Override

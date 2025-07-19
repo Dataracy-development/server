@@ -70,8 +70,7 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
         if (occupationId == null) {
             return Optional.empty();
         }
-        return occupationJpaRepository.findById(occupationId)
-                .map(OccupationEntity::getLabel);
+        return occupationJpaRepository.findLabelById(occupationId);
     }
 
     @Override

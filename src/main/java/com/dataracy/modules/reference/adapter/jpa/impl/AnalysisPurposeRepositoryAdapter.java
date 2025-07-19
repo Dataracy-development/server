@@ -71,8 +71,7 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
         if (analysisPurposeId == null) {
             return Optional.empty();
         }
-        return analysisPurposeJpaRepository.findById(analysisPurposeId)
-                .map(AnalysisPurposeEntity::getLabel);
+        return analysisPurposeJpaRepository.findLabelById(analysisPurposeId);
     }
 
     @Override
