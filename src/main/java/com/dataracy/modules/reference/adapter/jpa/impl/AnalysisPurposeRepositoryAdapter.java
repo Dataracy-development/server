@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -62,5 +64,12 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
     public Optional<String> getLabelById(Long analysisPurposeId) {
         return analysisPurposeJpaRepository.findById(analysisPurposeId)
                 .map(AnalysisPurposeEntity::getLabel);
+    }
+
+    @Override
+    public Map<Long, String> getLabelsByIds(List<Long> analysisPurposeIds) {
+        return analysisPurposeJpaRepository.findAllById(analysisPurposeIds)
+                .stream()
+                .collect(Collectors.toMap(AnalysisPurposeEntity::getId, AnalysisPurposeEntity::getLabel));
     }
 }

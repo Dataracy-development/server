@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -61,5 +63,12 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
     public Optional<String> getLabelById(Long occupationId) {
         return occupationJpaRepository.findById(occupationId)
                 .map(OccupationEntity::getLabel);
+    }
+
+    @Override
+    public Map<Long, String> getLabelsByIds(List<Long> occupationIds) {
+        return occupationJpaRepository.findAllById(occupationIds)
+                .stream()
+                .collect(Collectors.toMap(OccupationEntity::getId, OccupationEntity::getLabel));
     }
 }

@@ -2,6 +2,8 @@ package com.dataracy.modules.user.application.port.out;
 
 import com.dataracy.modules.user.domain.model.User;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -57,4 +59,6 @@ public interface UserRepositoryPort {
  * @param encodePassword 새로 적용할 인코딩된 비밀번호
  */
     void changePassword(Long userId, String encodePassword);
+
+    Map<Long, String> findUsernamesByIds(List<Long> userIds);
 }

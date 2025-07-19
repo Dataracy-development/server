@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -62,5 +64,12 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     public Optional<String> getLabelById(Long dataSourceId) {
         return dataSourceJpaRepository.findById(dataSourceId)
                 .map(DataSourceEntity::getLabel);
+    }
+
+    @Override
+    public Map<Long, String> getLabelsByIds(List<Long> dataSourceIds) {
+        return dataSourceJpaRepository.findAllById(dataSourceIds)
+                .stream()
+                .collect(Collectors.toMap(DataSourceEntity::getId, DataSourceEntity::getLabel));
     }
 }

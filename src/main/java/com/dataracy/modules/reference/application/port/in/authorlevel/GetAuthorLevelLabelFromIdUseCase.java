@@ -1,5 +1,8 @@
 package com.dataracy.modules.reference.application.port.in.authorlevel;
 
+import java.util.List;
+import java.util.Map;
+
 public interface GetAuthorLevelLabelFromIdUseCase {
     /**
  * 주어진 저자 레벨 ID에 해당하는 레이블을 반환합니다.
@@ -8,4 +11,6 @@ public interface GetAuthorLevelLabelFromIdUseCase {
  * @return 해당 저자 레벨의 레이블 문자열
  */
 String getLabelById(Long authorLevelId);
+
+    Map<Long, String> getLabelsByIds(List<Long> authorLevelIds);
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -90,5 +91,11 @@ public class OccupationQueryService implements
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION);
         }
         return label.get();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, String> getLabelsByIds(List<Long> occupationIds) {
+        return occupationRepositoryPort.getLabelsByIds(occupationIds);
     }
 }

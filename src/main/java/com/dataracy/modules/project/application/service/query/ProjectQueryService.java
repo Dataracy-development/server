@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -96,5 +97,34 @@ public class ProjectQueryService implements
                 })
                 .toList();
         return responseDto;
+    }
+
+//    @Override
+    @Transactional(readOnly = true)
+    public List<ProjectPopularSearchResponse> findPopularProjects2(int size) {
+        List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
+
+        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
+        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
+        List<Long> analysisPurposeIds = savedProjects.stream().map(Project::getAnalysisPurposeId).toList();
+        List<Long> dataSourceIds = savedProjects.stream().map(Project::getDataSourceId).toList();
+        List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
+
+        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
+        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
+        Map<Long, String> analysisPurposeLabelMap = getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds);
+        Map<Long, String> dataSourceLabelMap = getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds);
+        Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
+
+        return savedProjects.stream()
+                .map(project -> popularProjectsDtoMapper.toResponseDto(
+                        project,
+                        usernameMap.get(project.getUserId()),
+                        topicLabelMap.get(project.getTopicId()),
+                        analysisPurposeLabelMap.get(project.getAnalysisPurposeId()),
+                        dataSourceLabelMap.get(project.getDataSourceId()),
+                        authorLevelLabelMap.get(project.getAuthorLevelId())
+                ))
+                .toList();
     }
 }

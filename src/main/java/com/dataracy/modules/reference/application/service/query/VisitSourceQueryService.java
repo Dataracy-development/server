@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -92,5 +93,11 @@ public class VisitSourceQueryService implements
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE);
         }
         return label.get();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, String> getLabelsByIds(List<Long> visitSourceIds) {
+        return visitSourceRepositoryPort.getLabelsByIds(visitSourceIds);
     }
 }

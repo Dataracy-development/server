@@ -3,6 +3,7 @@ package com.dataracy.modules.reference.application.port.out;
 import com.dataracy.modules.reference.domain.model.Occupation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,4 +40,6 @@ boolean existsOccupationById(Long occupationId);
  * @return 직업이 존재하면 라벨을 포함한 Optional, 존재하지 않으면 빈 Optional
  */
 Optional<String> getLabelById(Long occupationId);
+
+    Map<Long, String> getLabelsByIds(List<Long> occupationIds);
 }

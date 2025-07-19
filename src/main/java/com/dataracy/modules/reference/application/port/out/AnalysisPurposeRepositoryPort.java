@@ -3,6 +3,7 @@ package com.dataracy.modules.reference.application.port.out;
 import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,4 +40,6 @@ boolean existsAnalysisPurposeById(Long analysisPurposeId);
  * @return 해당 ID의 라벨이 존재하면 Optional에 담아 반환하며, 없으면 빈 Optional을 반환합니다.
  */
 Optional<String> getLabelById(Long analysisPurposeId);
+
+    Map<Long, String> getLabelsByIds(List<Long> analysisPurposeIds);
 }

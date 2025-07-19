@@ -10,7 +10,10 @@ import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -101,6 +104,12 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         userEntity.changePassword(encodePassword);
     }
 
+    @Override
+    public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
+        return userJpaRepository.findAllById(userIds)
+                .stream()
+                .collect(Collectors.toMap(UserEntity::getId, UserEntity::getNickname));
+    }
 
     /**
      * 지정된 사용자 ID에 해당하는 사용자를 탈퇴 처리합니다.

@@ -3,6 +3,7 @@ package com.dataracy.modules.reference.application.port.out;
 import com.dataracy.modules.reference.domain.model.DataType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,4 +40,6 @@ boolean existsDataTypeById(Long dataTypeId);
  * @return 데이터 타입 레이블이 존재하면 해당 문자열을, 없으면 빈 Optional을 반환합니다.
  */
 Optional<String> getLabelById(Long dataTypeId);
+
+    Map<Long, String> getLabelsByIds(List<Long> dataTypeIds);
 }
