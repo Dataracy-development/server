@@ -4,11 +4,12 @@ import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.data.application.port.in.ValidateDataUseCase;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
-import com.dataracy.modules.project.adapter.index.document.ProjectSearchDocument;
+import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
 import com.dataracy.modules.project.application.port.out.ProjectIndexingPort;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
+import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProjectCommandService implements ProjectUploadUseCase {
     private final ProjectRepositoryPort projectRepositoryPort;
     private final ProjectIndexingPort projectIndexingPort;
+    private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
     private final FileUploadUseCase fileUploadUseCase;
@@ -74,7 +76,7 @@ public class ProjectCommandService implements ProjectUploadUseCase {
         // 부모 프로젝트 조회
         Project parentProject = null;
         if (requestDto.parentProjectId() != null) {
-            parentProject = projectRepositoryPort.findProjectById(requestDto.parentProjectId())
+            parentProject = projectQueryRepositoryPort.findProjectById(requestDto.parentProjectId())
                     .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
         }
 
