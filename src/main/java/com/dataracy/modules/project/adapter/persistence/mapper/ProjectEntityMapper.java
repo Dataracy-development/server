@@ -95,11 +95,7 @@ public final class ProjectEntityMapper {
                 project.getIsContinue(),
                 parentProject,
                 project.getContent(),
-                project.getFileUrl(),
-                project.getCommentCount(),
-                project.getLikeCount(),
-                project.getViewCount(),
-                project.getIsDeleted()
+                project.getFileUrl()
         );
 
         // dataIds → projectDataEntities 변환 후 연결

@@ -68,14 +68,20 @@ public class ProjectEntity extends BaseTimeEntity {
     private List<ProjectDataEntity> projectDataEntities = new ArrayList<>();
 
     @Column(nullable = false)
-    private Long commentCount;
-    @Column(nullable = false)
-    private Long likeCount;
-    @Column(nullable = false)
-    private Long viewCount;
+    @Builder.Default
+    private Long commentCount = 0L;
 
     @Column(nullable = false)
-    private Boolean isDeleted;
+    @Builder.Default
+    private Long likeCount = 0L;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Long viewCount = 0L;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
 
     /**
      * 프로젝트에 ProjectDataEntity를 추가하고 해당 데이터 엔티티의 프로젝트 참조를 이 프로젝트로 설정합니다.
@@ -129,10 +135,6 @@ public class ProjectEntity extends BaseTimeEntity {
      * @param parentProject 상위 프로젝트 엔티티, 없으면 null
      * @param content 프로젝트 상세 내용
      * @param fileUrl 파일의 URL, 없으면 null
-     * @param commentCount 댓글 수
-     * @param likeCount 좋아요 수
-     * @param viewCount 조회 수
-     * @param isDeleted 삭제 여부
      * @return 생성된 ProjectEntity 객체
      */
     public static ProjectEntity toEntity(
@@ -145,11 +147,7 @@ public class ProjectEntity extends BaseTimeEntity {
             Boolean isContinue,
             ProjectEntity parentProject,
             String content,
-            String fileUrl,
-            Long commentCount,
-            Long likeCount,
-            Long viewCount,
-            Boolean isDeleted
+            String fileUrl
     ) {
         return ProjectEntity.builder()
                 .title(title)
@@ -162,10 +160,6 @@ public class ProjectEntity extends BaseTimeEntity {
                 .parentProject(parentProject)
                 .content(content)
                 .fileUrl(fileUrl)
-                .commentCount(commentCount)
-                .likeCount(likeCount)
-                .viewCount(viewCount)
-                .isDeleted(isDeleted)
                 .build();
     }
 }

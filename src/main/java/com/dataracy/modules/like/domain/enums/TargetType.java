@@ -1,13 +1,11 @@
 package com.dataracy.modules.like.domain.enums;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
- * 역할 enum
+ * 좋아요 대상 타입 enum
  */
-@Getter
-@RequiredArgsConstructor
 public enum TargetType {
-    BOARD, COMMENT
+    /** 프로젝트(게시판) */
+    PROJECT,
+    /** 댓글 */
+    COMMENT
 }

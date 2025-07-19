@@ -14,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Table(
-        name = "like",
+        name = "target_like",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"targetId", "targetType", "userId"}),
         }
