@@ -39,7 +39,10 @@ public class ProjectSearchWebMapper {
                 responseDto.topicLabel(),
                 responseDto.analysisPurposeLabel(),
                 responseDto.dataSourceLabel(),
-                responseDto.authorLevelLabel()
+                responseDto.authorLevelLabel(),
+                responseDto.commentCount(),
+                responseDto.likeCount(),
+                responseDto.viewCount()
         );
     }
 }

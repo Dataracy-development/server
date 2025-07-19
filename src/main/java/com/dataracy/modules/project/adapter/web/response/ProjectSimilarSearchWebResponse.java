@@ -9,5 +9,8 @@ public record ProjectSimilarSearchWebResponse(
         String topicLabel,
         String analysisPurposeLabel,
         String dataSourceLabel,
-        String authorLevelLabel
+        String authorLevelLabel,
+        Long commentCount,
+        Long likeCount,
+        Long viewCount
 ) {}

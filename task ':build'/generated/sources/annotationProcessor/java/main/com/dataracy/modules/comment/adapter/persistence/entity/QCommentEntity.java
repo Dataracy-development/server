@@ -35,6 +35,8 @@ public class QCommentEntity extends EntityPathBase<CommentEntity> {
 
     public final BooleanPath isDeleted = createBoolean("isDeleted");
 
+    public final NumberPath<Long> likeCount = createNumber("likeCount", Long.class);
+
     public final QCommentEntity parent;
 
     public final NumberPath<Long> projectId = createNumber("projectId", Long.class);
