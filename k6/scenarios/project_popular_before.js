@@ -39,7 +39,7 @@ export default function () {
         check(res, {
             '✅ Status is 200': (r) => r.status === 200,
             '⏱️ Response time < 500ms': (r) => r.timings.duration < 500,
-            '🧪 Returned project list': (r) => r.json('content.length') > 0,
+            '🧪 Returned project list': (r) => r.json('data.length') > 0,
         });
 
         sleep(Math.random() * 2); // think time
