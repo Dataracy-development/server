@@ -38,6 +38,9 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
      */
     @Override
     public Optional<AuthorLevel> findAuthorLevelById(Long authorLevelId) {
+        if (authorLevelId == null) {
+            return Optional.empty();
+        }
         return authorLevelJpaRepository.findById(authorLevelId)
                 .map(AuthorLevelEntityMapper::toDomain);
     }
@@ -50,6 +53,9 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
      */
     @Override
     public boolean existsAuthorLevelById(Long authorLevelId) {
+        if (authorLevelId == null) {
+            return false;
+        }
         return authorLevelJpaRepository.existsById(authorLevelId);
     }
 
@@ -61,6 +67,9 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
      */
     @Override
     public Optional<String> getLabelById(Long authorLevelId) {
+        if (authorLevelId == null) {
+            return Optional.empty();
+        }
         return authorLevelJpaRepository.findById(authorLevelId)
                 .map(AuthorLevelEntity::getLabel);
     }

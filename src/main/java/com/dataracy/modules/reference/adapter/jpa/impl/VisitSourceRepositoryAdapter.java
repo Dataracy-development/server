@@ -38,6 +38,9 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
      */
     @Override
     public Optional<VisitSource> findVisitSourceById(Long visitSourceId) {
+        if (visitSourceId == null) {
+            return Optional.empty();
+        }
         return visitSourceJpaRepository.findById(visitSourceId)
                 .map(VisitSourceEntityMapper::toDomain);
     }
@@ -50,6 +53,9 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
      */
     @Override
     public boolean existsVisitSourceById(Long visitSourceId) {
+        if (visitSourceId == null) {
+            return false;
+        }
         return visitSourceJpaRepository.existsById(visitSourceId);
     }
 
@@ -61,6 +67,9 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
      */
     @Override
     public Optional<String> getLabelById(Long visitSourceId) {
+        if (visitSourceId == null) {
+            return Optional.empty();
+        }
         return visitSourceJpaRepository.findById(visitSourceId)
                 .map(VisitSourceEntity::getLabel);
     }

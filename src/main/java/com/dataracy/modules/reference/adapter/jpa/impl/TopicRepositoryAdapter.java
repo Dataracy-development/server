@@ -39,6 +39,9 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
      */
     @Override
     public Optional<Topic> findTopicById(Long topicId) {
+        if (topicId == null) {
+            return Optional.empty();
+        }
         return topicJpaRepository.findById(topicId)
                 .map(TopicEntityMapper::toDomain);
     }
@@ -51,6 +54,9 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
      */
     @Override
     public boolean existsTopicById(Long topicId) {
+        if (topicId == null) {
+            return false;
+        }
         return topicJpaRepository.existsById(topicId);
     }
 
@@ -62,6 +68,9 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
      */
     @Override
     public Optional<String> getLabelById(Long topicId) {
+        if (topicId == null) {
+            return Optional.empty();
+        }
         return topicJpaRepository.findById(topicId)
                 .map(TopicEntity::getLabel);
     }

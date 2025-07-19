@@ -39,6 +39,9 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
      */
     @Override
     public Optional<AnalysisPurpose> findAnalysisPurposeById(Long analysisPurposeId) {
+        if (analysisPurposeId == null) {
+            return Optional.empty();
+        }
         return analysisPurposeJpaRepository.findById(analysisPurposeId)
                 .map(AnalysisPurposeEntityMapper::toDomain);
     }
@@ -51,6 +54,9 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
      */
     @Override
     public boolean existsAnalysisPurposeById(Long analysisPurposeId) {
+        if (analysisPurposeId == null) {
+            return false;
+        }
         return analysisPurposeJpaRepository.existsById(analysisPurposeId);
     }
 
@@ -62,6 +68,9 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
      */
     @Override
     public Optional<String> getLabelById(Long analysisPurposeId) {
+        if (analysisPurposeId == null) {
+            return Optional.empty();
+        }
         return analysisPurposeJpaRepository.findById(analysisPurposeId)
                 .map(AnalysisPurposeEntity::getLabel);
     }
