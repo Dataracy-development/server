@@ -158,15 +158,6 @@ sourceSets {
 	}
 }
 
-tasks.named('compileJava') {
-	doFirst {
-		def generatedDir = file("$build/generated/sources/annotationProcessor/java/main")
-		if (generatedDir.exists()) {
-			generatedDir.deleteDir()
-		}
-	}
-}
-
 tasks.named('test') {
 	useJUnitPlatform()
 }
