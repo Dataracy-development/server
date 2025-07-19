@@ -23,7 +23,9 @@ public class LatencyAspect {
      * @return 원래 대상 메서드의 반환값
      * @throws Throwable 대상 메서드 실행 중 발생한 예외를 그대로 전달합니다.
      */
-    @Around("execution(* com.dataracy.modules..adapter.persistence.impl..*(..))")
+    @Around("execution(* com.dataracy.modules..adapter.*.impl..*(..))" +
+            " || execution(* com.dataracy.modules..adapter.elasticsearch..*(..))" +
+            " || execution(* com.dataracy.modules..adapter.query..*(..))")
     public Object trackDbLatency(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.nanoTime();
         try {
