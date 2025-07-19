@@ -45,6 +45,8 @@ public class QProjectEntity extends EntityPathBase<ProjectEntity> {
 
     public final BooleanPath isContinue = createBoolean("isContinue");
 
+    public final BooleanPath isDeleted = createBoolean("isDeleted");
+
     public final NumberPath<Long> likeCount = createNumber("likeCount", Long.class);
 
     public final QProjectEntity parentProject;

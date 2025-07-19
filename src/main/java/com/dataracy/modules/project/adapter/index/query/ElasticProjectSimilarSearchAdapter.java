@@ -107,7 +107,10 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
                 doc.topicLabel(),
                 doc.analysisPurposeLabel(),
                 doc.dataSourceLabel(),
-                doc.authorLevelLabel()
+                doc.authorLevelLabel(),
+                doc.commentCount(),
+                doc.likeCount(),
+                doc.viewCount()
         );
     }
 }

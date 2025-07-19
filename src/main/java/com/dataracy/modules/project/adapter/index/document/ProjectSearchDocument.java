@@ -22,7 +22,10 @@ public record ProjectSearchDocument(
         String authorLevelLabel,
         Boolean isContinue,
         String fileUrl,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Long commentCount,
+        Long likeCount,
+        Long viewCount
 ) {
     /**
      * Project 도메인 객체와 관련 라벨, 사용자 이름을 기반으로 ProjectSearchDocument 인스턴스를 생성합니다.
@@ -60,6 +63,9 @@ public record ProjectSearchDocument(
                 .isContinue(project.getIsContinue())
                 .fileUrl(project.getFileUrl())
                 .createdAt(project.getCreatedAt())
+                .commentCount(project.getCommentCount())
+                .likeCount(project.getLikeCount())
+                .viewCount(project.getViewCount())
                 .build();
     }
 }
