@@ -37,7 +37,9 @@ public final class ProjectEntityMapper {
                 .build()
                 : null;
 
-        List<Long> dataIds = projectEntity.getProjectDataEntities().stream()
+        List<Long> dataIds = Optional.ofNullable(projectEntity.getProjectDataEntities())
+                .orElseGet(Collections::emptyList)
+                .stream()
                 .map(ProjectDataEntity::getDataId)
                 .toList();
 
