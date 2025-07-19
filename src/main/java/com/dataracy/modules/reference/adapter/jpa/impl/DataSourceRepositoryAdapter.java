@@ -39,6 +39,9 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
      */
     @Override
     public Optional<DataSource> findDataSourceById(Long dataSourceId) {
+        if (dataSourceId == null) {
+            return Optional.empty();
+        }
         return dataSourceJpaRepository.findById(dataSourceId)
                 .map(DataSourceEntityMapper::toDomain);
     }
@@ -51,6 +54,9 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
      */
     @Override
     public boolean existsDataSourceById(Long dataSourceId) {
+        if (dataSourceId == null) {
+            return false;
+        }
         return dataSourceJpaRepository.existsById(dataSourceId);
     }
 
@@ -62,6 +68,9 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
      */
     @Override
     public Optional<String> getLabelById(Long dataSourceId) {
+        if (dataSourceId == null) {
+            return Optional.empty();
+        }
         return dataSourceJpaRepository.findById(dataSourceId)
                 .map(DataSourceEntity::getLabel);
     }

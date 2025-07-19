@@ -39,6 +39,9 @@ public class DataTypeRepositoryAdapter implements DataTypeRepositoryPort {
      */
     @Override
     public Optional<DataType> findDataTypeById(Long dataTypeId) {
+        if (dataTypeId == null) {
+            return Optional.empty();
+        }
         return dataTypeJpaRepository.findById(dataTypeId)
                 .map(DataTypeEntityMapper::toDomain);
     }
@@ -51,6 +54,9 @@ public class DataTypeRepositoryAdapter implements DataTypeRepositoryPort {
      */
     @Override
     public boolean existsDataTypeById(Long dataTypeId) {
+        if (dataTypeId == null) {
+            return false;
+        }
         return dataTypeJpaRepository.existsById(dataTypeId);
     }
 
@@ -62,6 +68,9 @@ public class DataTypeRepositoryAdapter implements DataTypeRepositoryPort {
      */
     @Override
     public Optional<String> getLabelById(Long dataTypeId) {
+        if (dataTypeId == null) {
+            return Optional.empty();
+        }
         return dataTypeJpaRepository.findById(dataTypeId)
                 .map(DataTypeEntity::getLabel);
     }

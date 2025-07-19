@@ -38,6 +38,9 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
      */
     @Override
     public Optional<Occupation> findOccupationById(Long occupationId) {
+        if (occupationId == null) {
+            return Optional.empty();
+        }
         return occupationJpaRepository.findById(occupationId)
                 .map(OccupationEntityMapper::toDomain);
     }
@@ -50,6 +53,9 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
      */
     @Override
     public boolean existsOccupationById(Long occupationId) {
+        if (occupationId == null) {
+            return false;
+        }
         return occupationJpaRepository.existsById(occupationId);
     }
 
@@ -61,6 +67,9 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
      */
     @Override
     public Optional<String> getLabelById(Long occupationId) {
+        if (occupationId == null) {
+            return Optional.empty();
+        }
         return occupationJpaRepository.findById(occupationId)
                 .map(OccupationEntity::getLabel);
     }
