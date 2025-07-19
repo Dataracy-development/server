@@ -100,6 +100,9 @@ public class DataSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> dataSourceIds) {
+        if (dataSourceIds == null || dataSourceIds.isEmpty()) {
+            return Map.of();
+        }
         return dataSourceRepositoryPort.getLabelsByIds(dataSourceIds);
     }
 }

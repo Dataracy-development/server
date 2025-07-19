@@ -96,6 +96,9 @@ public class OccupationQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> occupationIds) {
+        if (occupationIds == null || occupationIds.isEmpty()) {
+            return Map.of();
+        }
         return occupationRepositoryPort.getLabelsByIds(occupationIds);
     }
 }

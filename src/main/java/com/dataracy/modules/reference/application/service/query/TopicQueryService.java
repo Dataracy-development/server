@@ -95,6 +95,9 @@ public class TopicQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> topicIds) {
+        if (topicIds == null || topicIds.isEmpty()) {
+            return Map.of();
+        }
         return topicRepositoryPort.getLabelsByIds(topicIds);
     }
 }

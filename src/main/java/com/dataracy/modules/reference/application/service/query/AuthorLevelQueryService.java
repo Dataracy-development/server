@@ -96,6 +96,9 @@ public class AuthorLevelQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> authorLevelIds) {
+        if (authorLevelIds == null || authorLevelIds.isEmpty()) {
+            return Map.of();
+        }
         return authorLevelRepositoryPort.getLabelsByIds(authorLevelIds);
     }
 }
