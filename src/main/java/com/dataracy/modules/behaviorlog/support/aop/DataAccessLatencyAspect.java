@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-public class LatencyAspect {
+public class DataAccessLatencyAspect {
 
     /**
      * 데이터베이스 관련 메서드 실행 시간을 측정하여 로그로 기록하고, Mapped Diagnostic Context(MDC)에 저장합니다.
@@ -26,14 +26,14 @@ public class LatencyAspect {
     @Around("execution(* com.dataracy.modules..adapter.*.impl..*(..))" +
             " || execution(* com.dataracy.modules..adapter.elasticsearch..*(..))" +
             " || execution(* com.dataracy.modules..adapter.query..*(..))")
-    public Object trackDbLatency(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object trackDataAccessLatency(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.nanoTime();
         try {
             return joinPoint.proceed();
         } finally {
             long end = System.nanoTime();
             long latency = (end - start) / 1_000_000; // Convert to milliseconds
-            MDC.put(MdcKey.DB_LATENCY, String.valueOf(latency));
+            MDC.put(MdcKey.DATA_ACCESS_LATENCY, String.valueOf(latency));
             log.debug("[DB Latency] {} ms - {}", latency, joinPoint.getSignature());
         }
     }
