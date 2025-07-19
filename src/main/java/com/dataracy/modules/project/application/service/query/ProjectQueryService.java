@@ -74,34 +74,34 @@ public class ProjectQueryService implements
         return projectSimilarSearchPort.recommendSimilarProjects(project, size);
     }
 
+//    @Override
+//    @Transactional(readOnly = true)
+//    public List<ProjectPopularSearchResponse> findPopularProjects(int size) {
+//        List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
+//        List<ProjectPopularSearchResponse> responseDto = savedProjects.stream()
+//                .map(project -> {
+//                    String username = findUsernameUseCase.findUsernameById(project.getUserId());
+//                    String topicLabel = getTopicLabelFromIdUseCase.getLabelById(project.getTopicId());
+//                    String analysisPurposeLabel = getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId());
+//                    String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId());
+//                    String authorLevelLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(project.getAuthorLevelId());
+//
+//                    return popularProjectsDtoMapper.toResponseDto(
+//                            project,
+//                            username,
+//                            topicLabel,
+//                            analysisPurposeLabel,
+//                            dataSourceLabel,
+//                            authorLevelLabel
+//                    );
+//                })
+//                .toList();
+//        return responseDto;
+//    }
+
     @Override
     @Transactional(readOnly = true)
     public List<ProjectPopularSearchResponse> findPopularProjects(int size) {
-        List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
-        List<ProjectPopularSearchResponse> responseDto = savedProjects.stream()
-                .map(project -> {
-                    String username = findUsernameUseCase.findUsernameById(project.getUserId());
-                    String topicLabel = getTopicLabelFromIdUseCase.getLabelById(project.getTopicId());
-                    String analysisPurposeLabel = getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId());
-                    String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId());
-                    String authorLevelLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(project.getAuthorLevelId());
-
-                    return popularProjectsDtoMapper.toResponseDto(
-                            project,
-                            username,
-                            topicLabel,
-                            analysisPurposeLabel,
-                            dataSourceLabel,
-                            authorLevelLabel
-                    );
-                })
-                .toList();
-        return responseDto;
-    }
-
-//    @Override
-    @Transactional(readOnly = true)
-    public List<ProjectPopularSearchResponse> findPopularProjects2(int size) {
         List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
 
         List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();

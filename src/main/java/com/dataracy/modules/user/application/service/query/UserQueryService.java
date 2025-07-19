@@ -23,6 +23,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -155,5 +158,10 @@ public class UserQueryService implements
         User user = userRepositoryPort.findUserById(userId)
                 .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
         return user.getNickname();
+    }
+
+    @Override
+    public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
+        return userRepositoryPort.findUsernamesByIds(userIds);
     }
 }
