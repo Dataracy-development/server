@@ -30,6 +30,8 @@ public class QProjectEntity extends EntityPathBase<ProjectEntity> {
 
     public final ListPath<ProjectEntity, QProjectEntity> childProjects = this.<ProjectEntity, QProjectEntity>createList("childProjects", ProjectEntity.class, QProjectEntity.class, PathInits.DIRECT2);
 
+    public final NumberPath<Long> commentCount = createNumber("commentCount", Long.class);
+
     public final StringPath content = createString("content");
 
     //inherited
@@ -43,6 +45,8 @@ public class QProjectEntity extends EntityPathBase<ProjectEntity> {
 
     public final BooleanPath isContinue = createBoolean("isContinue");
 
+    public final NumberPath<Long> likeCount = createNumber("likeCount", Long.class);
+
     public final QProjectEntity parentProject;
 
     public final ListPath<ProjectDataEntity, QProjectDataEntity> projectDataEntities = this.<ProjectDataEntity, QProjectDataEntity>createList("projectDataEntities", ProjectDataEntity.class, QProjectDataEntity.class, PathInits.DIRECT2);
@@ -55,6 +59,8 @@ public class QProjectEntity extends EntityPathBase<ProjectEntity> {
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
+
+    public final NumberPath<Long> viewCount = createNumber("viewCount", Long.class);
 
     public QProjectEntity(String variable) {
         this(ProjectEntity.class, forVariable(variable), INITS);

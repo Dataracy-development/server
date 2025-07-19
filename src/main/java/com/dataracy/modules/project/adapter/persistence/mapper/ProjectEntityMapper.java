@@ -54,7 +54,11 @@ public final class ProjectEntityMapper {
                 projectEntity.getContent(),
                 projectEntity.getFileUrl(),
                 dataIds,
-                projectEntity.getCreatedAt()
+                projectEntity.getCreatedAt(),
+                projectEntity.getCommentCount(),
+                projectEntity.getLikeCount(),
+                projectEntity.getViewCount(),
+                projectEntity.getIsDeleted()
                 );
     }
 
@@ -91,7 +95,11 @@ public final class ProjectEntityMapper {
                 project.getIsContinue(),
                 parentProject,
                 project.getContent(),
-                project.getFileUrl()
+                project.getFileUrl(),
+                project.getCommentCount(),
+                project.getLikeCount(),
+                project.getViewCount(),
+                project.getIsDeleted()
         );
 
         // dataIds → projectDataEntities 변환 후 연결
