@@ -89,7 +89,11 @@ public class ProjectCommandService implements ProjectUploadUseCase {
                 requestDto.content(),
                 defaultImageUrl,
                 requestDto.dataIds(),
-                null
+                null,
+                0L,
+                0L,
+                0L,
+                false
                 );
         Project saveProject = projectRepositoryPort.saveProject(project);
 

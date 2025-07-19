@@ -1,5 +1,6 @@
 package com.dataracy.modules.project.domain.model;
 
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,11 @@ public class Project {
     private List<Long> dataIds;
     private LocalDateTime createdAt;
 
+    private Long commentCount;
+    private Long likeCount;
+    private Long viewCount;
+
+    private Boolean isDeleted;
     /**
      * 프로젝트의 썸네일 URL을 업데이트합니다.
      *
@@ -54,6 +60,10 @@ public class Project {
      * @param fileUrl 프로젝트 썸네일 또는 파일 URL
      * @param dataIds 연관된 데이터셋의 식별자 리스트
      * @param createdAt 프로젝트 생성 시각
+     * @param commentCount 댓글 수
+     * @param likeCount 좋아요 수
+     * @param viewCount 조회 수
+     * @param isDeleted 삭제 여부
      * @return 생성된 Project 객체
      */
     public static Project toDomain(
@@ -69,7 +79,11 @@ public class Project {
             String content,
             String fileUrl,
             List<Long> dataIds,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            Long commentCount,
+            Long likeCount,
+            Long viewCount,
+            Boolean isDeleted
     ) {
         return Project.builder()
                 .id(id)
@@ -85,6 +99,10 @@ public class Project {
                 .fileUrl(fileUrl)
                 .dataIds(dataIds)
                 .createdAt(createdAt)
+                .commentCount(commentCount)
+                .likeCount(likeCount)
+                .viewCount(viewCount)
+                .isDeleted(isDeleted)
                 .build();
     }
 }

@@ -45,9 +45,19 @@ public class CommentEntity extends BaseTimeEntity {
     @Builder.Default
     private List<CommentEntity> children = new ArrayList<>();
 
+    @Column(nullable = false)
+    private Long likeCount;
+
     // 답글 여부
     public boolean isReply() {
         return parent != null;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+    public void decreaseLikeCount() {
+        this.likeCount = Math.max(0, this.likeCount - 1);
     }
 
     public static CommentEntity toEntity(
@@ -55,7 +65,8 @@ public class CommentEntity extends BaseTimeEntity {
             Long projectId,
             Long userId,
             String content,
-            CommentEntity parent
+            CommentEntity parent,
+            Long likeCount
     ) {
         return CommentEntity.builder()
                 .id(id)
@@ -63,6 +74,7 @@ public class CommentEntity extends BaseTimeEntity {
                 .userId(userId)
                 .content(content)
                 .parent(parent)
+                .likeCount(likeCount)
                 .build();
     }
 }

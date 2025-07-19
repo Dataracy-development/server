@@ -1,6 +1,5 @@
 package com.dataracy.modules.project.adapter.persistence.entity;
 
-import com.dataracy.modules.common.base.BaseEntity;
 import com.dataracy.modules.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -68,6 +67,16 @@ public class ProjectEntity extends BaseTimeEntity {
     @Builder.Default
     private List<ProjectDataEntity> projectDataEntities = new ArrayList<>();
 
+    @Column(nullable = false)
+    private Long commentCount;
+    @Column(nullable = false)
+    private Long likeCount;
+    @Column(nullable = false)
+    private Long viewCount;
+
+    @Column(nullable = false)
+    private Boolean isDeleted;
+
     /**
      * 프로젝트에 ProjectDataEntity를 추가하고 해당 데이터 엔티티의 프로젝트 참조를 이 프로젝트로 설정합니다.
      *
@@ -87,6 +96,26 @@ public class ProjectEntity extends BaseTimeEntity {
         this.fileUrl = fileUrl;
     }
 
+    public void increaseCommentCount() {
+        this.commentCount++;
+    }
+    public void decreaseCommentCount() {
+        this.commentCount = Math.max(0, this.commentCount - 1);
+    }
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+    public void decreaseLikeCount() {
+        this.likeCount = Math.max(0, this.likeCount - 1);
+    }
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
+    public void decreaseViewCount() {
+        this.viewCount = Math.max(0, this.viewCount - 1);
+    }
+
+
     /**
      * 주어진 값들로 새로운 ProjectEntity 인스턴스를 생성합니다.
      *
@@ -100,6 +129,10 @@ public class ProjectEntity extends BaseTimeEntity {
      * @param parentProject 상위 프로젝트 엔티티, 없으면 null
      * @param content 프로젝트 상세 내용
      * @param fileUrl 파일의 URL, 없으면 null
+     * @param commentCount 댓글 수
+     * @param likeCount 좋아요 수
+     * @param viewCount 조회 수
+     * @param isDeleted 삭제 여부
      * @return 생성된 ProjectEntity 객체
      */
     public static ProjectEntity toEntity(
@@ -112,7 +145,11 @@ public class ProjectEntity extends BaseTimeEntity {
             Boolean isContinue,
             ProjectEntity parentProject,
             String content,
-            String fileUrl
+            String fileUrl,
+            Long commentCount,
+            Long likeCount,
+            Long viewCount,
+            Boolean isDeleted
     ) {
         return ProjectEntity.builder()
                 .title(title)
@@ -125,6 +162,10 @@ public class ProjectEntity extends BaseTimeEntity {
                 .parentProject(parentProject)
                 .content(content)
                 .fileUrl(fileUrl)
+                .commentCount(commentCount)
+                .likeCount(likeCount)
+                .viewCount(viewCount)
+                .isDeleted(isDeleted)
                 .build();
     }
 }
