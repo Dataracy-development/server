@@ -29,6 +29,7 @@ public class LikeEntity extends BaseTimeEntity {
     private Long targetId;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private TargetType targetType;
 
     @Column(nullable = false)
