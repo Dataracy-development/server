@@ -4,11 +4,14 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectSearchWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectWebMapper;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
+import com.dataracy.modules.project.adapter.web.response.ProjectPopularSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
+import com.dataracy.modules.project.application.dto.response.ProjectPopularSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
+import com.dataracy.modules.project.application.port.in.ProjectPopularSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
@@ -30,6 +33,8 @@ public class ProjectController implements ProjectApi {
     private final ProjectUploadUseCase projectUploadUseCase;
     private final ProjectRealTimeSearchUseCase projectRealTimeSearchUseCase;
     private final ProjectSimilarSearchUseCase projectSimilarSearchUseCase;
+    private final ProjectPopularSearchUseCase projectPopularSearchUseCase;
+
     /**
      * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
      *
@@ -84,5 +89,16 @@ public class ProjectController implements ProjectApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_SIMILAR_PROJECTS, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<List<ProjectPopularSearchWebResponse>>> searchPopularProjects(int size) {
+        List<ProjectPopularSearchResponse> responseDto = projectPopularSearchUseCase.findPopularProjects(size);
+        List<ProjectPopularSearchWebResponse> webResponse = responseDto.stream()
+                .map(projectSearchWebMapper::toWeb)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.FIND_POPULAR_PROJECTS, webResponse));
     }
 }

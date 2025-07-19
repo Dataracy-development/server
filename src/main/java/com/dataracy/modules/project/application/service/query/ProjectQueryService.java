@@ -75,7 +75,7 @@ public class ProjectQueryService implements
 
     @Override
     @Transactional(readOnly = true)
-    List<ProjectPopularSearchResponse> findPopularProjects(int size) {
+    public List<ProjectPopularSearchResponse> findPopularProjects(int size) {
         List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
         List<ProjectPopularSearchResponse> responseDto = savedProjects.stream()
                 .map(project -> {
