@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QAuthorLevelEntity extends EntityPathBase<AuthorLevelEntity> {
 
-    private static final long serialVersionUID = 1555109147L;
+    private static final long serialVersionUID = -1227709857L;
 
     public static final QAuthorLevelEntity authorLevelEntity = new QAuthorLevelEntity("authorLevelEntity");
 

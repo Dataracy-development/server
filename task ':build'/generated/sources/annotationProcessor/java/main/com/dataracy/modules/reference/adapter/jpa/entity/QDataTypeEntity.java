@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QDataTypeEntity extends EntityPathBase<DataTypeEntity> {
 
-    private static final long serialVersionUID = -78476216L;
+    private static final long serialVersionUID = 1430889860L;
 
     public static final QDataTypeEntity dataTypeEntity = new QDataTypeEntity("dataTypeEntity");
 
