@@ -1,6 +1,5 @@
 package com.dataracy.modules.project.adapter.persistence.entity;
 
-import com.dataracy.modules.common.base.BaseEntity;
 import com.dataracy.modules.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -68,6 +67,22 @@ public class ProjectEntity extends BaseTimeEntity {
     @Builder.Default
     private List<ProjectDataEntity> projectDataEntities = new ArrayList<>();
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Long commentCount = 0L;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Long likeCount = 0L;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Long viewCount = 0L;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
     /**
      * 프로젝트에 ProjectDataEntity를 추가하고 해당 데이터 엔티티의 프로젝트 참조를 이 프로젝트로 설정합니다.
      *
@@ -79,13 +94,51 @@ public class ProjectEntity extends BaseTimeEntity {
     }
 
     /**
-     * 프로젝트의 파일 URL을 새로운 값으로 변경합니다.
+     * 프로젝트의 파일 URL을 지정된 값으로 업데이트합니다.
      *
-     * @param fileUrl 새로 지정할 파일의 URL
+     * @param fileUrl 새로 설정할 파일 URL
      */
     public void updateFile (String fileUrl) {
         this.fileUrl = fileUrl;
     }
+
+    /**
+     * 댓글 수를 1 증가시킵니다.
+     */
+    public void increaseCommentCount() {
+        this.commentCount++;
+    }
+    /**
+     * 댓글 수를 1 감소시킵니다. 최소값은 0입니다.
+     */
+    public void decreaseCommentCount() {
+        this.commentCount = Math.max(0, this.commentCount - 1);
+    }
+    /**
+     * 좋아요 수를 1 증가시킵니다.
+     */
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+    /**
+     * 좋아요 수를 1 감소시킵니다. 값이 0보다 작아지지 않도록 보장합니다.
+     */
+    public void decreaseLikeCount() {
+        this.likeCount = Math.max(0, this.likeCount - 1);
+    }
+    /**
+     * 프로젝트의 조회수를 1 증가시킵니다.
+     */
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
+    /**
+     * 조회수(viewCount)를 1 감소시킵니다. 값이 0보다 작아지지 않도록 보장합니다.
+     */
+    public void decreaseViewCount() {
+        this.viewCount = Math.max(0, this.viewCount - 1);
+    }
+
 
     /**
      * 주어진 값들로 새로운 ProjectEntity 인스턴스를 생성합니다.

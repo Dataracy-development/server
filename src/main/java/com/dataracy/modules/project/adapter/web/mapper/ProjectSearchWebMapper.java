@@ -26,6 +26,8 @@ public class ProjectSearchWebMapper {
     /**
      * ProjectSimilarSearchResponse DTO를 ProjectSimilarSearchWebResponse 웹 응답 객체로 변환합니다.
      *
+     * Project의 유사 검색 결과 DTO를 받아 웹 응답 객체로 필드 값을 매핑하여 반환합니다.
+     *
      * @param responseDto 변환할 ProjectSimilarSearchResponse DTO
      * @return 변환된 ProjectSimilarSearchWebResponse 객체
      */
@@ -39,7 +41,10 @@ public class ProjectSearchWebMapper {
                 responseDto.topicLabel(),
                 responseDto.analysisPurposeLabel(),
                 responseDto.dataSourceLabel(),
-                responseDto.authorLevelLabel()
+                responseDto.authorLevelLabel(),
+                responseDto.commentCount(),
+                responseDto.likeCount(),
+                responseDto.viewCount()
         );
     }
 }
