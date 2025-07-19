@@ -70,8 +70,7 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
         if (visitSourceId == null) {
             return Optional.empty();
         }
-        return visitSourceJpaRepository.findById(visitSourceId)
-                .map(VisitSourceEntity::getLabel);
+        return visitSourceJpaRepository.findLabelById(visitSourceId);
     }
 
     @Override

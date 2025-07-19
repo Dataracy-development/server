@@ -71,8 +71,7 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
         if (topicId == null) {
             return Optional.empty();
         }
-        return topicJpaRepository.findById(topicId)
-                .map(TopicEntity::getLabel);
+        return topicJpaRepository.findLabelById(topicId);
     }
 
     @Override

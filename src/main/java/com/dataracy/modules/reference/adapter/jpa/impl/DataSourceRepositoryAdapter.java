@@ -71,8 +71,7 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
         if (dataSourceId == null) {
             return Optional.empty();
         }
-        return dataSourceJpaRepository.findById(dataSourceId)
-                .map(DataSourceEntity::getLabel);
+        return dataSourceJpaRepository.findLabelById(dataSourceId);
     }
 
     @Override
