@@ -18,7 +18,7 @@ public class ViewEntity extends BaseTimeEntity {
     private Long id;
 
     // 타 어그리거트로 간접참조
-    @Column(name = "projectId", nullable = false)
+    @Column(name = "project_id", nullable = false)
     private Long projectId;
 
     @Column(name = "user_id")
@@ -32,4 +32,20 @@ public class ViewEntity extends BaseTimeEntity {
 
     @Column(name = "user_agent")
     private String userAgent;
+
+    public static ViewEntity toEntity(
+            Long projectId,
+            Long userId,
+            String anonymousId,
+            String ip,
+            String userAgent
+    ) {
+        return ViewEntity.builder()
+                .projectId(projectId)
+                .userId(userId)
+                .anonymousId(anonymousId)
+                .ip(ip)
+                .userAgent(userAgent)
+                .build();
+    }
 }
