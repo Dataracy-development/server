@@ -18,7 +18,7 @@ public final class ProjectEntityMapper {
     /**
      * ProjectEntity 객체를 Project 도메인 모델로 변환합니다.
      *
-     * 입력이 null이면 null을 반환하며, 부모 프로젝트가 있을 경우 순환 참조를 방지하기 위해 부모의 ID와 제목만 포함한 Project 객체로 매핑합니다. 프로젝트에 연결된 데이터 ID 목록과 생성 시각 정보도 함께 변환됩니다.
+     * 입력이 null이면 null을 반환하며, 순환 참조를 방지하기 위해 부모 프로젝트가 있을 경우 부모의 ID와 제목만 포함한 Project 객체로 매핑합니다. 프로젝트에 연결된 데이터 ID 목록, 생성 시각, 댓글 수, 좋아요 수, 조회 수, 삭제 여부 등 주요 속성도 함께 변환됩니다.
      *
      * @param projectEntity 변환할 ProjectEntity 객체
      * @return 변환된 Project 도메인 모델 객체 또는 입력이 null일 경우 null

@@ -33,6 +33,16 @@ public class ViewEntity extends BaseTimeEntity {
     @Column(name = "user_agent")
     private String userAgent;
 
+    /**
+     * 주어진 값들로 새로운 ViewEntity 인스턴스를 생성합니다.
+     *
+     * @param projectId 프로젝트 식별자
+     * @param userId 사용자 식별자 (회원이 아닐 경우 null)
+     * @param anonymousId 비회원 식별용 UUID (회원일 경우 null)
+     * @param ip 접속한 사용자의 IP 주소
+     * @param userAgent 접속한 사용자의 User-Agent 문자열
+     * @return 생성된 ViewEntity 객체
+     */
     public static ViewEntity toEntity(
             Long projectId,
             Long userId,

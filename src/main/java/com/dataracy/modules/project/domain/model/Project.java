@@ -45,7 +45,7 @@ public class Project {
     }
 
     /**
-     * 주어진 값들로 새로운 Project 도메인 객체를 생성하여 반환합니다.
+     * 주어진 모든 속성 값으로 새로운 Project 도메인 객체를 생성하여 반환합니다.
      *
      * @param id 프로젝트의 고유 식별자
      * @param title 프로젝트 제목
