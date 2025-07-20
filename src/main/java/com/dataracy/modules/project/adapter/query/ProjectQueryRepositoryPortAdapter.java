@@ -27,8 +27,8 @@ import java.util.Optional;
 public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepositoryPort {
     private final JPAQueryFactory queryFactory;
 
-    QProjectEntity project = QProjectEntity.projectEntity;
-    QProjectDataEntity dataEntity = QProjectDataEntity.projectDataEntity;
+    private final QProjectEntity project = QProjectEntity.projectEntity;
+    private final QProjectDataEntity dataEntity = QProjectDataEntity.projectDataEntity;
 
     /**
      * 주어진 ID에 해당하는 프로젝트를 조회하여 Optional로 반환합니다.
@@ -71,9 +71,9 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .toList();
     }
 
+
     @Override
     public Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable, ProjectSortType sortType) {
-        QProjectEntity project = QProjectEntity.projectEntity;
 
         List<ProjectEntity> entities = queryFactory
                 .selectFrom(project)

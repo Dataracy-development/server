@@ -14,7 +14,7 @@ public enum ProjectErrorStatus implements BaseErrorCode {
     FAIL_REAL_TIME_SEARCH_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-003", "프로젝트 실시간 검색 실패"),
     FAIL_INDEXING_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-004", "Elasticsearch 색인 실패"),
     FAIL_SIMILAR_SEARCH_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-005", "유사 프로젝트 검색 실패"),
-    INVALID_PROJECT_SORT_TYPE(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-005", "프로젝트 정렬은 LATEST, OLDEST, MOST_LIKED, MOST_VIEWED, MOST_COMMENTED, LEAST_COMMENTED 만 가능합니다."),
+    INVALID_PROJECT_SORT_TYPE(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-006", "프로젝트 정렬은 LATEST, OLDEST, MOST_LIKED, MOST_VIEWED, MOST_COMMENTED, LEAST_COMMENTED 만 가능합니다."),
     ;
     private final HttpStatus httpStatus;
     private final String code;
