@@ -1,10 +1,7 @@
 package com.dataracy.modules.project.application.service.query;
 
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
-import com.dataracy.modules.project.application.dto.response.ProjectFilterResponse;
-import com.dataracy.modules.project.application.dto.response.ProjectPopularSearchResponse;
-import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
-import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
+import com.dataracy.modules.project.application.dto.response.*;
 import com.dataracy.modules.project.application.mapper.FilterProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
@@ -29,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -118,26 +116,16 @@ public class ProjectQueryService implements
     public List<ProjectPopularSearchResponse> findPopularProjects(int size) {
         List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
 
-        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
-        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
-        List<Long> analysisPurposeIds = savedProjects.stream().map(Project::getAnalysisPurposeId).toList();
-        List<Long> dataSourceIds = savedProjects.stream().map(Project::getDataSourceId).toList();
-        List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
-
-        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
-        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
-        Map<Long, String> analysisPurposeLabelMap = getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds);
-        Map<Long, String> dataSourceLabelMap = getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds);
-        Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
+        LabelMappingResponse labelResponse = labelMapping(savedProjects);
 
         return savedProjects.stream()
                 .map(project -> popularProjectsDtoMapper.toResponseDto(
                         project,
-                        usernameMap.get(project.getUserId()),
-                        topicLabelMap.get(project.getTopicId()),
-                        analysisPurposeLabelMap.get(project.getAnalysisPurposeId()),
-                        dataSourceLabelMap.get(project.getDataSourceId()),
-                        authorLevelLabelMap.get(project.getAuthorLevelId())
+                        labelResponse.usernameMap().get(project.getUserId()),
+                        labelResponse.topicLabelMap().get(project.getTopicId()),
+                        labelResponse.analysisPurposeLabelMap().get(project.getAnalysisPurposeId()),
+                        labelResponse.dataSourceLabelMap().get(project.getDataSourceId()),
+                        labelResponse.authorLevelLabelMap().get(project.getAuthorLevelId())
                 ))
                 .toList();
     }
@@ -150,18 +138,7 @@ public class ProjectQueryService implements
         }
         Page<Project> savedProjects = projectQueryRepositoryPort.searchByFilters(request, pageable, sortType);
 
-        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
-        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
-        List<Long> analysisPurposeIds = savedProjects.stream().map(Project::getAnalysisPurposeId).toList();
-        List<Long> dataSourceIds = savedProjects.stream().map(Project::getDataSourceId).toList();
-        List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
-
-        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
-        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
-        Map<Long, String> analysisPurposeLabelMap = getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds);
-        Map<Long, String> dataSourceLabelMap = getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds);
-        Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
-
+        LabelMappingResponse labelResponse = labelMapping(savedProjects.getContent());
         return savedProjects.map(project -> {
             // 자식 프로젝트들의 userId 수집
             List<Long> childUserIds = project.getChildProjects().stream()
@@ -174,13 +151,29 @@ public class ProjectQueryService implements
 
             return filterProjectDtoMapper.toResponseDto(
                     project,
-                    usernameMap.get(project.getUserId()),
-                    topicLabelMap.get(project.getTopicId()),
-                    analysisPurposeLabelMap.get(project.getAnalysisPurposeId()),
-                    dataSourceLabelMap.get(project.getDataSourceId()),
-                    authorLevelLabelMap.get(project.getAuthorLevelId()),
+                    labelResponse.usernameMap().get(project.getUserId()),
+                    labelResponse.topicLabelMap().get(project.getTopicId()),
+                    labelResponse.analysisPurposeLabelMap().get(project.getAnalysisPurposeId()),
+                    labelResponse.dataSourceLabelMap().get(project.getDataSourceId()),
+                    labelResponse.authorLevelLabelMap().get(project.getAuthorLevelId()),
                     childUsernames
             );
         });
+    }
+
+    private LabelMappingResponse labelMapping(Collection<Project> savedProjects) {
+        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
+        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
+        List<Long> analysisPurposeIds = savedProjects.stream().map(Project::getAnalysisPurposeId).toList();
+        List<Long> dataSourceIds = savedProjects.stream().map(Project::getDataSourceId).toList();
+        List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
+
+        return new LabelMappingResponse(
+                findUsernameUseCase.findUsernamesByIds(userIds),
+                getTopicLabelFromIdUseCase.getLabelsByIds(topicIds),
+                getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds),
+                getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds),
+                getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds)
+        );
     }
 }
