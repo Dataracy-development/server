@@ -11,12 +11,16 @@ import com.dataracy.modules.project.application.port.query.ProjectQueryRepositor
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
+import com.dataracy.modules.project.domain.model.vo.ProjectUser;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAnalysisPurposeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
+import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +41,7 @@ public class ProjectQueryService implements
         ProjectDetailUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
+    private final FilterProjectDtoMapper filterProjectDtoMapper;
 
     private final ProjectRealTimeSearchPort projectRealTimeSearchPort;
     private final ProjectSimilarSearchPort projectSimilarSearchPort;
@@ -47,7 +52,8 @@ public class ProjectQueryService implements
     private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
-    private final FilterProjectDtoMapper filterProjectDtoMapper;
+    private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
+    private final GetUserInfoUseCase getUserInfoUseCase;
 
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
@@ -195,12 +201,15 @@ public class ProjectQueryService implements
         boolean hasChild = projectQueryRepositoryPort.existsByParentProjectId(projectId);
         boolean hasData = projectQueryRepositoryPort.existsProjectDataByProjectId(projectId);
 
+        UserInfo userInfo = getUserInfoUseCase.getUserInfo(project.getUserId());
+        ProjectUser projectUser = ProjectUser.from(userInfo);
+
         return new ProjectDetailResponse(
                 project.getId(),
                 project.getTitle(),
                 findUsernameUseCase.findUsernameById(project.getUserId()),
-                getAuthorLevelLabelFromIdUseCase.getLabelById(project.getAuthorLevelId()),
-                null,
+                getAuthorLevelLabelFromIdUseCase.getLabelById(projectUser.authorLevelId()),
+                getOccupationLabelFromIdUseCase.getLabelById(projectUser.occupationId()),
                 getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),
                 getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId()),
                 getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId()),

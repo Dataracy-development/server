@@ -8,7 +8,8 @@ public record ProjectUser(
         RoleType role,
         String email,
         String nickname,
-        Long occupationId
+        Long occupationId,
+        Long authorLevelId
 ) {
     /**
      * 주어진 UserInfo 객체로부터 ProjectUser 인스턴스를 생성합니다.
@@ -22,7 +23,8 @@ public record ProjectUser(
                 info.role(),
                 info.email(),
                 info.nickname(),
-                info.occupationId()
+                info.occupationId(),
+                info.authorLevelId()
         );
     }
 }
