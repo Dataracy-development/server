@@ -1,7 +1,9 @@
 package com.dataracy.modules.project.adapter.web.mapper;
 
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
+import com.dataracy.modules.project.adapter.web.response.ProjectDetailWebResponse;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
+import com.dataracy.modules.project.application.dto.response.ProjectDetailResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,6 +25,29 @@ public class ProjectWebMapper {
                 webRequest.parentProjectId(),
                 webRequest.content(),
                 webRequest.dataIds()
+        );
+    }
+
+    public ProjectDetailWebResponse toWebDto(ProjectDetailResponse responseDto) {
+        return new ProjectDetailWebResponse(
+                responseDto.id(),
+                responseDto.title(),
+                responseDto.username(),
+                responseDto.authorLevelLabel(),
+                responseDto.occupationLabel(),
+                responseDto.topicLabel(),
+                responseDto.analysisPurposeLabel(),
+                responseDto.dataSourceLabel(),
+                responseDto.isContinue(),
+                responseDto.parentProjectId(),
+                responseDto.content(),
+                responseDto.fileUrl(),
+                responseDto.createdAt(),
+                responseDto.commentCount(),
+                responseDto.likeCount(),
+                responseDto.viewCount(),
+                responseDto.hasChild(),
+                responseDto.hasDataSet()
         );
     }
 }
