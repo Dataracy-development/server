@@ -49,7 +49,7 @@ public final class DataEntityMapper {
     /**
      * Data 도메인 객체를 DataEntity 엔티티로 변환합니다.
      *
-     * 입력값이 null이면 null을 반환하며, null이 아닌 경우 모든 필드와 메타데이터를 포함하여 DataEntity로 매핑합니다.
+     * 입력값이 null이면 null을 반환하며, 모든 필드와 중첩된 메타데이터까지 DataEntity로 매핑합니다.
      *
      * @param data 변환할 Data 도메인 객체
      * @return 변환된 DataEntity 엔티티 또는 입력이 null일 경우 null

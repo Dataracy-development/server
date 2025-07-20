@@ -28,7 +28,7 @@ public class ProjectSearchWebMapper {
     /**
      * ProjectSimilarSearchResponse DTO를 ProjectSimilarSearchWebResponse 웹 응답 객체로 변환합니다.
      *
-     * Project의 유사 검색 결과 DTO를 받아 웹 응답 객체로 필드 값을 매핑하여 반환합니다.
+     * 유사 프로젝트 검색 결과 DTO의 모든 필드를 웹 응답 객체에 매핑하여 반환합니다.
      *
      * @param responseDto 변환할 ProjectSimilarSearchResponse DTO
      * @return 변환된 ProjectSimilarSearchWebResponse 객체
@@ -50,6 +50,12 @@ public class ProjectSearchWebMapper {
         );
     }
 
+    /**
+     * ProjectPopularSearchResponse DTO를 ProjectPopularSearchWebResponse 웹 응답 객체로 변환합니다.
+     *
+     * @param responseDto 변환할 인기 프로젝트 검색 응답 DTO
+     * @return 변환된 인기 프로젝트 검색 웹 응답 객체
+     */
     public ProjectPopularSearchWebResponse toWeb(ProjectPopularSearchResponse responseDto) {
         return new ProjectPopularSearchWebResponse(
                 responseDto.id(),

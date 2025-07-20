@@ -29,6 +29,13 @@ public class VisitSourceEntity {
     @Column(nullable = false)
     private String label;
 
+    /**
+     * 주어진 값과 라벨로 새로운 VisitSourceEntity 인스턴스를 생성합니다.
+     *
+     * @param value 방문 소스의 고유 값
+     * @param label 방문 소스의 표시 이름
+     * @return 생성된 VisitSourceEntity 객체
+     */
     public static VisitSourceEntity of(
             String value,
             String label

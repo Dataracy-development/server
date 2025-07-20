@@ -79,12 +79,32 @@ public class UserEntity extends BaseTimeEntity {
         this.password = encodedPassword;
     }
 
-    // 유저의 흥미있는 도메인리스트에 도메인을 추가한다
+    /**
+     * 사용자의 관심 주제 목록에 주제 엔티티를 추가하고, 해당 주제 엔티티에 이 사용자를 할당합니다.
+     *
+     * @param topicEntity 추가할 사용자 주제 엔티티
+     */
     public void addUserTopic(UserTopicEntity topicEntity) {
         userTopicEntities.add(topicEntity);
         topicEntity.assignUser(this);
     }
 
+    /**
+     * 주어진 정보를 기반으로 새로운 UserEntity 인스턴스를 생성합니다.
+     *
+     * @param provider 소셜 로그인 또는 인증 제공자 유형
+     * @param providerId 제공자별 사용자 식별자
+     * @param role 사용자 역할 유형
+     * @param email 사용자 이메일
+     * @param password 암호화된 비밀번호
+     * @param nickname 사용자 닉네임
+     * @param authorLevelId 작성자 레벨 식별자
+     * @param occupationId 직업 식별자
+     * @param visitSourceId 방문 경로 식별자
+     * @param isAdTermsAgreed 광고 약관 동의 여부
+     * @param isDeleted 삭제 여부
+     * @return 생성된 UserEntity 객체
+     */
     public static UserEntity of(
             ProviderType provider,
             String providerId,

@@ -32,9 +32,9 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
     }
 
     /**
-     * 주어진 ID에 해당하는 토픽을 조회하여 Optional로 반환합니다.
+     * 주어진 ID로 토픽을 조회하여 Optional로 반환합니다.
      *
-     * @param topicId 조회할 토픽의 ID
+     * @param topicId 조회할 토픽의 ID. null인 경우 빈 Optional을 반환합니다.
      * @return 토픽이 존재하면 해당 도메인 객체를, 없으면 빈 Optional을 반환합니다.
      */
     @Override
@@ -47,10 +47,10 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
     }
 
     /**
-     * 주어진 토픽 ID에 해당하는 토픽의 존재 여부를 반환한다.
+     * 주어진 토픽 ID에 해당하는 토픽이 데이터베이스에 존재하는지 확인한다.
      *
-     * @param topicId 존재 여부를 확인할 토픽의 ID
-     * @return 토픽이 존재하면 true, 존재하지 않으면 false
+     * @param topicId 확인할 토픽의 ID
+     * @return 토픽이 존재하면 true, 존재하지 않거나 ID가 null이면 false
      */
     @Override
     public boolean existsTopicById(Long topicId) {
@@ -61,10 +61,10 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
     }
 
     /**
-     * 주어진 토픽 ID에 해당하는 토픽의 라벨을 조회합니다.
+     * 주어진 토픽 ID로 토픽의 라벨을 조회합니다.
      *
      * @param topicId 조회할 토픽의 ID
-     * @return 토픽이 존재하면 라벨을 포함한 Optional, 없으면 빈 Optional
+     * @return 해당 ID의 토픽이 존재하면 라벨을 포함한 Optional, 없으면 빈 Optional
      */
     @Override
     public Optional<String> getLabelById(Long topicId) {
@@ -74,6 +74,12 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
         return topicJpaRepository.findLabelById(topicId);
     }
 
+    /**
+     * 주어진 토픽 ID 목록에 해당하는 토픽의 ID와 라벨을 매핑한 Map을 반환합니다.
+     *
+     * @param topicIds 조회할 토픽의 ID 목록
+     * @return 각 토픽 ID와 해당 라벨이 매핑된 Map
+     */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> topicIds) {
         return topicJpaRepository.findAllById(topicIds)

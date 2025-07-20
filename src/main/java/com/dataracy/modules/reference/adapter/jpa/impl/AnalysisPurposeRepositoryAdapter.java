@@ -34,7 +34,7 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
     /**
      * 주어진 ID에 해당하는 분석 목적 도메인 객체를 Optional로 반환한다.
      *
-     * @param analysisPurposeId 조회할 분석 목적의 ID
+     * @param analysisPurposeId 조회할 분석 목적의 ID. null인 경우 Optional.empty()를 반환한다.
      * @return 해당 ID의 분석 목적이 존재하면 Optional로 감싸서 반환하며, 존재하지 않으면 Optional.empty()를 반환한다.
      */
     @Override
@@ -47,10 +47,10 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
     }
 
     /**
-     * 주어진 ID에 해당하는 분석 목적(AnalysisPurpose)이 데이터베이스에 존재하는지 반환합니다.
+     * 주어진 ID의 분석 목적이 데이터베이스에 존재하는지 확인합니다.
      *
      * @param analysisPurposeId 존재 여부를 확인할 분석 목적의 ID
-     * @return 해당 ID의 분석 목적이 존재하면 true, 존재하지 않으면 false
+     * @return 해당 ID가 null이 아니고, 데이터베이스에 존재하면 true, 그렇지 않으면 false
      */
     @Override
     public boolean existsAnalysisPurposeById(Long analysisPurposeId) {
@@ -61,10 +61,10 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
     }
 
     /**
-     * 주어진 ID에 해당하는 분석 목적(AnalysisPurpose)의 라벨을 조회합니다.
+     * 주어진 ID에 해당하는 분석 목적의 라벨을 Optional로 반환합니다.
      *
-     * @param analysisPurposeId 조회할 분석 목적의 ID
-     * @return 해당 ID의 분석 목적이 존재하면 라벨을 포함한 Optional, 존재하지 않으면 빈 Optional
+     * @param analysisPurposeId 라벨을 조회할 분석 목적의 ID
+     * @return 존재할 경우 라벨을 포함한 Optional, 존재하지 않거나 ID가 null인 경우 빈 Optional
      */
     @Override
     public Optional<String> getLabelById(Long analysisPurposeId) {
@@ -74,6 +74,12 @@ public class AnalysisPurposeRepositoryAdapter implements AnalysisPurposeReposito
         return analysisPurposeJpaRepository.findLabelById(analysisPurposeId);
     }
 
+    /**
+     * 주어진 분석 목적 ID 목록에 해당하는 엔티티들의 ID와 라벨을 매핑한 Map을 반환합니다.
+     *
+     * @param analysisPurposeIds 조회할 분석 목적 ID 목록
+     * @return 각 ID에 해당하는 라벨 문자열의 Map
+     */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> analysisPurposeIds) {
         return analysisPurposeJpaRepository.findAllById(analysisPurposeIds)

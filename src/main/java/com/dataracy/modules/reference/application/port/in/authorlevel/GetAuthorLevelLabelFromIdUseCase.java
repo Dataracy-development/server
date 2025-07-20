@@ -12,5 +12,11 @@ public interface GetAuthorLevelLabelFromIdUseCase {
  */
 String getLabelById(Long authorLevelId);
 
-    Map<Long, String> getLabelsByIds(List<Long> authorLevelIds);
+    /**
+ * 여러 저자 레벨 ID에 대해 각 ID에 해당하는 라벨 문자열을 반환합니다.
+ *
+ * @param authorLevelIds 라벨을 조회할 저자 레벨 ID 목록
+ * @return 각 저자 레벨 ID와 해당 라벨 문자열의 매핑
+ */
+Map<Long, String> getLabelsByIds(List<Long> authorLevelIds);
 }

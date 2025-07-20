@@ -77,14 +77,14 @@ public class DataTypeQueryService implements
         }
     }
 
-    /**
-     * 주어진 데이터 타입 ID에 해당하는 라벨을 반환합니다.
+    /****
+     * 주어진 데이터 타입 ID에 해당하는 라벨 문자열을 반환합니다.
      *
-     * 데이터 타입이 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 데이터 타입이 존재하지 않을 경우 {@code ReferenceException}이 발생합니다.
      *
      * @param dataTypeId 조회할 데이터 타입의 ID
      * @return 데이터 타입의 라벨 문자열
-     * @throws ReferenceException 데이터 타입을 찾을 수 없는 경우 발생
+     * @throws ReferenceException 데이터 타입을 찾을 수 없는 경우
      */
     @Override
     @Transactional(readOnly = true)
@@ -96,6 +96,12 @@ public class DataTypeQueryService implements
         return label.get();
     }
 
+    /**
+     * 주어진 데이터 타입 ID 목록에 대해 각 ID에 해당하는 라벨을 반환합니다.
+     *
+     * @param dataTypeIds 라벨을 조회할 데이터 타입 ID 목록
+     * @return 각 데이터 타입 ID와 해당 라벨의 매핑. 입력이 null이거나 비어 있으면 빈 맵을 반환합니다.
+     */
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> dataTypeIds) {

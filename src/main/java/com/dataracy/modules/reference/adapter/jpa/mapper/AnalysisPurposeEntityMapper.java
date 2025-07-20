@@ -29,10 +29,12 @@ public final class AnalysisPurposeEntityMapper {
     }
 
     /**
-     * AnalysisPurpose 도메인 모델을 AnalysisPurposeEntity 엔티티로 변환합니다.
+     * AnalysisPurpose 도메인 모델을 AnalysisPurposeEntity JPA 엔티티로 변환합니다.
      *
-     * @param analysisPurpose 변환할 AnalysisPurpose 도메인 모델 객체
-     * @return 변환된 AnalysisPurposeEntity 엔티티 객체, 입력이 null이면 null 반환
+     * 입력이 null이면 null을 반환합니다. 그렇지 않으면 도메인 모델의 value와 label 값을 사용하여 새로운 엔티티를 생성합니다.
+     *
+     * @param analysisPurpose 변환할 AnalysisPurpose 도메인 모델
+     * @return 변환된 AnalysisPurposeEntity 엔티티 또는 입력이 null인 경우 null
      */
     public static AnalysisPurposeEntity toEntity(AnalysisPurpose analysisPurpose) {
         if (analysisPurpose == null) {

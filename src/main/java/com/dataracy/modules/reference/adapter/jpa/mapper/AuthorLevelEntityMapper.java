@@ -23,7 +23,12 @@ public final class AuthorLevelEntityMapper {
         );
     }
 
-    // AuthorLevel 도메인 모델 -> AuthorLevel 엔티티
+    /**
+     * AuthorLevel 도메인 모델을 AuthorLevelEntity 엔티티로 변환합니다.
+     *
+     * @param authorLevel 변환할 AuthorLevel 도메인 모델
+     * @return 변환된 AuthorLevelEntity 엔티티, 입력이 null이면 null 반환
+     */
     public static AuthorLevelEntity toEntity(AuthorLevel authorLevel) {
         if (authorLevel == null) {
             return null;
