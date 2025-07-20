@@ -76,11 +76,11 @@ public class TopicQueryService implements
     }
 
     /**
-     * 주어진 토픽 ID에 해당하는 라벨을 조회합니다.
+     * 주어진 토픽 ID로 토픽의 라벨을 반환합니다.
      *
-     * @param topicId 조회할 토픽의 ID
-     * @return 토픽의 라벨 문자열
-     * @throws ReferenceException 해당 토픽의 라벨이 존재하지 않을 경우 발생
+     * @param topicId 라벨을 조회할 토픽의 ID
+     * @return 해당 토픽의 라벨 문자열
+     * @throws ReferenceException 토픽이 존재하지 않거나 라벨이 없을 때 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -92,6 +92,12 @@ public class TopicQueryService implements
         return label.get();
     }
 
+    /**
+     * 주어진 토픽 ID 목록에 대해 각 토픽의 라벨을 조회하여 ID와 라벨의 맵으로 반환합니다.
+     *
+     * @param topicIds 라벨을 조회할 토픽 ID 목록
+     * @return 각 토픽 ID에 해당하는 라벨의 맵. 입력이 null이거나 비어 있으면 빈 맵을 반환합니다.
+     */
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> topicIds) {

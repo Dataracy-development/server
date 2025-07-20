@@ -58,12 +58,12 @@ public class ProjectQueryService implements
     }
 
     /**
-     * 지정한 프로젝트와 유사한 프로젝트 목록을 조회합니다.
+     * 주어진 프로젝트와 유사한 프로젝트 목록을 조회합니다.
      *
-     * @param projectId 유사한 프로젝트를 찾을 기준이 되는 프로젝트의 ID
+     * @param projectId 기준이 되는 프로젝트의 ID
      * @param size 반환할 유사 프로젝트의 최대 개수
-     * @return 유사한 프로젝트 정보를 담은 응답 객체 리스트
-     * @throws ProjectException 프로젝트가 존재하지 않을 경우 발생
+     * @return 유사한 프로젝트 응답 객체 리스트
+     * @throws ProjectException 기준 프로젝트가 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -97,7 +97,12 @@ public class ProjectQueryService implements
 //                })
 //                .toList();
 //        return responseDto;
-//    }
+/**
+     * 지정한 개수만큼 인기 프로젝트 목록을 조회하고, 각 프로젝트에 관련된 사용자명 및 다양한 라벨 정보를 포함하여 반환합니다.
+     *
+     * @param size 반환할 인기 프로젝트의 최대 개수
+     * @return 사용자명, 주제, 분석 목적, 데이터 소스, 저자 레벨 라벨이 포함된 인기 프로젝트 응답 리스트
+     */
 
     @Override
     @Transactional(readOnly = true)

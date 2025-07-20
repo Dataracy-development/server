@@ -77,11 +77,11 @@ public class AnalysisPurposeQueryService implements
     }
 
     /**
-     * 주어진 분석 목적 ID에 해당하는 라벨을 반환합니다.
+     * 주어진 분석 목적 ID에 해당하는 라벨을 조회합니다.
      *
-     * @param analysisPurposeId 분석 목적의 고유 식별자
-     * @return 해당 분석 목적의 라벨 문자열
-     * @throws ReferenceException 분석 목적이 존재하지 않을 경우 발생
+     * @param analysisPurposeId 조회할 분석 목적의 ID
+     * @return 분석 목적의 라벨 문자열
+     * @throws ReferenceException 해당 ID의 분석 목적이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -90,6 +90,12 @@ public class AnalysisPurposeQueryService implements
                 .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE));
     }
 
+    /**
+     * 주어진 분석 목적 ID 목록에 대해 각 ID에 해당하는 라벨을 반환합니다.
+     *
+     * @param analysisPurposeIds 라벨을 조회할 분석 목적 ID 목록
+     * @return 각 ID와 해당 라벨이 매핑된 Map. 입력이 null이거나 비어 있으면 빈 Map을 반환합니다.
+     */
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> analysisPurposeIds) {

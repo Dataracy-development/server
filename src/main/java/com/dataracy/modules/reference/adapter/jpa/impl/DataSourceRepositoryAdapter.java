@@ -32,9 +32,9 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     }
 
     /**
-     * 주어진 ID로 데이터 출처를 조회하여 도메인 객체로 변환한 후 Optional로 반환한다.
+     * 주어진 ID로 데이터 출처를 조회하여 도메인 객체로 변환한 Optional로 반환한다.
      *
-     * @param dataSourceId 조회할 데이터 출처의 ID
+     * @param dataSourceId 조회할 데이터 출처의 ID. null일 경우 빈 Optional을 반환한다.
      * @return 데이터 출처 도메인 객체의 Optional. 해당 ID가 없거나 null이면 빈 Optional을 반환한다.
      */
     @Override
@@ -47,10 +47,10 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     }
 
     /**
-     * 지정된 ID의 데이터 소스가 존재하는지 확인합니다.
+     * 주어진 ID에 해당하는 데이터 소스의 존재 여부를 반환합니다.
      *
-     * @param dataSourceId 확인할 데이터 소스의 ID
-     * @return 데이터 소스가 존재하면 true, 존재하지 않으면 false
+     * @param dataSourceId 데이터 소스의 ID
+     * @return 데이터 소스가 존재하면 true, 존재하지 않으면 false입니다. ID가 null인 경우에도 false를 반환합니다.
      */
     @Override
     public boolean existsDataSourceById(Long dataSourceId) {
@@ -61,7 +61,7 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
     }
 
     /**
-     * 지정된 ID에 해당하는 데이터 소스의 라벨을 조회합니다.
+     * 주어진 ID에 해당하는 데이터 소스의 라벨을 Optional로 반환합니다.
      *
      * @param dataSourceId 조회할 데이터 소스의 ID
      * @return 데이터 소스가 존재하면 라벨을 포함한 Optional, 존재하지 않으면 빈 Optional
@@ -74,6 +74,12 @@ public class DataSourceRepositoryAdapter implements DataSourceRepositoryPort {
         return dataSourceJpaRepository.findLabelById(dataSourceId);
     }
 
+    /**
+     * 주어진 데이터 소스 ID 목록에 해당하는 데이터 소스의 ID와 라벨을 매핑한 Map을 반환합니다.
+     *
+     * @param dataSourceIds 조회할 데이터 소스의 ID 목록
+     * @return 각 데이터 소스 ID와 해당 라벨이 매핑된 Map
+     */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> dataSourceIds) {
         return dataSourceJpaRepository.findAllById(dataSourceIds)

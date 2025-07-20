@@ -14,10 +14,10 @@ public final class DataMetadataEntityMapper {
     }
 
     /**
-     * DataMetadataEntity 객체를 DataMetadata 도메인 모델로 변환합니다.
+     * DataMetadataEntity를 DataMetadata 도메인 객체로 변환합니다.
      *
      * @param dataMetadataEntity 변환할 DataMetadataEntity 객체
-     * @return 변환된 DataMetadata 객체, 입력이 null인 경우 null 반환
+     * @return 변환된 DataMetadata 객체, 입력이 null이면 null을 반환합니다.
      */
     public static DataMetadata toDomain(DataMetadataEntity dataMetadataEntity) {
         if (dataMetadataEntity == null) {
@@ -33,7 +33,7 @@ public final class DataMetadataEntityMapper {
     }
 
     /**
-     * 도메인 모델인 {@link DataMetadata}를 영속성 엔티티 {@link DataMetadataEntity}로 변환합니다.
+     * {@link DataMetadata} 도메인 객체를 {@link DataMetadataEntity} 영속성 엔티티로 변환합니다.
      *
      * @param dataMetadata 변환할 데이터 메타데이터 도메인 객체
      * @return 변환된 {@link DataMetadataEntity} 객체, 입력이 {@code null}이면 {@code null} 반환

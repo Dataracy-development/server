@@ -46,12 +46,12 @@ public class DataMetadataEntity {
     }
 
     /**
-     * 주어진 행 수, 열 수, 미리보기 JSON 문자열을 사용하여 새로운 DataMetadataEntity 인스턴스를 생성합니다.
+     * 행 수, 열 수, 미리보기 JSON 문자열을 기반으로 새로운 DataMetadataEntity 객체를 생성합니다.
      *
-     * @param rowCount     데이터의 행 수
-     * @param columnCount  데이터의 열 수
-     * @param previewJson  데이터 미리보기 정보를 담은 JSON 문자열
-     * @return             생성된 DataMetadataEntity 객체
+     * @param rowCount 데이터의 행 개수
+     * @param columnCount 데이터의 열 개수
+     * @param previewJson 데이터 미리보기 정보를 담은 JSON 문자열
+     * @return 생성된 DataMetadataEntity 인스턴스
      */
     public static DataMetadataEntity of(
             Integer rowCount,

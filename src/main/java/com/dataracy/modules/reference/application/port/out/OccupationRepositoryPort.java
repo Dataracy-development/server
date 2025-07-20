@@ -34,12 +34,18 @@ public interface OccupationRepositoryPort {
 boolean existsOccupationById(Long occupationId);
 
     /**
- * 주어진 직업 ID에 해당하는 직업의 라벨(이름 또는 설명)을 조회합니다.
+ * 주어진 직업 ID에 해당하는 직업의 라벨(이름 또는 설명)을 반환합니다.
  *
- * @param occupationId 조회할 직업의 고유 ID
- * @return 직업이 존재하면 라벨을 포함한 Optional, 존재하지 않으면 빈 Optional
+ * @param occupationId 라벨을 조회할 직업의 고유 ID
+ * @return 직업이 존재하면 해당 라벨을 포함한 Optional, 존재하지 않으면 빈 Optional
  */
 Optional<String> getLabelById(Long occupationId);
 
-    Map<Long, String> getLabelsByIds(List<Long> occupationIds);
+    /**
+ * 여러 직업 ID에 대해 각 ID와 해당 직업 라벨을 매핑한 맵을 반환합니다.
+ *
+ * @param occupationIds 라벨을 조회할 직업 ID 목록
+ * @return 각 직업 ID와 해당 라벨이 매핑된 맵
+ */
+Map<Long, String> getLabelsByIds(List<Long> occupationIds);
 }
