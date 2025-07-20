@@ -11,6 +11,7 @@ import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.model.Project;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -71,6 +72,15 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .toList();
     }
 
+    private BooleanExpression[] buildFilterPredicates(ProjectFilterRequest request) {
+        return new BooleanExpression[] {
+                ProjectFilterPredicate.keywordContains(request.keyword()),
+                ProjectFilterPredicate.topicIdEq(request.topicId()),
+                ProjectFilterPredicate.analysisPurposeIdEq(request.analysisPurposeId()),
+                ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
+                ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId())
+        };
+    }
 
     @Override
     public Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable, ProjectSortType sortType) {
@@ -81,13 +91,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .orderBy(ProjectSortBuilder.fromSortOption(sortType))
                 .leftJoin(project.parentProject).fetchJoin()
                 .leftJoin(project.childProjects).fetchJoin()
-                .where(
-                        ProjectFilterPredicate.keywordContains(request.keyword()),
-                        ProjectFilterPredicate.topicIdEq(request.topicId()),
-                        ProjectFilterPredicate.analysisPurposeIdEq(request.analysisPurposeId()),
-                        ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
-                        ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId())
-                )
+                .where(buildFilterPredicates(request))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -101,13 +105,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                         .select(project.count())
                         .from(project)
                         .distinct()
-                        .where(
-                                ProjectFilterPredicate.keywordContains(request.keyword()),
-                                ProjectFilterPredicate.topicIdEq(request.topicId()),
-                                ProjectFilterPredicate.analysisPurposeIdEq(request.analysisPurposeId()),
-                                ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
-                                ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId())
-                        )
+                        .where(buildFilterPredicates(request))
                         .fetchOne()
         ).orElse(0L);
 
