@@ -97,9 +97,9 @@ public class ProjectController implements ProjectApi {
     }
 
     /**
-     * 인기 프로젝트 목록을 조회하여 반환합니다.
+     * 지정한 개수만큼 인기 프로젝트 목록을 조회하여 반환합니다.
      *
-     * @param size 반환할 인기 프로젝트의 최대 개수
+     * @param size 조회할 인기 프로젝트의 최대 개수
      * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
@@ -113,6 +113,13 @@ public class ProjectController implements ProjectApi {
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_POPULAR_PROJECTS, webResponse));
     }
 
+    /**
+     * 필터 조건과 페이지 정보를 기반으로 프로젝트 목록을 검색하여 반환합니다.
+     *
+     * @param webRequest 프로젝트 필터링 조건이 담긴 요청 객체
+     * @param pageable 페이지네이션 정보
+     * @return 필터링된 프로젝트 목록의 페이지를 포함한 성공 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<Page<ProjectFilterWebResponse>>> searchFilteredProjects(ProjectFilterWebRequest webRequest, Pageable pageable) {
         ProjectFilterRequest requestDto = projectFilterWebMapper.toApplicationDto(webRequest);

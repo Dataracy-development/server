@@ -8,10 +8,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class ProjectSortBuilder {
     /**
- * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+ * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
  */
 private ProjectSortBuilder() {}
 
+    /**
+     * 프로젝트 정렬 옵션에 따라 QueryDSL 정렬 조건 배열을 반환합니다.
+     *
+     * @param sort 적용할 프로젝트 정렬 타입. null인 경우 최신순(생성일 내림차순)으로 정렬됩니다.
+     * @return 정렬 조건이 담긴 OrderSpecifier 배열
+     */
     public static OrderSpecifier<?>[] fromSortOption(ProjectSortType sort) {
         QProjectEntity project = QProjectEntity.projectEntity;
         if (sort == null) {

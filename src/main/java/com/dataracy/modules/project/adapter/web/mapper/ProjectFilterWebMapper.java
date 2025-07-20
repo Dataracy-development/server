@@ -16,6 +16,12 @@ public class ProjectFilterWebMapper {
 
     private final ChildProjectWebMapper childProjectWebMapper;
 
+    /**
+     * 웹 요청 DTO를 애플리케이션 계층의 프로젝트 필터 요청 DTO로 변환합니다.
+     *
+     * @param webRequest 웹 계층에서 전달된 프로젝트 필터 요청 DTO
+     * @return 변환된 애플리케이션 계층의 프로젝트 필터 요청 DTO
+     */
     public ProjectFilterRequest toApplicationDto(ProjectFilterWebRequest webRequest) {
         return new ProjectFilterRequest(
                 webRequest.keyword(),
@@ -27,6 +33,12 @@ public class ProjectFilterWebMapper {
         );
     }
 
+    /**
+     * 애플리케이션 계층의 프로젝트 필터 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     *
+     * @param responseDto 애플리케이션 계층의 프로젝트 필터 응답 DTO
+     * @return 웹 계층의 프로젝트 필터 응답 DTO
+     */
     public ProjectFilterWebResponse toWebDto(ProjectFilterResponse responseDto) {
 
         List<ChildProjectWebResponse> childProjectWebResponses = responseDto.childProjects().stream()
