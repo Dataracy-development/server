@@ -15,9 +15,9 @@ public class ProjectFilterPredicate {
     public static BooleanExpression keywordContains(String keyword) {
         if (!StringUtils.hasText(keyword)) return null;
 
-        return projectEntity.title.containsIgnoreCase(keyword)
-                .or(projectEntity.content.containsIgnoreCase(keyword));
+        return projectEntity.title.containsIgnoreCase(keyword);
     }
+
 
     public static BooleanExpression topicIdEq(Long topicId) {
         return topicId == null ? null : projectEntity.topicId.eq(topicId);
