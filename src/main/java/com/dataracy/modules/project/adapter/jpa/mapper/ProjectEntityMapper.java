@@ -27,16 +27,6 @@ private ProjectEntityMapper() {}
     }
 
     /**
-     * ProjectEntity를 Project 도메인 객체로 변환하며, 부모 프로젝트와 데이터 정보만 포함합니다.
-     *
-     * @param entity 변환할 ProjectEntity 객체
-     * @return 부모와 데이터가 포함된 Project 도메인 객체, 입력이 null이면 null 반환
-     */
-    public static Project toWithData(ProjectEntity entity) {
-        return toDomain(entity, true, false, true);
-    }
-
-    /**
      * ProjectEntity를 Project 도메인 객체로 변환하며, 부모와 최대 2개의 자식 프로젝트 정보를 포함합니다.
      *
      * 데이터 정보는 포함하지 않습니다.
