@@ -123,7 +123,7 @@ public class ProjectController implements ProjectApi {
     @Override
     public ResponseEntity<SuccessResponse<Page<ProjectFilterWebResponse>>> searchFilteredProjects(ProjectFilterWebRequest webRequest, Pageable pageable) {
         ProjectFilterRequest requestDto = projectFilterWebMapper.toApplicationDto(webRequest);
-        Page<ProjectFilterResponse> responseDto = projectFilteredSearchUsecase.findFilteringProjects(requestDto, pageable);
+        Page<ProjectFilterResponse> responseDto = projectFilteredSearchUsecase.findFilterdProjects(requestDto, pageable);
         Page<ProjectFilterWebResponse> webResponse = responseDto.map(projectFilterWebMapper::toWebDto);
 
         return ResponseEntity.status(HttpStatus.OK)

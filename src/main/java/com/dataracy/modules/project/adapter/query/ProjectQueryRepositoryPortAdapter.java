@@ -43,14 +43,29 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
         ProjectEntity entity = queryFactory
                 .selectFrom(project)
                 .distinct()
-                .leftJoin(project.parentProject).fetchJoin()
-                .leftJoin(project.projectDataEntities, dataEntity).fetchJoin()
-                .leftJoin(project.childProjects).fetchJoin()
                 .where(ProjectFilterPredicate.projectIdEq(projectId))
                 .fetchOne();
 
-        return Optional.ofNullable(ProjectEntityMapper.toFull(entity));
+        return Optional.ofNullable(ProjectEntityMapper.toMinimal(entity));
     }
+
+//    public boolean existsByParentProjectId(Long projectId) {
+//        Integer result = queryFactory
+//                .selectOne()
+//                .from(project)
+//                .where(project.pa.eq(projectId))
+//                .fetchFirst();
+//        return result != null;
+//    }
+//
+//    public boolean existsProjectDataByProjectId(Long projectId) {
+//        Integer result = queryFactory
+//                .selectOne()
+//                .from(projectDataEntity)
+//                .where(projectDataEntity.project.id.eq(projectId))
+//                .fetchFirst();
+//        return result != null;
+//    }
 
     /**
      * 인기 순으로 정렬된 프로젝트 목록을 지정된 개수만큼 반환합니다.
@@ -89,7 +104,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
 
     /**
      * 필터 조건, 페이지네이션, 정렬 기준에 따라 프로젝트 목록을 검색하여 페이지 형태로 반환합니다.
-     * 프로젝트 페이지에서 필터를 통한 프로젝트 조회 시 부모, 자식프로젝트를 함께 조회한다.
+     * 프로젝트 페이지에서 필터를 통한 프로젝트 조회 시 자식프로젝트를 함께 조회한다.
      *
      * @param request 프로젝트 필터링 조건을 담은 요청 객체
      * @param pageable 페이지네이션 정보
@@ -103,7 +118,6 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .selectFrom(project)
                 .distinct()
                 .orderBy(ProjectSortBuilder.fromSortOption(sortType))
-                .leftJoin(project.parentProject).fetchJoin()
                 .leftJoin(project.childProjects).fetchJoin()
                 .where(buildFilterPredicates(request))
                 .offset(pageable.getOffset())
@@ -111,7 +125,9 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .fetch();
 
         List<Project> contents = entities.stream()
-                .map(ProjectEntityMapper::toWithChildren)
+                .map(projectEntity ->
+                        ProjectEntityMapper.toWithChildren(projectEntity, 2)
+                )
                 .toList();
 
         long total = Optional.ofNullable(

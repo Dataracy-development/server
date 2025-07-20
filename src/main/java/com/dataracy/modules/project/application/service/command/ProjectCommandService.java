@@ -76,10 +76,12 @@ public class ProjectCommandService implements ProjectUploadUseCase {
         FileUtil.validateImageFile(file);
 
         // 부모 프로젝트 조회
-        Project parentProject = null;
-        if (requestDto.parentProjectId() != null) {
-            parentProject = projectQueryRepositoryPort.findProjectById(requestDto.parentProjectId())
-                    .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
+        Long parentProjectId = null;
+
+        if (!projectRepositoryPort.existsProjectById(requestDto.parentProjectId())) {
+            throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
+        } else {
+            parentProjectId = requestDto.parentProjectId();
         }
 
         // 프로젝트 업로드 DB 저장
@@ -92,7 +94,7 @@ public class ProjectCommandService implements ProjectUploadUseCase {
                 requestDto.dataSourceId(),
                 requestDto.authorLevelId(),
                 requestDto.isContinue(),
-                parentProject,
+                parentProjectId,
                 requestDto.content(),
                 defaultImageUrl,
                 requestDto.dataIds(),
