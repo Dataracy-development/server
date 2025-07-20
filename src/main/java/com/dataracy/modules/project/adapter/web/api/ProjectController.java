@@ -1,22 +1,26 @@
 package com.dataracy.modules.project.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.project.adapter.web.mapper.ProjectFilterWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectSearchWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectWebMapper;
+import com.dataracy.modules.project.adapter.web.request.ProjectFilterWebRequest;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
+import com.dataracy.modules.project.adapter.web.response.ProjectFilterWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectPopularSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
+import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
+import com.dataracy.modules.project.application.dto.response.ProjectFilterResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectPopularSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
-import com.dataracy.modules.project.application.port.in.ProjectPopularSearchUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
+import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,12 +33,13 @@ import java.util.List;
 public class ProjectController implements ProjectApi {
     private final ProjectWebMapper projectWebMapper;
     private final ProjectSearchWebMapper projectSearchWebMapper;
+    private final ProjectFilterWebMapper projectFilterWebMapper;
 
     private final ProjectUploadUseCase projectUploadUseCase;
     private final ProjectRealTimeSearchUseCase projectRealTimeSearchUseCase;
     private final ProjectSimilarSearchUseCase projectSimilarSearchUseCase;
     private final ProjectPopularSearchUseCase projectPopularSearchUseCase;
-
+    private final ProjectFilteredSearchUseCase projectFilteredSearchUsecase;
     /**
      * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
      *
@@ -106,5 +111,15 @@ public class ProjectController implements ProjectApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_POPULAR_PROJECTS, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Page<ProjectFilterWebResponse>>> searchFilteredProjects(ProjectFilterWebRequest webRequest, Pageable pageable) {
+        ProjectFilterRequest requestDto = projectFilterWebMapper.toApplicationDto(webRequest);
+        Page<ProjectFilterResponse> responseDto = projectFilteredSearchUsecase.findFilteringProjects(requestDto, pageable);
+        Page<ProjectFilterWebResponse> webResponse = responseDto.map(projectFilterWebMapper::toWebDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.FIND_FILTERED_PROJECTS, webResponse));
     }
 }

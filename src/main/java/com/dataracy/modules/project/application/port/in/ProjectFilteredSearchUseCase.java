@@ -5,6 +5,6 @@ import com.dataracy.modules.project.application.dto.response.ProjectFilterRespon
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface ProjectFilterUseCase {
+public interface ProjectFilteredSearchUseCase {
     Page<ProjectFilterResponse> findFilteringProjects(ProjectFilterRequest requestDto, Pageable pageable);
 }
