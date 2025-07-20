@@ -14,6 +14,7 @@ import com.dataracy.modules.project.application.port.in.ProjectPopularSearchUseC
 import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
+import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
@@ -143,7 +144,11 @@ public class ProjectQueryService implements
 
     @Override
     public Page<ProjectFilterResponse> findFilteringProjects(ProjectFilterRequest request, Pageable pageable) {
-        Page<Project> savedProjects = projectQueryRepositoryPort.searchByFilters(request, pageable);
+        ProjectSortType sortType = null;
+        if (request.sortType() != null && !request.sortType().isEmpty()) {
+            sortType = ProjectSortType.of(request.sortType());
+        }
+        Page<Project> savedProjects = projectQueryRepositoryPort.searchByFilters(request, pageable, sortType);
 
         List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
         List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();

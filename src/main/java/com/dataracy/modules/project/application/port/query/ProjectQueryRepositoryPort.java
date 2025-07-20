@@ -1,6 +1,7 @@
 package com.dataracy.modules.project.application.port.query;
 
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
+import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.model.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,5 +26,5 @@ Optional<Project> findProjectById(Long projectId);
  */
 List<Project> findPopularProjects(int size);
 
-    Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable);
+    Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable, ProjectSortType sortType);
 }

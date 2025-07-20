@@ -13,6 +13,9 @@ public class ProjectFilterPredicate {
     }
 
     public static BooleanExpression keywordContains(String keyword) {
+        if (keyword == null || keyword.isEmpty()) {
+            return null;
+        }
         if (!StringUtils.hasText(keyword)) return null;
 
         return projectEntity.title.containsIgnoreCase(keyword);

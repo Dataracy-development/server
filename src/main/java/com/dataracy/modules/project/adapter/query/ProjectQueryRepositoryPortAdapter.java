@@ -9,6 +9,7 @@ import com.dataracy.modules.project.adapter.query.sort.ProjectPopularOrderBuilde
 import com.dataracy.modules.project.adapter.query.sort.ProjectSortBuilder;
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
+import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.model.Project;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -71,12 +72,13 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     }
 
     @Override
-    public Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable) {
+    public Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable, ProjectSortType sortType) {
         QProjectEntity project = QProjectEntity.projectEntity;
 
         List<ProjectEntity> entities = queryFactory
                 .selectFrom(project)
                 .distinct()
+                .orderBy(ProjectSortBuilder.fromSortOption(sortType))
                 .leftJoin(project.parentProject).fetchJoin()
                 .leftJoin(project.childProjects).fetchJoin()
                 .where(
@@ -86,7 +88,6 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                         ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
                         ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId())
                 )
-                .orderBy(ProjectSortBuilder.fromSortOption(request.sortType()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

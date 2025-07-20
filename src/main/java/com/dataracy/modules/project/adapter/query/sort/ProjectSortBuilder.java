@@ -12,6 +12,7 @@ private ProjectSortBuilder() {}
 
     public static OrderSpecifier<?>[] fromSortOption(ProjectSortType sort) {
         QProjectEntity project = QProjectEntity.projectEntity;
+        System.out.println("정렬 방식: " + sort);
 
         if (sort == null) {
             return new OrderSpecifier[]{project.createdAt.desc()};
