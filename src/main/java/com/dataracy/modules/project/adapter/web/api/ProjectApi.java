@@ -113,7 +113,7 @@ public interface ProjectApi {
     );
 
     /**
-     * 좋아요, 댓글, 조회수를 기준으로 인기있는 프로젝트 목록을 조회한다.
+     * 좋아요, 댓글, 조회수를 기준으로 인기 프로젝트 목록을 조회한다.
      *
      * @param size 반환할 프로젝트 최대 개수 (1 이상)
      * @return 인기 프로젝트 목록이 포함된 성공 응답
@@ -134,6 +134,13 @@ public interface ProjectApi {
             int size
     );
 
+    /**
+     * 필터 조건에 따라 프로젝트 목록을 페이지 단위로 조회한다.
+     *
+     * @param webRequest 프로젝트 필터링 조건이 담긴 요청 객체
+     * @param pageable 페이지네이션 정보 (기본: 페이지 0, 크기 5)
+     * @return 필터링된 프로젝트 목록이 포함된 성공 응답 객체
+     */
     @Operation(
             summary = "필터링된 프로젝트 리스트를 조회한다.",
             description = "필터링된 프로젝트 리스트를 조회한다."
