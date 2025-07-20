@@ -11,6 +11,7 @@ import com.dataracy.modules.user.application.port.in.auth.HandleUserUseCase;
 import com.dataracy.modules.user.application.port.in.auth.IsNewUserUseCase;
 import com.dataracy.modules.user.application.port.in.user.ConfirmPasswordUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
 import com.dataracy.modules.user.application.port.in.user.IsLoginPossibleUseCase;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
@@ -34,7 +35,8 @@ public class UserQueryService implements
         HandleUserUseCase,
         IsLoginPossibleUseCase,
         ConfirmPasswordUseCase,
-        FindUsernameUseCase
+        FindUsernameUseCase,
+        GetUserInfoUseCase
 {
     private final PasswordEncoder passwordEncoder;
 
@@ -171,5 +173,21 @@ public class UserQueryService implements
     @Transactional(readOnly = true)
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
         return userRepositoryPort.findUsernamesByIds(userIds);
+    }
+
+    @Override
+    public UserInfo getUserInfo(Long userId) {
+        User user = userRepositoryPort.findUserById(userId)
+                .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
+        return new UserInfo(
+                user.getId(),
+                user.getRole(),
+                user.getEmail(),
+                user.getNickname(),
+                user.getAuthorLevelId(),
+                user.getOccupationId(),
+                user.getTopicIds(),
+                user.getVisitSourceId()
+        );
     }
 }
