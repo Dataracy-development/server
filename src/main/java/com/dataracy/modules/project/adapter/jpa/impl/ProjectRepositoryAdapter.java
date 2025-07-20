@@ -26,7 +26,7 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     public Project saveProject(Project project) {
         try {
             ProjectEntity projectEntity = projectJpaRepository.save(ProjectEntityMapper.toEntity(project));
-            return ProjectEntityMapper.toDomain(projectEntity);
+            return ProjectEntityMapper.toMinimal(projectEntity);
         } catch (Exception e) {
             throw new ProjectException(ProjectErrorStatus.FAIL_SAVE_PROJECT);
         }

@@ -6,7 +6,9 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * project 테이블
@@ -54,7 +56,7 @@ public class ProjectEntity extends BaseTimeEntity {
     @OneToMany(mappedBy = "parentProject", cascade = CascadeType.PERSIST)
     @BatchSize(size = 10)
     @Builder.Default
-    private List<ProjectEntity> childProjects = new ArrayList<>();
+    private Set<ProjectEntity> childProjects = new HashSet<>();
 
     @Lob
     @Column(columnDefinition = "TEXT", nullable = false)
@@ -65,7 +67,7 @@ public class ProjectEntity extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     @Builder.Default
-    private List<ProjectDataEntity> projectDataEntities = new ArrayList<>();
+    private Set<ProjectDataEntity> projectDataEntities = new HashSet<>();
 
     @Column(nullable = false)
     @Builder.Default

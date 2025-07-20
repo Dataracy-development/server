@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -144,7 +145,10 @@ public interface ProjectApi {
     })
     @GetMapping("/search/filter")
     ResponseEntity<SuccessResponse<Page<ProjectFilterWebResponse>>> searchFilteredProjects(
-            @Validated @ModelAttribute ProjectFilterWebRequest webRequest,
+            @Validated @ModelAttribute
+            ProjectFilterWebRequest webRequest,
+
+            @PageableDefault(size = 5, page = 0)
             Pageable pageable
     );
 }

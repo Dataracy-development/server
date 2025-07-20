@@ -45,10 +45,11 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .distinct()
                 .leftJoin(project.parentProject).fetchJoin()
                 .leftJoin(project.projectDataEntities, dataEntity).fetchJoin()
+                .leftJoin(project.childProjects).fetchJoin()
                 .where(ProjectFilterPredicate.projectIdEq(projectId))
                 .fetchOne();
 
-        return Optional.ofNullable(ProjectEntityMapper.toDomain(entity));
+        return Optional.ofNullable(ProjectEntityMapper.toFull(entity));
     }
 
     /**
@@ -65,7 +66,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .limit(size)
                 .fetch()
                 .stream()
-                .map(ProjectEntityMapper::toDomain)
+                .map(ProjectEntityMapper::toMinimal)
                 .toList();
     }
 
@@ -75,6 +76,9 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
 
         List<ProjectEntity> entities = queryFactory
                 .selectFrom(project)
+                .distinct()
+                .leftJoin(project.parentProject).fetchJoin()
+                .leftJoin(project.childProjects).fetchJoin()
                 .where(
                         ProjectFilterPredicate.keywordContains(request.keyword()),
                         ProjectFilterPredicate.topicIdEq(request.topicId()),
@@ -88,13 +92,14 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .fetch();
 
         List<Project> contents = entities.stream()
-                .map(ProjectEntityMapper::toDomain)
+                .map(ProjectEntityMapper::toWithChildren)
                 .toList();
 
         long total = Optional.ofNullable(
                 queryFactory
                         .select(project.count())
                         .from(project)
+                        .distinct()
                         .where(
                                 ProjectFilterPredicate.keywordContains(request.keyword()),
                                 ProjectFilterPredicate.topicIdEq(request.topicId()),

@@ -28,7 +28,7 @@ public class QProjectEntity extends EntityPathBase<ProjectEntity> {
 
     public final NumberPath<Long> authorLevelId = createNumber("authorLevelId", Long.class);
 
-    public final ListPath<ProjectEntity, QProjectEntity> childProjects = this.<ProjectEntity, QProjectEntity>createList("childProjects", ProjectEntity.class, QProjectEntity.class, PathInits.DIRECT2);
+    public final SetPath<ProjectEntity, QProjectEntity> childProjects = this.<ProjectEntity, QProjectEntity>createSet("childProjects", ProjectEntity.class, QProjectEntity.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> commentCount = createNumber("commentCount", Long.class);
 
@@ -51,7 +51,7 @@ public class QProjectEntity extends EntityPathBase<ProjectEntity> {
 
     public final QProjectEntity parentProject;
 
-    public final ListPath<ProjectDataEntity, QProjectDataEntity> projectDataEntities = this.<ProjectDataEntity, QProjectDataEntity>createList("projectDataEntities", ProjectDataEntity.class, QProjectDataEntity.class, PathInits.DIRECT2);
+    public final SetPath<ProjectDataEntity, QProjectDataEntity> projectDataEntities = this.<ProjectDataEntity, QProjectDataEntity>createSet("projectDataEntities", ProjectDataEntity.class, QProjectDataEntity.class, PathInits.DIRECT2);
 
     public final StringPath title = createString("title");
 

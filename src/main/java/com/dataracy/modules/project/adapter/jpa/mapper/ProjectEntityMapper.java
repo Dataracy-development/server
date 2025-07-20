@@ -8,89 +8,91 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * 프로젝트 엔티티와 프로젝트 도메인 모델을 변환하는 매퍼
- */
 public final class ProjectEntityMapper {
-    private ProjectEntityMapper() {
+    private ProjectEntityMapper() {}
+
+    // 1단계: 아무 관계도 포함하지 않음 (parent, children, data 모두 제외)
+    public static Project toMinimal(ProjectEntity entity) {
+        return toDomain(entity, false, false, false);
     }
 
-    /**
-     * ProjectEntity 객체를 Project 도메인 모델로 변환합니다.
-     *
-     * 입력이 null이면 null을 반환하며, 부모 프로젝트가 존재할 경우 순환 참조를 방지하기 위해 부모의 ID와 제목만 포함한 Project 객체로 매핑합니다. 프로젝트에 연결된 데이터 ID 목록과 주요 속성(생성 시각, 댓글 수, 좋아요 수, 조회 수, 삭제 여부 등)도 함께 변환됩니다.
-     *
-     * @param projectEntity 변환할 ProjectEntity 객체
-     * @return 변환된 Project 도메인 모델 객체 또는 입력이 null일 경우 null
-     */
-    public static Project toDomain(ProjectEntity projectEntity) {
-        if (projectEntity == null) {
-            return null;
-        }
+    // 2단계: 부모 + 데이터만 포함 (기본 정보) – 기존 toSummary
+    public static Project toWithData(ProjectEntity entity) {
+        return toDomain(entity, true, false, true);
+    }
 
-        // 재귀 방지를 위해 아이디, 제목만 추출하여 저장
-        Project parentProject = projectEntity.getParentProject() != null
-                ? Project
-                .builder()
-                .id(projectEntity.getParentProject().getId())
-                .title(projectEntity.getParentProject().getTitle())
-                .build()
+    // 3단계: 부모 + 자식 포함 (데이터 제외)
+    public static Project toWithChildren(ProjectEntity entity) {
+        return toDomain(entity, true, true, false);
+    }
+
+    // 4단계: 부모 + 자식 + 데이터 모두 포함 (전체 정보)
+    public static Project toFull(ProjectEntity entity) {
+        return toDomain(entity, true, true, true);
+    }
+
+    // 엔티티 -> 도메인 공통 내부 변환 메서드
+    private static Project toDomain(ProjectEntity entity, boolean includeParent, boolean includeChildren, boolean includeData) {
+        if (entity == null) return null;
+
+        Project parent = includeParent
+                ? Optional.ofNullable(entity.getParentProject())
+                .map(p -> Project.builder()
+                        .id(p.getId())
+                        .title(p.getTitle())
+                        .build())
+                .orElse(null)
                 : null;
 
-        List<Long> dataIds = Optional.ofNullable(projectEntity.getProjectDataEntities())
-                .orElseGet(Collections::emptyList)
+        List<Long> dataIds = includeData
+                ? Optional.ofNullable(entity.getProjectDataEntities())
+                .orElse(Collections.emptySet())
                 .stream()
                 .map(ProjectDataEntity::getDataId)
-                .toList();
+                .toList()
+                : List.of();
 
-        List<Project> projects = projectEntity.getChildProjects().stream()
-                .map(ProjectEntityMapper::toDomain)
-                .toList();
+        List<Project> childProjects = includeChildren
+                ? Optional.ofNullable(entity.getChildProjects())
+                .orElse(Collections.emptySet())
+                .stream()
+                .limit(2)
+                .map(ProjectEntityMapper::toMinimal) // 재귀 방지
+                .toList()
+                : List.of();
 
         return Project.of(
-                projectEntity.getId(),
-                projectEntity.getTitle(),
-                projectEntity.getTopicId(),
-                projectEntity.getUserId(),
-                projectEntity.getAnalysisPurposeId(),
-                projectEntity.getDataSourceId(),
-                projectEntity.getAuthorLevelId(),
-                projectEntity.getIsContinue(),
-                parentProject,
-                projectEntity.getContent(),
-                projectEntity.getFileUrl(),
+                entity.getId(),
+                entity.getTitle(),
+                entity.getTopicId(),
+                entity.getUserId(),
+                entity.getAnalysisPurposeId(),
+                entity.getDataSourceId(),
+                entity.getAuthorLevelId(),
+                entity.getIsContinue(),
+                parent,
+                entity.getContent(),
+                entity.getFileUrl(),
                 dataIds,
-                projectEntity.getCreatedAt(),
-                projectEntity.getCommentCount(),
-                projectEntity.getLikeCount(),
-                projectEntity.getViewCount(),
-                projectEntity.getIsDeleted(),
-                projects
-                );
+                entity.getCreatedAt(),
+                entity.getCommentCount(),
+                entity.getLikeCount(),
+                entity.getViewCount(),
+                entity.getIsDeleted(),
+                childProjects
+        );
     }
 
-    /**
-     * Project 도메인 모델을 ProjectEntity JPA 엔티티로 변환합니다.
-     *
-     * 부모 프로젝트가 존재할 경우, 순환 참조를 방지하기 위해 부모의 ID와 제목만 포함한 엔티티로 매핑합니다.
-     * 도메인 모델의 데이터 ID 목록을 ProjectDataEntity로 변환하여 ProjectEntity에 연결합니다.
-     *
-     * @param project 변환할 Project 도메인 모델 인스턴스
-     * @return 변환된 ProjectEntity 인스턴스. 입력이 null이면 null을 반환합니다.
-     */
+    // 도메인 → 엔티티 변환
     public static ProjectEntity toEntity(Project project) {
-        if (project == null) {
-            return null;
-        }
+        if (project == null) return null;
 
-        // 재귀 방지를 위해 아이디, 제목만 추출하여 저장
-        ProjectEntity parentProject = project.getParentProject() != null
-                ? ProjectEntity
-                .builder()
-                .id(project.getParentProject().getId())
-                .title(project.getParentProject().getTitle())
-                .build()
-                : null;
+        ProjectEntity parentProject = Optional.ofNullable(project.getParentProject())
+                .map(parent -> ProjectEntity.builder()
+                        .id(parent.getId())
+                        .title(parent.getTitle())
+                        .build())
+                .orElse(null);
 
         ProjectEntity projectEntity = ProjectEntity.of(
                 project.getTitle(),
@@ -105,13 +107,11 @@ public final class ProjectEntityMapper {
                 project.getFileUrl()
         );
 
-        // dataIds → projectDataEntities 변환 후 연결
-        List<ProjectDataEntity> projectDataEntities = Optional.ofNullable(project.getDataIds())
-                .orElseGet(Collections::emptyList)
+        Optional.ofNullable(project.getDataIds())
+                .orElse(Collections.emptyList())
                 .stream()
                 .map(dataId -> ProjectDataEntity.of(projectEntity, dataId))
-                .toList();
-        projectDataEntities.forEach(projectEntity::addProjectData);
+                .forEach(projectEntity::addProjectData);
 
         return projectEntity;
     }
