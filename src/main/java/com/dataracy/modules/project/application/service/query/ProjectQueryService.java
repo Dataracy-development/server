@@ -157,13 +157,25 @@ public class ProjectQueryService implements
         Map<Long, String> dataSourceLabelMap = getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds);
         Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
 
-        return savedProjects.map(project -> filterProjectDtoMapper.toResponseDto(
-                project,
-                usernameMap.get(project.getUserId()),
-                topicLabelMap.get(project.getTopicId()),
-                analysisPurposeLabelMap.get(project.getAnalysisPurposeId()),
-                dataSourceLabelMap.get(project.getDataSourceId()),
-                authorLevelLabelMap.get(project.getAuthorLevelId())
-        ));
+        return savedProjects.map(project -> {
+            // 자식 프로젝트들의 userId 수집
+            List<Long> childUserIds = project.getChildProjects().stream()
+                    .map(Project::getUserId)
+                    .distinct()
+                    .toList();
+
+            // userId → username 일괄 조회
+            Map<Long, String> childUsernames = findUsernameUseCase.findUsernamesByIds(childUserIds);
+
+            return filterProjectDtoMapper.toResponseDto(
+                    project,
+                    usernameMap.get(project.getUserId()),
+                    topicLabelMap.get(project.getTopicId()),
+                    analysisPurposeLabelMap.get(project.getAnalysisPurposeId()),
+                    dataSourceLabelMap.get(project.getDataSourceId()),
+                    authorLevelLabelMap.get(project.getAuthorLevelId()),
+                    childUsernames
+            );
+        });
     }
 }

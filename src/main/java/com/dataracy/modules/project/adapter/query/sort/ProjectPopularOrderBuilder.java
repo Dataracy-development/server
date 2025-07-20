@@ -17,11 +17,11 @@ private ProjectPopularOrderBuilder() {}
      * @return 인기 점수를 기준으로 내림차순 정렬하는 OrderSpecifier 객체
      */
     public static OrderSpecifier<?> popularOrder() {
-        QProjectEntity p = QProjectEntity.projectEntity;
+        QProjectEntity project = QProjectEntity.projectEntity;
 
-        return p.likeCount.multiply(2)
-                .add(p.commentCount.multiply(1.5))
-                .add(p.viewCount)
+        return project.likeCount.multiply(2)
+                .add(project.commentCount.multiply(1.5))
+                .add(project.viewCount)
                 .desc();
     }
 }

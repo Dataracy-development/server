@@ -1,26 +1,33 @@
 package com.dataracy.modules.project.adapter.query;
 
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectEntity;
+import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
+import com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity;
 import com.dataracy.modules.project.adapter.jpa.mapper.ProjectEntityMapper;
 import com.dataracy.modules.project.adapter.query.predicates.ProjectFilterPredicate;
 import com.dataracy.modules.project.adapter.query.sort.ProjectPopularOrderBuilder;
+import com.dataracy.modules.project.adapter.query.sort.ProjectSortBuilder;
+import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.model.Project;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity.projectDataEntity;
-import static com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity.projectEntity;
 
 @Repository
 @RequiredArgsConstructor
 public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepositoryPort {
-
     private final JPAQueryFactory queryFactory;
+
+    QProjectEntity project = QProjectEntity.projectEntity;
+    QProjectDataEntity dataEntity = QProjectDataEntity.projectDataEntity;
 
     /**
      * 주어진 ID에 해당하는 프로젝트를 조회하여 Optional로 반환합니다.
@@ -34,10 +41,10 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     @Override
     public Optional<Project> findProjectById(Long projectId) {
         ProjectEntity entity = queryFactory
-                .selectFrom(projectEntity)
+                .selectFrom(project)
                 .distinct()
-                .leftJoin(projectEntity.parentProject).fetchJoin()
-                .leftJoin(projectEntity.projectDataEntities, projectDataEntity).fetchJoin()
+                .leftJoin(project.parentProject).fetchJoin()
+                .leftJoin(project.projectDataEntities, dataEntity).fetchJoin()
                 .where(ProjectFilterPredicate.projectIdEq(projectId))
                 .fetchOne();
 
@@ -53,12 +60,51 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     @Override
     public List<Project> findPopularProjects(int size) {
         return queryFactory
-                .selectFrom(projectEntity)
+                .selectFrom(project)
                 .orderBy(ProjectPopularOrderBuilder.popularOrder())
                 .limit(size)
                 .fetch()
                 .stream()
                 .map(ProjectEntityMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable) {
+        QProjectEntity project = QProjectEntity.projectEntity;
+
+        List<ProjectEntity> entities = queryFactory
+                .selectFrom(project)
+                .where(
+                        ProjectFilterPredicate.keywordContains(request.keyword()),
+                        ProjectFilterPredicate.topicIdEq(request.topicId()),
+                        ProjectFilterPredicate.analysisPurposeIdEq(request.analysisPurposeId()),
+                        ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
+                        ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId())
+                )
+                .orderBy(ProjectSortBuilder.fromSortOption(request.sortType()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        List<Project> contents = entities.stream()
+                .map(ProjectEntityMapper::toDomain)
+                .toList();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(project.count())
+                        .from(project)
+                        .where(
+                                ProjectFilterPredicate.keywordContains(request.keyword()),
+                                ProjectFilterPredicate.topicIdEq(request.topicId()),
+                                ProjectFilterPredicate.analysisPurposeIdEq(request.analysisPurposeId()),
+                                ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
+                                ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId())
+                        )
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(contents, pageable, total);
     }
 }

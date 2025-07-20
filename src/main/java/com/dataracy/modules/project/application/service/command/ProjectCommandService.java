@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -98,7 +100,8 @@ public class ProjectCommandService implements ProjectUploadUseCase {
                 0L,
                 0L,
                 0L,
-                false
+                false,
+                List.of()
                 );
         Project saveProject = projectRepositoryPort.saveProject(project);
 
