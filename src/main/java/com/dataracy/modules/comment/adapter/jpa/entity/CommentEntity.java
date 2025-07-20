@@ -73,14 +73,14 @@ public class CommentEntity extends BaseTimeEntity {
     }
 
     /**
-     * 지정된 값으로 새로운 CommentEntity 인스턴스를 생성합니다.
+     * 주어진 값들로 새로운 CommentEntity 인스턴스를 생성합니다.
      *
-     * @param id        댓글의 고유 식별자
+     * @param id 댓글의 고유 식별자
      * @param projectId 댓글이 속한 프로젝트의 식별자
-     * @param userId    댓글 작성자의 식별자
-     * @param content   댓글 내용
-     * @param parent    부모 댓글 엔티티(대댓글인 경우), 없으면 null
-     * @return 생성된 CommentEntity 객체
+     * @param userId 댓글 작성자의 식별자
+     * @param content 댓글 내용
+     * @param parent 부모 댓글 엔티티(대댓글일 경우), 없으면 null
+     * @return 생성된 CommentEntity 인스턴스
      */
     public static CommentEntity of(
             Long id,

@@ -36,12 +36,12 @@ public class LikeEntity extends BaseTimeEntity {
     private Long userId;
 
     /**
-     * 주어진 대상 ID, 대상 타입, 사용자 ID로 새로운 LikeEntity 인스턴스를 생성합니다.
+     * 주어진 대상 ID, 대상 타입, 사용자 ID를 사용하여 새로운 LikeEntity 인스턴스를 생성합니다.
      *
-     * @param targetId 좋아요가 지정된 대상의 ID
+     * @param targetId 좋아요 대상의 고유 ID
      * @param targetType 좋아요 대상의 타입
-     * @param userId 좋아요를 누른 사용자의 ID
-     * @return 생성된 LikeEntity 객체
+     * @param userId 좋아요를 누른 사용자의 고유 ID
+     * @return 생성된 LikeEntity 인스턴스
      */
     public static LikeEntity of(
             Long targetId,

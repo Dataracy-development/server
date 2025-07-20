@@ -30,11 +30,11 @@ public class DataSourceEntity {
     private String label;
 
     /**
-     * 주어진 id, value, label 값을 사용하여 DataSourceEntity 인스턴스를 생성합니다.
+     * 주어진 value와 label로 새로운 DataSourceEntity 인스턴스를 생성합니다.
      *
      * @param value 데이터 소스의 값
      * @param label 데이터 소스의 라벨
-     * @return 생성된 DataSourceEntity 객체
+     * @return value와 label이 설정된 DataSourceEntity 객체
      */
     public static DataSourceEntity of(
             String value,

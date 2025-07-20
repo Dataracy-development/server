@@ -34,12 +34,18 @@ public interface AuthorLevelRepositoryPort {
 boolean existsAuthorLevelById(Long authorLevelId);
 
     /**
- * 주어진 ID에 해당하는 AuthorLevel 엔티티의 라벨을 조회합니다.
+ * 주어진 ID에 해당하는 AuthorLevel 엔티티의 라벨을 반환합니다.
  *
- * @param authorLevelId 조회할 AuthorLevel의 고유 식별자
- * @return 라벨이 존재하면 해당 값을 포함한 Optional, 없으면 빈 Optional
+ * @param authorLevelId 라벨을 조회할 AuthorLevel의 고유 ID
+ * @return 라벨이 존재하면 해당 값을 포함한 Optional, 존재하지 않으면 빈 Optional
  */
 Optional<String> getLabelById(Long authorLevelId);
 
-    Map<Long, String> getLabelsByIds(List<Long> authorLevelIds);
+    /**
+ * 주어진 여러 AuthorLevel ID에 대해 각 ID에 해당하는 라벨을 매핑하여 반환합니다.
+ *
+ * @param authorLevelIds 라벨을 조회할 AuthorLevel ID 목록
+ * @return 각 AuthorLevel ID와 해당 라벨이 매핑된 Map 객체
+ */
+Map<Long, String> getLabelsByIds(List<Long> authorLevelIds);
 }

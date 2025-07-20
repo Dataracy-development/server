@@ -34,12 +34,18 @@ public interface AnalysisPurposeRepositoryPort {
 boolean existsAnalysisPurposeById(Long analysisPurposeId);
 
     /**
- * 지정된 분석 목적 ID에 해당하는 라벨을 조회합니다.
+ * 지정된 분석 목적 ID에 해당하는 라벨을 반환합니다.
  *
- * @param analysisPurposeId 조회할 분석 목적의 고유 ID
- * @return 해당 ID의 라벨이 존재하면 Optional에 담아 반환하며, 없으면 빈 Optional을 반환합니다.
+ * @param analysisPurposeId 라벨을 조회할 분석 목적의 고유 ID
+ * @return 해당 ID의 라벨이 존재하면 Optional로 반환하며, 없으면 빈 Optional을 반환합니다.
  */
 Optional<String> getLabelById(Long analysisPurposeId);
 
-    Map<Long, String> getLabelsByIds(List<Long> analysisPurposeIds);
+    /**
+ * 주어진 분석 목적 ID 목록에 대해 각 ID에 해당하는 라벨을 반환합니다.
+ *
+ * @param analysisPurposeIds 라벨을 조회할 분석 목적 ID 목록
+ * @return 각 ID와 해당 라벨이 매핑된 Map 객체. 라벨이 없는 ID는 결과에 포함되지 않을 수 있습니다.
+ */
+Map<Long, String> getLabelsByIds(List<Long> analysisPurposeIds);
 }

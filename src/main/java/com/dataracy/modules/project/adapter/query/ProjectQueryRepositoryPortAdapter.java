@@ -23,10 +23,10 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     private final JPAQueryFactory queryFactory;
 
     /**
-     * 주어진 프로젝트 ID에 해당하는 프로젝트를 조회하여 반환합니다.
+     * 주어진 ID에 해당하는 프로젝트를 조회하여 Optional로 반환합니다.
      *
-     * 프로젝트 엔티티와 연관된 부모 프로젝트 및 프로젝트 데이터 엔티티를 함께 조회하며,
-     * 결과가 존재하지 않으면 빈 Optional을 반환합니다.
+     * 프로젝트와 연관된 부모 프로젝트 및 프로젝트 데이터도 함께 조회합니다.
+     * 결과가 없을 경우 빈 Optional을 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID
      * @return 조회된 프로젝트 도메인 객체의 Optional, 없으면 빈 Optional
@@ -44,6 +44,12 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
         return Optional.ofNullable(ProjectEntityMapper.toDomain(entity));
     }
 
+    /**
+     * 지정된 개수만큼 인기 프로젝트 목록을 조회합니다.
+     *
+     * @param size 반환할 프로젝트의 최대 개수
+     * @return 인기 순으로 정렬된 프로젝트 도메인 객체 리스트
+     */
     @Override
     public List<Project> findPopularProjects(int size) {
         return queryFactory

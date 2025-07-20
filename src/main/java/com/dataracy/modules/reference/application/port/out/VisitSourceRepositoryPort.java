@@ -34,12 +34,18 @@ public interface VisitSourceRepositoryPort {
 boolean existsVisitSourceById(Long visitSourceId);
 
     /**
- * 지정된 방문 소스 ID에 해당하는 라벨을 조회합니다.
+ * 지정된 방문 소스 ID에 해당하는 라벨을 반환합니다.
  *
- * @param visitSourceId 조회할 방문 소스의 고유 ID
- * @return 라벨이 존재하면 해당 값을 포함한 Optional, 없으면 빈 Optional
+ * @param visitSourceId 라벨을 조회할 방문 소스의 고유 ID
+ * @return 라벨이 존재하면 해당 값을 포함한 Optional, 존재하지 않으면 빈 Optional
  */
 Optional<String> getLabelById(Long visitSourceId);
 
-    Map<Long, String> getLabelsByIds(List<Long> visitSourceIds);
+    /**
+ * 여러 방문 소스 ID에 대해 각 ID에 해당하는 라벨을 조회하여 맵으로 반환합니다.
+ *
+ * @param visitSourceIds 라벨을 조회할 방문 소스 ID 목록
+ * @return 각 방문 소스 ID와 해당 라벨이 매핑된 맵
+ */
+Map<Long, String> getLabelsByIds(List<Long> visitSourceIds);
 }

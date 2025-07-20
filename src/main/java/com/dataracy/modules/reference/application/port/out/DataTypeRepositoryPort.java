@@ -34,12 +34,18 @@ public interface DataTypeRepositoryPort {
 boolean existsDataTypeById(Long dataTypeId);
 
     /**
- * 지정된 데이터 타입 ID에 해당하는 레이블을 조회합니다.
+ * 지정된 데이터 타입 ID에 해당하는 레이블을 반환합니다.
  *
- * @param dataTypeId 조회할 데이터 타입의 고유 ID
- * @return 데이터 타입 레이블이 존재하면 해당 문자열을, 없으면 빈 Optional을 반환합니다.
+ * @param dataTypeId 레이블을 조회할 데이터 타입의 고유 ID
+ * @return 레이블이 존재하면 해당 문자열을 포함한 Optional, 존재하지 않으면 빈 Optional
  */
 Optional<String> getLabelById(Long dataTypeId);
 
-    Map<Long, String> getLabelsByIds(List<Long> dataTypeIds);
+    /**
+ * 주어진 데이터 타입 ID 목록에 대해 각 ID에 해당하는 라벨을 매핑하여 반환합니다.
+ *
+ * @param dataTypeIds 라벨을 조회할 데이터 타입 ID 목록
+ * @return 각 데이터 타입 ID와 해당 라벨이 매핑된 Map 객체
+ */
+Map<Long, String> getLabelsByIds(List<Long> dataTypeIds);
 }

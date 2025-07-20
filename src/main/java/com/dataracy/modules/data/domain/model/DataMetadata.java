@@ -16,13 +16,13 @@ public class DataMetadata {
     private String previewJson;
 
     /**
-     * 주어진 메타데이터 정보를 기반으로 DataMetadata 도메인 객체를 생성합니다.
+     * 주어진 값들로 DataMetadata 도메인 객체를 생성하여 반환합니다.
      *
      * @param id 메타데이터의 고유 식별자
      * @param rowCount 데이터의 행 개수
      * @param columnCount 데이터의 열 개수
      * @param previewJson 데이터 미리보기 정보를 담은 JSON 문자열
-     * @return 생성된 DataMetadata 객체
+     * @return 생성된 DataMetadata 인스턴스
      */
     public static DataMetadata of(
             Long id,

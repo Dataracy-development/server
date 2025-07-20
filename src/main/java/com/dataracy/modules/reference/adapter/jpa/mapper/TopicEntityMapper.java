@@ -29,10 +29,10 @@ public final class TopicEntityMapper {
     }
 
     /**
-     * 토픽 도메인 모델 객체를 토픽 엔티티로 변환합니다.
+     * Topic 도메인 모델 객체를 TopicEntity로 변환합니다.
      *
-     * @param topic 변환할 토픽 도메인 모델 객체
-     * @return 변환된 토픽 엔티티 객체, 입력이 {@code null}이면 {@code null} 반환
+     * @param topic 변환할 Topic 도메인 모델 객체
+     * @return 변환된 TopicEntity 객체, 입력이 {@code null}이면 {@code null}을 반환합니다.
      */
     public static TopicEntity toEntity(Topic topic) {
         if (topic == null) {

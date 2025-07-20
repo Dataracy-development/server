@@ -23,7 +23,12 @@ public final class OccupationEntityMapper {
         );
     }
 
-    // Occupation 도메인 모델 -> Occupation 엔티티
+    /**
+     * Occupation 도메인 모델을 OccupationEntity JPA 엔티티로 변환합니다.
+     *
+     * @param occupation 변환할 Occupation 도메인 모델
+     * @return 변환된 OccupationEntity 엔티티, 입력이 null이면 null 반환
+     */
     public static OccupationEntity toEntity(Occupation occupation) {
         if (occupation == null) {
             return null;

@@ -141,18 +141,18 @@ public class ProjectEntity extends BaseTimeEntity {
 
 
     /**
-     * 주어진 값들로 새로운 ProjectEntity 인스턴스를 생성합니다.
+     * 주어진 정보로 새로운 ProjectEntity 인스턴스를 생성합니다.
      *
-     * @param title 프로젝트 제목
-     * @param topicId 주제 식별자
-     * @param userId 사용자 식별자
-     * @param analysisPurposeId 분석 목적 식별자
-     * @param dataSourceId 데이터 소스 식별자
-     * @param authorLevelId 작성자 등급 식별자
+     * @param title 프로젝트의 제목
+     * @param topicId 프로젝트가 속한 주제의 식별자
+     * @param userId 프로젝트 작성자의 식별자
+     * @param analysisPurposeId 분석 목적의 식별자
+     * @param dataSourceId 데이터 소스의 식별자
+     * @param authorLevelId 작성자 등급의 식별자
      * @param isContinue 프로젝트의 연속 여부
      * @param parentProject 상위 프로젝트 엔티티, 없으면 null
-     * @param content 프로젝트 상세 내용
-     * @param fileUrl 파일의 URL, 없으면 null
+     * @param content 프로젝트의 상세 내용
+     * @param fileUrl 첨부 파일의 URL, 없으면 null
      * @return 생성된 ProjectEntity 객체
      */
     public static ProjectEntity of(
