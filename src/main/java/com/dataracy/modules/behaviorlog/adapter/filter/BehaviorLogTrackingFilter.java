@@ -97,9 +97,9 @@ public class BehaviorLogTrackingFilter extends OncePerRequestFilter {
     }
 
     /**
-     * HTTP 요청 및 MDC 정보를 기반으로 BehaviorLog 객체를 생성합니다.
+     * 현재 HTTP 요청과 MDC에 저장된 정보를 바탕으로 BehaviorLog 객체를 생성합니다.
      *
-     * @param request      현재 HTTP 요청 객체
+     * @param request      HTTP 요청 객체
      * @param responseTime 요청 처리에 소요된 시간(밀리초)
      * @return             수집된 사용자 행동 로그 정보가 담긴 BehaviorLog 객체
      */
@@ -108,7 +108,7 @@ public class BehaviorLogTrackingFilter extends OncePerRequestFilter {
         String actionRaw = MDC.get(MdcKey.ACTION);
         ActionType action = ActionType.fromNullableString(actionRaw);
 
-        long dbLatency = parseLong(MDC.get(MdcKey.DB_LATENCY));
+        long dbLatency = parseLong(MDC.get(MdcKey.DATA_ACCESS_LATENCY));
         long stayTime = parseLong(MDC.get(MdcKey.STAY_TIME));
 
         String referrer = MDC.get(MdcKey.REFERRER) != null

@@ -22,17 +22,17 @@ public class MetadataParseService implements MetadataParseUseCase {
     private final DataMetadataRepositoryPort metadataRepositoryPort;
 
     /**
-     * 파일 URL과 원본 파일명을 기반으로 파일을 파싱하여 메타데이터를 추출하고, 해당 데이터를 저장합니다.
+     * 파일 URL과 원본 파일명을 이용해 파일을 파싱하여 메타데이터를 추출하고, 해당 데이터를 데이터 ID에 연결하여 저장합니다.
      *
-     * 파일 파싱 중 오류가 발생하면 예외를 던지지 않고 로그로만 처리합니다.
+     * 파싱 또는 저장 과정에서 오류가 발생해도 예외를 던지지 않고 로그로만 처리합니다.
      *
-     * @param request 메타데이터 파싱 및 저장에 필요한 파일 URL, 원본 파일명, 데이터 ID 정보를 포함한 요청 객체
+     * @param request 메타데이터 추출 및 저장에 필요한 파일 URL, 원본 파일명, 데이터 ID 정보를 포함한 요청 객체
      */
     @Override
     public void parseAndSaveMetadata(MetadataParseRequest request) {
         try (InputStream inputStream = fileStoragePort.download(request.fileUrl())) {
             MetadataParseResponse response = FileParsingUtil.parse(inputStream, request.originalFilename());
-            DataMetadata metadata = DataMetadata.toDomain(
+            DataMetadata metadata = DataMetadata.of(
                     null,
                     response.rowCount(),
                     response.columnCount(),

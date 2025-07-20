@@ -3,6 +3,7 @@ package com.dataracy.modules.project.adapter.web.api;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
+import com.dataracy.modules.project.adapter.web.response.ProjectPopularSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -80,11 +81,11 @@ public interface ProjectApi {
     );
 
     /**
-     * 지정한 프로젝트와 유사한 프로젝트들의 리스트를 조회합니다.
+     * 지정한 프로젝트와 유사한 프로젝트 목록을 조회합니다.
      *
-     * @param projectId 기준이 되는 프로젝트의 ID
+     * @param projectId 유사도를 비교할 기준 프로젝트의 ID
      * @param size 반환할 유사 프로젝트의 최대 개수
-     * @return 유사한 프로젝트 목록이 포함된 성공 응답
+     * @return 유사한 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Operation(
             summary = "유사 프로젝트 리스트를 조회한다.",
@@ -101,6 +102,28 @@ public interface ProjectApi {
             @Min(1)
             Long projectId,
 
+            @RequestParam(name = "size")
+            @Min(1)
+            int size
+    );
+
+    /**
+     * 좋아요, 댓글, 조회수를 기준으로 인기있는 프로젝트 목록을 조회한다.
+     *
+     * @param size 반환할 프로젝트 최대 개수 (1 이상)
+     * @return 인기 프로젝트 목록이 포함된 성공 응답
+     */
+    @Operation(
+            summary = "인기있는 프로젝트 리스트를 조회한다.",
+            description = "좋아요, 댓글, 조회수를 기준으로 프로젝트 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인기있는 프로젝트 리스트 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/search/popular")
+    ResponseEntity<SuccessResponse<List<ProjectPopularSearchWebResponse>>> searchPopularProjects(
             @RequestParam(name = "size")
             @Min(1)
             int size

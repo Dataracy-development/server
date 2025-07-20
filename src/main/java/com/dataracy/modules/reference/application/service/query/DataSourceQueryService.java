@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -80,11 +81,11 @@ public class DataSourceQueryService implements
     /**
      * 주어진 데이터 소스 ID에 해당하는 라벨을 반환합니다.
      *
-     * 데이터 소스가 존재하지 않으면 ReferenceException을 발생시킵니다.
+     * 데이터 소스가 존재하지 않을 경우 ReferenceException이 발생합니다.
      *
-     * @param dataSourceId 조회할 데이터 소스의 ID
+     * @param dataSourceId 라벨을 조회할 데이터 소스의 ID
      * @return 데이터 소스의 라벨 문자열
-     * @throws ReferenceException 데이터 소스를 찾을 수 없는 경우 발생
+     * @throws ReferenceException 데이터 소스를 찾을 수 없는 경우
      */
     @Override
     @Transactional(readOnly = true)
@@ -94,5 +95,20 @@ public class DataSourceQueryService implements
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE);
         }
         return label.get();
+    }
+
+    /**
+     * 주어진 데이터 소스 ID 목록에 대해 각 ID와 해당 라벨을 매핑한 맵을 반환합니다.
+     *
+     * @param dataSourceIds 라벨을 조회할 데이터 소스 ID 목록
+     * @return 각 데이터 소스 ID와 라벨의 매핑 맵. 입력이 null이거나 비어 있으면 빈 맵을 반환합니다.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, String> getLabelsByIds(List<Long> dataSourceIds) {
+        if (dataSourceIds == null || dataSourceIds.isEmpty()) {
+            return Map.of();
+        }
+        return dataSourceRepositoryPort.getLabelsByIds(dataSourceIds);
     }
 }

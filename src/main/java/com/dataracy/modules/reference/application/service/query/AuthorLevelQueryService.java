@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -75,11 +76,11 @@ public class AuthorLevelQueryService implements
         }
     }
 
-    /**
+    /****
      * 주어진 작가 등급 ID에 해당하는 라벨을 반환합니다.
      *
      * @param authorLevelId 조회할 작가 등급의 ID
-     * @return 해당 작가 등급의 라벨 문자열
+     * @return 작가 등급의 라벨 문자열
      * @throws ReferenceException 해당 ID의 작가 등급이 존재하지 않을 경우 발생
      */
     @Override
@@ -90,5 +91,20 @@ public class AuthorLevelQueryService implements
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);
         }
         return label.get();
+    }
+
+    /**
+     * 주어진 작가 레벨 ID 목록에 해당하는 레이블을 매핑하여 반환합니다.
+     *
+     * @param authorLevelIds 조회할 작가 레벨 ID 목록
+     * @return 각 작가 레벨 ID에 해당하는 레이블의 맵. 입력이 null이거나 비어 있으면 빈 맵을 반환합니다.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, String> getLabelsByIds(List<Long> authorLevelIds) {
+        if (authorLevelIds == null || authorLevelIds.isEmpty()) {
+            return Map.of();
+        }
+        return authorLevelRepositoryPort.getLabelsByIds(authorLevelIds);
     }
 }

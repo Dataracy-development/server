@@ -45,28 +45,11 @@ public class Project {
     }
 
     /**
-     * 주어진 모든 속성 값으로 새로운 Project 도메인 객체를 생성하여 반환합니다.
+     * 모든 속성 값을 지정하여 새로운 Project 도메인 객체를 생성합니다.
      *
-     * @param id 프로젝트의 고유 식별자
-     * @param title 프로젝트 제목
-     * @param topicId 주제 식별자
-     * @param userId 사용자 식별자
-     * @param analysisPurposeId 분석 목적 식별자
-     * @param dataSourceId 데이터 소스 식별자
-     * @param authorLevelId 작성자 등급 식별자
-     * @param isContinue 프로젝트의 연속 여부
-     * @param parentProject 상위 프로젝트 객체
-     * @param content 프로젝트 내용
-     * @param fileUrl 프로젝트 썸네일 또는 파일 URL
-     * @param dataIds 연관된 데이터셋의 식별자 리스트
-     * @param createdAt 프로젝트 생성 시각
-     * @param commentCount 댓글 수
-     * @param likeCount 좋아요 수
-     * @param viewCount 조회 수
-     * @param isDeleted 삭제 여부
-     * @return 생성된 Project 객체
+     * @return 지정된 값들로 생성된 Project 인스턴스
      */
-    public static Project toDomain(
+    public static Project of(
             Long id,
             String title,
             Long topicId,
