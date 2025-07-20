@@ -27,7 +27,7 @@ public class FilterProjectDtoMapper {
                         child.getId(),
                         child.getTitle(),
                         child.getContent(),
-                        childUsernames.get(child.getUserId()),
+                        childUsernames.getOrDefault(child.getUserId(), "익명 유저"),
                         child.getCommentCount(),
                         child.getLikeCount()
                 ))

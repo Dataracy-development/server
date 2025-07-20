@@ -5,9 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -56,7 +55,7 @@ public class ProjectEntity extends BaseTimeEntity {
     @OneToMany(mappedBy = "parentProject", cascade = CascadeType.PERSIST)
     @BatchSize(size = 10)
     @Builder.Default
-    private Set<ProjectEntity> childProjects = new HashSet<>();
+    private Set<ProjectEntity> childProjects = new LinkedHashSet<>();
 
     @Lob
     @Column(columnDefinition = "TEXT", nullable = false)
@@ -67,7 +66,7 @@ public class ProjectEntity extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     @Builder.Default
-    private Set<ProjectDataEntity> projectDataEntities = new HashSet<>();
+    private Set<ProjectDataEntity> projectDataEntities = new LinkedHashSet<>();
 
     @Column(nullable = false)
     @Builder.Default
