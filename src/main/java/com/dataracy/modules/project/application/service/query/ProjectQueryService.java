@@ -9,7 +9,7 @@ import com.dataracy.modules.project.application.mapper.FilterProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectSimilarSearchPort;
-import com.dataracy.modules.project.application.port.in.ProjectFilterUseCase;
+import com.dataracy.modules.project.application.port.in.ProjectFilteredSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectPopularSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
@@ -37,7 +37,7 @@ public class ProjectQueryService implements
         ProjectRealTimeSearchUseCase,
         ProjectSimilarSearchUseCase,
         ProjectPopularSearchUseCase,
-        ProjectFilterUseCase
+        ProjectFilteredSearchUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
 
