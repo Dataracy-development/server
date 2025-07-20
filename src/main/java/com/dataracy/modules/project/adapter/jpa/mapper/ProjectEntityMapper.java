@@ -9,29 +9,64 @@ import java.util.List;
 import java.util.Optional;
 
 public final class ProjectEntityMapper {
-    private ProjectEntityMapper() {}
+    /**
+ * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+ */
+private ProjectEntityMapper() {}
 
-    // 1단계: 아무 관계도 포함하지 않음 (parent, children, data 모두 제외)
+    /**
+     * ProjectEntity를 최소 정보만 포함하는 Project 도메인 객체로 변환합니다.
+     *
+     * 부모, 자식, 데이터 정보는 포함하지 않습니다.
+     *
+     * @param entity 변환할 ProjectEntity 객체
+     * @return 최소 정보만 포함된 Project 도메인 객체, 입력이 null이면 null 반환
+     */
     public static Project toMinimal(ProjectEntity entity) {
         return toDomain(entity, false, false, false);
     }
 
-    // 2단계: 부모 + 데이터만 포함 (기본 정보) – 기존 toSummary
+    /**
+     * ProjectEntity를 Project 도메인 객체로 변환하며, 부모 프로젝트와 데이터 정보만 포함합니다.
+     *
+     * @param entity 변환할 ProjectEntity 객체
+     * @return 부모와 데이터가 포함된 Project 도메인 객체, 입력이 null이면 null 반환
+     */
     public static Project toWithData(ProjectEntity entity) {
         return toDomain(entity, true, false, true);
     }
 
-    // 3단계: 부모 + 자식 포함 (데이터 제외)
+    /**
+     * ProjectEntity를 Project 도메인 객체로 변환하며, 부모와 최대 2개의 자식 프로젝트 정보를 포함합니다.
+     *
+     * 데이터 정보는 포함하지 않습니다.
+     *
+     * @param entity 변환할 ProjectEntity 객체
+     * @return 부모와 자식 정보가 포함된 Project 도메인 객체, 입력이 null이면 null 반환
+     */
     public static Project toWithChildren(ProjectEntity entity) {
         return toDomain(entity, true, true, false);
     }
 
-    // 4단계: 부모 + 자식 + 데이터 모두 포함 (전체 정보)
+    /**
+     * ProjectEntity를 Project 도메인 객체로 변환하며, 부모, 자식, 데이터 정보를 모두 포함합니다.
+     *
+     * @param entity 변환할 ProjectEntity 객체
+     * @return 부모, 자식, 데이터가 모두 포함된 Project 도메인 객체. 입력이 null이면 null 반환.
+     */
     public static Project toFull(ProjectEntity entity) {
         return toDomain(entity, true, true, true);
     }
 
-    // 엔티티 -> 도메인 공통 내부 변환 메서드
+    /**
+     * ProjectEntity를 Project 도메인 객체로 변환합니다.
+     *
+     * @param entity 변환할 ProjectEntity 객체
+     * @param includeParent 부모 프로젝트 정보를 포함할지 여부
+     * @param includeChildren 자식 프로젝트 정보를 포함할지 여부 (최대 2개, 최소 정보만 포함)
+     * @param includeData 프로젝트 데이터 ID 목록을 포함할지 여부
+     * @return 변환된 Project 도메인 객체. 입력이 null이면 null을 반환합니다.
+     */
     private static Project toDomain(ProjectEntity entity, boolean includeParent, boolean includeChildren, boolean includeData) {
         if (entity == null) return null;
 
@@ -83,7 +118,12 @@ public final class ProjectEntityMapper {
         );
     }
 
-    // 도메인 → 엔티티 변환
+    /**
+     * 도메인 모델인 {@link Project} 객체를 JPA 엔티티인 {@link ProjectEntity}로 변환합니다.
+     *
+     * @param project 변환할 도메인 {@link Project} 객체
+     * @return 변환된 {@link ProjectEntity} 객체, 입력이 null이면 null 반환
+     */
     public static ProjectEntity toEntity(Project project) {
         if (project == null) return null;
 

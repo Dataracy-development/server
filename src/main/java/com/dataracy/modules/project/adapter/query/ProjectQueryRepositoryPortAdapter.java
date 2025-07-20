@@ -32,10 +32,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     private final QProjectDataEntity dataEntity = QProjectDataEntity.projectDataEntity;
 
     /**
-     * 주어진 ID에 해당하는 프로젝트를 조회하여 Optional로 반환합니다.
-     *
-     * 프로젝트와 연관된 부모 프로젝트 및 프로젝트 데이터도 함께 조회합니다.
-     * 결과가 없을 경우 빈 Optional을 반환합니다.
+     * 주어진 ID에 해당하는 프로젝트와 그 부모, 데이터, 자식 프로젝트를 함께 조회하여 Optional로 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID
      * @return 조회된 프로젝트 도메인 객체의 Optional, 없으면 빈 Optional
@@ -55,10 +52,10 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     }
 
     /**
-     * 지정된 개수만큼 인기 프로젝트 목록을 조회합니다.
+     * 인기 순으로 정렬된 프로젝트 목록을 지정된 개수만큼 반환합니다.
      *
      * @param size 반환할 프로젝트의 최대 개수
-     * @return 인기 순으로 정렬된 프로젝트 도메인 객체 리스트
+     * @return 인기 순으로 정렬된 최소 정보의 프로젝트 도메인 객체 리스트
      */
     @Override
     public List<Project> findPopularProjects(int size) {
@@ -72,6 +69,12 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .toList();
     }
 
+    /**
+     * 주어진 필터 요청을 기반으로 프로젝트 검색에 사용할 QueryDSL BooleanExpression 배열을 생성합니다.
+     *
+     * @param request 프로젝트 필터 조건이 담긴 요청 객체
+     * @return 각 필터 조건에 해당하는 BooleanExpression 배열
+     */
     private BooleanExpression[] buildFilterPredicates(ProjectFilterRequest request) {
         return new BooleanExpression[] {
                 ProjectFilterPredicate.keywordContains(request.keyword()),
@@ -82,6 +85,14 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
         };
     }
 
+    /**
+     * 필터 조건, 페이지네이션, 정렬 기준에 따라 프로젝트 목록을 검색하여 페이지 형태로 반환합니다.
+     *
+     * @param request 프로젝트 필터링 조건을 담은 요청 객체
+     * @param pageable 페이지네이션 정보
+     * @param sortType 프로젝트 정렬 기준
+     * @return 필터 및 정렬 조건에 맞는 프로젝트 목록과 전체 개수를 포함한 페이지 객체
+     */
     @Override
     public Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable, ProjectSortType sortType) {
 

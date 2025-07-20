@@ -47,9 +47,10 @@ public class Project {
     }
 
     /**
-     * 모든 속성 값을 지정하여 새로운 Project 도메인 객체를 생성합니다.
+     * 모든 속성 값을 지정하여 새로운 Project 인스턴스를 생성합니다.
      *
-     * @return 지정된 값들로 생성된 Project 인스턴스
+     * @param childProjects 하위 프로젝트 목록을 포함하여 프로젝트 계층 구조를 설정할 때 사용합니다.
+     * @return 지정된 모든 속성 값이 반영된 Project 객체
      */
     public static Project of(
             Long id,

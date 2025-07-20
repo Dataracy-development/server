@@ -23,6 +23,16 @@ public enum ProjectSortType {
 
     private final String value;
 
+    /**
+     * 주어진 문자열 입력값에 해당하는 ProjectSortType 열거형 상수를 반환합니다.
+     *
+     * 입력값은 열거형 상수의 이름 또는 value 필드와 대소문자 구분 없이 매칭됩니다.
+     * 일치하는 정렬 타입이 없을 경우 ProjectException이 발생합니다.
+     *
+     * @param input 프로젝트 정렬 타입을 나타내는 문자열
+     * @return 매칭되는 ProjectSortType 열거형 상수
+     * @throws ProjectException 유효하지 않은 정렬 타입 입력 시 발생
+     */
     public static ProjectSortType of(String input) {
 
         return Arrays.stream(ProjectSortType.values())
