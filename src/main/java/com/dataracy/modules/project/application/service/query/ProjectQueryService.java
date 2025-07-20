@@ -1,11 +1,15 @@
 package com.dataracy.modules.project.application.service.query;
 
+import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
+import com.dataracy.modules.project.application.dto.response.ProjectFilterResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectPopularSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
+import com.dataracy.modules.project.application.mapper.FilterProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectSimilarSearchPort;
+import com.dataracy.modules.project.application.port.in.ProjectFilterUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectPopularSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
@@ -19,6 +23,8 @@ import com.dataracy.modules.reference.application.port.in.datasource.GetDataSour
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +36,8 @@ import java.util.Map;
 public class ProjectQueryService implements
         ProjectRealTimeSearchUseCase,
         ProjectSimilarSearchUseCase,
-        ProjectPopularSearchUseCase
+        ProjectPopularSearchUseCase,
+        ProjectFilterUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
 
@@ -43,6 +50,7 @@ public class ProjectQueryService implements
     private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+    private final FilterProjectDtoMapper filterProjectDtoMapper;
 
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
@@ -131,5 +139,31 @@ public class ProjectQueryService implements
                         authorLevelLabelMap.get(project.getAuthorLevelId())
                 ))
                 .toList();
+    }
+
+    @Override
+    public Page<ProjectFilterResponse> findFilteringProjects(ProjectFilterRequest request, Pageable pageable) {
+        Page<Project> savedProjects = projectQueryRepositoryPort.searchByFilters(request, pageable);
+
+        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
+        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
+        List<Long> analysisPurposeIds = savedProjects.stream().map(Project::getAnalysisPurposeId).toList();
+        List<Long> dataSourceIds = savedProjects.stream().map(Project::getDataSourceId).toList();
+        List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
+
+        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
+        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
+        Map<Long, String> analysisPurposeLabelMap = getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds);
+        Map<Long, String> dataSourceLabelMap = getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds);
+        Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
+
+        return savedProjects.map(project -> filterProjectDtoMapper.toResponseDto(
+                project,
+                usernameMap.get(project.getUserId()),
+                topicLabelMap.get(project.getTopicId()),
+                analysisPurposeLabelMap.get(project.getAnalysisPurposeId()),
+                dataSourceLabelMap.get(project.getDataSourceId()),
+                authorLevelLabelMap.get(project.getAuthorLevelId())
+        ));
     }
 }

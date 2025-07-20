@@ -1,6 +1,9 @@
 package com.dataracy.modules.project.application.port.query;
 
+import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.domain.model.Project;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +24,6 @@ Optional<Project> findProjectById(Long projectId);
  * @return 인기 프로젝트 리스트
  */
 List<Project> findPopularProjects(int size);
+
+    Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable);
 }

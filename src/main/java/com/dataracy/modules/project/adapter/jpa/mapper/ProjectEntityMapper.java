@@ -43,6 +43,10 @@ public final class ProjectEntityMapper {
                 .map(ProjectDataEntity::getDataId)
                 .toList();
 
+        List<Project> projects = projectEntity.getChildProjects().stream()
+                .map(ProjectEntityMapper::toDomain)
+                .toList();
+
         return Project.of(
                 projectEntity.getId(),
                 projectEntity.getTitle(),
@@ -60,7 +64,8 @@ public final class ProjectEntityMapper {
                 projectEntity.getCommentCount(),
                 projectEntity.getLikeCount(),
                 projectEntity.getViewCount(),
-                projectEntity.getIsDeleted()
+                projectEntity.getIsDeleted(),
+                projects
                 );
     }
 
