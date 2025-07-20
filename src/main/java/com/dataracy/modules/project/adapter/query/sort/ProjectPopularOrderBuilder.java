@@ -10,11 +10,11 @@ public final class ProjectPopularOrderBuilder {
 private ProjectPopularOrderBuilder() {}
 
     /**
-     * 프로젝트의 인기 점수를 기반으로 내림차순 정렬하는 OrderSpecifier를 반환합니다.
+     * 프로젝트의 인기 점수를 계산하여 내림차순으로 정렬하는 OrderSpecifier를 반환합니다.
      *
-     * 인기 점수는 좋아요 수에 2를 곱하고, 댓글 수에 1.5를 곱한 뒤, 조회수를 더해 계산됩니다.
+     * 인기 점수는 (좋아요 수 × 2) + (댓글 수 × 1.5) + 조회수로 산출됩니다.
      *
-     * @return 인기 점수를 기준으로 내림차순 정렬하는 OrderSpecifier 객체
+     * @return 프로젝트 인기 점수 기준 내림차순 정렬 OrderSpecifier
      */
     public static OrderSpecifier<?> popularOrder() {
         QProjectEntity project = QProjectEntity.projectEntity;

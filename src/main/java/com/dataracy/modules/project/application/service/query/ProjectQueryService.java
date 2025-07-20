@@ -105,10 +105,10 @@ public class ProjectQueryService implements
 //                .toList();
 //        return responseDto;
 /**
-     * 지정한 개수만큼 인기 프로젝트 목록을 조회하고, 각 프로젝트에 관련된 사용자명 및 다양한 라벨 정보를 포함하여 반환합니다.
+     * 지정한 개수만큼 인기 프로젝트를 조회하여, 각 프로젝트에 사용자명과 주제, 분석 목적, 데이터 소스, 저자 레벨 등 다양한 라벨 정보를 포함한 응답 리스트를 반환합니다.
      *
-     * @param size 반환할 인기 프로젝트의 최대 개수
-     * @return 사용자명, 주제, 분석 목적, 데이터 소스, 저자 레벨 라벨이 포함된 인기 프로젝트 응답 리스트
+     * @param size 조회할 인기 프로젝트의 최대 개수
+     * @return 사용자명과 다양한 라벨 정보가 포함된 인기 프로젝트 응답 리스트
      */
 
     @Override
@@ -130,6 +130,13 @@ public class ProjectQueryService implements
                 .toList();
     }
 
+    /**
+     * 필터 조건과 페이지 정보를 기반으로 프로젝트 목록을 조회하고, 각 프로젝트에 사용자명 및 다양한 라벨 정보를 매핑하여 반환합니다.
+     *
+     * @param request 프로젝트 필터링 조건을 담은 요청 객체
+     * @param pageable 페이지네이션 및 정렬 정보를 담은 객체
+     * @return 필터링된 프로젝트 응답 DTO의 페이지 객체
+     */
     @Override
     public Page<ProjectFilterResponse> findFilteringProjects(ProjectFilterRequest request, Pageable pageable) {
         ProjectSortType sortType = null;
@@ -161,6 +168,12 @@ public class ProjectQueryService implements
         });
     }
 
+    /**
+     * 주어진 프로젝트 컬렉션에서 사용자, 토픽, 분석 목적, 데이터 소스, 저자 레벨의 ID를 추출하여 각 ID에 대한 레이블 및 사용자명을 일괄 조회한 결과를 반환합니다.
+     *
+     * @param savedProjects 레이블 및 사용자명 매핑을 위한 프로젝트 컬렉션
+     * @return 각 ID에 대한 사용자명 및 레이블 매핑 정보를 담은 LabelMappingResponse 객체
+     */
     private LabelMappingResponse labelMapping(Collection<Project> savedProjects) {
         List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
         List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
