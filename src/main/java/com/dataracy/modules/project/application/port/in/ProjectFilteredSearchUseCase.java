@@ -13,5 +13,5 @@ public interface ProjectFilteredSearchUseCase {
  * @param pageable 페이지네이션 정보
  * @return 필터링된 프로젝트 목록의 페이지 객체
  */
-Page<ProjectFilterResponse> findFilteringProjects(ProjectFilterRequest requestDto, Pageable pageable);
+Page<ProjectFilterResponse> findFilterdProjects(ProjectFilterRequest requestDto, Pageable pageable);
 }

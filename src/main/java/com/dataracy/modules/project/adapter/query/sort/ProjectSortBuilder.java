@@ -3,9 +3,7 @@ package com.dataracy.modules.project.adapter.query.sort;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.querydsl.core.types.OrderSpecifier;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public final class ProjectSortBuilder {
     /**
  * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.

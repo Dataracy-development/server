@@ -33,6 +33,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
 
     /**
      * 주어진 ID에 해당하는 프로젝트와 그 부모, 데이터, 자식 프로젝트를 함께 조회하여 Optional로 반환합니다.
+     * 프로젝트 id를 통한 프로젝트 세부 조회에 해당하는 부분으로 모두 fetch해서 조회한다.
      *
      * @param projectId 조회할 프로젝트의 ID
      * @return 조회된 프로젝트 도메인 객체의 Optional, 없으면 빈 Optional
@@ -53,6 +54,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
 
     /**
      * 인기 순으로 정렬된 프로젝트 목록을 지정된 개수만큼 반환합니다.
+     * 인기있는 프로젝트 목록 조회는 부모, 자식 프로젝트, 데이터셋을 반환하지 않아도 되므로 fetch join을 하지 않는다.
      *
      * @param size 반환할 프로젝트의 최대 개수
      * @return 인기 순으로 정렬된 최소 정보의 프로젝트 도메인 객체 리스트
@@ -87,6 +89,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
 
     /**
      * 필터 조건, 페이지네이션, 정렬 기준에 따라 프로젝트 목록을 검색하여 페이지 형태로 반환합니다.
+     * 프로젝트 페이지에서 필터를 통한 프로젝트 조회 시 부모, 자식프로젝트를 함께 조회한다.
      *
      * @param request 프로젝트 필터링 조건을 담은 요청 객체
      * @param pageable 페이지네이션 정보
