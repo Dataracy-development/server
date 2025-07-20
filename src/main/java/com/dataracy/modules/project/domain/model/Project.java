@@ -1,6 +1,5 @@
 package com.dataracy.modules.project.domain.model;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -35,6 +34,9 @@ public class Project {
     private Long viewCount;
 
     private Boolean isDeleted;
+
+    private List<Project> childProjects;
+
     /**
      * 프로젝트의 썸네일 URL을 업데이트합니다.
      *
@@ -66,7 +68,8 @@ public class Project {
             Long commentCount,
             Long likeCount,
             Long viewCount,
-            Boolean isDeleted
+            Boolean isDeleted,
+            List<Project> childProjects
     ) {
         return Project.builder()
                 .id(id)
@@ -86,6 +89,7 @@ public class Project {
                 .likeCount(likeCount)
                 .viewCount(viewCount)
                 .isDeleted(isDeleted)
+                .childProjects(childProjects)
                 .build();
     }
 }
