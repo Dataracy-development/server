@@ -138,11 +138,10 @@ public class ProjectQueryService implements
      * @return 필터링된 프로젝트 응답 DTO의 페이지 객체
      */
     @Override
-    public Page<ProjectFilterResponse> findFilteringProjects(ProjectFilterRequest request, Pageable pageable) {
-        ProjectSortType sortType = null;
-        if (request.sortType() != null && !request.sortType().isEmpty()) {
-            sortType = ProjectSortType.of(request.sortType());
-        }
+    public Page<ProjectFilterResponse> findFilterdProjects(ProjectFilterRequest request, Pageable pageable) {
+        ProjectSortType sortType = (request.sortType() != null && !request.sortType().isEmpty())
+                ? ProjectSortType.of(request.sortType())
+                : null;
         Page<Project> savedProjects = projectQueryRepositoryPort.searchByFilters(request, pageable, sortType);
 
         LabelMappingResponse labelResponse = labelMapping(savedProjects.getContent());
