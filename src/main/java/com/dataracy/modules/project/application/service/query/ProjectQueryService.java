@@ -6,10 +6,7 @@ import com.dataracy.modules.project.application.mapper.FilterProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectSimilarSearchPort;
-import com.dataracy.modules.project.application.port.in.ProjectFilteredSearchUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectPopularSearchUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
+import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
@@ -36,7 +33,8 @@ public class ProjectQueryService implements
         ProjectRealTimeSearchUseCase,
         ProjectSimilarSearchUseCase,
         ProjectPopularSearchUseCase,
-        ProjectFilteredSearchUseCase
+        ProjectFilteredSearchUseCase,
+        ProjectDetailUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
 
@@ -186,6 +184,36 @@ public class ProjectQueryService implements
                 getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds),
                 getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds),
                 getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds)
+        );
+    }
+
+    @Override
+    public ProjectDetailResponse getProjectDetailInfo(Long projectId) {
+        Project project = projectQueryRepositoryPort.findProjectById(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
+
+        boolean hasChild = projectQueryRepositoryPort.existsByParentProjectId(projectId);
+        boolean hasData = projectQueryRepositoryPort.existsProjectDataByProjectId(projectId);
+
+        return new ProjectDetailResponse(
+                project.getId(),
+                project.getTitle(),
+                findUsernameUseCase.findUsernameById(project.getUserId()),
+                getAuthorLevelLabelFromIdUseCase.getLabelById(project.getAuthorLevelId()),
+                null,
+                getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),
+                getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId()),
+                getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId()),
+                project.getIsContinue(),
+                project.getParentProjectId(),
+                project.getContent(),
+                project.getFileUrl(),
+                project.getCreatedAt(),
+                project.getCommentCount(),
+                project.getLikeCount(),
+                project.getViewCount(),
+                hasChild,
+                hasData
         );
     }
 }
