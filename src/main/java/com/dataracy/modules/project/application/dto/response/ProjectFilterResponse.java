@@ -17,14 +17,5 @@ public record ProjectFilterResponse(
         Long likeCount,
         Long viewCount,
         LocalDateTime createdAt,
-        List<ContinueProjectResponse> continueProjects
-) {
-    public record ContinueProjectResponse(
-            Long id,
-            String title,
-            String content,
-            String username,
-            Long commentCount,
-            Long likeCount
-    ){}
-}
+        List<ChildProjectResponse> childProjects
+) {}
