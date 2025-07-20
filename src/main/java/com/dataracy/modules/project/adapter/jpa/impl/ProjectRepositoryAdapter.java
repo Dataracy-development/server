@@ -46,4 +46,9 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
         projectEntity.updateFile(fileUrl);
     }
+
+    @Override
+    public boolean existsProjectById(Long projectId) {
+        return projectJpaRepository.existsById(projectId);
+    }
 }

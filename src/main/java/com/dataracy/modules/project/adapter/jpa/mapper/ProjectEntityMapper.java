@@ -17,57 +17,42 @@ private ProjectEntityMapper() {}
     /**
      * ProjectEntity를 최소 정보만 포함하는 Project 도메인 객체로 변환합니다.
      *
-     * 부모, 자식, 데이터 정보는 포함하지 않습니다.
+     * 자식, 데이터 정보는 포함하지 않습니다.
      *
      * @param entity 변환할 ProjectEntity 객체
      * @return 최소 정보만 포함된 Project 도메인 객체, 입력이 null이면 null 반환
      */
     public static Project toMinimal(ProjectEntity entity) {
-        return toDomain(entity, false, false, false);
+        return toDomain(entity,false, false, 0);
     }
 
     /**
-     * ProjectEntity를 Project 도메인 객체로 변환하며, 부모와 최대 2개의 자식 프로젝트 정보를 포함합니다.
+     * ProjectEntity를 Project 도메인 객체로 변환하며, 최대 2개의 자식 프로젝트 정보를 포함합니다.
+     * 해당 프로젝트와 자식 프로젝트의 정보를 한번에 반환해야 할 때 사용합니다.
      *
      * 데이터 정보는 포함하지 않습니다.
      *
      * @param entity 변환할 ProjectEntity 객체
-     * @return 부모와 자식 정보가 포함된 Project 도메인 객체, 입력이 null이면 null 반환
+     * @return 자식 정보가 포함된 Project 도메인 객체, 입력이 null이면 null 반환
      */
-    public static Project toWithChildren(ProjectEntity entity) {
-        return toDomain(entity, true, true, false);
+    public static Project toWithChildren(ProjectEntity entity, int childrenCount) {
+        return toDomain(entity,true, false, childrenCount);
     }
 
-    /**
-     * ProjectEntity를 Project 도메인 객체로 변환하며, 부모, 자식, 데이터 정보를 모두 포함합니다.
-     *
-     * @param entity 변환할 ProjectEntity 객체
-     * @return 부모, 자식, 데이터가 모두 포함된 Project 도메인 객체. 입력이 null이면 null 반환.
-     */
-    public static Project toFull(ProjectEntity entity) {
-        return toDomain(entity, true, true, true);
+    public static Project toWithData(ProjectEntity entity) {
+        return toDomain(entity,false, true, 0);
     }
 
     /**
      * ProjectEntity를 Project 도메인 객체로 변환합니다.
      *
      * @param entity 변환할 ProjectEntity 객체
-     * @param includeParent 부모 프로젝트 정보를 포함할지 여부
      * @param includeChildren 자식 프로젝트 정보를 포함할지 여부 (최대 2개, 최소 정보만 포함)
      * @param includeData 프로젝트 데이터 ID 목록을 포함할지 여부
      * @return 변환된 Project 도메인 객체. 입력이 null이면 null을 반환합니다.
      */
-    private static Project toDomain(ProjectEntity entity, boolean includeParent, boolean includeChildren, boolean includeData) {
+    private static Project toDomain(ProjectEntity entity, boolean includeChildren, boolean includeData, int childrenCount) {
         if (entity == null) return null;
-
-        Project parent = includeParent
-                ? Optional.ofNullable(entity.getParentProject())
-                .map(p -> Project.builder()
-                        .id(p.getId())
-                        .title(p.getTitle())
-                        .build())
-                .orElse(null)
-                : null;
 
         List<Long> dataIds = includeData
                 ? Optional.ofNullable(entity.getProjectDataEntities())
@@ -81,8 +66,8 @@ private ProjectEntityMapper() {}
                 ? Optional.ofNullable(entity.getChildProjects())
                 .orElse(Collections.emptySet())
                 .stream()
-                .limit(2)
-                .map(ProjectEntityMapper::toMinimal) // 재귀 방지
+                .limit(childrenCount)
+                .map(ProjectEntityMapper::toMinimal)
                 .toList()
                 : List.of();
 
@@ -95,7 +80,7 @@ private ProjectEntityMapper() {}
                 entity.getDataSourceId(),
                 entity.getAuthorLevelId(),
                 entity.getIsContinue(),
-                parent,
+                null,
                 entity.getContent(),
                 entity.getFileUrl(),
                 dataIds,
@@ -117,11 +102,11 @@ private ProjectEntityMapper() {}
     public static ProjectEntity toEntity(Project project) {
         if (project == null) return null;
 
-        ProjectEntity parentProject = Optional.ofNullable(project.getParentProject())
-                .map(parent -> ProjectEntity.builder()
-                        .id(parent.getId())
-                        .title(parent.getTitle())
-                        .build())
+        ProjectEntity parentProject = Optional.ofNullable(project.getParentProjectId())
+                .map(parentProjectId -> ProjectEntity.builder()
+                        .id(parentProjectId)
+                        .build()
+                )
                 .orElse(null);
 
         ProjectEntity projectEntity = ProjectEntity.of(

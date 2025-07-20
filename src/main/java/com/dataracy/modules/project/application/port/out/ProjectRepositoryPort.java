@@ -22,4 +22,6 @@ public interface ProjectRepositoryPort {
  * @param fileUrl 새로 저장할 이미지 URL
  */
 void updateFile(Long projectId, String fileUrl);
+
+    boolean existsProjectById(Long projectId);
 }

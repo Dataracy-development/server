@@ -22,7 +22,7 @@ public class Project {
     private Long dataSourceId;
     private Long authorLevelId;
     private Boolean isContinue;
-    private Project parentProject;
+    private Long parentProjectId;
     private String content;
     private String fileUrl;
     // 타 어그리거트인 Data 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
@@ -61,7 +61,7 @@ public class Project {
             Long dataSourceId,
             Long authorLevelId,
             Boolean isContinue,
-            Project parentProject,
+            Long parentProjectId,
             String content,
             String fileUrl,
             List<Long> dataIds,
@@ -81,7 +81,7 @@ public class Project {
                 .dataSourceId(dataSourceId)
                 .authorLevelId(authorLevelId)
                 .isContinue(isContinue)
-                .parentProject(parentProject)
+                .parentProjectId(parentProjectId)
                 .content(content)
                 .fileUrl(fileUrl)
                 .dataIds(dataIds)
