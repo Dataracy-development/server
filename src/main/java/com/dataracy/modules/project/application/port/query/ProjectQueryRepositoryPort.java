@@ -35,4 +35,8 @@ List<Project> findPopularProjects(int size);
  * @return          조건에 맞는 프로젝트의 페이지 결과
  */
 Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable, ProjectSortType sortType);
+
+    boolean existsByParentProjectId(Long projectId);
+
+    boolean existsProjectDataByProjectId(Long projectId);
 }

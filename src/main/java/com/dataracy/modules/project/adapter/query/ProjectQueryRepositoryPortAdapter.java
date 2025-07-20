@@ -29,7 +29,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     private final JPAQueryFactory queryFactory;
 
     private final QProjectEntity project = QProjectEntity.projectEntity;
-    private final QProjectDataEntity dataEntity = QProjectDataEntity.projectDataEntity;
+    private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
     /**
      * 주어진 ID에 해당하는 프로젝트와 그 부모, 데이터, 자식 프로젝트를 함께 조회하여 Optional로 반환합니다.
@@ -42,11 +42,30 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     public Optional<Project> findProjectById(Long projectId) {
         ProjectEntity entity = queryFactory
                 .selectFrom(project)
-                .distinct()
                 .where(ProjectFilterPredicate.projectIdEq(projectId))
                 .fetchOne();
 
         return Optional.ofNullable(ProjectEntityMapper.toMinimal(entity));
+    }
+
+    @Override
+    public boolean existsByParentProjectId(Long projectId) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(project)
+                .where(project.parentProject.id.eq(projectId))
+                .fetchFirst();
+        return result != null;
+    }
+
+    @Override
+    public boolean existsProjectDataByProjectId(Long projectId) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(projectData)
+                .where(projectData.project.id.eq(projectId))
+                .fetchFirst();
+        return result != null;
     }
 
 //    public boolean existsByParentProjectId(Long projectId) {
@@ -116,7 +135,6 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
 
         List<ProjectEntity> entities = queryFactory
                 .selectFrom(project)
-                .distinct()
                 .orderBy(ProjectSortBuilder.fromSortOption(sortType))
                 .leftJoin(project.childProjects).fetchJoin()
                 .where(buildFilterPredicates(request))
