@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -78,11 +79,11 @@ public class VisitSourceQueryService implements
     /**
      * 주어진 방문 출처 ID에 해당하는 라벨을 반환합니다.
      *
-     * 방문 출처가 존재하지 않을 경우 {@code ReferenceException}이 발생합니다.
+     * 방문 출처가 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
      *
      * @param visitSourceId 조회할 방문 출처의 ID
-     * @return 방문 출처의 라벨 문자열
-     * @throws ReferenceException 방문 출처를 찾을 수 없는 경우 발생
+     * @return 해당 방문 출처의 라벨 문자열
+     * @throws ReferenceException 방문 출처를 찾을 수 없는 경우
      */
     @Override
     @Transactional(readOnly = true)
@@ -92,5 +93,20 @@ public class VisitSourceQueryService implements
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE);
         }
         return label.get();
+    }
+
+    /**
+     * 주어진 방문 출처 ID 목록에 대해 각 ID와 해당 라벨을 매핑한 Map을 반환합니다.
+     *
+     * @param visitSourceIds 방문 출처 ID 목록
+     * @return ID를 키로, 라벨을 값으로 하는 Map. 입력이 null이거나 비어 있으면 빈 Map을 반환합니다.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, String> getLabelsByIds(List<Long> visitSourceIds) {
+        if (visitSourceIds == null || visitSourceIds.isEmpty()) {
+            return Map.of();
+        }
+        return visitSourceRepositoryPort.getLabelsByIds(visitSourceIds);
     }
 }

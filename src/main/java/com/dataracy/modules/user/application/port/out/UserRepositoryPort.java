@@ -2,6 +2,8 @@ package com.dataracy.modules.user.application.port.out;
 
 import com.dataracy.modules.user.domain.model.User;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -51,10 +53,18 @@ public interface UserRepositoryPort {
  */
     Optional<User> findUserByEmail(String email);
     /**
- * 주어진 사용자 ID에 해당하는 사용자의 비밀번호를 인코딩된 새 비밀번호로 변경합니다.
+ * 지정한 사용자 ID의 비밀번호를 주어진 인코딩된 새 비밀번호로 변경합니다.
  *
- * @param userId 비밀번호를 변경할 대상 사용자의 고유 식별자
- * @param encodePassword 새로 적용할 인코딩된 비밀번호
+ * @param userId 비밀번호를 변경할 사용자 고유 식별자
+ * @param encodePassword 변경할 인코딩된 새 비밀번호
  */
     void changePassword(Long userId, String encodePassword);
+
+    /**
+ * 주어진 사용자 ID 목록에 대해 각 사용자 ID와 해당 사용자의 닉네임을 매핑한 Map을 반환합니다.
+ *
+ * @param userIds 닉네임을 조회할 사용자 ID 목록
+ * @return 각 사용자 ID와 해당 닉네임이 매핑된 Map
+ */
+Map<Long, String> findUsernamesByIds(List<Long> userIds);
 }

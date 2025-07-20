@@ -48,11 +48,24 @@ public class User {
     }
 
     /**
-     * 주어진 사용자 속성 값들로 새로운 User 도메인 객체를 생성합니다.
+     * 주어진 사용자 속성 값들로 User 도메인 객체를 생성합니다.
      *
+     * @param id 사용자 식별자
+     * @param provider 인증 제공자 유형
+     * @param providerId 인증 제공자에서 발급한 식별자
+     * @param role 사용자 역할
+     * @param email 사용자 이메일
+     * @param password 암호화된 비밀번호
+     * @param nickname 사용자 닉네임
+     * @param authorLevelId 작가 등급 식별자
+     * @param occupationId 직업 식별자
+     * @param topicIds 사용자가 연관된 토픽 ID 목록
+     * @param visitSourceId 방문 경로 식별자
+     * @param isAdTermsAgreed 광고 약관 동의 여부
+     * @param isDeleted 삭제 여부
      * @return 생성된 User 객체
      */
-    public static User toDomain(
+    public static User of(
             Long id,
             ProviderType provider,
             String providerId,

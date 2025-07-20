@@ -4,11 +4,12 @@ import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.data.application.port.in.ValidateDataUseCase;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
-import com.dataracy.modules.project.adapter.index.document.ProjectSearchDocument;
+import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
 import com.dataracy.modules.project.application.port.out.ProjectIndexingPort;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
+import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProjectCommandService implements ProjectUploadUseCase {
     private final ProjectRepositoryPort projectRepositoryPort;
     private final ProjectIndexingPort projectIndexingPort;
+    private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
     private final FileUploadUseCase fileUploadUseCase;
@@ -44,9 +46,9 @@ public class ProjectCommandService implements ProjectUploadUseCase {
     private String defaultImageUrl;
 
     /**
-     * 주어진 사용자 ID와 프로젝트 요청 정보를 바탕으로 새 프로젝트를 생성하고, 필요 시 썸네일 이미지를 외부 저장소에 업로드합니다.
+     * 사용자의 프로젝트 요청 정보를 기반으로 새 프로젝트를 생성하고, 필요 시 썸네일 이미지를 업로드한 뒤 프로젝트를 검색 시스템에 색인합니다.
      *
-     * 프로젝트의 주요 라벨(주제, 분석 목적, 데이터 소스, 저자 레벨) 값을 조회 및 검증하고, 데이터셋 ID의 존재 여부를 확인합니다. 부모 프로젝트가 지정된 경우 존재 여부를 검증하며, 이미지 파일이 제공되면 업로드 후 프로젝트 정보에 반영합니다. 프로젝트 저장 후 검색 시스템에 색인하여 외부 검색이 가능하도록 처리합니다.
+     * 프로젝트 생성 시 주요 라벨(주제, 분석 목적, 데이터 소스, 저자 레벨) 값을 검증 및 조회하고, 데이터셋 ID의 존재 여부를 확인합니다. 부모 프로젝트가 지정된 경우 존재 여부를 검증하며, 이미지 파일이 제공되면 외부 저장소에 업로드 후 프로젝트 정보에 반영합니다. 프로젝트 저장 후 외부 검색 시스템에 색인하여 검색이 가능하도록 처리합니다.
      *
      * @throws ProjectException 부모 프로젝트가 존재하지 않을 경우 발생합니다.
      * @throws RuntimeException 파일 업로드 실패 시 트랜잭션 롤백을 위해 발생합니다.
@@ -74,12 +76,12 @@ public class ProjectCommandService implements ProjectUploadUseCase {
         // 부모 프로젝트 조회
         Project parentProject = null;
         if (requestDto.parentProjectId() != null) {
-            parentProject = projectRepositoryPort.findProjectById(requestDto.parentProjectId())
+            parentProject = projectQueryRepositoryPort.findProjectById(requestDto.parentProjectId())
                     .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
         }
 
         // 프로젝트 업로드 DB 저장
-        Project project = Project.toDomain(
+        Project project = Project.of(
                 null,
                 requestDto.title(),
                 requestDto.topicId(),

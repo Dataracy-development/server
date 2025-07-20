@@ -52,8 +52,8 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     /**
      * 자체 회원가입 요청을 처리하여 새로운 사용자를 등록하고 리프레시 토큰을 발급한다.
      *
-     * 이메일, 닉네임, 비밀번호 등 필수 정보를 검증하고, 작성자 유형, 직업, 방문 경로, 토픽 등 선택 정보를 유효성 검사 후 사용자 계정을 생성한다.
-     * 중복 가입 방지를 위해 이메일 기준 분산 락을 적용하며, 회원가입 성공 시 리프레시 토큰을 생성하여 Redis에 저장하고 토큰과 만료 시간을 반환한다.
+     * 이메일, 닉네임, 비밀번호 등 필수 정보를 검증하고, 작성자 유형, 직업, 방문 경로, 토픽 등 선택 정보를 유효성 검사한 후 사용자 계정을 생성한다.
+     * 중복 가입을 방지하기 위해 이메일 기준 분산 락을 적용하며, 회원가입 성공 시 리프레시 토큰을 생성하여 Redis에 저장하고 토큰과 만료 시간을 반환한다.
      *
      * @param requestDto 자체 회원가입 요청 정보
      * @return 리프레시 토큰과 만료 시간이 포함된 응답 객체
@@ -97,7 +97,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         }
 
         // 유저 도메인 모델 생성 및 db 저장
-        User user = User.toDomain(
+        User user = User.of(
                 null,
                 ProviderType.LOCAL,
                 providerId,
@@ -131,8 +131,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
      * OAuth 기반 회원가입 요청을 처리하고 리프레시 토큰을 발급합니다.
      *
      * 소셜 로그인에서 발급된 회원가입 토큰과 온보딩 정보를 검증하여 신규 사용자를 등록합니다.
-     * 이메일 및 닉네임 중복을 방지하고, 필수 및 선택 온보딩 항목의 유효성을 확인합니다.
-     * 회원 정보 저장 후 리프레시 토큰을 생성하여 Redis에 저장하며, 토큰과 만료 시간을 반환합니다.
+     * 이메일 및 닉네임 중복, 필수 및 선택 온보딩 항목의 유효성을 확인한 후, 회원 정보를 저장하고 리프레시 토큰을 생성하여 Redis에 저장합니다.
      *
      * @param registerToken 소셜 회원가입 토큰
      * @param requestDto 온보딩 요청 정보
@@ -176,7 +175,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
         }
 
         // 유저 도메인 모델 생성 및 db 저장
-        User user = User.toDomain(
+        User user = User.of(
                 null,
                 ProviderType.of(provider),
                 providerId,

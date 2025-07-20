@@ -4,11 +4,14 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectSearchWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectWebMapper;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
+import com.dataracy.modules.project.adapter.web.response.ProjectPopularSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
+import com.dataracy.modules.project.application.dto.response.ProjectPopularSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
 import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
+import com.dataracy.modules.project.application.port.in.ProjectPopularSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
@@ -30,6 +33,8 @@ public class ProjectController implements ProjectApi {
     private final ProjectUploadUseCase projectUploadUseCase;
     private final ProjectRealTimeSearchUseCase projectRealTimeSearchUseCase;
     private final ProjectSimilarSearchUseCase projectSimilarSearchUseCase;
+    private final ProjectPopularSearchUseCase projectPopularSearchUseCase;
+
     /**
      * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
      *
@@ -71,7 +76,7 @@ public class ProjectController implements ProjectApi {
     /**
      * 지정한 프로젝트와 유사한 프로젝트 목록을 조회하여 반환합니다.
      *
-     * @param projectId 기준이 되는 프로젝트의 ID
+     * @param projectId 유사 프로젝트를 찾을 기준 프로젝트의 ID
      * @param size 반환할 유사 프로젝트의 최대 개수
      * @return 유사 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
@@ -84,5 +89,22 @@ public class ProjectController implements ProjectApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_SIMILAR_PROJECTS, webResponse));
+    }
+
+    /**
+     * 인기 프로젝트 목록을 조회하여 반환합니다.
+     *
+     * @param size 반환할 인기 프로젝트의 최대 개수
+     * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
+     */
+    @Override
+    public ResponseEntity<SuccessResponse<List<ProjectPopularSearchWebResponse>>> searchPopularProjects(int size) {
+        List<ProjectPopularSearchResponse> responseDto = projectPopularSearchUseCase.findPopularProjects(size);
+        List<ProjectPopularSearchWebResponse> webResponse = responseDto.stream()
+                .map(projectSearchWebMapper::toWeb)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.FIND_POPULAR_PROJECTS, webResponse));
     }
 }

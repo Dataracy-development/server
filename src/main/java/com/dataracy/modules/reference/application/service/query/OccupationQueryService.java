@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -90,5 +91,20 @@ public class OccupationQueryService implements
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION);
         }
         return label.get();
+    }
+
+    /**
+     * 주어진 직업 ID 목록에 대해 각 ID에 해당하는 직업명을 반환합니다.
+     *
+     * @param occupationIds 직업 ID의 리스트
+     * @return 각 직업 ID와 해당 직업명(String)으로 이루어진 맵. 입력이 null이거나 비어 있으면 빈 맵을 반환합니다.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, String> getLabelsByIds(List<Long> occupationIds) {
+        if (occupationIds == null || occupationIds.isEmpty()) {
+            return Map.of();
+        }
+        return occupationRepositoryPort.getLabelsByIds(occupationIds);
     }
 }
