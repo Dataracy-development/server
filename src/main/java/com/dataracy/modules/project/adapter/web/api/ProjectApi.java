@@ -2,7 +2,9 @@ package com.dataracy.modules.project.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
+import com.dataracy.modules.project.adapter.web.request.ProjectFilterWebRequest;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
+import com.dataracy.modules.project.adapter.web.response.ProjectFilterWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectPopularSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
@@ -14,6 +16,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -108,7 +113,7 @@ public interface ProjectApi {
     );
 
     /**
-     * 좋아요, 댓글, 조회수를 기준으로 인기있는 프로젝트 목록을 조회한다.
+     * 좋아요, 댓글, 조회수를 기준으로 인기 프로젝트 목록을 조회한다.
      *
      * @param size 반환할 프로젝트 최대 개수 (1 이상)
      * @return 인기 프로젝트 목록이 포함된 성공 응답
@@ -127,5 +132,30 @@ public interface ProjectApi {
             @RequestParam(name = "size")
             @Min(1)
             int size
+    );
+
+    /**
+     * 필터 조건에 따라 프로젝트 목록을 페이지 단위로 조회한다.
+     *
+     * @param webRequest 프로젝트 필터링 조건이 담긴 요청 객체
+     * @param pageable 페이지네이션 정보 (기본: 페이지 0, 크기 5)
+     * @return 필터링된 프로젝트 목록이 포함된 성공 응답 객체
+     */
+    @Operation(
+            summary = "필터링된 프로젝트 리스트를 조회한다.",
+            description = "필터링된 프로젝트 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "필터링된 프로젝트 리스트 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/search/filter")
+    ResponseEntity<SuccessResponse<Page<ProjectFilterWebResponse>>> searchFilteredProjects(
+            @Validated @ModelAttribute
+            ProjectFilterWebRequest webRequest,
+
+            @PageableDefault(size = 5, page = 0)
+            Pageable pageable
     );
 }

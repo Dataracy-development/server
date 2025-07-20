@@ -1,15 +1,17 @@
 package com.dataracy.modules.project.application.service.query;
 
-import com.dataracy.modules.project.application.dto.response.ProjectPopularSearchResponse;
-import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
-import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
+import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
+import com.dataracy.modules.project.application.dto.response.*;
+import com.dataracy.modules.project.application.mapper.FilterProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectSimilarSearchPort;
+import com.dataracy.modules.project.application.port.in.ProjectFilteredSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectPopularSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
+import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
@@ -19,9 +21,12 @@ import com.dataracy.modules.reference.application.port.in.datasource.GetDataSour
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +35,8 @@ import java.util.Map;
 public class ProjectQueryService implements
         ProjectRealTimeSearchUseCase,
         ProjectSimilarSearchUseCase,
-        ProjectPopularSearchUseCase
+        ProjectPopularSearchUseCase,
+        ProjectFilteredSearchUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
 
@@ -43,6 +49,7 @@ public class ProjectQueryService implements
     private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+    private final FilterProjectDtoMapper filterProjectDtoMapper;
 
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
@@ -98,10 +105,10 @@ public class ProjectQueryService implements
 //                .toList();
 //        return responseDto;
 /**
-     * 지정한 개수만큼 인기 프로젝트 목록을 조회하고, 각 프로젝트에 관련된 사용자명 및 다양한 라벨 정보를 포함하여 반환합니다.
+     * 지정한 개수만큼 인기 프로젝트를 조회하여, 각 프로젝트에 사용자명과 주제, 분석 목적, 데이터 소스, 저자 레벨 등 다양한 라벨 정보를 포함한 응답 리스트를 반환합니다.
      *
-     * @param size 반환할 인기 프로젝트의 최대 개수
-     * @return 사용자명, 주제, 분석 목적, 데이터 소스, 저자 레벨 라벨이 포함된 인기 프로젝트 응답 리스트
+     * @param size 조회할 인기 프로젝트의 최대 개수
+     * @return 사용자명과 다양한 라벨 정보가 포함된 인기 프로젝트 응답 리스트
      */
 
     @Override
@@ -109,27 +116,77 @@ public class ProjectQueryService implements
     public List<ProjectPopularSearchResponse> findPopularProjects(int size) {
         List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
 
+        LabelMappingResponse labelResponse = labelMapping(savedProjects);
+
+        return savedProjects.stream()
+                .map(project -> popularProjectsDtoMapper.toResponseDto(
+                        project,
+                        labelResponse.usernameMap().get(project.getUserId()),
+                        labelResponse.topicLabelMap().get(project.getTopicId()),
+                        labelResponse.analysisPurposeLabelMap().get(project.getAnalysisPurposeId()),
+                        labelResponse.dataSourceLabelMap().get(project.getDataSourceId()),
+                        labelResponse.authorLevelLabelMap().get(project.getAuthorLevelId())
+                ))
+                .toList();
+    }
+
+    /**
+     * 필터 조건과 페이지 정보를 기반으로 프로젝트 목록을 조회하고, 각 프로젝트에 사용자명 및 다양한 라벨 정보를 매핑하여 반환합니다.
+     *
+     * @param request 프로젝트 필터링 조건을 담은 요청 객체
+     * @param pageable 페이지네이션 및 정렬 정보를 담은 객체
+     * @return 필터링된 프로젝트 응답 DTO의 페이지 객체
+     */
+    @Override
+    public Page<ProjectFilterResponse> findFilteringProjects(ProjectFilterRequest request, Pageable pageable) {
+        ProjectSortType sortType = null;
+        if (request.sortType() != null && !request.sortType().isEmpty()) {
+            sortType = ProjectSortType.of(request.sortType());
+        }
+        Page<Project> savedProjects = projectQueryRepositoryPort.searchByFilters(request, pageable, sortType);
+
+        LabelMappingResponse labelResponse = labelMapping(savedProjects.getContent());
+        return savedProjects.map(project -> {
+            // 자식 프로젝트들의 userId 수집
+            List<Long> childUserIds = project.getChildProjects().stream()
+                    .map(Project::getUserId)
+                    .distinct()
+                    .toList();
+
+            // userId → username 일괄 조회
+            Map<Long, String> childUsernames = findUsernameUseCase.findUsernamesByIds(childUserIds);
+
+            return filterProjectDtoMapper.toResponseDto(
+                    project,
+                    labelResponse.usernameMap().get(project.getUserId()),
+                    labelResponse.topicLabelMap().get(project.getTopicId()),
+                    labelResponse.analysisPurposeLabelMap().get(project.getAnalysisPurposeId()),
+                    labelResponse.dataSourceLabelMap().get(project.getDataSourceId()),
+                    labelResponse.authorLevelLabelMap().get(project.getAuthorLevelId()),
+                    childUsernames
+            );
+        });
+    }
+
+    /**
+     * 주어진 프로젝트 컬렉션에서 사용자, 토픽, 분석 목적, 데이터 소스, 저자 레벨의 ID를 추출하여 각 ID에 대한 레이블 및 사용자명을 일괄 조회한 결과를 반환합니다.
+     *
+     * @param savedProjects 레이블 및 사용자명 매핑을 위한 프로젝트 컬렉션
+     * @return 각 ID에 대한 사용자명 및 레이블 매핑 정보를 담은 LabelMappingResponse 객체
+     */
+    private LabelMappingResponse labelMapping(Collection<Project> savedProjects) {
         List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
         List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
         List<Long> analysisPurposeIds = savedProjects.stream().map(Project::getAnalysisPurposeId).toList();
         List<Long> dataSourceIds = savedProjects.stream().map(Project::getDataSourceId).toList();
         List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
 
-        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
-        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
-        Map<Long, String> analysisPurposeLabelMap = getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds);
-        Map<Long, String> dataSourceLabelMap = getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds);
-        Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
-
-        return savedProjects.stream()
-                .map(project -> popularProjectsDtoMapper.toResponseDto(
-                        project,
-                        usernameMap.get(project.getUserId()),
-                        topicLabelMap.get(project.getTopicId()),
-                        analysisPurposeLabelMap.get(project.getAnalysisPurposeId()),
-                        dataSourceLabelMap.get(project.getDataSourceId()),
-                        authorLevelLabelMap.get(project.getAuthorLevelId())
-                ))
-                .toList();
+        return new LabelMappingResponse(
+                findUsernameUseCase.findUsernamesByIds(userIds),
+                getTopicLabelFromIdUseCase.getLabelsByIds(topicIds),
+                getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds),
+                getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds),
+                getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds)
+        );
     }
 }

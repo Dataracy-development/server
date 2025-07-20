@@ -16,17 +16,17 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     private final ProjectJpaRepository projectJpaRepository;
 
     /**
-     * 프로젝트 도메인 객체를 저장한 후, 저장된 객체를 반환한다.
+     * 프로젝트 도메인 객체를 저장하고, 저장된 최소 정보의 프로젝트 객체를 반환한다.
      *
      * @param project 저장할 프로젝트 도메인 객체
-     * @return 저장된 프로젝트 도메인 객체
-     * @throws ProjectException 저장에 실패할 경우 발생
+     * @return 저장된 프로젝트의 최소 정보 도메인 객체
+     * @throws ProjectException 저장에 실패한 경우 발생
      */
     @Override
     public Project saveProject(Project project) {
         try {
             ProjectEntity projectEntity = projectJpaRepository.save(ProjectEntityMapper.toEntity(project));
-            return ProjectEntityMapper.toDomain(projectEntity);
+            return ProjectEntityMapper.toMinimal(projectEntity);
         } catch (Exception e) {
             throw new ProjectException(ProjectErrorStatus.FAIL_SAVE_PROJECT);
         }
