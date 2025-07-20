@@ -147,11 +147,11 @@ public class UserQueryService implements
     }
 
     /**
-     * 주어진 사용자 ID로 사용자를 조회하여 닉네임을 반환합니다.
+     * 주어진 사용자 ID에 해당하는 사용자의 닉네임을 반환합니다.
      *
-     * @param userId 조회할 사용자의 ID
-     * @return 사용자의 닉네임
-     * @throws UserException 사용자를 찾을 수 없는 경우 발생합니다.
+     * @param userId 닉네임을 조회할 사용자 ID
+     * @return 해당 사용자의 닉네임
+     * @throws UserException 사용자가 존재하지 않을 경우 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)
@@ -161,6 +161,12 @@ public class UserQueryService implements
         return user.getNickname();
     }
 
+    /**
+     * 주어진 사용자 ID 목록에 대해 각 ID에 해당하는 닉네임을 매핑하여 반환합니다.
+     *
+     * @param userIds 닉네임을 조회할 사용자 ID 목록
+     * @return 각 사용자 ID와 해당 닉네임의 매핑을 담은 Map 객체
+     */
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {

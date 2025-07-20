@@ -96,7 +96,7 @@ public class DataEntity extends BaseTimeEntity {
     }
 
     /**
-     * 주어진 값들로 새로운 DataEntity 객체를 생성합니다.
+     * 주어진 값들로 DataEntity 인스턴스를 생성합니다.
      *
      * @param title 데이터셋의 제목
      * @param topicId 주제 ID
@@ -112,7 +112,7 @@ public class DataEntity extends BaseTimeEntity {
      * @param downloadCount 전체 다운로드 횟수
      * @param recentWeekDownloadCount 최근 1주일간 다운로드 횟수
      * @param metadata 데이터 메타데이터 엔티티
-     * @return 생성된 DataEntity 인스턴스
+     * @return 생성된 DataEntity 객체
      */
     public static DataEntity of(
             String title,

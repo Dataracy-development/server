@@ -23,7 +23,12 @@ public final class VisitSourceEntityMapper {
         );
     }
 
-    // VisitSource 도메인 모델 -> VisitSource 엔티티
+    /**
+     * VisitSource 도메인 모델을 VisitSourceEntity JPA 엔티티로 변환합니다.
+     *
+     * @param visitSource 변환할 VisitSource 도메인 모델
+     * @return VisitSourceEntity 객체 또는 입력이 null인 경우 null
+     */
     public static VisitSourceEntity toEntity(VisitSource visitSource) {
         if (visitSource == null) {
             return null;

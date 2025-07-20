@@ -29,10 +29,10 @@ public final class DataSourceEntityMapper {
     }
 
     /**
-     * DataSource 도메인 모델을 DataSourceEntity 엔티티로 변환합니다.
+     * DataSource 도메인 모델을 DataSourceEntity JPA 엔티티로 변환합니다.
      *
      * @param dataSource 변환할 DataSource 도메인 모델 객체
-     * @return 변환된 DataSourceEntity 객체, 입력이 null이면 null 반환
+     * @return 변환된 DataSourceEntity 객체. 입력이 null이면 null을 반환합니다.
      */
     public static DataSourceEntity toEntity(DataSource dataSource) {
         if (dataSource == null) {

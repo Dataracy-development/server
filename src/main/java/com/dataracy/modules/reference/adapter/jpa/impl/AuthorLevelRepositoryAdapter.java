@@ -46,10 +46,10 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
     }
 
     /**
-     * 지정된 ID를 가진 AuthorLevel 엔티티의 존재 여부를 확인합니다.
+     * 주어진 ID의 AuthorLevel 엔티티가 존재하는지 여부를 반환합니다.
      *
-     * @param authorLevelId 존재 여부를 확인할 AuthorLevel의 ID
-     * @return 엔티티가 존재하면 true, 존재하지 않으면 false
+     * @param authorLevelId 확인할 AuthorLevel의 ID
+     * @return 엔티티가 존재하면 true, ID가 null이거나 존재하지 않으면 false
      */
     @Override
     public boolean existsAuthorLevelById(Long authorLevelId) {
@@ -60,10 +60,10 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
     }
 
     /**
-     * 주어진 ID에 해당하는 AuthorLevel 엔티티의 라벨을 조회합니다.
+     * 주어진 ID에 해당하는 AuthorLevel의 라벨을 Optional로 반환합니다.
      *
      * @param authorLevelId 조회할 AuthorLevel의 ID
-     * @return 라벨 문자열을 포함하는 Optional, 엔티티가 없으면 빈 Optional 반환
+     * @return 라벨 문자열을 포함하는 Optional, ID가 null이거나 엔티티가 없으면 빈 Optional 반환
      */
     @Override
     public Optional<String> getLabelById(Long authorLevelId) {
@@ -73,6 +73,12 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
         return authorLevelJpaRepository.findLabelById(authorLevelId);
     }
 
+    /**
+     * 주어진 ID 목록에 해당하는 AuthorLevel 엔티티들의 ID와 라벨을 매핑하여 반환합니다.
+     *
+     * @param authorLevelIds 조회할 AuthorLevel ID 목록
+     * @return 각 ID에 해당하는 라벨을 담은 Map 객체
+     */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> authorLevelIds) {
         return authorLevelJpaRepository.findAllById(authorLevelIds)

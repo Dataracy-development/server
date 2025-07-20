@@ -91,9 +91,9 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     /**
-     * 지정한 사용자의 비밀번호를 새로운 인코딩된 값으로 변경합니다.
+     * 사용자의 비밀번호를 새로운 인코딩된 값으로 변경합니다.
      *
-     * @param userId 비밀번호를 변경할 사용자의 고유 ID
+     * @param userId 비밀번호를 변경할 사용자의 ID
      * @param encodePassword 새로 설정할 인코딩된 비밀번호
      * @throws UserException 사용자를 찾을 수 없는 경우 발생합니다.
      */
@@ -104,6 +104,12 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         userEntity.changePassword(encodePassword);
     }
 
+    /**
+     * 주어진 사용자 ID 목록에 해당하는 사용자들의 닉네임을 ID별로 매핑하여 반환합니다.
+     *
+     * @param userIds 조회할 사용자 ID 목록
+     * @return 각 사용자 ID에 해당하는 닉네임의 맵
+     */
     @Override
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
         return userJpaRepository.findAllById(userIds)

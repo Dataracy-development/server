@@ -34,7 +34,7 @@ public final class DataTypeEntityMapper {
     }
 
     /**
-     * 데이터 유형 도메인 모델을 데이터 유형 엔티티로 변환합니다.
+     * 데이터 유형 도메인 모델 객체를 데이터 유형 JPA 엔티티로 변환합니다.
      *
      * @param dataType 변환할 데이터 유형 도메인 모델 객체
      * @return 변환된 데이터 유형 엔티티 객체, 입력이 {@code null}이면 {@code null}을 반환합니다.

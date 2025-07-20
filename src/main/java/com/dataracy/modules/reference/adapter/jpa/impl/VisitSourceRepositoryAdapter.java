@@ -30,11 +30,11 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
                 .toList();
     }
 
-    /**
-     * 주어진 방문 경로 ID에 해당하는 방문 경로를 조회하여 Optional로 반환한다.
+    /****
+     * 주어진 ID에 해당하는 방문 경로 도메인 객체를 Optional로 반환한다.
      *
-     * @param visitSourceId 조회할 방문 경로의 ID
-     * @return 방문 경로가 존재하면 해당 도메인 객체를 포함한 Optional, 존재하지 않으면 빈 Optional
+     * @param visitSourceId 조회할 방문 경로의 ID. null인 경우 빈 Optional을 반환한다.
+     * @return 방문 경로가 존재하면 해당 도메인 객체를 포함한 Optional, 존재하지 않거나 ID가 null이면 빈 Optional
      */
     @Override
     public Optional<VisitSource> findVisitSourceById(Long visitSourceId) {
@@ -46,10 +46,10 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
     }
 
     /**
-     * 주어진 ID의 방문 소스가 데이터베이스에 존재하는지 확인합니다.
+     * 주어진 ID에 해당하는 방문 소스가 데이터베이스에 존재하는지 반환합니다.
      *
      * @param visitSourceId 존재 여부를 확인할 방문 소스의 ID
-     * @return 방문 소스가 존재하면 true, 존재하지 않으면 false
+     * @return 방문 소스가 존재하면 true, ID가 null이거나 존재하지 않으면 false
      */
     @Override
     public boolean existsVisitSourceById(Long visitSourceId) {
@@ -73,6 +73,12 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
         return visitSourceJpaRepository.findLabelById(visitSourceId);
     }
 
+    /**
+     * 주어진 방문 소스 ID 목록에 해당하는 ID와 라벨의 매핑을 반환합니다.
+     *
+     * @param visitSourceIds 조회할 방문 소스 ID 목록
+     * @return 각 ID에 해당하는 라벨의 Map
+     */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> visitSourceIds) {
         return visitSourceJpaRepository.findAllById(visitSourceIds)

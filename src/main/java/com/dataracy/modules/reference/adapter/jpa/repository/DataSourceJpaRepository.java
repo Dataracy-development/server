@@ -6,5 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface DataSourceJpaRepository extends JpaRepository<DataSourceEntity, Long> {
-    Optional<String> findLabelById(Long id);
+    /**
+ * 지정된 ID에 해당하는 DataSourceEntity의 라벨을 Optional로 반환합니다.
+ *
+ * @param id 라벨을 조회할 DataSourceEntity의 ID
+ * @return 해당 ID의 라벨이 존재하면 Optional로 감싸서 반환하며, 없으면 빈 Optional을 반환합니다.
+ */
+Optional<String> findLabelById(Long id);
 }

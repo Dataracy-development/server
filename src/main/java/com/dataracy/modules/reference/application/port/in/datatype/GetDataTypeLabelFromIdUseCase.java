@@ -12,5 +12,11 @@ public interface GetDataTypeLabelFromIdUseCase {
  */
 String getLabelById(Long dataTypeId);
 
-    Map<Long, String> getLabelsByIds(List<Long> dataTypeIds);
+    /**
+ * 여러 데이터 타입 ID에 대해 각 ID에 해당하는 레이블을 반환합니다.
+ *
+ * @param dataTypeIds 조회할 데이터 타입 ID 목록
+ * @return 각 데이터 타입 ID와 해당 레이블이 매핑된 Map 객체
+ */
+Map<Long, String> getLabelsByIds(List<Long> dataTypeIds);
 }

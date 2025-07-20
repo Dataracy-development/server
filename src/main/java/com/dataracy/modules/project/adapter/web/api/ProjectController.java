@@ -76,7 +76,7 @@ public class ProjectController implements ProjectApi {
     /**
      * 지정한 프로젝트와 유사한 프로젝트 목록을 조회하여 반환합니다.
      *
-     * @param projectId 기준이 되는 프로젝트의 ID
+     * @param projectId 유사 프로젝트를 찾을 기준 프로젝트의 ID
      * @param size 반환할 유사 프로젝트의 최대 개수
      * @return 유사 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
@@ -91,6 +91,12 @@ public class ProjectController implements ProjectApi {
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_SIMILAR_PROJECTS, webResponse));
     }
 
+    /**
+     * 인기 프로젝트 목록을 조회하여 반환합니다.
+     *
+     * @param size 반환할 인기 프로젝트의 최대 개수
+     * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<List<ProjectPopularSearchWebResponse>>> searchPopularProjects(int size) {
         List<ProjectPopularSearchResponse> responseDto = projectPopularSearchUseCase.findPopularProjects(size);
