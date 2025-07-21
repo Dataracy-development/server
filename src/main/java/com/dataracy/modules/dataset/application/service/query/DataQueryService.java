@@ -1,11 +1,9 @@
 package com.dataracy.modules.dataset.application.service.query;
 
-import com.dataracy.modules.dataset.application.dto.response.DataLabelMappingResponse;
-import com.dataracy.modules.dataset.application.dto.response.DataPopularSearchResponse;
-import com.dataracy.modules.dataset.application.dto.response.DataSimilarSearchResponse;
-import com.dataracy.modules.dataset.application.dto.response.DataWithProjectCountDto;
+import com.dataracy.modules.dataset.application.dto.response.*;
 import com.dataracy.modules.dataset.application.mapper.PopularDataSetsDtoMapper;
 import com.dataracy.modules.dataset.application.port.elasticsearch.DataSimilarSearchPort;
+import com.dataracy.modules.dataset.application.port.in.DataDetailUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataPopularSearchUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataSimilarSearchUseCase;
 import com.dataracy.modules.dataset.application.port.in.ValidateDataUseCase;
@@ -13,11 +11,16 @@ import com.dataracy.modules.dataset.application.port.out.DataRepositoryPort;
 import com.dataracy.modules.dataset.application.port.query.DataQueryRepositoryPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
+import com.dataracy.modules.dataset.domain.model.vo.DataUser;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
+import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,7 +35,8 @@ import java.util.List;
 public class DataQueryService implements
         ValidateDataUseCase,
         DataSimilarSearchUseCase,
-        DataPopularSearchUseCase
+        DataPopularSearchUseCase,
+        DataDetailUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
 
@@ -44,6 +48,9 @@ public class DataQueryService implements
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
+    private final GetUserInfoUseCase getUserInfoUseCase;
+    private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+    private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
 
     /**
      * 주어진 데이터 ID에 해당하는 데이터의 존재 여부를 검증합니다.
@@ -111,10 +118,10 @@ public class DataQueryService implements
     }
 
     /**
-     * 주어진 데이터셋 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 대한 레이블 매핑 정보를 반환합니다.
+     * 데이터셋 DTO 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 해당하는 레이블 매핑 정보를 반환합니다.
      *
      * @param savedDataSets 프로젝트 개수가 포함된 데이터셋 DTO 컬렉션
-     * @return 각 ID별로 매핑된 사용자명, 토픽 레이블, 데이터 소스 레이블, 데이터 타입 레이블 정보를 담은 응답 객체
+     * @return 사용자명, 토픽 레이블, 데이터 소스 레이블, 데이터 타입 레이블의 매핑 정보를 담은 응답 객체
      */
     private DataLabelMappingResponse labelMapping(Collection<DataWithProjectCountDto> savedDataSets) {
         List<Long> userIds = savedDataSets.stream()
@@ -137,5 +144,46 @@ public class DataQueryService implements
                 getDataTypeLabelFromIdUseCase.getLabelsByIds(dataTypeIds)
         );
     }
+    /**
+     * 주어진 데이터 ID에 해당하는 데이터셋의 상세 정보를 조회합니다.
+     *
+     * 데이터셋의 기본 정보, 작성자 닉네임, 작성자 등급 및 직업 라벨, 주제/데이터 소스/데이터 타입 라벨, 기간, 설명, 분석 가이드, 썸네일 URL, 다운로드 수, 최근 일주일 다운로드 수, 메타데이터(행/열 개수, 미리보기 JSON), 생성일시를 포함한 상세 정보를 반환합니다.
+     *
+     * @param dataId 조회할 데이터셋의 ID
+     * @return 데이터셋의 상세 정보를 담은 DataDetailResponse 객체
+     * @throws DataException 데이터셋이 존재하지 않을 경우 발생
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public DataDetailResponse getDataDetail(Long dataId) {
+        Data data = dataQueryRepositoryPort.findDataWithMetadataById(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        UserInfo userInfo = getUserInfoUseCase.getUserInfo(data.getUserId());
+        DataUser dataUser = DataUser.from(userInfo);
 
+        String authorLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(dataUser.authorLevelId());
+        String occupationLabel = getOccupationLabelFromIdUseCase.getLabelById(dataUser.occupationId());
+
+        return new DataDetailResponse(
+                data.getId(),
+                data.getTitle(),
+                dataUser.nickname(),
+                authorLabel,
+                occupationLabel,
+                getTopicLabelFromIdUseCase.getLabelById(data.getTopicId()),
+                getDataSourceLabelFromIdUseCase.getLabelById(data.getDataSourceId()),
+                getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId()),
+                data.getStartDate(),
+                data.getEndDate(),
+                data.getDescription(),
+                data.getAnalysisGuide(),
+                data.getThumbnailUrl(),
+                data.getDownloadCount(),
+                data.getRecentWeekDownloadCount(),
+                data.getMetadata().getRowCount(),
+                data.getMetadata().getColumnCount(),
+                data.getMetadata().getPreviewJson(),
+                data.getCreatedAt()
+        );
+    }
 }
