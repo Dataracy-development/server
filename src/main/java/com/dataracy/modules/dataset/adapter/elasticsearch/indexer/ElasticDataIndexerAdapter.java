@@ -16,6 +16,11 @@ public class ElasticDataIndexerAdapter implements DataIndexingPort {
 
     private final ElasticsearchClient client;
 
+    /**
+     * 주어진 DataSearchDocument를 Elasticsearch의 "data_index" 인덱스에 저장합니다.
+     *
+     * @param doc 인덱싱할 데이터셋 문서
+     */
     @Override
     public void index(DataSearchDocument doc) {
         try {

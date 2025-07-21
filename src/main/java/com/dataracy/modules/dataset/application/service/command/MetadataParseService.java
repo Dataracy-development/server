@@ -41,11 +41,13 @@ public class MetadataParseService implements MetadataParseUseCase {
     private final DataIndexingPort dataIndexingPort;
 
     /**
-     * 파일 URL과 원본 파일명을 이용해 파일을 파싱하여 메타데이터를 추출하고, 해당 데이터를 데이터 ID에 연결하여 저장합니다.
+     * 파일을 다운로드하여 메타데이터를 추출하고, 해당 데이터를 데이터 ID에 연결해 저장 및 검색 색인에 반영합니다.
      *
-     * 파싱 또는 저장 과정에서 오류가 발생해도 예외를 던지지 않고 로그로만 처리합니다.
+     * 파일 URL과 원본 파일명을 기반으로 파일을 파싱하여 행/열 수, 미리보기 정보를 포함한 메타데이터를 생성하고 저장합니다.
+     * 이후 관련 데이터와 라벨 정보를 조회하여 검색 색인 문서를 생성하고, 이를 검색 시스템에 색인합니다.
+     * 파싱, 저장, 색인 과정에서 발생하는 모든 오류는 예외로 던지지 않고 로그로만 처리됩니다.
      *
-     * @param request 메타데이터 추출 및 저장에 필요한 파일 URL, 원본 파일명, 데이터 ID 정보를 포함한 요청 객체
+     * @param request 파일 URL, 원본 파일명, 데이터 ID를 포함한 메타데이터 파싱 및 저장 요청 객체
      */
     @Override
     @Transactional

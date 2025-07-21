@@ -24,13 +24,13 @@ import java.util.List;
 @RequestMapping("/api/v1/datasets")
 public interface DataApi {
 
-    /****
-     * 데이터셋 파일과 메타데이터를 업로드하여 데이터셋 정보를 저장한다.
+    /**
+     * 데이터셋 파일, 썸네일(선택), 메타데이터를 업로드하여 새로운 데이터셋 정보를 저장한다.
      *
      * @param dataFile 업로드할 데이터셋 파일
      * @param thumbnailFile 데이터셋 썸네일 이미지 파일 (선택 사항)
-     * @param webRequest 데이터셋 메타데이터 및 추가 정보가 담긴 요청 객체
-     * @return 업로드 성공 여부를 나타내는 성공 응답
+     * @param webRequest 데이터셋의 메타데이터 및 추가 정보를 포함하는 요청 객체
+     * @return 업로드 성공 시 성공 응답을 반환
      */
     @Operation(
             summary = "데이터셋을 업로드한다.",
@@ -53,6 +53,13 @@ public interface DataApi {
             DataUploadWebRequest webRequest
     );
 
+    /**
+     * 주어진 데이터셋과 유사한 데이터셋 목록을 조회합니다.
+     *
+     * @param dataId 유사도를 기준으로 검색할 데이터셋의 ID (1 이상)
+     * @param size 반환할 유사 데이터셋의 개수 (1 이상)
+     * @return 유사한 데이터셋 목록이 포함된 성공 응답
+     */
     @Operation(
             summary = "유사한 데이터셋을 조회한다.",
             description = "제공받은 데이터와 유사한 데이터셋을 조회한다."
