@@ -4,10 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.project.adapter.web.request.ProjectFilterWebRequest;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
-import com.dataracy.modules.project.adapter.web.response.ProjectFilterWebResponse;
-import com.dataracy.modules.project.adapter.web.response.ProjectPopularSearchWebResponse;
-import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
-import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
+import com.dataracy.modules.project.adapter.web.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -157,5 +154,20 @@ public interface ProjectApi {
 
             @PageableDefault(size = 5, page = 0)
             Pageable pageable
+    );
+
+    @Operation(
+            summary = "프로젝트 상세 정보를 조회한다.",
+            description = "프로젝트 상세 정보를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "프로젝트 상세 정보 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/{projectId}")
+    ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(
+            @PathVariable @Min(1)
+            Long projectId
     );
 }

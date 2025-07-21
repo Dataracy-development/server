@@ -194,7 +194,7 @@ public class ProjectQueryService implements
     }
 
     @Override
-    public ProjectDetailResponse getProjectDetailInfo(Long projectId) {
+    public ProjectDetailResponse getProjectDetail(Long projectId) {
         Project project = projectQueryRepositoryPort.findProjectById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
 

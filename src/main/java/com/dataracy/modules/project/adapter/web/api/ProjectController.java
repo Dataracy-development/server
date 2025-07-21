@@ -6,16 +6,10 @@ import com.dataracy.modules.project.adapter.web.mapper.ProjectSearchWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectWebMapper;
 import com.dataracy.modules.project.adapter.web.request.ProjectFilterWebRequest;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
-import com.dataracy.modules.project.adapter.web.response.ProjectFilterWebResponse;
-import com.dataracy.modules.project.adapter.web.response.ProjectPopularSearchWebResponse;
-import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
-import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
+import com.dataracy.modules.project.adapter.web.response.*;
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
-import com.dataracy.modules.project.application.dto.response.ProjectFilterResponse;
-import com.dataracy.modules.project.application.dto.response.ProjectPopularSearchResponse;
-import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
-import com.dataracy.modules.project.application.dto.response.ProjectSimilarSearchResponse;
+import com.dataracy.modules.project.application.dto.response.*;
 import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +34,8 @@ public class ProjectController implements ProjectApi {
     private final ProjectSimilarSearchUseCase projectSimilarSearchUseCase;
     private final ProjectPopularSearchUseCase projectPopularSearchUseCase;
     private final ProjectFilteredSearchUseCase projectFilteredSearchUsecase;
+    private final ProjectDetailUseCase projectDetailUseCase;
+
     /**
      * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
      *
@@ -128,5 +124,14 @@ public class ProjectController implements ProjectApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_FILTERED_PROJECTS, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(Long projectId) {
+        ProjectDetailResponse responseDto = projectDetailUseCase.getProjectDetail(projectId);
+        ProjectDetailWebResponse webResponse = projectWebMapper.toWebDto(responseDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.GET_PROJECT_DETAIL, webResponse));
     }
 }

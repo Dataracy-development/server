@@ -14,6 +14,7 @@ public enum ProjectSuccessStatus implements BaseSuccessCode {
     FIND_SIMILAR_PROJECTS(HttpStatus.OK, "200", "유사 프로젝트 리스트를 조회하였습니다."),
     FIND_POPULAR_PROJECTS(HttpStatus.OK, "200", "인기있는 프로젝트 리스트를 조회하였습니다."),
     FIND_FILTERED_PROJECTS(HttpStatus.OK, "200", "필터링된 프로젝트 리스트를 조회하였습니다."),
+    GET_PROJECT_DETAIL(HttpStatus.OK, "200", "프로젝트 상세 정보를 조회하였습니다."),
     ;
 
     private final HttpStatus httpStatus;
