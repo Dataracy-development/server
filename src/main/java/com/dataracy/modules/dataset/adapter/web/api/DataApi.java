@@ -115,7 +115,7 @@ public interface DataApi {
     })
     @GetMapping("/{dataId}")
     ResponseEntity<SuccessResponse<DataDetailWebResponse>> getDataDetail(
-            @RequestParam(name = "dataId")
+            @PathVariable(name = "dataId")
             Long dataId
     );
 }
