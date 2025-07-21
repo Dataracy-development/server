@@ -110,11 +110,11 @@ public class ProjectController implements ProjectApi {
     }
 
     /**
-     * 필터 조건과 페이지 정보를 기반으로 프로젝트 목록을 검색하여 반환합니다.
+     * 필터 조건과 페이지네이션 정보를 이용해 프로젝트 목록을 검색합니다.
      *
      * @param webRequest 프로젝트 필터링 조건이 담긴 요청 객체
      * @param pageable 페이지네이션 정보
-     * @return 필터링된 프로젝트 목록의 페이지를 포함한 성공 응답
+     * @return 필터링된 프로젝트 목록이 포함된 성공 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<ProjectFilterWebResponse>>> searchFilteredProjects(ProjectFilterWebRequest webRequest, Pageable pageable) {
@@ -126,6 +126,12 @@ public class ProjectController implements ProjectApi {
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_FILTERED_PROJECTS, webResponse));
     }
 
+    /**
+     * 프로젝트의 상세 정보를 조회하여 반환합니다.
+     *
+     * @param projectId 조회할 프로젝트의 ID
+     * @return 프로젝트 상세 정보를 포함한 성공 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(Long projectId) {
         ProjectDetailResponse responseDto = projectDetailUseCase.getProjectDetail(projectId);
