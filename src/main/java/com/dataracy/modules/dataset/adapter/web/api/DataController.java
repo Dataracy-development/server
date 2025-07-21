@@ -54,11 +54,11 @@ public class DataController implements DataApi {
     }
 
     /**
-     * 주어진 데이터 ID와 유사한 데이터셋 목록을 조회하여 반환합니다.
+     * 주어진 데이터 ID를 기준으로 유사한 데이터셋 목록을 조회합니다.
      *
-     * @param dataId 유사 데이터셋을 찾을 기준이 되는 데이터 ID
+     * @param dataId 유사 데이터셋 검색의 기준이 되는 데이터 ID
      * @param size 반환할 유사 데이터셋의 최대 개수
-     * @return 유사 데이터셋 목록과 성공 상태를 포함한 HTTP 200 OK 응답
+     * @return 유사 데이터셋 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<List<DataSimilarSearchWebResponse>>> searchSimilarDataSets(Long dataId, int size) {
@@ -71,6 +71,12 @@ public class DataController implements DataApi {
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_SIMILAR_DATASETS, webResponse));
     }
 
+    /**
+     * 인기 데이터셋 목록을 요청된 개수만큼 조회하여 반환합니다.
+     *
+     * @param size 반환할 인기 데이터셋의 최대 개수
+     * @return 인기 데이터셋 목록과 성공 상태가 포함된 HTTP 200 OK 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<List<DataPopularSearchWebResponse>>> searchPopularDataSets(int size) {
         List<DataPopularSearchResponse> responseDto = dataPopularSearchUseCase.findPopularDataSets(size);
