@@ -1,4 +1,4 @@
-package com.dataracy.modules.project.application.port.out;
+package com.dataracy.modules.project.application.port.elasticsearch;
 
 import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
 
