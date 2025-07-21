@@ -1,7 +1,11 @@
 package com.dataracy.modules.dataset.application.service.query;
 
+import com.dataracy.modules.dataset.application.dto.response.DataLabelMappingResponse;
+import com.dataracy.modules.dataset.application.dto.response.DataPopularSearchResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataSimilarSearchResponse;
+import com.dataracy.modules.dataset.application.mapper.PopularDataSetsDtoMapper;
 import com.dataracy.modules.dataset.application.port.elasticsearch.DataSimilarSearchPort;
+import com.dataracy.modules.dataset.application.port.in.DataPopularSearchUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataSimilarSearchUseCase;
 import com.dataracy.modules.dataset.application.port.in.ValidateDataUseCase;
 import com.dataracy.modules.dataset.application.port.out.DataRepositoryPort;
@@ -9,11 +13,16 @@ import com.dataracy.modules.dataset.application.port.query.DataQueryRepositoryPo
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -21,11 +30,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DataQueryService implements
         ValidateDataUseCase,
-        DataSimilarSearchUseCase
+        DataSimilarSearchUseCase,
+        DataPopularSearchUseCase
 {
+    private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
+
     private final DataRepositoryPort dataRepositoryPort;
     private final DataSimilarSearchPort dataSimilarSearchPort;
     private final DataQueryRepositoryPort dataQueryRepositoryPort;
+
+    private final FindUsernameUseCase findUsernameUseCase;
+    private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
+    private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
+    private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
 
     /**
      * 주어진 데이터 ID에 해당하는 데이터의 존재 여부를 검증합니다.
@@ -62,5 +79,37 @@ public class DataQueryService implements
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
         return dataSimilarSearchPort.recommendSimilarDataSets(data, size);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DataPopularSearchResponse> findPopularDataSets(int size) {
+        List<Data> savedDataSets = dataQueryRepositoryPort.findPopularDataSets(size);
+
+        DataLabelMappingResponse labelResponse = labelMapping(savedDataSets);
+
+        return savedDataSets.stream()
+                .map(data -> popularDataSetsDtoMapper.toResponseDto(
+                        data,
+                        labelResponse.usernameMap().get(data.getUserId()),
+                        labelResponse.topicLabelMap().get(data.getTopicId()),
+                        labelResponse.dataSourceLabelMap().get(data.getDataSourceId()),
+                        labelResponse.dataTypeLabelMap().get(data.getDataTypeId())
+                ))
+                .toList();
+    }
+
+    private DataLabelMappingResponse labelMapping(Collection<Data> savedDataSets) {
+        List<Long> userIds = savedDataSets.stream().map(Data::getUserId).toList();
+        List<Long> topicIds = savedDataSets.stream().map(Data::getTopicId).toList();
+        List<Long> dataSourceIds = savedDataSets.stream().map(Data::getDataSourceId).toList();
+        List<Long> dataTypeIds = savedDataSets.stream().map(Data::getDataTypeId).toList();
+
+        return new DataLabelMappingResponse(
+                findUsernameUseCase.findUsernamesByIds(userIds),
+                getTopicLabelFromIdUseCase.getLabelsByIds(topicIds),
+                getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds),
+                getDataTypeLabelFromIdUseCase.getLabelsByIds(dataTypeIds)
+        );
     }
 }
