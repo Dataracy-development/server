@@ -1,6 +1,6 @@
 package com.dataracy.modules.common.util;
 
-import com.dataracy.modules.data.application.dto.response.MetadataParseResponse;
+import com.dataracy.modules.dataset.application.dto.response.MetadataParseResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -107,8 +107,7 @@ public class FileParsingUtil {
     /**
      * XLSX 파일의 첫 번째 시트를 파싱하여 행 수, 열 수, 미리보기 데이터를 추출합니다.
      *
-     * 첫 번째 행을 헤더로 간주하며, 헤더가 없는 셀은 기본 컬럼명으로 대체합니다.
-     * 미리보기 데이터는 최대 5개의 데이터 행(헤더 제외)으로 구성되며, 각 행은 헤더명을 키로 하는 맵 형태입니다.
+     * 첫 번째 행을 헤더로 간주하며, 비어 있는 헤더 셀은 기본 컬럼명으로 대체됩니다. 미리보기 데이터는 최대 5개의 데이터 행(헤더 제외)으로 구성되며, 각 행은 헤더명을 키로 하는 맵 형태로 반환됩니다.
      *
      * @param is XLSX 파일의 입력 스트림
      * @return 행 수(헤더 제외), 열 수, 미리보기 데이터(JSON 문자열)가 포함된 MetadataParseResponse 객체
@@ -117,7 +116,6 @@ public class FileParsingUtil {
     private static MetadataParseResponse parseXlsx(InputStream is) throws IOException {
         try (var wb = WorkbookFactory.create(is)) {
             var sheet = wb.getSheetAt(SHEET_INDEX);
-            // ... 기존 로직 ...
             int rowCount = sheet.getPhysicalNumberOfRows();
             if (rowCount == 0) {
                 return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
