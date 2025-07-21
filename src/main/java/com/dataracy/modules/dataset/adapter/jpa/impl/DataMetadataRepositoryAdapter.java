@@ -35,7 +35,11 @@ public class DataMetadataRepositoryAdapter implements DataMetadataRepositoryPort
             DataMetadataEntity dataMetadataEntity = DataMetadataEntityMapper.toEntity(metadata);
             dataMetadataEntity.updateData(dataEntity);
             dataMetadataJpaRepository.save(dataMetadataEntity);
+        } catch (DataException de) {
+            // NOT_FOUND_DATA 등 기존 상태 유지
+            throw de;
         } catch (Exception e) {
+            // 원인 보존
             throw new DataException(DataErrorStatus.FAIL_UPLOAD_DATA);
         }
     }

@@ -27,7 +27,7 @@ public record DataUploadWebRequest(
         @Schema(description = "데이터 수집 시작일", example = "2025-01-01")
         LocalDate startDate,
 
-        @Schema(description = "데이터 수집 종료일", example = "2025-2-01")
+        @Schema(description = "데이터 수집 종료일", example = "2025-02-01")
         LocalDate endDate,
 
         @Schema(description = "설명", example = "지금 이 데이터는 설명은 ~~.")

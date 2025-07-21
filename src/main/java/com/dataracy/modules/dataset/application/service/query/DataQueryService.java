@@ -49,8 +49,10 @@ public class DataQueryService implements
     @Transactional(readOnly = true)
     public List<DataSimilarSearchResponse> findSimilarDataSets(Long dataId, int size) {
         Data data = dataQueryRepositoryPort.findDataById(dataId)
-                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
-
+                .orElseThrow(() -> {
+                    log.error("데이터 검증 후 조회 실패: dataId={}", dataId);
+                    return new DataException(DataErrorStatus.NOT_FOUND_DATA);
+                });
         return dataSimilarSearchPort.recommendSimilarDataSets(data, size);
     }
 }

@@ -3,6 +3,7 @@ package com.dataracy.modules.dataset.application.service.command;
 import com.dataracy.modules.common.util.FileParsingUtil;
 import com.dataracy.modules.dataset.adapter.elasticsearch.document.DataSearchDocument;
 import com.dataracy.modules.dataset.application.dto.request.MetadataParseRequest;
+import com.dataracy.modules.dataset.application.dto.response.DataLabels;
 import com.dataracy.modules.dataset.application.dto.response.MetadataParseResponse;
 import com.dataracy.modules.dataset.application.port.elasticsearch.DataIndexingPort;
 import com.dataracy.modules.dataset.application.port.in.MetadataParseUseCase;
@@ -20,7 +21,9 @@ import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 @Slf4j
@@ -45,6 +48,7 @@ public class MetadataParseService implements MetadataParseUseCase {
      * @param request 메타데이터 추출 및 저장에 필요한 파일 URL, 원본 파일명, 데이터 ID 정보를 포함한 요청 객체
      */
     @Override
+    @Transactional
     public void parseAndSaveMetadata(MetadataParseRequest request) {
         try (InputStream inputStream = fileStoragePort.download(request.fileUrl())) {
             MetadataParseResponse response = FileParsingUtil.parse(inputStream, request.originalFilename());
@@ -67,16 +71,21 @@ public class MetadataParseService implements MetadataParseUseCase {
             String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(data.getDataSourceId());
             String dataTypeLabel = getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId());
             String username = findUsernameUseCase.findUsernameById(data.getUserId());
+            DataLabels dataLabels = new DataLabels(topicLabel, dataSourceLabel, dataTypeLabel, username);
 
             // Elasticsearch 색인
-            DataSearchDocument document = DataSearchDocument.from(data, metadata, topicLabel, dataSourceLabel, dataTypeLabel, username);
+            DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);
             dataIndexingPort.index(document);
 
             log.info("데이터 인덱싱 완료: dataId={}", request.dataId());
 
+        } catch (IOException e) {
+            log.error("파일 다운로드 또는 파싱 실패: dataId={}, url={}", request.dataId(), request.fileUrl(), e);
+        } catch (DataException e) {
+            log.error("데이터 조회 실패: dataId={}", request.dataId(), e);
         } catch (Exception e) {
             // 업로드 이후 비동기 처리로 실패시 예외 처리가 아닌 로그처리
-            log.error("메타데이터 파싱 실패: dataId={}, url={}", request.dataId(), request.fileUrl(), e);
+            log.error("예상치 못한 오류 발생: dataId={}, url={}", request.dataId(), request.fileUrl(), e);
         }
     }
 }
