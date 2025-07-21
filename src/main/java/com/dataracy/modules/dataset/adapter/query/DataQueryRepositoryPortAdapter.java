@@ -43,6 +43,17 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         return Optional.ofNullable(DataEntityMapper.toDomain(entity));
     }
 
+    @Override
+    public Optional<Data> findDataWithMetadataById(Long dataId) {
+        DataEntity entity = queryFactory
+                .selectFrom(data)
+                .leftJoin(data.metadata).fetchJoin()
+                .where(DataFilterPredicate.dataIdEq(dataId))
+                .fetchOne();
+
+        return Optional.ofNullable(DataEntityMapper.toDomain(entity));
+    }
+
     /**
      * 데이터셋의 인기도를 기준으로 상위 데이터셋 목록을 조회합니다.
      *

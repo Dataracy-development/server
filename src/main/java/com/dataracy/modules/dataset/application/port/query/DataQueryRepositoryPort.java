@@ -15,6 +15,8 @@ public interface DataQueryRepositoryPort {
  */
 Optional<Data> findDataById(Long dataId);
 
+Optional<Data> findDataWithMetadataById(Long dataId);
+
     /**
  * 지정된 개수만큼 인기 있는 데이터셋 목록을 조회합니다.
  *
