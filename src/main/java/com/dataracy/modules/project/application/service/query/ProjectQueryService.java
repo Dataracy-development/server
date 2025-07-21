@@ -120,7 +120,7 @@ public class ProjectQueryService implements
     public List<ProjectPopularSearchResponse> findPopularProjects(int size) {
         List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
 
-        LabelMappingResponse labelResponse = labelMapping(savedProjects);
+        ProjectLabelMappingResponse labelResponse = labelMapping(savedProjects);
 
         return savedProjects.stream()
                 .map(project -> popularProjectsDtoMapper.toResponseDto(
@@ -148,7 +148,7 @@ public class ProjectQueryService implements
                 : null;
         Page<Project> savedProjects = projectQueryRepositoryPort.searchByFilters(request, pageable, sortType);
 
-        LabelMappingResponse labelResponse = labelMapping(savedProjects.getContent());
+        ProjectLabelMappingResponse labelResponse = labelMapping(savedProjects.getContent());
         return savedProjects.map(project -> {
             // 자식 프로젝트들의 userId 수집
             List<Long> childUserIds = project.getChildProjects().stream()
@@ -177,14 +177,14 @@ public class ProjectQueryService implements
      * @param savedProjects 레이블 및 사용자명 매핑을 위한 프로젝트 컬렉션
      * @return 각 ID에 대한 사용자명 및 레이블 매핑 정보를 포함하는 LabelMappingResponse 객체
      */
-    private LabelMappingResponse labelMapping(Collection<Project> savedProjects) {
+    private ProjectLabelMappingResponse labelMapping(Collection<Project> savedProjects) {
         List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
         List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
         List<Long> analysisPurposeIds = savedProjects.stream().map(Project::getAnalysisPurposeId).toList();
         List<Long> dataSourceIds = savedProjects.stream().map(Project::getDataSourceId).toList();
         List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
 
-        return new LabelMappingResponse(
+        return new ProjectLabelMappingResponse(
                 findUsernameUseCase.findUsernamesByIds(userIds),
                 getTopicLabelFromIdUseCase.getLabelsByIds(topicIds),
                 getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds),
