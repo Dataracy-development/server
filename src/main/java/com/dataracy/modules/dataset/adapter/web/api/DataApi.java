@@ -3,6 +3,7 @@ package com.dataracy.modules.dataset.adapter.web.api;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -101,5 +102,20 @@ public interface DataApi {
             @RequestParam(name = "size")
             @Min(1)
             int size
+    );
+
+    @Operation(
+            summary = "데이터셋 세부정보를 조회한다.",
+            description = "데이터셋 세부정보를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "데이터셋 세부정보 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/{dataId}")
+    ResponseEntity<SuccessResponse<DataDetailWebResponse>> getDataDetail(
+            @RequestParam(name = "dataId")
+            Long dataId
     );
 }
