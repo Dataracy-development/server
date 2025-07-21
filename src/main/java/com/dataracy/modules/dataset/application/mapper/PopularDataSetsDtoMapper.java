@@ -9,6 +9,17 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class PopularDataSetsDtoMapper {
+    /**
+     * 도메인 모델 Data와 추가 정보를 결합하여 DataPopularSearchResponse DTO로 변환합니다.
+     *
+     * @param data 변환할 데이터셋 도메인 객체
+     * @param username 데이터셋과 연관된 사용자 이름
+     * @param topicLabel 데이터셋의 주제 라벨
+     * @param dataSourceLabel 데이터셋의 데이터 소스 라벨
+     * @param dataTypeLabel 데이터셋의 데이터 타입 라벨
+     * @param countConnectedProjects 해당 데이터셋과 연결된 프로젝트 수
+     * @return DataPopularSearchResponse로 매핑된 응답 DTO
+     */
     public DataPopularSearchResponse toResponseDto(
             Data data,
             String username,

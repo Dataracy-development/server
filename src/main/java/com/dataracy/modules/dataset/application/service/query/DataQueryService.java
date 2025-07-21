@@ -64,9 +64,9 @@ public class DataQueryService implements
     }
 
     /**
-     * 주어진 데이터 ID를 기반으로 유사한 데이터셋 목록을 조회합니다.
+     * 지정한 데이터 ID를 기준으로 유사한 데이터셋 목록을 반환합니다.
      *
-     * @param dataId 유사 데이터셋을 찾을 기준이 되는 데이터의 ID
+     * @param dataId 유사 데이터셋 검색의 기준이 되는 데이터 ID
      * @param size 반환할 유사 데이터셋의 최대 개수
      * @return 유사한 데이터셋의 응답 객체 리스트
      * @throws DataException 데이터가 존재하지 않을 경우 발생
@@ -82,6 +82,12 @@ public class DataQueryService implements
         return dataSimilarSearchPort.recommendSimilarDataSets(data, size);
     }
 
+    /**
+     * 지정된 개수만큼 인기 있는 데이터셋 목록을 조회하여, 각 데이터셋에 사용자명, 주제, 데이터 소스, 데이터 타입 등의 라벨 정보를 포함한 응답 리스트를 반환합니다.
+     *
+     * @param size 조회할 인기 데이터셋의 최대 개수
+     * @return 인기 데이터셋에 대한 상세 정보와 연결된 프로젝트 수가 포함된 응답 리스트
+     */
     @Override
     @Transactional(readOnly = true)
     public List<DataPopularSearchResponse> findPopularDataSets(int size) {
@@ -104,6 +110,12 @@ public class DataQueryService implements
                 .toList();
     }
 
+    /**
+     * 주어진 데이터셋 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 대한 레이블 매핑 정보를 반환합니다.
+     *
+     * @param savedDataSets 프로젝트 개수가 포함된 데이터셋 DTO 컬렉션
+     * @return 각 ID별로 매핑된 사용자명, 토픽 레이블, 데이터 소스 레이블, 데이터 타입 레이블 정보를 담은 응답 객체
+     */
     private DataLabelMappingResponse labelMapping(Collection<DataWithProjectCountDto> savedDataSets) {
         List<Long> userIds = savedDataSets.stream()
                 .map(dto -> dto.data().getUserId())

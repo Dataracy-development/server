@@ -7,13 +7,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DataQueryRepositoryPort {
-/****
+/**
  * 주어진 식별자에 해당하는 데이터를 조회합니다.
  *
  * @param dataId 조회할 데이터의 식별자
- * @return 데이터가 존재하면 해당 Data 객체를 Optional로 감싸서 반환하며, 없으면 빈 Optional을 반환합니다.
+ * @return 데이터가 존재하면 해당 Data 객체를 Optional로 감싸서 반환하며, 존재하지 않으면 빈 Optional을 반환합니다.
  */
 Optional<Data> findDataById(Long dataId);
 
-    List<DataWithProjectCountDto> findPopularDataSets(int size);
+    /**
+ * 지정된 개수만큼 인기 있는 데이터셋 목록을 조회합니다.
+ *
+ * @param size 반환할 데이터셋의 최대 개수
+ * @return 인기 순으로 정렬된 데이터셋과 각 데이터셋의 프로젝트 수 정보를 담은 리스트
+ */
+List<DataWithProjectCountDto> findPopularDataSets(int size);
 }

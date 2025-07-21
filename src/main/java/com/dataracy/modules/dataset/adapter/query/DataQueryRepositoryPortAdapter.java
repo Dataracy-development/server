@@ -28,10 +28,10 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
     /**
-     * 주어진 데이터 ID에 해당하는 데이터를 조회하여 Optional로 반환합니다.
+     * 주어진 데이터 ID로 데이터를 조회하여 Optional로 반환합니다.
      *
      * @param dataId 조회할 데이터의 고유 식별자
-     * @return 데이터가 존재하면 해당 도메인 객체를, 없으면 빈 Optional을 반환합니다.
+     * @return 데이터가 존재하면 도메인 객체를, 없으면 빈 Optional을 반환합니다.
      */
     @Override
     public Optional<Data> findDataById(Long dataId) {
@@ -43,6 +43,14 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         return Optional.ofNullable(DataEntityMapper.toDomain(entity));
     }
 
+    /**
+     * 데이터셋의 인기도를 기준으로 상위 데이터셋 목록을 조회합니다.
+     *
+     * 각 데이터셋에 연결된 프로젝트 수를 함께 반환하며, 결과는 지정한 개수만큼 제한됩니다.
+     *
+     * @param size 반환할 데이터셋의 최대 개수
+     * @return 프로젝트 수와 함께 매핑된 인기 데이터셋 DTO 리스트
+     */
     @Override
     public List<DataWithProjectCountDto> findPopularDataSets(int size) {
         List<Tuple> tuples = queryFactory
