@@ -7,6 +7,8 @@ public record DataDetailResponse(
         Long id,
         String title,
         String username,
+        String authorLabel,
+        String occupationLabel,
         String topicLabel,
         String dataSourceLabel,
         String dataTypeLabel,

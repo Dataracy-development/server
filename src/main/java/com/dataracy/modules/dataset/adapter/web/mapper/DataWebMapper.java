@@ -6,9 +6,6 @@ import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
 import com.dataracy.modules.dataset.application.dto.response.DataDetailResponse;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @Component
 public class DataWebMapper {
     /**
@@ -37,6 +34,8 @@ public class DataWebMapper {
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.username(),
+                responseDto.authorLabel(),
+                responseDto.occupationLabel(),
                 responseDto.topicLabel(),
                 responseDto.dataSourceLabel(),
                 responseDto.dataTypeLabel(),
