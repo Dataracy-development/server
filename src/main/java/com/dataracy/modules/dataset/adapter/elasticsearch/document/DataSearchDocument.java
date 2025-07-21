@@ -33,6 +33,14 @@ public record DataSearchDocument(
         String previewJson,
         LocalDateTime createdAt
 ) {
+    /**
+     * 주어진 데이터, 메타데이터, 라벨 정보를 기반으로 DataSearchDocument 인스턴스를 생성합니다.
+     *
+     * @param data 데이터 도메인 객체
+     * @param dataMetadata 데이터의 메타데이터 정보
+     * @param dataLabels 데이터와 관련된 라벨 정보 DTO
+     * @return 데이터 검색 및 색인에 최적화된 DataSearchDocument 객체
+     */
     public static DataSearchDocument from(
             Data data,
             DataMetadata dataMetadata,

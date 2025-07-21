@@ -17,9 +17,9 @@ public class ElasticProjectIndexerAdapter implements ProjectIndexingPort {
     private final ElasticsearchClient client;
 
     /**
-     * 주어진 프로젝트 검색 문서를 Elasticsearch의 "project" 인덱스에 저장합니다.
+     * 주어진 프로젝트 검색 문서를 Elasticsearch의 "project_index" 인덱스에 저장합니다.
      *
-     * @param doc 인덱싱할 프로젝트 검색 문서
+     * @param doc Elasticsearch에 저장할 프로젝트 검색 문서
      */
     @Override
     public void index(ProjectSearchDocument doc) {
