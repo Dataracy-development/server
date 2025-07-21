@@ -28,9 +28,9 @@ public class DataQueryService implements
     private final DataQueryRepositoryPort dataQueryRepositoryPort;
 
     /**
-     * 주어진 데이터 ID에 해당하는 데이터가 존재하는지 검증합니다.
+     * 주어진 데이터 ID에 해당하는 데이터의 존재 여부를 검증합니다.
      *
-     * 데이터가 존재하지 않을 경우 {@code DataException}을 발생시키며, 오류 상태는 {@code NOT_FOUND_DATA}입니다.
+     * 데이터가 존재하지 않으면 {@code DataException}을 {@code NOT_FOUND_DATA} 상태로 발생시킵니다.
      *
      * @param dataId 존재 여부를 확인할 데이터의 ID
      * @throws DataException 데이터가 존재하지 않을 경우 발생
@@ -45,6 +45,14 @@ public class DataQueryService implements
         }
     }
 
+    /**
+     * 주어진 데이터 ID를 기반으로 유사한 데이터셋 목록을 조회합니다.
+     *
+     * @param dataId 유사 데이터셋을 찾을 기준이 되는 데이터의 ID
+     * @param size 반환할 유사 데이터셋의 최대 개수
+     * @return 유사한 데이터셋의 응답 객체 리스트
+     * @throws DataException 데이터가 존재하지 않을 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public List<DataSimilarSearchResponse> findSimilarDataSets(Long dataId, int size) {
