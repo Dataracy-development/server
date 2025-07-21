@@ -1,9 +1,13 @@
 package com.dataracy.modules.data.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.data.adapter.web.mapper.DataSearchWebMapper;
 import com.dataracy.modules.data.adapter.web.mapper.DataWebMapper;
 import com.dataracy.modules.data.adapter.web.request.DataUploadWebRequest;
+import com.dataracy.modules.data.adapter.web.response.DataSimilarSearchWebResponse;
 import com.dataracy.modules.data.application.dto.request.DataUploadRequest;
+import com.dataracy.modules.data.application.dto.response.DataSimilarSearchResponse;
+import com.dataracy.modules.data.application.port.in.DataSimilarSearchUseCase;
 import com.dataracy.modules.data.application.port.in.DataUploadUseCase;
 import com.dataracy.modules.data.domain.status.DataSuccessStatus;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +16,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class DataController implements DataApi {
     private final DataWebMapper dataWebMapper;
+    private final DataSearchWebMapper dataSearchWebMapper;
 
     private final DataUploadUseCase dataUploadUseCase;
+    private final DataSimilarSearchUseCase dataSimilarSearchUseCase;
 
     /**
      * 데이터 업로드 요청을 처리하고, 데이터셋 생성 성공 응답을 반환합니다.
@@ -39,5 +47,16 @@ public class DataController implements DataApi {
         dataUploadUseCase.upload(userId, dataFile, thumbnailFile, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(DataSuccessStatus.CREATED_DATASET));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<List<DataSimilarSearchWebResponse>>> searchSimilarDataSets(Long dataId, int size) {
+        List<DataSimilarSearchResponse> responseDto = dataSimilarSearchUseCase.findSimilarDataSets(dataId, size);
+        List<DataSimilarSearchWebResponse> webResponse = responseDto.stream()
+                .map(dataSearchWebMapper::toWebDto)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.FIND_SIMILAR_DATASETS, webResponse));
     }
 }

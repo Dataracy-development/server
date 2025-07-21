@@ -9,8 +9,6 @@ import com.dataracy.modules.data.application.port.query.DataQueryRepositoryPort;
 import com.dataracy.modules.data.domain.exception.DataException;
 import com.dataracy.modules.data.domain.model.Data;
 import com.dataracy.modules.data.domain.status.DataErrorStatus;
-import com.dataracy.modules.project.domain.exception.ProjectException;
-import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

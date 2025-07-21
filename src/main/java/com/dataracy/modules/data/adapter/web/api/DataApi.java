@@ -3,6 +3,7 @@ package com.dataracy.modules.data.adapter.web.api;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.data.adapter.web.request.DataUploadWebRequest;
+import com.dataracy.modules.data.adapter.web.response.DataSimilarSearchWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,13 +11,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Tag(name = "Data", description = "데이터셋 관련 API")
 @RequestMapping("/api/v1/datasets")
@@ -49,5 +51,25 @@ public interface DataApi {
             @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
             @RequestPart @Validated
             DataUploadWebRequest webRequest
+    );
+
+    @Operation(
+            summary = "유사한 데이터셋을 조회한다.",
+            description = "제공받은 데이터와 유사한 데이터셋을 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "유사 데이터셋 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/search/similar")
+    ResponseEntity<SuccessResponse<List<DataSimilarSearchWebResponse>>> searchSimilarDataSets(
+            @RequestParam(name = "dataId")
+            @Min(1)
+            Long dataId,
+
+            @RequestParam(name = "size")
+            @Min(1)
+            int size
     );
 }
