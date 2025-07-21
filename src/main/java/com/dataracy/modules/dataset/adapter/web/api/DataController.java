@@ -4,9 +4,12 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataSearchWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
+import com.dataracy.modules.dataset.application.dto.response.DataPopularSearchResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataSimilarSearchResponse;
+import com.dataracy.modules.dataset.application.port.in.DataPopularSearchUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataSimilarSearchUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataUploadUseCase;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
@@ -26,6 +29,7 @@ public class DataController implements DataApi {
 
     private final DataUploadUseCase dataUploadUseCase;
     private final DataSimilarSearchUseCase dataSimilarSearchUseCase;
+    private final DataPopularSearchUseCase dataPopularSearchUseCase;
 
     /**
      * 데이터 업로드 요청을 처리하여 데이터셋을 생성하고, 성공 상태의 HTTP 201(Created) 응답을 반환합니다.
@@ -50,11 +54,11 @@ public class DataController implements DataApi {
     }
 
     /**
-     * 주어진 데이터 ID와 유사한 데이터셋 목록을 조회하여 반환합니다.
+     * 주어진 데이터 ID를 기준으로 유사한 데이터셋 목록을 조회합니다.
      *
-     * @param dataId 유사 데이터셋을 찾을 기준이 되는 데이터 ID
+     * @param dataId 유사 데이터셋 검색의 기준이 되는 데이터 ID
      * @param size 반환할 유사 데이터셋의 최대 개수
-     * @return 유사 데이터셋 목록과 성공 상태를 포함한 HTTP 200 OK 응답
+     * @return 유사 데이터셋 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<List<DataSimilarSearchWebResponse>>> searchSimilarDataSets(Long dataId, int size) {
@@ -65,5 +69,22 @@ public class DataController implements DataApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_SIMILAR_DATASETS, webResponse));
+    }
+
+    /**
+     * 인기 데이터셋 목록을 요청된 개수만큼 조회하여 반환합니다.
+     *
+     * @param size 반환할 인기 데이터셋의 최대 개수
+     * @return 인기 데이터셋 목록과 성공 상태가 포함된 HTTP 200 OK 응답
+     */
+    @Override
+    public ResponseEntity<SuccessResponse<List<DataPopularSearchWebResponse>>> searchPopularDataSets(int size) {
+        List<DataPopularSearchResponse> responseDto = dataPopularSearchUseCase.findPopularDataSets(size);
+        List<DataPopularSearchWebResponse> webResponse = responseDto.stream()
+                .map(dataSearchWebMapper::toWebDto)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.FIND_POPULAR_DATASETS, webResponse));
     }
 }
