@@ -27,16 +27,28 @@ Optional<Project> findProjectById(Long projectId);
 List<Project> findPopularProjects(int size);
 
     /**
- * 필터 조건, 페이지네이션, 정렬 기준에 따라 프로젝트 목록을 검색하여 페이지 형태로 반환합니다.
+ * 필터 조건, 페이지네이션, 정렬 기준에 따라 프로젝트를 검색하여 페이지 형태로 반환합니다.
  *
- * @param request   프로젝트 필터링 조건이 담긴 요청 객체
- * @param pageable  페이지네이션 정보
- * @param sortType  프로젝트 정렬 기준
- * @return          조건에 맞는 프로젝트의 페이지 결과
+ * @param request 프로젝트 필터링 조건을 담은 요청 객체
+ * @param pageable 페이지네이션 정보
+ * @param sortType 프로젝트 정렬 기준
+ * @return 검색 조건에 부합하는 프로젝트의 페이지 결과
  */
 Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable, ProjectSortType sortType);
 
-    boolean existsByParentProjectId(Long projectId);
+    /**
+ * 지정된 프로젝트 ID를 부모로 갖는 프로젝트가 존재하는지 여부를 반환합니다.
+ *
+ * @param projectId 부모 프로젝트의 ID
+ * @return 해당 부모 프로젝트 ID를 가진 프로젝트가 하나 이상 존재하면 true, 아니면 false
+ */
+boolean existsByParentProjectId(Long projectId);
 
-    boolean existsProjectDataByProjectId(Long projectId);
+    /**
+ * 지정된 프로젝트 ID에 해당하는 프로젝트 데이터가 존재하는지 여부를 반환합니다.
+ *
+ * @param projectId 존재 여부를 확인할 프로젝트의 ID
+ * @return 프로젝트 데이터가 존재하면 true, 그렇지 않으면 false
+ */
+boolean existsProjectDataByProjectId(Long projectId);
 }

@@ -164,10 +164,10 @@ public class UserQueryService implements
     }
 
     /**
-     * 주어진 사용자 ID 목록에 대해 각 ID에 해당하는 닉네임을 매핑하여 반환합니다.
+     * 여러 사용자 ID에 대해 각 ID에 해당하는 닉네임을 매핑한 Map을 반환합니다.
      *
      * @param userIds 닉네임을 조회할 사용자 ID 목록
-     * @return 각 사용자 ID와 해당 닉네임의 매핑을 담은 Map 객체
+     * @return 사용자 ID를 키로, 닉네임을 값으로 가지는 Map
      */
     @Override
     @Transactional(readOnly = true)
@@ -175,6 +175,13 @@ public class UserQueryService implements
         return userRepositoryPort.findUsernamesByIds(userIds);
     }
 
+    /**
+     * 주어진 사용자 ID로 사용자의 상세 정보를 조회합니다.
+     *
+     * @param userId 조회할 사용자의 ID
+     * @return 사용자의 ID, 역할, 이메일, 닉네임, 저자 레벨 ID, 직업 ID, 관심 주제 ID 목록, 유입 경로 ID가 포함된 UserInfo 객체
+     * @throws UserException 사용자를 찾을 수 없는 경우 {@code UserErrorStatus.NOT_FOUND_USER}로 예외가 발생합니다.
+     */
     @Override
     @Transactional(readOnly = true)
     public UserInfo getUserInfo(Long userId) {
