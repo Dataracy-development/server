@@ -4,11 +4,14 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataSearchWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
+import com.dataracy.modules.dataset.application.dto.response.DataDetailResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataPopularSearchResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataSimilarSearchResponse;
+import com.dataracy.modules.dataset.application.port.in.DataDetailUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataPopularSearchUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataSimilarSearchUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataUploadUseCase;
@@ -30,6 +33,7 @@ public class DataController implements DataApi {
     private final DataUploadUseCase dataUploadUseCase;
     private final DataSimilarSearchUseCase dataSimilarSearchUseCase;
     private final DataPopularSearchUseCase dataPopularSearchUseCase;
+    private final DataDetailUseCase dataDetailUseCase;
 
     /**
      * 데이터 업로드 요청을 처리하여 데이터셋을 생성하고, 성공 상태의 HTTP 201(Created) 응답을 반환합니다.
@@ -72,7 +76,7 @@ public class DataController implements DataApi {
     }
 
     /**
-     * 인기 데이터셋 목록을 요청된 개수만큼 조회하여 반환합니다.
+     * 요청된 개수만큼 인기 데이터셋 목록을 조회하여 반환합니다.
      *
      * @param size 반환할 인기 데이터셋의 최대 개수
      * @return 인기 데이터셋 목록과 성공 상태가 포함된 HTTP 200 OK 응답
@@ -86,5 +90,20 @@ public class DataController implements DataApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_POPULAR_DATASETS, webResponse));
+    }
+
+    /**
+     * 데이터셋의 상세 정보를 조회하여 반환합니다.
+     *
+     * @param dataId 조회할 데이터셋의 고유 식별자
+     * @return 데이터셋 상세 정보와 성공 상태가 포함된 HTTP 200 OK 응답
+     */
+    @Override
+    public ResponseEntity<SuccessResponse<DataDetailWebResponse>> getDataDetail(Long dataId) {
+        DataDetailResponse responseDto = dataDetailUseCase.getDataDetail(dataId);
+        DataDetailWebResponse webResponse = dataWebMapper.toWebDto(responseDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.GET_DATA_DETAIL, webResponse));
     }
 }
