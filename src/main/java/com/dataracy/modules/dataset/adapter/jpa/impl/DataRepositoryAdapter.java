@@ -8,10 +8,12 @@ import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class DataRepositoryAdapter implements DataRepositoryPort {
@@ -30,6 +32,7 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
             DataEntity dataEntity = dataJpaRepository.save(DataEntityMapper.toEntity(data));
             return DataEntityMapper.toDomain(dataEntity);
         } catch (Exception e) {
+            log.error("데이터 저장 실패", e);
             throw new DataException(DataErrorStatus.FAIL_UPLOAD_DATA);
         }
     }

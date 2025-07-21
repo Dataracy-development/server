@@ -1,5 +1,6 @@
 package com.dataracy.modules.dataset.adapter.elasticsearch.document;
 
+import com.dataracy.modules.dataset.application.dto.response.DataLabels;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.DataMetadata;
 import lombok.Builder;
@@ -35,22 +36,19 @@ public record DataSearchDocument(
     public static DataSearchDocument from(
             Data data,
             DataMetadata dataMetadata,
-            String topicLabel,
-            String dataSourceLabel,
-            String dataTypeLabel,
-            String username
+            DataLabels dataLabels
     ) {
         return DataSearchDocument.builder()
                 .id(data.getId())
                 .title(data.getTitle())
                 .topicId(data.getTopicId())
-                .topicLabel(topicLabel)
+                .topicLabel(dataLabels.topicLabel())
                 .userId(data.getUserId())
-                .username(username)
+                .username(dataLabels.username())
                 .dataSourceId(data.getDataSourceId())
-                .dataSourceLabel(dataSourceLabel)
+                .dataSourceLabel(dataLabels.dataSourceLabel())
                 .dataTypeId(data.getDataTypeId())
-                .dataTypeLabel(dataTypeLabel)
+                .dataTypeLabel(dataLabels.dataTypeLabel())
                 .startDate(data.getStartDate())
                 .endDate(data.getEndDate())
                 .description(data.getDescription())
