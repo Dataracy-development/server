@@ -8,10 +8,10 @@ import java.util.Optional;
 
 public interface DataTypeJpaRepository extends JpaRepository<DataTypeEntity, Long> {
     /**
- * 주어진 ID에 해당하는 DataTypeEntity의 라벨을 조회합니다.
+ * 주어진 ID에 해당하는 DataTypeEntity의 라벨을 Optional로 반환합니다.
  *
- * @param id 조회할 DataTypeEntity의 ID
- * @return 해당 ID의 라벨이 존재하면 Optional로 반환하며, 없으면 빈 Optional을 반환합니다.
+ * @param id 라벨을 조회할 DataTypeEntity의 ID
+ * @return 해당 ID의 엔티티가 존재하면 라벨을 포함한 Optional, 없으면 빈 Optional
  */
     @Query("SELECT a.label FROM DataTypeEntity a WHERE a.id = :id")
 Optional<String> findLabelById(Long id);

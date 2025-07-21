@@ -12,10 +12,10 @@ public record ProjectUser(
         Long authorLevelId
 ) {
     /**
-     * 주어진 UserInfo 객체로부터 ProjectUser 인스턴스를 생성합니다.
+     * UserInfo 객체를 기반으로 ProjectUser 인스턴스를 생성합니다.
      *
-     * @param info ProjectUser로 변환할 사용자 정보 객체
-     * @return UserInfo의 정보를 기반으로 생성된 ProjectUser 인스턴스
+     * @param info 변환할 사용자 정보 객체
+     * @return 주어진 UserInfo의 필드 값을 반영한 ProjectUser 인스턴스
      */
     public static ProjectUser from(UserInfo info) {
         return new ProjectUser(

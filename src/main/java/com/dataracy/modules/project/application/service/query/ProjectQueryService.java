@@ -172,10 +172,10 @@ public class ProjectQueryService implements
     }
 
     /**
-     * 주어진 프로젝트 컬렉션에서 사용자, 토픽, 분석 목적, 데이터 소스, 저자 레벨의 ID를 추출하여 각 ID에 대한 레이블 및 사용자명을 일괄 조회한 결과를 반환합니다.
+     * 프로젝트 컬렉션에서 사용자, 토픽, 분석 목적, 데이터 소스, 저자 레벨의 ID를 추출하여 각 ID에 해당하는 사용자명과 레이블 정보를 일괄 조회합니다.
      *
      * @param savedProjects 레이블 및 사용자명 매핑을 위한 프로젝트 컬렉션
-     * @return 각 ID에 대한 사용자명 및 레이블 매핑 정보를 담은 LabelMappingResponse 객체
+     * @return 각 ID에 대한 사용자명 및 레이블 매핑 정보를 포함하는 LabelMappingResponse 객체
      */
     private LabelMappingResponse labelMapping(Collection<Project> savedProjects) {
         List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
@@ -193,6 +193,15 @@ public class ProjectQueryService implements
         );
     }
 
+    /**
+     * 지정한 프로젝트 ID에 대한 상세 정보를 조회합니다.
+     *
+     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 프로젝트 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 반환합니다.
+     *
+     * @param projectId 조회할 프로젝트의 ID
+     * @return 프로젝트의 상세 정보를 담은 ProjectDetailResponse 객체
+     * @throws ProjectException 프로젝트가 존재하지 않을 경우 발생합니다.
+     */
     @Override
     @Transactional(readOnly = true)
     public ProjectDetailResponse getProjectDetail(Long projectId) {

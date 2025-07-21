@@ -32,8 +32,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
     /**
-     * 주어진 ID에 해당하는 프로젝트와 그 부모, 데이터, 자식 프로젝트를 함께 조회하여 Optional로 반환합니다.
-     * 프로젝트 id를 통한 프로젝트 세부 조회에 해당하는 부분으로 모두 fetch해서 조회한다.
+     * 주어진 ID에 해당하는 프로젝트를 조회하여 Optional로 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID
      * @return 조회된 프로젝트 도메인 객체의 Optional, 없으면 빈 Optional
@@ -48,6 +47,12 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
         return Optional.ofNullable(ProjectEntityMapper.toMinimal(entity));
     }
 
+    /**
+     * 지정한 프로젝트 ID를 부모로 갖는 프로젝트가 존재하는지 여부를 반환합니다.
+     *
+     * @param projectId 부모 프로젝트의 ID
+     * @return 해당 부모 프로젝트 ID를 가진 프로젝트가 하나라도 존재하면 true, 아니면 false
+     */
     @Override
     public boolean existsByParentProjectId(Long projectId) {
         Integer result = queryFactory
@@ -58,6 +63,12 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
         return result != null;
     }
 
+    /**
+     * 주어진 프로젝트 ID에 연결된 프로젝트 데이터가 존재하는지 여부를 반환합니다.
+     *
+     * @param projectId 존재 여부를 확인할 프로젝트의 ID
+     * @return 프로젝트 데이터가 존재하면 true, 그렇지 않으면 false
+     */
     @Override
     public boolean existsProjectDataByProjectId(Long projectId) {
         Integer result = queryFactory
@@ -123,9 +134,9 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
 
     /**
      * 필터 조건, 페이지네이션, 정렬 기준에 따라 프로젝트 목록을 검색하여 페이지 형태로 반환합니다.
-     * 프로젝트 페이지에서 필터를 통한 프로젝트 조회 시 자식프로젝트를 함께 조회한다.
+     * 자식 프로젝트(최대 2단계) 정보를 포함하여 결과를 제공합니다.
      *
-     * @param request 프로젝트 필터링 조건을 담은 요청 객체
+     * @param request 프로젝트 필터링 조건이 담긴 요청 객체
      * @param pageable 페이지네이션 정보
      * @param sortType 프로젝트 정렬 기준
      * @return 필터 및 정렬 조건에 맞는 프로젝트 목록과 전체 개수를 포함한 페이지 객체
