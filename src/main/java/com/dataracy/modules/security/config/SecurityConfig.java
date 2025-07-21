@@ -32,10 +32,10 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     /**
-     * 애플리케이션의 HTTP 요청에 대한 Spring Security 보안 필터 체인을 설정합니다.
+     * 애플리케이션의 HTTP 요청에 대한 Spring Security 보안 필터 체인을 구성합니다.
      *
-     * CORS, CSRF 비활성화, 세션 무상태화, 예외 처리, OAuth2 로그인, JWT 인증 필터, 엔드포인트별 접근 권한 등 보안 정책을 통합적으로 구성합니다.
-     * 인증 없이 접근 가능한 엔드포인트(예: Swagger, 정적 리소스, 회원가입, 프로젝트 검색 등)와, 사용자 및 관리자 권한이 필요한 엔드포인트를 구분하여 접근을 제어합니다.
+     * CORS 활성화, CSRF 및 기본 인증 방식 비활성화, 세션 무상태화, OAuth2 로그인, JWT 인증 필터, 엔드포인트별 접근 권한 제어 등 통합 보안 정책을 적용합니다.
+     * 인증 없이 접근 가능한 엔드포인트(예: Swagger, 정적 리소스, 회원가입, 프로젝트/데이터셋 검색 등)와 사용자 또는 관리자 권한이 필요한 엔드포인트를 구분하여 접근을 제한합니다.
      *
      * @return 설정된 SecurityFilterChain 인스턴스
      */
@@ -64,6 +64,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/email/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/projects/search/**", "/api/v1/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/datasets/search/**", "/api/v1/datasets/**").permitAll()
                         .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
