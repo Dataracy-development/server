@@ -40,6 +40,7 @@ public class MetadataParseService implements MetadataParseUseCase {
             );
 
             metadataRepositoryPort.saveMetadata(request.dataId(), metadata);
+
             log.info("메타데이터 저장 완료: dataId={}, row={}, column={}",
                     request.dataId(), response.rowCount(), response.columnCount());
 

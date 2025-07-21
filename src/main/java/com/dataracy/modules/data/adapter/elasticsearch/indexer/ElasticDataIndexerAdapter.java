@@ -2,7 +2,7 @@ package com.dataracy.modules.data.adapter.elasticsearch.indexer;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.dataracy.modules.data.adapter.elasticsearch.document.DataSearchDocument;
-import com.dataracy.modules.data.application.elasticsearch.DataIndexingPort;
+import com.dataracy.modules.data.application.port.elasticsearch.DataIndexingPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

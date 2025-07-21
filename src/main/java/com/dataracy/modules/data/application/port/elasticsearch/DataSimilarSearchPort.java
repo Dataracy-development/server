@@ -1,4 +1,4 @@
-package com.dataracy.modules.data.application.elasticsearch;
+package com.dataracy.modules.data.application.port.elasticsearch;
 
 import com.dataracy.modules.data.application.dto.response.DataSimilarSearchResponse;
 import com.dataracy.modules.data.domain.model.Data;
