@@ -14,7 +14,8 @@ public class PopularDataSetsDtoMapper {
             String username,
             String topicLabel,
             String dataSourceLabel,
-            String dataTypeLabel
+            String dataTypeLabel,
+            Long countConnectedProjects
     ) {
         return new DataPopularSearchResponse(
                 data.getId(),
@@ -31,7 +32,8 @@ public class PopularDataSetsDtoMapper {
                 data.getRecentWeekDownloadCount(),
                 data.getMetadata().getRowCount(),
                 data.getMetadata().getColumnCount(),
-                data.getCreatedAt()
+                data.getCreatedAt(),
+                countConnectedProjects
         );
     }
 }

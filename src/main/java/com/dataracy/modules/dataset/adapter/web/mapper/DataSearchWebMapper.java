@@ -49,7 +49,8 @@ public class DataSearchWebMapper {
                 responseDto.recentWeekDownloadCount(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),
-                responseDto.createdAt()
+                responseDto.createdAt(),
+                responseDto.countConnectedProjects()
         );
     }
 }

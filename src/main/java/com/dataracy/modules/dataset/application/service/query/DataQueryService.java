@@ -3,6 +3,7 @@ package com.dataracy.modules.dataset.application.service.query;
 import com.dataracy.modules.dataset.application.dto.response.DataLabelMappingResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataPopularSearchResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataSimilarSearchResponse;
+import com.dataracy.modules.dataset.application.dto.response.DataWithProjectCountDto;
 import com.dataracy.modules.dataset.application.mapper.PopularDataSetsDtoMapper;
 import com.dataracy.modules.dataset.application.port.elasticsearch.DataSimilarSearchPort;
 import com.dataracy.modules.dataset.application.port.in.DataPopularSearchUseCase;
@@ -84,26 +85,38 @@ public class DataQueryService implements
     @Override
     @Transactional(readOnly = true)
     public List<DataPopularSearchResponse> findPopularDataSets(int size) {
-        List<Data> savedDataSets = dataQueryRepositoryPort.findPopularDataSets(size);
+        List<DataWithProjectCountDto> savedDataSets = dataQueryRepositoryPort.findPopularDataSets(size);
 
         DataLabelMappingResponse labelResponse = labelMapping(savedDataSets);
 
         return savedDataSets.stream()
-                .map(data -> popularDataSetsDtoMapper.toResponseDto(
-                        data,
-                        labelResponse.usernameMap().get(data.getUserId()),
-                        labelResponse.topicLabelMap().get(data.getTopicId()),
-                        labelResponse.dataSourceLabelMap().get(data.getDataSourceId()),
-                        labelResponse.dataTypeLabelMap().get(data.getDataTypeId())
-                ))
+                .map(wrapper -> {
+                    Data data = wrapper.data();
+                    return popularDataSetsDtoMapper.toResponseDto(
+                            data,
+                            labelResponse.usernameMap().get(data.getUserId()),
+                            labelResponse.topicLabelMap().get(data.getTopicId()),
+                            labelResponse.dataSourceLabelMap().get(data.getDataSourceId()),
+                            labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
+                            wrapper.countConnectedProjects()
+                    );
+                })
                 .toList();
     }
 
-    private DataLabelMappingResponse labelMapping(Collection<Data> savedDataSets) {
-        List<Long> userIds = savedDataSets.stream().map(Data::getUserId).toList();
-        List<Long> topicIds = savedDataSets.stream().map(Data::getTopicId).toList();
-        List<Long> dataSourceIds = savedDataSets.stream().map(Data::getDataSourceId).toList();
-        List<Long> dataTypeIds = savedDataSets.stream().map(Data::getDataTypeId).toList();
+    private DataLabelMappingResponse labelMapping(Collection<DataWithProjectCountDto> savedDataSets) {
+        List<Long> userIds = savedDataSets.stream()
+                .map(dto -> dto.data().getUserId())
+                .toList();
+        List<Long> topicIds = savedDataSets.stream()
+                .map(dto -> dto.data().getTopicId())
+                .toList();
+        List<Long> dataSourceIds = savedDataSets.stream()
+                .map(dto -> dto.data().getDataSourceId())
+                .toList();
+        List<Long> dataTypeIds = savedDataSets.stream()
+                .map(dto -> dto.data().getDataTypeId())
+                .toList();
 
         return new DataLabelMappingResponse(
                 findUsernameUseCase.findUsernamesByIds(userIds),
@@ -112,4 +125,5 @@ public class DataQueryService implements
                 getDataTypeLabelFromIdUseCase.getLabelsByIds(dataTypeIds)
         );
     }
+
 }

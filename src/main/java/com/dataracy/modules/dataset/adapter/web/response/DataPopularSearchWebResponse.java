@@ -18,5 +18,6 @@ public record DataPopularSearchWebResponse(
         int recentWeekDownloadCount,
         Integer rowCount,
         Integer columnCount,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Long countConnectedProjects
 ) {}
