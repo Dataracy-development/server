@@ -85,8 +85,8 @@ public interface DataApi {
     /**
      * 다운로드 수와 연결된 프로젝트 수를 기준으로 인기 있는 데이터셋 목록을 조회합니다.
      *
-     * @param size 반환할 인기 데이터셋의 개수 (최소 1)
-     * @return 인기 데이터셋 목록이 포함된 성공 응답
+     * @param size 반환할 데이터셋의 최대 개수 (1 이상)
+     * @return 인기 데이터셋 목록이 포함된 성공 응답 객체
      */
     @Operation(
             summary = "인기있는 데이터셋을 조회한다.",
@@ -104,6 +104,12 @@ public interface DataApi {
             int size
     );
 
+    /**
+     * 지정된 데이터셋의 세부 정보를 조회하여 반환합니다.
+     *
+     * @param dataId 조회할 데이터셋의 고유 식별자
+     * @return 데이터셋의 상세 정보를 포함한 성공 응답
+     */
     @Operation(
             summary = "데이터셋 세부정보를 조회한다.",
             description = "데이터셋 세부정보를 조회한다."
