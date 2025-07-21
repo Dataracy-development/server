@@ -6,20 +6,21 @@ import com.dataracy.modules.project.application.mapper.FilterProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectSimilarSearchPort;
-import com.dataracy.modules.project.application.port.in.ProjectFilteredSearchUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectPopularSearchUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectRealTimeSearchUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectSimilarSearchUseCase;
+import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
+import com.dataracy.modules.project.domain.model.vo.ProjectUser;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAnalysisPurposeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
+import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,9 +37,11 @@ public class ProjectQueryService implements
         ProjectRealTimeSearchUseCase,
         ProjectSimilarSearchUseCase,
         ProjectPopularSearchUseCase,
-        ProjectFilteredSearchUseCase
+        ProjectFilteredSearchUseCase,
+        ProjectDetailUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
+    private final FilterProjectDtoMapper filterProjectDtoMapper;
 
     private final ProjectRealTimeSearchPort projectRealTimeSearchPort;
     private final ProjectSimilarSearchPort projectSimilarSearchPort;
@@ -49,7 +52,8 @@ public class ProjectQueryService implements
     private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
-    private final FilterProjectDtoMapper filterProjectDtoMapper;
+    private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
+    private final GetUserInfoUseCase getUserInfoUseCase;
 
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
@@ -168,10 +172,10 @@ public class ProjectQueryService implements
     }
 
     /**
-     * 주어진 프로젝트 컬렉션에서 사용자, 토픽, 분석 목적, 데이터 소스, 저자 레벨의 ID를 추출하여 각 ID에 대한 레이블 및 사용자명을 일괄 조회한 결과를 반환합니다.
+     * 프로젝트 컬렉션에서 사용자, 토픽, 분석 목적, 데이터 소스, 저자 레벨의 ID를 추출하여 각 ID에 해당하는 사용자명과 레이블 정보를 일괄 조회합니다.
      *
      * @param savedProjects 레이블 및 사용자명 매핑을 위한 프로젝트 컬렉션
-     * @return 각 ID에 대한 사용자명 및 레이블 매핑 정보를 담은 LabelMappingResponse 객체
+     * @return 각 ID에 대한 사용자명 및 레이블 매핑 정보를 포함하는 LabelMappingResponse 객체
      */
     private LabelMappingResponse labelMapping(Collection<Project> savedProjects) {
         List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
@@ -186,6 +190,49 @@ public class ProjectQueryService implements
                 getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds),
                 getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds),
                 getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds)
+        );
+    }
+
+    /**
+     * 지정한 프로젝트 ID에 대한 상세 정보를 조회합니다.
+     *
+     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 프로젝트 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 반환합니다.
+     *
+     * @param projectId 조회할 프로젝트의 ID
+     * @return 프로젝트의 상세 정보를 담은 ProjectDetailResponse 객체
+     * @throws ProjectException 프로젝트가 존재하지 않을 경우 발생합니다.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public ProjectDetailResponse getProjectDetail(Long projectId) {
+        Project project = projectQueryRepositoryPort.findProjectById(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
+
+        boolean hasChild = projectQueryRepositoryPort.existsByParentProjectId(projectId);
+        boolean hasData = projectQueryRepositoryPort.existsProjectDataByProjectId(projectId);
+
+        UserInfo userInfo = getUserInfoUseCase.getUserInfo(project.getUserId());
+        ProjectUser projectUser = ProjectUser.from(userInfo);
+
+        return new ProjectDetailResponse(
+                project.getId(),
+                project.getTitle(),
+                findUsernameUseCase.findUsernameById(project.getUserId()),
+                getAuthorLevelLabelFromIdUseCase.getLabelById(projectUser.authorLevelId()),
+                getOccupationLabelFromIdUseCase.getLabelById(projectUser.occupationId()),
+                getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),
+                getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId()),
+                getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId()),
+                project.getIsContinue(),
+                project.getParentProjectId(),
+                project.getContent(),
+                project.getFileUrl(),
+                project.getCreatedAt(),
+                project.getCommentCount(),
+                project.getLikeCount(),
+                project.getViewCount(),
+                hasChild,
+                hasData
         );
     }
 }

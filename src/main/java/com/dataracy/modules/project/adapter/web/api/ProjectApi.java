@@ -4,10 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.project.adapter.web.request.ProjectFilterWebRequest;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
-import com.dataracy.modules.project.adapter.web.response.ProjectFilterWebResponse;
-import com.dataracy.modules.project.adapter.web.response.ProjectPopularSearchWebResponse;
-import com.dataracy.modules.project.adapter.web.response.ProjectRealTimeSearchWebResponse;
-import com.dataracy.modules.project.adapter.web.response.ProjectSimilarSearchWebResponse;
+import com.dataracy.modules.project.adapter.web.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -135,11 +132,11 @@ public interface ProjectApi {
     );
 
     /**
-     * 필터 조건에 따라 프로젝트 목록을 페이지 단위로 조회한다.
+     * 필터 조건에 따라 프로젝트 목록을 페이지네이션하여 조회한다.
      *
-     * @param webRequest 프로젝트 필터링 조건이 담긴 요청 객체
-     * @param pageable 페이지네이션 정보 (기본: 페이지 0, 크기 5)
-     * @return 필터링된 프로젝트 목록이 포함된 성공 응답 객체
+     * @param webRequest 프로젝트 필터링 조건이 포함된 요청 객체
+     * @param pageable 페이지 번호와 크기 등 페이지네이션 정보
+     * @return 필터링된 프로젝트 목록의 페이지를 담은 성공 응답
      */
     @Operation(
             summary = "필터링된 프로젝트 리스트를 조회한다.",
@@ -157,5 +154,26 @@ public interface ProjectApi {
 
             @PageableDefault(size = 5, page = 0)
             Pageable pageable
+    );
+
+    /**
+     * 지정한 프로젝트 ID에 해당하는 프로젝트의 상세 정보를 반환합니다.
+     *
+     * @param projectId 조회할 프로젝트의 ID (1 이상)
+     * @return 프로젝트 상세 정보를 포함한 성공 응답
+     */
+    @Operation(
+            summary = "프로젝트 상세 정보를 조회한다.",
+            description = "프로젝트 상세 정보를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "프로젝트 상세 정보 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/{projectId}")
+    ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(
+            @PathVariable @Min(1)
+            Long projectId
     );
 }
