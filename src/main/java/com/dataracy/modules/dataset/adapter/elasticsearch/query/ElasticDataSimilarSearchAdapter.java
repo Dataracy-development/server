@@ -25,6 +25,14 @@ public class ElasticDataSimilarSearchAdapter implements DataSimilarSearchPort {
 
     private final ElasticsearchClient client;
 
+    /**
+     * 주어진 데이터와 유사한 데이터셋을 Elasticsearch에서 검색하여 추천 결과 목록을 반환합니다.
+     *
+     * @param data 유사성을 기준으로 검색할 기준 데이터 객체
+     * @param size 반환할 추천 데이터셋의 최대 개수
+     * @return 유사 데이터셋 추천 결과의 리스트
+     * @throws DataException Elasticsearch 검색 중 오류가 발생한 경우
+     */
     @Override
     public List<DataSimilarSearchResponse> recommendSimilarDataSets(Data data, int size) {
         try {
@@ -48,6 +56,16 @@ public class ElasticDataSimilarSearchAdapter implements DataSimilarSearchPort {
         }
     }
 
+    /**
+     * 주어진 데이터와 유사한 데이터를 찾기 위한 Elasticsearch 쿼리를 생성합니다.
+     *
+     * 이 쿼리는 데이터의 제목과 설명을 기반으로 한 more_like_this 조건과, topicId에 대한 가중치(term) 조건을 포함하며,
+     * 동일한 id를 가진 문서는 결과에서 제외합니다.
+     *
+     * @param q    쿼리 빌더
+     * @param data 유사 데이터 추천 기준이 되는 데이터 객체
+     * @return 유사 데이터 추천을 위한 Elasticsearch 쿼리 빌더
+     */
     private ObjectBuilder<Query> buildRecommendationQuery(Query.Builder q, Data data) {
         return q.bool(b -> b
                 .should(sb -> sb.moreLikeThis(mlt -> mlt
@@ -68,6 +86,12 @@ public class ElasticDataSimilarSearchAdapter implements DataSimilarSearchPort {
         );
     }
 
+    /**
+     * DataSearchDocument 객체를 DataSimilarSearchResponse 객체로 변환합니다.
+     *
+     * @param doc 변환할 DataSearchDocument 객체
+     * @return 변환된 DataSimilarSearchResponse 객체
+     */
     private DataSimilarSearchResponse mapToSimilarResponse(DataSearchDocument doc) {
         return new DataSimilarSearchResponse(
                 doc.id(),

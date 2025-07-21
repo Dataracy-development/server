@@ -20,11 +20,11 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
     private final DataJpaRepository dataJpaRepository;
 
     /**
-     * 도메인 Data 객체를 데이터베이스에 저장하고 저장된 결과를 반환합니다.
+     * 도메인 Data 객체를 데이터베이스에 저장한 후, 저장된 결과를 반환합니다.
      *
      * @param data 저장할 도메인 Data 객체
      * @return 저장된 Data 객체
-     * @throws DataException 데이터 저장 중 오류가 발생하면 업로드 실패 상태와 함께 예외를 발생시킵니다.
+     * @throws DataException 데이터 저장 중 오류가 발생하면 업로드 실패 상태로 예외가 발생합니다.
      */
     @Override
     public Data saveData(Data data) {
