@@ -135,6 +135,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
 
         List<ProjectEntity> entities = queryFactory
                 .selectFrom(project)
+                .distinct()
                 .orderBy(ProjectSortBuilder.fromSortOption(sortType))
                 .leftJoin(project.childProjects).fetchJoin()
                 .where(buildFilterPredicates(request))
