@@ -1,12 +1,22 @@
 package com.dataracy.modules.data.application.service.command;
 
 import com.dataracy.modules.common.util.FileParsingUtil;
+import com.dataracy.modules.data.adapter.elasticsearch.document.DataSearchDocument;
 import com.dataracy.modules.data.application.dto.request.MetadataParseRequest;
 import com.dataracy.modules.data.application.dto.response.MetadataParseResponse;
+import com.dataracy.modules.data.application.port.elasticsearch.DataIndexingPort;
 import com.dataracy.modules.data.application.port.in.MetadataParseUseCase;
 import com.dataracy.modules.data.application.port.out.DataMetadataRepositoryPort;
+import com.dataracy.modules.data.application.port.out.DataRepositoryPort;
+import com.dataracy.modules.data.domain.exception.DataException;
+import com.dataracy.modules.data.domain.model.Data;
 import com.dataracy.modules.data.domain.model.DataMetadata;
+import com.dataracy.modules.data.domain.status.DataErrorStatus;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
+import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +30,12 @@ public class MetadataParseService implements MetadataParseUseCase {
 
     private final FileStoragePort fileStoragePort;
     private final DataMetadataRepositoryPort metadataRepositoryPort;
+    private final DataRepositoryPort dataRepositoryPort;
+    private final FindUsernameUseCase findUsernameUseCase;
+    private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
+    private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
+    private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
+    private final DataIndexingPort dataIndexingPort;
 
     /**
      * 파일 URL과 원본 파일명을 이용해 파일을 파싱하여 메타데이터를 추출하고, 해당 데이터를 데이터 ID에 연결하여 저장합니다.
@@ -43,6 +59,20 @@ public class MetadataParseService implements MetadataParseUseCase {
 
             log.info("메타데이터 저장 완료: dataId={}, row={}, column={}",
                     request.dataId(), response.rowCount(), response.columnCount());
+
+            // 색인을 위한 데이터 조회
+            Data data = dataRepositoryPort.findDataById(request.dataId())
+                    .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+            String topicLabel = getTopicLabelFromIdUseCase.getLabelById(data.getTopicId());
+            String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(data.getDataSourceId());
+            String dataTypeLabel = getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId());
+            String username = findUsernameUseCase.findUsernameById(data.getUserId());
+
+            // Elasticsearch 색인
+            DataSearchDocument document = DataSearchDocument.from(data, metadata, topicLabel, dataSourceLabel, dataTypeLabel, username);
+            dataIndexingPort.index(document);
+
+            log.info("데이터 인덱싱 완료: dataId={}", request.dataId());
 
         } catch (Exception e) {
             // 업로드 이후 비동기 처리로 실패시 예외 처리가 아닌 로그처리
