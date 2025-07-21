@@ -76,7 +76,7 @@ public class DataController implements DataApi {
     }
 
     /**
-     * 인기 데이터셋 목록을 요청된 개수만큼 조회하여 반환합니다.
+     * 요청된 개수만큼 인기 데이터셋 목록을 조회하여 반환합니다.
      *
      * @param size 반환할 인기 데이터셋의 최대 개수
      * @return 인기 데이터셋 목록과 성공 상태가 포함된 HTTP 200 OK 응답
@@ -92,6 +92,12 @@ public class DataController implements DataApi {
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_POPULAR_DATASETS, webResponse));
     }
 
+    /**
+     * 데이터셋의 상세 정보를 조회하여 반환합니다.
+     *
+     * @param dataId 조회할 데이터셋의 고유 식별자
+     * @return 데이터셋 상세 정보와 성공 상태가 포함된 HTTP 200 OK 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<DataDetailWebResponse>> getDataDetail(Long dataId) {
         DataDetailResponse responseDto = dataDetailUseCase.getDataDetail(dataId);

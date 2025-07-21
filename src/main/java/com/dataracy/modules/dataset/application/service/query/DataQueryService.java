@@ -118,10 +118,10 @@ public class DataQueryService implements
     }
 
     /**
-     * 주어진 데이터셋 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 대한 레이블 매핑 정보를 반환합니다.
+     * 데이터셋 DTO 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 해당하는 레이블 매핑 정보를 반환합니다.
      *
      * @param savedDataSets 프로젝트 개수가 포함된 데이터셋 DTO 컬렉션
-     * @return 각 ID별로 매핑된 사용자명, 토픽 레이블, 데이터 소스 레이블, 데이터 타입 레이블 정보를 담은 응답 객체
+     * @return 사용자명, 토픽 레이블, 데이터 소스 레이블, 데이터 타입 레이블의 매핑 정보를 담은 응답 객체
      */
     private DataLabelMappingResponse labelMapping(Collection<DataWithProjectCountDto> savedDataSets) {
         List<Long> userIds = savedDataSets.stream()
@@ -144,6 +144,15 @@ public class DataQueryService implements
                 getDataTypeLabelFromIdUseCase.getLabelsByIds(dataTypeIds)
         );
     }
+    /**
+     * 주어진 데이터 ID에 해당하는 데이터셋의 상세 정보를 조회합니다.
+     *
+     * 데이터셋의 기본 정보, 작성자 닉네임, 작성자 등급 및 직업 라벨, 주제/데이터 소스/데이터 타입 라벨, 기간, 설명, 분석 가이드, 썸네일 URL, 다운로드 수, 최근 일주일 다운로드 수, 메타데이터(행/열 개수, 미리보기 JSON), 생성일시를 포함한 상세 정보를 반환합니다.
+     *
+     * @param dataId 조회할 데이터셋의 ID
+     * @return 데이터셋의 상세 정보를 담은 DataDetailResponse 객체
+     * @throws DataException 데이터셋이 존재하지 않을 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public DataDetailResponse getDataDetail(Long dataId) {
