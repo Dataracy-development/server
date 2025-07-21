@@ -13,8 +13,10 @@ import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.vo.DataUser;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
@@ -47,6 +49,8 @@ public class DataQueryService implements
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
     private final GetUserInfoUseCase getUserInfoUseCase;
+    private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+    private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
 
     /**
      * 주어진 데이터 ID에 해당하는 데이터의 존재 여부를 검증합니다.
@@ -148,10 +152,15 @@ public class DataQueryService implements
         UserInfo userInfo = getUserInfoUseCase.getUserInfo(data.getUserId());
         DataUser dataUser = DataUser.from(userInfo);
 
+        String authorLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(dataUser.authorLevelId());
+        String occupationLabel = getOccupationLabelFromIdUseCase.getLabelById(dataUser.occupationId());
+
         return new DataDetailResponse(
                 data.getId(),
                 data.getTitle(),
                 dataUser.nickname(),
+                authorLabel,
+                occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(data.getTopicId()),
                 getDataSourceLabelFromIdUseCase.getLabelById(data.getDataSourceId()),
                 getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId()),
