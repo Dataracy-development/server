@@ -28,10 +28,10 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
     /**
-     * 주어진 데이터 ID로 데이터를 조회하여 Optional로 반환합니다.
+     * 주어진 데이터 ID에 해당하는 데이터를 조회하여 Optional로 반환합니다.
      *
      * @param dataId 조회할 데이터의 고유 식별자
-     * @return 데이터가 존재하면 도메인 객체를, 없으면 빈 Optional을 반환합니다.
+     * @return 데이터가 존재하면 도메인 Data 객체를, 없으면 빈 Optional을 반환합니다.
      */
     @Override
     public Optional<Data> findDataById(Long dataId) {
@@ -43,6 +43,12 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         return Optional.ofNullable(DataEntityMapper.toDomain(entity));
     }
 
+    /**
+     * 주어진 데이터 ID에 해당하는 데이터 엔티티를 조회하며, 연관된 메타데이터를 즉시 로딩하여 반환합니다.
+     *
+     * @param dataId 조회할 데이터의 ID
+     * @return 데이터와 메타데이터를 포함하는 도메인 객체의 Optional, 존재하지 않으면 빈 Optional 반환
+     */
     @Override
     public Optional<Data> findDataWithMetadataById(Long dataId) {
         DataEntity entity = queryFactory
