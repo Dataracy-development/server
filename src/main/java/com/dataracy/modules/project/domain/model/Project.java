@@ -49,7 +49,24 @@ public class Project {
     /**
      * 모든 속성 값을 지정하여 새로운 Project 인스턴스를 생성합니다.
      *
-     * @param childProjects 하위 프로젝트 목록을 포함하여 프로젝트 계층 구조를 설정할 때 사용합니다.
+     * @param id 프로젝트의 고유 식별자
+     * @param title 프로젝트 제목
+     * @param topicId 연관된 토픽의 식별자
+     * @param userId 프로젝트 소유자 또는 생성자의 식별자
+     * @param analysisPurposeId 분석 목적의 식별자
+     * @param dataSourceId 데이터 소스의 식별자
+     * @param authorLevelId 작성자 레벨의 식별자
+     * @param isContinue 프로젝트의 진행 여부
+     * @param parentProjectId 상위 프로젝트의 식별자
+     * @param content 프로젝트 설명 또는 내용
+     * @param fileUrl 프로젝트 썸네일 또는 관련 파일의 URL
+     * @param dataIds 연관된 데이터 엔티티의 식별자 목록
+     * @param createdAt 프로젝트 생성 시각
+     * @param commentCount 댓글 수
+     * @param likeCount 좋아요 수
+     * @param viewCount 조회 수
+     * @param isDeleted 삭제 여부
+     * @param childProjects 하위 프로젝트 목록
      * @return 지정된 모든 속성 값이 반영된 Project 객체
      */
     public static Project of(
