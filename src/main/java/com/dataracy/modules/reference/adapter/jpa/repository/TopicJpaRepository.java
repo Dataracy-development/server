@@ -2,6 +2,7 @@ package com.dataracy.modules.reference.adapter.jpa.repository;
 
 import com.dataracy.modules.reference.adapter.jpa.entity.TopicEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
@@ -12,5 +13,6 @@ public interface TopicJpaRepository extends JpaRepository<TopicEntity, Long> {
  * @param id 조회할 TopicEntity의 ID
  * @return 라벨이 존재하면 Optional로 감싸진 문자열, 없으면 빈 Optional
  */
+    @Query("SELECT a.label FROM TopicEntity a WHERE a.id = :id")
 Optional<String> findLabelById(Long id);
 }

@@ -176,6 +176,7 @@ public class UserQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserInfo getUserInfo(Long userId) {
         User user = userRepositoryPort.findUserById(userId)
                 .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
