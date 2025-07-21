@@ -1,6 +1,6 @@
 package com.dataracy.modules.common.util;
 
-import com.dataracy.modules.data.application.dto.response.MetadataParseResponse;
+import com.dataracy.modules.dataset.application.dto.response.MetadataParseResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -117,7 +117,6 @@ public class FileParsingUtil {
     private static MetadataParseResponse parseXlsx(InputStream is) throws IOException {
         try (var wb = WorkbookFactory.create(is)) {
             var sheet = wb.getSheetAt(SHEET_INDEX);
-            // ... 기존 로직 ...
             int rowCount = sheet.getPhysicalNumberOfRows();
             if (rowCount == 0) {
                 return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
