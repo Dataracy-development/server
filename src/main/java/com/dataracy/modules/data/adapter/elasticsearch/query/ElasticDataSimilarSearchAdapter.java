@@ -7,7 +7,7 @@ import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.util.ObjectBuilder;
 import com.dataracy.modules.data.adapter.elasticsearch.document.DataSearchDocument;
 import com.dataracy.modules.data.application.dto.response.DataSimilarSearchResponse;
-import com.dataracy.modules.data.application.elasticsearch.DataSimilarSearchPort;
+import com.dataracy.modules.data.application.port.elasticsearch.DataSimilarSearchPort;
 import com.dataracy.modules.data.domain.exception.DataException;
 import com.dataracy.modules.data.domain.model.Data;
 import com.dataracy.modules.data.domain.status.DataErrorStatus;
