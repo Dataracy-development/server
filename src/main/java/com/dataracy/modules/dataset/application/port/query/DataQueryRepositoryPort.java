@@ -1,5 +1,6 @@
 package com.dataracy.modules.dataset.application.port.query;
 
+import com.dataracy.modules.dataset.application.dto.response.DataWithProjectCountDto;
 import com.dataracy.modules.dataset.domain.model.Data;
 
 import java.util.List;
@@ -14,5 +15,5 @@ public interface DataQueryRepositoryPort {
  */
 Optional<Data> findDataById(Long dataId);
 
-    List<Data> findPopularDataSets(int size);
+    List<DataWithProjectCountDto> findPopularDataSets(int size);
 }

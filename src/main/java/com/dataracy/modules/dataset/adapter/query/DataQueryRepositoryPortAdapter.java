@@ -5,9 +5,12 @@ import com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity;
 import com.dataracy.modules.dataset.adapter.jpa.mapper.DataEntityMapper;
 import com.dataracy.modules.dataset.adapter.query.predicates.DataFilterPredicate;
 import com.dataracy.modules.dataset.adapter.query.sort.DataPopularOrderBuilder;
+import com.dataracy.modules.dataset.application.dto.response.DataWithProjectCountDto;
 import com.dataracy.modules.dataset.application.port.query.DataQueryRepositoryPort;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -41,16 +44,25 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
     }
 
     @Override
-    public List<Data> findPopularDataSets(int size) {
-        return queryFactory
-                .selectFrom(data)
+    public List<DataWithProjectCountDto> findPopularDataSets(int size) {
+        List<Tuple> tuples = queryFactory
+                .select(
+                        data,
+                        JPAExpressions
+                                .select(projectData.count())
+                                .from(projectData)
+                                .where(projectData.dataId.eq(data.id))
+                )
+                .from(data)
                 .leftJoin(data.metadata).fetchJoin()
                 .orderBy(DataPopularOrderBuilder.popularOrder(data, projectData))
-                .distinct()
                 .limit(size)
-                .fetch()
-                .stream()
-                .map(DataEntityMapper::toDomain)
+                .fetch();
+        return tuples.stream()
+                .map(tuple -> new DataWithProjectCountDto(
+                        DataEntityMapper.toDomain(tuple.get(data)),
+                        tuple.get(1, Long.class)
+                ))
                 .toList();
     }
 }
