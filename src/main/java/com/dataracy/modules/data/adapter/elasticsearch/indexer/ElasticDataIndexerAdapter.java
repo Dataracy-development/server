@@ -21,7 +21,7 @@ public class ElasticDataIndexerAdapter implements DataIndexingPort {
         try {
             log.info("데이터셋 인덱싱 시작: dataId={}", doc.id());
             client.index(i -> i
-                    .index("data")
+                    .index("data_index")
                     .id(doc.id().toString())
                     .document(doc)
             );

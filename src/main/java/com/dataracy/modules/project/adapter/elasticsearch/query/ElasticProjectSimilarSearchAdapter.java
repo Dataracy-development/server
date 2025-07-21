@@ -37,7 +37,7 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
     public List<ProjectSimilarSearchResponse> recommendSimilarProjects(Project project, int size) {
         try {
             SearchResponse<ProjectSearchDocument> response = client.search(s -> s
-                            .index("project")
+                            .index("project_index")
                             .size(size)
                             .sort(sort -> sort
                                     .field(f -> f.field("createdAt").order(SortOrder.Desc))
