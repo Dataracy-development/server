@@ -1,13 +1,13 @@
 package com.dataracy.modules.project.application.service.command;
 
 import com.dataracy.modules.common.util.FileUtil;
-import com.dataracy.modules.data.application.port.in.ValidateDataUseCase;
+import com.dataracy.modules.dataset.application.port.in.ValidateDataUseCase;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
-import com.dataracy.modules.project.application.port.out.ProjectIndexingPort;
+import com.dataracy.modules.project.application.port.elasticsearch.ProjectIndexingPort;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;

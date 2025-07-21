@@ -26,18 +26,18 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
     private final ElasticsearchClient client;
 
     /**
-     * 주어진 프로젝트와 유사한 프로젝트를 Elasticsearch에서 검색하여 추천 결과 목록을 반환합니다.
+     * 주어진 프로젝트와 유사한 프로젝트를 Elasticsearch에서 검색하여 추천 프로젝트 목록을 반환합니다.
      *
-     * @param project 기준이 되는 프로젝트 객체
+     * @param project 유사도를 판단할 기준 프로젝트
      * @param size 반환할 유사 프로젝트의 최대 개수
-     * @return 유사 프로젝트 추천 결과의 리스트
-     * @throws ProjectException 유사 프로젝트 검색에 실패한 경우 발생
+     * @return 유사 프로젝트 추천 결과 리스트
+     * @throws ProjectException Elasticsearch 검색에 실패한 경우 발생
      */
     @Override
     public List<ProjectSimilarSearchResponse> recommendSimilarProjects(Project project, int size) {
         try {
             SearchResponse<ProjectSearchDocument> response = client.search(s -> s
-                            .index("project")
+                            .index("project_index")
                             .size(size)
                             .sort(sort -> sort
                                     .field(f -> f.field("createdAt").order(SortOrder.Desc))
