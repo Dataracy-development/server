@@ -26,7 +26,7 @@ public class ElasticProjectIndexerAdapter implements ProjectIndexingPort {
         try {
             log.info("프로젝트 인덱싱 시작: projectId={}", doc.id());
             client.index(i -> i
-                    .index("project")
+                    .index("project_index")
                     .id(doc.id().toString())
                     .document(doc)
             );

@@ -29,7 +29,7 @@ public class ElasticDataSimilarSearchAdapter implements DataSimilarSearchPort {
     public List<DataSimilarSearchResponse> recommendSimilarDataSets(Data data, int size) {
         try {
             SearchResponse<DataSearchDocument> response = client.search(s -> s
-                            .index("data")
+                            .index("data_index")
                             .size(size)
                             .sort(sort -> sort
                                     .field(f -> f.field("createdAt").order(SortOrder.Desc))
