@@ -33,6 +33,12 @@ public class DataSearchWebMapper {
         );
     }
 
+    /**
+     * DataPopularSearchResponse 도메인 객체를 DataPopularSearchWebResponse 웹 응답 객체로 변환합니다.
+     *
+     * @param responseDto 변환할 도메인 응답 DTO
+     * @return 변환된 웹 응답 DTO
+     */
     public DataPopularSearchWebResponse toWebDto(DataPopularSearchResponse responseDto) {
         return new DataPopularSearchWebResponse(
                 responseDto.id(),
