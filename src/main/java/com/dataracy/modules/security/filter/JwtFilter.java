@@ -59,13 +59,13 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    /**
-     * 인증이 필요 없는 특정 경로에 대해 JWT 필터 적용을 건너뜁니다.
+    /****
+     * 인증이 필요 없는 특정 요청 경로에 대해 JWT 필터 적용을 건너뜁니다.
      *
-     * Swagger, API 문서, 정적 리소스, 웹훅, 로그인, OAuth2, 루트, 에러, 공개 API, 파비콘, 프로젝트 검색 등 인증 없이 접근 가능한 요청 경로에 대해 true를 반환합니다.
+     * Swagger, API 문서, 정적 리소스, 웹훅, 로그인, OAuth2, 루트, 에러, 공개 API, 파비콘, 프로젝트 관련 GET 요청 등 사전에 정의된 경로에 대해 true를 반환하여 JWT 인증을 우회합니다.
      *
      * @param request 현재 HTTP 요청 객체
-     * @return 해당 요청 경로가 필터 예외 대상이면 true, 그렇지 않으면 false
+     * @return 요청 경로가 필터 예외 대상이면 true, 그렇지 않으면 false
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -84,7 +84,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 || path.startsWith("/api/v1/signup")
                 || path.startsWith("/api/v1/auth")
                 || path.equals("/api/v1/nickname/check")
-                || path.startsWith("/api/v1/projects/search")
+                || path.startsWith("/api/v1/projects/search")  || (path.startsWith("/api/v1/projects") && request.getMethod().equals("GET"))
                 ;
     }
 
