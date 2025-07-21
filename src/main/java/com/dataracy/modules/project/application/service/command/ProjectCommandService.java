@@ -77,10 +77,10 @@ public class ProjectCommandService implements ProjectUploadUseCase {
 
         // 부모 프로젝트 조회
         Long parentProjectId = null;
-
-        if (!projectRepositoryPort.existsProjectById(requestDto.parentProjectId())) {
-            throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
-        } else {
+        if (requestDto.parentProjectId() != null) {
+            if (!projectRepositoryPort.existsProjectById(requestDto.parentProjectId())) {
+                throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
+            }
             parentProjectId = requestDto.parentProjectId();
         }
 
