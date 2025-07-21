@@ -4,9 +4,12 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataSearchWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
+import com.dataracy.modules.dataset.application.dto.response.DataPopularSearchResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataSimilarSearchResponse;
+import com.dataracy.modules.dataset.application.port.in.DataPopularSearchUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataSimilarSearchUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataUploadUseCase;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
@@ -26,6 +29,7 @@ public class DataController implements DataApi {
 
     private final DataUploadUseCase dataUploadUseCase;
     private final DataSimilarSearchUseCase dataSimilarSearchUseCase;
+    private final DataPopularSearchUseCase dataPopularSearchUseCase;
 
     /**
      * 데이터 업로드 요청을 처리하여 데이터셋을 생성하고, 성공 상태의 HTTP 201(Created) 응답을 반환합니다.
@@ -65,5 +69,16 @@ public class DataController implements DataApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_SIMILAR_DATASETS, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<List<DataPopularSearchWebResponse>>> searchPopularDataSets(int size) {
+        List<DataPopularSearchResponse> responseDto = dataPopularSearchUseCase.findPopularDataSets(size);
+        List<DataPopularSearchWebResponse> webResponse = responseDto.stream()
+                .map(dataSearchWebMapper::toWebDto)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.FIND_POPULAR_DATASETS, webResponse));
     }
 }

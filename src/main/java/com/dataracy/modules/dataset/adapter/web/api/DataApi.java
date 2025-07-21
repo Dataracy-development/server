@@ -3,6 +3,7 @@ package com.dataracy.modules.dataset.adapter.web.api;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -75,6 +76,22 @@ public interface DataApi {
             @Min(1)
             Long dataId,
 
+            @RequestParam(name = "size")
+            @Min(1)
+            int size
+    );
+
+    @Operation(
+            summary = "인기있는 데이터셋을 조회한다.",
+            description = "다운로드가 많은, 연결된 프로젝트 개수가 많은 데이터셋을 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인기 있는 데이터셋 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/search/popular")
+    ResponseEntity<SuccessResponse<List<DataPopularSearchWebResponse>>> searchPopularDataSets(
             @RequestParam(name = "size")
             @Min(1)
             int size
