@@ -17,7 +17,7 @@ services:
     container_name: nginx-proxy-dev
     restart: always
     ports:
-      - "8084:80"
+      - "8083:80"
     volumes:
       - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ../nginx/upstream-dev.conf:/etc/nginx/conf.d/upstream-dev.conf:ro
