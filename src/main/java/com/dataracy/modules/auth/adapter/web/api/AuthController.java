@@ -72,8 +72,8 @@ public class AuthController implements AuthApi {
 
     // 어세스 토큰, 어세스 토큰 만료기간, 리프레시 토큰 쿠키 저장
     private void setResponseHeaders(HttpServletResponse response, ReIssueTokenResponse responseDto) {
-        CookieUtil.setCookie(response, "accessToken", responseDto.accessToken(), (int) responseDto.accessTokenExpiration() / 1000);
-        CookieUtil.setCookie(response, "accessTokenExpiration", String.valueOf(responseDto.accessTokenExpiration()), (int) responseDto.accessTokenExpiration() / 1000);
-        CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), (int) responseDto.refreshTokenExpiration() / 1000);
+        CookieUtil.setCookie(response, "accessToken", responseDto.accessToken(), (int) (responseDto.accessTokenExpiration() / 1000));
+        CookieUtil.setCookie(response, "accessTokenExpiration", String.valueOf(responseDto.accessTokenExpiration()), (int) (responseDto.accessTokenExpiration() / 1000));
+        CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), (int) (responseDto.refreshTokenExpiration() / 1000));
     }
 }
