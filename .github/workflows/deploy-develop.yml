@@ -8,9 +8,10 @@ env:
   IMAGE_NAME: juuuunny/backend
 
 jobs:
-  build:
+  deploy-develop:
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout Source
         uses: actions/checkout@v3
 
@@ -54,9 +55,8 @@ jobs:
         run: |
           docker build -t $IMAGE_NAME:$TAG_NAME -f Dockerfile .
           docker push $IMAGE_NAME:$TAG_NAME
-  deploy-develop:
-    runs-on: ubuntu-latest
-    steps:
+
+      #여기부터 ec2
       - name: Save PEM key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > ec2key.pem
