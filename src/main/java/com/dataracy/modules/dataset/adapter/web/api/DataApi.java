@@ -160,4 +160,23 @@ public interface DataApi {
             @Min(1)
             int size
     );
+
+    @Operation(
+            summary = "데이터셋 자동완성 검색 기능",
+            description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/real-time")
+    ResponseEntity<SuccessResponse<List<DataMinimalSearchWebResponse>>> getRealTimeDataSets(
+            @RequestParam
+            String keyword,
+
+            @RequestParam(name = "size")
+            @Min(1)
+            int size
+    );
 }
