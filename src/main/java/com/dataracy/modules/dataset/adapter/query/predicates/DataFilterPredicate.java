@@ -57,4 +57,6 @@ private DataFilterPredicate() {}
     public static BooleanExpression dataTypeIdEq(Long dataTypeId) {
         return dataTypeId == null ? null : dataEntity.dataTypeId.eq(dataTypeId);
     }
+
+
 }
