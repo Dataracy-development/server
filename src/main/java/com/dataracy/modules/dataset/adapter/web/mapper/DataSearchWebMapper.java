@@ -79,7 +79,8 @@ public class DataSearchWebMapper {
         return new DataMinimalSearchWebResponse(
                 responseDto.id(),
                 responseDto.title(),
-                responseDto.thumbnailUrl()
+                responseDto.thumbnailUrl(),
+                responseDto.createAt()
         );
     }
 }
