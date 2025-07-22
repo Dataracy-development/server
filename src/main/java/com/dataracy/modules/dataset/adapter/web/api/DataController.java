@@ -3,20 +3,27 @@ package com.dataracy.modules.dataset.adapter.web.api;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataSearchWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataWebMapper;
+import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
+import com.dataracy.modules.dataset.adapter.web.response.FilteredDataWebResponse;
+import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
 import com.dataracy.modules.dataset.application.dto.response.DataDetailResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataPopularSearchResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataSimilarSearchResponse;
-import com.dataracy.modules.dataset.application.port.in.DataDetailUseCase;
-import com.dataracy.modules.dataset.application.port.in.DataPopularSearchUseCase;
-import com.dataracy.modules.dataset.application.port.in.DataSimilarSearchUseCase;
-import com.dataracy.modules.dataset.application.port.in.DataUploadUseCase;
+import com.dataracy.modules.dataset.application.dto.response.FilteredDataResponse;
+import com.dataracy.modules.dataset.application.port.in.*;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
+import com.dataracy.modules.project.adapter.web.response.ProjectFilterWebResponse;
+import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
+import com.dataracy.modules.project.application.dto.response.ProjectFilterResponse;
+import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +41,7 @@ public class DataController implements DataApi {
     private final DataSimilarSearchUseCase dataSimilarSearchUseCase;
     private final DataPopularSearchUseCase dataPopularSearchUseCase;
     private final DataDetailUseCase dataDetailUseCase;
+    private final DataFilteredSearchUseCase dataFilteredSearchUseCase;
 
     /**
      * 데이터 업로드 요청을 처리하여 데이터셋을 생성하고, 성공 상태의 HTTP 201(Created) 응답을 반환합니다.
@@ -90,6 +98,16 @@ public class DataController implements DataApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_POPULAR_DATASETS, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Page<FilteredDataWebResponse>>> searchFilteredDataSets(DataFilterWebRequest webRequest, Pageable pageable) {
+        DataFilterRequest requestDto = dataSearchWebMapper.toApplicationDto(webRequest);
+        Page<FilteredDataResponse> responseDto = dataFilteredSearchUseCase.findFilterdDataSets(requestDto, pageable);
+        Page<FilteredDataWebResponse> webResponse = responseDto.map(dataWebMapper::toWebDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.FIND_FILTERED_DATASETS, webResponse));
     }
 
     /**

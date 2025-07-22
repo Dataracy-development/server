@@ -126,9 +126,10 @@ public class DataQueryService implements
         DataSortType sortType = (request.sortType() != null && !request.sortType().isEmpty())
                 ? DataSortType.of(request.sortType())
                 : null;
+
         Page<DataWithProjectCountDto> savedDataSets = dataQueryRepositoryPort.searchByFilters(request, pageable, sortType);
 
-        DataLabelMappingResponse labelResponse = labelMapping((Collection<DataWithProjectCountDto>) savedDataSets);
+        DataLabelMappingResponse labelResponse = labelMapping(savedDataSets.getContent());
 
         return savedDataSets.map(wrapper -> {
             Data data = wrapper.data();
@@ -141,6 +142,7 @@ public class DataQueryService implements
             );
         });
     }
+
 
     /**
      * 데이터셋 DTO 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 해당하는 레이블 매핑 정보를 반환합니다.
