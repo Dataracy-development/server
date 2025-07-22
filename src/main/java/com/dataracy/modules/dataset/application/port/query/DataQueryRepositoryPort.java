@@ -1,7 +1,11 @@
 package com.dataracy.modules.dataset.application.port.query;
 
+import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
 import com.dataracy.modules.dataset.application.dto.response.DataWithProjectCountDto;
+import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import com.dataracy.modules.dataset.domain.model.Data;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,4 +34,6 @@ Optional<Data> findDataWithMetadataById(Long dataId);
  * @return 인기 순으로 정렬된 데이터셋과 각 데이터셋의 프로젝트 수 정보를 담은 리스트
  */
 List<DataWithProjectCountDto> findPopularDataSets(int size);
+
+    Page<DataWithProjectCountDto> searchByFilters(DataFilterRequest request, Pageable pageable, DataSortType sortType);
 }
