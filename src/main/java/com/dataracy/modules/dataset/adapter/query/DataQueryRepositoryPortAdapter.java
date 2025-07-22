@@ -154,4 +154,17 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
 
         return new PageImpl<>(contents, pageable, total);
     }
+
+    @Override
+    public List<Data> findRecentDataSets(int size) {
+        List<DataEntity> dataEntities = queryFactory
+                .selectFrom(data)
+                .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
+                .limit(size)
+                .fetch();
+
+        return dataEntities.stream()
+                .map(DataEntityMapper::toDomain)
+                .toList();
+    }
 }
