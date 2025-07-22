@@ -5,6 +5,7 @@ import com.dataracy.modules.dataset.application.dto.response.*;
 import com.dataracy.modules.dataset.application.mapper.FilterDataDtoMapper;
 import com.dataracy.modules.dataset.application.mapper.PopularDataSetsDtoMapper;
 import com.dataracy.modules.dataset.application.mapper.RecentDataSetsDtoMapper;
+import com.dataracy.modules.dataset.application.port.elasticsearch.DataRealTimeSearchPort;
 import com.dataracy.modules.dataset.application.port.elasticsearch.DataSimilarSearchPort;
 import com.dataracy.modules.dataset.application.port.in.*;
 import com.dataracy.modules.dataset.application.port.out.DataRepositoryPort;
@@ -41,7 +42,8 @@ public class DataQueryService implements
         DataPopularSearchUseCase,
         DataDetailUseCase,
         DataFilteredSearchUseCase,
-        DataRecentUseCase
+        DataRecentUseCase,
+        DataRealTimeUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
     private final FilterDataDtoMapper filterDataDtoMapper;
@@ -50,6 +52,7 @@ public class DataQueryService implements
     private final DataRepositoryPort dataRepositoryPort;
     private final DataSimilarSearchPort dataSimilarSearchPort;
     private final DataQueryRepositoryPort dataQueryRepositoryPort;
+    private final DataRealTimeSearchPort dataRealTimeSearchPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
@@ -224,5 +227,10 @@ public class DataQueryService implements
         return responseDto.stream()
                 .map(recentDataSetsDtoMapper::toResponseDto)
                 .toList();
+    }
+
+    @Override
+    public List<DataMinimalSearchResponse> findRealTimeDataSets(String keyword, int size) {
+        return dataRealTimeSearchPort.search(keyword, size);
     }
 }
