@@ -1,9 +1,11 @@
 package com.dataracy.modules.dataset.adapter.web.mapper;
 
 import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.DataMinimalSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
+import com.dataracy.modules.dataset.application.dto.response.DataMinimalSearchResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataPopularSearchResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataSimilarSearchResponse;
 import org.springframework.stereotype.Component;
@@ -70,6 +72,14 @@ public class DataSearchWebMapper {
                 webRequest.dataSourceId(),
                 webRequest.dataTypeId(),
                 webRequest.year()
+        );
+    }
+
+    public DataMinimalSearchWebResponse toWebDto(DataMinimalSearchResponse responseDto) {
+        return new DataMinimalSearchWebResponse(
+                responseDto.id(),
+                responseDto.title(),
+                responseDto.thumbnailUrl()
         );
     }
 }
