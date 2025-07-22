@@ -5,14 +5,21 @@ import com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity;
 import com.dataracy.modules.dataset.adapter.jpa.mapper.DataEntityMapper;
 import com.dataracy.modules.dataset.adapter.query.predicates.DataFilterPredicate;
 import com.dataracy.modules.dataset.adapter.query.sort.DataPopularOrderBuilder;
+import com.dataracy.modules.dataset.adapter.query.sort.DataSortBuilder;
+import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
 import com.dataracy.modules.dataset.application.dto.response.DataWithProjectCountDto;
 import com.dataracy.modules.dataset.application.port.query.DataQueryRepositoryPort;
+import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -89,5 +96,52 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
                         tuple.get(1, Long.class)
                 ))
                 .toList();
+    }
+
+    private BooleanExpression[] buildFilterPredicates(DataFilterRequest request) {
+        return new BooleanExpression[] {
+                DataFilterPredicate.keywordContains(request.keyword()),
+                DataFilterPredicate.topicIdEq(request.topicId()),
+                DataFilterPredicate.dataSourceIdEq(request.dataSourceId()),
+                DataFilterPredicate.dataTypeIdEq(request.dataTypeId()),
+        };
+    }
+
+    @Override
+    public Page<DataWithProjectCountDto> searchByFilters(DataFilterRequest request, Pageable pageable, DataSortType sortType) {
+        List<Tuple> tuples = queryFactory
+                .select(
+                        data,
+                        JPAExpressions
+                                .select(projectData.count())
+                                .from(projectData)
+                                .where(projectData.dataId.eq(data.id))
+                )
+                .from(data)
+                .distinct()
+                .orderBy(DataSortBuilder.fromSortOption(sortType))
+                .leftJoin(data.metadata).fetchJoin()
+                .where(buildFilterPredicates(request))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        List<DataWithProjectCountDto> contents = tuples.stream()
+                .map(tuple -> new DataWithProjectCountDto(
+                        DataEntityMapper.toDomain(tuple.get(data)),
+                        tuple.get(1, Long.class)
+                ))
+                .toList();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(data.count())
+                        .from(data)
+                        .distinct()
+                        .where(buildFilterPredicates(request))
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(contents, pageable, total);
     }
 }

@@ -44,6 +44,10 @@ private DataFilterPredicate() {}
         return topicId == null ? null : dataEntity.topicId.eq(topicId);
     }
 
+    public static BooleanExpression dataSourceIdEq(Long dataSourceId) {
+        return dataSourceId == null ? null : dataEntity.dataSourceId.eq(dataSourceId);
+    }
+
     /**
      * 주어진 데이터 타입 ID와 일치하는 데이터 엔티티만 필터링하는 QueryDSL 조건식을 반환합니다.
      *
