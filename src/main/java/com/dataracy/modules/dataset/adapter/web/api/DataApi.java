@@ -7,7 +7,7 @@ import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
-import com.dataracy.modules.dataset.adapter.web.response.FilteredDataWebResponse;
+import com.dataracy.modules.dataset.adapter.web.response.DataFilterWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -119,7 +119,7 @@ public interface DataApi {
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
     @GetMapping("/search/filter")
-    ResponseEntity<SuccessResponse<Page<FilteredDataWebResponse>>> searchFilteredDataSets(
+    ResponseEntity<SuccessResponse<Page<DataFilterWebResponse>>> searchFilteredDataSets(
             @Validated @ModelAttribute
             DataFilterWebRequest webRequest,
 

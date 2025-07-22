@@ -1,9 +1,9 @@
-package com.dataracy.modules.dataset.application.dto.response;
+package com.dataracy.modules.dataset.adapter.web.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public record FilteredDataResponse(
+public record DataFilterWebResponse(
         Long id,
         String title,
         String topicLabel,
