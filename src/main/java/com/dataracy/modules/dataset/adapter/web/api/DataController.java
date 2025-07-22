@@ -1,26 +1,23 @@
 package com.dataracy.modules.dataset.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.dataset.adapter.web.mapper.DataFilterWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataSearchWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
+import com.dataracy.modules.dataset.adapter.web.response.DataFilterWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
-import com.dataracy.modules.dataset.adapter.web.response.FilteredDataWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
 import com.dataracy.modules.dataset.application.dto.response.DataDetailResponse;
+import com.dataracy.modules.dataset.application.dto.response.DataFilterResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataPopularSearchResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataSimilarSearchResponse;
-import com.dataracy.modules.dataset.application.dto.response.FilteredDataResponse;
 import com.dataracy.modules.dataset.application.port.in.*;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
-import com.dataracy.modules.project.adapter.web.response.ProjectFilterWebResponse;
-import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
-import com.dataracy.modules.project.application.dto.response.ProjectFilterResponse;
-import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +33,7 @@ import java.util.List;
 public class DataController implements DataApi {
     private final DataWebMapper dataWebMapper;
     private final DataSearchWebMapper dataSearchWebMapper;
+    private final DataFilterWebMapper dataFilterWebMapper;
 
     private final DataUploadUseCase dataUploadUseCase;
     private final DataSimilarSearchUseCase dataSimilarSearchUseCase;
@@ -101,10 +99,10 @@ public class DataController implements DataApi {
     }
 
     @Override
-    public ResponseEntity<SuccessResponse<Page<FilteredDataWebResponse>>> searchFilteredDataSets(DataFilterWebRequest webRequest, Pageable pageable) {
+    public ResponseEntity<SuccessResponse<Page<DataFilterWebResponse>>> searchFilteredDataSets(DataFilterWebRequest webRequest, Pageable pageable) {
         DataFilterRequest requestDto = dataSearchWebMapper.toApplicationDto(webRequest);
-        Page<FilteredDataResponse> responseDto = dataFilteredSearchUseCase.findFilterdDataSets(requestDto, pageable);
-        Page<FilteredDataWebResponse> webResponse = responseDto.map(dataWebMapper::toWebDto);
+        Page<DataFilterResponse> responseDto = dataFilteredSearchUseCase.findFilterdDataSets(requestDto, pageable);
+        Page<DataFilterWebResponse> webResponse = responseDto.map(dataFilterWebMapper::toWebDto);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_FILTERED_DATASETS, webResponse));

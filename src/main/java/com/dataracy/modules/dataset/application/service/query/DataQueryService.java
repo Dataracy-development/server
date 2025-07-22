@@ -122,7 +122,7 @@ public class DataQueryService implements
     }
 
     @Override
-    public Page<FilteredDataResponse> findFilterdDataSets(DataFilterRequest request, Pageable pageable) {
+    public Page<DataFilterResponse> findFilterdDataSets(DataFilterRequest request, Pageable pageable) {
         DataSortType sortType = (request.sortType() != null && !request.sortType().isEmpty())
                 ? DataSortType.of(request.sortType())
                 : null;

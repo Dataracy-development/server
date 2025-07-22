@@ -1,6 +1,6 @@
 package com.dataracy.modules.dataset.application.mapper;
 
-import com.dataracy.modules.dataset.application.dto.response.FilteredDataResponse;
+import com.dataracy.modules.dataset.application.dto.response.DataFilterResponse;
 import com.dataracy.modules.dataset.domain.model.Data;
 import org.springframework.stereotype.Component;
 
@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class FilterDataDtoMapper {
-    public FilteredDataResponse toResponseDto(
+    public DataFilterResponse toResponseDto(
             Data data,
             String topicLabel,
             String dataSourceLabel,
             String dataTypeLabel,
             Long countConnectedProjects
     ) {
-        return new FilteredDataResponse(
+        return new DataFilterResponse(
                 data.getId(),
                 data.getTitle(),
                 topicLabel,
