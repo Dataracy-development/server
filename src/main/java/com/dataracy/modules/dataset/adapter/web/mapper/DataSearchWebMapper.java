@@ -1,7 +1,9 @@
 package com.dataracy.modules.dataset.adapter.web.mapper;
 
+import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
+import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
 import com.dataracy.modules.dataset.application.dto.response.DataPopularSearchResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataSimilarSearchResponse;
 import org.springframework.stereotype.Component;
@@ -57,6 +59,17 @@ public class DataSearchWebMapper {
                 responseDto.columnCount(),
                 responseDto.createdAt(),
                 responseDto.countConnectedProjects()
+        );
+    }
+
+    public DataFilterRequest toApplicationDto(DataFilterWebRequest webRequest) {
+        return new DataFilterRequest(
+                webRequest.keyword(),
+                webRequest.sortType(),
+                webRequest.topicId(),
+                webRequest.dataSourceId(),
+                webRequest.dataTypeId(),
+                webRequest.year()
         );
     }
 }
