@@ -3,6 +3,7 @@ package com.dataracy.modules.dataset.adapter.query;
 import com.dataracy.modules.dataset.adapter.jpa.entity.DataEntity;
 import com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity;
 import com.dataracy.modules.dataset.adapter.jpa.mapper.DataEntityMapper;
+import com.dataracy.modules.dataset.adapter.query.predicates.DataDatePredicate;
 import com.dataracy.modules.dataset.adapter.query.predicates.DataFilterPredicate;
 import com.dataracy.modules.dataset.adapter.query.sort.DataPopularOrderBuilder;
 import com.dataracy.modules.dataset.adapter.query.sort.DataSortBuilder;
@@ -107,6 +108,7 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
                 DataFilterPredicate.topicIdEq(request.topicId()),
                 DataFilterPredicate.dataSourceIdEq(request.dataSourceId()),
                 DataFilterPredicate.dataTypeIdEq(request.dataTypeId()),
+                DataDatePredicate.yearBetween(request.year())
         };
     }
 
