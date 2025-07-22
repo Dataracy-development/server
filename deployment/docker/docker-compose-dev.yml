@@ -4,7 +4,7 @@ services:
     container_name: backend-dev
     restart: always
     ports:
-      - "8083:8080"
+      - "8080"
     env_file:
       - /home/ubuntu/env-config/.env.dev
     environment:
