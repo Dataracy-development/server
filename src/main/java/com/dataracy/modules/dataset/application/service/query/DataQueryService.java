@@ -1,14 +1,14 @@
 package com.dataracy.modules.dataset.application.service.query;
 
+import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
 import com.dataracy.modules.dataset.application.dto.response.*;
+import com.dataracy.modules.dataset.application.mapper.FilterDataDtoMapper;
 import com.dataracy.modules.dataset.application.mapper.PopularDataSetsDtoMapper;
 import com.dataracy.modules.dataset.application.port.elasticsearch.DataSimilarSearchPort;
-import com.dataracy.modules.dataset.application.port.in.DataDetailUseCase;
-import com.dataracy.modules.dataset.application.port.in.DataPopularSearchUseCase;
-import com.dataracy.modules.dataset.application.port.in.DataSimilarSearchUseCase;
-import com.dataracy.modules.dataset.application.port.in.ValidateDataUseCase;
+import com.dataracy.modules.dataset.application.port.in.*;
 import com.dataracy.modules.dataset.application.port.out.DataRepositoryPort;
 import com.dataracy.modules.dataset.application.port.query.DataQueryRepositoryPort;
+import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.vo.DataUser;
@@ -23,6 +23,8 @@ import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,9 +38,11 @@ public class DataQueryService implements
         ValidateDataUseCase,
         DataSimilarSearchUseCase,
         DataPopularSearchUseCase,
-        DataDetailUseCase
+        DataDetailUseCase,
+        DataFilteredSearchUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
+    private final FilterDataDtoMapper filterDataDtoMapper;
 
     private final DataRepositoryPort dataRepositoryPort;
     private final DataSimilarSearchPort dataSimilarSearchPort;
@@ -115,6 +119,27 @@ public class DataQueryService implements
                     );
                 })
                 .toList();
+    }
+
+    @Override
+    public Page<FilteredDataResponse> findFilterdDataSets(DataFilterRequest request, Pageable pageable) {
+        DataSortType sortType = (request.sortType() != null && !request.sortType().isEmpty())
+                ? DataSortType.of(request.sortType())
+                : null;
+        Page<DataWithProjectCountDto> savedDataSets = dataQueryRepositoryPort.searchByFilters(request, pageable, sortType);
+
+        DataLabelMappingResponse labelResponse = labelMapping((Collection<DataWithProjectCountDto>) savedDataSets);
+
+        return savedDataSets.map(wrapper -> {
+            Data data = wrapper.data();
+            return filterDataDtoMapper.toResponseDto(
+                    data,
+                    labelResponse.topicLabelMap().get(data.getTopicId()),
+                    labelResponse.dataSourceLabelMap().get(data.getDataSourceId()),
+                    labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
+                    wrapper.countConnectedProjects()
+            );
+        });
     }
 
     /**
