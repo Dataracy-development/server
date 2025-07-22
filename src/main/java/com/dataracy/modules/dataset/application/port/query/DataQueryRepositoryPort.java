@@ -1,6 +1,7 @@
 package com.dataracy.modules.dataset.application.port.query;
 
 import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
+import com.dataracy.modules.dataset.application.dto.response.CountDataGroupResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataWithProjectCountDto;
 import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import com.dataracy.modules.dataset.domain.model.Data;
@@ -38,4 +39,5 @@ List<DataWithProjectCountDto> findPopularDataSets(int size);
     Page<DataWithProjectCountDto> searchByFilters(DataFilterRequest request, Pageable pageable, DataSortType sortType);
 
     List<Data> findRecentDataSets(int size);
+    List<CountDataGroupResponse> countDataGroups();
 }

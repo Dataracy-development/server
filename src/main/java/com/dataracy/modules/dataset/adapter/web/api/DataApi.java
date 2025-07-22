@@ -179,4 +179,16 @@ public interface DataApi {
             @Min(1)
             int size
     );
+
+    @Operation(
+            summary = "카테고리별 데이터셋 개수를 카운트한다.",
+            description = "카테고리별 데이터셋 개수를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "카테고리별 데이터셋 개수를 조회한다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/group-by/topic")
+    ResponseEntity<SuccessResponse<List<CountDataGroupWebResponse>>> countDataSetsByTopicLabel();
 }

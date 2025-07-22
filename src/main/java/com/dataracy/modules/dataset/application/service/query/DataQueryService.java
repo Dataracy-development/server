@@ -43,7 +43,8 @@ public class DataQueryService implements
         DataDetailUseCase,
         DataFilteredSearchUseCase,
         DataRecentUseCase,
-        DataRealTimeUseCase
+        DataRealTimeUseCase,
+        CountDataGroupByTopicLabelUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
     private final FilterDataDtoMapper filterDataDtoMapper;
@@ -232,5 +233,10 @@ public class DataQueryService implements
     @Override
     public List<DataMinimalSearchResponse> findRealTimeDataSets(String keyword, int size) {
         return dataRealTimeSearchPort.search(keyword, size);
+    }
+
+    @Override
+    public List<CountDataGroupResponse> countDataGroups() {
+        return dataQueryRepositoryPort.countDataGroups();
     }
 }

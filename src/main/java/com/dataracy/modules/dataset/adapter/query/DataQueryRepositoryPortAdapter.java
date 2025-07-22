@@ -8,13 +8,16 @@ import com.dataracy.modules.dataset.adapter.query.predicates.DataFilterPredicate
 import com.dataracy.modules.dataset.adapter.query.sort.DataPopularOrderBuilder;
 import com.dataracy.modules.dataset.adapter.query.sort.DataSortBuilder;
 import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
+import com.dataracy.modules.dataset.application.dto.response.CountDataGroupResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataWithProjectCountDto;
 import com.dataracy.modules.dataset.application.port.query.DataQueryRepositoryPort;
 import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
+import com.dataracy.modules.reference.adapter.jpa.entity.QTopicEntity;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
@@ -37,6 +40,7 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
 
     private final QDataEntity data = QDataEntity.dataEntity;
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
+    private final QTopicEntity topic = QTopicEntity.topicEntity;
 
     /**
      * 주어진 데이터 ID에 해당하는 데이터를 조회하여 Optional로 반환합니다.
@@ -166,5 +170,19 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         return dataEntities.stream()
                 .map(DataEntityMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<CountDataGroupResponse> countDataGroups() {
+        return queryFactory
+                .select(Projections.constructor(CountDataGroupResponse.class,
+                        topic.id,
+                        topic.label,
+                        data.count()
+                ))
+                .from(data)
+                .join(topic).on(data.topicId.eq(topic.id))
+                .groupBy(topic.label)
+                .fetch();
     }
 }
