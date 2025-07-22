@@ -36,4 +36,6 @@ Optional<Data> findDataWithMetadataById(Long dataId);
 List<DataWithProjectCountDto> findPopularDataSets(int size);
 
     Page<DataWithProjectCountDto> searchByFilters(DataFilterRequest request, Pageable pageable, DataSortType sortType);
+
+    List<Data> findRecentDataSets(int size);
 }

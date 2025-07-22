@@ -4,6 +4,7 @@ import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
 import com.dataracy.modules.dataset.application.dto.response.*;
 import com.dataracy.modules.dataset.application.mapper.FilterDataDtoMapper;
 import com.dataracy.modules.dataset.application.mapper.PopularDataSetsDtoMapper;
+import com.dataracy.modules.dataset.application.mapper.RecentDataSetsDtoMapper;
 import com.dataracy.modules.dataset.application.port.elasticsearch.DataSimilarSearchPort;
 import com.dataracy.modules.dataset.application.port.in.*;
 import com.dataracy.modules.dataset.application.port.out.DataRepositoryPort;
@@ -39,10 +40,12 @@ public class DataQueryService implements
         DataSimilarSearchUseCase,
         DataPopularSearchUseCase,
         DataDetailUseCase,
-        DataFilteredSearchUseCase
+        DataFilteredSearchUseCase,
+        DataRecentUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
     private final FilterDataDtoMapper filterDataDtoMapper;
+    private final RecentDataSetsDtoMapper recentDataSetsDtoMapper;
 
     private final DataRepositoryPort dataRepositoryPort;
     private final DataSimilarSearchPort dataSimilarSearchPort;
@@ -212,5 +215,14 @@ public class DataQueryService implements
                 data.getMetadata().getPreviewJson(),
                 data.getCreatedAt()
         );
+    }
+
+    @Override
+    public List<DataMinimalSearchResponse> findRecentDataSets(int size) {
+        List<Data> responseDto = dataQueryRepositoryPort.findRecentDataSets(size);
+
+        return responseDto.stream()
+                .map(recentDataSetsDtoMapper::toResponseDto)
+                .toList();
     }
 }
