@@ -2,9 +2,14 @@ package com.dataracy.modules.dataset.adapter.web.mapper;
 
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
+import com.dataracy.modules.dataset.adapter.web.response.FilteredDataWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
 import com.dataracy.modules.dataset.application.dto.response.DataDetailResponse;
+import com.dataracy.modules.dataset.application.dto.response.FilteredDataResponse;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 public class DataWebMapper {
@@ -56,6 +61,26 @@ public class DataWebMapper {
                 responseDto.columnCount(),
                 responseDto.previewJson(),
                 responseDto.createdAt()
+        );
+    }
+
+    public FilteredDataWebResponse toWebDto(FilteredDataResponse responseDto) {
+        return new FilteredDataWebResponse(
+                responseDto.id(),
+                responseDto.title(),
+                responseDto.topicLabel(),
+                responseDto.dataSourceLabel(),
+                responseDto.dataTypeLabel(),
+                responseDto.startDate(),
+                responseDto.endDate(),
+                responseDto.description(),
+                responseDto.thumbnailUrl(),
+                responseDto.downloadCount(),
+                responseDto.recentWeekDownloadCount(),
+                responseDto.rowCount(),
+                responseDto.columnCount(),
+                responseDto.createdAt(),
+                responseDto.countConnectedProjects()
         );
     }
 }
