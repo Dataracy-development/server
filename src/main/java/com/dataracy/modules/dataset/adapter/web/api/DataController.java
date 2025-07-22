@@ -128,4 +128,9 @@ public class DataController implements DataApi {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.GET_RECENT_DATASETS, webResponse));
     }
+
+    @Override
+    public ResponseEntity<SuccessResponse<List<DataMinimalSearchWebResponse>>> getRealTimeDataSets(String keyword, int size) {
+        return null;
+    }
 }
