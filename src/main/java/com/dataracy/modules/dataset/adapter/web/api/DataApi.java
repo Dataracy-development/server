@@ -4,10 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
-import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
-import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
-import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
-import com.dataracy.modules.dataset.adapter.web.response.DataFilterWebResponse;
+import com.dataracy.modules.dataset.adapter.web.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -146,5 +143,21 @@ public interface DataApi {
     ResponseEntity<SuccessResponse<DataDetailWebResponse>> getDataDetail(
             @PathVariable(name = "dataId")
             Long dataId
+    );
+
+    @Operation(
+            summary = "간단한 최신 데이터셋 목록을 조회한다.",
+            description = "최신 데이터셋 목록을 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "간단한 최신 데이터셋 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/recent")
+    ResponseEntity<SuccessResponse<List<DataMinimalSearchWebResponse>>> getRecentDataSets(
+            @RequestParam(name = "size")
+            @Min(1)
+            int size
     );
 }
