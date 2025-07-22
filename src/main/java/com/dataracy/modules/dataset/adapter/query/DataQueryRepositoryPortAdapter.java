@@ -13,7 +13,10 @@ import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -109,17 +112,22 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
 
     @Override
     public Page<DataWithProjectCountDto> searchByFilters(DataFilterRequest request, Pageable pageable, DataSortType sortType) {
+        NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
+
         List<Tuple> tuples = queryFactory
                 .select(
                         data,
-                        JPAExpressions
-                                .select(projectData.count())
-                                .from(projectData)
-                                .where(projectData.dataId.eq(data.id))
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(projectData.count())
+                                        .from(projectData)
+                                        .where(projectData.dataId.eq(data.id)),
+                                projectCountPath
+                        )
                 )
                 .from(data)
                 .distinct()
-                .orderBy(DataSortBuilder.fromSortOption(sortType))
+                .orderBy(DataSortBuilder.fromSortOption(sortType, projectCountPath))
                 .leftJoin(data.metadata).fetchJoin()
                 .where(buildFilterPredicates(request))
                 .offset(pageable.getOffset())
