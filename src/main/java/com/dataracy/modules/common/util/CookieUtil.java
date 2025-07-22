@@ -25,6 +25,7 @@ public final class CookieUtil {
      */
     public static void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
+        cookie.setDomain("dataracy.co.kr");
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
