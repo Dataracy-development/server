@@ -1,8 +1,10 @@
 package com.dataracy.modules.dataset.adapter.web.mapper;
 
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.CountDataGroupWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
+import com.dataracy.modules.dataset.application.dto.response.CountDataGroupResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataDetailResponse;
 import org.springframework.stereotype.Component;
 
@@ -56,6 +58,14 @@ public class DataWebMapper {
                 responseDto.columnCount(),
                 responseDto.previewJson(),
                 responseDto.createdAt()
+        );
+    }
+
+    public CountDataGroupWebResponse toWebDto(CountDataGroupResponse responseDto) {
+        return new CountDataGroupWebResponse(
+                responseDto.topicId(),
+                responseDto.topicLabel(),
+                responseDto.count()
         );
     }
 }

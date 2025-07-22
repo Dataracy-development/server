@@ -35,6 +35,8 @@ public class DataController implements DataApi {
     private final DataDetailUseCase dataDetailUseCase;
     private final DataFilteredSearchUseCase dataFilteredSearchUseCase;
     private final DataRecentUseCase dataRecentUseCase;
+    private final CountDataGroupByTopicLabelUseCase countDataGroupByTopicLabelUseCase;
+
 
     /**
      * 데이터 업로드 요청을 처리하여 데이터셋을 생성하고, 성공 상태의 HTTP 201(Created) 응답을 반환합니다.
@@ -132,5 +134,16 @@ public class DataController implements DataApi {
     @Override
     public ResponseEntity<SuccessResponse<List<DataMinimalSearchWebResponse>>> getRealTimeDataSets(String keyword, int size) {
         return null;
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<List<CountDataGroupWebResponse>>> countDataSetsByTopicLabel() {
+        List<CountDataGroupResponse> responseDto = countDataGroupByTopicLabelUseCase.countDataGroups();
+        List<CountDataGroupWebResponse> webResponse = responseDto.stream()
+                .map(dataWebMapper::toWebDto)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.COUNT_DATASETS_GROUP_BY_TOPIC, webResponse));
     }
 }
