@@ -214,12 +214,16 @@ public class ProjectQueryService implements
         UserInfo userInfo = getUserInfoUseCase.getUserInfo(project.getUserId());
         ProjectUser projectUser = ProjectUser.from(userInfo);
 
+        // 선택조건 null 일 경우에 대한 처리
+        String authorLevelLabel = projectUser.authorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(projectUser.authorLevelId());
+        String occupationLabel = projectUser.occupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(projectUser.occupationId());
+
         return new ProjectDetailResponse(
                 project.getId(),
                 project.getTitle(),
                 findUsernameUseCase.findUsernameById(project.getUserId()),
-                getAuthorLevelLabelFromIdUseCase.getLabelById(projectUser.authorLevelId()),
-                getOccupationLabelFromIdUseCase.getLabelById(projectUser.occupationId()),
+                authorLevelLabel,
+                occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),
                 getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId()),
                 getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId()),

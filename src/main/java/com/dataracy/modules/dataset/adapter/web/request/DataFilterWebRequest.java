@@ -15,7 +15,7 @@ public record DataFilterWebRequest(
                 enumClass = DataSortType.class,
                 message = "데이터 정렬 유형은 LATEST, OLDEST, DOWNLOAD, UTILIZE만 가능합니다."
         )
-        DataSortType sortType,
+        String sortType,
 
         @Schema(description = "도메인 ID")
         Long topicId,
