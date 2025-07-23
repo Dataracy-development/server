@@ -5,6 +5,7 @@ import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.*;
+import com.dataracy.modules.project.adapter.web.response.ConnectedProjectAssociatedWithDataWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -216,4 +217,22 @@ public interface DataApi {
     })
     @GetMapping("/group-by/topic")
     ResponseEntity<SuccessResponse<List<CountDataGroupWebResponse>>> countDataSetsByTopicLabel();
+
+    @Operation(
+            summary = "프로젝트와 연결된 데이터셋 리스트를 조회한다.",
+            description = "프로젝트와 연결된 데이터셋 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "프로젝트와 연결된 데이터셋 리스트를 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping
+    ResponseEntity<SuccessResponse<Page<ConnectedDataAssociatedWithProjectWebResponse>>> searchConnectedDataSetsAssociatedWithProject(
+            @RequestParam @Min(1)
+            Long projectId,
+
+            @PageableDefault(size = 3, page = 0)
+            Pageable pageable
+    );
 }

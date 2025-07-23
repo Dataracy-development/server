@@ -37,6 +37,7 @@ public class DataController implements DataApi {
     private final DataRecentUseCase dataRecentUseCase;
     private final DataRealTimeUseCase dataRealTimeUseCase;
     private final CountDataGroupByTopicLabelUseCase countDataGroupByTopicLabelUseCase;
+    private final ConnectedDataAssociatedWithProjectUseCase connectedDataAssociatedWithProjectUseCase;
 
     /**
      * 데이터 업로드 요청을 처리하여 데이터셋을 생성하고, 성공 상태의 HTTP 201(Created) 응답을 반환합니다.
@@ -176,5 +177,14 @@ public class DataController implements DataApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.COUNT_DATASETS_GROUP_BY_TOPIC, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Page<ConnectedDataAssociatedWithProjectWebResponse>>> searchConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
+        Page<ConnectedDataAssociatedWithProjectResponse> responseDto = connectedDataAssociatedWithProjectUseCase.findConnectedDataSetsAssociatedWithProject(projectId, pageable);
+        Page<ConnectedDataAssociatedWithProjectWebResponse> webResponse = responseDto.map(dataWebMapper::toWebDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.GET_CONNECTED_DATASETS_ASSOCIATED_PROJECT, webResponse));
     }
 }
