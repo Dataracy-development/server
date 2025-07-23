@@ -6,5 +6,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface DataFilteredSearchUseCase {
-Page<DataFilterResponse> findFilterdDataSets(DataFilterRequest requestDto, Pageable pageable);
+Page<DataFilterResponse> findFilteredDataSets(DataFilterRequest requestDto, Pageable pageable);
 }
