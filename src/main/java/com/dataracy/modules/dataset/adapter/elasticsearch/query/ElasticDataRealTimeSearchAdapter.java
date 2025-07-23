@@ -26,6 +26,17 @@ public class ElasticDataRealTimeSearchAdapter implements DataRealTimeSearchPort 
 
     private final ElasticsearchClient client;
 
+    /**
+     * 주어진 키워드로 Elasticsearch에서 데이터셋을 실시간으로 검색하여 최소 정보 응답 목록을 반환합니다.
+     *
+     * 키워드는 "title"(가중치 2) 및 "description" 필드에 대해 자동 퍼지(fuzziness) 멀티매치 쿼리로 검색되며,
+     * 결과는 "createdAt" 기준 내림차순으로 정렬되고 요청한 개수만큼 제한됩니다.
+     *
+     * @param keyword 검색할 키워드
+     * @param size 반환할 최대 결과 개수
+     * @return 검색된 데이터셋의 최소 정보 응답 객체 리스트
+     * @throws DataException 실시간 데이터셋 검색에 실패한 경우 발생
+     */
     @Override
     public List<DataMinimalSearchResponse> search(String keyword, int size) {
         try {

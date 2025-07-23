@@ -79,9 +79,9 @@ public class DataController implements DataApi {
     }
 
     /**
-     * 요청된 개수만큼 인기 데이터셋 목록을 조회하여 반환합니다.
+     * 지정한 개수만큼 인기 데이터셋 목록을 조회하여 반환합니다.
      *
-     * @param size 반환할 인기 데이터셋의 최대 개수
+     * @param size 조회할 인기 데이터셋의 최대 개수
      * @return 인기 데이터셋 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
@@ -95,6 +95,13 @@ public class DataController implements DataApi {
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_POPULAR_DATASETS, webResponse));
     }
 
+    /**
+     * 필터 조건과 페이지 정보를 기반으로 데이터셋 목록을 검색하여 반환합니다.
+     *
+     * @param webRequest 데이터셋 필터링 조건이 담긴 요청 객체
+     * @param pageable 페이지네이션 정보
+     * @return 필터링 및 페이징된 데이터셋 목록이 포함된 성공 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<Page<DataFilterWebResponse>>> searchFilteredDataSets(DataFilterWebRequest webRequest, Pageable pageable) {
         DataFilterRequest requestDto = dataSearchWebMapper.toApplicationDto(webRequest);
@@ -106,9 +113,9 @@ public class DataController implements DataApi {
     }
 
     /**
-     * 데이터셋의 상세 정보를 조회하여 반환합니다.
+     * 주어진 데이터셋 ID에 해당하는 상세 정보를 조회하여 반환합니다.
      *
-     * @param dataId 조회할 데이터셋의 고유 식별자
+     * @param dataId 조회할 데이터셋의 고유 ID
      * @return 데이터셋 상세 정보와 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
@@ -120,6 +127,12 @@ public class DataController implements DataApi {
                 .body(SuccessResponse.of(DataSuccessStatus.GET_DATA_DETAIL, webResponse));
     }
 
+    /**
+     * 최근 등록된 데이터셋 목록을 조회하여 반환합니다.
+     *
+     * @param size 반환할 데이터셋의 최대 개수
+     * @return 최근 데이터셋 목록이 포함된 성공 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<List<DataMinimalSearchWebResponse>>> getRecentDataSets(int size) {
         List<DataMinimalSearchResponse> responseDto = dataRecentUseCase.findRecentDataSets(size);
@@ -131,6 +144,13 @@ public class DataController implements DataApi {
                 .body(SuccessResponse.of(DataSuccessStatus.GET_RECENT_DATASETS, webResponse));
     }
 
+    /**
+     * 실시간으로 키워드에 해당하는 데이터셋 목록을 조회합니다.
+     *
+     * @param keyword 검색할 키워드
+     * @param size 반환할 데이터셋 최대 개수
+     * @return 실시간 데이터셋 목록이 포함된 성공 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<List<DataMinimalSearchWebResponse>>> getRealTimeDataSets(String keyword, int size) {
         List<DataMinimalSearchResponse> responseDto = dataRealTimeUseCase.findRealTimeDataSets(keyword, size);
@@ -142,6 +162,11 @@ public class DataController implements DataApi {
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_REAL_TIME_DATASETS, webResponse));
     }
 
+    /**
+     * 데이터셋을 주제 라벨별로 그룹화하여 각 그룹의 개수를 반환합니다.
+     *
+     * @return 주제 라벨별 데이터셋 개수 목록이 포함된 성공 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<List<CountDataGroupWebResponse>>> countDataSetsByTopicLabel() {
         List<CountDataGroupResponse> responseDto = countDataGroupByTopicLabelUseCase.countDataGroups();
