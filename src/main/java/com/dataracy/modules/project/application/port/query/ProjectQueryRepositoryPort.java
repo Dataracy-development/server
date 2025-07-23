@@ -53,4 +53,6 @@ boolean existsByParentProjectId(Long projectId);
 boolean existsProjectDataByProjectId(Long projectId);
 
     Page<Project> findContinueProjects(Long projectId, Pageable pageable);
+
+    Page<Project> findConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable);
 }

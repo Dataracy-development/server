@@ -2,6 +2,7 @@ package com.dataracy.modules.project.application.service.query;
 
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.dto.response.*;
+import com.dataracy.modules.project.application.mapper.ConnectedProjectAssociatedDtoMapper;
 import com.dataracy.modules.project.application.mapper.ContinueProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.FilterProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
@@ -41,7 +42,8 @@ public class ProjectQueryService implements
         ProjectPopularSearchUseCase,
         ProjectFilteredSearchUseCase,
         ProjectDetailUseCase,
-        ContinueProjectUseCase
+        ContinueProjectUseCase,
+        ConnectedProjectAssociatedWithDataUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
     private final FilterProjectDtoMapper filterProjectDtoMapper;
@@ -59,6 +61,7 @@ public class ProjectQueryService implements
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
     private final GetUserInfoUseCase getUserInfoUseCase;
+    private final ConnectedProjectAssociatedDtoMapper connectedProjectAssociatedDtoMapper;
 
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
@@ -269,6 +272,23 @@ public class ProjectQueryService implements
                 userThumbnailMap.get(project.getUserId()),
                 topicLabelMap.get(project.getTopicId()),
                 authorLevelLabelMap.get(project.getAuthorLevelId())
+        ));
+    }
+
+    @Override
+    public Page<ConnectedProjectAssociatedWithDataResponse> findConnectedProjects(Long dataId, Pageable pageable) {
+        Page<Project> savedProjects = projectQueryRepositoryPort.findConnectedProjectsAssociatedWithData(dataId, pageable);
+
+        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
+        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
+
+        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
+        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
+
+        return savedProjects.map(project -> connectedProjectAssociatedDtoMapper.toResponseDto(
+                project,
+                usernameMap.get(project.getUserId()),
+                topicLabelMap.get(project.getTopicId())
         ));
     }
 }

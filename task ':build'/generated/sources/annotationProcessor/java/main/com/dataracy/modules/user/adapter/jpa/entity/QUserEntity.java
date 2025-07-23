@@ -41,6 +41,8 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
 
     public final StringPath password = createString("password");
 
+    public final StringPath profileImageUrl = createString("profileImageUrl");
+
     public final EnumPath<com.dataracy.modules.user.domain.enums.ProviderType> provider = createEnum("provider", com.dataracy.modules.user.domain.enums.ProviderType.class);
 
     public final StringPath providerId = createString("providerId");
