@@ -230,6 +230,9 @@ public class DataQueryService implements
 
     @Override
     public List<DataMinimalSearchResponse> findRealTimeDataSets(String keyword, int size) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return List.of();
+        }
         return dataRealTimeSearchPort.search(keyword, size);
     }
 

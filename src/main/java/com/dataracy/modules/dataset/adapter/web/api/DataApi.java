@@ -172,7 +172,7 @@ public interface DataApi {
     })
     @GetMapping("/real-time")
     ResponseEntity<SuccessResponse<List<DataMinimalSearchWebResponse>>> getRealTimeDataSets(
-            @RequestParam
+            @RequestParam(required = false)
             String keyword,
 
             @RequestParam(name = "size")
