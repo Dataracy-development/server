@@ -61,6 +61,12 @@ public class DataWebMapper {
         );
     }
 
+    /**
+     * 애플리케이션 계층의 CountDataGroupResponse를 웹 계층의 CountDataGroupWebResponse로 변환합니다.
+     *
+     * @param responseDto 변환할 CountDataGroupResponse 객체
+     * @return 변환된 CountDataGroupWebResponse 객체
+     */
     public CountDataGroupWebResponse toWebDto(CountDataGroupResponse responseDto) {
         return new CountDataGroupWebResponse(
                 responseDto.topicId(),

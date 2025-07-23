@@ -101,10 +101,10 @@ public class DataQueryService implements
     }
 
     /**
-     * 지정된 개수만큼 인기 있는 데이터셋 목록을 조회하여, 각 데이터셋에 사용자명, 주제, 데이터 소스, 데이터 타입 등의 라벨 정보를 포함한 응답 리스트를 반환합니다.
+     * 인기 있는 데이터셋을 지정된 개수만큼 조회하고, 각 데이터셋에 사용자명, 주제, 데이터 소스, 데이터 타입 등의 라벨 정보와 연결된 프로젝트 수를 포함한 응답 리스트를 반환합니다.
      *
      * @param size 조회할 인기 데이터셋의 최대 개수
-     * @return 인기 데이터셋에 대한 상세 정보와 연결된 프로젝트 수가 포함된 응답 리스트
+     * @return 인기 데이터셋의 상세 정보와 프로젝트 수가 포함된 응답 리스트
      */
     @Override
     @Transactional(readOnly = true)
@@ -128,6 +128,13 @@ public class DataQueryService implements
                 .toList();
     }
 
+    /**
+     * 필터 조건과 정렬 기준, 페이지 정보를 기반으로 데이터셋 목록을 조회하여 페이지 형태로 반환합니다.
+     *
+     * @param request 데이터셋 필터 및 정렬 요청 정보
+     * @param pageable 페이지네이션 정보
+     * @return 필터링 및 정렬된 데이터셋 목록의 페이지
+     */
     @Override
     public Page<DataFilterResponse> findFilteredDataSets(DataFilterRequest request, Pageable pageable) {
         DataSortType dataSortType = DataSortType.of(request.sortType());
@@ -177,9 +184,9 @@ public class DataQueryService implements
         );
     }
     /**
-     * 주어진 데이터 ID에 해당하는 데이터셋의 상세 정보를 조회합니다.
+     * 주어진 데이터 ID에 해당하는 데이터셋의 상세 정보를 반환합니다.
      *
-     * 데이터셋의 기본 정보, 작성자 닉네임, 작성자 등급 및 직업 라벨, 주제/데이터 소스/데이터 타입 라벨, 기간, 설명, 분석 가이드, 썸네일 URL, 다운로드 수, 최근 일주일 다운로드 수, 메타데이터(행/열 개수, 미리보기 JSON), 생성일시를 포함한 상세 정보를 반환합니다.
+     * 데이터셋의 기본 정보, 작성자 닉네임, 작성자 등급 및 직업 라벨, 주제/데이터 소스/데이터 타입 라벨, 기간, 설명, 분석 가이드, 썸네일 URL, 다운로드 수, 최근 일주일 다운로드 수, 메타데이터(행/열 개수, 미리보기 JSON), 생성일시를 포함합니다.
      *
      * @param dataId 조회할 데이터셋의 ID
      * @return 데이터셋의 상세 정보를 담은 DataDetailResponse 객체
@@ -219,6 +226,12 @@ public class DataQueryService implements
         );
     }
 
+    /**
+     * 최신 데이터셋을 지정된 개수만큼 조회하여 최소 정보 응답 리스트로 반환합니다.
+     *
+     * @param size 조회할 데이터셋의 최대 개수
+     * @return 최신 데이터셋의 최소 정보 응답 리스트
+     */
     @Override
     public List<DataMinimalSearchResponse> findRecentDataSets(int size) {
         List<Data> recentDataSets = dataQueryRepositoryPort.findRecentDataSets(size);
@@ -228,6 +241,13 @@ public class DataQueryService implements
                 .toList();
     }
 
+    /**
+     * 주어진 키워드로 실시간 데이터셋을 검색하여 결과를 반환합니다.
+     *
+     * @param keyword 검색에 사용할 키워드
+     * @param size 반환할 최대 데이터셋 개수
+     * @return 검색된 데이터셋의 최소 정보 목록. 키워드가 비어 있거나 null이면 빈 리스트를 반환합니다.
+     */
     @Override
     public List<DataMinimalSearchResponse> findRealTimeDataSets(String keyword, int size) {
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -236,6 +256,11 @@ public class DataQueryService implements
         return dataRealTimeSearchPort.search(keyword, size);
     }
 
+    /**
+     * 데이터셋을 주제별로 그룹화하여 각 그룹의 개수를 반환합니다.
+     *
+     * @return 주제별 데이터셋 그룹의 개수 목록
+     */
     @Override
     public List<CountDataGroupResponse> countDataGroups() {
         return dataQueryRepositoryPort.countDataGroups();
