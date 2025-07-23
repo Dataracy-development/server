@@ -10,7 +10,6 @@ import com.dataracy.modules.dataset.application.port.elasticsearch.DataSimilarSe
 import com.dataracy.modules.dataset.application.port.in.*;
 import com.dataracy.modules.dataset.application.port.out.DataRepositoryPort;
 import com.dataracy.modules.dataset.application.port.query.DataQueryRepositoryPort;
-import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.vo.DataUser;
@@ -130,11 +129,7 @@ public class DataQueryService implements
 
     @Override
     public Page<DataFilterResponse> findFilteredDataSets(DataFilterRequest request, Pageable pageable) {
-        DataSortType sortType = (request.sortType() != null && !request.sortType().isEmpty())
-                ? DataSortType.of(request.sortType())
-                : null;
-
-        Page<DataWithProjectCountDto> savedDataSets = dataQueryRepositoryPort.searchByFilters(request, pageable, sortType);
+        Page<DataWithProjectCountDto> savedDataSets = dataQueryRepositoryPort.searchByFilters(request, pageable, request.sortType());
 
         DataLabelMappingResponse labelResponse = labelMapping(savedDataSets.getContent());
 
