@@ -14,7 +14,7 @@ public enum DataErrorStatus implements BaseErrorCode {
     BAD_REQUEST_DATE(HttpStatus.BAD_REQUEST, "DATA-003", "데이터셋 수집 시작일은 종료일보다 이전이어야 합니다."),
     FAIL_SIMILAR_SEARCH_DATA(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-005", "유사 데이터셋 검색 실패"),
     INVALID_DATA_SORT_TYPE(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-006", "데이터셋 정렬은 LATEST, OLDEST, DOWNLOAD 만 가능합니다."),
-    FAIL_REAL_TIME_SEARCH_DATASET(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-006", "데이터셋 자동완성 검색에 실패했습니다."),
+    FAIL_REAL_TIME_SEARCH_DATASET(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-007", "데이터셋 자동완성 검색에 실패했습니다."),
     ;
     private final HttpStatus httpStatus;
     private final String code;
