@@ -59,4 +59,7 @@ List<Data> findRecentDataSets(int size);
  * @return 그룹별 데이터셋 개수 정보를 담은 CountDataGroupResponse 리스트
  */
 List<CountDataGroupResponse> countDataGroups();
+
+Page<DataWithProjectCountDto> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable);
+
 }

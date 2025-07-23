@@ -16,7 +16,6 @@ import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
 import com.dataracy.modules.reference.adapter.jpa.entity.QTopicEntity;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -204,5 +203,43 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
                 .join(topic).on(data.topicId.eq(topic.id))
                 .groupBy(topic.id, topic.label)
                 .fetch();
+    }
+
+    @Override
+    public Page<DataWithProjectCountDto> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
+        NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
+
+        List<Tuple> tuples = queryFactory
+                .select(
+                        data,
+                        projectData.count().as(projectCountPath)
+                )
+                .from(data)
+                .innerJoin(projectData).on(projectData.dataId.eq(data.id).and(projectData.project.id.eq(projectId)))
+                .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
+                .distinct()
+                .leftJoin(data.metadata).fetchJoin()
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        List<DataWithProjectCountDto> contents = tuples.stream()
+                .map(tuple -> new DataWithProjectCountDto(
+                        DataEntityMapper.toDomain(tuple.get(data)),
+                        tuple.get(1, Long.class)
+                ))
+                .toList();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(data.count())
+                        .from(data)
+                        .innerJoin(projectData).on(projectData.dataId.eq(data.id).and(projectData.project.id.eq(projectId)))
+                        .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
+                        .distinct()
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(contents, pageable, total);
     }
 }

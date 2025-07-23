@@ -2,6 +2,7 @@ package com.dataracy.modules.dataset.application.service.query;
 
 import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
 import com.dataracy.modules.dataset.application.dto.response.*;
+import com.dataracy.modules.dataset.application.mapper.ConnectedDataAssociatedWithProjectDtoMapper;
 import com.dataracy.modules.dataset.application.mapper.FilterDataDtoMapper;
 import com.dataracy.modules.dataset.application.mapper.PopularDataSetsDtoMapper;
 import com.dataracy.modules.dataset.application.mapper.RecentDataSetsDtoMapper;
@@ -44,11 +45,13 @@ public class DataQueryService implements
         DataFilteredSearchUseCase,
         DataRecentUseCase,
         DataRealTimeUseCase,
-        CountDataGroupByTopicLabelUseCase
+        CountDataGroupByTopicLabelUseCase,
+        ConnectedDataAssociatedWithProjectUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
     private final FilterDataDtoMapper filterDataDtoMapper;
     private final RecentDataSetsDtoMapper recentDataSetsDtoMapper;
+    private final ConnectedDataAssociatedWithProjectDtoMapper connectedDataAssociatedWithProjectDtoMapper;
 
     private final DataRepositoryPort dataRepositoryPort;
     private final DataSimilarSearchPort dataSimilarSearchPort;
@@ -264,5 +267,22 @@ public class DataQueryService implements
     @Override
     public List<CountDataGroupResponse> countDataGroups() {
         return dataQueryRepositoryPort.countDataGroups();
+    }
+
+    @Override
+    public Page<ConnectedDataAssociatedWithProjectResponse> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
+        Page<DataWithProjectCountDto> savedDataSets = dataQueryRepositoryPort.findConnectedDataSetsAssociatedWithProject(projectId, pageable);
+
+        DataLabelMappingResponse labelResponse = labelMapping(savedDataSets.getContent());
+
+        return savedDataSets.map(wrapper -> {
+            Data data = wrapper.data();
+            return connectedDataAssociatedWithProjectDtoMapper.toResponseDto(
+                    data,
+                    labelResponse.topicLabelMap().get(data.getTopicId()),
+                    labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
+                    wrapper.countConnectedProjects()
+            );
+        });
     }
 }
