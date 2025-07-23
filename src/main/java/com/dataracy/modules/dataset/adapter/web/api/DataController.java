@@ -98,7 +98,7 @@ public class DataController implements DataApi {
     @Override
     public ResponseEntity<SuccessResponse<Page<DataFilterWebResponse>>> searchFilteredDataSets(DataFilterWebRequest webRequest, Pageable pageable) {
         DataFilterRequest requestDto = dataSearchWebMapper.toApplicationDto(webRequest);
-        Page<DataFilterResponse> responseDto = dataFilteredSearchUseCase.findFilterdDataSets(requestDto, pageable);
+        Page<DataFilterResponse> responseDto = dataFilteredSearchUseCase.findFilteredDataSets(requestDto, pageable);
         Page<DataFilterWebResponse> webResponse = responseDto.map(dataFilterWebMapper::toWebDto);
 
         return ResponseEntity.status(HttpStatus.OK)
