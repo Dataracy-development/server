@@ -64,7 +64,7 @@ public interface ProjectApi {
      * @return 실시간 검색 결과로 조회된 프로젝트 목록이 포함된 성공 응답
      */
     @Operation(
-            summary = "실시간으로 프로젝트 리스트를 조회한다.",
+            summary = "키워드 자동완성을 위한 실시간으로 프로젝트 리스트를 조회한다.",
             description = "제공받은 키워드와 사이즈를 토대로 실시간으로 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {

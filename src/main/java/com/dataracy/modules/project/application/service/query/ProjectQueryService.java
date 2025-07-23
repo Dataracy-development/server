@@ -65,6 +65,9 @@ public class ProjectQueryService implements
     @Override
     @Transactional(readOnly = true)
     public List<ProjectRealTimeSearchResponse> searchByKeyword(String keyword, int size) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return List.of();
+        }
         return projectRealTimeSearchPort.search(keyword, size);
     }
 

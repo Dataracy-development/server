@@ -162,7 +162,7 @@ public interface DataApi {
     );
 
     @Operation(
-            summary = "데이터셋 자동완성 검색 기능",
+            summary = "키워드 자동완성을 위한 데이터셋 검색 기능",
             description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다."
     )
     @ApiResponses(value = {
