@@ -35,7 +35,7 @@ public class ProjectController implements ProjectApi {
     private final ProjectPopularSearchUseCase projectPopularSearchUseCase;
     private final ProjectFilteredSearchUseCase projectFilteredSearchUsecase;
     private final ProjectDetailUseCase projectDetailUseCase;
-
+    private final ContinueProjectUseCase continueProjectUseCase;
     /**
      * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
      *
@@ -139,5 +139,14 @@ public class ProjectController implements ProjectApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_PROJECT_DETAIL, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Page<ContinueProjectWebResponse>>> searchFilteredProjects(Long projectId, Pageable pageable) {
+        Page<ContinueProjectResponse> responseDto = continueProjectUseCase.findContinueProjects(projectId, pageable);
+        Page<ContinueProjectWebResponse> webResponse = responseDto.map(projectWebMapper::toWebDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONTINUE_PROJECTS, webResponse));
     }
 }

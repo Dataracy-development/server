@@ -51,4 +51,6 @@ boolean existsByParentProjectId(Long projectId);
  * @return 프로젝트 데이터가 존재하면 true, 그렇지 않으면 false
  */
 boolean existsProjectDataByProjectId(Long projectId);
+
+    Page<Project> findContinueProjects(Long projectId, Pageable pageable);
 }

@@ -79,23 +79,32 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
         return result != null;
     }
 
-//    public boolean existsByParentProjectId(Long projectId) {
-//        Integer result = queryFactory
-//                .selectOne()
-//                .from(project)
-//                .where(project.pa.eq(projectId))
-//                .fetchFirst();
-//        return result != null;
-//    }
-//
-//    public boolean existsProjectDataByProjectId(Long projectId) {
-//        Integer result = queryFactory
-//                .selectOne()
-//                .from(projectDataEntity)
-//                .where(projectDataEntity.project.id.eq(projectId))
-//                .fetchFirst();
-//        return result != null;
-//    }
+    @Override
+    public Page<Project> findContinueProjects(Long projectId, Pageable pageable) {
+        List<ProjectEntity> entities = queryFactory
+                .selectFrom(project)
+                .orderBy(ProjectSortBuilder.fromSortOption(ProjectSortType.LATEST))
+                .where(ProjectFilterPredicate.parentProjectIdEq(projectId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        List<Project> contents = entities.stream()
+                .map(ProjectEntityMapper::toMinimal
+                )
+                .toList();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(project.count())
+                        .from(project)
+                        .distinct()
+                        .where(ProjectFilterPredicate.parentProjectIdEq(projectId))
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(contents, pageable, total);
+    }
 
     /**
      * 인기 순으로 정렬된 프로젝트 목록을 지정된 개수만큼 반환합니다.

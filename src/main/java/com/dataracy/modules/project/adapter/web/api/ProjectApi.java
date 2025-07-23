@@ -176,4 +176,22 @@ public interface ProjectApi {
             @PathVariable @Min(1)
             Long projectId
     );
+
+    @Operation(
+            summary = "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회한다.",
+            description = "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "이어가기 프로젝트 리스트를 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("{projectId}/continue")
+    ResponseEntity<SuccessResponse<Page<ContinueProjectWebResponse>>> searchFilteredProjects(
+            @PathVariable @Min(1)
+            Long projectId,
+
+            @PageableDefault(size = 3, page = 0)
+            Pageable pageable
+    );
 }

@@ -66,6 +66,9 @@ public class UserEntity extends BaseTimeEntity {
     @Column
     private Long visitSourceId;
 
+    @Column
+    private String profileImageUrl;
+
     @Column(nullable = false)
     @Builder.Default
     private boolean isAdTermsAgreed = false;

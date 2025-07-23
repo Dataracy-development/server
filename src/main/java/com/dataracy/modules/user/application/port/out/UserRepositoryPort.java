@@ -67,4 +67,6 @@ public interface UserRepositoryPort {
  * @return 각 사용자 ID와 해당 닉네임이 매핑된 Map
  */
 Map<Long, String> findUsernamesByIds(List<Long> userIds);
+
+    Map<Long, String> findUserThumbnailsByIds(List<Long> userIds);
 }

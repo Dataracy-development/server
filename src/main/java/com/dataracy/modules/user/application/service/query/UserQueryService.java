@@ -9,10 +9,7 @@ import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.user.application.dto.request.ConfirmPasswordRequest;
 import com.dataracy.modules.user.application.port.in.auth.HandleUserUseCase;
 import com.dataracy.modules.user.application.port.in.auth.IsNewUserUseCase;
-import com.dataracy.modules.user.application.port.in.user.ConfirmPasswordUseCase;
-import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
-import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
-import com.dataracy.modules.user.application.port.in.user.IsLoginPossibleUseCase;
+import com.dataracy.modules.user.application.port.in.user.*;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;
@@ -36,6 +33,7 @@ public class UserQueryService implements
         IsLoginPossibleUseCase,
         ConfirmPasswordUseCase,
         FindUsernameUseCase,
+        FindUserThumbnailUseCase,
         GetUserInfoUseCase
 {
     private final PasswordEncoder passwordEncoder;
@@ -173,6 +171,12 @@ public class UserQueryService implements
     @Transactional(readOnly = true)
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
         return userRepositoryPort.findUsernamesByIds(userIds);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, String> findUserThumbnailsByIds(List<Long> userIds) {
+        return userRepositoryPort.findUserThumbnailsByIds(userIds);
     }
 
     /**
