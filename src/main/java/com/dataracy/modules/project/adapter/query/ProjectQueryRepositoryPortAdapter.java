@@ -106,6 +106,33 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
         return new PageImpl<>(contents, pageable, total);
     }
 
+    @Override
+    public Page<Project> findConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable) {
+        List<ProjectEntity> entities = queryFactory
+                .selectFrom(project)
+                .orderBy(ProjectSortBuilder.fromSortOption(ProjectSortType.LATEST))
+                .join(projectData).on(projectData.dataId.eq(dataId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        List<Project> contents = entities.stream()
+                .map(ProjectEntityMapper::toMinimal
+                )
+                .toList();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(project.count())
+                        .from(project)
+                        .distinct()
+                        .join(projectData).on(projectData.dataId.eq(dataId))
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(contents, pageable, total);
+    }
+
     /**
      * 인기 순으로 정렬된 프로젝트 목록을 지정된 개수만큼 반환합니다.
      * 인기있는 프로젝트 목록 조회는 부모, 자식 프로젝트, 데이터셋을 반환하지 않아도 되므로 fetch join을 하지 않는다.

@@ -36,6 +36,7 @@ public class ProjectController implements ProjectApi {
     private final ProjectFilteredSearchUseCase projectFilteredSearchUsecase;
     private final ProjectDetailUseCase projectDetailUseCase;
     private final ContinueProjectUseCase continueProjectUseCase;
+    private final ConnectedProjectAssociatedWithDataUseCase connectedProjectAssociatedWithDataUseCase;
     /**
      * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
      *
@@ -148,5 +149,14 @@ public class ProjectController implements ProjectApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONTINUE_PROJECTS, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Page<ConnectedProjectAssociatedWithDataWebResponse>>> searchConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable) {
+        Page<ConnectedProjectAssociatedWithDataResponse> responseDto = connectedProjectAssociatedWithDataUseCase.findConnectedProjects(dataId, pageable);
+        Page<ConnectedProjectAssociatedWithDataWebResponse> webResponse = responseDto.map(projectWebMapper::toWebDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONNECTED_PROJECTS_ASSOCIATED_DATA, webResponse));
     }
 }
