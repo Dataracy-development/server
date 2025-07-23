@@ -1,17 +1,21 @@
 package com.dataracy.modules.dataset.adapter.web.request;
 
+import com.dataracy.modules.common.support.annotation.ValidEnumValue;
+import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
 
 public record DataFilterWebRequest(
         @Schema(description = "검색 키워드(제목)", example = "LLM")
         String keyword,
 
-        @Pattern(regexp = "LATEST|OLDEST|DOWNLOAD|UTILIZE",
-                message = "유효하지 않은 정렬 타입입니다. 프로젝트 정렬 방식은 LATEST, OLDEST, DOWNLOAD, UTILIZE 만 가능합니다.")
-        String sortType,
+        @Schema(description = "정렬 타입", example = "LATEST")
+        @ValidEnumValue(
+                enumClass = DataSortType.class,
+                message = "데이터 정렬 유형은 LATEST, OLDEST, DOWNLOAD, UTILIZE만 가능합니다."
+        )
+        DataSortType sortType,
 
         @Schema(description = "도메인 ID")
         Long topicId,
