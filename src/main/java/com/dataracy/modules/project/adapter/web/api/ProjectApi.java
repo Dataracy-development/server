@@ -74,7 +74,7 @@ public interface ProjectApi {
     })
     @GetMapping("/search/real-time")
     ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> searchRealTimeProjects(
-            @RequestParam(name = "keyword")
+            @RequestParam(name = "keyword", required = false)
             String keyword,
 
             @RequestParam(name = "size")
