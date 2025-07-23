@@ -16,6 +16,7 @@ public enum DataSortType {
     LATEST("LATEST"),
     OLDEST("OLDEST"),
     DOWNLOAD("DOWNLOAD"),
+    UTILIZE("UTILIZE")
     ;
 
     private final String value;
