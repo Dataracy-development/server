@@ -218,9 +218,9 @@ public class DataQueryService implements
 
     @Override
     public List<DataMinimalSearchResponse> findRecentDataSets(int size) {
-        List<Data> responseDto = dataQueryRepositoryPort.findRecentDataSets(size);
+        List<Data> recentDataSets = dataQueryRepositoryPort.findRecentDataSets(size);
 
-        return responseDto.stream()
+        return recentDataSets.stream()
                 .map(recentDataSetsDtoMapper::toResponseDto)
                 .toList();
     }

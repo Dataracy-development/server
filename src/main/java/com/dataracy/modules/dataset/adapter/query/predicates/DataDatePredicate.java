@@ -6,6 +6,8 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 
 public class DataDatePredicate {
+    private DataDatePredicate() {}
+
     private static final QDataEntity data = QDataEntity.dataEntity;
 
     public static BooleanExpression yearBetween(Integer year) {

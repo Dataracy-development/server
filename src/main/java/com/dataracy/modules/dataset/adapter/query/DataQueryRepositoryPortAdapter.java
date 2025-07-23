@@ -123,16 +123,11 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         List<Tuple> tuples = queryFactory
                 .select(
                         data,
-                        ExpressionUtils.as(
-                                JPAExpressions
-                                        .select(projectData.count())
-                                        .from(projectData)
-                                        .where(projectData.dataId.eq(data.id)),
-                                projectCountPath
-                        )
+                        projectData.count().as(projectCountPath)
                 )
                 .from(data)
-                .distinct()
+                .leftJoin(projectData).on(projectData.dataId.eq(data.id))
+                .groupBy(data.id)
                 .orderBy(DataSortBuilder.fromSortOption(sortType, projectCountPath))
                 .leftJoin(data.metadata).fetchJoin()
                 .where(buildFilterPredicates(request))
@@ -182,7 +177,7 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
                 ))
                 .from(data)
                 .join(topic).on(data.topicId.eq(topic.id))
-                .groupBy(topic.label)
+                .groupBy(topic.id, topic.label)
                 .fetch();
     }
 }

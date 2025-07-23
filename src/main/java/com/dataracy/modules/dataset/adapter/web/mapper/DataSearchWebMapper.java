@@ -80,7 +80,7 @@ public class DataSearchWebMapper {
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.thumbnailUrl(),
-                responseDto.createAt()
+                responseDto.createdAt()
         );
     }
 }
