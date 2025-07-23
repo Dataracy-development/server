@@ -58,6 +58,8 @@ public class ProjectQueryService implements
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
      *
+     * 키워드가 null이거나 공백만 포함된 경우 빈 리스트를 반환합니다.
+     *
      * @param keyword 검색에 사용할 키워드
      * @param size 반환할 최대 결과 개수
      * @return 키워드에 매칭되는 프로젝트의 실시간 검색 응답 객체 리스트
@@ -65,6 +67,9 @@ public class ProjectQueryService implements
     @Override
     @Transactional(readOnly = true)
     public List<ProjectRealTimeSearchResponse> searchByKeyword(String keyword, int size) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return List.of();
+        }
         return projectRealTimeSearchPort.search(keyword, size);
     }
 
@@ -194,11 +199,11 @@ public class ProjectQueryService implements
     }
 
     /**
-     * 지정한 프로젝트 ID에 대한 상세 정보를 조회합니다.
+     * 지정한 프로젝트 ID에 대한 상세 정보를 반환합니다.
      *
-     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 프로젝트 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 반환합니다.
+     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 프로젝트 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 조회합니다.
      *
-     * @param projectId 조회할 프로젝트의 ID
+     * @param projectId 상세 정보를 조회할 프로젝트의 ID
      * @return 프로젝트의 상세 정보를 담은 ProjectDetailResponse 객체
      * @throws ProjectException 프로젝트가 존재하지 않을 경우 발생합니다.
      */
@@ -214,12 +219,16 @@ public class ProjectQueryService implements
         UserInfo userInfo = getUserInfoUseCase.getUserInfo(project.getUserId());
         ProjectUser projectUser = ProjectUser.from(userInfo);
 
+        // 선택조건 null 일 경우에 대한 처리
+        String authorLevelLabel = projectUser.authorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(projectUser.authorLevelId());
+        String occupationLabel = projectUser.occupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(projectUser.occupationId());
+
         return new ProjectDetailResponse(
                 project.getId(),
                 project.getTitle(),
                 findUsernameUseCase.findUsernameById(project.getUserId()),
-                getAuthorLevelLabelFromIdUseCase.getLabelById(projectUser.authorLevelId()),
-                getOccupationLabelFromIdUseCase.getLabelById(projectUser.occupationId()),
+                authorLevelLabel,
+                occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),
                 getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId()),
                 getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId()),

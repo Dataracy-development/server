@@ -1,8 +1,10 @@
 package com.dataracy.modules.dataset.adapter.web.mapper;
 
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.CountDataGroupWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
+import com.dataracy.modules.dataset.application.dto.response.CountDataGroupResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataDetailResponse;
 import org.springframework.stereotype.Component;
 
@@ -56,6 +58,20 @@ public class DataWebMapper {
                 responseDto.columnCount(),
                 responseDto.previewJson(),
                 responseDto.createdAt()
+        );
+    }
+
+    /**
+     * 애플리케이션 계층의 CountDataGroupResponse를 웹 계층의 CountDataGroupWebResponse로 변환합니다.
+     *
+     * @param responseDto 변환할 CountDataGroupResponse 객체
+     * @return 변환된 CountDataGroupWebResponse 객체
+     */
+    public CountDataGroupWebResponse toWebDto(CountDataGroupResponse responseDto) {
+        return new CountDataGroupWebResponse(
+                responseDto.topicId(),
+                responseDto.topicLabel(),
+                responseDto.count()
         );
     }
 }

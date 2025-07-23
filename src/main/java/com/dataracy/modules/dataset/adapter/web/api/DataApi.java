@@ -2,10 +2,9 @@ package com.dataracy.modules.dataset.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
+import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
-import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
-import com.dataracy.modules.dataset.adapter.web.response.DataPopularSearchWebResponse;
-import com.dataracy.modules.dataset.adapter.web.response.DataSimilarSearchWebResponse;
+import com.dataracy.modules.dataset.adapter.web.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,6 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -83,7 +85,7 @@ public interface DataApi {
     );
 
     /**
-     * 다운로드 수와 연결된 프로젝트 수를 기준으로 인기 있는 데이터셋 목록을 조회합니다.
+     * 다운로드 수와 연결된 프로젝트 수를 기준으로 인기 있는 데이터셋 목록을 반환합니다.
      *
      * @param size 반환할 데이터셋의 최대 개수 (1 이상)
      * @return 인기 데이터셋 목록이 포함된 성공 응답 객체
@@ -105,9 +107,34 @@ public interface DataApi {
     );
 
     /**
-     * 지정된 데이터셋의 세부 정보를 조회하여 반환합니다.
+     * 필터 조건에 따라 데이터셋의 페이지별 목록을 조회한다.
      *
-     * @param dataId 조회할 데이터셋의 고유 식별자
+     * @param webRequest 데이터셋 필터링 조건이 포함된 요청 객체
+     * @param pageable 페이지네이션 정보
+     * @return 필터링된 데이터셋의 페이지 결과를 포함하는 성공 응답
+     */
+    @Operation(
+            summary = "필터링된 데이터셋 리스트를 조회한다.",
+            description = "필터링된 데이터셋 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "필터링된 데이터셋 리스트 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/search/filter")
+    ResponseEntity<SuccessResponse<Page<DataFilterWebResponse>>> searchFilteredDataSets(
+            @Validated @ModelAttribute
+            DataFilterWebRequest webRequest,
+
+            @PageableDefault(size = 5, page = 0)
+            Pageable pageable
+    );
+
+    /**
+     * 데이터셋의 고유 식별자를 기반으로 상세 정보를 반환합니다.
+     *
+     * @param dataId 상세 정보를 조회할 데이터셋의 고유 식별자
      * @return 데이터셋의 상세 정보를 포함한 성공 응답
      */
     @Operation(
@@ -124,4 +151,69 @@ public interface DataApi {
             @PathVariable(name = "dataId")
             Long dataId
     );
+
+    /**
+     * 최신에 추가된 데이터셋의 간단한 목록을 조회합니다.
+     *
+     * @param size 반환할 데이터셋 개수 (1 이상)
+     * @return 최신 데이터셋의 최소 정보 목록이 포함된 성공 응답
+     */
+    @Operation(
+            summary = "간단한 최신 데이터셋 목록을 조회한다.",
+            description = "최신 데이터셋 목록을 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "간단한 최신 데이터셋 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/recent")
+    ResponseEntity<SuccessResponse<List<DataMinimalSearchWebResponse>>> getRecentDataSets(
+            @RequestParam(name = "size")
+            @Min(1)
+            int size
+    );
+
+    /**
+     * 키워드 기반 자동완성 검색을 통해 데이터셋 목록을 조회합니다.
+     *
+     * @param keyword 자동완성에 사용할 검색 키워드(선택 사항)
+     * @param size 반환할 데이터셋 개수(최소 1)
+     * @return 자동완성 결과로 조회된 데이터셋 최소 정보 목록을 포함한 성공 응답
+     */
+    @Operation(
+            summary = "키워드 자동완성을 위한 데이터셋 검색 기능",
+            description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/real-time")
+    ResponseEntity<SuccessResponse<List<DataMinimalSearchWebResponse>>> getRealTimeDataSets(
+            @RequestParam(required = false)
+            String keyword,
+
+            @RequestParam(name = "size")
+            @Min(1)
+            int size
+    );
+
+    /**
+     * 데이터셋을 카테고리(토픽)별로 그룹화하여 각 카테고리별 데이터셋 개수를 반환합니다.
+     *
+     * @return 카테고리별 데이터셋 개수 목록이 포함된 성공 응답
+     */
+    @Operation(
+            summary = "카테고리별 데이터셋 개수를 카운트한다.",
+            description = "카테고리별 데이터셋 개수를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "카테고리별 데이터셋 개수를 조회한다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/group-by/topic")
+    ResponseEntity<SuccessResponse<List<CountDataGroupWebResponse>>> countDataSetsByTopicLabel();
 }

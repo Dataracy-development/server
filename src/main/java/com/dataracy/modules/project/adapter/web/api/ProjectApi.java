@@ -57,14 +57,14 @@ public interface ProjectApi {
     );
 
     /**
-     * 키워드와 개수 제한을 기준으로 실시간 프로젝트 목록을 조회합니다.
+     * 키워드 자동완성을 위해 실시간으로 프로젝트 목록을 조회합니다.
      *
-     * @param keyword 프로젝트 검색에 사용할 키워드
+     * @param keyword 자동완성에 사용할 검색 키워드 (선택 사항)
      * @param size 반환할 프로젝트 최대 개수 (1 이상)
      * @return 실시간 검색 결과로 조회된 프로젝트 목록이 포함된 성공 응답
      */
     @Operation(
-            summary = "실시간으로 프로젝트 리스트를 조회한다.",
+            summary = "키워드 자동완성을 위한 실시간으로 프로젝트 리스트를 조회한다.",
             description = "제공받은 키워드와 사이즈를 토대로 실시간으로 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
@@ -74,7 +74,7 @@ public interface ProjectApi {
     })
     @GetMapping("/search/real-time")
     ResponseEntity<SuccessResponse<List<ProjectRealTimeSearchWebResponse>>> searchRealTimeProjects(
-            @RequestParam(name = "keyword")
+            @RequestParam(name = "keyword", required = false)
             String keyword,
 
             @RequestParam(name = "size")
