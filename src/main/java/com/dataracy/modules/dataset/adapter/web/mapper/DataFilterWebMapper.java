@@ -6,6 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataFilterWebMapper {
+    /**
+     * DataFilterResponse 객체를 DataFilterWebResponse 객체로 변환합니다.
+     *
+     * @param responseDto 변환할 DataFilterResponse 객체
+     * @return 변환된 DataFilterWebResponse 객체
+     */
     public DataFilterWebResponse toWebDto(DataFilterResponse responseDto) {
         return new DataFilterWebResponse(
                 responseDto.id(),
