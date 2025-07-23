@@ -117,6 +117,13 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
                 .collect(Collectors.toMap(UserEntity::getId, UserEntity::getNickname));
     }
 
+    @Override
+    public Map<Long, String> findUserThumbnailsByIds(List<Long> userIds) {
+        return userJpaRepository.findAllById(userIds)
+                .stream()
+                .collect(Collectors.toMap(UserEntity::getId, UserEntity::getProfileImageUrl));
+    }
+
     /**
      * 지정된 사용자 ID에 해당하는 사용자를 탈퇴 처리합니다.
      *

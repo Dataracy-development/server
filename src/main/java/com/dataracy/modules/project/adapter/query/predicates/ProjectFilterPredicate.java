@@ -73,4 +73,8 @@ private ProjectFilterPredicate() {}
     public static BooleanExpression authorLevelIdEq(Long authorLevelId) {
         return authorLevelId == null ? null : projectEntity.authorLevelId.eq(authorLevelId);
     }
+
+    public static BooleanExpression parentProjectIdEq(Long projectId) {
+        return projectId == null ? null : projectEntity.parentProject.id.eq(projectId);
+    }
 }

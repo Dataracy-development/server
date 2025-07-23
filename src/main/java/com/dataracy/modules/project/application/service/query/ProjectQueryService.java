@@ -2,6 +2,7 @@ package com.dataracy.modules.project.application.service.query;
 
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.dto.response.*;
+import com.dataracy.modules.project.application.mapper.ContinueProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.FilterProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
@@ -18,6 +19,7 @@ import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorL
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.user.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
@@ -38,16 +40,19 @@ public class ProjectQueryService implements
         ProjectSimilarSearchUseCase,
         ProjectPopularSearchUseCase,
         ProjectFilteredSearchUseCase,
-        ProjectDetailUseCase
+        ProjectDetailUseCase,
+        ContinueProjectUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
     private final FilterProjectDtoMapper filterProjectDtoMapper;
+    private final ContinueProjectDtoMapper continueProjectDtoMapper;
 
     private final ProjectRealTimeSearchPort projectRealTimeSearchPort;
     private final ProjectSimilarSearchPort projectSimilarSearchPort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
+    private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
@@ -243,5 +248,27 @@ public class ProjectQueryService implements
                 hasChild,
                 hasData
         );
+    }
+
+    @Override
+    public Page<ContinueProjectResponse> findContinueProjects(Long projectId, Pageable pageable) {
+        Page<Project> savedProjects = projectQueryRepositoryPort.findContinueProjects(projectId, pageable);
+
+        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
+        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
+        List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
+
+        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
+        Map<Long, String> userThumbnailMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
+        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
+        Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
+
+        return savedProjects.map(project -> continueProjectDtoMapper.toResponseDto(
+                project,
+                usernameMap.get(project.getUserId()),
+                userThumbnailMap.get(project.getUserId()),
+                topicLabelMap.get(project.getTopicId()),
+                authorLevelLabelMap.get(project.getAuthorLevelId())
+        ));
     }
 }
