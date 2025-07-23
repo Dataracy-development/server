@@ -10,6 +10,7 @@ import com.dataracy.modules.dataset.application.port.elasticsearch.DataSimilarSe
 import com.dataracy.modules.dataset.application.port.in.*;
 import com.dataracy.modules.dataset.application.port.out.DataRepositoryPort;
 import com.dataracy.modules.dataset.application.port.query.DataQueryRepositoryPort;
+import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.vo.DataUser;
@@ -129,7 +130,9 @@ public class DataQueryService implements
 
     @Override
     public Page<DataFilterResponse> findFilteredDataSets(DataFilterRequest request, Pageable pageable) {
-        Page<DataWithProjectCountDto> savedDataSets = dataQueryRepositoryPort.searchByFilters(request, pageable, request.sortType());
+        DataSortType dataSortType = DataSortType.of(request.sortType());
+
+        Page<DataWithProjectCountDto> savedDataSets = dataQueryRepositoryPort.searchByFilters(request, pageable, dataSortType);
 
         DataLabelMappingResponse labelResponse = labelMapping(savedDataSets.getContent());
 
@@ -190,8 +193,8 @@ public class DataQueryService implements
         UserInfo userInfo = getUserInfoUseCase.getUserInfo(data.getUserId());
         DataUser dataUser = DataUser.from(userInfo);
 
-        String authorLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(dataUser.authorLevelId());
-        String occupationLabel = getOccupationLabelFromIdUseCase.getLabelById(dataUser.occupationId());
+        String authorLabel = dataUser.authorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(dataUser.authorLevelId());
+        String occupationLabel = dataUser.occupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(dataUser.occupationId());
 
         return new DataDetailResponse(
                 data.getId(),
