@@ -7,7 +7,6 @@ import com.dataracy.modules.project.adapter.jpa.repository.ProjectDataJpaReposit
 import com.dataracy.modules.project.adapter.jpa.repository.ProjectJpaRepository;
 import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
-import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
@@ -21,7 +20,6 @@ import java.util.List;
 public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     private final ProjectJpaRepository projectJpaRepository;
     private final ProjectDataJpaRepository projectDataJpaRepository;
-    private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
 
     /**
      * 프로젝트 도메인 객체를 저장하고, 저장된 최소 정보의 프로젝트 객체를 반환한다.
@@ -97,5 +95,19 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
         // 저장
         projectDataJpaRepository.saveAll(newLinks);
         projectJpaRepository.save(projectEntity);
+    }
+
+    @Override
+    public void delete(Long projectId) {
+        ProjectEntity project = projectJpaRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
+        project.delete();
+    }
+
+    @Override
+    public void restore(Long projectId) {
+        ProjectEntity project = projectJpaRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
+        project.restore();
     }
 }

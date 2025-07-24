@@ -2,14 +2,15 @@ package com.dataracy.modules.project.application.service.command;
 
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.dataset.application.port.in.ValidateDataUseCase;
-import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectIndexingPort;
+import com.dataracy.modules.project.application.port.in.ProjectDeleteUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectModifyUseCase;
+import com.dataracy.modules.project.application.port.in.ProjectRestoreUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
@@ -33,7 +34,12 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProjectCommandService implements ProjectUploadUseCase, ProjectModifyUseCase {
+public class ProjectCommandService implements
+        ProjectUploadUseCase,
+        ProjectModifyUseCase,
+        ProjectDeleteUseCase,
+        ProjectRestoreUseCase
+{
     private final ProjectRepositoryPort projectRepositoryPort;
     private final ProjectIndexingPort projectIndexingPort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
@@ -194,5 +200,19 @@ public class ProjectCommandService implements ProjectUploadUseCase, ProjectModif
         ));
 
         log.info("프로젝트 수정 완료 - projectId: {}, title: {}", projectId, updatedProject.getTitle());
+    }
+
+    @Override
+    @Transactional
+    public void markAsDelete(Long projectId) {
+        projectRepositoryPort.delete(projectId);
+        projectIndexingPort.markAsDeleted(projectId);
+    }
+
+    @Override
+    @Transactional
+    public void markAsRestore(Long projectId) {
+        projectRepositoryPort.restore(projectId);
+        projectIndexingPort.markAsRestore(projectId);
     }
 }

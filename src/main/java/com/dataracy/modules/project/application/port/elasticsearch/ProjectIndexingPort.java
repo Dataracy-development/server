@@ -10,5 +10,5 @@ public interface ProjectIndexingPort {
  */
 void index(ProjectSearchDocument doc);
     void markAsDeleted(Long projectId);
-    void restoreDeleted(Long projectId);
+    void markAsRestore(Long projectId);
 }
