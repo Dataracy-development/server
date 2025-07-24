@@ -35,4 +35,7 @@ boolean existsProjectById(Long projectId);
 Long findUserIdByProjectId(Long projectId);
 
 void modify(Long projectId, ProjectModifyRequest requestDto);
+
+void delete(Long projectId);
+void restore(Long projectId);
 }

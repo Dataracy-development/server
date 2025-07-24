@@ -114,8 +114,16 @@ public class ProjectEntity extends BaseTimeEntity {
      *
      * @param fileUrl 새로 설정할 파일 URL
      */
-    public void updateFile (String fileUrl) {
+    public void updateFile(String fileUrl) {
         this.fileUrl = fileUrl;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
+
+    public void restore() {
+        this.isDeleted = false;
     }
 
     /**
