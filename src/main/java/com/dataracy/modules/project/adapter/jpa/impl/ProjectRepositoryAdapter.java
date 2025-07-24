@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -108,6 +110,9 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     public void delete(Long projectId) {
         ProjectEntity project = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
+        project.getChildProjects()
+                .forEach(ProjectEntity::deleteParentProject);
+
         project.delete();
     }
 
