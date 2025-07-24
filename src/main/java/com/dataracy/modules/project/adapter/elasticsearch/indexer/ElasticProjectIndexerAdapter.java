@@ -56,7 +56,7 @@ public class ElasticProjectIndexerAdapter implements ProjectIndexingPort {
     }
 
     @Override
-    public void restoreDeleted(Long projectId) {
+    public void markAsRestore(Long projectId) {
         try {
             log.info("프로젝트 복원 시작: projectId={}", projectId);
             client.update(u -> u
