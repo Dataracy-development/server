@@ -22,7 +22,6 @@ import java.util.Set;
 @Table(
         name = "project"
 )
-@SQLDelete(sql = "UPDATE project SET is_deleted = true WHERE project_id = ?")
 @Where(clause = "is_deleted = false")
 public class ProjectEntity extends BaseTimeEntity {
     @Id
