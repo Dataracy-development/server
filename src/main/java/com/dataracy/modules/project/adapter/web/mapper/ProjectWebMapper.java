@@ -1,9 +1,11 @@
 package com.dataracy.modules.project.adapter.web.mapper;
 
+import com.dataracy.modules.project.adapter.web.request.ProjectModifyWebRequest;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
 import com.dataracy.modules.project.adapter.web.response.ConnectedProjectAssociatedWithDataWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ContinueProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectDetailWebResponse;
+import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.dto.response.ConnectedProjectAssociatedWithDataResponse;
 import com.dataracy.modules.project.application.dto.response.ContinueProjectResponse;
@@ -20,6 +22,20 @@ public class ProjectWebMapper {
      */
     public ProjectUploadRequest toApplicationDto(ProjectUploadWebRequest webRequest) {
         return new ProjectUploadRequest(
+                webRequest.title(),
+                webRequest.topicId(),
+                webRequest.analysisPurposeId(),
+                webRequest.dataSourceId(),
+                webRequest.authorLevelId(),
+                webRequest.isContinue(),
+                webRequest.parentProjectId(),
+                webRequest.content(),
+                webRequest.dataIds()
+        );
+    }
+
+    public ProjectModifyRequest toApplicationDto(ProjectModifyWebRequest webRequest) {
+        return new ProjectModifyRequest(
                 webRequest.title(),
                 webRequest.topicId(),
                 webRequest.analysisPurposeId(),
