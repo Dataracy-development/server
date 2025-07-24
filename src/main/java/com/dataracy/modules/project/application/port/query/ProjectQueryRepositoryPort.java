@@ -1,5 +1,6 @@
 package com.dataracy.modules.project.application.port.query;
 
+import com.dataracy.modules.project.adapter.jpa.entity.ProjectEntity;
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.model.Project;

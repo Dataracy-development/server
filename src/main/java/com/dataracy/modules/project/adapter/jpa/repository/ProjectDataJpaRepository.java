@@ -2,9 +2,11 @@ package com.dataracy.modules.project.adapter.jpa.repository;
 
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectDataEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 public interface ProjectDataJpaRepository extends JpaRepository<ProjectDataEntity, Long> {
-    List<ProjectDataEntity> findAllByProjectId(Long projectId);
+    @Modifying(clearAutomatically = true)
+    @Query("DELETE FROM ProjectDataEntity p WHERE p.project.id = :projectId")
+    void deleteAllByProjectId(Long projectId);
 }
