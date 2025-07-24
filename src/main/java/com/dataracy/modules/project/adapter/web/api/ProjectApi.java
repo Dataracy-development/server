@@ -98,9 +98,9 @@ public interface ProjectApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping("/search/similar")
+    @GetMapping("/{projectId}/similar")
     ResponseEntity<SuccessResponse<List<ProjectSimilarSearchWebResponse>>> searchSimilarProjects(
-            @RequestParam(name = "projectId")
+            @PathVariable(name = "projectId")
             @Min(1)
             Long projectId,
 
@@ -124,7 +124,7 @@ public interface ProjectApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping("/search/popular")
+    @GetMapping("/popular")
     ResponseEntity<SuccessResponse<List<ProjectPopularSearchWebResponse>>> searchPopularProjects(
             @RequestParam(name = "size")
             @Min(1)
@@ -147,7 +147,7 @@ public interface ProjectApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping("/search/filter")
+    @GetMapping("/filter")
     ResponseEntity<SuccessResponse<Page<ProjectFilterWebResponse>>> searchFilteredProjects(
             @Validated @ModelAttribute
             ProjectFilterWebRequest webRequest,

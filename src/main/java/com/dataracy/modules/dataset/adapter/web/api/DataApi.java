@@ -74,9 +74,9 @@ public interface DataApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping("/search/similar")
+    @GetMapping("/{dataId}/similar")
     ResponseEntity<SuccessResponse<List<DataSimilarSearchWebResponse>>> searchSimilarDataSets(
-            @RequestParam(name = "dataId")
+            @PathVariable(name = "dataId")
             @Min(1)
             Long dataId,
 
@@ -100,7 +100,7 @@ public interface DataApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping("/search/popular")
+    @GetMapping("/popular")
     ResponseEntity<SuccessResponse<List<DataPopularSearchWebResponse>>> searchPopularDataSets(
             @RequestParam(name = "size")
             @Min(1)
@@ -123,7 +123,7 @@ public interface DataApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping("/search/filter")
+    @GetMapping("/filter")
     ResponseEntity<SuccessResponse<Page<DataFilterWebResponse>>> searchFilteredDataSets(
             @Validated @ModelAttribute
             DataFilterWebRequest webRequest,
@@ -191,7 +191,7 @@ public interface DataApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping("/real-time")
+    @GetMapping("/search/real-time")
     ResponseEntity<SuccessResponse<List<DataMinimalSearchWebResponse>>> getRealTimeDataSets(
             @RequestParam(required = false)
             String keyword,
