@@ -21,7 +21,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -113,7 +117,6 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 queryFactory
                         .select(project.count())
                         .from(project)
-                        .distinct()
                         .where(
                                 ProjectFilterPredicate.parentProjectIdEq(projectId)
                         )
@@ -153,7 +156,12 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .where(project.id.in(projectIds))
                 .fetch();
 
-        List<Project> contents = entities.stream()
+        Map<Long, ProjectEntity> entityMap = entities.stream()
+                .collect(Collectors.toMap(ProjectEntity::getId, Function.identity()));
+
+        List<Project> contents = projectIds.stream()
+                .map(entityMap::get)
+                .filter(Objects::nonNull)
                 .map(ProjectEntityMapper::toMinimal)
                 .toList();
 
