@@ -22,9 +22,17 @@ public class QUserTopicEntity extends EntityPathBase<UserTopicEntity> {
 
     public static final QUserTopicEntity userTopicEntity = new QUserTopicEntity("userTopicEntity");
 
+    public final com.dataracy.modules.common.base.QBaseTimeEntity _super = new com.dataracy.modules.common.base.QBaseTimeEntity(this);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final NumberPath<Long> topicId = createNumber("topicId", Long.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final QUserEntity user;
 

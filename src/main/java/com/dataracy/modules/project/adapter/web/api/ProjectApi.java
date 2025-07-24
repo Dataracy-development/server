@@ -85,7 +85,7 @@ public interface ProjectApi {
     /**
      * 지정한 프로젝트와 유사한 프로젝트 목록을 조회합니다.
      *
-     * @param projectId 유사도를 비교할 기준 프로젝트의 ID
+     * @param projectId 유사도를 비교할 기준이 되는 프로젝트의 ID
      * @param size 반환할 유사 프로젝트의 최대 개수
      * @return 유사한 프로젝트 목록이 포함된 성공 응답 객체
      */
@@ -98,9 +98,9 @@ public interface ProjectApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping("/search/similar")
+    @GetMapping("/{projectId}/similar")
     ResponseEntity<SuccessResponse<List<ProjectSimilarSearchWebResponse>>> searchSimilarProjects(
-            @RequestParam(name = "projectId")
+            @PathVariable(name = "projectId")
             @Min(1)
             Long projectId,
 
@@ -110,9 +110,9 @@ public interface ProjectApi {
     );
 
     /**
-     * 좋아요, 댓글, 조회수를 기준으로 인기 프로젝트 목록을 조회한다.
+     * 좋아요, 댓글, 조회수를 기준으로 인기 프로젝트 목록을 반환한다.
      *
-     * @param size 반환할 프로젝트 최대 개수 (1 이상)
+     * @param size 반환할 프로젝트의 최대 개수 (1 이상)
      * @return 인기 프로젝트 목록이 포함된 성공 응답
      */
     @Operation(
@@ -124,7 +124,7 @@ public interface ProjectApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping("/search/popular")
+    @GetMapping("/popular")
     ResponseEntity<SuccessResponse<List<ProjectPopularSearchWebResponse>>> searchPopularProjects(
             @RequestParam(name = "size")
             @Min(1)
@@ -135,7 +135,7 @@ public interface ProjectApi {
      * 필터 조건에 따라 프로젝트 목록을 페이지네이션하여 조회한다.
      *
      * @param webRequest 프로젝트 필터링 조건이 포함된 요청 객체
-     * @param pageable 페이지 번호와 크기 등 페이지네이션 정보
+     * @param pageable 페이지네이션 정보 (기본: 1페이지, 5개씩)
      * @return 필터링된 프로젝트 목록의 페이지를 담은 성공 응답
      */
     @Operation(
@@ -147,7 +147,7 @@ public interface ProjectApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping("/search/filter")
+    @GetMapping("/filter")
     ResponseEntity<SuccessResponse<Page<ProjectFilterWebResponse>>> searchFilteredProjects(
             @Validated @ModelAttribute
             ProjectFilterWebRequest webRequest,
@@ -157,7 +157,7 @@ public interface ProjectApi {
     );
 
     /**
-     * 지정한 프로젝트 ID에 해당하는 프로젝트의 상세 정보를 반환합니다.
+     * 프로젝트 ID로 해당 프로젝트의 상세 정보를 조회하여 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID (1 이상)
      * @return 프로젝트 상세 정보를 포함한 성공 응답
@@ -175,5 +175,55 @@ public interface ProjectApi {
     ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(
             @PathVariable @Min(1)
             Long projectId
+    );
+
+    /**
+     * 지정한 프로젝트의 이어가기(연속) 프로젝트 목록을 페이지 단위로 조회한다.
+     *
+     * @param projectId 이어가기 프로젝트를 조회할 기준 프로젝트의 ID (1 이상)
+     * @param pageable 페이지네이션 정보 (기본: 페이지 0, 크기 3)
+     * @return 이어가기 프로젝트 목록이 포함된 성공 응답
+     */
+    @Operation(
+            summary = "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회한다.",
+            description = "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "이어가기 프로젝트 리스트 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/{projectId}/continue")
+    ResponseEntity<SuccessResponse<Page<ContinueProjectWebResponse>>> searchContinueProjects(
+            @PathVariable @Min(1)
+            Long projectId,
+
+            @PageableDefault(size = 3, page = 0)
+            Pageable pageable
+    );
+
+    /**
+     * 지정된 데이터셋과 연결된 프로젝트 목록을 페이지 단위로 조회합니다.
+     *
+     * @param dataId 연결된 데이터셋의 고유 식별자
+     * @param pageable 페이지네이션 정보 (기본 페이지 크기: 3)
+     * @return 데이터셋과 연결된 프로젝트 목록이 포함된 성공 응답
+     */
+    @Operation(
+            summary = "데이터와 연결된 프로젝트 리스트를 조회한다.",
+            description = "데이터와 연결된 프로젝트 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "데이터와 연결된 프로젝트 리스트 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/connected-to-dataset")
+    ResponseEntity<SuccessResponse<Page<ConnectedProjectAssociatedWithDataWebResponse>>> searchConnectedProjectsAssociatedWithData(
+            @RequestParam @Min(1)
+            Long dataId,
+
+            @PageableDefault(size = 3, page = 0)
+            Pageable pageable
     );
 }

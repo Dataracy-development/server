@@ -2,6 +2,8 @@ package com.dataracy.modules.project.application.service.query;
 
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.dto.response.*;
+import com.dataracy.modules.project.application.mapper.ConnectedProjectAssociatedDtoMapper;
+import com.dataracy.modules.project.application.mapper.ContinueProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.FilterProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
@@ -18,6 +20,7 @@ import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorL
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.user.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
 import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
@@ -38,22 +41,27 @@ public class ProjectQueryService implements
         ProjectSimilarSearchUseCase,
         ProjectPopularSearchUseCase,
         ProjectFilteredSearchUseCase,
-        ProjectDetailUseCase
+        ProjectDetailUseCase,
+        ContinueProjectUseCase,
+        ConnectedProjectAssociatedWithDataUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
     private final FilterProjectDtoMapper filterProjectDtoMapper;
+    private final ContinueProjectDtoMapper continueProjectDtoMapper;
 
     private final ProjectRealTimeSearchPort projectRealTimeSearchPort;
     private final ProjectSimilarSearchPort projectSimilarSearchPort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
+    private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
     private final GetUserInfoUseCase getUserInfoUseCase;
+    private final ConnectedProjectAssociatedDtoMapper connectedProjectAssociatedDtoMapper;
 
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
@@ -199,9 +207,9 @@ public class ProjectQueryService implements
     }
 
     /**
-     * 지정한 프로젝트 ID에 대한 상세 정보를 반환합니다.
+     * 지정한 프로젝트의 상세 정보를 조회하여 반환합니다.
      *
-     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 프로젝트 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 조회합니다.
+     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 프로젝트 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 제공합니다.
      *
      * @param projectId 상세 정보를 조회할 프로젝트의 ID
      * @return 프로젝트의 상세 정보를 담은 ProjectDetailResponse 객체
@@ -243,5 +251,60 @@ public class ProjectQueryService implements
                 hasChild,
                 hasData
         );
+    }
+
+    /**
+     * 지정한 프로젝트 ID를 기준으로 이어지는 프로젝트 목록을 페이지 단위로 조회합니다.
+     *
+     * 각 프로젝트에 대해 작성자 이름, 작성자 썸네일, 주제 라벨, 저자 레벨 라벨 정보를 함께 반환합니다.
+     *
+     * @param projectId 기준이 되는 프로젝트의 ID
+     * @param pageable 페이지네이션 정보
+     * @return 이어지는 프로젝트 응답 DTO의 페이지 객체
+     */
+    @Override
+    public Page<ContinueProjectResponse> findContinueProjects(Long projectId, Pageable pageable) {
+        Page<Project> savedProjects = projectQueryRepositoryPort.findContinueProjects(projectId, pageable);
+
+        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
+        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
+        List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
+
+        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
+        Map<Long, String> userThumbnailMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
+        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
+        Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
+
+        return savedProjects.map(project -> continueProjectDtoMapper.toResponseDto(
+                project,
+                usernameMap.get(project.getUserId()),
+                userThumbnailMap.get(project.getUserId()),
+                topicLabelMap.get(project.getTopicId()),
+                authorLevelLabelMap.get(project.getAuthorLevelId())
+        ));
+    }
+
+    /**
+     * 데이터 ID와 연결된 프로젝트들을 페이지 단위로 조회하여, 사용자명과 토픽 라벨 정보를 포함한 응답으로 반환합니다.
+     *
+     * @param dataId   연결된 데이터를 식별하는 ID
+     * @param pageable 페이지네이션 정보
+     * @return 연결된 프로젝트의 상세 정보가 담긴 페이지 객체
+     */
+    @Override
+    public Page<ConnectedProjectAssociatedWithDataResponse> findConnectedProjects(Long dataId, Pageable pageable) {
+        Page<Project> savedProjects = projectQueryRepositoryPort.findConnectedProjectsAssociatedWithData(dataId, pageable);
+
+        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
+        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
+
+        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
+        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
+
+        return savedProjects.map(project -> connectedProjectAssociatedDtoMapper.toResponseDto(
+                project,
+                usernameMap.get(project.getUserId()),
+                topicLabelMap.get(project.getTopicId())
+        ));
     }
 }

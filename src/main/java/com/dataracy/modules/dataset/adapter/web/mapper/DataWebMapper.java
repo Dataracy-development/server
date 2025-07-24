@@ -1,9 +1,11 @@
 package com.dataracy.modules.dataset.adapter.web.mapper;
 
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.ConnectedDataAssociatedWithProjectWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.CountDataGroupWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
+import com.dataracy.modules.dataset.application.dto.response.ConnectedDataAssociatedWithProjectResponse;
 import com.dataracy.modules.dataset.application.dto.response.CountDataGroupResponse;
 import com.dataracy.modules.dataset.application.dto.response.DataDetailResponse;
 import org.springframework.stereotype.Component;
@@ -62,16 +64,39 @@ public class DataWebMapper {
     }
 
     /**
-     * 애플리케이션 계층의 CountDataGroupResponse를 웹 계층의 CountDataGroupWebResponse로 변환합니다.
+     * CountDataGroupResponse 객체를 CountDataGroupWebResponse 객체로 변환합니다.
      *
-     * @param responseDto 변환할 CountDataGroupResponse 객체
-     * @return 변환된 CountDataGroupWebResponse 객체
+     * @param responseDto 변환할 애플리케이션 계층의 CountDataGroupResponse 객체
+     * @return 웹 계층에서 사용하는 CountDataGroupWebResponse 객체
      */
     public CountDataGroupWebResponse toWebDto(CountDataGroupResponse responseDto) {
         return new CountDataGroupWebResponse(
                 responseDto.topicId(),
                 responseDto.topicLabel(),
                 responseDto.count()
+        );
+    }
+
+    /**
+     * 애플리케이션 계층의 ConnectedDataAssociatedWithProjectResponse DTO를 웹 계층의 ConnectedDataAssociatedWithProjectWebResponse로 변환합니다.
+     *
+     * @param responseDto 변환할 데이터셋 연결 정보 DTO
+     * @return 변환된 웹 응답 객체
+     */
+    public ConnectedDataAssociatedWithProjectWebResponse toWebDto(ConnectedDataAssociatedWithProjectResponse responseDto) {
+        return new ConnectedDataAssociatedWithProjectWebResponse(
+                responseDto.id(),
+                responseDto.title(),
+                responseDto.topicLabel(),
+                responseDto.dataTypeLabel(),
+                responseDto.startDate(),
+                responseDto.endDate(),
+                responseDto.thumbnailUrl(),
+                responseDto.downloadCount(),
+                responseDto.rowCount(),
+                responseDto.columnCount(),
+                responseDto.createdAt(),
+                responseDto.countConnectedProjects()
         );
     }
 }

@@ -22,11 +22,19 @@ public class QProjectDataEntity extends EntityPathBase<ProjectDataEntity> {
 
     public static final QProjectDataEntity projectDataEntity = new QProjectDataEntity("projectDataEntity");
 
+    public final com.dataracy.modules.common.base.QBaseTimeEntity _super = new com.dataracy.modules.common.base.QBaseTimeEntity(this);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
+
     public final NumberPath<Long> dataId = createNumber("dataId", Long.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QProjectEntity project;
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public QProjectDataEntity(String variable) {
         this(ProjectDataEntity.class, forVariable(variable), INITS);

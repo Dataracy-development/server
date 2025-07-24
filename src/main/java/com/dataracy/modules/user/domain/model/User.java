@@ -34,6 +34,8 @@ public class User {
 
     private Long visitSourceId;
 
+    private String profileImageUrl;
+
     private boolean isAdTermsAgreed;
     private boolean isDeleted;
 
@@ -48,7 +50,7 @@ public class User {
     }
 
     /**
-     * 주어진 사용자 속성 값들로 User 도메인 객체를 생성합니다.
+     * 주어진 사용자 속성 값들로 새로운 User 도메인 객체를 생성합니다.
      *
      * @param id 사용자 식별자
      * @param provider 인증 제공자 유형
@@ -61,6 +63,7 @@ public class User {
      * @param occupationId 직업 식별자
      * @param topicIds 사용자가 연관된 토픽 ID 목록
      * @param visitSourceId 방문 경로 식별자
+     * @param profileImageUrl 프로필 이미지 URL
      * @param isAdTermsAgreed 광고 약관 동의 여부
      * @param isDeleted 삭제 여부
      * @return 생성된 User 객체
@@ -77,6 +80,7 @@ public class User {
             Long occupationId,
             List<Long> topicIds,
             Long visitSourceId,
+            String profileImageUrl,
             boolean isAdTermsAgreed,
             boolean isDeleted
     ) {
@@ -92,6 +96,7 @@ public class User {
                 .occupationId(occupationId)
                 .topicIds(topicIds)
                 .visitSourceId(visitSourceId)
+                .profileImageUrl(profileImageUrl)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)
                 .build();
