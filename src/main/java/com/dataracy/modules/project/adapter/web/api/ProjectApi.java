@@ -229,7 +229,7 @@ public interface ProjectApi {
     );
 
     @Operation(
-            summary = "프로젝트를 수정한다.한다.",
+            summary = "프로젝트를 수정한다.",
             description = "제공받은 웹 요청 DTO의 프로젝트 정보를 통해 기존 프로젝트를 수정한다."
     )
     @ApiResponses(value = {
