@@ -88,6 +88,12 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
                         .field("id")
                         .value(project.getId())
                 ))
+                .filter(f -> f
+                        .term(t -> t
+                                .field("isDeleted")
+                                .value(false)
+                        )
+                )
         );
     }
 
