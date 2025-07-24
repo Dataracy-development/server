@@ -192,6 +192,7 @@ public class ProjectController implements ProjectApi {
     }
 
     @Override
+    @AuthorizationProjectEdit
     public ResponseEntity<SuccessResponse<Void>> deleteProject(Long projectId) {
         projectDeleteUseCase.markAsDelete(projectId);
 
@@ -200,6 +201,7 @@ public class ProjectController implements ProjectApi {
     }
 
     @Override
+    @AuthorizationProjectEdit
     public ResponseEntity<SuccessResponse<Void>> restoreProject(Long projectId) {
         projectRestoreUseCase.markAsRestore(projectId);
 
