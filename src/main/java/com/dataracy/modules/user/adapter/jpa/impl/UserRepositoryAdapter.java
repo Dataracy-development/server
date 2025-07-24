@@ -105,10 +105,10 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     /**
-     * 주어진 사용자 ID 목록에 해당하는 사용자들의 닉네임을 ID별로 매핑하여 반환합니다.
+     * 주어진 사용자 ID 목록에 해당하는 사용자들의 닉네임을 사용자 ID별로 매핑하여 반환합니다.
      *
      * @param userIds 조회할 사용자 ID 목록
-     * @return 각 사용자 ID에 해당하는 닉네임의 맵
+     * @return 각 사용자 ID와 해당 닉네임이 매핑된 맵
      */
     @Override
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
@@ -117,6 +117,12 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
                 .collect(Collectors.toMap(UserEntity::getId, UserEntity::getNickname));
     }
 
+    /**
+     * 주어진 사용자 ID 목록에 대해 각 사용자의 프로필 이미지 URL을 반환합니다.
+     *
+     * @param userIds 프로필 이미지 URL을 조회할 사용자 ID 목록
+     * @return 사용자 ID를 키로 하고 프로필 이미지 URL(없을 경우 빈 문자열)을 값으로 하는 맵
+     */
     @Override
     public Map<Long, String> findUserThumbnailsByIds(List<Long> userIds) {
         return userJpaRepository.findAllById(userIds)

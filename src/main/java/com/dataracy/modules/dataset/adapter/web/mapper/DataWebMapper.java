@@ -64,10 +64,10 @@ public class DataWebMapper {
     }
 
     /**
-     * 애플리케이션 계층의 CountDataGroupResponse를 웹 계층의 CountDataGroupWebResponse로 변환합니다.
+     * CountDataGroupResponse 객체를 CountDataGroupWebResponse 객체로 변환합니다.
      *
-     * @param responseDto 변환할 CountDataGroupResponse 객체
-     * @return 변환된 CountDataGroupWebResponse 객체
+     * @param responseDto 변환할 애플리케이션 계층의 CountDataGroupResponse 객체
+     * @return 웹 계층에서 사용하는 CountDataGroupWebResponse 객체
      */
     public CountDataGroupWebResponse toWebDto(CountDataGroupResponse responseDto) {
         return new CountDataGroupWebResponse(
@@ -77,6 +77,12 @@ public class DataWebMapper {
         );
     }
 
+    /**
+     * 애플리케이션 계층의 ConnectedDataAssociatedWithProjectResponse DTO를 웹 계층의 ConnectedDataAssociatedWithProjectWebResponse로 변환합니다.
+     *
+     * @param responseDto 변환할 데이터셋 연결 정보 DTO
+     * @return 변환된 웹 응답 객체
+     */
     public ConnectedDataAssociatedWithProjectWebResponse toWebDto(ConnectedDataAssociatedWithProjectResponse responseDto) {
         return new ConnectedDataAssociatedWithProjectWebResponse(
                 responseDto.id(),

@@ -162,10 +162,10 @@ public class UserQueryService implements
     }
 
     /**
-     * 여러 사용자 ID에 대해 각 ID에 해당하는 닉네임을 매핑한 Map을 반환합니다.
+     * 주어진 사용자 ID 목록에 대해 각 ID에 해당하는 닉네임을 반환합니다.
      *
      * @param userIds 닉네임을 조회할 사용자 ID 목록
-     * @return 사용자 ID를 키로, 닉네임을 값으로 가지는 Map
+     * @return 사용자 ID를 키, 닉네임을 값으로 하는 Map
      */
     @Override
     @Transactional(readOnly = true)
@@ -173,6 +173,12 @@ public class UserQueryService implements
         return userRepositoryPort.findUsernamesByIds(userIds);
     }
 
+    /**
+     * 주어진 사용자 ID 목록에 대해 각 사용자의 썸네일 URL을 조회합니다.
+     *
+     * @param userIds 썸네일을 조회할 사용자 ID 목록
+     * @return 사용자 ID를 키로 하고 썸네일 URL을 값으로 하는 맵
+     */
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> findUserThumbnailsByIds(List<Long> userIds) {
