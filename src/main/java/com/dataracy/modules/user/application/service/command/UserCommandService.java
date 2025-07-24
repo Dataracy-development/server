@@ -24,6 +24,7 @@ import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,9 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     private final ValidateVisitSourceUseCase validateVisitSourceUseCase;
 
     private final TokenRedisUseCase tokenRedisUseCase;
+
+    @Value("${default.image.url:}")
+    private String defaultImageUrl;
 
     /**
      * 자체 회원가입 요청을 처리하여 새로운 사용자를 등록하고 리프레시 토큰을 발급한다.
@@ -109,6 +113,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 requestDto.occupationId(),
                 requestDto.topicIds(),
                 requestDto.visitSourceId(),
+                defaultImageUrl,
                 requestDto.isAdTermsAgreed(),
                 false
         );
@@ -187,6 +192,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 requestDto.occupationId(),
                 requestDto.topicIds(),
                 requestDto.visitSourceId(),
+                defaultImageUrl,
                 requestDto.isAdTermsAgreed(),
                 false
         );

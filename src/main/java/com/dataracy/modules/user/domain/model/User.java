@@ -34,6 +34,8 @@ public class User {
 
     private Long visitSourceId;
 
+    private String profileImageUrl;
+
     private boolean isAdTermsAgreed;
     private boolean isDeleted;
 
@@ -77,6 +79,7 @@ public class User {
             Long occupationId,
             List<Long> topicIds,
             Long visitSourceId,
+            String profileImageUrl,
             boolean isAdTermsAgreed,
             boolean isDeleted
     ) {
@@ -92,6 +95,7 @@ public class User {
                 .occupationId(occupationId)
                 .topicIds(topicIds)
                 .visitSourceId(visitSourceId)
+                .profileImageUrl(profileImageUrl)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)
                 .build();
