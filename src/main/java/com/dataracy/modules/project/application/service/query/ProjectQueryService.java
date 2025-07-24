@@ -9,6 +9,7 @@ import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectSimilarSearchPort;
 import com.dataracy.modules.project.application.port.in.*;
+import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
@@ -43,12 +44,14 @@ public class ProjectQueryService implements
         ProjectFilteredSearchUseCase,
         ProjectDetailUseCase,
         ContinueProjectUseCase,
-        ConnectedProjectAssociatedWithDataUseCase
+        ConnectedProjectAssociatedWithDataUseCase,
+        FindUserIdByProjectIdUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
     private final FilterProjectDtoMapper filterProjectDtoMapper;
     private final ContinueProjectDtoMapper continueProjectDtoMapper;
 
+    private final ProjectRepositoryPort projectRepositoryPort;
     private final ProjectRealTimeSearchPort projectRealTimeSearchPort;
     private final ProjectSimilarSearchPort projectSimilarSearchPort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
@@ -306,5 +309,10 @@ public class ProjectQueryService implements
                 usernameMap.get(project.getUserId()),
                 topicLabelMap.get(project.getTopicId())
         ));
+    }
+
+    @Override
+    public Long findUserIdByProjectId(Long projectId) {
+        return projectRepositoryPort.findUserIdByProjectId(projectId);
     }
 }

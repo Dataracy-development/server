@@ -57,4 +57,11 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     public boolean existsProjectById(Long projectId) {
         return projectJpaRepository.existsById(projectId);
     }
+
+    @Override
+    public Long findUserIdByProjectId(Long projectId) {
+        ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
+        return projectEntity.getUserId();
+    }
 }
