@@ -201,7 +201,7 @@ public class ProjectController implements ProjectApi {
     }
 
     @Override
-    @AuthorizationProjectEdit
+    @AuthorizationProjectEdit(restore = true)
     public ResponseEntity<SuccessResponse<Void>> restoreProject(Long projectId) {
         projectRestoreUseCase.markAsRestore(projectId);
 

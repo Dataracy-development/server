@@ -6,4 +6,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AuthorizationProjectEdit {
+    boolean restore() default false;
 }
