@@ -1,5 +1,6 @@
 package com.dataracy.modules.user.adapter.jpa.entity;
 
+import com.dataracy.modules.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Table(name = "user_topic")
-public class UserTopicEntity {
+public class UserTopicEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_topic_id", nullable = false)
