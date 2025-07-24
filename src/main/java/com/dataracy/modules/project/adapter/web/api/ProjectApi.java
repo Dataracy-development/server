@@ -189,7 +189,7 @@ public interface ProjectApi {
             description = "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "이어가기 프로젝트 리스트를 조회에 성공했습니다.",
+            @ApiResponse(responseCode = "200", description = "이어가기 프로젝트 리스트 조회에 성공했습니다.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
@@ -214,7 +214,7 @@ public interface ProjectApi {
             description = "데이터와 연결된 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "데이터와 연결된 프로젝트 리스트를 조회에 성공했습니다.",
+            @ApiResponse(responseCode = "200", description = "데이터와 연결된 프로젝트 리스트 조회에 성공했습니다.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
