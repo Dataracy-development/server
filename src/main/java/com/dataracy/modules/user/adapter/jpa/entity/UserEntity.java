@@ -118,6 +118,7 @@ public class UserEntity extends BaseTimeEntity {
             Long authorLevelId,
             Long occupationId,
             Long visitSourceId,
+            String profileImageUrl,
             Boolean isAdTermsAgreed,
             Boolean isDeleted
     ) {
@@ -131,6 +132,7 @@ public class UserEntity extends BaseTimeEntity {
                 .authorLevelId(authorLevelId)
                 .occupationId(occupationId)
                 .visitSourceId(visitSourceId)
+                .profileImageUrl(profileImageUrl)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)
                 .build();
