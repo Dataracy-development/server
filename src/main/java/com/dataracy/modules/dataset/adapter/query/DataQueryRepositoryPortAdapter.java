@@ -19,6 +19,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -51,10 +52,12 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
     public Optional<Data> findDataById(Long dataId) {
         DataEntity entity = queryFactory
                 .selectFrom(data)
-                .where(DataFilterPredicate.dataIdEq(dataId))
+                .where(
+                        DataFilterPredicate.dataIdEq(dataId)
+                )
                 .fetchOne();
 
-        return Optional.ofNullable(DataEntityMapper.toDomain(entity));
+        return Optional.ofNullable(entity).map(DataEntityMapper::toDomain);
     }
 
     /**
@@ -68,10 +71,12 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         DataEntity entity = queryFactory
                 .selectFrom(data)
                 .leftJoin(data.metadata).fetchJoin()
-                .where(DataFilterPredicate.dataIdEq(dataId))
+                .where(
+                        DataFilterPredicate.dataIdEq(dataId)
+                )
                 .fetchOne();
 
-        return Optional.ofNullable(DataEntityMapper.toDomain(entity));
+        return Optional.ofNullable(entity).map(DataEntityMapper::toDomain);
     }
 
     /**
@@ -82,23 +87,25 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
      */
     @Override
     public List<DataWithProjectCountDto> findPopularDataSets(int size) {
+        NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
+        NumberExpression<Double> score = DataPopularOrderBuilder.popularScore(data, projectCountPath);
+
         List<Tuple> tuples = queryFactory
                 .select(
                         data,
-                        JPAExpressions
-                                .select(projectData.count())
-                                .from(projectData)
-                                .where(projectData.dataId.eq(data.id))
+                        projectData.id.count().as(projectCountPath)
                 )
                 .from(data)
+                .leftJoin(projectData).on(projectData.dataId.eq(data.id))
                 .leftJoin(data.metadata).fetchJoin()
-                .orderBy(DataPopularOrderBuilder.popularOrder(data, projectData))
+                .groupBy(data.id)
+                .orderBy(score.desc())
                 .limit(size)
                 .fetch();
         return tuples.stream()
                 .map(tuple -> new DataWithProjectCountDto(
                         DataEntityMapper.toDomain(tuple.get(data)),
-                        tuple.get(1, Long.class)
+                        tuple.get(projectCountPath)
                 ))
                 .toList();
     }
@@ -136,14 +143,14 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         List<Tuple> tuples = queryFactory
                 .select(
                         data,
-                        projectData.count().as(projectCountPath)
+                        projectData.id.count().as(projectCountPath)
                 )
                 .from(data)
                 .leftJoin(projectData).on(projectData.dataId.eq(data.id))
-                .groupBy(data.id)
-                .orderBy(DataSortBuilder.fromSortOption(sortType, projectCountPath))
                 .leftJoin(data.metadata).fetchJoin()
                 .where(buildFilterPredicates(request))
+                .groupBy(data.id)
+                .orderBy(DataSortBuilder.fromSortOption(sortType, projectCountPath))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -151,18 +158,16 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         List<DataWithProjectCountDto> contents = tuples.stream()
                 .map(tuple -> new DataWithProjectCountDto(
                         DataEntityMapper.toDomain(tuple.get(data)),
-                        tuple.get(1, Long.class)
+                        tuple.get(projectCountPath)
                 ))
                 .toList();
 
-        long total = Optional.ofNullable(
-                queryFactory
-                        .select(data.count())
+        long total = Optional.ofNullable(queryFactory
+                        .select(data.id.countDistinct())
                         .from(data)
-                        .distinct()
+                        .leftJoin(projectData).on(projectData.dataId.eq(data.id))
                         .where(buildFilterPredicates(request))
-                        .fetchOne()
-        ).orElse(0L);
+                        .fetchOne()).orElse(0L);
 
         return new PageImpl<>(contents, pageable, total);
     }
@@ -212,13 +217,14 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         List<Tuple> tuples = queryFactory
                 .select(
                         data,
-                        projectData.count().as(projectCountPath)
+                        projectData.id.count().as(projectCountPath)
                 )
                 .from(data)
-                .innerJoin(projectData).on(projectData.dataId.eq(data.id).and(projectData.project.id.eq(projectId)))
-                .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
-                .distinct()
+                .innerJoin(projectData).on(projectData.dataId.eq(data.id)
+                        .and(projectData.project.id.eq(projectId)))
                 .leftJoin(data.metadata).fetchJoin()
+                .groupBy(data.id)
+                .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -226,17 +232,14 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         List<DataWithProjectCountDto> contents = tuples.stream()
                 .map(tuple -> new DataWithProjectCountDto(
                         DataEntityMapper.toDomain(tuple.get(data)),
-                        tuple.get(1, Long.class)
+                        tuple.get(projectCountPath)
                 ))
                 .toList();
 
-        long total = Optional.ofNullable(
-                queryFactory
-                        .select(data.count())
+        long total = Optional.ofNullable(queryFactory
+                        .select(data.id.countDistinct())
                         .from(data)
                         .innerJoin(projectData).on(projectData.dataId.eq(data.id).and(projectData.project.id.eq(projectId)))
-                        .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
-                        .distinct()
                         .fetchOne()
         ).orElse(0L);
 
