@@ -11,6 +11,10 @@ public class ProjectFilterPredicate {
  */
 private ProjectFilterPredicate() {}
 
+    public static BooleanExpression notDeleted() {
+        return projectEntity.isDeleted.isFalse();
+    }
+
     /**
      * 주어진 프로젝트 ID와 일치하는 ProjectEntity를 필터링하는 QueryDSL BooleanExpression을 반환합니다.
      *

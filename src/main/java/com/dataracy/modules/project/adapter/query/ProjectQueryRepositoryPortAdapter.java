@@ -47,7 +47,8 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
         ProjectEntity entity = queryFactory
                 .selectFrom(project)
                 .where(
-                        ProjectFilterPredicate.projectIdEq(projectId)
+                        ProjectFilterPredicate.projectIdEq(projectId),
+                        ProjectFilterPredicate.notDeleted()
                 )
                 .fetchOne();
 
@@ -66,7 +67,8 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .selectOne()
                 .from(project)
                 .where(
-                        ProjectFilterPredicate.parentProjectIdEq(projectId)
+                        ProjectFilterPredicate.parentProjectIdEq(projectId),
+                        ProjectFilterPredicate.notDeleted()
                 )
                 .fetchFirst();
         return result != null;
@@ -84,7 +86,8 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .selectOne()
                 .from(projectData)
                 .where(
-                        ProjectDataFilterPredicate.projectIdEq(projectId)
+                        ProjectDataFilterPredicate.projectIdEq(projectId),
+                        ProjectDataFilterPredicate.notDeleted()
                 )
                 .fetchFirst();
         return result != null;
@@ -103,7 +106,8 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .selectFrom(project)
                 .orderBy(ProjectSortBuilder.fromSortOption(ProjectSortType.LATEST))
                 .where(
-                        ProjectFilterPredicate.parentProjectIdEq(projectId)
+                        ProjectFilterPredicate.parentProjectIdEq(projectId),
+                        ProjectFilterPredicate.notDeleted()
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -118,7 +122,8 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                         .select(project.count())
                         .from(project)
                         .where(
-                                ProjectFilterPredicate.parentProjectIdEq(projectId)
+                                ProjectFilterPredicate.parentProjectIdEq(projectId),
+                                ProjectFilterPredicate.notDeleted()
                         )
                         .fetchOne()
         ).orElse(0L);
@@ -135,12 +140,13 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
      */
     @Override
     public Page<Project> findConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable) {
-        // Step 1: 먼저 id 목록 조회 (페이징 포함)
+        // 먼저 id 목록 조회 (페이징 포함)
         List<Long> projectIds = queryFactory
                 .select(projectData.project.id)
                 .from(projectData)
                 .where(
-                        ProjectDataFilterPredicate.dataIdEq(dataId)
+                        ProjectDataFilterPredicate.dataIdEq(dataId),
+                        ProjectDataFilterPredicate.notDeleted()
                 )
                 .orderBy(projectData.project.createdAt.desc())
                 .offset(pageable.getOffset())
@@ -169,7 +175,10 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 queryFactory
                         .select(projectData.project.countDistinct())
                         .from(projectData)
-                        .where(ProjectDataFilterPredicate.dataIdEq(dataId))
+                        .where(
+                                ProjectDataFilterPredicate.dataIdEq(dataId),
+                                ProjectDataFilterPredicate.notDeleted()
+                        )
                         .fetchOne()
         ).orElse(0L);
 
@@ -188,6 +197,9 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     public List<Project> findPopularProjects(int size) {
         return queryFactory
                 .selectFrom(project)
+                .where(
+                        ProjectFilterPredicate.notDeleted()
+                )
                 .orderBy(ProjectPopularOrderBuilder.popularOrder())
                 .limit(size)
                 .fetch()
@@ -208,7 +220,8 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 ProjectFilterPredicate.topicIdEq(request.topicId()),
                 ProjectFilterPredicate.analysisPurposeIdEq(request.analysisPurposeId()),
                 ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
-                ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId())
+                ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId()),
+                ProjectFilterPredicate.notDeleted()
         };
     }
 
