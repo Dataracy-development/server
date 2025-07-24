@@ -247,4 +247,34 @@ public interface ProjectApi {
             @RequestPart @Validated
             ProjectModifyWebRequest webRequest
     );
+
+    @Operation(
+            summary = "프로젝트를 삭제한다.",
+            description = "해당하는 프로젝트를 삭제한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "해당하는 프로젝트 삭제에  성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @DeleteMapping("/{projectId}")
+    ResponseEntity<SuccessResponse<Void>> deleteProject(
+            @PathVariable @Min(1)
+            Long projectId
+    );
+
+    @Operation(
+            summary = "프로젝트를 복원한다.",
+            description = "해당하는 프로젝트를 복원한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "해당하는 프로젝트 복원에  성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @PatchMapping("/{projectId}/restore")
+    ResponseEntity<SuccessResponse<Void>> restoreProject(
+            @PathVariable @Min(1)
+            Long projectId
+    );
 }
