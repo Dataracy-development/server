@@ -5,7 +5,6 @@ import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.util.LinkedHashSet;
@@ -106,6 +105,10 @@ public class ProjectEntity extends BaseTimeEntity {
     public void addProjectData(ProjectDataEntity dataEntity) {
         projectDataEntities.add(dataEntity);
         dataEntity.assignProject(this);
+    }
+
+    public void deleteParentProject() {
+        this.parentProject = null;
     }
 
     /**
