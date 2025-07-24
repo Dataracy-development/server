@@ -1,0 +1,31 @@
+package com.dataracy.modules.common.support.aop;
+
+import com.dataracy.modules.dataset.application.port.in.FindUserIdByDataIdUseCase;
+import com.dataracy.modules.dataset.domain.exception.DataException;
+import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import com.dataracy.modules.security.handler.SecurityContextProvider;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class DataAuthPolicyAspect {
+
+    private final FindUserIdByDataIdUseCase findUserIdByDataIdUseCase;
+
+    @Before("@annotation(com.dataracy.modules.common.support.annotation.AuthorizationDataEdit) && args(dataId,..)")
+    public void checkDataEditPermission(Long dataId) {
+        Long authenticatedUserId = SecurityContextProvider.getAuthenticatedUserId();
+        Long ownerId = findUserIdByDataIdUseCase.findUserIdByDataId(dataId);
+
+        log.error("데이터셋 작성자만 수정 및 삭제가 가능합니다.");
+        if (!ownerId.equals(authenticatedUserId)) {
+            throw new DataException(DataErrorStatus.NOT_MATCH_CREATOR);
+        }
+    }
+}
