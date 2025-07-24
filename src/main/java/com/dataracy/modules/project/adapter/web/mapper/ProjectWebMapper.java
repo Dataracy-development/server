@@ -66,7 +66,7 @@ public class ProjectWebMapper {
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.username(),
-                responseDto.userThumnailUrl(),
+                responseDto.userThumbnailUrl(),
                 responseDto.fileUrl(),
                 responseDto.topicLabel(),
                 responseDto.authorLevelLabel(),

@@ -6,7 +6,7 @@ public record ContinueProjectWebResponse(
         Long id,
         String title,
         String username,
-        String userThumnailUrl,
+        String userThumnbailUrl,
         String fileUrl,
         String topicLabel,
         String authorLevelLabel,
