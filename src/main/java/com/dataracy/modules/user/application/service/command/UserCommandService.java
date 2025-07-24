@@ -24,6 +24,7 @@ import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,9 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     private final ValidateVisitSourceUseCase validateVisitSourceUseCase;
 
     private final TokenRedisUseCase tokenRedisUseCase;
+
+    @Value("${default.image.url:}")
+    private String defaultImageUrl;
 
     /**
      * 자체 회원가입 요청을 처리하여 새로운 사용자를 등록하고 리프레시 토큰을 발급한다.
@@ -109,6 +113,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 requestDto.occupationId(),
                 requestDto.topicIds(),
                 requestDto.visitSourceId(),
+                defaultImageUrl,
                 requestDto.isAdTermsAgreed(),
                 false
         );
@@ -128,10 +133,11 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
     }
 
     /**
-     * OAuth 기반 회원가입 요청을 처리하고 리프레시 토큰을 발급합니다.
+     * 소셜 로그인 기반 회원가입 요청을 처리하고 리프레시 토큰을 발급합니다.
      *
-     * 소셜 로그인에서 발급된 회원가입 토큰과 온보딩 정보를 검증하여 신규 사용자를 등록합니다.
+     * 소셜 회원가입 토큰의 유효성을 검증하고, 온보딩 정보를 바탕으로 신규 사용자를 등록합니다.
      * 이메일 및 닉네임 중복, 필수 및 선택 온보딩 항목의 유효성을 확인한 후, 회원 정보를 저장하고 리프레시 토큰을 생성하여 Redis에 저장합니다.
+     * 동시 닉네임 회원가입을 방지하기 위해 분산 락을 사용합니다.
      *
      * @param registerToken 소셜 회원가입 토큰
      * @param requestDto 온보딩 요청 정보
@@ -187,6 +193,7 @@ public class UserCommandService implements SelfSignUpUseCase, OAuthSignUpUseCase
                 requestDto.occupationId(),
                 requestDto.topicIds(),
                 requestDto.visitSourceId(),
+                defaultImageUrl,
                 requestDto.isAdTermsAgreed(),
                 false
         );

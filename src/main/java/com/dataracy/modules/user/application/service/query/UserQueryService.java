@@ -9,10 +9,7 @@ import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.user.application.dto.request.ConfirmPasswordRequest;
 import com.dataracy.modules.user.application.port.in.auth.HandleUserUseCase;
 import com.dataracy.modules.user.application.port.in.auth.IsNewUserUseCase;
-import com.dataracy.modules.user.application.port.in.user.ConfirmPasswordUseCase;
-import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
-import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
-import com.dataracy.modules.user.application.port.in.user.IsLoginPossibleUseCase;
+import com.dataracy.modules.user.application.port.in.user.*;
 import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;
@@ -36,6 +33,7 @@ public class UserQueryService implements
         IsLoginPossibleUseCase,
         ConfirmPasswordUseCase,
         FindUsernameUseCase,
+        FindUserThumbnailUseCase,
         GetUserInfoUseCase
 {
     private final PasswordEncoder passwordEncoder;
@@ -164,15 +162,27 @@ public class UserQueryService implements
     }
 
     /**
-     * 여러 사용자 ID에 대해 각 ID에 해당하는 닉네임을 매핑한 Map을 반환합니다.
+     * 주어진 사용자 ID 목록에 대해 각 ID에 해당하는 닉네임을 반환합니다.
      *
      * @param userIds 닉네임을 조회할 사용자 ID 목록
-     * @return 사용자 ID를 키로, 닉네임을 값으로 가지는 Map
+     * @return 사용자 ID를 키, 닉네임을 값으로 하는 Map
      */
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
         return userRepositoryPort.findUsernamesByIds(userIds);
+    }
+
+    /**
+     * 주어진 사용자 ID 목록에 대해 각 사용자의 썸네일 URL을 조회합니다.
+     *
+     * @param userIds 썸네일을 조회할 사용자 ID 목록
+     * @return 사용자 ID를 키로 하고 썸네일 URL을 값으로 하는 맵
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, String> findUserThumbnailsByIds(List<Long> userIds) {
+        return userRepositoryPort.findUserThumbnailsByIds(userIds);
     }
 
     /**

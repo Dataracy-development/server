@@ -54,9 +54,19 @@ Page<DataWithProjectCountDto> searchByFilters(DataFilterRequest request, Pageabl
  */
 List<Data> findRecentDataSets(int size);
     /**
- * 데이터셋을 특정 기준으로 그룹화하여 각 그룹별 개수를 반환합니다.
+ * 데이터셋을 그룹화 기준에 따라 집계하여 각 그룹별 데이터셋 개수를 반환합니다.
  *
- * @return 그룹별 데이터셋 개수 정보를 담은 CountDataGroupResponse 리스트
+ * @return 그룹별 데이터셋 개수 정보를 담은 CountDataGroupResponse 객체의 리스트
  */
 List<CountDataGroupResponse> countDataGroups();
+
+/**
+ * 지정된 프로젝트와 연결된 데이터셋 목록을 페이지 단위로 조회합니다.
+ *
+ * @param projectId 연결된 데이터셋을 조회할 프로젝트의 식별자
+ * @param pageable 페이지네이션 정보를 담은 객체
+ * @return 프로젝트와 연결된 데이터셋 및 각 데이터셋의 프로젝트 수를 포함하는 페이지 결과
+ */
+Page<DataWithProjectCountDto> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable);
+
 }

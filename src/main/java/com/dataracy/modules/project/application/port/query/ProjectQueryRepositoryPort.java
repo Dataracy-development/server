@@ -45,10 +45,28 @@ Page<Project> searchByFilters(ProjectFilterRequest request, Pageable pageable, P
 boolean existsByParentProjectId(Long projectId);
 
     /**
- * 지정된 프로젝트 ID에 해당하는 프로젝트 데이터가 존재하는지 여부를 반환합니다.
+ * 주어진 프로젝트 ID에 해당하는 프로젝트 데이터의 존재 여부를 확인합니다.
  *
- * @param projectId 존재 여부를 확인할 프로젝트의 ID
- * @return 프로젝트 데이터가 존재하면 true, 그렇지 않으면 false
+ * @param projectId 데이터 존재 여부를 확인할 프로젝트의 ID
+ * @return 프로젝트 데이터가 존재하면 true, 없으면 false
  */
 boolean existsProjectDataByProjectId(Long projectId);
+
+    /**
+ * 지정된 프로젝트 ID를 기준으로 이어지는 프로젝트 목록을 페이지 단위로 조회합니다.
+ *
+ * @param projectId 기준이 되는 프로젝트의 ID
+ * @param pageable 페이지네이션 정보
+ * @return 이어지는 프로젝트의 페이지 결과
+ */
+Page<Project> findContinueProjects(Long projectId, Pageable pageable);
+
+    /**
+ * 지정된 데이터 ID와 연관된 연결된 프로젝트 목록을 페이지 단위로 반환합니다.
+ *
+ * @param dataId 연관된 데이터를 식별하는 ID
+ * @param pageable 페이지네이션 정보를 담은 객체
+ * @return 해당 데이터와 연결된 프로젝트의 페이지 결과
+ */
+Page<Project> findConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable);
 }

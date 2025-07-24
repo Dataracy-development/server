@@ -66,6 +66,9 @@ public class UserEntity extends BaseTimeEntity {
     @Column
     private Long visitSourceId;
 
+    @Column
+    private String profileImageUrl;
+
     @Column(nullable = false)
     @Builder.Default
     private boolean isAdTermsAgreed = false;
@@ -90,7 +93,7 @@ public class UserEntity extends BaseTimeEntity {
     }
 
     /**
-     * 주어진 정보를 기반으로 새로운 UserEntity 인스턴스를 생성합니다.
+     * 주어진 정보로 새로운 UserEntity 인스턴스를 생성합니다.
      *
      * @param provider 소셜 로그인 또는 인증 제공자 유형
      * @param providerId 제공자별 사용자 식별자
@@ -101,6 +104,7 @@ public class UserEntity extends BaseTimeEntity {
      * @param authorLevelId 작성자 레벨 식별자
      * @param occupationId 직업 식별자
      * @param visitSourceId 방문 경로 식별자
+     * @param profileImageUrl 프로필 이미지 URL
      * @param isAdTermsAgreed 광고 약관 동의 여부
      * @param isDeleted 삭제 여부
      * @return 생성된 UserEntity 객체
@@ -115,6 +119,7 @@ public class UserEntity extends BaseTimeEntity {
             Long authorLevelId,
             Long occupationId,
             Long visitSourceId,
+            String profileImageUrl,
             Boolean isAdTermsAgreed,
             Boolean isDeleted
     ) {
@@ -128,6 +133,7 @@ public class UserEntity extends BaseTimeEntity {
                 .authorLevelId(authorLevelId)
                 .occupationId(occupationId)
                 .visitSourceId(visitSourceId)
+                .profileImageUrl(profileImageUrl)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)
                 .build();

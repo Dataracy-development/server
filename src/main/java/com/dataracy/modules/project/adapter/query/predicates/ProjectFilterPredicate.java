@@ -65,12 +65,22 @@ private ProjectFilterPredicate() {}
     }
 
     /**
-     * 주어진 authorLevelId와 동일한 authorLevelId를 가진 프로젝트에 대한 QueryDSL BooleanExpression을 반환합니다.
+     * 주어진 authorLevelId와 일치하는 프로젝트를 필터링하는 QueryDSL BooleanExpression을 반환합니다.
      *
      * @param authorLevelId 필터링할 작성자 레벨 ID
-     * @return authorLevelId가 일치하는 프로젝트를 위한 BooleanExpression, authorLevelId가 null이면 null 반환
+     * @return authorLevelId가 일치하는 프로젝트에 대한 BooleanExpression, authorLevelId가 null이면 null
      */
     public static BooleanExpression authorLevelIdEq(Long authorLevelId) {
         return authorLevelId == null ? null : projectEntity.authorLevelId.eq(authorLevelId);
+    }
+
+    /**
+     * 주어진 프로젝트 ID와 일치하는 부모 프로젝트를 가진 프로젝트를 필터링하는 QueryDSL 조건식을 반환합니다.
+     *
+     * @param projectId 부모 프로젝트의 ID
+     * @return 부모 프로젝트 ID가 일치하는 프로젝트에 대한 BooleanExpression, 입력값이 null이면 null 반환
+     */
+    public static BooleanExpression parentProjectIdEq(Long projectId) {
+        return projectId == null ? null : projectEntity.parentProject.id.eq(projectId);
     }
 }

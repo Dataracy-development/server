@@ -35,7 +35,8 @@ public class ProjectController implements ProjectApi {
     private final ProjectPopularSearchUseCase projectPopularSearchUseCase;
     private final ProjectFilteredSearchUseCase projectFilteredSearchUsecase;
     private final ProjectDetailUseCase projectDetailUseCase;
-
+    private final ContinueProjectUseCase continueProjectUseCase;
+    private final ConnectedProjectAssociatedWithDataUseCase connectedProjectAssociatedWithDataUseCase;
     /**
      * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
      *
@@ -127,9 +128,9 @@ public class ProjectController implements ProjectApi {
     }
 
     /**
-     * 프로젝트의 상세 정보를 조회하여 반환합니다.
+     * 주어진 프로젝트 ID에 해당하는 프로젝트의 상세 정보를 조회하여 반환합니다.
      *
-     * @param projectId 조회할 프로젝트의 ID
+     * @param projectId 상세 정보를 조회할 프로젝트의 ID
      * @return 프로젝트 상세 정보를 포함한 성공 응답
      */
     @Override
@@ -139,5 +140,37 @@ public class ProjectController implements ProjectApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_PROJECT_DETAIL, webResponse));
+    }
+
+    /**
+     * 지정한 프로젝트 ID를 기준으로 이어지는 프로젝트 목록을 페이지네이션하여 조회합니다.
+     *
+     * @param projectId 기준이 되는 프로젝트의 ID
+     * @param pageable 페이지네이션 정보
+     * @return 이어지는 프로젝트 목록과 함께 성공 응답을 반환합니다.
+     */
+    @Override
+    public ResponseEntity<SuccessResponse<Page<ContinueProjectWebResponse>>> searchContinueProjects(Long projectId, Pageable pageable) {
+        Page<ContinueProjectResponse> responseDto = continueProjectUseCase.findContinueProjects(projectId, pageable);
+        Page<ContinueProjectWebResponse> webResponse = responseDto.map(projectWebMapper::toWebDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONTINUE_PROJECTS, webResponse));
+    }
+
+    /**
+     * 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 조회합니다.
+     *
+     * @param dataId 연결된 데이터를 식별하는 ID
+     * @param pageable 페이지네이션 정보
+     * @return 연결된 프로젝트 목록을 포함한 성공 응답
+     */
+    @Override
+    public ResponseEntity<SuccessResponse<Page<ConnectedProjectAssociatedWithDataWebResponse>>> searchConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable) {
+        Page<ConnectedProjectAssociatedWithDataResponse> responseDto = connectedProjectAssociatedWithDataUseCase.findConnectedProjects(dataId, pageable);
+        Page<ConnectedProjectAssociatedWithDataWebResponse> webResponse = responseDto.map(projectWebMapper::toWebDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONNECTED_PROJECTS_ASSOCIATED_DATA, webResponse));
     }
 }

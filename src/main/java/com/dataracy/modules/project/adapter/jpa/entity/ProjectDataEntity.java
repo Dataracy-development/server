@@ -1,5 +1,6 @@
 package com.dataracy.modules.project.adapter.jpa.entity;
 
+import com.dataracy.modules.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Table(name = "project_data")
-public class ProjectDataEntity {
+public class ProjectDataEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_data_id", nullable = false)
