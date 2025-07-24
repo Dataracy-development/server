@@ -1,5 +1,6 @@
 package com.dataracy.modules.project.application.port.out;
 
+import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import com.dataracy.modules.project.domain.model.Project;
 
 /**
@@ -32,4 +33,6 @@ void updateFile(Long projectId, String fileUrl);
 boolean existsProjectById(Long projectId);
 
 Long findUserIdByProjectId(Long projectId);
+
+void modify(Long projectId, ProjectModifyRequest requestDto);
 }
