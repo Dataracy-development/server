@@ -48,4 +48,6 @@ public interface DataRepositoryPort {
  * @return 데이터가 존재하면 true, 존재하지 않으면 false
  */
 boolean existsDataById(Long dataId);
+
+    Long findUserIdByDataId(Long dataId);
 }

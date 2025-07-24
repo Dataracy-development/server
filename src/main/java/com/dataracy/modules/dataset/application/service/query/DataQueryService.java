@@ -46,7 +46,8 @@ public class DataQueryService implements
         DataRecentUseCase,
         DataRealTimeUseCase,
         CountDataGroupByTopicLabelUseCase,
-        ConnectedDataAssociatedWithProjectUseCase
+        ConnectedDataAssociatedWithProjectUseCase,
+        FindUserIdByDataIdUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
     private final FilterDataDtoMapper filterDataDtoMapper;
@@ -291,5 +292,10 @@ public class DataQueryService implements
                     wrapper.countConnectedProjects()
             );
         });
+    }
+
+    @Override
+    public Long findUserIdByDataId(Long dataId) {
+        return dataRepositoryPort.findUserIdByDataId(dataId);
     }
 }

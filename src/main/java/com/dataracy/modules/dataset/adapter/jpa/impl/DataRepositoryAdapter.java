@@ -88,4 +88,11 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
     public boolean existsDataById(Long dataId) {
         return dataJpaRepository.existsById(dataId);
     }
+
+    @Override
+    public Long findUserIdByDataId(Long dataId) {
+        DataEntity dataEntity = dataJpaRepository.findById(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        return dataEntity.getUserId();
+    }
 }
