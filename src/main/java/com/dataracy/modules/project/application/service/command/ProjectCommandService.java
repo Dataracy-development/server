@@ -141,6 +141,7 @@ public class ProjectCommandService implements ProjectUploadUseCase, ProjectModif
     }
 
     @Override
+    @Transactional
     public void modify(Long projectId, MultipartFile file, ProjectModifyRequest requestDto) {
         log.info("프로젝트 수정 시작 - projectId: {}, title: {}", projectId, requestDto.title());
 

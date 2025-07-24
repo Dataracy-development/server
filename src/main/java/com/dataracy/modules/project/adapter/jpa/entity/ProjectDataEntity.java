@@ -49,8 +49,4 @@ public class ProjectDataEntity extends BaseTimeEntity {
     public void assignProject(ProjectEntity project) {
         this.project = project;
     }
-
-    public void removeProject() {
-        this.project = null;
-    }
 }

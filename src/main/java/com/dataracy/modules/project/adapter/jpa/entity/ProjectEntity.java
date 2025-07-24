@@ -7,7 +7,6 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -94,23 +93,6 @@ public class ProjectEntity extends BaseTimeEntity {
         this.isContinue = requestDto.isContinue();
         this.parentProject = parentProject;
         this.content = requestDto.content();
-    }
-
-    public void syncProjectDataByDataIds(
-            List<Long> newDataIds,
-            List<ProjectDataEntity> currentLinkedEntities
-    ) {
-        // 기존 연결 제거
-        for (ProjectDataEntity entity : currentLinkedEntities) {
-            entity.removeProject();
-        }
-        this.projectDataEntities.clear();
-
-        // 새로운 연결 추가
-        for (Long dataId : newDataIds) {
-            ProjectDataEntity newLink = ProjectDataEntity.of(this, dataId);
-            this.addProjectData(newLink);
-        }
     }
 
     /**
