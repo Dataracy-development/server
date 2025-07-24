@@ -41,6 +41,8 @@ public class ProjectController implements ProjectApi {
     private final ContinueProjectUseCase continueProjectUseCase;
     private final ConnectedProjectAssociatedWithDataUseCase connectedProjectAssociatedWithDataUseCase;
     private final ProjectModifyUseCase projectModifyUseCase;
+    private final ProjectDeleteUseCase projectDeleteUseCase;
+    private final ProjectRestoreUseCase projectRestoreUseCase;
 
     /**
      * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
@@ -187,5 +189,21 @@ public class ProjectController implements ProjectApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.MODIFY_PROJECT));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> deleteProject(Long projectId) {
+        projectDeleteUseCase.markAsDelete(projectId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.DELETE_PROJECT));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> restoreProject(Long projectId) {
+        projectRestoreUseCase.markAsRestore(projectId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.RESTORE_PROJECT));
     }
 }
