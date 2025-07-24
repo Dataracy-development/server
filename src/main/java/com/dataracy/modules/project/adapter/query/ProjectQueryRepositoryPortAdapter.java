@@ -118,37 +118,42 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
 
     @Override
     public Page<Project> findConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable) {
-        List<ProjectEntity> entities = queryFactory
-                .selectFrom(project)
-                .orderBy(ProjectSortBuilder.fromSortOption(ProjectSortType.LATEST))
-                .innerJoin(projectData).on(
-                        ProjectDataFilterPredicate.projectIdNumberPathEq(project.id)
-                                        .and(ProjectDataFilterPredicate.dataIdEq(dataId))
+        // Step 1: 먼저 id 목록 조회 (페이징 포함)
+        List<Long> projectIds = queryFactory
+                .select(projectData.project.id)
+                .from(projectData)
+                .where(
+                        ProjectDataFilterPredicate.dataIdEq(dataId)
                 )
-                .distinct()
+                .orderBy(projectData.project.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        if (projectIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        List<ProjectEntity> entities = queryFactory
+                .selectFrom(project)
+                .where(project.id.in(projectIds))
+                .fetch();
+
         List<Project> contents = entities.stream()
-                .map(ProjectEntityMapper::toMinimal
-                )
+                .map(ProjectEntityMapper::toMinimal)
                 .toList();
 
         long total = Optional.ofNullable(
                 queryFactory
-                        .select(project.count())
-                        .from(project)
-                        .innerJoin(projectData).on(
-                                ProjectDataFilterPredicate.projectIdNumberPathEq(project.id)
-                                        .and(ProjectDataFilterPredicate.dataIdEq(dataId))
-                        )
-                        .distinct()
+                        .select(projectData.project.countDistinct())
+                        .from(projectData)
+                        .where(ProjectDataFilterPredicate.dataIdEq(dataId))
                         .fetchOne()
         ).orElse(0L);
 
         return new PageImpl<>(contents, pageable, total);
     }
+
 
     /**
      * 인기 순으로 정렬된 프로젝트 목록을 지정된 개수만큼 반환합니다.
