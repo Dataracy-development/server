@@ -33,10 +33,10 @@ public class ProjectWebMapper {
     }
 
     /**
-     * 애플리케이션 계층의 프로젝트 상세 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     * 프로젝트 상세 정보를 애플리케이션 계층 DTO에서 웹 계층 DTO로 변환합니다.
      *
-     * @param responseDto 변환할 프로젝트 상세 응답 DTO
-     * @return 변환된 웹 계층 프로젝트 상세 응답 DTO
+     * @param responseDto 애플리케이션 계층의 프로젝트 상세 응답 DTO
+     * @return 웹 계층의 프로젝트 상세 응답 DTO
      */
     public ProjectDetailWebResponse toWebDto(ProjectDetailResponse responseDto) {
         return new ProjectDetailWebResponse(
@@ -61,6 +61,12 @@ public class ProjectWebMapper {
         );
     }
 
+    /**
+     * 애플리케이션 계층의 프로젝트 이어하기 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     *
+     * @param responseDto 변환할 프로젝트 이어하기 응답 DTO
+     * @return 변환된 웹 계층의 프로젝트 이어하기 응답 DTO
+     */
     public ContinueProjectWebResponse toWebDto(ContinueProjectResponse responseDto) {
         return new ContinueProjectWebResponse(
                 responseDto.id(),
@@ -77,6 +83,12 @@ public class ProjectWebMapper {
         );
     }
 
+    /**
+     * 애플리케이션 계층의 ConnectedProjectAssociatedWithDataResponse를 웹 계층의 ConnectedProjectAssociatedWithDataWebResponse로 변환합니다.
+     *
+     * @param responseDto 변환할 프로젝트 연결 데이터 응답 DTO
+     * @return 변환된 웹 계층 프로젝트 연결 데이터 응답 DTO
+     */
     public ConnectedProjectAssociatedWithDataWebResponse toWebDto(ConnectedProjectAssociatedWithDataResponse responseDto) {
         return new ConnectedProjectAssociatedWithDataWebResponse(
                 responseDto.id(),

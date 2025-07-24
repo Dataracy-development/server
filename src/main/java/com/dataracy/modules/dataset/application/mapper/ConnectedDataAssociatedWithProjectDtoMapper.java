@@ -9,6 +9,15 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ConnectedDataAssociatedWithProjectDtoMapper {
+    /**
+     * 도메인 모델 객체와 추가 정보를 결합하여 ConnectedDataAssociatedWithProjectResponse DTO로 변환합니다.
+     *
+     * @param data 데이터셋 도메인 객체
+     * @param topicLabel 데이터셋의 주제 레이블
+     * @param dataTypeLabel 데이터셋의 유형 레이블
+     * @param countConnectedProjects 데이터와 연결된 프로젝트 수
+     * @return 변환된 ConnectedDataAssociatedWithProjectResponse DTO
+     */
     public ConnectedDataAssociatedWithProjectResponse toResponseDto(
             Data data,
             String topicLabel,

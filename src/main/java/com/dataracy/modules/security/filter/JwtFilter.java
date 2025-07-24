@@ -60,9 +60,9 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 인증이 필요 없는 요청 경로에 대해 JWT 필터 적용을 건너뛰어야 하는지 여부를 반환합니다.
+     * 현재 HTTP 요청이 JWT 인증 필터를 우회해야 하는 경로인지 여부를 반환합니다.
      *
-     * Swagger, API 문서, 정적 리소스, 웹훅, 로그인, OAuth2, 루트, 에러, 공개 API, 파비콘, 프로젝트 및 데이터셋 관련 GET 요청 등 사전에 정의된 경로에 대해서는 true를 반환하여 JWT 인증을 우회합니다.
+     * Swagger, API 문서, 정적 리소스, 웹훅, 로그인, OAuth2, 루트, 에러, 공개 API, 파비콘, 프로젝트 및 데이터셋 관련 GET 요청 등 사전에 정의된 경로에 대해서는 true를 반환하여 JWT 인증을 적용하지 않습니다.
      *
      * @param request 현재 HTTP 요청 객체
      * @return 요청 경로가 필터 예외 대상이면 true, 그렇지 않으면 false

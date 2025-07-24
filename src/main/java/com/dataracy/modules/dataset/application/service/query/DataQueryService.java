@@ -260,15 +260,22 @@ public class DataQueryService implements
     }
 
     /**
-     * 데이터셋을 주제별로 그룹화하여 각 그룹의 개수를 반환합니다.
+     * 데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환합니다.
      *
-     * @return 주제별 데이터셋 그룹의 개수 목록
+     * @return 각 주제별 데이터셋 개수를 담은 CountDataGroupResponse 객체의 리스트
      */
     @Override
     public List<CountDataGroupResponse> countDataGroups() {
         return dataQueryRepositoryPort.countDataGroups();
     }
 
+    /**
+     * 지정된 프로젝트와 연결된 데이터셋 목록을 페이지 단위로 조회합니다.
+     *
+     * @param projectId 연결된 프로젝트의 ID
+     * @param pageable 페이지네이션 정보
+     * @return 프로젝트와 연결된 데이터셋의 응답 객체 페이지
+     */
     @Override
     public Page<ConnectedDataAssociatedWithProjectResponse> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
         Page<DataWithProjectCountDto> savedDataSets = dataQueryRepositoryPort.findConnectedDataSetsAssociatedWithProject(projectId, pageable);

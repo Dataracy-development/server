@@ -42,10 +42,10 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
     private final QTopicEntity topic = QTopicEntity.topicEntity;
 
     /**
-     * 주어진 데이터 ID에 해당하는 데이터를 조회하여 Optional로 반환합니다.
+     * 데이터 ID로 해당 데이터를 조회하여 Optional로 반환합니다.
      *
      * @param dataId 조회할 데이터의 고유 식별자
-     * @return 데이터가 존재하면 도메인 Data 객체를, 없으면 빈 Optional을 반환합니다.
+     * @return 데이터가 존재하면 도메인 Data 객체를 포함한 Optional, 없으면 빈 Optional
      */
     @Override
     public Optional<Data> findDataById(Long dataId) {
@@ -60,10 +60,10 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
     }
 
     /**
-     * 주어진 데이터 ID에 해당하는 데이터 엔티티를 조회하며, 연관된 메타데이터를 즉시 로딩하여 반환합니다.
+     * 데이터 ID로 데이터를 조회하고, 연관된 메타데이터를 즉시 로딩하여 반환합니다.
      *
      * @param dataId 조회할 데이터의 ID
-     * @return 데이터와 메타데이터를 포함하는 도메인 객체의 Optional, 존재하지 않으면 빈 Optional 반환
+     * @return 데이터와 메타데이터를 포함하는 도메인 객체의 Optional, 존재하지 않으면 빈 Optional
      */
     @Override
     public Optional<Data> findDataWithMetadataById(Long dataId) {
@@ -79,7 +79,7 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
     }
 
     /**
-     * 인기도 기준으로 상위 데이터셋 목록을 조회하고, 각 데이터셋에 연결된 프로젝트 수를 함께 반환합니다.
+     * 인기도 점수를 기준으로 상위 데이터셋 목록과 각 데이터셋에 연결된 프로젝트 수를 조회합니다.
      *
      * @param size 반환할 데이터셋의 최대 개수
      * @return 각 데이터셋과 해당 데이터셋에 연결된 프로젝트 수를 포함하는 DTO 리스트
@@ -128,12 +128,12 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
     /**
      * 필터 조건과 정렬 기준에 따라 데이터셋 목록을 페이지 단위로 조회합니다.
      *
-     * 데이터셋별로 연관된 프로젝트 개수를 함께 반환하며, 필터링, 정렬, 페이징이 모두 적용됩니다.
+     * 각 데이터셋에 연관된 프로젝트 개수를 포함하여, 필터링, 정렬, 페이징이 모두 적용된 결과를 반환합니다.
      *
      * @param request 데이터셋 필터링 조건이 담긴 요청 객체
      * @param pageable 페이지 정보 및 크기
-     * @param sortType 정렬 기준
-     * @return 데이터셋과 프로젝트 개수 DTO의 페이지 객체
+     * @param sortType 데이터셋 정렬 기준
+     * @return 데이터셋과 연관 프로젝트 개수를 포함한 DTO의 페이지 객체
      */
     @Override
     public Page<DataWithProjectCountDto> searchByFilters(DataFilterRequest request, Pageable pageable, DataSortType sortType) {
@@ -191,9 +191,9 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
     }
 
     /**
-     * 데이터셋을 주제별로 그룹화하여 각 그룹의 데이터셋 개수를 반환합니다.
+     * 데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환합니다.
      *
-     * @return 주제 ID, 주제명, 데이터셋 개수를 포함하는 CountDataGroupResponse 리스트
+     * @return 각 주제의 ID, 이름, 데이터셋 개수를 포함하는 CountDataGroupResponse 객체 리스트
      */
     @Override
     public List<CountDataGroupResponse> countDataGroups() {
@@ -209,6 +209,13 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
                 .fetch();
     }
 
+    /**
+     * 지정된 프로젝트에 연결된 데이터셋을 최신순으로 조회하여 프로젝트 연결 개수와 함께 페이지 형태로 반환합니다.
+     *
+     * @param projectId 연결된 프로젝트의 ID
+     * @param pageable 페이지네이션 정보
+     * @return 프로젝트에 연결된 데이터셋과 각 데이터셋의 프로젝트 연결 개수를 포함하는 페이지 객체
+     */
     @Override
     public Page<DataWithProjectCountDto> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
         NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
