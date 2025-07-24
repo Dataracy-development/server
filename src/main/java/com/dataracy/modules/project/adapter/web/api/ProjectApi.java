@@ -187,7 +187,7 @@ public interface ProjectApi {
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
     @GetMapping("/{projectId}/continue")
-    ResponseEntity<SuccessResponse<Page<ContinueProjectWebResponse>>> searchFilteredProjects(
+    ResponseEntity<SuccessResponse<Page<ContinueProjectWebResponse>>> searchContinueProjects(
             @PathVariable @Min(1)
             Long projectId,
 
@@ -204,7 +204,7 @@ public interface ProjectApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping
+    @GetMapping("/connected-to-dataset")
     ResponseEntity<SuccessResponse<Page<ConnectedProjectAssociatedWithDataWebResponse>>> searchConnectedProjectsAssociatedWithData(
             @RequestParam @Min(1)
             Long dataId,

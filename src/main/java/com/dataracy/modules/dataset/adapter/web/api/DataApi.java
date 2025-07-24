@@ -5,7 +5,6 @@ import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.*;
-import com.dataracy.modules.project.adapter.web.response.ConnectedProjectAssociatedWithDataWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -227,7 +226,7 @@ public interface DataApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
-    @GetMapping
+    @GetMapping("/connected-to-project")
     ResponseEntity<SuccessResponse<Page<ConnectedDataAssociatedWithProjectWebResponse>>> searchConnectedDataSetsAssociatedWithProject(
             @RequestParam @Min(1)
             Long projectId,

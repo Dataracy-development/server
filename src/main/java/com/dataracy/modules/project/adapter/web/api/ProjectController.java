@@ -143,7 +143,7 @@ public class ProjectController implements ProjectApi {
     }
 
     @Override
-    public ResponseEntity<SuccessResponse<Page<ContinueProjectWebResponse>>> searchFilteredProjects(Long projectId, Pageable pageable) {
+    public ResponseEntity<SuccessResponse<Page<ContinueProjectWebResponse>>> searchContinueProjects(Long projectId, Pageable pageable) {
         Page<ContinueProjectResponse> responseDto = continueProjectUseCase.findContinueProjects(projectId, pageable);
         Page<ContinueProjectWebResponse> webResponse = responseDto.map(projectWebMapper::toWebDto);
 
