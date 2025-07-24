@@ -44,14 +44,25 @@ public class ElasticProjectRealTimeSearchAdapter implements ProjectRealTimeSearc
                                     )
                             )
                             .query(q -> q
-                                    .multiMatch(m -> m
-                                            .fields("title^3", "username^2")
-                                            .query(keyword)
-                                            .fuzziness("AUTO")
+                                    .bool(b -> b
+                                            .must(m -> m
+                                                    .multiMatch(mm -> mm
+                                                            .fields("title^3", "username^2")
+                                                            .query(keyword)
+                                                            .fuzziness("AUTO")
+                                                    )
+                                            )
+                                            .filter(f -> f
+                                                    .term(t -> t
+                                                            .field("isDeleted")
+                                                            .value(false)
+                                                    )
+                                            )
                                     )
                             ),
                     ProjectSearchDocument.class
             );
+
             return response.hits().hits().stream()
                     .map(hit -> {
                         var doc = hit.source();
@@ -64,4 +75,5 @@ public class ElasticProjectRealTimeSearchAdapter implements ProjectRealTimeSearc
             throw new ProjectException(ProjectErrorStatus.FAIL_REAL_TIME_SEARCH_PROJECT);
         }
     }
+
 }
