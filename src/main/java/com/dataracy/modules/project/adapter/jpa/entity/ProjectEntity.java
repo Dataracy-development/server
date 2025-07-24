@@ -5,6 +5,8 @@ import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -20,6 +22,8 @@ import java.util.Set;
 @Table(
         name = "project"
 )
+@SQLDelete(sql = "UPDATE project SET is_deleted = true WHERE project_id = ?")
+@Where(clause = "is_deleted = false")
 public class ProjectEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,7 +84,7 @@ public class ProjectEntity extends BaseTimeEntity {
     @Builder.Default
     private Long viewCount = 0L;
 
-    @Column(nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     @Builder.Default
     private Boolean isDeleted = false;
 

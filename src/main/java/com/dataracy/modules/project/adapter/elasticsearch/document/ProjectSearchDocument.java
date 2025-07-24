@@ -25,7 +25,8 @@ public record ProjectSearchDocument(
         LocalDateTime createdAt,
         Long commentCount,
         Long likeCount,
-        Long viewCount
+        Long viewCount,
+        Boolean isDeleted
 ) {
     /**
      * Project 도메인 객체와 관련 라벨, 사용자 이름을 이용해 ProjectSearchDocument 인스턴스를 생성합니다.
@@ -66,6 +67,7 @@ public record ProjectSearchDocument(
                 .commentCount(project.getCommentCount())
                 .likeCount(project.getLikeCount())
                 .viewCount(project.getViewCount())
+                .isDeleted(project.getIsDeleted())
                 .build();
     }
 }
