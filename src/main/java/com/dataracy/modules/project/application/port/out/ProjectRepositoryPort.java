@@ -30,4 +30,6 @@ void updateFile(Long projectId, String fileUrl);
  * @return 프로젝트가 존재하면 true, 그렇지 않으면 false
  */
 boolean existsProjectById(Long projectId);
+
+Long findUserIdByProjectId(Long projectId);
 }
