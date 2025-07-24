@@ -207,7 +207,9 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .orderBy(ProjectSortBuilder.fromSortOption(sortType))
                 .leftJoin(project.childProjects).fetchJoin()
                 .distinct()
-                .where(buildFilterPredicates(request))
+                .where(
+                        buildFilterPredicates(request)
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -223,7 +225,9 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                         .select(project.count())
                         .from(project)
                         .distinct()
-                        .where(buildFilterPredicates(request))
+                        .where(
+                                buildFilterPredicates(request)
+                        )
                         .fetchOne()
         ).orElse(0L);
 
