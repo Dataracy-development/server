@@ -86,13 +86,13 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
      */
     @Override
     public List<DataWithProjectCountDto> findPopularDataSets(int size) {
-        NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
-        NumberExpression<Double> score = DataPopularOrderBuilder.popularScore(data, projectCountPath);
+        NumberExpression<Long> projectCountExpr = projectData.id.count();
+        NumberExpression<Double> score = DataPopularOrderBuilder.popularScore(data, projectCountExpr); // ✅ 직접 count() 식 전달
 
         List<Tuple> tuples = queryFactory
                 .select(
                         data,
-                        projectData.id.count().as(projectCountPath)
+                        projectCountExpr
                 )
                 .from(data)
                 .leftJoin(projectData).on(projectData.dataId.eq(data.id))
@@ -104,7 +104,7 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
         return tuples.stream()
                 .map(tuple -> new DataWithProjectCountDto(
                         DataEntityMapper.toDomain(tuple.get(data)),
-                        tuple.get(projectCountPath)
+                        tuple.get(projectCountExpr)
                 ))
                 .toList();
     }

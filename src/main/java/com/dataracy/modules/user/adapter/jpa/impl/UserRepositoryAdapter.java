@@ -121,7 +121,10 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     public Map<Long, String> findUserThumbnailsByIds(List<Long> userIds) {
         return userJpaRepository.findAllById(userIds)
                 .stream()
-                .collect(Collectors.toMap(UserEntity::getId, UserEntity::getProfileImageUrl));
+                .collect(Collectors.toMap(
+                        UserEntity::getId,
+                        user -> Optional.ofNullable(user.getProfileImageUrl()).orElse("")
+                ));
     }
 
     /**

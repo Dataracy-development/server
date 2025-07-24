@@ -2,7 +2,6 @@ package com.dataracy.modules.dataset.adapter.query.sort;
 
 import com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity;
 import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.NumberPath;
 
 public final class DataPopularOrderBuilder {
     /**
@@ -10,8 +9,8 @@ public final class DataPopularOrderBuilder {
  */
 private DataPopularOrderBuilder() {}
 
-    public static NumberExpression<Double> popularScore(QDataEntity data, NumberPath<Long> projectCountPath) {
-        NumberExpression<Double> projectScore = projectCountPath.castToNum(Double.class).multiply(1.5);
+    public static NumberExpression<Double> popularScore(QDataEntity data, NumberExpression<Long> projectCountExpr) {
+        NumberExpression<Double> projectScore = projectCountExpr.castToNum(Double.class).multiply(1.5);
         NumberExpression<Double> downloadScore = data.downloadCount.castToNum(Double.class).multiply(2.0);
         return downloadScore.add(projectScore);
     }
