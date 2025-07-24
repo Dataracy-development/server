@@ -72,6 +72,13 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     }
 
     @Override
+    public Long findUserIdIncludingDeleted(Long projectId) {
+        ProjectEntity projectEntity = projectJpaRepository.findIncludingDeleted(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
+        return projectEntity.getUserId();
+    }
+
+    @Override
     public void modify(Long projectId, ProjectModifyRequest requestDto) {
         ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
@@ -106,7 +113,7 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
 
     @Override
     public void restore(Long projectId) {
-        ProjectEntity project = projectJpaRepository.findById(projectId)
+        ProjectEntity project = projectJpaRepository.findIncludingDeleted(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
         project.restore();
     }

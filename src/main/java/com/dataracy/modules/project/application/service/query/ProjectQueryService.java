@@ -45,7 +45,8 @@ public class ProjectQueryService implements
         ProjectDetailUseCase,
         ContinueProjectUseCase,
         ConnectedProjectAssociatedWithDataUseCase,
-        FindUserIdByProjectIdUseCase
+        FindUserIdByProjectIdUseCase,
+        FindUserIdIncludingDeletedUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
     private final FilterProjectDtoMapper filterProjectDtoMapper;
@@ -314,5 +315,10 @@ public class ProjectQueryService implements
     @Override
     public Long findUserIdByProjectId(Long projectId) {
         return projectRepositoryPort.findUserIdByProjectId(projectId);
+    }
+
+    @Override
+    public Long findUserIdIncludingDeleted(Long projectId) {
+        return projectRepositoryPort.findUserIdIncludingDeleted(projectId);
     }
 }

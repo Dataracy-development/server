@@ -33,7 +33,7 @@ void updateFile(Long projectId, String fileUrl);
 boolean existsProjectById(Long projectId);
 
 Long findUserIdByProjectId(Long projectId);
-
+    Long findUserIdIncludingDeleted(Long projectId);
 void modify(Long projectId, ProjectModifyRequest requestDto);
 
 void delete(Long projectId);
