@@ -164,7 +164,7 @@ public class DataController implements DataApi {
     }
 
     /**
-     * 데이터셋을 주제 라벨별로 그룹화하여 각 그룹의 개수를 반환합니다.
+     * 데이터셋을 주제 라벨별로 그룹화하여 각 그룹의 데이터셋 개수를 조회합니다.
      *
      * @return 주제 라벨별 데이터셋 개수 목록이 포함된 성공 응답
      */
@@ -179,6 +179,13 @@ public class DataController implements DataApi {
                 .body(SuccessResponse.of(DataSuccessStatus.COUNT_DATASETS_GROUP_BY_TOPIC, webResponse));
     }
 
+    /**
+     * 지정된 프로젝트와 연결된 데이터셋 목록을 페이지 단위로 조회합니다.
+     *
+     * @param projectId 연결된 데이터셋을 조회할 프로젝트의 ID
+     * @param pageable 페이지네이션 정보
+     * @return 프로젝트에 연결된 데이터셋 목록과 함께 성공 상태를 포함하는 HTTP 200 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<Page<ConnectedDataAssociatedWithProjectWebResponse>>> searchConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
         Page<ConnectedDataAssociatedWithProjectResponse> responseDto = connectedDataAssociatedWithProjectUseCase.findConnectedDataSetsAssociatedWithProject(projectId, pageable);
