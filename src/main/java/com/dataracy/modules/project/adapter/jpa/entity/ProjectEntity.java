@@ -1,12 +1,13 @@
 package com.dataracy.modules.project.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
+import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -83,6 +84,34 @@ public class ProjectEntity extends BaseTimeEntity {
     @Column(nullable = false)
     @Builder.Default
     private Boolean isDeleted = false;
+
+    public void modify(ProjectModifyRequest requestDto, ProjectEntity parentProject) {
+        this.title = requestDto.title();
+        this.topicId = requestDto.topicId();
+        this.analysisPurposeId = requestDto.analysisPurposeId();
+        this.dataSourceId = requestDto.dataSourceId();
+        this.authorLevelId = requestDto.authorLevelId();
+        this.isContinue = requestDto.isContinue();
+        this.parentProject = parentProject;
+        this.content = requestDto.content();
+    }
+
+    public void syncProjectDataByDataIds(
+            List<Long> newDataIds,
+            List<ProjectDataEntity> currentLinkedEntities
+    ) {
+        // 기존 연결 제거
+        for (ProjectDataEntity entity : currentLinkedEntities) {
+            entity.removeProject();
+        }
+        this.projectDataEntities.clear();
+
+        // 새로운 연결 추가
+        for (Long dataId : newDataIds) {
+            ProjectDataEntity newLink = ProjectDataEntity.of(this, dataId);
+            this.addProjectData(newLink);
+        }
+    }
 
     /**
      * 프로젝트에 ProjectDataEntity를 추가하고 해당 데이터 엔티티의 프로젝트 참조를 이 프로젝트로 설정합니다.

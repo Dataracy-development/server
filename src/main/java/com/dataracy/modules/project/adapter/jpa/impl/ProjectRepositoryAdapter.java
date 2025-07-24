@@ -1,8 +1,11 @@
 package com.dataracy.modules.project.adapter.jpa.impl;
 
+import com.dataracy.modules.project.adapter.jpa.entity.ProjectDataEntity;
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectEntity;
 import com.dataracy.modules.project.adapter.jpa.mapper.ProjectEntityMapper;
+import com.dataracy.modules.project.adapter.jpa.repository.ProjectDataJpaRepository;
 import com.dataracy.modules.project.adapter.jpa.repository.ProjectJpaRepository;
+import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
@@ -10,11 +13,13 @@ import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     private final ProjectJpaRepository projectJpaRepository;
-
+    private final ProjectDataJpaRepository projectDataJpaRepository;
     /**
      * 프로젝트 도메인 객체를 저장하고, 저장된 최소 정보의 프로젝트 객체를 반환한다.
      *
@@ -63,5 +68,22 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
         ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
         return projectEntity.getUserId();
+    }
+
+    @Override
+    public void modify(Long projectId, ProjectModifyRequest requestDto) {
+        ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
+
+        ProjectEntity parentProject = projectJpaRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PARENT_PROJECT));
+        projectEntity.modify(requestDto, parentProject);
+
+        List<ProjectDataEntity> currentLinks = projectDataJpaRepository.findAllByProjectId(projectId);
+        projectEntity.syncProjectDataByDataIds(requestDto.dataIds(), currentLinks);
+
+        // orphanRemoval이 없어 직접 새롭게 저장해주어야 한다.
+        projectJpaRepository.save(projectEntity);
+        projectDataJpaRepository.saveAll(currentLinks);
     }
 }
