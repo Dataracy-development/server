@@ -1,7 +1,6 @@
 package com.dataracy.modules.project.adapter.query.predicates;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberPath;
 
 import static com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity.projectDataEntity;
 
@@ -12,10 +11,6 @@ public class ProjectDataFilterPredicate {
 private ProjectDataFilterPredicate() {}
 
     public static BooleanExpression projectIdEq(Long projectId) {
-        return projectId == null ? null : projectDataEntity.project.id.eq(projectId);
-    }
-
-    public static BooleanExpression projectIdNumberPathEq(NumberPath<Long> projectId) {
         return projectId == null ? null : projectDataEntity.project.id.eq(projectId);
     }
 

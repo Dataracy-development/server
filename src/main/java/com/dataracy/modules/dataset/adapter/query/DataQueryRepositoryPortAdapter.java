@@ -21,7 +21,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -236,10 +235,12 @@ public class DataQueryRepositoryPortAdapter implements DataQueryRepositoryPort {
                 ))
                 .toList();
 
-        long total = Optional.ofNullable(queryFactory
+        long total = Optional.ofNullable(
+                queryFactory
                         .select(data.id.countDistinct())
                         .from(data)
-                        .innerJoin(projectData).on(projectData.dataId.eq(data.id).and(projectData.project.id.eq(projectId)))
+                        .innerJoin(projectData).on(projectData.dataId.eq(data.id)
+                                .and(projectData.project.id.eq(projectId)))
                         .fetchOne()
         ).orElse(0L);
 
