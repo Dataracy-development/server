@@ -3,6 +3,7 @@ package com.dataracy.modules.project.adapter.web.api;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.project.adapter.web.request.ProjectFilterWebRequest;
+import com.dataracy.modules.project.adapter.web.request.ProjectModifyWebRequest;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
 import com.dataracy.modules.project.adapter.web.response.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -225,5 +226,25 @@ public interface ProjectApi {
 
             @PageableDefault(size = 3, page = 0)
             Pageable pageable
+    );
+
+    @Operation(
+            summary = "프로젝트를 수정한다.한다.",
+            description = "제공받은 웹 요청 DTO의 프로젝트 정보를 통해 기존 프로젝트를 수정한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "프로젝트 수정에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @PutMapping(value="/{projectId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<SuccessResponse<Void>> modifyProject(
+            @PathVariable @Min(1)
+            Long projectId,
+
+            @RequestPart(value = "file", required = false) MultipartFile file,
+
+            @RequestPart @Validated
+            ProjectModifyWebRequest webRequest
     );
 }

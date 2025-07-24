@@ -1,13 +1,16 @@
 package com.dataracy.modules.project.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.support.annotation.AuthorizationProjectEdit;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectFilterWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectSearchWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectWebMapper;
 import com.dataracy.modules.project.adapter.web.request.ProjectFilterWebRequest;
+import com.dataracy.modules.project.adapter.web.request.ProjectModifyWebRequest;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
 import com.dataracy.modules.project.adapter.web.response.*;
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
+import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.dto.response.*;
 import com.dataracy.modules.project.application.port.in.*;
@@ -37,6 +40,8 @@ public class ProjectController implements ProjectApi {
     private final ProjectDetailUseCase projectDetailUseCase;
     private final ContinueProjectUseCase continueProjectUseCase;
     private final ConnectedProjectAssociatedWithDataUseCase connectedProjectAssociatedWithDataUseCase;
+    private final ProjectModifyUseCase projectModifyUseCase;
+
     /**
      * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
      *
@@ -172,5 +177,15 @@ public class ProjectController implements ProjectApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONNECTED_PROJECTS_ASSOCIATED_DATA, webResponse));
+    }
+
+    @Override
+    @AuthorizationProjectEdit
+    public ResponseEntity<SuccessResponse<Void>> modifyProject(Long projectId, MultipartFile file, ProjectModifyWebRequest webRequest) {
+        ProjectModifyRequest requestDto = projectWebMapper.toApplicationDto(webRequest);
+        projectModifyUseCase.modify(projectId, file, requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.MODIFY_PROJECT));
     }
 }
