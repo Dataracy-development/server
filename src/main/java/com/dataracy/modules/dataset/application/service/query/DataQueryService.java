@@ -272,11 +272,11 @@ public class DataQueryService implements
     }
 
     /**
-     * 지정된 프로젝트와 연결된 데이터셋 목록을 페이지 단위로 조회합니다.
+     * 지정된 프로젝트와 연결된 데이터셋 목록을 페이지네이션하여 조회합니다.
      *
      * @param projectId 연결된 프로젝트의 ID
      * @param pageable 페이지네이션 정보
-     * @return 프로젝트와 연결된 데이터셋의 응답 객체 페이지
+     * @return 프로젝트와 연결된 데이터셋의 상세 정보와 연결된 프로젝트 수를 포함하는 응답 객체의 페이지
      */
     @Override
     public Page<ConnectedDataAssociatedWithProjectResponse> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
@@ -295,12 +295,24 @@ public class DataQueryService implements
         });
     }
 
+    /**
+     * 주어진 데이터 ID에 해당하는 데이터셋의 사용자 ID를 반환합니다.
+     *
+     * @param dataId 사용자 ID를 조회할 데이터셋의 ID
+     * @return 데이터셋을 소유한 사용자 ID
+     */
     @Override
     @Transactional(readOnly = true)
     public Long findUserIdByDataId(Long dataId) {
         return dataRepositoryPort.findUserIdByDataId(dataId);
     }
 
+    /**
+     * 삭제된 데이터를 포함하여 주어진 데이터 ID에 해당하는 사용자 ID를 반환합니다.
+     *
+     * @param dataId 사용자 ID를 조회할 데이터의 ID
+     * @return 해당 데이터의 소유자 사용자 ID
+     */
     @Override
     @Transactional(readOnly = true)
     public Long findUserIdIncludingDeleted(Long dataId) {

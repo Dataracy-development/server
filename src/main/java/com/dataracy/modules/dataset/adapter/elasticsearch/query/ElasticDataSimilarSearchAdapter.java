@@ -59,12 +59,11 @@ public class ElasticDataSimilarSearchAdapter implements DataSimilarSearchPort {
     /**
      * 주어진 데이터와 유사한 데이터를 찾기 위한 Elasticsearch 쿼리를 생성합니다.
      *
-     * 이 쿼리는 데이터의 제목과 설명을 기반으로 한 more_like_this 조건과, topicId에 대한 가중치(term) 조건을 포함하며,
-     * 동일한 id를 가진 문서는 결과에서 제외합니다.
+     * 이 쿼리는 제목과 설명을 기반으로 한 more_like_this 조건, topicId에 대한 가중치(term) 조건, 동일한 id의 문서 제외, 그리고 삭제되지 않은(isDeleted=false) 문서만을 대상으로 하는 필터를 포함합니다.
      *
      * @param q    쿼리 빌더
      * @param data 유사 데이터 추천 기준이 되는 데이터 객체
-     * @return 유사 데이터 추천을 위한 Elasticsearch 쿼리 빌더
+     * @return 유사 데이터 검색을 위한 Elasticsearch 쿼리 빌더
      */
     private ObjectBuilder<Query> buildRecommendationQuery(Query.Builder q, Data data) {
         return q.bool(b -> b

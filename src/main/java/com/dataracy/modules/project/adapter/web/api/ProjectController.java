@@ -166,7 +166,7 @@ public class ProjectController implements ProjectApi {
     }
 
     /**
-     * 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 조회합니다.
+     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 조회합니다.
      *
      * @param dataId 연결된 데이터를 식별하는 ID
      * @param pageable 페이지네이션 정보
@@ -181,6 +181,14 @@ public class ProjectController implements ProjectApi {
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONNECTED_PROJECTS_ASSOCIATED_DATA, webResponse));
     }
 
+    /**
+     * 프로젝트 정보를 수정한다.
+     *
+     * @param projectId 수정할 프로젝트의 ID
+     * @param file      프로젝트 썸네일 파일 (선택 사항)
+     * @param webRequest 프로젝트 수정 요청 정보
+     * @return 수정 성공 여부를 나타내는 응답
+     */
     @Override
     @AuthorizationProjectEdit
     public ResponseEntity<SuccessResponse<Void>> modifyProject(Long projectId, MultipartFile file, ProjectModifyWebRequest webRequest) {
@@ -191,6 +199,12 @@ public class ProjectController implements ProjectApi {
                 .body(SuccessResponse.of(ProjectSuccessStatus.MODIFY_PROJECT));
     }
 
+    /**
+     * 지정된 프로젝트를 삭제 상태로 변경합니다.
+     *
+     * @param projectId 삭제할 프로젝트의 ID
+     * @return 삭제 성공 여부를 나타내는 성공 응답
+     */
     @Override
     @AuthorizationProjectEdit
     public ResponseEntity<SuccessResponse<Void>> deleteProject(Long projectId) {
@@ -200,6 +214,12 @@ public class ProjectController implements ProjectApi {
                 .body(SuccessResponse.of(ProjectSuccessStatus.DELETE_PROJECT));
     }
 
+    /**
+     * 삭제된 프로젝트를 복구합니다.
+     *
+     * @param projectId 복구할 프로젝트의 ID
+     * @return 복구 성공 상태를 포함한 HTTP 200 OK 응답
+     */
     @Override
     @AuthorizationProjectEdit(restore = true)
     public ResponseEntity<SuccessResponse<Void>> restoreProject(Long projectId) {
