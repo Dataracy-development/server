@@ -1,7 +1,12 @@
 package com.dataracy.modules.dataset.application.service.command;
 
 import com.dataracy.modules.common.util.FileUtil;
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
+import com.dataracy.modules.dataset.application.port.elasticsearch.DataIndexingPort;
+import com.dataracy.modules.dataset.application.port.in.DataDeleteUseCase;
+import com.dataracy.modules.dataset.application.port.in.DataModifyUseCase;
+import com.dataracy.modules.dataset.application.port.in.DataRestoreUseCase;
 import com.dataracy.modules.dataset.application.port.in.DataUploadUseCase;
 import com.dataracy.modules.dataset.application.port.out.DataKafkaProducerPort;
 import com.dataracy.modules.dataset.application.port.out.DataRepositoryPort;
@@ -23,9 +28,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DataCommandService implements DataUploadUseCase {
+public class DataCommandService implements
+        DataUploadUseCase,
+        DataModifyUseCase,
+        DataDeleteUseCase,
+        DataRestoreUseCase
+{
     private final DataRepositoryPort dataRepositoryPort;
     private final DataKafkaProducerPort kafkaProducerPort;
+    private final DataIndexingPort dataIndexingPort;
 
     private final FileUploadUseCase fileUploadUseCase;
     private final ValidateTopicUseCase validateTopicUseCase;
@@ -122,5 +133,76 @@ public class DataCommandService implements DataUploadUseCase {
 
         log.info("데이터셋 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
         return saveData.getId();
+    }
+
+    @Override
+    public void modify(Long dataId, MultipartFile dataFile, MultipartFile thumbnailFile, DataModifyRequest requestDto) {
+        log.info("데이터셋 수정 시작 - dataId: {}, title: {}", dataId, requestDto.title());
+        if (requestDto.startDate().isAfter(requestDto.endDate())) {
+            throw new DataException(DataErrorStatus.BAD_REQUEST_DATE);
+        }
+
+        // 데이터셋 파일 유효성 검사
+        FileUtil.validateGeneralFile(dataFile);
+        // 썸네일 파일 유효성 검사
+        FileUtil.validateImageFile(thumbnailFile);
+
+        // 유효성 검사
+        validateTopicUseCase.validateTopic(requestDto.topicId());
+        validateDataSourceUseCase.validateDataSource(requestDto.dataSourceId());
+        validateDataTypeUseCase.validateDataType(requestDto.dataTypeId());
+
+        dataRepositoryPort.modify(dataId,requestDto);
+
+        // 데이터셋 파일 업로드 시도
+        if (dataFile != null && !dataFile.isEmpty()) {
+            try {
+                String key = S3KeyGeneratorUtil.generateKey("data", dataId, dataFile.getOriginalFilename());
+                String dataFileUrl = fileUploadUseCase.uploadFile(key, dataFile);
+                log.info("새 데이터셋 파일 업로드 성공 - url={}", dataFileUrl);
+
+                dataRepositoryPort.updateDataFile(dataId, dataFileUrl);
+            } catch (Exception e) {
+                log.error("새 데이터셋 파일 업로드 실패. 프로젝트 ID={}, 에러={}", dataId, e.getMessage());
+                throw new RuntimeException("새 데이터셋 파일 업로드 실패", e); // rollback 유도
+            }
+        }
+        // 썸네일 파일 업로드 시도
+        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+            try {
+                String key = S3KeyGeneratorUtil.generateThumbnailKey("data", dataId, thumbnailFile.getOriginalFilename());
+                String thumbnailFileUrl = fileUploadUseCase.uploadFile(key, thumbnailFile);
+                log.info("새 썸네일 파일 업로드 성공 - url={}", thumbnailFileUrl);
+
+                dataRepositoryPort.updateThumbnailFile(dataId, thumbnailFileUrl);
+            } catch (Exception e) {
+                log.error("새 썸네일 파일 업로드 실패. 데이터 ID={}, 에러={}", dataId, e.getMessage());
+                throw new RuntimeException("새 썸네일 파일 업로드 실패", e); // rollback 유도
+            }
+        }
+
+        Data savedData = dataRepositoryPort.findDataById(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+
+        // 데이터셋 파일 파싱 후 통계 저장
+        if (dataFile != null && !dataFile.isEmpty()) {
+            kafkaProducerPort.sendUploadEvent(savedData.getId(), savedData.getDataFileUrl(), dataFile.getOriginalFilename());
+        }
+
+        log.info("데이터셋 수정 완료 - dataId: {}, title: {}", dataId, requestDto.title());
+    }
+
+    @Override
+    @Transactional
+    public void markAsDelete(Long dataId) {
+        dataRepositoryPort.delete(dataId);
+        dataIndexingPort.markAsDeleted(dataId);
+    }
+
+    @Override
+    @Transactional
+    public void markAsRestore(Long dataId) {
+        dataRepositoryPort.restore(dataId);
+        dataIndexingPort.markAsRestore(dataId);
     }
 }

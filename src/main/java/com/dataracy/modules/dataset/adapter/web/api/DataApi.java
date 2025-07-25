@@ -3,6 +3,7 @@ package com.dataracy.modules.dataset.adapter.web.api;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
+import com.dataracy.modules.dataset.adapter.web.request.DataModifyWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -240,5 +241,56 @@ public interface DataApi {
 
             @PageableDefault(size = 3, page = 0)
             Pageable pageable
+    );
+
+    @Operation(
+            summary = "데이터셋 수정한다.",
+            description = "제공받은 웹 요청 DTO의 데이터셋 정보를 통해 기존 데이터셋을 수정한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "데이터셋 수정에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @PutMapping(value="/{dataId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<SuccessResponse<Void>> modifyDataSet(
+            @PathVariable @Min(1)
+            Long dataId,
+
+            @RequestPart(value = "dataFile") MultipartFile dataFile,
+            @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
+
+            @RequestPart @Validated
+            DataModifyWebRequest webRequest
+    );
+
+    @Operation(
+            summary = "데이터셋을 삭제한다.",
+            description = "해당하는 데이터셋을 삭제한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 삭제에  성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @DeleteMapping("/{dataId}")
+    ResponseEntity<SuccessResponse<Void>> deleteDataSet(
+            @PathVariable @Min(1)
+            Long dataId
+    );
+
+    @Operation(
+            summary = "데이터셋을 복원한다.",
+            description = "해당하는 데이터셋을 복원한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 복원에  성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @PatchMapping("/{dataId}/restore")
+    ResponseEntity<SuccessResponse<Void>> restoreDataSet(
+            @PathVariable @Min(1)
+            Long dataId
     );
 }

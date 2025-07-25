@@ -1,6 +1,7 @@
 package com.dataracy.modules.dataset.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
@@ -73,6 +74,17 @@ public class DataEntity extends BaseTimeEntity {
 
     public void restore() {
         this.isDeleted = false;
+    }
+
+    public void modify(DataModifyRequest requestDto) {
+        this.title = requestDto.title();
+        this.topicId = requestDto.topicId();
+        this.dataSourceId = requestDto.dataSourceId();
+        this.dataTypeId = requestDto.dataTypeId();
+        this.startDate = requestDto.startDate();
+        this.endDate = requestDto.endDate();
+        this.description = requestDto.description();
+        this.analysisGuide = requestDto.analysisGuide();
     }
 
     /**

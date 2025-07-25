@@ -31,7 +31,8 @@ public record DataSearchDocument(
         Integer rowCount,
         Integer columnCount,
         String previewJson,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Boolean isDeleted
 ) {
     /**
      * 주어진 데이터, 메타데이터, 라벨 정보를 기반으로 DataSearchDocument 인스턴스를 생성합니다.
@@ -69,6 +70,7 @@ public record DataSearchDocument(
                 .columnCount(dataMetadata.getColumnCount())
                 .previewJson(dataMetadata.getPreviewJson())
                 .createdAt(data.getCreatedAt())
+                .isDeleted(false)
                 .build();
     }
 }

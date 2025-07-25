@@ -9,4 +9,6 @@ public interface DataIndexingPort {
  * @param doc 인덱싱할 DataSearchDocument 객체
  */
 void index(DataSearchDocument doc);
+    void markAsDeleted(Long dataId);
+    void markAsRestore(Long dataId);
 }

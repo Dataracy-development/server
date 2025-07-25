@@ -47,7 +47,8 @@ public class DataQueryService implements
         DataRealTimeUseCase,
         CountDataGroupByTopicLabelUseCase,
         ConnectedDataAssociatedWithProjectUseCase,
-        FindUserIdByDataIdUseCase
+        FindUserIdByDataIdUseCase,
+        FindUserIdIncludingDeletedUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
     private final FilterDataDtoMapper filterDataDtoMapper;
@@ -297,5 +298,10 @@ public class DataQueryService implements
     @Override
     public Long findUserIdByDataId(Long dataId) {
         return dataRepositoryPort.findUserIdByDataId(dataId);
+    }
+
+    @Override
+    public Long findUserIdIncludingDeleted(Long dataId) {
+        return dataRepositoryPort.findUserIdIncludingDeleted(dataId);
     }
 }
