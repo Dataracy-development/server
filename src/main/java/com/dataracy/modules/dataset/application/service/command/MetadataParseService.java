@@ -47,7 +47,7 @@ public class MetadataParseService implements MetadataParseUseCase {
      * 이후 관련 데이터와 라벨 정보를 조회하여 검색 색인 문서를 생성하고, 이를 검색 시스템에 색인합니다.
      * 파싱, 저장, 색인 과정에서 발생하는 모든 오류는 예외로 던지지 않고 로그로만 처리됩니다.
      *
-     * @param request 파일 URL, 원본 파일명, 데이터 ID를 포함한 메타데이터 파싱 및 저장 요청 객체
+     * @param request 메타데이터 파싱 및 저장에 필요한 파일 URL, 원본 파일명, 데이터 ID를 포함한 요청 객체
      */
     @Override
     @Transactional
@@ -79,7 +79,7 @@ public class MetadataParseService implements MetadataParseUseCase {
             DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);
             dataIndexingPort.index(document);
 
-            log.info("데이터 인덱싱 완료: dataId={}", request.dataId());
+            log.info("새 데이터 인덱싱 완료: dataId={}", request.dataId());
 
         } catch (IOException e) {
             log.error("파일 다운로드 또는 파싱 실패: dataId={}, url={}", request.dataId(), request.fileUrl(), e);

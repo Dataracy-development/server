@@ -37,17 +37,18 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
     /**
-     * 주어진 ID에 해당하는 프로젝트를 조회하여 Optional로 반환합니다.
+     * 주어진 ID에 해당하며 삭제되지 않은 프로젝트를 조회하여 Optional로 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID
-     * @return 프로젝트가 존재하면 해당 도메인 객체의 Optional, 없으면 빈 Optional
+     * @return 존재하는 경우 최소 정보가 매핑된 프로젝트의 Optional, 없으면 빈 Optional
      */
     @Override
     public Optional<Project> findProjectById(Long projectId) {
         ProjectEntity entity = queryFactory
                 .selectFrom(project)
                 .where(
-                        ProjectFilterPredicate.projectIdEq(projectId)
+                        ProjectFilterPredicate.projectIdEq(projectId),
+                        ProjectFilterPredicate.notDeleted()
                 )
                 .fetchOne();
 
@@ -55,10 +56,10 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     }
 
     /**
-     * 주어진 프로젝트 ID를 부모로 하는 프로젝트가 존재하는지 확인합니다.
+     * 지정한 프로젝트 ID를 부모로 갖는 자식 프로젝트가 삭제되지 않은 상태로 존재하는지 여부를 반환합니다.
      *
      * @param projectId 부모 프로젝트의 ID
-     * @return 하나 이상의 자식 프로젝트가 존재하면 true, 그렇지 않으면 false
+     * @return 삭제되지 않은 자식 프로젝트가 하나 이상 존재하면 true, 없으면 false
      */
     @Override
     public boolean existsByParentProjectId(Long projectId) {
@@ -66,17 +67,18 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .selectOne()
                 .from(project)
                 .where(
-                        ProjectFilterPredicate.parentProjectIdEq(projectId)
+                        ProjectFilterPredicate.parentProjectIdEq(projectId),
+                        ProjectFilterPredicate.notDeleted()
                 )
                 .fetchFirst();
         return result != null;
     }
 
     /**
-     * 특정 프로젝트 ID에 연결된 프로젝트 데이터가 존재하는지 확인합니다.
+     * 주어진 프로젝트 ID에 연결된 삭제되지 않은 프로젝트 데이터가 존재하는지 반환합니다.
      *
-     * @param projectId 연결된 프로젝트 데이터의 존재 여부를 확인할 프로젝트 ID
-     * @return 프로젝트 데이터가 존재하면 true, 없으면 false
+     * @param projectId 존재 여부를 확인할 프로젝트의 ID
+     * @return 삭제되지 않은 프로젝트 데이터가 존재하면 true, 그렇지 않으면 false
      */
     @Override
     public boolean existsProjectDataByProjectId(Long projectId) {
@@ -84,18 +86,19 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .selectOne()
                 .from(projectData)
                 .where(
-                        ProjectDataFilterPredicate.projectIdEq(projectId)
+                        ProjectDataFilterPredicate.projectIdEq(projectId),
+                        ProjectDataFilterPredicate.notDeleted()
                 )
                 .fetchFirst();
         return result != null;
     }
 
     /**
-     * 주어진 프로젝트 ID를 부모로 갖는 프로젝트들을 최신순으로 조회하여 페이지 형태로 반환합니다.
+     * 부모 프로젝트 ID에 해당하는 자식 프로젝트들을 최신순으로 페이지네이션하여 반환합니다.
      *
      * @param projectId 부모 프로젝트의 ID
      * @param pageable 페이지네이션 정보
-     * @return 부모 프로젝트 ID에 해당하는 프로젝트들의 페이지 결과
+     * @return 자식 프로젝트들의 페이지 결과
      */
     @Override
     public Page<Project> findContinueProjects(Long projectId, Pageable pageable) {
@@ -103,7 +106,8 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 .selectFrom(project)
                 .orderBy(ProjectSortBuilder.fromSortOption(ProjectSortType.LATEST))
                 .where(
-                        ProjectFilterPredicate.parentProjectIdEq(projectId)
+                        ProjectFilterPredicate.parentProjectIdEq(projectId),
+                        ProjectFilterPredicate.notDeleted()
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -118,7 +122,8 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                         .select(project.count())
                         .from(project)
                         .where(
-                                ProjectFilterPredicate.parentProjectIdEq(projectId)
+                                ProjectFilterPredicate.parentProjectIdEq(projectId),
+                                ProjectFilterPredicate.notDeleted()
                         )
                         .fetchOne()
         ).orElse(0L);
@@ -127,7 +132,7 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     }
 
     /**
-     * 주어진 데이터 ID와 연관된 프로젝트들을 최신순으로 페이징하여 조회합니다.
+     * 주어진 데이터 ID와 연관된 프로젝트들을 최신 생성일 순으로 페이징하여 조회합니다.
      *
      * @param dataId 연관된 데이터의 ID
      * @param pageable 페이징 및 정렬 정보
@@ -135,12 +140,13 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
      */
     @Override
     public Page<Project> findConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable) {
-        // Step 1: 먼저 id 목록 조회 (페이징 포함)
+        // 먼저 id 목록 조회 (페이징 포함)
         List<Long> projectIds = queryFactory
                 .select(projectData.project.id)
                 .from(projectData)
                 .where(
-                        ProjectDataFilterPredicate.dataIdEq(dataId)
+                        ProjectDataFilterPredicate.dataIdEq(dataId),
+                        ProjectDataFilterPredicate.notDeleted()
                 )
                 .orderBy(projectData.project.createdAt.desc())
                 .offset(pageable.getOffset())
@@ -169,7 +175,10 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 queryFactory
                         .select(projectData.project.countDistinct())
                         .from(projectData)
-                        .where(ProjectDataFilterPredicate.dataIdEq(dataId))
+                        .where(
+                                ProjectDataFilterPredicate.dataIdEq(dataId),
+                                ProjectDataFilterPredicate.notDeleted()
+                        )
                         .fetchOne()
         ).orElse(0L);
 
@@ -178,16 +187,20 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
 
 
     /**
-     * 인기 순으로 정렬된 프로젝트 목록을 지정된 개수만큼 반환합니다.
-     * 인기있는 프로젝트 목록 조회는 부모, 자식 프로젝트, 데이터셋을 반환하지 않아도 되므로 fetch join을 하지 않는다.
+     * 인기 순으로 정렬된 프로젝트를 최대 지정된 개수만큼 조회합니다.
+     *
+     * 프로젝트의 최소 정보만 반환하며, 논리적으로 삭제되지 않은 프로젝트만 포함됩니다.
      *
      * @param size 반환할 프로젝트의 최대 개수
-     * @return 인기 순으로 정렬된 최소 정보의 프로젝트 도메인 객체 리스트
+     * @return 인기 순으로 정렬된 프로젝트 도메인 객체 리스트
      */
     @Override
     public List<Project> findPopularProjects(int size) {
         return queryFactory
                 .selectFrom(project)
+                .where(
+                        ProjectFilterPredicate.notDeleted()
+                )
                 .orderBy(ProjectPopularOrderBuilder.popularOrder())
                 .limit(size)
                 .fetch()
@@ -197,10 +210,10 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
     }
 
     /**
-     * 주어진 필터 요청을 기반으로 프로젝트 검색에 사용할 QueryDSL BooleanExpression 배열을 생성합니다.
+     * 프로젝트 필터 요청에 따라 QueryDSL BooleanExpression 조건 배열을 생성합니다.
      *
-     * @param request 프로젝트 필터 조건이 담긴 요청 객체
-     * @return 각 필터 조건에 해당하는 BooleanExpression 배열
+     * @param request 프로젝트 검색에 적용할 필터 조건이 포함된 요청 객체
+     * @return 필터 조건에 해당하는 QueryDSL BooleanExpression 배열
      */
     private BooleanExpression[] buildFilterPredicates(ProjectFilterRequest request) {
         return new BooleanExpression[] {
@@ -208,7 +221,8 @@ public class ProjectQueryRepositoryPortAdapter implements ProjectQueryRepository
                 ProjectFilterPredicate.topicIdEq(request.topicId()),
                 ProjectFilterPredicate.analysisPurposeIdEq(request.analysisPurposeId()),
                 ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
-                ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId())
+                ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId()),
+                ProjectFilterPredicate.notDeleted()
         };
     }
 

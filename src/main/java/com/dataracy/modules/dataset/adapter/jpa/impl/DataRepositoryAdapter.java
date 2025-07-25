@@ -3,6 +3,7 @@ package com.dataracy.modules.dataset.adapter.jpa.impl;
 import com.dataracy.modules.dataset.adapter.jpa.entity.DataEntity;
 import com.dataracy.modules.dataset.adapter.jpa.mapper.DataEntityMapper;
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataJpaRepository;
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import com.dataracy.modules.dataset.application.port.out.DataRepositoryPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
@@ -50,25 +51,26 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
     }
 
     /**
-     * 지정된 데이터 ID에 해당하는 데이터 엔티티의 데이터 파일 URL을 업데이트합니다.
+     * 데이터 ID에 해당하는 데이터 엔티티의 데이터 파일 URL을 새 값으로 변경합니다.
      *
-     * 데이터가 존재하지 않을 경우 DataException을 발생시킵니다.
+     * 데이터가 존재하지 않으면 DataException이 발생합니다.
      *
-     * @param dataId        데이터 엔티티의 식별자
-     * @param dataFileUrl   새로 설정할 데이터 파일 URL
+     * @param dataId 데이터 엔티티의 ID
+     * @param dataFileUrl 변경할 데이터 파일의 URL
      */
     @Override
     public void updateDataFile(Long dataId, String dataFileUrl) {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
         dataEntity.updateDataFile(dataFileUrl);
+        dataJpaRepository.save(dataEntity);
     }
 
     /**
-     * 데이터 ID에 해당하는 데이터의 썸네일 파일 URL을 새 값으로 변경합니다.
+     * 지정한 데이터 ID의 썸네일 파일 URL을 새로운 값으로 업데이트합니다.
      *
-     * @param dataId 썸네일 파일 URL을 변경할 데이터의 ID
-     * @param thumbnailFileUrl 변경할 새 썸네일 파일 URL
+     * @param dataId 업데이트할 데이터의 ID
+     * @param thumbnailFileUrl 새로 설정할 썸네일 파일 URL
      * @throws DataException 데이터가 존재하지 않을 경우 발생합니다.
      */
     @Override
@@ -76,16 +78,93 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
         dataEntity.updateThumbnailFile(thumbnailFileUrl);
+        dataJpaRepository.save(dataEntity);
     }
 
     /**
-     * 지정된 ID를 가진 데이터 엔티티가 저장소에 존재하는지 여부를 반환합니다.
+     * 주어진 ID의 데이터가 저장소에 존재하는지 확인합니다.
      *
      * @param dataId 존재 여부를 확인할 데이터의 ID
-     * @return 데이터가 존재하면 true, 그렇지 않으면 false
+     * @return 데이터가 존재하면 true, 존재하지 않으면 false
      */
     @Override
     public boolean existsDataById(Long dataId) {
         return dataJpaRepository.existsById(dataId);
+    }
+
+    /**
+     * 주어진 데이터 ID에 해당하는 데이터의 사용자 ID를 반환합니다.
+     *
+     * 데이터가 존재하지 않을 경우 {@code DataException}이 발생합니다.
+     *
+     * @param dataId 사용자 ID를 조회할 데이터의 ID
+     * @return 데이터에 연결된 사용자 ID
+     */
+    @Override
+    public Long findUserIdByDataId(Long dataId) {
+        DataEntity dataEntity = dataJpaRepository.findById(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        return dataEntity.getUserId();
+    }
+
+    /**
+     * 주어진 데이터 ID에 해당하는 데이터 엔티티(삭제된 데이터 포함)의 사용자 ID를 반환합니다.
+     *
+     * @param dataId 사용자 ID를 조회할 데이터의 ID
+     * @return 데이터에 연결된 사용자 ID
+     * @throws DataException 데이터가 존재하지 않을 경우 {@code DataErrorStatus.NOT_FOUND_DATA} 상태로 예외가 발생합니다.
+     */
+    @Override
+    public Long findUserIdIncludingDeleted(Long dataId) {
+        DataEntity dataEntity = dataJpaRepository.findIncludingDeletedData(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        return dataEntity.getUserId();
+    }
+
+    /**
+     * 지정된 데이터 ID에 해당하는 DataEntity를 찾아 DataModifyRequest로 수정한 후 저장합니다.
+     *
+     * 데이터가 존재하지 않을 경우 DataException이 발생합니다.
+     *
+     * @param dataId 수정할 데이터의 ID
+     * @param requestDto 데이터 수정 요청 정보
+     */
+    @Override
+    public void modify(Long dataId, DataModifyRequest requestDto) {
+        DataEntity dataEntity = dataJpaRepository.findById(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+
+        dataEntity.modify(requestDto);
+        dataJpaRepository.save(dataEntity);
+    }
+
+    /**
+     * 지정된 데이터 ID에 해당하는 데이터를 논리적으로 삭제합니다.
+     *
+     * 데이터가 존재하지 않을 경우 {@code DataException}이 발생합니다.
+     *
+     * @param dataId 삭제할 데이터의 ID
+     * @throws DataException 데이터가 존재하지 않을 경우 발생
+     */
+    @Override
+    public void delete(Long dataId) {
+        DataEntity data = dataJpaRepository.findById(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        data.delete();
+        dataJpaRepository.save(data);
+    }
+
+    /**
+     * 논리적으로 삭제된 데이터를 복구합니다.
+     *
+     * @param dataId 복구할 데이터의 ID
+     * @throws DataException 해당 ID의 데이터를 찾을 수 없는 경우 발생하며, 상태는 NOT_FOUND_DATA입니다.
+     */
+    @Override
+    public void restore(Long dataId) {
+        DataEntity data = dataJpaRepository.findIncludingDeletedData(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        data.restore();
+        dataJpaRepository.save(data);
     }
 }

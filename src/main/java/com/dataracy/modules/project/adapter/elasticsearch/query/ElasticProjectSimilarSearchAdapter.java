@@ -57,13 +57,12 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
     }
 
     /**
-     * 주어진 프로젝트를 기반으로 유사 프로젝트 추천을 위한 Elasticsearch 쿼리를 생성합니다.
+     * 주어진 프로젝트를 기준으로 유사 프로젝트 추천을 위한 Elasticsearch 불리언 쿼리를 생성합니다.
      *
-     * 프로젝트의 제목과 내용을 활용한 유사 문서 검색, 주제 ID 및 분석 목적 ID의 가중치 부여, 
-     * 그리고 동일 프로젝트 제외 조건을 포함한 불리언 쿼리를 구성합니다.
+     * 제목과 내용을 활용한 유사 문서 검색, 주제 ID 및 분석 목적 ID의 가중치 부여, 동일 프로젝트 제외, 삭제되지 않은 프로젝트만 포함하는 조건을 결합합니다.
      *
-     * @param q       쿼리 빌더 객체
-     * @param project 유사 프로젝트 추천 기준이 되는 프로젝트
+     * @param q 쿼리 빌더 객체
+     * @param project 유사 프로젝트 추천의 기준이 되는 프로젝트
      * @return 유사 프로젝트 추천을 위한 Elasticsearch 쿼리 빌더
      */
     private ObjectBuilder<Query> buildRecommendationQuery(Query.Builder q, Project project) {
@@ -88,6 +87,12 @@ public class ElasticProjectSimilarSearchAdapter implements ProjectSimilarSearchP
                         .field("id")
                         .value(project.getId())
                 ))
+                .filter(f -> f
+                        .term(t -> t
+                                .field("isDeleted")
+                                .value(false)
+                        )
+                )
         );
     }
 
