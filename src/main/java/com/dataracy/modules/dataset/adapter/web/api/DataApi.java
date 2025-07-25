@@ -219,11 +219,11 @@ public interface DataApi {
     ResponseEntity<SuccessResponse<List<CountDataGroupWebResponse>>> countDataSetsByTopicLabel();
 
     /**
-     * 지정된 프로젝트와 연결된 데이터셋 목록을 페이지 단위로 조회합니다.
+     * 프로젝트에 연결된 데이터셋 목록을 페이지 단위로 조회합니다.
      *
-     * @param projectId 연결된 데이터셋을 조회할 프로젝트의 고유 ID (1 이상)
+     * @param projectId 데이터셋을 조회할 프로젝트의 고유 ID (1 이상)
      * @param pageable 페이지네이션 정보 (기본 페이지 크기 3, 0페이지부터 시작)
-     * @return 프로젝트와 연결된 데이터셋 목록의 페이지 결과를 성공 응답으로 반환
+     * @return 프로젝트와 연결된 데이터셋 목록을 포함하는 성공 응답
      */
     @Operation(
             summary = "프로젝트와 연결된 데이터셋 리스트를 조회한다.",
@@ -243,6 +243,15 @@ public interface DataApi {
             Pageable pageable
     );
 
+    /**
+     * 지정한 데이터셋 ID에 해당하는 데이터셋을 새로운 파일과 메타데이터로 수정합니다.
+     *
+     * @param dataId 수정할 데이터셋의 고유 ID (1 이상)
+     * @param dataFile 필수 데이터셋 파일
+     * @param thumbnailFile 선택적 썸네일 파일
+     * @param webRequest 데이터셋 수정 정보를 담은 요청 DTO
+     * @return 수정 성공 여부를 나타내는 응답
+     */
     @Operation(
             summary = "데이터셋 수정한다.",
             description = "제공받은 웹 요청 DTO의 데이터셋 정보를 통해 기존 데이터셋을 수정한다."
@@ -264,6 +273,12 @@ public interface DataApi {
             DataModifyWebRequest webRequest
     );
 
+    /**
+     * 지정한 데이터셋을 삭제합니다.
+     *
+     * @param dataId 삭제할 데이터셋의 ID (1 이상)
+     * @return 삭제 성공 여부를 포함한 응답
+     */
     @Operation(
             summary = "데이터셋을 삭제한다.",
             description = "해당하는 데이터셋을 삭제한다."
@@ -279,6 +294,12 @@ public interface DataApi {
             Long dataId
     );
 
+    /**
+     * 삭제된 데이터셋을 복원한다.
+     *
+     * @param dataId 복원할 데이터셋의 ID (1 이상)
+     * @return 복원 성공 여부를 나타내는 응답
+     */
     @Operation(
             summary = "데이터셋을 복원한다.",
             description = "해당하는 데이터셋을 복원한다."

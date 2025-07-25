@@ -47,7 +47,7 @@ public class DataCommandService implements
     private String defaultImageUrl;
 
     /**
-     * 데이터셋 파일과 썸네일 파일을 검증 및 업로드하고, 데이터셋 정보를 저장한 뒤 업로드 이벤트를 발행합니다.
+     * 데이터셋 파일과 썸네일 파일을 검증 및 업로드하고, 데이터셋 정보를 저장한 후 업로드 이벤트를 발행합니다.
      *
      * 데이터셋 메타데이터와 파일의 유효성을 검사하고, 주제/데이터소스/데이터유형 ID를 각각 검증합니다. 데이터셋 정보는 데이터베이스에 저장되며, 파일 업로드가 성공하면 해당 URL이 데이터셋에 반영됩니다. 파일 업로드 중 오류가 발생하면 트랜잭션이 롤백됩니다. 데이터셋 파일 업로드가 완료되면 업로드 이벤트가 발행됩니다.
      *
@@ -135,6 +135,19 @@ public class DataCommandService implements
         return saveData.getId();
     }
 
+    /**
+     * 데이터셋의 메타데이터와 파일(데이터셋 파일, 썸네일 파일)을 수정합니다.
+     *
+     * 데이터셋의 제목, 설명, 날짜 범위, 주제, 데이터 소스, 데이터 타입 등 메타데이터를 갱신하고,
+     * 새로운 데이터셋 파일 또는 썸네일 파일이 제공된 경우 파일을 업로드하여 해당 URL로 갱신합니다.
+     * 파일 업로드 실패 시 트랜잭션이 롤백됩니다.
+     * 데이터셋 파일이 수정된 경우, 업로드 이벤트를 카프카로 발행합니다.
+     *
+     * @param dataId        수정할 데이터셋의 ID
+     * @param dataFile      새 데이터셋 파일 (선택)
+     * @param thumbnailFile 새 썸네일 파일 (선택)
+     * @param requestDto    데이터셋 수정 요청 정보
+     */
     @Override
     public void modify(Long dataId, MultipartFile dataFile, MultipartFile thumbnailFile, DataModifyRequest requestDto) {
         log.info("데이터셋 수정 시작 - dataId: {}, title: {}", dataId, requestDto.title());
@@ -192,6 +205,11 @@ public class DataCommandService implements
         log.info("데이터셋 수정 완료 - dataId: {}, title: {}", dataId, requestDto.title());
     }
 
+    /**
+     * 데이터셋을 삭제 상태로 표시하고 Elasticsearch 인덱스에서도 삭제 상태로 반영합니다.
+     *
+     * @param dataId 삭제할 데이터셋의 식별자
+     */
     @Override
     @Transactional
     public void markAsDelete(Long dataId) {
@@ -199,6 +217,11 @@ public class DataCommandService implements
         dataIndexingPort.markAsDeleted(dataId);
     }
 
+    /**
+     * 데이터셋을 복구 상태로 변경하고, Elasticsearch 인덱스도 복구 상태로 동기화합니다.
+     *
+     * @param dataId 복구할 데이터셋의 식별자
+     */
     @Override
     @Transactional
     public void markAsRestore(Long dataId) {

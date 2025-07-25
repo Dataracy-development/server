@@ -34,6 +34,12 @@ public class ProjectWebMapper {
         );
     }
 
+    /**
+     * 웹 계층의 프로젝트 수정 요청 DTO를 애플리케이션 계층의 프로젝트 수정 요청 DTO로 변환합니다.
+     *
+     * @param webRequest 프로젝트 수정 정보를 담은 웹 요청 DTO
+     * @return 변환된 애플리케이션 계층의 프로젝트 수정 요청 DTO
+     */
     public ProjectModifyRequest toApplicationDto(ProjectModifyWebRequest webRequest) {
         return new ProjectModifyRequest(
                 webRequest.title(),
