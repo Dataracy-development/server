@@ -48,7 +48,7 @@ public class DataQueryService implements
         CountDataGroupByTopicLabelUseCase,
         ConnectedDataAssociatedWithProjectUseCase,
         FindUserIdByDataIdUseCase,
-        FindUserIdIncludingDeletedUseCase
+        FindUserIdIncludingDeletedDataUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
     private final FilterDataDtoMapper filterDataDtoMapper;

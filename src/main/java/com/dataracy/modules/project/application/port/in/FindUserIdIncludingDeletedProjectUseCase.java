@@ -1,5 +1,5 @@
 package com.dataracy.modules.project.application.port.in;
 
-public interface FindUserIdIncludingDeletedUseCase {
+public interface FindUserIdIncludingDeletedProjectUseCase {
     Long findUserIdIncludingDeleted(Long projectId);
 }

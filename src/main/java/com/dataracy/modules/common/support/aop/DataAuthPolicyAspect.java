@@ -2,7 +2,7 @@ package com.dataracy.modules.common.support.aop;
 
 import com.dataracy.modules.common.support.annotation.AuthorizationDataEdit;
 import com.dataracy.modules.dataset.application.port.in.FindUserIdByDataIdUseCase;
-import com.dataracy.modules.dataset.application.port.in.FindUserIdIncludingDeletedUseCase;
+import com.dataracy.modules.dataset.application.port.in.FindUserIdIncludingDeletedDataUseCase;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import com.dataracy.modules.security.handler.SecurityContextProvider;
@@ -19,13 +19,13 @@ import org.springframework.stereotype.Component;
 public class DataAuthPolicyAspect {
 
     private final FindUserIdByDataIdUseCase findUserIdByDataIdUseCase;
-    private final FindUserIdIncludingDeletedUseCase findUserIdIncludingDeletedUseCase;
+    private final FindUserIdIncludingDeletedDataUseCase findUserIdIncludingDeletedDataUseCase;
 
     @Before("@annotation(annotation) && args(dataId,..)")
     public void checkDataEditPermission(AuthorizationDataEdit annotation, Long dataId) {
         Long authenticatedUserId = SecurityContextProvider.getAuthenticatedUserId();
         Long ownerId = annotation.restore()
-                ? findUserIdIncludingDeletedUseCase.findUserIdIncludingDeleted(dataId)
+                ? findUserIdIncludingDeletedDataUseCase.findUserIdIncludingDeleted(dataId)
                 : findUserIdByDataIdUseCase.findUserIdByDataId(dataId);
 
         log.error("데이터셋 작성자만 수정 및 삭제가 가능합니다.");
