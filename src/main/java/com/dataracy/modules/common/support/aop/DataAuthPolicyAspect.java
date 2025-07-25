@@ -28,7 +28,6 @@ public class DataAuthPolicyAspect {
                 ? findUserIdIncludingDeletedDataUseCase.findUserIdIncludingDeleted(dataId)
                 : findUserIdByDataIdUseCase.findUserIdByDataId(dataId);
 
-        log.error("데이터셋 작성자만 수정 및 삭제가 가능합니다.");
         if (!ownerId.equals(authenticatedUserId)) {
             log.error("데이터셋 작성자만 {}할 수 있습니다.",
                     annotation.restore() ? "복원" : "수정 및 삭제");

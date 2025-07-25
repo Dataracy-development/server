@@ -110,8 +110,12 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
         ProjectEntity project = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
         project.getChildProjects()
-                .forEach(ProjectEntity::deleteParentProject);
+                .forEach(projectEntity -> {
+                    projectEntity.deleteParentProject();
+                    projectJpaRepository.save(projectEntity);
+                });
         project.delete();
+        projectJpaRepository.save(project);
     }
 
     @Override
@@ -119,5 +123,6 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
         ProjectEntity project = projectJpaRepository.findIncludingDeleted(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
         project.restore();
+        projectJpaRepository.save(project);
     }
 }
