@@ -13,7 +13,10 @@ import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -92,16 +95,27 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
 
         projectEntity.modify(requestDto, parentProject);
 
-        // 기존 연결 제거 (DB 레벨에서)
-        projectDataJpaRepository.deleteAllByProjectId(projectId);
+        // 기존 연결과 새로운 연결 비교 후 필요한 것만 추가/삭제
+        Set<Long> existingDataIds = projectDataJpaRepository.findDataIdsByProjectId(projectId);
+        Set<Long> newDataIds = new HashSet<>(requestDto.dataIds());
+        // 삭제할 연결
+        Set<Long> toDelete = existingDataIds.stream()
+                .filter(id -> !newDataIds.contains(id))
+                .collect(Collectors.toSet());
+        if (!toDelete.isEmpty()) {
+            projectDataJpaRepository.deleteByProjectIdAndDataIdIn(projectId, toDelete);
+        }
 
-        // 새로운 연결 생성
-        List<ProjectDataEntity> newLinks = requestDto.dataIds().stream()
-                .map(dataId -> ProjectDataEntity.of(projectEntity, dataId))
-                .toList();
-
-        // 저장
-        projectDataJpaRepository.saveAll(newLinks);
+        // 추가할 연결
+        Set<Long> toAdd = newDataIds.stream()
+                .filter(id -> !existingDataIds.contains(id))
+                .collect(Collectors.toSet());
+        if (!toAdd.isEmpty()) {
+            List<ProjectDataEntity> newLinks = toAdd.stream()
+                    .map(dataId -> ProjectDataEntity.of(projectEntity, dataId))
+                    .toList();
+            projectDataJpaRepository.saveAll(newLinks);
+        }
         projectJpaRepository.save(projectEntity);
     }
 
