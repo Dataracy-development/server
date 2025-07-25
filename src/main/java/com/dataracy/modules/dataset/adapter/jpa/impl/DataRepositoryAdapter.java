@@ -120,7 +120,6 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
         DataEntity data = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
         data.delete();
-        dataJpaRepository.save(data);
     }
 
     @Override
@@ -128,6 +127,5 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
         DataEntity data = dataJpaRepository.findIncludingDeletedData(dataId)
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
         data.restore();
-        dataJpaRepository.save(data);
     }
 }
