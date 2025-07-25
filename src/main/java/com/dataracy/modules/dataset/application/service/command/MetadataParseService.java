@@ -79,7 +79,7 @@ public class MetadataParseService implements MetadataParseUseCase {
             DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);
             dataIndexingPort.index(document);
 
-            log.info("데이터 인덱싱 완료: dataId={}", request.dataId());
+            log.info("새 데이터 인덱싱 완료: dataId={}", request.dataId());
 
         } catch (IOException e) {
             log.error("파일 다운로드 또는 파싱 실패: dataId={}, url={}", request.dataId(), request.fileUrl(), e);

@@ -1,5 +1,6 @@
 package com.dataracy.modules.dataset.application.port.out;
 
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import com.dataracy.modules.dataset.domain.model.Data;
 
 import java.util.Optional;
@@ -50,4 +51,9 @@ public interface DataRepositoryPort {
 boolean existsDataById(Long dataId);
 
     Long findUserIdByDataId(Long dataId);
+    Long findUserIdIncludingDeleted(Long dataId);
+
+    void modify(Long dataId, DataModifyRequest requestDto);
+    void delete(Long dataId);
+    void restore(Long dataId);
 }

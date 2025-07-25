@@ -3,6 +3,7 @@ package com.dataracy.modules.dataset.adapter.jpa.impl;
 import com.dataracy.modules.dataset.adapter.jpa.entity.DataEntity;
 import com.dataracy.modules.dataset.adapter.jpa.mapper.DataEntityMapper;
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataJpaRepository;
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import com.dataracy.modules.dataset.application.port.out.DataRepositoryPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
@@ -62,6 +63,7 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
         dataEntity.updateDataFile(dataFileUrl);
+        dataJpaRepository.save(dataEntity);
     }
 
     /**
@@ -76,6 +78,7 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
         dataEntity.updateThumbnailFile(thumbnailFileUrl);
+        dataJpaRepository.save(dataEntity);
     }
 
     /**
@@ -94,5 +97,37 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
         return dataEntity.getUserId();
+    }
+
+    @Override
+    public Long findUserIdIncludingDeleted(Long dataId) {
+        DataEntity dataEntity = dataJpaRepository.findIncludingDeletedData(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        return dataEntity.getUserId();
+    }
+
+    @Override
+    public void modify(Long dataId, DataModifyRequest requestDto) {
+        DataEntity dataEntity = dataJpaRepository.findById(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+
+        dataEntity.modify(requestDto);
+        dataJpaRepository.save(dataEntity);
+    }
+
+    @Override
+    public void delete(Long dataId) {
+        DataEntity data = dataJpaRepository.findById(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        data.delete();
+        dataJpaRepository.save(data);
+    }
+
+    @Override
+    public void restore(Long dataId) {
+        DataEntity data = dataJpaRepository.findIncludingDeletedData(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        data.restore();
+        dataJpaRepository.save(data);
     }
 }

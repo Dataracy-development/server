@@ -83,6 +83,12 @@ public class ElasticDataSimilarSearchAdapter implements DataSimilarSearchPort {
                         .field("id")
                         .value(data.getId())
                 ))
+                .filter(f -> f
+                        .term(t -> t
+                                .field("isDeleted")
+                                .value(false)
+                        )
+                )
         );
     }
 

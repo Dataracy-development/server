@@ -1,5 +1,6 @@
 package com.dataracy.modules.dataset.adapter.jpa.entity;
 
+import com.dataracy.modules.dataset.domain.model.DataMetadata;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,6 +44,12 @@ public class DataMetadataEntity {
     public void updateData(DataEntity data) {
         this.data = data;
         data.updateMetadata(this);
+    }
+
+    public void updateFrom(DataMetadata metadata) {
+        this.rowCount = metadata.getRowCount();
+        this.columnCount = metadata.getColumnCount();
+        this.previewJson = metadata.getPreviewJson();
     }
 
     /**

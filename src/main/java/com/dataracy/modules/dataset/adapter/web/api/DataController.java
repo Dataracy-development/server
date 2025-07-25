@@ -1,13 +1,16 @@
 package com.dataracy.modules.dataset.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.support.annotation.AuthorizationDataEdit;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataFilterWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataSearchWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
+import com.dataracy.modules.dataset.adapter.web.request.DataModifyWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.*;
 import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
 import com.dataracy.modules.dataset.application.dto.response.*;
 import com.dataracy.modules.dataset.application.port.in.*;
@@ -38,6 +41,9 @@ public class DataController implements DataApi {
     private final DataRealTimeUseCase dataRealTimeUseCase;
     private final CountDataGroupByTopicLabelUseCase countDataGroupByTopicLabelUseCase;
     private final ConnectedDataAssociatedWithProjectUseCase connectedDataAssociatedWithProjectUseCase;
+    private final DataModifyUseCase dataModifyUseCase;
+    private final DataDeleteUseCase dataDeleteUseCase;
+    private final DataRestoreUseCase dataRestoreUseCase;
 
     /**
      * 데이터 업로드 요청을 처리하여 데이터셋을 생성하고, 성공 상태의 HTTP 201(Created) 응답을 반환합니다.
@@ -193,5 +199,33 @@ public class DataController implements DataApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.GET_CONNECTED_DATASETS_ASSOCIATED_PROJECT, webResponse));
+    }
+
+    @Override
+    @AuthorizationDataEdit
+    public ResponseEntity<SuccessResponse<Void>> modifyDataSet(Long dataId, MultipartFile dataFile, MultipartFile thumbnailFile, DataModifyWebRequest webRequest) {
+        DataModifyRequest requestDto = dataWebMapper.toApplicationDto(webRequest);
+        dataModifyUseCase.modify(dataId, dataFile, thumbnailFile, requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.MODIFY_DATASET));
+    }
+
+    @Override
+    @AuthorizationDataEdit
+    public ResponseEntity<SuccessResponse<Void>> deleteDataSet(Long dataId) {
+        dataDeleteUseCase.markAsDelete(dataId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.DELETE_DATASET));
+    }
+
+    @Override
+    @AuthorizationDataEdit(restore = true)
+    public ResponseEntity<SuccessResponse<Void>> restoreDataSet(Long dataId) {
+        dataRestoreUseCase.markAsRestore(dataId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.RESTORE_DATASET));
     }
 }

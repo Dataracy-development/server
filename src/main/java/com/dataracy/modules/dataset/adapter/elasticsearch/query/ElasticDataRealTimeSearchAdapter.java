@@ -7,11 +7,6 @@ import com.dataracy.modules.dataset.application.dto.response.DataMinimalSearchRe
 import com.dataracy.modules.dataset.application.port.elasticsearch.DataRealTimeSearchPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
-import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
-import com.dataracy.modules.project.application.dto.response.ProjectRealTimeSearchResponse;
-import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
-import com.dataracy.modules.project.domain.exception.ProjectException;
-import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -50,10 +45,20 @@ public class ElasticDataRealTimeSearchAdapter implements DataRealTimeSearchPort 
                                     )
                             )
                             .query(q -> q
-                                    .multiMatch(m -> m
-                                            .fields("title^2", "description")
-                                            .query(keyword)
-                                            .fuzziness("AUTO")
+                                    .bool(b -> b
+                                            .must(m -> m
+                                                    .multiMatch(mm -> mm
+                                                            .fields("title^2", "description")
+                                                            .query(keyword)
+                                                            .fuzziness("AUTO")
+                                                    )
+                                            )
+                                            .filter(f -> f
+                                                    .term(t -> t
+                                                            .field("isDeleted")
+                                                            .value(false)
+                                                    )
+                                            )
                                     )
                             ),
                     DataSearchDocument.class

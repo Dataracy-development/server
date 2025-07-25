@@ -12,6 +12,8 @@ import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class DataMetadataRepositoryAdapter implements DataMetadataRepositoryPort {
@@ -32,9 +34,18 @@ public class DataMetadataRepositoryAdapter implements DataMetadataRepositoryPort
         try {
             DataEntity dataEntity = dataJpaRepository.findById(dataId)
                     .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
-            DataMetadataEntity dataMetadataEntity = DataMetadataEntityMapper.toEntity(metadata);
-            dataMetadataEntity.updateData(dataEntity);
-            dataMetadataJpaRepository.save(dataMetadataEntity);
+
+            Optional<DataMetadataEntity> existing = dataMetadataJpaRepository.findByDataId(dataId);
+
+            if (existing.isPresent()) {
+                DataMetadataEntity entity = existing.get();
+                entity.updateFrom(metadata);
+                dataMetadataJpaRepository.save(entity);
+            } else {
+                DataMetadataEntity newEntity = DataMetadataEntityMapper.toEntity(metadata);
+                newEntity.updateData(dataEntity);
+                dataMetadataJpaRepository.save(newEntity);
+            }
         } catch (DataException de) {
             // NOT_FOUND_DATA 등 기존 상태 유지
             throw de;
