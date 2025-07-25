@@ -16,7 +16,7 @@ public enum ProjectErrorStatus implements BaseErrorCode {
     FAIL_INDEXING_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-005", "Elasticsearch 색인 실패"),
     FAIL_SIMILAR_SEARCH_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-006", "유사 프로젝트 검색 실패"),
     INVALID_PROJECT_SORT_TYPE(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-007", "프로젝트 정렬은 LATEST, OLDEST, MOST_LIKED, MOST_VIEWED, MOST_COMMENTED, LEAST_COMMENTED 만 가능합니다."),
-    NOT_MATCH_CREATOR(HttpStatus.FORBIDDEN, "PROJECT-008", "작성자만 수정 및 삭제가 가능합니다."),
+    NOT_MATCH_CREATOR(HttpStatus.FORBIDDEN, "PROJECT-008", "작성자만 수정 및 삭제, 복원이 가능합니다."),
     ;
     private final HttpStatus httpStatus;
     private final String code;
