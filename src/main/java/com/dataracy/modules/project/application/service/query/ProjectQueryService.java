@@ -46,7 +46,7 @@ public class ProjectQueryService implements
         ContinueProjectUseCase,
         ConnectedProjectAssociatedWithDataUseCase,
         FindUserIdByProjectIdUseCase,
-        FindUserIdIncludingDeletedUseCase
+        FindUserIdIncludingDeletedProjectUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
     private final FilterProjectDtoMapper filterProjectDtoMapper;

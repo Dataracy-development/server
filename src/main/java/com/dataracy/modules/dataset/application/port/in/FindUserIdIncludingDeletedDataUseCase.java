@@ -1,5 +1,5 @@
 package com.dataracy.modules.dataset.application.port.in;
 
-public interface FindUserIdIncludingDeletedUseCase {
+public interface FindUserIdIncludingDeletedDataUseCase {
     Long findUserIdIncludingDeleted(Long dataId);
 }

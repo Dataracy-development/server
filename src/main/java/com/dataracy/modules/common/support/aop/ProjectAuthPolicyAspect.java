@@ -2,7 +2,7 @@ package com.dataracy.modules.common.support.aop;
 
 import com.dataracy.modules.common.support.annotation.AuthorizationProjectEdit;
 import com.dataracy.modules.project.application.port.in.FindUserIdByProjectIdUseCase;
-import com.dataracy.modules.project.application.port.in.FindUserIdIncludingDeletedUseCase;
+import com.dataracy.modules.project.application.port.in.FindUserIdIncludingDeletedProjectUseCase;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import com.dataracy.modules.security.handler.SecurityContextProvider;
@@ -19,14 +19,14 @@ import org.springframework.stereotype.Component;
 public class ProjectAuthPolicyAspect {
 
     private final FindUserIdByProjectIdUseCase findUserIdByProjectIdUseCase;
-    private final FindUserIdIncludingDeletedUseCase findUserIdIncludingDeletedUseCase;
+    private final FindUserIdIncludingDeletedProjectUseCase findUserIdIncludingDeletedProjectUseCase;
 
     @Before("@annotation(annotation) && args(projectId,..)")
     public void checkProjectEditPermission(AuthorizationProjectEdit annotation, Long projectId) {
         Long authenticatedUserId = SecurityContextProvider.getAuthenticatedUserId();
 
         Long ownerId = annotation.restore()
-                ? findUserIdIncludingDeletedUseCase.findUserIdIncludingDeleted(projectId)
+                ? findUserIdIncludingDeletedProjectUseCase.findUserIdIncludingDeleted(projectId)
                 : findUserIdByProjectIdUseCase.findUserIdByProjectId(projectId);
 
         if (!ownerId.equals(authenticatedUserId)) {
