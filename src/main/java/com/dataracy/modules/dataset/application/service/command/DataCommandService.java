@@ -163,7 +163,7 @@ public class DataCommandService implements
 
                 dataRepositoryPort.updateDataFile(dataId, dataFileUrl);
             } catch (Exception e) {
-                log.error("새 데이터셋 파일 업로드 실패. 프로젝트 ID={}, 에러={}", dataId, e.getMessage());
+                log.error("새 데이터셋 파일 업로드 실패. 데이터셋 ID={}, 에러={}", dataId, e.getMessage());
                 throw new RuntimeException("새 데이터셋 파일 업로드 실패", e); // rollback 유도
             }
         }

@@ -18,7 +18,7 @@ public enum DataSuccessStatus implements BaseSuccessCode {
     FIND_REAL_TIME_DATASETS(HttpStatus.OK, "200", "데이터셋 자동완성을 위한 데이터셋 목록을 조회한다."),
     COUNT_DATASETS_GROUP_BY_TOPIC(HttpStatus.OK, "200", "토픽 카테고리별 데이터셋 개수를 조회한다."),
     GET_CONNECTED_DATASETS_ASSOCIATED_PROJECT(HttpStatus.OK, "200", "프로젝트와 연결된 데이터셋 리스트 조회가 완료되었습니다."),
-    MODIFY_DATASET(HttpStatus.CREATED, "200", "수정이 완료되었습니다"),
+    MODIFY_DATASET(HttpStatus.OK, "200", "수정이 완료되었습니다"),
     DELETE_DATASET(HttpStatus.OK, "200", "데이터셋 삭제가 완료되었습니다."),
     RESTORE_DATASET(HttpStatus.OK, "200", "데이터셋 복원에 완료되었습니다."),
     ;

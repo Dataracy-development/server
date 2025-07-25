@@ -313,11 +313,13 @@ public class ProjectQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long findUserIdByProjectId(Long projectId) {
         return projectRepositoryPort.findUserIdByProjectId(projectId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long findUserIdIncludingDeleted(Long projectId) {
         return projectRepositoryPort.findUserIdIncludingDeleted(projectId);
     }

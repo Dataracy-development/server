@@ -296,11 +296,13 @@ public class DataQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long findUserIdByDataId(Long dataId) {
         return dataRepositoryPort.findUserIdByDataId(dataId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long findUserIdIncludingDeleted(Long dataId) {
         return dataRepositoryPort.findUserIdIncludingDeleted(dataId);
     }

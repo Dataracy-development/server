@@ -36,38 +36,28 @@ public class ElasticProjectIndexerAdapter implements ProjectIndexingPort {
         }
     }
 
-    /**
-     * 프로젝트를 Soft Delete로 마킹합니다. isDeleted = true 로 부분 업데이트합니다.
-     */
-    @Override
-    public void markAsDeleted(Long projectId) {
+    private void updateDeletedStatus(Long projectId, ProjectDeletedUpdate update, String operation) {
         try {
-            log.info("프로젝트 soft delete 시작: projectId={}", projectId);
+            log.info("프로젝트 {} 시작: projectId={}", operation, projectId);
             client.update(u -> u
                             .index(INDEX)
                             .id(projectId.toString())
-                            .doc(ProjectDeletedUpdate.deleted()),
+                            .doc(update),
                     ProjectSearchDocument.class
             );
-            log.info("프로젝트 soft delete 완료: projectId={}", projectId);
+            log.info("프로젝트 {} 완료: projectId={}", operation, projectId);
         } catch (IOException e) {
-            log.error("프로젝트 soft delete 실패: projectId={}", projectId, e);
+            log.error("프로젝트 {} 실패: projectId={}", operation, projectId, e);
         }
     }
 
     @Override
+    public void markAsDeleted(Long projectId) {
+        updateDeletedStatus(projectId, ProjectDeletedUpdate.deleted(), "soft delete");
+    }
+
+    @Override
     public void markAsRestore(Long projectId) {
-        try {
-            log.info("프로젝트 복원 시작: projectId={}", projectId);
-            client.update(u -> u
-                            .index(INDEX)
-                            .id(projectId.toString())
-                            .doc(ProjectDeletedUpdate.restored()),
-                    ProjectSearchDocument.class
-            );
-            log.info("프로젝트 복원 완료: projectId={}", projectId);
-        } catch (IOException e) {
-            log.error("프로젝트 복원 실패: projectId={}", projectId, e);
-        }
+        updateDeletedStatus(projectId, ProjectDeletedUpdate.restored(), "복원");
     }
 }

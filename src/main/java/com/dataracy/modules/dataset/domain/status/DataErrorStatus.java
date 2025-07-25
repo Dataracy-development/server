@@ -15,7 +15,7 @@ public enum DataErrorStatus implements BaseErrorCode {
     FAIL_SIMILAR_SEARCH_DATA(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-005", "유사 데이터셋 검색 실패"),
     INVALID_DATA_SORT_TYPE(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-006", "데이터셋 정렬은 LATEST, OLDEST, DOWNLOAD 만 가능합니다."),
     FAIL_REAL_TIME_SEARCH_DATASET(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-007", "데이터셋 자동완성 검색에 실패했습니다."),
-    NOT_MATCH_CREATOR(HttpStatus.FORBIDDEN, "DATA-0078", "작성자만 수정 및 삭제가 가능합니다."),
+    NOT_MATCH_CREATOR(HttpStatus.FORBIDDEN, "DATA-008", "작성자만 수정 및 삭제가 가능합니다."),
     ;
     private final HttpStatus httpStatus;
     private final String code;

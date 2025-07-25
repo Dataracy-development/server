@@ -41,38 +41,28 @@ public class ElasticDataIndexerAdapter implements DataIndexingPort {
         }
     }
 
-    /**
-     * 데이터셋을 Soft Delete로 마킹합니다. isDeleted = true 로 부분 업데이트합니다.
-     */
-    @Override
-    public void markAsDeleted(Long dataId) {
+    private void updateDeletedStatus(Long dataId, DataDeletedUpdate update, String operation) {
         try {
-            log.info("데이터셋 soft delete 시작: dataId={}", dataId);
+            log.info("데이터셋 {} 시작: dataId={}", operation, dataId);
             client.update(u -> u
                             .index(INDEX)
                             .id(dataId.toString())
-                            .doc(DataDeletedUpdate.deleted()),
+                            .doc(update),
                     DataSearchDocument.class
             );
-            log.info("데이터셋 soft delete 완료: dataId={}", dataId);
+            log.info("데이터셋 {} 완료: dataId={}", operation, dataId);
         } catch (IOException e) {
-            log.error("데이터셋 soft delete 실패: dataId={}", dataId, e);
+            log.error("데이터셋 {} 실패: dataId={}", operation, dataId, e);
         }
     }
 
     @Override
+    public void markAsDeleted(Long dataId) {
+        updateDeletedStatus(dataId, DataDeletedUpdate.deleted(), "soft delete");
+    }
+
+    @Override
     public void markAsRestore(Long dataId) {
-        try {
-            log.info("데이터셋 복원 시작: dataId={}", dataId);
-            client.update(u -> u
-                            .index(INDEX)
-                            .id(dataId.toString())
-                            .doc(DataDeletedUpdate.restored()),
-                    DataSearchDocument.class
-            );
-            log.info("데이터셋 복원 완료: dataId={}", dataId);
-        } catch (IOException e) {
-            log.error("데이터셋 복원 실패: dataId={}", dataId, e);
-        }
+        updateDeletedStatus(dataId, DataDeletedUpdate.restored(), "복원");
     }
 }
