@@ -1,9 +1,11 @@
 package com.dataracy.modules.dataset.adapter.web.mapper;
 
+import com.dataracy.modules.dataset.adapter.web.request.DataModifyWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.ConnectedDataAssociatedWithProjectWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.CountDataGroupWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
 import com.dataracy.modules.dataset.application.dto.response.ConnectedDataAssociatedWithProjectResponse;
 import com.dataracy.modules.dataset.application.dto.response.CountDataGroupResponse;
@@ -13,15 +15,34 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataWebMapper {
     /**
-     * DataUploadWebRequest 객체를 애플리케이션 계층의 DataUploadRequest DTO로 변환합니다.
+     * DataUploadWebRequest 객체를 DataUploadRequest DTO로 변환합니다.
      *
-     * 웹 계층에서 전달된 데이터 업로드 요청 정보를 DataUploadRequest 객체로 매핑하여 반환합니다.
+     * 웹 계층에서 전달된 데이터 업로드 요청 정보를 애플리케이션 계층의 DTO로 매핑합니다.
      *
-     * @param webRequest 변환할 데이터 업로드 웹 요청 객체
-     * @return 매핑된 DataUploadRequest 객체
+     * @param webRequest 데이터 업로드 웹 요청 객체
+     * @return 변환된 DataUploadRequest DTO
      */
     public DataUploadRequest toApplicationDto(DataUploadWebRequest webRequest) {
         return new DataUploadRequest(
+                webRequest.title(),
+                webRequest.topicId(),
+                webRequest.dataSourceId(),
+                webRequest.dataTypeId(),
+                webRequest.startDate(),
+                webRequest.endDate(),
+                webRequest.description(),
+                webRequest.analysisGuide()
+        );
+    }
+
+    /**
+     * 웹 계층의 DataModifyWebRequest 객체를 애플리케이션 계층의 DataModifyRequest DTO로 변환합니다.
+     *
+     * @param webRequest 데이터 수정 요청 정보를 담은 웹 요청 객체
+     * @return 변환된 DataModifyRequest DTO
+     */
+    public DataModifyRequest toApplicationDto(DataModifyWebRequest webRequest) {
+        return new DataModifyRequest(
                 webRequest.title(),
                 webRequest.topicId(),
                 webRequest.dataSourceId(),

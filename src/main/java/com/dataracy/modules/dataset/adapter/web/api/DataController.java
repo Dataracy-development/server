@@ -1,13 +1,16 @@
 package com.dataracy.modules.dataset.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.support.annotation.AuthorizationDataEdit;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataFilterWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataSearchWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.DataWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.DataFilterWebRequest;
+import com.dataracy.modules.dataset.adapter.web.request.DataModifyWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.*;
 import com.dataracy.modules.dataset.application.dto.request.DataFilterRequest;
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
 import com.dataracy.modules.dataset.application.dto.response.*;
 import com.dataracy.modules.dataset.application.port.in.*;
@@ -38,6 +41,9 @@ public class DataController implements DataApi {
     private final DataRealTimeUseCase dataRealTimeUseCase;
     private final CountDataGroupByTopicLabelUseCase countDataGroupByTopicLabelUseCase;
     private final ConnectedDataAssociatedWithProjectUseCase connectedDataAssociatedWithProjectUseCase;
+    private final DataModifyUseCase dataModifyUseCase;
+    private final DataDeleteUseCase dataDeleteUseCase;
+    private final DataRestoreUseCase dataRestoreUseCase;
 
     /**
      * 데이터 업로드 요청을 처리하여 데이터셋을 생성하고, 성공 상태의 HTTP 201(Created) 응답을 반환합니다.
@@ -180,11 +186,11 @@ public class DataController implements DataApi {
     }
 
     /**
-     * 지정된 프로젝트와 연결된 데이터셋 목록을 페이지 단위로 조회합니다.
+     * 프로젝트에 연결된 데이터셋 목록을 페이지네이션하여 조회합니다.
      *
-     * @param projectId 연결된 데이터셋을 조회할 프로젝트의 ID
+     * @param projectId 데이터셋을 조회할 대상 프로젝트의 ID
      * @param pageable 페이지네이션 정보
-     * @return 프로젝트에 연결된 데이터셋 목록과 함께 성공 상태를 포함하는 HTTP 200 응답
+     * @return 프로젝트에 연결된 데이터셋 목록과 성공 상태를 포함한 HTTP 200 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<ConnectedDataAssociatedWithProjectWebResponse>>> searchConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
@@ -193,5 +199,54 @@ public class DataController implements DataApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.GET_CONNECTED_DATASETS_ASSOCIATED_PROJECT, webResponse));
+    }
+
+    /**
+     * 데이터셋의 정보를 수정합니다.
+     *
+     * @param dataId 수정할 데이터셋의 식별자
+     * @param dataFile 새로운 데이터 파일 (선택 사항)
+     * @param thumbnailFile 새로운 썸네일 파일 (선택 사항)
+     * @param webRequest 데이터셋 수정 요청 정보
+     * @return 데이터셋 수정 성공 여부를 포함한 응답
+     */
+    @Override
+    @AuthorizationDataEdit
+    public ResponseEntity<SuccessResponse<Void>> modifyDataSet(Long dataId, MultipartFile dataFile, MultipartFile thumbnailFile, DataModifyWebRequest webRequest) {
+        DataModifyRequest requestDto = dataWebMapper.toApplicationDto(webRequest);
+        dataModifyUseCase.modify(dataId, dataFile, thumbnailFile, requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.MODIFY_DATASET));
+    }
+
+    /**
+     * 데이터셋을 삭제 상태로 변경합니다.
+     *
+     * @param dataId 삭제할 데이터셋의 ID
+     * @return 삭제 성공 여부를 포함한 응답
+     */
+    @Override
+    @AuthorizationDataEdit
+    public ResponseEntity<SuccessResponse<Void>> deleteDataSet(Long dataId) {
+        dataDeleteUseCase.markAsDelete(dataId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.DELETE_DATASET));
+    }
+
+    /**
+     * 데이터셋을 복구 상태로 변경합니다.
+     *
+     * @param dataId 복구할 데이터셋의 고유 ID
+     * @return 복구 성공 상태를 포함한 HTTP 200 OK 응답
+     */
+    @Override
+    @AuthorizationDataEdit(restore = true)
+    public ResponseEntity<SuccessResponse<Void>> restoreDataSet(Long dataId) {
+        dataRestoreUseCase.markAsRestore(dataId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.RESTORE_DATASET));
     }
 }

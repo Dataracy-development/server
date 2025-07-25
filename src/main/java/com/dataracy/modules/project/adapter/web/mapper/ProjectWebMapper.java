@@ -1,9 +1,11 @@
 package com.dataracy.modules.project.adapter.web.mapper;
 
+import com.dataracy.modules.project.adapter.web.request.ProjectModifyWebRequest;
 import com.dataracy.modules.project.adapter.web.request.ProjectUploadWebRequest;
 import com.dataracy.modules.project.adapter.web.response.ConnectedProjectAssociatedWithDataWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ContinueProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.ProjectDetailWebResponse;
+import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
 import com.dataracy.modules.project.application.dto.response.ConnectedProjectAssociatedWithDataResponse;
 import com.dataracy.modules.project.application.dto.response.ContinueProjectResponse;
@@ -20,6 +22,26 @@ public class ProjectWebMapper {
      */
     public ProjectUploadRequest toApplicationDto(ProjectUploadWebRequest webRequest) {
         return new ProjectUploadRequest(
+                webRequest.title(),
+                webRequest.topicId(),
+                webRequest.analysisPurposeId(),
+                webRequest.dataSourceId(),
+                webRequest.authorLevelId(),
+                webRequest.isContinue(),
+                webRequest.parentProjectId(),
+                webRequest.content(),
+                webRequest.dataIds()
+        );
+    }
+
+    /**
+     * 웹 계층의 프로젝트 수정 요청 DTO를 애플리케이션 계층의 프로젝트 수정 요청 DTO로 변환합니다.
+     *
+     * @param webRequest 프로젝트 수정 정보를 담은 웹 요청 DTO
+     * @return 변환된 애플리케이션 계층의 프로젝트 수정 요청 DTO
+     */
+    public ProjectModifyRequest toApplicationDto(ProjectModifyWebRequest webRequest) {
+        return new ProjectModifyRequest(
                 webRequest.title(),
                 webRequest.topicId(),
                 webRequest.analysisPurposeId(),

@@ -43,6 +43,8 @@ public class QDataEntity extends EntityPathBase<DataEntity> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final BooleanPath isDeleted = createBoolean("isDeleted");
+
     public final QDataMetadataEntity metadata;
 
     public final NumberPath<Integer> recentWeekDownloadCount = createNumber("recentWeekDownloadCount", Integer.class);

@@ -1,11 +1,12 @@
 package com.dataracy.modules.project.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
+import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Where;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -20,6 +21,7 @@ import java.util.Set;
 @Table(
         name = "project"
 )
+@Where(clause = "is_deleted = false")
 public class ProjectEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,14 +82,31 @@ public class ProjectEntity extends BaseTimeEntity {
     @Builder.Default
     private Long viewCount = 0L;
 
-    @Column(nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     @Builder.Default
     private Boolean isDeleted = false;
 
     /**
-     * 프로젝트에 ProjectDataEntity를 추가하고 해당 데이터 엔티티의 프로젝트 참조를 이 프로젝트로 설정합니다.
+     * 프로젝트의 주요 필드 값을 주어진 수정 요청 DTO와 부모 프로젝트로 갱신합니다.
      *
-     * @param dataEntity 추가할 ProjectDataEntity 인스턴스
+     * @param requestDto 프로젝트 수정 정보를 담은 DTO
+     * @param parentProject 새로 지정할 부모 프로젝트 엔티티
+     */
+    public void modify(ProjectModifyRequest requestDto, ProjectEntity parentProject) {
+        this.title = requestDto.title();
+        this.topicId = requestDto.topicId();
+        this.analysisPurposeId = requestDto.analysisPurposeId();
+        this.dataSourceId = requestDto.dataSourceId();
+        this.authorLevelId = requestDto.authorLevelId();
+        this.isContinue = requestDto.isContinue();
+        this.parentProject = parentProject;
+        this.content = requestDto.content();
+    }
+
+    /**
+     * 프로젝트에 연관된 ProjectDataEntity를 추가하고, 해당 데이터 엔티티의 프로젝트 참조를 현재 프로젝트로 설정합니다.
+     *
+     * @param dataEntity 추가할 프로젝트 데이터 엔티티
      */
     public void addProjectData(ProjectDataEntity dataEntity) {
         projectDataEntities.add(dataEntity);
@@ -95,12 +114,33 @@ public class ProjectEntity extends BaseTimeEntity {
     }
 
     /**
-     * 프로젝트의 파일 URL을 지정된 값으로 업데이트합니다.
-     *
-     * @param fileUrl 새로 설정할 파일 URL
+     * 부모 프로젝트 참조를 제거합니다.
      */
-    public void updateFile (String fileUrl) {
+    public void deleteParentProject() {
+        this.parentProject = null;
+    }
+
+    /****
+     * 프로젝트의 파일 URL을 새로운 값으로 변경합니다.
+     *
+     * @param fileUrl 새로 지정할 파일 URL
+     */
+    public void updateFile(String fileUrl) {
         this.fileUrl = fileUrl;
+    }
+
+    /**
+     * 프로젝트를 소프트 삭제 처리하여 삭제된 상태로 표시합니다.
+     */
+    public void delete() {
+        this.isDeleted = true;
+    }
+
+    /**
+     * 프로젝트의 삭제 상태를 해제하여 복구합니다.
+     */
+    public void restore() {
+        this.isDeleted = false;
     }
 
     /**

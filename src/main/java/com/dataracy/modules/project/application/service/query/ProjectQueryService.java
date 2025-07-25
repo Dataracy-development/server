@@ -9,6 +9,7 @@ import com.dataracy.modules.project.application.mapper.PopularProjectsDtoMapper;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTimeSearchPort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectSimilarSearchPort;
 import com.dataracy.modules.project.application.port.in.*;
+import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
@@ -43,12 +44,15 @@ public class ProjectQueryService implements
         ProjectFilteredSearchUseCase,
         ProjectDetailUseCase,
         ContinueProjectUseCase,
-        ConnectedProjectAssociatedWithDataUseCase
+        ConnectedProjectAssociatedWithDataUseCase,
+        FindUserIdByProjectIdUseCase,
+        FindUserIdIncludingDeletedProjectUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
     private final FilterProjectDtoMapper filterProjectDtoMapper;
     private final ContinueProjectDtoMapper continueProjectDtoMapper;
 
+    private final ProjectRepositoryPort projectRepositoryPort;
     private final ProjectRealTimeSearchPort projectRealTimeSearchPort;
     private final ProjectSimilarSearchPort projectSimilarSearchPort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
@@ -285,9 +289,9 @@ public class ProjectQueryService implements
     }
 
     /**
-     * 데이터 ID와 연결된 프로젝트들을 페이지 단위로 조회하여, 사용자명과 토픽 라벨 정보를 포함한 응답으로 반환합니다.
+     * 지정된 데이터 ID와 연결된 프로젝트들을 페이지 단위로 조회하여, 각 프로젝트의 사용자명과 토픽 라벨 정보를 포함한 응답으로 반환합니다.
      *
-     * @param dataId   연결된 데이터를 식별하는 ID
+     * @param dataId 연결된 데이터를 식별하는 ID
      * @param pageable 페이지네이션 정보
      * @return 연결된 프로젝트의 상세 정보가 담긴 페이지 객체
      */
@@ -306,5 +310,29 @@ public class ProjectQueryService implements
                 usernameMap.get(project.getUserId()),
                 topicLabelMap.get(project.getTopicId())
         ));
+    }
+
+    /**
+     * 주어진 프로젝트 ID에 해당하는 사용자 ID를 반환합니다.
+     *
+     * @param projectId 사용자 ID를 조회할 프로젝트의 ID
+     * @return 해당 프로젝트의 사용자 ID
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Long findUserIdByProjectId(Long projectId) {
+        return projectRepositoryPort.findUserIdByProjectId(projectId);
+    }
+
+    /**
+     * 삭제된 프로젝트를 포함하여 주어진 프로젝트 ID에 해당하는 사용자 ID를 반환합니다.
+     *
+     * @param projectId 사용자 ID를 조회할 프로젝트의 ID
+     * @return 해당 프로젝트(삭제된 경우 포함)의 사용자 ID
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Long findUserIdIncludingDeleted(Long projectId) {
+        return projectRepositoryPort.findUserIdIncludingDeleted(projectId);
     }
 }

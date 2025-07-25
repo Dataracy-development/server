@@ -1,5 +1,6 @@
 package com.dataracy.modules.dataset.application.port.out;
 
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import com.dataracy.modules.dataset.domain.model.Data;
 
 import java.util.Optional;
@@ -42,10 +43,45 @@ public interface DataRepositoryPort {
     void updateThumbnailFile(Long dataId, String thumbFileUrl);
 
     /**
- * 지정된 ID를 가진 데이터 엔티티가 존재하는지 여부를 확인합니다.
+ * 주어진 ID의 데이터 엔티티가 저장소에 존재하는지 확인합니다.
  *
  * @param dataId 존재 여부를 확인할 데이터의 고유 식별자
  * @return 데이터가 존재하면 true, 존재하지 않으면 false
  */
 boolean existsDataById(Long dataId);
+
+    /**
+ * 지정된 데이터 ID에 연결된 사용자 ID를 반환합니다.
+ *
+ * @param dataId 사용자 ID를 조회할 데이터의 고유 식별자
+ * @return 해당 데이터에 연결된 사용자 ID
+ */
+Long findUserIdByDataId(Long dataId);
+    /**
+ * 삭제된 데이터를 포함하여 지정된 데이터 ID에 연결된 사용자 ID를 반환합니다.
+ *
+ * @param dataId 사용자 ID를 조회할 데이터의 고유 식별자
+ * @return 해당 데이터에 연결된 사용자 ID
+ */
+Long findUserIdIncludingDeleted(Long dataId);
+
+    /**
+ * 지정된 데이터 ID에 해당하는 데이터 엔터티를 주어진 수정 요청 정보로 변경합니다.
+ *
+ * @param dataId 수정할 데이터의 고유 식별자
+ * @param requestDto 데이터 수정 요청 정보를 담은 객체
+ */
+void modify(Long dataId, DataModifyRequest requestDto);
+    /**
+ * 지정된 데이터 ID에 해당하는 데이터를 삭제합니다.
+ *
+ * @param dataId 삭제할 데이터의 고유 식별자
+ */
+void delete(Long dataId);
+    /**
+ * 삭제된 데이터 엔티티를 복구합니다.
+ *
+ * @param dataId 복구할 데이터의 고유 식별자
+ */
+void restore(Long dataId);
 }

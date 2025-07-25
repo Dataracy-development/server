@@ -1,5 +1,6 @@
 package com.dataracy.modules.dataset.adapter.jpa.entity;
 
+import com.dataracy.modules.dataset.domain.model.DataMetadata;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,13 +37,24 @@ public class DataMetadataEntity {
     private String previewJson;
 
     /**
-     * 연관된 DataEntity를 설정하고, 해당 DataEntity의 메타데이터 참조도 현재 엔티티로 동기화합니다.
+     * 연관된 DataEntity를 설정하고, 해당 DataEntity의 메타데이터 참조를 현재 엔티티로 동기화합니다.
      *
-     * @param data 연관시킬 DataEntity 인스턴스
+     * @param data 연결할 DataEntity 인스턴스
      */
     public void updateData(DataEntity data) {
         this.data = data;
         data.updateMetadata(this);
+    }
+
+    /**
+     * 주어진 {@link DataMetadata} 객체의 값을 사용하여 엔터티의 행 수, 열 수, 미리보기 JSON을 갱신합니다.
+     *
+     * @param metadata 동기화할 데이터 메타데이터 도메인 모델
+     */
+    public void updateFrom(DataMetadata metadata) {
+        this.rowCount = metadata.getRowCount();
+        this.columnCount = metadata.getColumnCount();
+        this.previewJson = metadata.getPreviewJson();
     }
 
     /**

@@ -1,8 +1,10 @@
 package com.dataracy.modules.dataset.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 @Table(
         name = "data"
 )
+@Where(clause = "is_deleted = false")
 public class DataEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +63,43 @@ public class DataEntity extends BaseTimeEntity {
     // 메타데이터 FK (1:1)
     @OneToOne(mappedBy = "data", cascade = CascadeType.PERSIST)
     private DataMetadataEntity metadata;
+
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    /**
+     * 엔티티를 논리적으로 삭제 처리합니다.
+     *
+     * 이 메서드는 isDeleted 플래그를 true로 설정하여 데이터가 삭제된 것으로 표시합니다.
+     * 실제 데이터베이스에서 삭제되지는 않으며, @Where 절에 의해 쿼리 결과에서 제외됩니다.
+     */
+    public void delete() {
+        this.isDeleted = true;
+    }
+
+    /**
+     * 논리적으로 삭제된 엔티티를 복구 상태로 전환합니다.
+     */
+    public void restore() {
+        this.isDeleted = false;
+    }
+
+    /**
+     * 주어진 요청 DTO의 값으로 데이터 엔티티의 주요 필드를 일괄 수정합니다.
+     *
+     * @param requestDto 데이터 수정 요청 정보를 담은 DTO
+     */
+    public void modify(DataModifyRequest requestDto) {
+        this.title = requestDto.title();
+        this.topicId = requestDto.topicId();
+        this.dataSourceId = requestDto.dataSourceId();
+        this.dataTypeId = requestDto.dataTypeId();
+        this.startDate = requestDto.startDate();
+        this.endDate = requestDto.endDate();
+        this.description = requestDto.description();
+        this.analysisGuide = requestDto.analysisGuide();
+    }
 
     /**
      * 데이터의 다운로드 횟수를 1 증가시킵니다.
