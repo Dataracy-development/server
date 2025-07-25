@@ -1,9 +1,11 @@
 package com.dataracy.modules.dataset.adapter.web.mapper;
 
+import com.dataracy.modules.dataset.adapter.web.request.DataModifyWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.DataUploadWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.ConnectedDataAssociatedWithProjectWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.CountDataGroupWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.DataDetailWebResponse;
+import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
 import com.dataracy.modules.dataset.application.dto.request.DataUploadRequest;
 import com.dataracy.modules.dataset.application.dto.response.ConnectedDataAssociatedWithProjectResponse;
 import com.dataracy.modules.dataset.application.dto.response.CountDataGroupResponse;
@@ -22,6 +24,19 @@ public class DataWebMapper {
      */
     public DataUploadRequest toApplicationDto(DataUploadWebRequest webRequest) {
         return new DataUploadRequest(
+                webRequest.title(),
+                webRequest.topicId(),
+                webRequest.dataSourceId(),
+                webRequest.dataTypeId(),
+                webRequest.startDate(),
+                webRequest.endDate(),
+                webRequest.description(),
+                webRequest.analysisGuide()
+        );
+    }
+
+    public DataModifyRequest toApplicationDto(DataModifyWebRequest webRequest) {
+        return new DataModifyRequest(
                 webRequest.title(),
                 webRequest.topicId(),
                 webRequest.dataSourceId(),

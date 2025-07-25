@@ -3,6 +3,7 @@ package com.dataracy.modules.dataset.adapter.jpa.entity;
 import com.dataracy.modules.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 @Table(
         name = "data"
 )
+@Where(clause = "is_deleted = false")
 public class DataEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +62,18 @@ public class DataEntity extends BaseTimeEntity {
     // 메타데이터 FK (1:1)
     @OneToOne(mappedBy = "data", cascade = CascadeType.PERSIST)
     private DataMetadataEntity metadata;
+
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    public void delete() {
+        this.isDeleted = true;
+    }
+
+    public void restore() {
+        this.isDeleted = false;
+    }
 
     /**
      * 데이터의 다운로드 횟수를 1 증가시킵니다.
