@@ -154,11 +154,10 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     public void delete(Long projectId) {
         ProjectEntity project = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
-        project.getChildProjects()
-                .forEach(projectEntity -> {
-                    projectEntity.deleteParentProject();
-                    projectJpaRepository.save(projectEntity);
-                });
+        Set<ProjectEntity> childProjects = project.getChildProjects();
+        childProjects.forEach(ProjectEntity::deleteParentProject);
+        projectJpaRepository.saveAll(childProjects);
+
         project.delete();
         projectJpaRepository.save(project);
     }
