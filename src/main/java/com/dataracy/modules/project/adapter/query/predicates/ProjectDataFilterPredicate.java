@@ -6,12 +6,17 @@ import static com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity
 
 public class ProjectDataFilterPredicate {
     /**
- * 이 클래스의 인스턴스 생성을 방지합니다.
+ * `ProjectDataFilterPredicate` 클래스의 인스턴스 생성을 방지합니다.
  *
- * 유틸리티 클래스이므로 외부에서 인스턴스화할 수 없도록 private 생성자를 제공합니다.
+ * 이 클래스는 정적 메서드만을 제공하는 유틸리티 클래스이므로, 외부에서 인스턴스화하지 못하도록 private 생성자를 정의합니다.
  */
 private ProjectDataFilterPredicate() {}
 
+    /**
+     * 프로젝트가 삭제되지 않은 경우에 해당하는 필터 조건을 반환합니다.
+     *
+     * @return 프로젝트의 isDeleted 플래그가 false인 경우를 나타내는 BooleanExpression
+     */
     public static BooleanExpression notDeleted() {
         return projectDataEntity.project.isDeleted.isFalse();
     }

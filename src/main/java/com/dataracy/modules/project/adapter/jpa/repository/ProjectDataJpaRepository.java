@@ -9,14 +9,20 @@ import org.springframework.data.repository.query.Param;
 import java.util.Set;
 
 public interface ProjectDataJpaRepository extends JpaRepository<ProjectDataEntity, Long> {
+    /**
+     * 지정된 프로젝트 ID에 연결된 모든 데이터 ID의 집합을 반환합니다.
+     *
+     * @param projectId 데이터 ID를 조회할 프로젝트의 ID
+     * @return 해당 프로젝트에 속한 데이터 ID들의 집합
+     */
     @Query("SELECT pd.dataId FROM ProjectDataEntity pd WHERE pd.project.id = :projectId")
     Set<Long> findDataIdsByProjectId(@Param("projectId") Long projectId);
 
     /**
-     * 특정 프로젝트 ID에 대해, 지정된 dataId 목록에 해당하는 연결만 삭제합니다.
+     * 주어진 프로젝트 ID와 dataId 목록에 해당하는 ProjectDataEntity 레코드를 모두 삭제합니다.
      *
-     * @param projectId 프로젝트 ID
-     * @param dataIds 삭제할 dataId 목록
+     * @param projectId 삭제할 프로젝트의 ID
+     * @param dataIds 삭제할 dataId의 집합
      */
     @Modifying(clearAutomatically = true)
     @Query("DELETE FROM ProjectDataEntity pd WHERE pd.project.id = :projectId AND pd.dataId IN :dataIds")

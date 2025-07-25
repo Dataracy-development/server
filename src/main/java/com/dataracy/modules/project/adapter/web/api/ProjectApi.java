@@ -204,11 +204,11 @@ public interface ProjectApi {
     );
 
     /**
-     * 지정된 데이터셋과 연결된 프로젝트 목록을 페이지 단위로 조회합니다.
+     * 지정된 데이터셋과 연결된 프로젝트 목록을 페이지네로 조회합니다.
      *
-     * @param dataId 연결된 데이터셋의 고유 식별자
-     * @param pageable 페이지네이션 정보 (기본 페이지 크기: 3)
-     * @return 데이터셋과 연결된 프로젝트 목록이 포함된 성공 응답
+     * @param dataId 조회할 데이터셋의 고유 식별자
+     * @param pageable 결과 페이지네이션 정보 (기본 페이지 크기: 3)
+     * @return 연결된 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Operation(
             summary = "데이터와 연결된 프로젝트 리스트를 조회한다.",
@@ -228,6 +228,14 @@ public interface ProjectApi {
             Pageable pageable
     );
 
+    /**
+     * 주어진 프로젝트 ID에 해당하는 프로젝트를 전달받은 데이터로 수정합니다.
+     *
+     * @param projectId 수정할 프로젝트의 ID (1 이상)
+     * @param file      프로젝트와 연관된 파일 (선택 사항)
+     * @param webRequest 프로젝트 수정 정보를 담은 요청 객체
+     * @return 프로젝트 수정 성공 여부를 나타내는 응답
+     */
     @Operation(
             summary = "프로젝트를 수정한다.",
             description = "제공받은 웹 요청 DTO의 프로젝트 정보를 통해 기존 프로젝트를 수정한다."
@@ -248,6 +256,12 @@ public interface ProjectApi {
             ProjectModifyWebRequest webRequest
     );
 
+    /**
+     * 지정한 프로젝트를 삭제합니다.
+     *
+     * @param projectId 삭제할 프로젝트의 ID (1 이상)
+     * @return 삭제 성공 여부를 포함한 응답
+     */
     @Operation(
             summary = "프로젝트를 삭제한다.",
             description = "해당하는 프로젝트를 삭제한다."
@@ -263,6 +277,12 @@ public interface ProjectApi {
             Long projectId
     );
 
+    /**
+     * 삭제된 프로젝트를 복원한다.
+     *
+     * @param projectId 복원할 프로젝트의 ID (1 이상)
+     * @return 복원 성공 여부를 담은 성공 응답
+     */
     @Operation(
             summary = "프로젝트를 복원한다.",
             description = "해당하는 프로젝트를 복원한다."

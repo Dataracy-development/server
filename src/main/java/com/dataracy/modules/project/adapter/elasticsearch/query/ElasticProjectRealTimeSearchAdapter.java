@@ -22,9 +22,9 @@ public class ElasticProjectRealTimeSearchAdapter implements ProjectRealTimeSearc
     private final ElasticsearchClient client;
 
     /**
-     * 주어진 키워드로 Elasticsearch의 "project_index"에서 프로젝트를 실시간으로 검색합니다.
+     * 주어진 키워드로 Elasticsearch의 "project_index"에서 삭제되지 않은 프로젝트를 실시간으로 검색합니다.
      *
-     * 검색 결과는 생성일(createdAt) 기준 내림차순으로 정렬되며, title과 username 필드에 가중치와 자동 퍼지(fuzziness)가 적용된 멀티 매치 쿼리를 사용합니다.
+     * 검색 결과는 생성일(createdAt) 기준 내림차순으로 정렬되며, title과 username 필드에 가중치와 자동 퍼지(fuzziness)가 적용된 멀티 매치 쿼리를 사용합니다. 삭제된 프로젝트(isDeleted=true)는 결과에서 제외됩니다.
      *
      * @param keyword 검색에 사용할 키워드
      * @param size 반환할 최대 결과 개수

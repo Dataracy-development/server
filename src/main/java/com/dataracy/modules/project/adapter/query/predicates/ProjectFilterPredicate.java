@@ -6,11 +6,16 @@ import org.springframework.util.StringUtils;
 import static com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity.projectEntity;
 
 public class ProjectFilterPredicate {
-    /**
- * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+    /****
+ * `ProjectFilterPredicate` 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
  */
 private ProjectFilterPredicate() {}
 
+    /**
+     * 프로젝트가 삭제되지 않은 경우를 필터링하는 조건식을 반환합니다.
+     *
+     * @return 삭제되지 않은 프로젝트만 선택하는 BooleanExpression
+     */
     public static BooleanExpression notDeleted() {
         return projectEntity.isDeleted.isFalse();
     }

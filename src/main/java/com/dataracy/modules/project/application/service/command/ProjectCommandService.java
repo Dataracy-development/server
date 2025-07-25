@@ -59,7 +59,7 @@ public class ProjectCommandService implements
     /**
      * 사용자의 프로젝트 업로드 요청을 처리하여 새 프로젝트를 생성하고, 필요 시 썸네일 이미지를 업로드한 뒤 프로젝트를 검색 시스템에 색인합니다.
      *
-     * 프로젝트 생성 시 주요 라벨(주제, 분석 목적, 데이터 소스, 저자 레벨) 값을 검증 및 조회하고, 데이터셋 ID의 존재 여부를 확인합니다. 부모 프로젝트가 지정된 경우 존재 여부를 검증하며, 이미지 파일이 제공되면 외부 저장소에 업로드 후 프로젝트 정보에 반영합니다. 프로젝트 저장 후 외부 검색 시스템에 색인하여 검색이 가능하도록 처리합니다.
+     * 프로젝트 생성 시 주요 라벨(주제, 분석 목적, 데이터 소스, 저자 레벨) 값을 검증 및 조회하고, 데이터셋 ID의 존재 여부와 부모 프로젝트의 존재를 확인합니다. 이미지 파일이 제공되면 외부 저장소에 업로드 후 프로젝트 정보에 반영하며, 모든 정보가 저장된 후 검색 시스템에 색인하여 검색이 가능하도록 처리합니다.
      *
      * @throws ProjectException 부모 프로젝트가 존재하지 않을 경우 발생합니다.
      * @throws RuntimeException 파일 업로드 실패 시 트랜잭션 롤백을 위해 발생합니다.
@@ -146,6 +146,15 @@ public class ProjectCommandService implements
         log.info("프로젝트 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
     }
 
+    /**
+     * 프로젝트의 정보를 수정하고, 필요 시 새로운 이미지 파일을 업로드한 뒤, 변경된 내용을 Elasticsearch에 반영합니다.
+     *
+     * @param projectId 수정할 프로젝트의 ID
+     * @param file      새로 업로드할 이미지 파일 (선택적)
+     * @param requestDto 프로젝트 수정 요청 데이터
+     * @throws ProjectException 프로젝트가 존재하지 않을 경우 발생
+     * @throws RuntimeException 파일 업로드에 실패할 경우 트랜잭션 롤백을 위해 발생
+     */
     @Override
     @Transactional
     public void modify(Long projectId, MultipartFile file, ProjectModifyRequest requestDto) {
@@ -202,6 +211,13 @@ public class ProjectCommandService implements
         log.info("프로젝트 수정 완료 - projectId: {}, title: {}", projectId, updatedProject.getTitle());
     }
 
+    /**
+     * 프로젝트를 삭제 상태로 표시합니다.
+     *
+     * 데이터베이스에서 해당 프로젝트를 삭제 처리하고, Elasticsearch 인덱스에서도 삭제 상태로 반영합니다.
+     *
+     * @param projectId 삭제할 프로젝트의 ID
+     */
     @Override
     @Transactional
     public void markAsDelete(Long projectId) {
@@ -209,6 +225,13 @@ public class ProjectCommandService implements
         projectIndexingPort.markAsDeleted(projectId);
     }
 
+    /**
+     * 삭제된 프로젝트를 복원 상태로 변경합니다.
+     *
+     * 프로젝트를 데이터베이스에서 복원하고, Elasticsearch 인덱스에서도 복원 상태로 표시합니다.
+     *
+     * @param projectId 복원할 프로젝트의 ID
+     */
     @Override
     @Transactional
     public void markAsRestore(Long projectId) {
