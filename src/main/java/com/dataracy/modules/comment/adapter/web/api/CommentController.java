@@ -43,9 +43,9 @@ public class CommentController implements CommentApi {
 
     @Override
     @AuthorizationCommentEdit
-    public ResponseEntity<SuccessResponse<Void>> modifyComment(Long projectId, Long commentId, Long userId, CommentModifyWebRequest webRequest) {
+    public ResponseEntity<SuccessResponse<Void>> modifyComment(Long projectId, Long commentId, CommentModifyWebRequest webRequest) {
         CommentModifyRequest requestDto = commentWebMapper.toApplicationDto(webRequest);
-        commentModifyUseCase.modify(projectId, commentId, userId, requestDto);
+        commentModifyUseCase.modify(projectId, commentId, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(CommentSuccessStatus.MODIFY_COMMENT));

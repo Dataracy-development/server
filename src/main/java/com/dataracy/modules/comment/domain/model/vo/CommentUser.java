@@ -13,7 +13,7 @@ public record CommentUser(
         return new CommentUser(
                 info.id(),
                 info.role(),
-                info.email(),
+                info.nickname(),
                 info.authorLevelId()
         );
     }

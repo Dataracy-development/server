@@ -88,6 +88,7 @@ public class CommentQueryRepositoryPortAdapter implements CommentQueryRepository
         List<CommentEntity> entities = queryFactory
                 .selectFrom(comment)
                 .where(
+                        CommentFilterPredicate.projectIdEq(projectId),
                         CommentFilterPredicate.parentCommentIdEq(commentId)
                 )
                 .orderBy(CommentSortBuilder.createdAtDesc())
@@ -105,6 +106,7 @@ public class CommentQueryRepositoryPortAdapter implements CommentQueryRepository
                         .select(comment.count())
                         .from(comment)
                         .where(
+                                CommentFilterPredicate.projectIdEq(projectId),
                                 CommentFilterPredicate.parentCommentIdEq(commentId)
                         )
                         .fetchOne()

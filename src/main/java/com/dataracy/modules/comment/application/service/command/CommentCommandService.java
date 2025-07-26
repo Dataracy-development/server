@@ -12,6 +12,7 @@ import com.dataracy.modules.comment.domain.model.Comment;
 import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class CommentCommandService implements
     private final CommentRepositoryPort commentRepositoryPort;
 
     @Override
+    @Transactional
     public void upload(Long projectId, Long userId, CommentUploadRequest requestDto) {
         Long parentId = requestDto.parentCommentId();
 
@@ -49,11 +51,13 @@ public class CommentCommandService implements
     }
 
     @Override
-    public void modify(Long projectId, Long commentId, Long userId, CommentModifyRequest requestDto) {
+    @Transactional
+    public void modify(Long projectId, Long commentId, CommentModifyRequest requestDto) {
         commentRepositoryPort.modify(projectId, commentId, requestDto);
     }
 
     @Override
+    @Transactional
     public void delete(Long projectId, Long commentId) {
         commentRepositoryPort.delete(projectId, commentId);
     }

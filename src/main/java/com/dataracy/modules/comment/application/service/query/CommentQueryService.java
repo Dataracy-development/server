@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -44,12 +45,14 @@ public class CommentQueryService implements
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
 
     @Override
+    @Transactional(readOnly = true)
     public Long findUserIdByCommentId(Long commentId) {
         return commentRepositoryPort.findUserIdByCommentId(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<FindCommentResponse> findComments(Long projectId, Pageable pageable) {
         Page<CommentWithReplyCountResponse> savedComments = commentQueryRepositoryPort.findComments(projectId, pageable);
 
@@ -73,6 +76,7 @@ public class CommentQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<FindReplyCommentResponse> findReplyComments(Long projectId, Long commentId, Pageable pageable) {
         Page<Comment> savedComments = commentQueryRepositoryPort.findReplyComments(projectId, commentId, pageable);
 
@@ -104,7 +108,6 @@ public class CommentQueryService implements
                 .toList();
 
         Map<Long, String> userAuthorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
-        CommentLabelResponse result = new CommentLabelResponse(usernameMap, userThumbnailMap, userAuthorLevelIds, userAuthorLevelLabelMap);
-        return result;
+        return new CommentLabelResponse(usernameMap, userThumbnailMap, userAuthorLevelIds, userAuthorLevelLabelMap);
     }
 }
