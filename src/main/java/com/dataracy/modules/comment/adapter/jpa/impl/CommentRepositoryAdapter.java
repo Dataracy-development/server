@@ -11,6 +11,8 @@
  import lombok.RequiredArgsConstructor;
  import org.springframework.stereotype.Repository;
 
+ import java.util.Optional;
+
  @Repository
 @RequiredArgsConstructor
 public class CommentRepositoryAdapter implements CommentRepositoryPort {
@@ -42,4 +44,9 @@ public class CommentRepositoryAdapter implements CommentRepositoryPort {
   }
   commentJpaRepository.delete(comment);
  }
-}
+
+  @Override
+  public Optional<Long> findUserIdByCommentId(Long commentId) {
+   return commentJpaRepository.findUserIdById(commentId);
+  }
+ }
