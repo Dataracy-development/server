@@ -4,8 +4,6 @@ import com.dataracy.modules.comment.application.port.in.FindUserIdByCommentIdUse
 import com.dataracy.modules.comment.domain.exception.CommentException;
 import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
 import com.dataracy.modules.common.support.annotation.AuthorizationCommentEdit;
-import com.dataracy.modules.dataset.application.port.in.FindUserIdByDataIdUseCase;
-import com.dataracy.modules.dataset.application.port.in.FindUserIdIncludingDeletedDataUseCase;
 import com.dataracy.modules.security.handler.SecurityContextProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
