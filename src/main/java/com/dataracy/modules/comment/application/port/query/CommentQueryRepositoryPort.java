@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface CommentQueryRepositoryPort {
 Optional<Comment> findCommentById(Long commentId);
     Page<CommentWithReplyCountResponse> findComments(Long projectId, Pageable pageable);
+    Page<Comment> findReplyComments(Long projectId, Long commentId, Pageable pageable);
 }

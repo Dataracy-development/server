@@ -20,7 +20,12 @@ private CommentFilterPredicate() {}
         return projectId == null ? null : commentEntity.projectId.eq(projectId);
     }
 
+    public static BooleanExpression parentCommentIdEq(Long commentId) {
+        return commentId == null ? null : commentEntity.parentCommentId.eq(commentId);
+    }
+
     public static BooleanExpression isRootComment() {
         return commentEntity.parentCommentId.isNull();
     }
+
 }

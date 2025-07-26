@@ -82,4 +82,34 @@ public class CommentQueryRepositoryPortAdapter implements CommentQueryRepository
 
         return new PageImpl<>(contents, pageable, total);
     }
+
+    @Override
+    public Page<Comment> findReplyComments(Long projectId, Long commentId, Pageable pageable) {
+        List<CommentEntity> entities = queryFactory
+                .selectFrom(comment)
+                .where(
+                        CommentFilterPredicate.parentCommentIdEq(commentId)
+                )
+                .orderBy(CommentSortBuilder.createdAtDesc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        List<Comment> contents = entities.stream()
+                .map(CommentEntityMapper::toDomain
+                )
+                .toList();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(comment.count())
+                        .from(comment)
+                        .where(
+                                CommentFilterPredicate.parentCommentIdEq(commentId)
+                        )
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(contents, pageable, total);
+    }
 }

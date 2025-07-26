@@ -3,6 +3,7 @@ package com.dataracy.modules.comment.adapter.web.api;
 import com.dataracy.modules.comment.adapter.web.request.CommentModifyWebRequest;
 import com.dataracy.modules.comment.adapter.web.request.CommentUploadWebRequest;
 import com.dataracy.modules.comment.adapter.web.response.FindCommentWebResponse;
+import com.dataracy.modules.comment.adapter.web.response.FindReplyCommentWebResponse;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import io.swagger.v3.oas.annotations.Operation;
@@ -113,6 +114,27 @@ public interface CommentApi {
     ResponseEntity<SuccessResponse<Page<FindCommentWebResponse>>> findComments(
             @PathVariable @Min(1)
             Long projectId,
+
+            @PageableDefault(size = 5, page = 0)
+            Pageable pageable
+    );
+
+    @Operation(
+            summary = "해당 댓글 대한 답글 목록을 조회한다.",
+            description = "해당 댓글 대한 답글 목록을 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "해당 댓글 대한 답글 목록 조회에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/{projectId}/comments/{commentId}")
+    ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(
+            @PathVariable @Min(1)
+            Long projectId,
+
+            @PathVariable @Min(1)
+            Long commentId,
 
             @PageableDefault(size = 5, page = 0)
             Pageable pageable
