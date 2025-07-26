@@ -34,6 +34,7 @@ public class UserQueryService implements
         ConfirmPasswordUseCase,
         FindUsernameUseCase,
         FindUserThumbnailUseCase,
+        FindUserAuthorLevelIdsUseCase,
         GetUserInfoUseCase
 {
     private final PasswordEncoder passwordEncoder;
@@ -207,5 +208,10 @@ public class UserQueryService implements
                 user.getTopicIds(),
                 user.getVisitSourceId()
         );
+    }
+
+    @Override
+    public Map<Long, String> findUserAuthorLevelIds(List<Long> userIds) {
+        return userRepositoryPort.findUserAuthorLevelIds(userIds);
     }
 }
