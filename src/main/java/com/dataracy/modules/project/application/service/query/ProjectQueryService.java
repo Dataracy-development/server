@@ -1,5 +1,9 @@
 package com.dataracy.modules.project.application.service.query;
 
+import com.dataracy.modules.auth.adapter.jwt.JwtValidatorAdapter;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.like.application.port.in.ValidateTargetLikeUseCase;
+import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.dto.response.*;
 import com.dataracy.modules.project.application.mapper.ConnectedProjectAssociatedDtoMapper;
@@ -67,6 +71,8 @@ public class ProjectQueryService implements
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
     private final GetUserInfoUseCase getUserInfoUseCase;
     private final ConnectedProjectAssociatedDtoMapper connectedProjectAssociatedDtoMapper;
+    private final ValidateTargetLikeUseCase validateTargetLikeUseCase;
+    private final JwtValidateUseCase jwtValidateUseCase;
 
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
@@ -222,7 +228,7 @@ public class ProjectQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public ProjectDetailResponse getProjectDetail(Long projectId) {
+    public ProjectDetailResponse getProjectDetail(Long projectId, Long userId) {
         Project project = projectQueryRepositoryPort.findProjectById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
 
@@ -235,6 +241,11 @@ public class ProjectQueryService implements
         // 선택조건 null 일 경우에 대한 처리
         String authorLevelLabel = projectUser.authorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(projectUser.authorLevelId());
         String occupationLabel = projectUser.occupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(projectUser.occupationId());
+
+        boolean isLiked = false;
+        if (userId != null) {
+            isLiked = validateTargetLikeUseCase.isValidateTarget(userId, projectId, TargetType.PROJECT);
+        }
 
         return new ProjectDetailResponse(
                 project.getId(),
@@ -253,7 +264,7 @@ public class ProjectQueryService implements
                 project.getCommentCount(),
                 project.getLikeCount(),
                 project.getViewCount(),
-                false,
+                isLiked,
                 hasChild,
                 hasData
         );

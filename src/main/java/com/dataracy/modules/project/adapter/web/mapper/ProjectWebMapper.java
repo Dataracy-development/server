@@ -78,6 +78,7 @@ public class ProjectWebMapper {
                 responseDto.commentCount(),
                 responseDto.likeCount(),
                 responseDto.viewCount(),
+                responseDto.isLiked(),
                 responseDto.hasChild(),
                 responseDto.hasDataSet()
         );
