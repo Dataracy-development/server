@@ -8,6 +8,7 @@ import com.dataracy.modules.comment.application.mapper.FindCommentDtoMapper;
 import com.dataracy.modules.comment.application.port.in.FindCommentListUseCase;
 import com.dataracy.modules.comment.application.port.in.FindReplyCommentListUseCase;
 import com.dataracy.modules.comment.application.port.in.FindUserIdByCommentIdUseCase;
+import com.dataracy.modules.comment.application.port.in.ValidateCommentUseCase;
 import com.dataracy.modules.comment.application.port.out.CommentRepositoryPort;
 import com.dataracy.modules.comment.application.port.query.CommentQueryRepositoryPort;
 import com.dataracy.modules.comment.domain.exception.CommentException;
@@ -31,7 +32,8 @@ import java.util.Map;
 public class CommentQueryService implements
         FindCommentListUseCase,
         FindUserIdByCommentIdUseCase,
-        FindReplyCommentListUseCase
+        FindReplyCommentListUseCase,
+        ValidateCommentUseCase
 {
 
     private final FindCommentDtoMapper findCommentDtoMapper;
@@ -138,5 +140,14 @@ public class CommentQueryService implements
 
         Map<Long, String> userAuthorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
         return new CommentLabelResponse(usernameMap, userThumbnailMap, userAuthorLevelIds, userAuthorLevelLabelMap);
+    }
+
+    @Override
+    public void validateComment(Long commentId) {
+        boolean isValidated = commentRepositoryPort.existsByCommentId(commentId);
+
+        if (!isValidated) {
+            throw new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT);
+        }
     }
 }

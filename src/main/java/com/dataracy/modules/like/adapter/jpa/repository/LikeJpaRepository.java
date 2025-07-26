@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface LikeJpaRepository extends JpaRepository<LikeEntity, Long> {
-    Optional<LikeEntity> findTargetLike(Long targetId, TargetType targetType);
+    Optional<LikeEntity> findByTargetIdAndTargetType(Long targetId, TargetType targetType);
 }

@@ -34,4 +34,8 @@ void delete(Long projectId, Long commentId);
  * @return 댓글 작성자의 사용자 ID를 포함하는 Optional 객체. 해당 댓글이 없으면 빈 Optional을 반환합니다.
  */
 Optional<Long> findUserIdByCommentId(Long commentId);
+
+boolean existsByCommentId(Long commentId);
+
 }
+

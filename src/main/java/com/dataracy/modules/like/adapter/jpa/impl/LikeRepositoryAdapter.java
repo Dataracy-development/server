@@ -24,7 +24,7 @@ public class LikeRepositoryAdapter implements LikeRepositoryPort {
 
     @Override
     public void cancleLike(Long targetId, TargetType targetType) {
-        LikeEntity entity = likeJpaRepository.findTargetLike(targetId, targetType)
+        LikeEntity entity = likeJpaRepository.findByTargetIdAndTargetType(targetId, targetType)
                 .orElseThrow(() -> new LikeException(LikeErrorStatus.NOT_FOUND_TARGET_LIKE));
         likeJpaRepository.delete(entity);
     }
