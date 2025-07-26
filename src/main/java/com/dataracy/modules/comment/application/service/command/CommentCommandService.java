@@ -24,6 +24,17 @@ public class CommentCommandService implements
     private final CommentQueryRepositoryPort commentQueryRepositoryPort;
     private final CommentRepositoryPort commentRepositoryPort;
 
+    /**
+     * 프로젝트에 새로운 댓글을 등록합니다.
+     *
+     * 부모 댓글 ID가 제공된 경우, 해당 부모 댓글의 존재 여부와 대댓글 제한(1단계까지만 허용)을 검증합니다.
+     * 부모 댓글이 존재하지 않거나, 이미 대댓글인 경우 예외가 발생합니다.
+     *
+     * @param projectId 댓글이 등록될 프로젝트의 ID
+     * @param userId 댓글을 작성하는 사용자의 ID
+     * @param requestDto 댓글 등록 요청 정보
+     * @throws CommentException 부모 댓글이 존재하지 않거나 대댓글 제한을 위반한 경우 발생합니다.
+     */
     @Override
     @Transactional
     public void upload(Long projectId, Long userId, CommentUploadRequest requestDto) {
@@ -50,12 +61,25 @@ public class CommentCommandService implements
         commentRepositoryPort.upload(comment);
     }
 
+    /**
+     * 주어진 프로젝트와 댓글 ID에 해당하는 댓글의 내용을 수정합니다.
+     *
+     * @param projectId 댓글이 속한 프로젝트의 ID
+     * @param commentId 수정할 댓글의 ID
+     * @param requestDto 댓글 수정 요청 정보
+     */
     @Override
     @Transactional
     public void modify(Long projectId, Long commentId, CommentModifyRequest requestDto) {
         commentRepositoryPort.modify(projectId, commentId, requestDto);
     }
 
+    /**
+     * 지정된 프로젝트와 댓글 ID에 해당하는 댓글을 삭제합니다.
+     *
+     * @param projectId 댓글이 속한 프로젝트의 ID
+     * @param commentId 삭제할 댓글의 ID
+     */
     @Override
     @Transactional
     public void delete(Long projectId, Long commentId) {
