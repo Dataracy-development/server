@@ -4,19 +4,15 @@ import com.dataracy.modules.comment.adapter.web.mapper.CommentWebMapper;
 import com.dataracy.modules.comment.adapter.web.request.CommentModifyWebRequest;
 import com.dataracy.modules.comment.adapter.web.request.CommentUploadWebRequest;
 import com.dataracy.modules.comment.adapter.web.response.FindCommentWebResponse;
+import com.dataracy.modules.comment.adapter.web.response.FindReplyCommentWebResponse;
 import com.dataracy.modules.comment.application.dto.request.CommentModifyRequest;
 import com.dataracy.modules.comment.application.dto.request.CommentUploadRequest;
 import com.dataracy.modules.comment.application.dto.response.FindCommentResponse;
-import com.dataracy.modules.comment.application.mapper.FindCommentDtoMapper;
-import com.dataracy.modules.comment.application.port.in.CommentDeleteUseCase;
-import com.dataracy.modules.comment.application.port.in.CommentModifyUseCase;
-import com.dataracy.modules.comment.application.port.in.CommentUploadUseCase;
-import com.dataracy.modules.comment.application.port.in.FindCommentListUseCase;
+import com.dataracy.modules.comment.application.dto.response.FindReplyCommentResponse;
+import com.dataracy.modules.comment.application.port.in.*;
 import com.dataracy.modules.comment.domain.status.CommentSuccessStatus;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.AuthorizationCommentEdit;
-import com.dataracy.modules.dataset.adapter.web.response.ConnectedDataAssociatedWithProjectWebResponse;
-import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,19 +20,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 public class CommentController implements CommentApi {
 
     private final CommentWebMapper commentWebMapper;
-    private final FindCommentDtoMapper findCommentDtoMapper;
 
     private final CommentUploadUseCase commentUploadUseCase;
     private final CommentModifyUseCase commentModifyUseCase;
     private final CommentDeleteUseCase commentDeleteUseCase;
     private final FindCommentListUseCase findCommentListUseCase;
+    private final FindReplyCommentListUseCase findReplyCommentListUseCase;
 
     @Override
     public ResponseEntity<SuccessResponse<Void>> uploadComment(Long projectId, Long userId, CommentUploadWebRequest webRequest) {
@@ -73,5 +67,14 @@ public class CommentController implements CommentApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(CommentSuccessStatus.GET_COMMENTS, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(Long projectId, Long commentId, Pageable pageable) {
+        Page<FindReplyCommentResponse> responseDto = findReplyCommentListUseCase.findReplyComments(projectId, commentId, pageable);
+        Page<FindReplyCommentWebResponse> webResponse = responseDto.map(commentWebMapper::toWebDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(CommentSuccessStatus.GET_REPLY_COMMENTS, webResponse));
     }
 }

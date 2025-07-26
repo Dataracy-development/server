@@ -3,9 +3,11 @@ package com.dataracy.modules.comment.adapter.web.mapper;
 import com.dataracy.modules.comment.adapter.web.request.CommentModifyWebRequest;
 import com.dataracy.modules.comment.adapter.web.request.CommentUploadWebRequest;
 import com.dataracy.modules.comment.adapter.web.response.FindCommentWebResponse;
+import com.dataracy.modules.comment.adapter.web.response.FindReplyCommentWebResponse;
 import com.dataracy.modules.comment.application.dto.request.CommentModifyRequest;
 import com.dataracy.modules.comment.application.dto.request.CommentUploadRequest;
 import com.dataracy.modules.comment.application.dto.response.FindCommentResponse;
+import com.dataracy.modules.comment.application.dto.response.FindReplyCommentResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,6 +34,18 @@ public class CommentWebMapper {
                 responseDto.content(),
                 responseDto.likeCount(),
                 responseDto.childCommentCount(),
+                responseDto.createdAt()
+        );
+    }
+
+    public FindReplyCommentWebResponse toWebDto(FindReplyCommentResponse responseDto) {
+        return new FindReplyCommentWebResponse(
+                responseDto.id(),
+                responseDto.username(),
+                responseDto.authorLevelLabel(),
+                responseDto.userThumbnailUrl(),
+                responseDto.content(),
+                responseDto.likeCount(),
                 responseDto.createdAt()
         );
     }
