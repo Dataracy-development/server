@@ -1,5 +1,6 @@
 package com.dataracy.modules.comment.adapter.web.api;
 
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.comment.adapter.web.mapper.CommentWebMapper;
 import com.dataracy.modules.comment.adapter.web.request.CommentModifyWebRequest;
 import com.dataracy.modules.comment.adapter.web.request.CommentUploadWebRequest;
@@ -13,12 +14,16 @@ import com.dataracy.modules.comment.application.port.in.*;
 import com.dataracy.modules.comment.domain.status.CommentSuccessStatus;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.AuthorizationCommentEdit;
+import com.dataracy.modules.common.util.ExtractHeaderUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +36,7 @@ public class CommentController implements CommentApi {
     private final CommentDeleteUseCase commentDeleteUseCase;
     private final FindCommentListUseCase findCommentListUseCase;
     private final FindReplyCommentListUseCase findReplyCommentListUseCase;
+    private final JwtValidateUseCase jwtValidateUseCase;
 
     /**
      * 프로젝트에 새로운 댓글을 등록합니다.
@@ -91,8 +97,14 @@ public class CommentController implements CommentApi {
      * @return 조회된 댓글 목록과 성공 상태가 포함된 HTTP 200 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<Page<FindCommentWebResponse>>> findComments(Long projectId, Pageable pageable) {
-        Page<FindCommentResponse> responseDto = findCommentListUseCase.findComments(projectId, pageable);
+    public ResponseEntity<SuccessResponse<Page<FindCommentWebResponse>>> findComments(HttpServletRequest request, Long projectId, Pageable pageable) {
+        Long userId = null;
+        Optional<String> accessToken = ExtractHeaderUtil.extractAccessToken(request);
+        if (accessToken.isPresent()) {
+            userId = jwtValidateUseCase.getUserIdFromToken(accessToken.get());
+        }
+
+        Page<FindCommentResponse> responseDto = findCommentListUseCase.findComments(userId, projectId, pageable);
         Page<FindCommentWebResponse> webResponse = responseDto.map(commentWebMapper::toWebDto);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -108,8 +120,14 @@ public class CommentController implements CommentApi {
      * @return           답글 목록과 성공 상태가 포함된 HTTP 200 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(Long projectId, Long commentId, Pageable pageable) {
-        Page<FindReplyCommentResponse> responseDto = findReplyCommentListUseCase.findReplyComments(projectId, commentId, pageable);
+    public ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(HttpServletRequest request, Long projectId, Long commentId, Pageable pageable) {
+        Long userId = null;
+        Optional<String> accessToken = ExtractHeaderUtil.extractAccessToken(request);
+        if (accessToken.isPresent()) {
+            userId = jwtValidateUseCase.getUserIdFromToken(accessToken.get());
+        }
+
+        Page<FindReplyCommentResponse> responseDto = findReplyCommentListUseCase.findReplyComments(userId, projectId, commentId, pageable);
         Page<FindReplyCommentWebResponse> webResponse = responseDto.map(commentWebMapper::toWebDto);
 
         return ResponseEntity.status(HttpStatus.OK)

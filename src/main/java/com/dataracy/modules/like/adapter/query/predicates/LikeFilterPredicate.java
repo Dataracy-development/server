@@ -3,6 +3,8 @@ package com.dataracy.modules.like.adapter.query.predicates;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
+import java.util.List;
+
 import static com.dataracy.modules.like.adapter.jpa.entity.QLikeEntity.likeEntity;
 
 public class LikeFilterPredicate {
@@ -18,5 +20,9 @@ private LikeFilterPredicate() {}
 
     public static BooleanExpression targetTypeEq(TargetType targetType) {
         return targetType == null ? null : likeEntity.targetType.eq(targetType);
+    }
+
+    public static BooleanExpression containTargetIdEq(List<Long> targetIds) {
+        return targetIds == null ? null : likeEntity.targetId.in(targetIds);
     }
 }

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -137,6 +138,8 @@ public interface CommentApi {
     })
     @GetMapping("/{projectId}/comments")
     ResponseEntity<SuccessResponse<Page<FindCommentWebResponse>>> findComments(
+            HttpServletRequest request,
+
             @PathVariable @Min(1)
             Long projectId,
 
@@ -163,6 +166,8 @@ public interface CommentApi {
     })
     @GetMapping("/{projectId}/comments/{commentId}")
     ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(
+            HttpServletRequest request,
+
             @PathVariable @Min(1)
             Long projectId,
 

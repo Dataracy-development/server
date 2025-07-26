@@ -13,5 +13,5 @@ public interface FindReplyCommentListUseCase {
  * @param pageable   페이지네이션 정보를 담은 객체
  * @return           답글 목록과 페이지 정보를 포함하는 Page 객체
  */
-Page<FindReplyCommentResponse> findReplyComments(Long projectId, Long commentId, Pageable pageable);
+Page<FindReplyCommentResponse> findReplyComments(Long userId, Long projectId, Long commentId, Pageable pageable);
 }

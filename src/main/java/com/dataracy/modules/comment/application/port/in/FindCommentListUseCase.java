@@ -12,5 +12,5 @@ public interface FindCommentListUseCase {
  * @param pageable 페이지네이션 정보를 담은 객체
  * @return 프로젝트에 속한 댓글의 페이지별 목록
  */
-Page<FindCommentResponse> findComments(Long projectId, Pageable pageable);
+Page<FindCommentResponse> findComments(Long userId, Long projectId, Pageable pageable);
 }

@@ -9,5 +9,6 @@ public record FindReplyCommentResponse(
         String userThumbnailUrl,
         String content,
         Long likeCount,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        boolean isLiked
 ) {}

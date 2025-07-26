@@ -52,7 +52,8 @@ public class CommentWebMapper {
                 responseDto.content(),
                 responseDto.likeCount(),
                 responseDto.childCommentCount(),
-                responseDto.createdAt()
+                responseDto.createdAt(),
+                responseDto.isLiked()
         );
     }
 
@@ -70,7 +71,8 @@ public class CommentWebMapper {
                 responseDto.userThumbnailUrl(),
                 responseDto.content(),
                 responseDto.likeCount(),
-                responseDto.createdAt()
+                responseDto.createdAt(),
+                responseDto.isLiked()
         );
     }
 }
