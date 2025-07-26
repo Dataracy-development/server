@@ -70,10 +70,6 @@ public interface CommentApi {
             @PathVariable @Min(1)
             Long commentId,
 
-            @Parameter(hidden = true)
-            @CurrentUserId
-            Long userId,
-
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     description = "수정할 댓글 내용.",

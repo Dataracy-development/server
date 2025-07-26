@@ -211,6 +211,7 @@ public class UserQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<Long, String> findUserAuthorLevelIds(List<Long> userIds) {
         return userRepositoryPort.findUserAuthorLevelIds(userIds);
     }
