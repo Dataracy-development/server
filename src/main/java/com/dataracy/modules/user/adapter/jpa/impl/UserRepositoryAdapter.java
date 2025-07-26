@@ -133,6 +133,16 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
                 ));
     }
 
+    @Override
+    public Map<Long, String> findUserAuthorLevelIds(List<Long> userIds) {
+        return userJpaRepository.findAllById(userIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        UserEntity::getId,
+                        user -> String.valueOf(Optional.ofNullable(user.getAuthorLevelId()).orElse(1L))
+                ));
+    }
+
     /**
      * 지정된 사용자 ID에 해당하는 사용자를 탈퇴 처리합니다.
      *

@@ -75,4 +75,7 @@ Map<Long, String> findUsernamesByIds(List<Long> userIds);
  * @return 각 사용자 ID와 해당 썸네일 문자열이 매핑된 Map 객체
  */
 Map<Long, String> findUserThumbnailsByIds(List<Long> userIds);
+
+    Map<Long, String> findUserAuthorLevelIds(List<Long> userIds);
+
 }
