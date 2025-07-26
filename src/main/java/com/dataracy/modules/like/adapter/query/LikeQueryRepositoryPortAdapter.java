@@ -8,6 +8,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Repository
 @RequiredArgsConstructor
@@ -29,5 +31,21 @@ public class LikeQueryRepositoryPortAdapter implements LikeQueryRepositoryPort {
                 .fetchFirst();
 
         return result != null;
+    }
+
+    @Override
+    public List<Long> findLikedTargetIds(Long userId, List<Long> targetIds, TargetType targetType) {
+        if (userId == null || targetIds == null || targetIds.isEmpty()) {
+            return List.of();
+        }
+        return queryFactory
+                .select(like.targetId)
+                .from(like)
+                .where(
+                        LikeFilterPredicate.userIdEq(userId),
+                        LikeFilterPredicate.containTargetIdEq(targetIds),
+                        LikeFilterPredicate.targetTypeEq(targetType)
+                )
+                .fetch();
     }
 }

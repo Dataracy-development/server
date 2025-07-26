@@ -1,10 +1,9 @@
-package com.dataracy.modules.like.application.port.query;
+package com.dataracy.modules.like.application.port.in;
 
 import com.dataracy.modules.like.domain.enums.TargetType;
 
 import java.util.List;
 
-public interface LikeQueryRepositoryPort {
-    boolean isLikedTarget(Long userId, Long targetId, TargetType targetType);
+public interface FindTargetIdsUseCase {
     List<Long> findLikedTargetIds(Long userId, List<Long> targetIds, TargetType targetType);
 }

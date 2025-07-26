@@ -14,6 +14,8 @@ import com.dataracy.modules.comment.application.port.query.CommentQueryRepositor
 import com.dataracy.modules.comment.domain.exception.CommentException;
 import com.dataracy.modules.comment.domain.model.Comment;
 import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
+import com.dataracy.modules.like.application.port.in.FindTargetIdsUseCase;
+import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUserAuthorLevelIdsUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUserThumbnailUseCase;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +48,7 @@ public class CommentQueryService implements
     private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final FindUserAuthorLevelIdsUseCase findUserAuthorLevelIdsUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+    private final FindTargetIdsUseCase findTargetIdsUseCase;
 
     /**
      * 주어진 댓글 ID에 해당하는 사용자의 ID를 반환합니다.
@@ -70,12 +74,18 @@ public class CommentQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<FindCommentResponse> findComments(Long projectId, Pageable pageable) {
+    public Page<FindCommentResponse> findComments(Long userId, Long projectId, Pageable pageable) {
         Page<CommentWithReplyCountResponse> savedComments = commentQueryRepositoryPort.findComments(projectId, pageable);
 
         List<Long> userIds = savedComments.stream()
                 .map(dto -> dto.comment().getUserId())
                 .toList();
+
+        List<Long> commentIds = savedComments.stream()
+                .map(dto -> dto.comment().getId())
+                .toList();
+
+        List<Long> likedIds = findTargetIdsUseCase.findLikedTargetIds(userId, commentIds, TargetType.COMMENT);
 
         CommentLabelResponse result = getCommentLabelResponse(userIds);
 
@@ -87,7 +97,8 @@ public class CommentQueryService implements
                     result.usernameMap().get(comment.getUserId()),
                     result.userThumbnailMap().get(comment.getUserId()),
                     result.userAuthorLevelLabelMap().get(authorLevelId),
-                    wrapper.replyCount()
+                    wrapper.replyCount(),
+                    likedIds.contains(comment.getId())
             );
         });
     }
@@ -102,12 +113,18 @@ public class CommentQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<FindReplyCommentResponse> findReplyComments(Long projectId, Long commentId, Pageable pageable) {
+    public Page<FindReplyCommentResponse> findReplyComments(Long userId, Long projectId, Long commentId, Pageable pageable) {
         Page<Comment> savedComments = commentQueryRepositoryPort.findReplyComments(projectId, commentId, pageable);
 
         List<Long> userIds = savedComments.stream()
                 .map(Comment::getUserId)
                 .toList();
+
+        List<Long> commentIds = savedComments.stream()
+                .map(Comment::getId)
+                .toList();
+
+        List<Long> likedIds = findTargetIdsUseCase.findLikedTargetIds(userId, commentIds, TargetType.COMMENT);
 
         CommentLabelResponse result = getCommentLabelResponse(userIds);
 
@@ -117,7 +134,8 @@ public class CommentQueryService implements
                     comment,
                     result.usernameMap().get(comment.getUserId()),
                     result.userThumbnailMap().get(comment.getUserId()),
-                    result.userAuthorLevelLabelMap().get(authorLevelId)
+                    result.userAuthorLevelLabelMap().get(authorLevelId),
+                    likedIds.contains(comment.getId())
             );
         });
     }
@@ -143,6 +161,7 @@ public class CommentQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void validateComment(Long commentId) {
         boolean isValidated = commentRepositoryPort.existsByCommentId(commentId);
 

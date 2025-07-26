@@ -22,7 +22,8 @@ public class FindCommentDtoMapper {
             String username,
             String userThumbnailUrl,
             String authorLevelLabel,
-            Long childCommentCount
+            Long childCommentCount,
+            boolean isLiked
     ) {
         return new FindCommentResponse(
                 comment.getId(),
@@ -32,7 +33,8 @@ public class FindCommentDtoMapper {
                 comment.getContent(),
                 comment.getLikeCount(),
                 childCommentCount,
-                comment.getCreatedAt()
+                comment.getCreatedAt(),
+                isLiked
         );
     }
 
@@ -49,7 +51,8 @@ public class FindCommentDtoMapper {
             Comment comment,
             String username,
             String userThumbnailUrl,
-            String authorLevelLabel
+            String authorLevelLabel,
+            boolean isLiked
     ) {
         return new FindReplyCommentResponse(
                 comment.getId(),
@@ -58,7 +61,8 @@ public class FindCommentDtoMapper {
                 userThumbnailUrl,
                 comment.getContent(),
                 comment.getLikeCount(),
-                comment.getCreatedAt()
+                comment.getCreatedAt(),
+                isLiked
         );
     }
 }
