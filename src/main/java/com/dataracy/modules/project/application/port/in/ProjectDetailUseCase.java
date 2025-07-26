@@ -9,5 +9,5 @@ public interface ProjectDetailUseCase {
  * @param projectId 조회할 프로젝트의 고유 식별자
  * @return 프로젝트의 상세 정보를 담은 ProjectDetailResponse 객체
  */
-ProjectDetailResponse getProjectDetail(Long projectId);
+ProjectDetailResponse getProjectDetail(Long projectId, Long userId);
 }
