@@ -20,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class LikeCommandService implements
-        TargetLikeUseCase,
-        ValidateTargetLikeUseCase
+        TargetLikeUseCase
 {
 
     private final LikeRepositoryPort likeRepositoryPort;
@@ -70,10 +69,5 @@ public class LikeCommandService implements
                 };
             }
         }
-    }
-
-    @Override
-    public boolean isValidateTarget(Long projectId, TargetType targetType) {
-        return likeRepositoryPort.isLikedTarget(projectId, targetType);
     }
 }

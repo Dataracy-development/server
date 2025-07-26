@@ -253,6 +253,7 @@ public class ProjectQueryService implements
                 project.getCommentCount(),
                 project.getLikeCount(),
                 project.getViewCount(),
+                false,
                 hasChild,
                 hasData
         );
@@ -338,6 +339,7 @@ public class ProjectQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void validateProject(Long projectId) {
         boolean isValidate = projectRepositoryPort.existsProjectById(projectId);
         if (!isValidate) {
