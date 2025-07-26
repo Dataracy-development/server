@@ -12,6 +12,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CommentWebMapper {
+    /**
+     * 웹 요청 객체를 애플리케이션 계층의 댓글 업로드 요청 DTO로 변환합니다.
+     *
+     * @param webRequest 댓글 업로드 웹 요청 객체
+     * @return 변환된 댓글 업로드 요청 DTO
+     */
     public CommentUploadRequest toApplicationDto(CommentUploadWebRequest webRequest) {
         return new CommentUploadRequest(
                 webRequest.content(),
@@ -19,12 +25,24 @@ public class CommentWebMapper {
         );
     }
 
+    /**
+     * 웹 요청 객체를 애플리케이션 계층의 댓글 수정 요청 DTO로 변환합니다.
+     *
+     * @param webRequest 댓글 수정 웹 요청 객체
+     * @return 댓글 수정 요청 DTO
+     */
     public CommentModifyRequest toApplicationDto(CommentModifyWebRequest webRequest) {
         return new CommentModifyRequest(
                 webRequest.content()
         );
     }
 
+    /**
+     * 애플리케이션 계층의 댓글 응답 DTO를 웹 계층의 댓글 응답 객체로 변환합니다.
+     *
+     * @param responseDto 변환할 댓글 응답 DTO
+     * @return 변환된 웹 계층 댓글 응답 객체
+     */
     public FindCommentWebResponse toWebDto(FindCommentResponse responseDto) {
         return new FindCommentWebResponse(
                 responseDto.id(),
@@ -38,6 +56,12 @@ public class CommentWebMapper {
         );
     }
 
+    /**
+     * 답글 댓글 응답 DTO를 웹 응답 객체로 변환합니다.
+     *
+     * @param responseDto 애플리케이션 계층의 답글 댓글 응답 DTO
+     * @return 웹 계층의 답글 댓글 응답 객체
+     */
     public FindReplyCommentWebResponse toWebDto(FindReplyCommentResponse responseDto) {
         return new FindReplyCommentWebResponse(
                 responseDto.id(),

@@ -44,6 +44,14 @@ public class CommentQueryService implements
     private final FindUserAuthorLevelIdsUseCase findUserAuthorLevelIdsUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
 
+    /**
+     * 주어진 댓글 ID에 해당하는 사용자의 ID를 반환합니다.
+     *
+     * 댓글이 존재하지 않을 경우 {@code CommentException}이 발생합니다.
+     *
+     * @param commentId 조회할 댓글의 ID
+     * @return 댓글 작성자의 사용자 ID
+     */
     @Override
     @Transactional(readOnly = true)
     public Long findUserIdByCommentId(Long commentId) {
@@ -51,6 +59,13 @@ public class CommentQueryService implements
                 .orElseThrow(() -> new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT));
     }
 
+    /**
+     * 지정된 프로젝트의 댓글 목록을 페이지 단위로 조회하고, 각 댓글에 대한 작성자 정보 및 답글 수를 포함하여 반환합니다.
+     *
+     * @param projectId 댓글을 조회할 프로젝트의 ID
+     * @param pageable 페이지네이션 정보
+     * @return 댓글과 작성자 정보, 답글 수가 포함된 페이지 결과
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<FindCommentResponse> findComments(Long projectId, Pageable pageable) {
@@ -75,6 +90,14 @@ public class CommentQueryService implements
         });
     }
 
+    /**
+     * 지정된 프로젝트와 댓글 ID에 대한 답글 목록을 페이지 단위로 조회하여, 각 답글에 작성자 정보(닉네임, 썸네일, 작성자 레벨 라벨)를 포함한 응답으로 반환합니다.
+     *
+     * @param projectId   답글이 속한 프로젝트의 ID
+     * @param commentId   답글이 달린 원본 댓글의 ID
+     * @param pageable    페이지네이션 정보
+     * @return            답글 목록과 작성자 메타데이터가 포함된 페이지 객체
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<FindReplyCommentResponse> findReplyComments(Long projectId, Long commentId, Pageable pageable) {
@@ -97,6 +120,12 @@ public class CommentQueryService implements
         });
     }
 
+    /**
+     * 주어진 사용자 ID 목록에 대해 사용자명, 썸네일, 작성자 레벨 ID 및 레벨 라벨 정보를 조회하여 통합 응답 객체로 반환합니다.
+     *
+     * @param userIds 사용자 ID 목록
+     * @return 사용자명, 썸네일, 작성자 레벨 ID, 작성자 레벨 라벨 정보를 포함한 CommentLabelResponse 객체
+     */
     private CommentLabelResponse getCommentLabelResponse(List<Long> userIds) {
         Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
         Map<Long, String> userThumbnailMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
