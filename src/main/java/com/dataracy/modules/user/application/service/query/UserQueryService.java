@@ -187,11 +187,11 @@ public class UserQueryService implements
     }
 
     /**
-     * 주어진 사용자 ID로 사용자의 상세 정보를 조회합니다.
+     * 사용자 ID로 상세 정보를 조회하여 UserInfo 객체로 반환합니다.
      *
      * @param userId 조회할 사용자의 ID
-     * @return 사용자의 ID, 역할, 이메일, 닉네임, 저자 레벨 ID, 직업 ID, 관심 주제 ID 목록, 유입 경로 ID가 포함된 UserInfo 객체
-     * @throws UserException 사용자를 찾을 수 없는 경우 {@code UserErrorStatus.NOT_FOUND_USER}로 예외가 발생합니다.
+     * @return 사용자의 상세 정보가 담긴 UserInfo 객체
+     * @throws UserException 사용자를 찾을 수 없는 경우 {@code UserErrorStatus.NOT_FOUND_USER} 예외가 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)
@@ -210,6 +210,12 @@ public class UserQueryService implements
         );
     }
 
+    /**
+     * 주어진 사용자 ID 목록에 대해 각 사용자의 작가 레벨 ID를 반환합니다.
+     *
+     * @param userIds 작가 레벨 ID를 조회할 사용자 ID 목록
+     * @return 사용자 ID와 해당 작가 레벨 ID의 매핑
+     */
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> findUserAuthorLevelIds(List<Long> userIds) {
