@@ -118,10 +118,10 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     /**
-     * 주어진 사용자 ID 목록에 대해 각 사용자의 프로필 이미지 URL을 반환합니다.
+     * 주어진 사용자 ID 목록에 대해 각 사용자의 프로필 이미지 URL을 맵으로 반환합니다.
      *
      * @param userIds 프로필 이미지 URL을 조회할 사용자 ID 목록
-     * @return 사용자 ID를 키로 하고 프로필 이미지 URL(없을 경우 빈 문자열)을 값으로 하는 맵
+     * @return 사용자 ID를 키로 하고, 프로필 이미지 URL(없을 경우 빈 문자열)을 값으로 하는 맵
      */
     @Override
     public Map<Long, String> findUserThumbnailsByIds(List<Long> userIds) {
@@ -130,6 +130,24 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
                 .collect(Collectors.toMap(
                         UserEntity::getId,
                         user -> Optional.ofNullable(user.getProfileImageUrl()).orElse("")
+                ));
+    }
+
+    /**
+     * 주어진 사용자 ID 목록에 대해 각 사용자의 author level ID를 문자열로 반환합니다.
+     *
+     * author level ID가 없는 경우 기본값 "1"이 반환됩니다.
+     *
+     * @param userIds 조회할 사용자 ID 목록
+     * @return 사용자 ID를 키로 하고 author level ID(문자열)를 값으로 하는 맵
+     */
+    @Override
+    public Map<Long, String> findUserAuthorLevelIds(List<Long> userIds) {
+        return userJpaRepository.findAllById(userIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        UserEntity::getId,
+                        user -> String.valueOf(Optional.ofNullable(user.getAuthorLevelId()).orElse(1L))
                 ));
     }
 
