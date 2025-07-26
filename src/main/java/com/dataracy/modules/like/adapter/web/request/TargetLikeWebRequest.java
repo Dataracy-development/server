@@ -19,7 +19,7 @@ public record TargetLikeWebRequest(
                 required = true,
                 message = "좋아요 타겟은 PROJECT, COMMENT만 가능합니다."
         )
-        TargetType targetType,
+        String targetType,
 
         @Schema(description = "이전 좋아요 상태", example = "false")
         @NotNull(message = "좋아요 상태는 NULL 값이 불가합니다.")

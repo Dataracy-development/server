@@ -5,6 +5,7 @@ import com.dataracy.modules.like.adapter.web.mapper.LikeWebMapper;
 import com.dataracy.modules.like.adapter.web.request.TargetLikeWebRequest;
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;
 import com.dataracy.modules.like.application.port.in.TargetLikeUseCase;
+import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.like.domain.status.LikeSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,17 +22,18 @@ public class LikeController implements LikeApi {
     @Override
     public ResponseEntity<SuccessResponse<Void>> modifyTargetLike(Long userId, TargetLikeWebRequest webRequest) {
         TargetLikeRequest requestDto = likeWebMapper.toApplicationDto(webRequest);
-        targetLikeUseCase.targetLike(userId, requestDto);
+        TargetType targetType = TargetType.of(requestDto.targetType());
+        targetLikeUseCase.targetLike(userId, requestDto, targetType);
 
         if (!requestDto.isLiked()) {
-            return switch (requestDto.targetType()) {
+            return switch (targetType) {
                 case PROJECT -> ResponseEntity.status(HttpStatus.OK)
                         .body(SuccessResponse.of(LikeSuccessStatus.LIKE_PROJECT));
                 case COMMENT -> ResponseEntity.status(HttpStatus.OK)
                         .body(SuccessResponse.of(LikeSuccessStatus.LIKE_COMMENT));
             };
         } else {
-            return switch (requestDto.targetType()) {
+            return switch (targetType) {
                 case PROJECT -> ResponseEntity.status(HttpStatus.OK)
                         .body(SuccessResponse.of(LikeSuccessStatus.UNLIKE_PROJECT));
                 case COMMENT -> ResponseEntity.status(HttpStatus.OK)

@@ -46,7 +46,8 @@ public class ProjectQueryService implements
         ContinueProjectUseCase,
         ConnectedProjectAssociatedWithDataUseCase,
         FindUserIdByProjectIdUseCase,
-        FindUserIdIncludingDeletedProjectUseCase
+        FindUserIdIncludingDeletedProjectUseCase,
+        ValidateProjectUseCase
 {
     private final PopularProjectsDtoMapper popularProjectsDtoMapper;
     private final FilterProjectDtoMapper filterProjectDtoMapper;
@@ -334,5 +335,13 @@ public class ProjectQueryService implements
     @Transactional(readOnly = true)
     public Long findUserIdIncludingDeleted(Long projectId) {
         return projectRepositoryPort.findUserIdIncludingDeleted(projectId);
+    }
+
+    @Override
+    public void validateProject(Long projectId) {
+        boolean isValidate = projectRepositoryPort.existsProjectById(projectId);
+        if (!isValidate) {
+            throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
+        }
     }
 }

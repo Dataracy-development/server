@@ -1,17 +1,17 @@
 package com.dataracy.modules.comment.adapter.jpa.impl;
 
- import com.dataracy.modules.comment.adapter.jpa.entity.CommentEntity;
- import com.dataracy.modules.comment.adapter.jpa.mapper.CommentEntityMapper;
- import com.dataracy.modules.comment.adapter.jpa.repository.CommentJpaRepository;
- import com.dataracy.modules.comment.application.dto.request.CommentModifyRequest;
- import com.dataracy.modules.comment.application.port.out.CommentRepositoryPort;
- import com.dataracy.modules.comment.domain.exception.CommentException;
- import com.dataracy.modules.comment.domain.model.Comment;
- import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
- import lombok.RequiredArgsConstructor;
- import org.springframework.stereotype.Repository;
+import com.dataracy.modules.comment.adapter.jpa.entity.CommentEntity;
+import com.dataracy.modules.comment.adapter.jpa.mapper.CommentEntityMapper;
+import com.dataracy.modules.comment.adapter.jpa.repository.CommentJpaRepository;
+import com.dataracy.modules.comment.application.dto.request.CommentModifyRequest;
+import com.dataracy.modules.comment.application.port.out.CommentRepositoryPort;
+import com.dataracy.modules.comment.domain.exception.CommentException;
+import com.dataracy.modules.comment.domain.model.Comment;
+import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
- import java.util.Optional;
+import java.util.Optional;
 
  @Repository
 @RequiredArgsConstructor
@@ -78,5 +78,10 @@ public class CommentRepositoryAdapter implements CommentRepositoryPort {
   @Override
   public Optional<Long> findUserIdByCommentId(Long commentId) {
    return commentJpaRepository.findUserIdById(commentId);
+  }
+
+  @Override
+  public boolean existsByCommentId(Long commentId) {
+   return commentJpaRepository.existsById(commentId);
   }
  }
