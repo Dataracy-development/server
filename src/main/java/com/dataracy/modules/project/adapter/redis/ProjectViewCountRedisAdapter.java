@@ -1,4 +1,4 @@
-package com.dataracy.modules.project.adapter.elasticsearch.redis;
+package com.dataracy.modules.project.adapter.redis;
 
 import com.dataracy.modules.project.application.port.out.ProjectViewCountRedisPort;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-public class ProjectViewCountRedisRepository implements ProjectViewCountRedisPort {
+public class ProjectViewCountRedisAdapter implements ProjectViewCountRedisPort {
 
     private final StringRedisTemplate redisTemplate;
     private static final Duration TTL = Duration.ofMinutes(5);
