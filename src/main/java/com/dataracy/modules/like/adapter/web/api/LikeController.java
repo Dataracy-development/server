@@ -19,6 +19,13 @@ public class LikeController implements LikeApi {
 
     private final TargetLikeUseCase targetLikeUseCase;
 
+    /**
+     * 사용자가 프로젝트 또는 댓글에 대해 좋아요 또는 좋아요 취소 요청을 수행할 때, 해당 요청을 처리하고 결과에 따라 성공 상태를 반환합니다.
+     *
+     * @param userId 좋아요 또는 좋아요 취소를 수행하는 사용자 ID
+     * @param webRequest 좋아요 대상 및 이전 좋아요 여부를 포함한 웹 요청 객체
+     * @return 좋아요 또는 좋아요 취소 결과에 따라 적절한 성공 상태가 포함된 HTTP 200 OK 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<Void>> modifyTargetLike(Long userId, TargetLikeWebRequest webRequest) {
         TargetLikeRequest requestDto = likeWebMapper.toApplicationDto(webRequest);

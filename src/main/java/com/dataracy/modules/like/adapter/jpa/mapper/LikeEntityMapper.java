@@ -5,10 +5,16 @@ import com.dataracy.modules.like.domain.model.Like;
 
 public final class LikeEntityMapper {
     /**
- * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+ * LikeEntityMapper 클래스의 인스턴스 생성을 방지하는 private 생성자입니다.
  */
 private LikeEntityMapper() {}
 
+    /**
+     * LikeEntity 객체를 Like 도메인 객체로 변환합니다.
+     *
+     * @param entity 변환할 LikeEntity 객체
+     * @return 변환된 Like 도메인 객체, 입력이 null이면 null 반환
+     */
     private static Like toDomain(LikeEntity entity) {
         if (entity == null) return null;
 
@@ -20,6 +26,12 @@ private LikeEntityMapper() {}
         );
     }
 
+    /**
+     * Like 도메인 객체를 LikeEntity로 변환합니다.
+     *
+     * @param like 변환할 Like 도메인 객체
+     * @return 변환된 LikeEntity 객체, 입력이 null이면 null 반환
+     */
     public static LikeEntity toEntity(Like like) {
         if (like == null) return null;
 
