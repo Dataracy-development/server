@@ -98,11 +98,7 @@ public class CommentController implements CommentApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<FindCommentWebResponse>>> findComments(HttpServletRequest request, Long projectId, Pageable pageable) {
-        Long userId = null;
-        Optional<String> accessToken = ExtractHeaderUtil.extractAccessToken(request);
-        if (accessToken.isPresent()) {
-            userId = jwtValidateUseCase.getUserIdFromToken(accessToken.get());
-        }
+        Long userId = extractUserIdFromRequest(request);
 
         Page<FindCommentResponse> responseDto = findCommentListUseCase.findComments(userId, projectId, pageable);
         Page<FindCommentWebResponse> webResponse = responseDto.map(commentWebMapper::toWebDto);
@@ -121,16 +117,22 @@ public class CommentController implements CommentApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(HttpServletRequest request, Long projectId, Long commentId, Pageable pageable) {
-        Long userId = null;
-        Optional<String> accessToken = ExtractHeaderUtil.extractAccessToken(request);
-        if (accessToken.isPresent()) {
-            userId = jwtValidateUseCase.getUserIdFromToken(accessToken.get());
-        }
+        Long userId = extractUserIdFromRequest(request);
 
         Page<FindReplyCommentResponse> responseDto = findReplyCommentListUseCase.findReplyComments(userId, projectId, commentId, pageable);
         Page<FindReplyCommentWebResponse> webResponse = responseDto.map(commentWebMapper::toWebDto);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(CommentSuccessStatus.GET_REPLY_COMMENTS, webResponse));
+    }
+
+    private Long extractUserIdFromRequest(HttpServletRequest request) {
+        try {
+            return ExtractHeaderUtil.extractAccessToken(request)
+                    .map(jwtValidateUseCase::getUserIdFromToken)
+                    .orElse(null);
+            } catch (Exception e) {
+                return null;
+            }
     }
 }
