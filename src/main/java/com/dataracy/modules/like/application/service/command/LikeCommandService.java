@@ -27,6 +27,17 @@ public class LikeCommandService implements
     private final ValidateProjectUseCase validateProjectUseCase;
     private final ValidateCommentUseCase validateCommentUseCase;
 
+    /**
+     * 사용자가 프로젝트 또는 댓글에 대해 좋아요 또는 좋아요 취소를 수행합니다.
+     *
+     * 대상 타입과 ID를 기반으로 해당 엔티티의 존재를 검증한 후, 이전에 좋아요를 눌렀는지 여부에 따라 좋아요를 저장하거나 취소합니다.
+     * 동시성 제어를 위해 대상 타입, 대상 ID, 사용자 ID를 조합한 분산 락이 적용됩니다.
+     *
+     * @param userId 좋아요 또는 좋아요 취소를 수행하는 사용자의 ID
+     * @param requestDto 대상 타입, 대상 ID, 이전 좋아요 여부를 포함한 요청 정보
+     * @return 좋아요 또는 좋아요 취소가 적용된 대상의 타입
+     * @throws LikeException 데이터베이스 오류 등으로 인해 좋아요 또는 좋아요 취소에 실패한 경우, 대상 타입과 작업에 따라 도메인별 예외가 발생합니다.
+     */
     @Override
     @Transactional
     @DistributedLock(

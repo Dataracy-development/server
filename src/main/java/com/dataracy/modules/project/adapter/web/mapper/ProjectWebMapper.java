@@ -55,10 +55,10 @@ public class ProjectWebMapper {
     }
 
     /**
-     * 프로젝트 상세 정보를 애플리케이션 계층 DTO에서 웹 계층 DTO로 변환합니다.
+     * 애플리케이션 계층의 프로젝트 상세 응답 DTO를 웹 계층의 프로젝트 상세 응답 DTO로 변환합니다.
      *
-     * @param responseDto 애플리케이션 계층의 프로젝트 상세 응답 DTO
-     * @return 웹 계층의 프로젝트 상세 응답 DTO
+     * @param responseDto 애플리케이션 계층의 프로젝트 상세 정보 DTO
+     * @return 웹 계층의 프로젝트 상세 정보 DTO
      */
     public ProjectDetailWebResponse toWebDto(ProjectDetailResponse responseDto) {
         return new ProjectDetailWebResponse(

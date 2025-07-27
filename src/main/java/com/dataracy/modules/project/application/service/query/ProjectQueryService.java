@@ -218,9 +218,10 @@ public class ProjectQueryService implements
     /**
      * 지정한 프로젝트의 상세 정보를 조회하여 반환합니다.
      *
-     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 프로젝트 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 제공합니다.
+     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 프로젝트 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 사용자의 좋아요 여부, 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 제공합니다.
      *
      * @param projectId 상세 정보를 조회할 프로젝트의 ID
+     * @param userId 프로젝트를 조회하는 사용자의 ID (좋아요 여부 확인에 사용, null 가능)
      * @return 프로젝트의 상세 정보를 담은 ProjectDetailResponse 객체
      * @throws ProjectException 프로젝트가 존재하지 않을 경우 발생합니다.
      */
@@ -336,10 +337,10 @@ public class ProjectQueryService implements
     }
 
     /**
-     * 삭제된 프로젝트를 포함하여 주어진 프로젝트 ID에 해당하는 사용자 ID를 반환합니다.
+     * 삭제된 프로젝트를 포함하여 지정된 프로젝트 ID의 소유자 사용자 ID를 반환합니다.
      *
      * @param projectId 사용자 ID를 조회할 프로젝트의 ID
-     * @return 해당 프로젝트(삭제된 경우 포함)의 사용자 ID
+     * @return 해당 프로젝트(삭제된 경우 포함)의 소유자 사용자 ID
      */
     @Override
     @Transactional(readOnly = true)
@@ -347,6 +348,14 @@ public class ProjectQueryService implements
         return projectRepositoryPort.findUserIdIncludingDeleted(projectId);
     }
 
+    /**
+     * 주어진 프로젝트 ID에 해당하는 프로젝트가 존재하는지 검증합니다.
+     *
+     * 프로젝트가 존재하지 않을 경우 {@code ProjectException}을 발생시킵니다.
+     *
+     * @param projectId 검증할 프로젝트의 ID
+     * @throws ProjectException 프로젝트가 존재하지 않을 때 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public void validateProject(Long projectId) {
