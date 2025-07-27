@@ -20,14 +20,14 @@ public class CommentKafkaProducerAdapter implements CommentKafkaProducerPort {
     private String TOPIC_DELETE;
 
     @Override
-    public void sendCommentUploadedEvent(Long commentId) {
-        log.info("Kafka 발행: 댓글 작성됨, commentId={}", commentId);
-        kafkaTemplate.send(TOPIC_UPLOAD, String.valueOf(commentId), commentId);
+    public void sendCommentUploadedEvent(Long projectId) {
+        log.info("Kafka 발행: 댓글 작성됨, commentId={}", projectId);
+        kafkaTemplate.send(TOPIC_UPLOAD, String.valueOf(projectId), projectId);
     }
 
     @Override
-    public void sendCommentDeletedEvent(Long commentId) {
-        log.info("Kafka 발행: 댓글 삭제됨, commentId={}", commentId);
-        kafkaTemplate.send(TOPIC_DELETE, String.valueOf(commentId), commentId);
+    public void sendCommentDeletedEvent(Long projectId) {
+        log.info("Kafka 발행: 댓글 삭제됨, commentId={}", projectId);
+        kafkaTemplate.send(TOPIC_DELETE, String.valueOf(projectId), projectId);
     }
 }

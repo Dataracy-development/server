@@ -61,7 +61,7 @@ public class CommentCommandService implements
         );
 
         Comment savedComment = commentRepositoryPort.upload(comment);
-        commentKafkaProducerPort.sendCommentUploadedEvent(savedComment.getId());
+        commentKafkaProducerPort.sendCommentUploadedEvent(savedComment.getProjectId());
     }
 
     /**
@@ -87,6 +87,6 @@ public class CommentCommandService implements
     @Transactional
     public void delete(Long projectId, Long commentId) {
         commentRepositoryPort.delete(projectId, commentId);
-        commentKafkaProducerPort.sendCommentDeletedEvent(commentId);
+        commentKafkaProducerPort.sendCommentDeletedEvent(projectId);
     }
 }
