@@ -1,5 +1,6 @@
 package com.dataracy.modules.project.adapter.scheduler;
 
+import com.dataracy.modules.project.application.port.elasticsearch.ProjectViewUpdatePort;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.out.ProjectViewCountRedisPort;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,9 @@ public class ProjectViewCountScheduler {
 
     private final ProjectViewCountRedisPort projectViewCountRedisPort;
     private final ProjectRepositoryPort projectRepositoryPort;
+    private final ProjectViewUpdatePort projectViewUpdatePort;
 
-    @Scheduled(fixedRate = 3 * 60 * 1000) // 3분
+    @Scheduled(fixedRate = 60 * 1000) // 1분
     @Transactional
     public void flushProjectViews() {
         Set<String> keys = projectViewCountRedisPort.getAllViewCountKeys("PROJECT");
@@ -27,6 +29,7 @@ public class ProjectViewCountScheduler {
 
             if (count > 0) {
                 projectRepositoryPort.increaseViewCount(projectId, count);
+                projectViewUpdatePort.increaseViewCount(projectId, count);
                 projectViewCountRedisPort.clearViewCount(projectId, "PROJECT");
             }
         }
