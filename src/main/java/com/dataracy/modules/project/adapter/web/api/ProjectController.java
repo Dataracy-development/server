@@ -1,7 +1,9 @@
 package com.dataracy.modules.project.adapter.web.api;
 
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.AuthorizationProjectEdit;
+import com.dataracy.modules.common.util.ExtractHeaderUtil;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectFilterWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectSearchWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.ProjectWebMapper;
@@ -15,6 +17,7 @@ import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest
 import com.dataracy.modules.project.application.dto.response.*;
 import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +47,7 @@ public class ProjectController implements ProjectApi {
     private final ProjectModifyUseCase projectModifyUseCase;
     private final ProjectDeleteUseCase projectDeleteUseCase;
     private final ProjectRestoreUseCase projectRestoreUseCase;
+    private final JwtValidateUseCase jwtValidateUseCase;
 
     /**
      * 프로젝트 업로드 요청을 받아 새로운 프로젝트를 생성한다.
@@ -135,14 +140,21 @@ public class ProjectController implements ProjectApi {
     }
 
     /**
-     * 주어진 프로젝트 ID에 해당하는 프로젝트의 상세 정보를 조회하여 반환합니다.
+     * HTTP 요청에서 JWT 토큰을 추출하여, 인증된 사용자 정보와 함께 주어진 프로젝트 ID의 상세 정보를 반환합니다.
      *
-     * @param projectId 상세 정보를 조회할 프로젝트의 ID
+     * @param request 프로젝트 상세 정보 조회 시 사용할 HTTP 요청 객체
+     * @param projectId 조회할 프로젝트의 ID
      * @return 프로젝트 상세 정보를 포함한 성공 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(Long projectId) {
-        ProjectDetailResponse responseDto = projectDetailUseCase.getProjectDetail(projectId);
+    public ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(HttpServletRequest request, Long projectId) {
+        Long userId = null;
+        Optional<String> accessToken = ExtractHeaderUtil.extractAccessToken(request);
+        if (accessToken.isPresent()) {
+            userId = jwtValidateUseCase.getUserIdFromToken(accessToken.get());
+        }
+
+        ProjectDetailResponse responseDto = projectDetailUseCase.getProjectDetail(projectId, userId);
         ProjectDetailWebResponse webResponse = projectWebMapper.toWebDto(responseDto);
 
         return ResponseEntity.status(HttpStatus.OK)

@@ -19,6 +19,7 @@ public record ProjectDetailResponse(
         Long commentCount,
         Long likeCount,
         Long viewCount,
+        boolean isLiked,
         boolean hasChild,
         boolean hasDataSet
 ) {}

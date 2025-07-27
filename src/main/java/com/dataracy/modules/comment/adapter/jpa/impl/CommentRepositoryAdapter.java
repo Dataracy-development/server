@@ -1,17 +1,17 @@
 package com.dataracy.modules.comment.adapter.jpa.impl;
 
- import com.dataracy.modules.comment.adapter.jpa.entity.CommentEntity;
- import com.dataracy.modules.comment.adapter.jpa.mapper.CommentEntityMapper;
- import com.dataracy.modules.comment.adapter.jpa.repository.CommentJpaRepository;
- import com.dataracy.modules.comment.application.dto.request.CommentModifyRequest;
- import com.dataracy.modules.comment.application.port.out.CommentRepositoryPort;
- import com.dataracy.modules.comment.domain.exception.CommentException;
- import com.dataracy.modules.comment.domain.model.Comment;
- import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
- import lombok.RequiredArgsConstructor;
- import org.springframework.stereotype.Repository;
+import com.dataracy.modules.comment.adapter.jpa.entity.CommentEntity;
+import com.dataracy.modules.comment.adapter.jpa.mapper.CommentEntityMapper;
+import com.dataracy.modules.comment.adapter.jpa.repository.CommentJpaRepository;
+import com.dataracy.modules.comment.application.dto.request.CommentModifyRequest;
+import com.dataracy.modules.comment.application.port.out.CommentRepositoryPort;
+import com.dataracy.modules.comment.domain.exception.CommentException;
+import com.dataracy.modules.comment.domain.model.Comment;
+import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
- import java.util.Optional;
+import java.util.Optional;
 
  @Repository
 @RequiredArgsConstructor
@@ -70,13 +70,24 @@ public class CommentRepositoryAdapter implements CommentRepositoryPort {
  }
 
   /**
-   * 주어진 댓글 ID에 해당하는 사용자의 ID를 반환합니다.
+   * 주어진 댓글 ID에 연결된 사용자 ID를 Optional로 반환합니다.
    *
-   * @param commentId 조회할 댓글의 ID
-   * @return 댓글에 연결된 사용자 ID의 Optional 객체
+   * @param commentId 사용자 ID를 조회할 댓글의 ID
+   * @return 해당 댓글에 연결된 사용자 ID의 Optional, 존재하지 않으면 빈 Optional 반환
    */
   @Override
   public Optional<Long> findUserIdByCommentId(Long commentId) {
    return commentJpaRepository.findUserIdById(commentId);
+  }
+
+  /**
+   * 주어진 댓글 ID에 해당하는 댓글이 데이터베이스에 존재하는지 여부를 반환합니다.
+   *
+   * @param commentId 존재 여부를 확인할 댓글의 ID
+   * @return 댓글이 존재하면 true, 그렇지 않으면 false
+   */
+  @Override
+  public boolean existsByCommentId(Long commentId) {
+   return commentJpaRepository.existsById(commentId);
   }
  }

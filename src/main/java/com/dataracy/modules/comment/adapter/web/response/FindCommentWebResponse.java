@@ -10,5 +10,6 @@ public record FindCommentWebResponse(
         String content,
         Long likeCount,
         Long childCommentCount,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        boolean isLiked
 ) {}
