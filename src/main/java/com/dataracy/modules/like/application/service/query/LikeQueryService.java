@@ -18,7 +18,7 @@ public class LikeQueryService implements ValidateTargetLikeUseCase, FindTargetId
     private final LikeQueryRepositoryPort likeQueryRepositoryPort;
 
     @Override
-    public boolean isValidateTarget(Long userId, Long projectId, TargetType targetType) {
+    public boolean hasUserLikedTarget(Long userId, Long projectId, TargetType targetType) {
         return likeQueryRepositoryPort.isLikedTarget(userId, projectId, targetType);
     }
 

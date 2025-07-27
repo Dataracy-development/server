@@ -244,7 +244,7 @@ public class ProjectQueryService implements
 
         boolean isLiked = false;
         if (userId != null) {
-            isLiked = validateTargetLikeUseCase.isValidateTarget(userId, projectId, TargetType.PROJECT);
+            isLiked = validateTargetLikeUseCase.hasUserLikedTarget(userId, projectId, TargetType.PROJECT);
         }
 
         return new ProjectDetailResponse(
