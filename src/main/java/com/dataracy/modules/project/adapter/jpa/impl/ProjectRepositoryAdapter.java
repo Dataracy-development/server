@@ -175,4 +175,9 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
         project.restore();
         projectJpaRepository.save(project);
     }
+
+    @Override
+    public void increaseViewCount(Long projectId, Long count) {
+        projectJpaRepository.increaseViewCount(projectId, count);
+    }
 }
