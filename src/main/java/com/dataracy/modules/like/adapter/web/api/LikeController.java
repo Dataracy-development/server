@@ -22,8 +22,7 @@ public class LikeController implements LikeApi {
     @Override
     public ResponseEntity<SuccessResponse<Void>> modifyTargetLike(Long userId, TargetLikeWebRequest webRequest) {
         TargetLikeRequest requestDto = likeWebMapper.toApplicationDto(webRequest);
-        TargetType targetType = TargetType.of(requestDto.targetType());
-        targetLikeUseCase.targetLike(userId, requestDto, targetType);
+        TargetType targetType = targetLikeUseCase.targetLike(userId, requestDto);
 
         if (!requestDto.isLiked()) {
             return switch (targetType) {

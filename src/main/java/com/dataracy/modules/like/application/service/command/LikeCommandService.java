@@ -36,7 +36,9 @@ public class LikeCommandService implements
             leaseTime = 2000L,
             retry = 2
     )
-    public void targetLike(Long userId, TargetLikeRequest requestDto, TargetType targetType) {
+    public TargetType targetLike(Long userId, TargetLikeRequest requestDto) {
+
+        TargetType targetType = TargetType.of(requestDto.targetType());
 
         if (targetType.equals(TargetType.PROJECT)) {
             validateProjectUseCase.validateProject(requestDto.targetId());
@@ -70,5 +72,7 @@ public class LikeCommandService implements
                 };
             }
         }
+
+        return targetType;
     }
 }
