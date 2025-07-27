@@ -7,6 +7,7 @@ import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
+import com.dataracy.modules.project.application.port.elasticsearch.ProjectDeletePort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectIndexingPort;
 import com.dataracy.modules.project.application.port.in.ProjectDeleteUseCase;
 import com.dataracy.modules.project.application.port.in.ProjectModifyUseCase;
@@ -42,6 +43,7 @@ public class ProjectCommandService implements
 {
     private final ProjectRepositoryPort projectRepositoryPort;
     private final ProjectIndexingPort projectIndexingPort;
+    private final ProjectDeletePort projectDeletePort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
@@ -222,7 +224,7 @@ public class ProjectCommandService implements
     @Transactional
     public void markAsDelete(Long projectId) {
         projectRepositoryPort.delete(projectId);
-        projectIndexingPort.markAsDeleted(projectId);
+        projectDeletePort.markAsDeleted(projectId);
     }
 
     /**
@@ -236,6 +238,6 @@ public class ProjectCommandService implements
     @Transactional
     public void markAsRestore(Long projectId) {
         projectRepositoryPort.restore(projectId);
-        projectIndexingPort.markAsRestore(projectId);
+        projectDeletePort.markAsRestore(projectId);
     }
 }
