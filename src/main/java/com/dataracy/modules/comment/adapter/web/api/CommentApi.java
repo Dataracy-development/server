@@ -138,6 +138,7 @@ public interface CommentApi {
     })
     @GetMapping("/{projectId}/comments")
     ResponseEntity<SuccessResponse<Page<FindCommentWebResponse>>> findComments(
+            @Parameter(hidden = true)
             HttpServletRequest request,
 
             @PathVariable @Min(1)
@@ -166,6 +167,7 @@ public interface CommentApi {
     })
     @GetMapping("/{projectId}/comments/{commentId}")
     ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(
+            @Parameter(hidden = true)
             HttpServletRequest request,
 
             @PathVariable @Min(1)
