@@ -180,4 +180,14 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     public void increaseViewCount(Long projectId, Long count) {
         projectJpaRepository.increaseViewCount(projectId, count);
     }
+
+    @Override
+    public void increase(Long projectId) {
+        projectJpaRepository.increaseCommentCount(projectId);
+    }
+
+    @Override
+    public void decrease(Long projectId) {
+        projectJpaRepository.decreaseCommentCount(projectId);
+    }
 }

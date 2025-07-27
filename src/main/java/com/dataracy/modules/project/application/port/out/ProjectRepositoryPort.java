@@ -68,4 +68,7 @@ void delete(Long projectId);
 void restore(Long projectId);
 
     void increaseViewCount(Long projectId, Long count);
+
+    void increase(Long projectId);
+    void decrease(Long projectId);
 }
