@@ -228,6 +228,8 @@ public class ProjectQueryService implements
     @Override
     @Transactional(readOnly = true)
     public ProjectDetailResponse getProjectDetail(Long projectId, Long userId) {
+
+        // 프로젝트 세부정보 조회
         Project project = projectQueryRepositoryPort.findProjectById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
 
@@ -245,6 +247,10 @@ public class ProjectQueryService implements
         if (userId != null) {
             isLiked = validateTargetLikeUseCase.hasUserLikedTarget(userId, projectId, TargetType.PROJECT);
         }
+
+        // 프로젝트 조회수 증가
+        // 조회수 기록 (중복 방지 TTL)
+        viewCountRedisRepository.increaseViewCount(projectId, viewerId, "PROJECT");
 
         return new ProjectDetailResponse(
                 project.getId(),

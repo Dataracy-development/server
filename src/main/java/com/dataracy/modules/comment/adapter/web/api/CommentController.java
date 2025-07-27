@@ -28,6 +28,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 public class CommentController implements CommentApi {
+    private final ExtractHeaderUtil extractHeaderUtil;
 
     private final CommentWebMapper commentWebMapper;
 
@@ -101,7 +102,7 @@ public class CommentController implements CommentApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<FindCommentWebResponse>>> findComments(HttpServletRequest request, Long projectId, Pageable pageable) {
-        Long userId = extractUserIdFromRequest(request);
+        Long userId = extractHeaderUtil.extractAuthenticatedUserIdFromRequest(request);
 
         Page<FindCommentResponse> responseDto = findCommentListUseCase.findComments(userId, projectId, pageable);
         Page<FindCommentWebResponse> webResponse = responseDto.map(commentWebMapper::toWebDto);
@@ -123,30 +124,12 @@ public class CommentController implements CommentApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(HttpServletRequest request, Long projectId, Long commentId, Pageable pageable) {
-        Long userId = extractUserIdFromRequest(request);
+        Long userId = extractHeaderUtil.extractAuthenticatedUserIdFromRequest(request);
 
         Page<FindReplyCommentResponse> responseDto = findReplyCommentListUseCase.findReplyComments(userId, projectId, commentId, pageable);
         Page<FindReplyCommentWebResponse> webResponse = responseDto.map(commentWebMapper::toWebDto);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(CommentSuccessStatus.GET_REPLY_COMMENTS, webResponse));
-    }
-
-    /**
-     * HTTP 요청에서 액세스 토큰을 추출하여 해당 사용자의 ID를 반환합니다.
-     *
-     * 액세스 토큰이 없거나 유효하지 않은 경우, 또는 추출 과정에서 예외가 발생하면 {@code null}을 반환합니다.
-     *
-     * @param request 사용자 인증 정보를 포함할 수 있는 HTTP 요청
-     * @return 추출된 사용자 ID 또는 실패 시 {@code null}
-     */
-    private Long extractUserIdFromRequest(HttpServletRequest request) {
-        try {
-            return ExtractHeaderUtil.extractAccessToken(request)
-                    .map(jwtValidateUseCase::getUserIdFromToken)
-                    .orElse(null);
-            } catch (Exception e) {
-                return null;
-            }
     }
 }

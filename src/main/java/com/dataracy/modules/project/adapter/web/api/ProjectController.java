@@ -18,6 +18,7 @@ import com.dataracy.modules.project.application.dto.response.*;
 import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,8 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 public class ProjectController implements ProjectApi {
+    private final ExtractHeaderUtil extractHeaderUtil;
+
     private final ProjectWebMapper projectWebMapper;
     private final ProjectSearchWebMapper projectSearchWebMapper;
     private final ProjectFilterWebMapper projectFilterWebMapper;
@@ -147,12 +150,9 @@ public class ProjectController implements ProjectApi {
      * @return 프로젝트 상세 정보를 포함한 성공 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(HttpServletRequest request, Long projectId) {
-        Long userId = null;
-        Optional<String> accessToken = ExtractHeaderUtil.extractAccessToken(request);
-        if (accessToken.isPresent()) {
-            userId = jwtValidateUseCase.getUserIdFromToken(accessToken.get());
-        }
+    public ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(HttpServletRequest request, HttpServletResponse response, Long projectId) {
+        Long userId = extractHeaderUtil.extractAuthenticatedUserIdFromRequest(request);
+        String viewerId = extractHeaderUtil.extractViewerIdFromRequest(request, response);
 
         ProjectDetailResponse responseDto = projectDetailUseCase.getProjectDetail(projectId, userId);
         ProjectDetailWebResponse webResponse = projectWebMapper.toWebDto(responseDto);
