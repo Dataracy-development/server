@@ -159,7 +159,7 @@ public interface ProjectApi {
     );
 
     /**
-     * 프로젝트 ID로 해당 프로젝트의 상세 정보를 조회하여 반환합니다.
+     * 지정한 프로젝트 ID에 해당하는 프로젝트의 상세 정보를 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID (1 이상)
      * @return 프로젝트 상세 정보를 포함한 성공 응답

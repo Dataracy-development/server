@@ -66,11 +66,12 @@ public class CommentQueryService implements
     }
 
     /**
-     * 지정된 프로젝트의 댓글 목록을 페이지 단위로 조회하고, 각 댓글에 대한 작성자 정보 및 답글 수를 포함하여 반환합니다.
+     * 지정된 프로젝트의 댓글 목록을 페이지 단위로 조회하고, 각 댓글에 대해 작성자 정보, 답글 수, 사용자의 좋아요 여부를 포함하여 반환합니다.
      *
+     * @param userId 댓글 목록을 조회하는 사용자의 ID
      * @param projectId 댓글을 조회할 프로젝트의 ID
      * @param pageable 페이지네이션 정보
-     * @return 댓글과 작성자 정보, 답글 수가 포함된 페이지 결과
+     * @return 댓글, 작성자 정보, 답글 수, 좋아요 여부가 포함된 페이지 결과
      */
     @Override
     @Transactional(readOnly = true)
@@ -104,12 +105,13 @@ public class CommentQueryService implements
     }
 
     /**
-     * 지정된 프로젝트와 댓글 ID에 대한 답글 목록을 페이지 단위로 조회하여, 각 답글에 작성자 정보(닉네임, 썸네일, 작성자 레벨 라벨)를 포함한 응답으로 반환합니다.
+     * 지정된 프로젝트의 원본 댓글에 대한 답글 목록을 페이지 단위로 조회하고, 각 답글에 대해 작성자 정보(닉네임, 썸네일, 작성자 레벨 라벨)와 사용자의 좋아요 여부를 포함하여 반환합니다.
      *
-     * @param projectId   답글이 속한 프로젝트의 ID
-     * @param commentId   답글이 달린 원본 댓글의 ID
-     * @param pageable    페이지네이션 정보
-     * @return            답글 목록과 작성자 메타데이터가 포함된 페이지 객체
+     * @param userId    현재 사용자의 ID
+     * @param projectId 답글이 속한 프로젝트의 ID
+     * @param commentId 답글이 달린 원본 댓글의 ID
+     * @param pageable  페이지네이션 정보
+     * @return          답글 목록과 작성자 메타데이터, 좋아요 여부가 포함된 페이지 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -141,10 +143,10 @@ public class CommentQueryService implements
     }
 
     /**
-     * 주어진 사용자 ID 목록에 대해 사용자명, 썸네일, 작성자 레벨 ID 및 레벨 라벨 정보를 조회하여 통합 응답 객체로 반환합니다.
+     * 사용자 ID 목록에 대해 사용자명, 썸네일, 작성자 레벨 ID, 작성자 레벨 라벨 정보를 조회하여 CommentLabelResponse로 반환합니다.
      *
-     * @param userIds 사용자 ID 목록
-     * @return 사용자명, 썸네일, 작성자 레벨 ID, 작성자 레벨 라벨 정보를 포함한 CommentLabelResponse 객체
+     * @param userIds 정보를 조회할 사용자 ID 목록
+     * @return 각 사용자 ID에 대한 사용자명, 썸네일, 작성자 레벨 ID, 작성자 레벨 라벨이 포함된 CommentLabelResponse
      */
     private CommentLabelResponse getCommentLabelResponse(List<Long> userIds) {
         Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
@@ -160,6 +162,14 @@ public class CommentQueryService implements
         return new CommentLabelResponse(usernameMap, userThumbnailMap, userAuthorLevelIds, userAuthorLevelLabelMap);
     }
 
+    /**
+     * 주어진 댓글 ID에 해당하는 댓글이 존재하는지 검증합니다.
+     *
+     * 댓글이 존재하지 않을 경우 {@code CommentException}이 발생합니다.
+     *
+     * @param commentId 검증할 댓글의 ID
+     * @throws CommentException 댓글이 존재하지 않을 때 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public void validateComment(Long commentId) {
