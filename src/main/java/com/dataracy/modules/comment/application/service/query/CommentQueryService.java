@@ -8,11 +8,14 @@ import com.dataracy.modules.comment.application.mapper.FindCommentDtoMapper;
 import com.dataracy.modules.comment.application.port.in.FindCommentListUseCase;
 import com.dataracy.modules.comment.application.port.in.FindReplyCommentListUseCase;
 import com.dataracy.modules.comment.application.port.in.FindUserIdByCommentIdUseCase;
+import com.dataracy.modules.comment.application.port.in.ValidateCommentUseCase;
 import com.dataracy.modules.comment.application.port.out.CommentRepositoryPort;
 import com.dataracy.modules.comment.application.port.query.CommentQueryRepositoryPort;
 import com.dataracy.modules.comment.domain.exception.CommentException;
 import com.dataracy.modules.comment.domain.model.Comment;
 import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
+import com.dataracy.modules.like.application.port.in.FindTargetIdsUseCase;
+import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUserAuthorLevelIdsUseCase;
 import com.dataracy.modules.user.application.port.in.user.FindUserThumbnailUseCase;
@@ -25,13 +28,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class CommentQueryService implements
         FindCommentListUseCase,
         FindUserIdByCommentIdUseCase,
-        FindReplyCommentListUseCase
+        FindReplyCommentListUseCase,
+        ValidateCommentUseCase
 {
 
     private final FindCommentDtoMapper findCommentDtoMapper;
@@ -43,6 +48,7 @@ public class CommentQueryService implements
     private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final FindUserAuthorLevelIdsUseCase findUserAuthorLevelIdsUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+    private final FindTargetIdsUseCase findTargetIdsUseCase;
 
     /**
      * 주어진 댓글 ID에 해당하는 사용자의 ID를 반환합니다.
@@ -60,20 +66,27 @@ public class CommentQueryService implements
     }
 
     /**
-     * 지정된 프로젝트의 댓글 목록을 페이지 단위로 조회하고, 각 댓글에 대한 작성자 정보 및 답글 수를 포함하여 반환합니다.
+     * 지정된 프로젝트의 댓글 목록을 페이지 단위로 조회하고, 각 댓글에 대해 작성자 정보, 답글 수, 사용자의 좋아요 여부를 포함하여 반환합니다.
      *
+     * @param userId 댓글 목록을 조회하는 사용자의 ID
      * @param projectId 댓글을 조회할 프로젝트의 ID
      * @param pageable 페이지네이션 정보
-     * @return 댓글과 작성자 정보, 답글 수가 포함된 페이지 결과
+     * @return 댓글, 작성자 정보, 답글 수, 좋아요 여부가 포함된 페이지 결과
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<FindCommentResponse> findComments(Long projectId, Pageable pageable) {
+    public Page<FindCommentResponse> findComments(Long userId, Long projectId, Pageable pageable) {
         Page<CommentWithReplyCountResponse> savedComments = commentQueryRepositoryPort.findComments(projectId, pageable);
 
         List<Long> userIds = savedComments.stream()
                 .map(dto -> dto.comment().getUserId())
                 .toList();
+
+        List<Long> commentIds = savedComments.stream()
+                .map(dto -> dto.comment().getId())
+                .toList();
+
+        List<Long> likedIds = findTargetIdsUseCase.findLikedTargetIds(userId, commentIds, TargetType.COMMENT);
 
         CommentLabelResponse result = getCommentLabelResponse(userIds);
 
@@ -85,27 +98,35 @@ public class CommentQueryService implements
                     result.usernameMap().get(comment.getUserId()),
                     result.userThumbnailMap().get(comment.getUserId()),
                     result.userAuthorLevelLabelMap().get(authorLevelId),
-                    wrapper.replyCount()
+                    wrapper.replyCount(),
+                    likedIds.contains(comment.getId())
             );
         });
     }
 
     /**
-     * 지정된 프로젝트와 댓글 ID에 대한 답글 목록을 페이지 단위로 조회하여, 각 답글에 작성자 정보(닉네임, 썸네일, 작성자 레벨 라벨)를 포함한 응답으로 반환합니다.
+     * 지정된 프로젝트의 원본 댓글에 대한 답글 목록을 페이지 단위로 조회하고, 각 답글에 대해 작성자 정보(닉네임, 썸네일, 작성자 레벨 라벨)와 사용자의 좋아요 여부를 포함하여 반환합니다.
      *
-     * @param projectId   답글이 속한 프로젝트의 ID
-     * @param commentId   답글이 달린 원본 댓글의 ID
-     * @param pageable    페이지네이션 정보
-     * @return            답글 목록과 작성자 메타데이터가 포함된 페이지 객체
+     * @param userId    현재 사용자의 ID
+     * @param projectId 답글이 속한 프로젝트의 ID
+     * @param commentId 답글이 달린 원본 댓글의 ID
+     * @param pageable  페이지네이션 정보
+     * @return          답글 목록과 작성자 메타데이터, 좋아요 여부가 포함된 페이지 객체
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<FindReplyCommentResponse> findReplyComments(Long projectId, Long commentId, Pageable pageable) {
+    public Page<FindReplyCommentResponse> findReplyComments(Long userId, Long projectId, Long commentId, Pageable pageable) {
         Page<Comment> savedComments = commentQueryRepositoryPort.findReplyComments(projectId, commentId, pageable);
 
         List<Long> userIds = savedComments.stream()
                 .map(Comment::getUserId)
                 .toList();
+
+        List<Long> commentIds = savedComments.stream()
+                .map(Comment::getId)
+                .toList();
+
+        List<Long> likedIds = findTargetIdsUseCase.findLikedTargetIds(userId, commentIds, TargetType.COMMENT);
 
         CommentLabelResponse result = getCommentLabelResponse(userIds);
 
@@ -115,16 +136,17 @@ public class CommentQueryService implements
                     comment,
                     result.usernameMap().get(comment.getUserId()),
                     result.userThumbnailMap().get(comment.getUserId()),
-                    result.userAuthorLevelLabelMap().get(authorLevelId)
+                    result.userAuthorLevelLabelMap().get(authorLevelId),
+                    likedIds.contains(comment.getId())
             );
         });
     }
 
     /**
-     * 주어진 사용자 ID 목록에 대해 사용자명, 썸네일, 작성자 레벨 ID 및 레벨 라벨 정보를 조회하여 통합 응답 객체로 반환합니다.
+     * 사용자 ID 목록에 대해 사용자명, 썸네일, 작성자 레벨 ID, 작성자 레벨 라벨 정보를 조회하여 CommentLabelResponse로 반환합니다.
      *
-     * @param userIds 사용자 ID 목록
-     * @return 사용자명, 썸네일, 작성자 레벨 ID, 작성자 레벨 라벨 정보를 포함한 CommentLabelResponse 객체
+     * @param userIds 정보를 조회할 사용자 ID 목록
+     * @return 각 사용자 ID에 대한 사용자명, 썸네일, 작성자 레벨 ID, 작성자 레벨 라벨이 포함된 CommentLabelResponse
      */
     private CommentLabelResponse getCommentLabelResponse(List<Long> userIds) {
         Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
@@ -138,5 +160,23 @@ public class CommentQueryService implements
 
         Map<Long, String> userAuthorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
         return new CommentLabelResponse(usernameMap, userThumbnailMap, userAuthorLevelIds, userAuthorLevelLabelMap);
+    }
+
+    /**
+     * 주어진 댓글 ID에 해당하는 댓글이 존재하는지 검증합니다.
+     *
+     * 댓글이 존재하지 않을 경우 {@code CommentException}이 발생합니다.
+     *
+     * @param commentId 검증할 댓글의 ID
+     * @throws CommentException 댓글이 존재하지 않을 때 발생
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public void validateComment(Long commentId) {
+        boolean isValidated = commentRepositoryPort.existsByCommentId(commentId);
+
+        if (!isValidated) {
+            throw new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT);
+        }
     }
 }
