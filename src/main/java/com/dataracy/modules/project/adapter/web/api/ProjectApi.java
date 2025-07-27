@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -175,7 +176,11 @@ public interface ProjectApi {
     })
     @GetMapping("/{projectId}")
     ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(
+            @Parameter(hidden = true)
             HttpServletRequest request,
+
+            @Parameter(hidden = true)
+            HttpServletResponse response,
 
             @PathVariable @Min(1)
             Long projectId
