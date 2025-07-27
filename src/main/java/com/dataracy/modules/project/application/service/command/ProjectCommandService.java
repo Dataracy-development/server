@@ -243,12 +243,14 @@ public class ProjectCommandService implements
     }
 
     @Override
+    @Transactional
     public void increase(Long projectId) {
         projectRepositoryPort.increase(projectId);
         projectCommentUpdatePort.increaseCommentCount(projectId);
     }
 
     @Override
+    @Transactional
     public void decrease(Long projectId) {
         projectRepositoryPort.decrease(projectId);
         projectCommentUpdatePort.decreaseCommentCount(projectId);

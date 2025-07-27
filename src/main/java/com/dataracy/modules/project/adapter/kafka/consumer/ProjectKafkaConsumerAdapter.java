@@ -17,7 +17,8 @@ public class ProjectKafkaConsumerAdapter {
 
     @KafkaListener(
             topics = "${spring.kafka.consumer.comment-upload.topic.topic:comment-uploaded-topic}",
-            groupId = "${spring.kafka.consumer.comment-upload.group-id:project-comment-upload-consumer-group}"
+            groupId = "${spring.kafka.consumer.comment-upload.group-id:project-comment-upload-consumer-group}",
+            containerFactory = "longKafkaListenerContainerFactory"
     )
     public void consumeCommentUpload(Long projectId) {
         log.info("[Kafka] 댓글 작성 이벤트 수신됨: projectId:{}", projectId);
@@ -26,7 +27,8 @@ public class ProjectKafkaConsumerAdapter {
 
     @KafkaListener(
             topics = "${spring.kafka.consumer.comment-delete.topic.topic:comment-deleted-topic}",
-            groupId = "${spring.kafka.consumer.comment-delete.group-id:project-comment-delete-consumer-group}"
+            groupId = "${spring.kafka.consumer.comment-delete.group-id:project-comment-delete-consumer-group}",
+            containerFactory = "longKafkaListenerContainerFactory"
     )
     public void consumeCommentDelete(Long projectId) {
         log.info("[Kafka] 댓글 삭제 이벤트 수신됨: projectId:{}", projectId);
