@@ -61,7 +61,7 @@ public class LikeCommandService implements
             }
         } else {
             try {
-                likeRepositoryPort.cancleLike(requestDto.targetId(), targetType);
+                likeRepositoryPort.cancelLike(userId, requestDto.targetId(), targetType);
             } catch (Exception e) {
                 log.error("Database error while saving like: {}", e.getMessage());
                 switch (targetType) {

@@ -5,5 +5,5 @@ import com.dataracy.modules.like.domain.model.Like;
 
 public interface LikeRepositoryPort {
     void save(Like like);
-    void cancelLike(Long targetId, TargetType targetType);
+    void cancelLike(Long userId, Long targetId, TargetType targetType);
 }
