@@ -154,7 +154,7 @@ public class ProjectController implements ProjectApi {
         Long userId = extractHeaderUtil.extractAuthenticatedUserIdFromRequest(request);
         String viewerId = extractHeaderUtil.extractViewerIdFromRequest(request, response);
 
-        ProjectDetailResponse responseDto = projectDetailUseCase.getProjectDetail(projectId, userId);
+        ProjectDetailResponse responseDto = projectDetailUseCase.getProjectDetail(projectId, userId, viewerId);
         ProjectDetailWebResponse webResponse = projectWebMapper.toWebDto(responseDto);
 
         return ResponseEntity.status(HttpStatus.OK)

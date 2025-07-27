@@ -1,8 +1,8 @@
 package com.dataracy.modules.project.application.service.query;
 
-import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.like.application.port.in.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
+import com.dataracy.modules.project.adapter.redis.ProjectViewCountRedisAdapter;
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.dto.response.*;
 import com.dataracy.modules.project.application.mapper.ConnectedProjectAssociatedDtoMapper;
@@ -13,6 +13,7 @@ import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTi
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectSimilarSearchPort;
 import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
+import com.dataracy.modules.project.application.port.out.ProjectViewCountRedisPort;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
@@ -60,6 +61,7 @@ public class ProjectQueryService implements
     private final ProjectRealTimeSearchPort projectRealTimeSearchPort;
     private final ProjectSimilarSearchPort projectSimilarSearchPort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
+    private final ProjectViewCountRedisPort projectViewCountRedisPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
     private final FindUserThumbnailUseCase findUserThumbnailUseCase;
@@ -227,7 +229,7 @@ public class ProjectQueryService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public ProjectDetailResponse getProjectDetail(Long projectId, Long userId) {
+    public ProjectDetailResponse getProjectDetail(Long projectId, Long userId, String viewerId) {
 
         // 프로젝트 세부정보 조회
         Project project = projectQueryRepositoryPort.findProjectById(projectId)
@@ -250,7 +252,7 @@ public class ProjectQueryService implements
 
         // 프로젝트 조회수 증가
         // 조회수 기록 (중복 방지 TTL)
-        viewCountRedisRepository.increaseViewCount(projectId, viewerId, "PROJECT");
+        projectViewCountRedisPort.increaseViewCount(projectId, viewerId, "PROJECT");
 
         return new ProjectDetailResponse(
                 project.getId(),
