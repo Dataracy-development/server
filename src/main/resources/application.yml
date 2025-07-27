@@ -72,6 +72,10 @@ spring:
         topic: file-delete-topic
       extract-metadata:
         topic: data-uploaded
+      comment-upload:
+        topic: comment-uploaded-topic
+      comment-delete:
+        topic: comment-deleted-topic
 
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

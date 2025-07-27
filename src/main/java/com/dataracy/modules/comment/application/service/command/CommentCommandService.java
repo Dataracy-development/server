@@ -5,6 +5,7 @@ import com.dataracy.modules.comment.application.dto.request.CommentUploadRequest
 import com.dataracy.modules.comment.application.port.in.CommentDeleteUseCase;
 import com.dataracy.modules.comment.application.port.in.CommentModifyUseCase;
 import com.dataracy.modules.comment.application.port.in.CommentUploadUseCase;
+import com.dataracy.modules.comment.application.port.out.CommentKafkaProducerPort;
 import com.dataracy.modules.comment.application.port.out.CommentRepositoryPort;
 import com.dataracy.modules.comment.application.port.query.CommentQueryRepositoryPort;
 import com.dataracy.modules.comment.domain.exception.CommentException;
@@ -23,6 +24,7 @@ public class CommentCommandService implements
 {
     private final CommentQueryRepositoryPort commentQueryRepositoryPort;
     private final CommentRepositoryPort commentRepositoryPort;
+    private final CommentKafkaProducerPort commentKafkaProducerPort;
 
     /**
      * 프로젝트에 새로운 댓글을 등록합니다.
@@ -58,7 +60,8 @@ public class CommentCommandService implements
                 null
         );
 
-        commentRepositoryPort.upload(comment);
+        Comment savedComment = commentRepositoryPort.upload(comment);
+        commentKafkaProducerPort.sendCommentUploadedEvent(savedComment.getId());
     }
 
     /**
@@ -84,5 +87,6 @@ public class CommentCommandService implements
     @Transactional
     public void delete(Long projectId, Long commentId) {
         commentRepositoryPort.delete(projectId, commentId);
+        commentKafkaProducerPort.sendCommentDeletedEvent(commentId);
     }
 }
