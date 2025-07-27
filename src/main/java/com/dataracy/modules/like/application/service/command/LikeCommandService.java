@@ -4,7 +4,6 @@ import com.dataracy.modules.comment.application.port.in.ValidateCommentUseCase;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;
 import com.dataracy.modules.like.application.port.in.TargetLikeUseCase;
-import com.dataracy.modules.like.application.port.in.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.application.port.out.LikeRepositoryPort;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.like.domain.exception.LikeException;

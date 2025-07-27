@@ -2,15 +2,13 @@ package com.dataracy.modules.like.domain.enums;
 
 import com.dataracy.modules.like.domain.exception.LikeException;
 import com.dataracy.modules.like.domain.status.LikeErrorStatus;
-import com.dataracy.modules.project.domain.exception.ProjectException;
-import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
 /**
- * 프로젝트 정렬 enum
+ * 좋아요 대상 enum
  */
 @Getter
 @RequiredArgsConstructor
