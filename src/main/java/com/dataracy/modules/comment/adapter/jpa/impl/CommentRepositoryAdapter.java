@@ -24,9 +24,9 @@ public class CommentRepositoryAdapter implements CommentRepositoryPort {
   * @param comment 저장할 댓글 도메인 객체
   */
  @Override
- public void upload(Comment comment) {
+ public Comment upload(Comment comment) {
   CommentEntity commentEntity = CommentEntityMapper.toEntity(comment);
-  commentJpaRepository.save(commentEntity);
+  return CommentEntityMapper.toDomain(commentJpaRepository.save(commentEntity));
  }
 
  /**
