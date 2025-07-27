@@ -28,13 +28,19 @@ void modify(Long projectId, Long commentId, CommentModifyRequest requestDto);
  */
 void delete(Long projectId, Long commentId);
     /**
- * 주어진 댓글 ID에 해당하는 사용자의 ID를 조회합니다.
+ * 주어진 댓글 ID로 댓글 작성자의 사용자 ID를 조회합니다.
  *
  * @param commentId 조회할 댓글의 ID
- * @return 댓글 작성자의 사용자 ID를 포함하는 Optional 객체. 해당 댓글이 없으면 빈 Optional을 반환합니다.
+ * @return 댓글 작성자의 사용자 ID가 존재하면 해당 값을 포함한 Optional, 존재하지 않으면 빈 Optional
  */
 Optional<Long> findUserIdByCommentId(Long commentId);
 
+/**
+ * 지정된 댓글 ID에 해당하는 댓글이 존재하는지 여부를 반환합니다.
+ *
+ * @param commentId 존재 여부를 확인할 댓글의 ID
+ * @return 댓글이 존재하면 true, 그렇지 않으면 false
+ */
 boolean existsByCommentId(Long commentId);
 
 }

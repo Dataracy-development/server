@@ -92,9 +92,12 @@ public class CommentController implements CommentApi {
     /**
      * 프로젝트의 댓글 목록을 페이지네이션하여 조회합니다.
      *
-     * @param projectId 댓글을 조회할 프로젝트의 ID
-     * @param pageable 페이지네이션 정보
-     * @return 조회된 댓글 목록과 성공 상태가 포함된 HTTP 200 응답
+     * 인증 토큰이 요청에 포함된 경우 사용자 정보를 반영하여 댓글 목록을 조회합니다.
+     *
+     * @param request HTTP 요청 객체로부터 사용자 인증 정보를 추출합니다.
+     * @param projectId 댓글을 조회할 프로젝트의 ID입니다.
+     * @param pageable 페이지네이션 정보입니다.
+     * @return 조회된 댓글 목록과 성공 상태가 포함된 HTTP 200 응답을 반환합니다.
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<FindCommentWebResponse>>> findComments(HttpServletRequest request, Long projectId, Pageable pageable) {
@@ -110,10 +113,13 @@ public class CommentController implements CommentApi {
     /**
      * 프로젝트 내 특정 댓글에 대한 답글 목록을 페이징하여 조회합니다.
      *
-     * @param projectId  프로젝트의 고유 식별자
-     * @param commentId  답글을 조회할 대상 댓글의 고유 식별자
-     * @param pageable   페이징 및 정렬 정보를 포함하는 객체
-     * @return           답글 목록과 성공 상태가 포함된 HTTP 200 응답
+     * 인증된 사용자의 정보를 활용하여, 지정된 프로젝트와 댓글에 대한 답글 목록을 페이지 단위로 반환합니다.
+     *
+     * @param request   HTTP 요청 객체로, JWT 토큰에서 사용자 정보를 추출하는 데 사용됩니다.
+     * @param projectId 답글을 조회할 프로젝트의 고유 식별자입니다.
+     * @param commentId 답글을 조회할 대상 댓글의 고유 식별자입니다.
+     * @param pageable  페이징 및 정렬 정보를 포함하는 객체입니다.
+     * @return          답글 목록과 성공 상태가 포함된 HTTP 200 응답을 반환합니다.
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(HttpServletRequest request, Long projectId, Long commentId, Pageable pageable) {
@@ -126,6 +132,14 @@ public class CommentController implements CommentApi {
                 .body(SuccessResponse.of(CommentSuccessStatus.GET_REPLY_COMMENTS, webResponse));
     }
 
+    /**
+     * HTTP 요청에서 액세스 토큰을 추출하여 해당 사용자의 ID를 반환합니다.
+     *
+     * 액세스 토큰이 없거나 유효하지 않은 경우, 또는 추출 과정에서 예외가 발생하면 {@code null}을 반환합니다.
+     *
+     * @param request 사용자 인증 정보를 포함할 수 있는 HTTP 요청
+     * @return 추출된 사용자 ID 또는 실패 시 {@code null}
+     */
     private Long extractUserIdFromRequest(HttpServletRequest request) {
         try {
             return ExtractHeaderUtil.extractAccessToken(request)

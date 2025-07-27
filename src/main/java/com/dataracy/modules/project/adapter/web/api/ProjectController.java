@@ -140,9 +140,10 @@ public class ProjectController implements ProjectApi {
     }
 
     /**
-     * 주어진 프로젝트 ID에 해당하는 프로젝트의 상세 정보를 조회하여 반환합니다.
+     * HTTP 요청에서 JWT 토큰을 추출하여, 인증된 사용자 정보와 함께 주어진 프로젝트 ID의 상세 정보를 반환합니다.
      *
-     * @param projectId 상세 정보를 조회할 프로젝트의 ID
+     * @param request 프로젝트 상세 정보 조회 시 사용할 HTTP 요청 객체
+     * @param projectId 조회할 프로젝트의 ID
      * @return 프로젝트 상세 정보를 포함한 성공 응답
      */
     @Override
