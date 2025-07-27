@@ -63,6 +63,7 @@ public class LikeCommandService implements
             try {
                 likeRepositoryPort.cancleLike(requestDto.targetId(), targetType);
             } catch (Exception e) {
+                log.error("Database error while saving like: {}", e.getMessage());
                 switch (targetType) {
                     case PROJECT -> throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_PROJECT);
                     case COMMENT -> throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_COMMENT);
