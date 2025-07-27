@@ -95,6 +95,12 @@ spring:
       extract-metadata:
         topic: data-uploaded
         group-id: data-upload-metadata-consumer-group
+      comment-upload:
+        topic: comment-uploaded-topic
+        group-id: project-comment-upload-consumer-group
+      comment-delete:
+        topic: comment-deleted-topic
+        group-id: project-comment-delete-consumer-group
 
 logging:
   pattern:

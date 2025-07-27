@@ -7,12 +7,10 @@ import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
 import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
+import com.dataracy.modules.project.application.port.elasticsearch.ProjectCommentUpdatePort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectDeletePort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectIndexingPort;
-import com.dataracy.modules.project.application.port.in.ProjectDeleteUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectModifyUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectRestoreUseCase;
-import com.dataracy.modules.project.application.port.in.ProjectUploadUseCase;
+import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
@@ -39,12 +37,15 @@ public class ProjectCommandService implements
         ProjectUploadUseCase,
         ProjectModifyUseCase,
         ProjectDeleteUseCase,
-        ProjectRestoreUseCase
+        ProjectRestoreUseCase,
+        IncreaseCommentCountUseCase,
+        DecreaseCommentCountUseCase
 {
     private final ProjectRepositoryPort projectRepositoryPort;
     private final ProjectIndexingPort projectIndexingPort;
     private final ProjectDeletePort projectDeletePort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
+    private final ProjectCommentUpdatePort projectCommentUpdatePort;
 
     private final FindUsernameUseCase findUsernameUseCase;
     private final FileUploadUseCase fileUploadUseCase;
@@ -239,5 +240,17 @@ public class ProjectCommandService implements
     public void markAsRestore(Long projectId) {
         projectRepositoryPort.restore(projectId);
         projectDeletePort.markAsRestore(projectId);
+    }
+
+    @Override
+    public void increase(Long projectId) {
+        projectRepositoryPort.increase(projectId);
+        projectCommentUpdatePort.increaseCommentCount(projectId);
+    }
+
+    @Override
+    public void decrease(Long projectId) {
+        projectRepositoryPort.decrease(projectId);
+        projectCommentUpdatePort.decreaseCommentCount(projectId);
     }
 }

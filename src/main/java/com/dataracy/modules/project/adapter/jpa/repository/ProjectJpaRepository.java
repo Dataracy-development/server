@@ -21,4 +21,20 @@ public interface ProjectJpaRepository extends JpaRepository<ProjectEntity, Long>
     @Modifying
     @Query("UPDATE ProjectEntity p SET p.viewCount = p.viewCount + :count WHERE p.id = :projectId")
     void increaseViewCount(@Param("projectId") Long projectId, @Param("count") Long count);
+
+    @Modifying
+    @Query("UPDATE ProjectEntity p SET p.commentCount = p.commentCount + 1 WHERE p.id = :projectId")
+    void increaseCommentCount(@Param("projectId") Long projectId);
+
+    @Modifying
+    @Query("""
+    UPDATE ProjectEntity p 
+    SET p.commentCount = 
+        CASE 
+            WHEN p.commentCount > 0 THEN p.commentCount - 1 
+            ELSE 0 
+        END
+    WHERE p.id = :projectId
+""")
+    void decreaseCommentCount(@Param("projectId") Long projectId);
 }
