@@ -24,19 +24,19 @@ public class LikeController implements LikeApi {
         TargetLikeRequest requestDto = likeWebMapper.toApplicationDto(webRequest);
         TargetType targetType = targetLikeUseCase.targetLike(userId, requestDto);
 
-        if (!requestDto.isLiked()) {
-            return switch (targetType) {
-                case PROJECT -> ResponseEntity.status(HttpStatus.OK)
-                        .body(SuccessResponse.of(LikeSuccessStatus.LIKE_PROJECT));
-                case COMMENT -> ResponseEntity.status(HttpStatus.OK)
-                        .body(SuccessResponse.of(LikeSuccessStatus.LIKE_COMMENT));
-            };
-        } else {
+        if (requestDto.previouslyLiked()) {
             return switch (targetType) {
                 case PROJECT -> ResponseEntity.status(HttpStatus.OK)
                         .body(SuccessResponse.of(LikeSuccessStatus.UNLIKE_PROJECT));
                 case COMMENT -> ResponseEntity.status(HttpStatus.OK)
                         .body(SuccessResponse.of(LikeSuccessStatus.UNLIKE_COMMENT));
+            };
+        } else {
+            return switch (targetType) {
+                case PROJECT -> ResponseEntity.status(HttpStatus.OK)
+                        .body(SuccessResponse.of(LikeSuccessStatus.LIKE_PROJECT));
+                case COMMENT -> ResponseEntity.status(HttpStatus.OK)
+                        .body(SuccessResponse.of(LikeSuccessStatus.LIKE_COMMENT));
             };
         }
     }

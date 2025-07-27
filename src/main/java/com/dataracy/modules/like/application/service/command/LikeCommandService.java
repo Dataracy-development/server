@@ -46,7 +46,17 @@ public class LikeCommandService implements
             validateCommentUseCase.validateComment(requestDto.targetId());
         }
 
-        if (!requestDto.isLiked()){
+        if (requestDto.previouslyLiked()){
+            try {
+                likeRepositoryPort.cancelLike(userId, requestDto.targetId(), targetType);
+            } catch (Exception e) {
+                log.error("Database error while saving like: {}", e.getMessage());
+                switch (targetType) {
+                    case PROJECT -> throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_PROJECT);
+                    case COMMENT -> throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_COMMENT);
+                };
+            }
+        } else {
             Like like = Like.of(
                     null,
                     requestDto.targetId(),
@@ -59,16 +69,6 @@ public class LikeCommandService implements
                 switch (targetType) {
                     case PROJECT -> throw new LikeException(LikeErrorStatus.FAIL_LIKE_PROJECT);
                     case COMMENT -> throw new LikeException(LikeErrorStatus.FAIL_LIKE_COMMENT);
-                };
-            }
-        } else {
-            try {
-                likeRepositoryPort.cancelLike(userId, requestDto.targetId(), targetType);
-            } catch (Exception e) {
-                log.error("Database error while saving like: {}", e.getMessage());
-                switch (targetType) {
-                    case PROJECT -> throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_PROJECT);
-                    case COMMENT -> throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_COMMENT);
                 };
             }
         }

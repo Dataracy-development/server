@@ -11,7 +11,7 @@ public class LikeWebMapper {
         return new TargetLikeRequest(
                 webRequest.targetId(),
                 webRequest.targetType(),
-                webRequest.isLiked()
+                webRequest.previouslyLiked()
         );
     }
 }
