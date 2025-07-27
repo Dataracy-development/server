@@ -1,6 +1,5 @@
 package com.dataracy.modules.project.application.service.query;
 
-import com.dataracy.modules.auth.adapter.jwt.JwtValidatorAdapter;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.like.application.port.in.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
@@ -72,7 +71,6 @@ public class ProjectQueryService implements
     private final GetUserInfoUseCase getUserInfoUseCase;
     private final ConnectedProjectAssociatedDtoMapper connectedProjectAssociatedDtoMapper;
     private final ValidateTargetLikeUseCase validateTargetLikeUseCase;
-    private final JwtValidateUseCase jwtValidateUseCase;
 
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
