@@ -66,4 +66,6 @@ void delete(Long projectId);
  * @param projectId 복원할 프로젝트의 ID
  */
 void restore(Long projectId);
+
+    void increaseViewCount(Long projectId, Long count);
 }
