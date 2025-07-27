@@ -27,7 +27,7 @@ public class ProjectCommentUpdateAdapter implements ProjectCommentUpdatePort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("ctx._source.viewCount += 1")
+                                            .source("ctx._source.commentCount += 1")
                                     )
                             ),
                     ProjectSearchDocument.class
@@ -48,7 +48,7 @@ public class ProjectCommentUpdateAdapter implements ProjectCommentUpdatePort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("ctx._source.viewCount -= 1")
+                                            .source("ctx._source.commentCount -= 1")
                                     )
                             ),
                     ProjectSearchDocument.class
