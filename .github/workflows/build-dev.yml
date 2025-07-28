@@ -35,7 +35,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image with 'latest' tag
-        run: docker build -t $IMAGE_NAME:$IMAGE_TAG .
+        run: docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" .
 
       - name: Push Docker image to Docker Hub
-        run: docker push $IMAGE_NAME:$IMAGE_TAG
+        run: docker push "${IMAGE_NAME}:${IMAGE_TAG}"
