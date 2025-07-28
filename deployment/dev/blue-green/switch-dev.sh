@@ -22,8 +22,7 @@ NEXT=$([[ "$CURRENT" == "blue" ]] && echo "green" || echo "blue")
 # 💡 최초 실행 시 green 컨테이너는 띄우지 않고 blue만 실행
 if [ "$CURRENT" == "blue" ] && ! docker ps --format '{{.Names}}' | grep -q 'backend-blue-dev'; then
   echo "[INFO] 최초 실행: backend-blue-dev 컨테이너만 실행"
-  docker pull juuuunny/backend:latest
-  docker-compose -f ../docker/docker-compose-blue-dev.yml up -d --force-recreate --pull always
+  docker-compose -f ../docker/docker-compose-blue-dev.yml up -d --build --force-recreate
 
   echo "[INFO] nginx-proxy-dev 실행"
   docker-compose -f ../docker/docker-compose-nginx-dev.yml up -d nginx-proxy-dev
@@ -39,9 +38,8 @@ NEXT_COMPOSE="../docker/docker-compose-${NEXT}-dev.yml"
 echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
 echo "[INFO] 새로 배포할 색상: $NEXT"
 
-docker pull juuuunny/backend:latest
 docker rm -f "$BACKEND_NAME" || true
-docker-compose -f "$NEXT_COMPOSE" up -d --force-recreate --pull always
+docker-compose -f "$NEXT_COMPOSE" up -d --build --force-recreate
 
 echo "[INFO] Health Check 시작: $BACKEND_NAME ..."
 for i in {1..20}; do
