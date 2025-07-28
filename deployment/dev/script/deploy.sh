@@ -10,7 +10,6 @@ cd "$(dirname "$0")/../blue-green" || { echo "[ERROR] 작업 디렉터리 이동
 chmod +x ./switch-dev.sh
 ./switch-dev.sh
 
-# 결과 출력
 echo "========================================"
 echo "[DEPLOY] 배포 완료! 현재 서비스 중인 인스턴스: $(cat /home/ubuntu/color-config/current_color_dev)"
 echo "========================================"
