@@ -5,4 +5,4 @@ scrape_configs:
   - job_name: 'backend-dev'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['backend-{{COLOR}}-dev:8080']
+      - targets: ['${BACKEND_SERVICE_HOST}:8080']

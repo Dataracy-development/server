@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
@@ -9,7 +11,7 @@ services:
       - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms256m -Xmx256m
     ports:
-      - "9200:9200"  # 표준 포트
+      - "9200:9200"
     networks:
       - dataracy-network-dev
 
@@ -19,7 +21,7 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch-dev:9200
     ports:
-      - "5601:5601"  # 표준 포트
+      - "5601:5601"
     networks:
       - dataracy-network-dev
     depends_on:

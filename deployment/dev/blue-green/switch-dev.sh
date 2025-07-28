@@ -6,7 +6,6 @@ echo "========================================"
 echo "[DEV DEPLOY] Blue/Green 무중단 배포 시작"
 echo "========================================"
 
-# 상태 파일 경로
 DEPLOY_STATE_DIR="/home/ubuntu/color-config"
 CURRENT_COLOR_FILE="$DEPLOY_STATE_DIR/current_color_dev"
 
@@ -16,45 +15,44 @@ if [ ! -f "$CURRENT_COLOR_FILE" ]; then
 fi
 
 CURRENT=$(cat "$CURRENT_COLOR_FILE")
-if [ "$CURRENT" == "blue" ]; then
-  NEXT="green"
-else
-  NEXT="blue"
-fi
-
-NEXT_COMPOSE="../docker/docker-compose-${NEXT}-dev.yml"
+NEXT=$([[ "$CURRENT" == "blue" ]] && echo "green" || echo "blue")
 BACKEND_NAME="backend-${NEXT}-dev"
+NEXT_COMPOSE="../docker/docker-compose-${NEXT}-dev.yml"
 
 echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
-echo "[INFO] 전환할 컨테이너: $NEXT"
+echo "[INFO] 새로 배포할 색상: $NEXT"
+
+# Docker Hub에서 latest pull 후 태그 변경
+echo "[INFO] Docker 이미지 pull 및 retag: latest → $NEXT"
+docker pull juuuunny/backend:latest
+docker tag juuuunny/backend:latest juuuunny/backend:$NEXT
 
 # 새 컨테이너 실행
-docker compose -f "$NEXT_COMPOSE" up -d --build
+docker-compose -f "$NEXT_COMPOSE" up -d
 
 # Health Check
-echo "[INFO] Health Check 진행 중: $BACKEND_NAME ..."
+echo "[INFO] Health Check 시작: $BACKEND_NAME ..."
 for i in {1..20}; do
   STATUS=$(docker inspect --format='{{json .State.Health.Status}}' "$BACKEND_NAME" 2>/dev/null || echo "null")
   if [ "$STATUS" == "\"healthy\"" ]; then
     echo "[SUCCESS] $BACKEND_NAME 컨테이너가 정상입니다."
     break
   else
-    echo "  [$i/20] 아직 준비되지 않음... (상태: $STATUS)"
+    echo "  [$i/20] 대기 중... (상태: $STATUS)"
     sleep 5
   fi
 done
 
 # 실패 시 롤백
 if [ "$STATUS" != "\"healthy\"" ]; then
-  echo "[ERROR] $BACKEND_NAME 실행 실패 → 롤백"
+  echo "[ERROR] $BACKEND_NAME 실행 실패 → 롤백 시작"
   docker rm -f "$BACKEND_NAME" || true
+  echo "[INFO] 롤백 완료: 기존 컨테이너 유지 ($CURRENT)"
   exit 1
 fi
 
-# NGINX upstream 파일 업데이트
+# NGINX 업스트림 교체
 NGINX_CONF_PATH="../nginx/upstream-blue-green-dev.conf"
-echo "[INFO] Nginx upstream 설정 갱신 → $BACKEND_NAME"
-
 cat > "$NGINX_CONF_PATH" <<EOF
 upstream backend-dev {
   server $BACKEND_NAME:8080;
@@ -78,51 +76,35 @@ server {
 }
 EOF
 
-# nginx-proxy-dev 재시작
-echo "[INFO] nginx-proxy-dev 재시작 중..."
-if docker ps -a --format '{{.Names}}' | grep -q '^nginx-proxy-dev$'; then
-  docker restart nginx-proxy-dev || {
-    echo "[ERROR] nginx-proxy-dev 재시작 실패"
-    exit 1
-  }
-else
-  docker compose -f "$NEXT_COMPOSE" up -d nginx || {
-    echo "[ERROR] nginx-proxy-dev 실행 실패"
-    exit 1
-  }
-fi
+echo "[INFO] NGINX 재시작 중..."
+docker restart nginx-proxy-dev || {
+  echo "[ERROR] nginx-proxy-dev 재시작 실패"
+  exit 1
+}
 
-# Prometheus 설정 갱신
+# Prometheus 설정 교체
 PROM_TEMPLATE_PATH="../../../infrastructure/prometheus/prometheus-dev.template.yml"
 PROM_CONFIG_PATH="../../../infrastructure/prometheus/prometheus-dev.yml"
 
-echo "[INFO] Prometheus 설정 갱신 → 대상: $BACKEND_NAME"
+echo "[INFO] Prometheus 설정 갱신: $BACKEND_NAME"
 export BACKEND_SERVICE_HOST="$BACKEND_NAME"
 envsubst < "$PROM_TEMPLATE_PATH" > "$PROM_CONFIG_PATH"
 
-echo "[INFO] Prometheus 컨테이너 재시작..."
-if docker ps -a --format '{{.Names}}' | grep -q '^prometheus-dev$'; then
-  docker restart prometheus-dev || {
-    echo "[ERROR] Prometheus-dev 재시작 실패"
-    exit 1
-  }
-else
-  docker compose -f ../../../infrastructure/prometheus/docker-compose-dev.yml up -d prometheus || {
-    echo "[ERROR] Prometheus-dev 실행 실패"
-    exit 1
-  }
-fi
+echo "[INFO] Prometheus 재시작 중..."
+docker restart prometheus-dev || {
+  echo "[ERROR] Prometheus 재시작 실패"
+  exit 1
+}
 
 # 이전 컨테이너 종료
-echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}-dev"
-if docker ps --format '{{.Names}}' | grep -q "backend-${CURRENT}-dev"; then
-  docker stop "backend-${CURRENT}-dev" || true
-fi
-docker rm -f "backend-${CURRENT}-dev" || echo "[WARN] 제거 실패 또는 이미 없음"
+OLD_BACKEND="backend-${CURRENT}-dev"
+echo "[INFO] 이전 컨테이너 종료: $OLD_BACKEND"
+docker stop "$OLD_BACKEND" || true
+docker rm -f "$OLD_BACKEND" || echo "[WARN] 제거 실패 또는 이미 없음"
 
 # 상태 갱신
 echo "$NEXT" > "$CURRENT_COLOR_FILE"
 
 echo "========================================"
-echo "[DONE] 개발 서버 무중단 배포 완료: [$NEXT]"
+echo "[DONE] 무중단 배포 완료: [$NEXT]"
 echo "========================================"
