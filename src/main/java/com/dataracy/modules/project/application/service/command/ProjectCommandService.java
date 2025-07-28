@@ -215,9 +215,9 @@ public class ProjectCommandService implements
     }
 
     /**
-     * 프로젝트를 삭제 상태로 표시합니다.
+     * 프로젝트를 삭제 상태로 변경합니다.
      *
-     * 데이터베이스에서 해당 프로젝트를 삭제 처리하고, Elasticsearch 인덱스에서도 삭제 상태로 반영합니다.
+     * 데이터베이스에서 프로젝트를 삭제 처리하고, Elasticsearch 인덱스에서도 삭제 상태로 동기화합니다.
      *
      * @param projectId 삭제할 프로젝트의 ID
      */
@@ -229,9 +229,9 @@ public class ProjectCommandService implements
     }
 
     /**
-     * 삭제된 프로젝트를 복원 상태로 변경합니다.
+     * 프로젝트를 복원 상태로 변경합니다.
      *
-     * 프로젝트를 데이터베이스에서 복원하고, Elasticsearch 인덱스에서도 복원 상태로 표시합니다.
+     * 데이터베이스에서 삭제된 프로젝트를 복원하고, Elasticsearch 인덱스에서도 복원 상태로 반영합니다.
      *
      * @param projectId 복원할 프로젝트의 ID
      */
@@ -242,6 +242,13 @@ public class ProjectCommandService implements
         projectDeletePort.markAsRestore(projectId);
     }
 
+    /**
+     * 프로젝트의 댓글 수를 1 증가시킵니다.
+     *
+     * 데이터베이스와 Elasticsearch 인덱스의 댓글 수를 모두 업데이트합니다.
+     *
+     * @param projectId 댓글 수를 증가시킬 프로젝트의 ID
+     */
     @Override
     @Transactional
     public void increase(Long projectId) {
@@ -249,6 +256,11 @@ public class ProjectCommandService implements
         projectCommentUpdatePort.increaseCommentCount(projectId);
     }
 
+    /**
+     * 프로젝트의 댓글 수를 1 감소시키고, 변경된 댓글 수를 Elasticsearch 인덱스에 반영합니다.
+     *
+     * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
+     */
     @Override
     @Transactional
     public void decrease(Long projectId) {

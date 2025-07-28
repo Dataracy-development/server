@@ -163,7 +163,7 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     }
 
     /**
-     * 논리적으로 삭제된 프로젝트를 복구합니다.
+     * 지정한 ID의 논리적으로 삭제된 프로젝트를 복구합니다.
      *
      * @param projectId 복구할 프로젝트의 ID
      * @throws ProjectException 해당 ID의 프로젝트가 존재하지 않을 경우 발생합니다.
@@ -176,16 +176,32 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
         projectJpaRepository.save(project);
     }
 
+    /**
+     * 지정된 프로젝트의 조회수를 주어진 수만큼 증가시킵니다.
+     *
+     * @param projectId 조회수를 증가시킬 프로젝트의 ID
+     * @param count 증가시킬 조회수
+     */
     @Override
     public void increaseViewCount(Long projectId, Long count) {
         projectJpaRepository.increaseViewCount(projectId, count);
     }
 
+    /**
+     * 프로젝트의 댓글 수를 1 증가시킵니다.
+     *
+     * @param projectId 댓글 수를 증가시킬 프로젝트의 ID
+     */
     @Override
     public void increase(Long projectId) {
         projectJpaRepository.increaseCommentCount(projectId);
     }
 
+    /**
+     * 지정된 프로젝트의 댓글 수를 1 감소시킵니다.
+     *
+     * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
+     */
     @Override
     public void decrease(Long projectId) {
         projectJpaRepository.decreaseCommentCount(projectId);
