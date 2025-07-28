@@ -10,31 +10,44 @@ DEPLOY_STATE_DIR="/home/ubuntu/color-config"
 CURRENT_COLOR_FILE="$DEPLOY_STATE_DIR/current_color_dev"
 
 mkdir -p "$DEPLOY_STATE_DIR"
+
+# 최초 실행 시 무조건 blue로 고정
 if [ ! -f "$CURRENT_COLOR_FILE" ]; then
   echo "blue" > "$CURRENT_COLOR_FILE"
 fi
 
 CURRENT=$(cat "$CURRENT_COLOR_FILE")
 NEXT=$([[ "$CURRENT" == "blue" ]] && echo "green" || echo "blue")
+
+# 💡 최초 실행 시 green 컨테이너는 띄우지 않고 blue만 실행
+if [ "$CURRENT" == "blue" ] && ! docker ps --format '{{.Names}}' | grep -q 'backend-blue-dev'; then
+  echo "[INFO] 최초 실행: backend-blue-dev 컨테이너만 실행"
+  docker pull juuuunny/backend:latest
+  docker-compose -f ../docker/docker-compose-blue-dev.yml up -d --force-recreate --pull always
+
+  echo "[INFO] nginx-proxy-dev 실행"
+  docker-compose -f ../docker/docker-compose-dev.yml up -d nginx-proxy-dev
+
+  echo "[INFO] prometheus-dev 및 grafana-dev 실행"
+  docker-compose -f ../prometheus/docker-compose-dev.yml up -d prometheus grafana
+
+  echo "[INFO] 초기 배포 완료 (blue)"
+  exit 0
+fi
+
+# 이후부터는 기존 switch 로직 수행
 BACKEND_NAME="backend-${NEXT}-dev"
 NEXT_COMPOSE="../docker/docker-compose-${NEXT}-dev.yml"
 
 echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
 echo "[INFO] 새로 배포할 색상: $NEXT"
 
-# Docker 이미지 강제 pull
-echo "[INFO] Docker 이미지 최신 버전 pull: juuuunny/backend:latest"
 docker pull juuuunny/backend:latest
 
-# 기존 컨테이너 제거 (이미 떠 있으면 recreate가 안 될 수 있음)
-echo "[INFO] 기존 동일 이름의 컨테이너 제거 시도: $BACKEND_NAME"
 docker rm -f "$BACKEND_NAME" || true
 
-# 새 컨테이너 실행 (항상 최신 이미지로 덮어씌우기)
-echo "[INFO] 새 컨테이너 실행 중..."
 docker-compose -f "$NEXT_COMPOSE" up -d --force-recreate --pull always
 
-# Health Check
 echo "[INFO] Health Check 시작: $BACKEND_NAME ..."
 for i in {1..20}; do
   STATUS=$(docker inspect --format='{{json .State.Health.Status}}' "$BACKEND_NAME" 2>/dev/null || echo "null")
@@ -47,7 +60,6 @@ for i in {1..20}; do
   fi
 done
 
-# 실패 시 롤백
 if [ "$STATUS" != "\"healthy\"" ]; then
   echo "[ERROR] $BACKEND_NAME 실행 실패 → 롤백 시작"
   docker rm -f "$BACKEND_NAME" || true
@@ -55,7 +67,7 @@ if [ "$STATUS" != "\"healthy\"" ]; then
   exit 1
 fi
 
-# NGINX 업스트림 교체
+# NGINX 설정 변경
 NGINX_CONF_PATH="../nginx/upstream-blue-green-dev.conf"
 cat > "$NGINX_CONF_PATH" <<EOF
 upstream backend-dev {
@@ -80,13 +92,11 @@ server {
 }
 EOF
 
-echo "[INFO] NGINX 재시작 중..."
 docker restart nginx-proxy-dev || {
   echo "[ERROR] nginx-proxy-dev 재시작 실패"
   exit 1
 }
 
-# Prometheus 설정 교체
 PROM_TEMPLATE_PATH="../../../infrastructure/prometheus/prometheus-dev.template.yml"
 PROM_CONFIG_PATH="../../../infrastructure/prometheus/prometheus-dev.yml"
 
@@ -94,19 +104,15 @@ echo "[INFO] Prometheus 설정 갱신: $BACKEND_NAME"
 export BACKEND_SERVICE_HOST="$BACKEND_NAME"
 envsubst < "$PROM_TEMPLATE_PATH" > "$PROM_CONFIG_PATH"
 
-echo "[INFO] Prometheus 재시작 중..."
 docker restart prometheus-dev || {
   echo "[ERROR] Prometheus 재시작 실패"
   exit 1
 }
 
-# 이전 컨테이너 종료
 OLD_BACKEND="backend-${CURRENT}-dev"
-echo "[INFO] 이전 컨테이너 종료: $OLD_BACKEND"
 docker stop "$OLD_BACKEND" || true
 docker rm -f "$OLD_BACKEND" || echo "[WARN] 제거 실패 또는 이미 없음"
 
-# 상태 갱신
 echo "$NEXT" > "$CURRENT_COLOR_FILE"
 
 echo "========================================"
