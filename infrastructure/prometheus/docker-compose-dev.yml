@@ -7,7 +7,7 @@ services:
     volumes:
       - ../prometheus/prometheus-dev.yml:/etc/prometheus/prometheus.yml
     networks:
-      - dataracy-network-ㅇev
+      - dataracy-network-dev
     deploy:
       resources:
         limits:

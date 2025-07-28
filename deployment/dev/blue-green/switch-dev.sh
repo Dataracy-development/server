@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 echo "========================================"
 echo "[DEV DEPLOY] Blue/Green 무중단 배포 시작"

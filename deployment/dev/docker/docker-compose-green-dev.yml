@@ -18,6 +18,7 @@ services:
       interval: 15s
       timeout: 5s
       retries: 10
+      start_period: 30s
 
   nginx-proxy-dev:
     image: nginx:latest
