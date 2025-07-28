@@ -3,7 +3,9 @@ package com.dataracy.modules.common.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,13 +25,15 @@ public final class CookieUtil {
      * @param maxAge 쿠키의 만료 시간(초 단위)
      */
     public static void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
-//        cookie.setDomain("dataracy.co.kr");
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setMaxAge(maxAge);
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .httpOnly(true)
+                .secure(false) // 운영시 true
+                .sameSite("Lax") // 또는 "None"
+                .path("/")
+                .maxAge(Duration.ofSeconds(maxAge))
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     /**
