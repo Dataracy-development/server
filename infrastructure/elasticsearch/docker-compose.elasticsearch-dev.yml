@@ -10,7 +10,7 @@ services:
     ports:
       - "9201:9200"
     env_file:
-      - /home/ubuntu/env-config/.env
+      - /home/ubuntu/env-config/.env.dev
     networks:
       - dataracy-network
 
