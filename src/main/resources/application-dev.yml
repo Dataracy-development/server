@@ -46,10 +46,21 @@ elasticsearch:
     protocol: http
     ssl: false
 
+logging:
+  level:
+    root: info
+    org.springframework.web: debug
+
 management:
   metrics:
     tags:
       application: dataracy-dev
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
   endpoint:
+    health:
+      show-details: always
     prometheus:
       enabled: true
