@@ -120,9 +120,15 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health,prometheus"
+        include: health,info
   endpoint:
     prometheus:
+      enabled: true
+      show-details: always
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
       enabled: true
   metrics:
     tags:
