@@ -9,8 +9,6 @@ services:
       - xpack.security.enabled=false
     ports:
       - "9201:9200"
-    env_file:
-      - /home/ubuntu/env-config/.env.dev
     networks:
       - dataracy-network
 
