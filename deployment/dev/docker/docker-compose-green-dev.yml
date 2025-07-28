@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   backend-green-dev:
-    image: juuuunny/backend:green-dev
+    image: juuuunny/backend:latest
     container_name: backend-green-dev
     restart: always
     env_file:
