@@ -26,10 +26,10 @@ if [ "$CURRENT" == "blue" ] && ! docker ps --format '{{.Names}}' | grep -q 'back
   docker-compose -f ../docker/docker-compose-blue-dev.yml up -d --force-recreate --pull always
 
   echo "[INFO] nginx-proxy-dev 실행"
-  docker-compose -f ../docker/docker-compose-dev.yml up -d nginx-proxy-dev
+  docker-compose -f ../docker/docker-compose-nginx-dev.yml up -d nginx-proxy-dev
 
   echo "[INFO] prometheus-dev 및 grafana-dev 실행"
-  docker-compose -f ../prometheus/docker-compose-dev.yml up -d prometheus grafana
+  docker-compose -f ../../../infrastructure/prometheus/docker-compose-dev.yml up -d prometheus grafana
 
   echo "[INFO] 초기 배포 완료 (blue)"
   exit 0

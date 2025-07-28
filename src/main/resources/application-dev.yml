@@ -58,7 +58,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus
+        include: health, info, prometheus
   endpoint:
     health:
       show-details: always
