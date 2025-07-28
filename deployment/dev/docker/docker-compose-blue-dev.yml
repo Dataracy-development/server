@@ -11,6 +11,8 @@ services:
       SPRING_PROFILES_ACTIVE: dev
     ports:
       - "8081:8080"
+    build:
+      context: ../../..
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 15s
