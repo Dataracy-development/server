@@ -32,25 +32,33 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Save PEM key
+      - name: Save PEM keys
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > ec2key.pem
-          chmod 600 ec2key.pem
+          echo "${{ secrets.EC2_DEV_SSH_KEY }}" > ec2-dev.pem
+          chmod 600 ec2-dev.pem
+          echo "${{ secrets.EC2_SSH_KEY }}" > ec2-prod.pem
+          chmod 600 ec2-prod.pem
 
-      - name: Set Docker tag based on branch
+      - name: Determine TAG_NAME by branch and server color
         run: |
           if [[ "${{ github.base_ref }}" == "main" ]]; then
-            COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/blue-green/current_color || echo blue")
+            COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2-prod.pem ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/prod/blue-green/current_color || echo blue")
             if [ "$COLOR" = "blue" ]; then
-              echo "TAG_NAME=green" >> $GITHUB_ENV
+              echo "TAG_NAME=prod-green" >> $GITHUB_ENV
             else
-              echo "TAG_NAME=blue" >> $GITHUB_ENV
+              echo "TAG_NAME=prod-blue" >> $GITHUB_ENV
             fi
-          else
-            echo "TAG_NAME=develop" >> $GITHUB_ENV
+          elif [[ "${{ github.base_ref }}" == "develop" ]]; then
+            COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2-dev.pem ubuntu@${{ secrets.EC2_DEV_HOST }} "cat ~/dataracy/deployment/dev/blue-green/current_color || echo blue")
+            if [ "$COLOR" = "blue" ]; then
+              echo "TAG_NAME=develop-green" >> $GITHUB_ENV
+            else
+              echo "TAG_NAME=develop-blue" >> $GITHUB_ENV
+            fi
           fi
 
       - name: Build and Push Docker Image
         run: |
+          echo "Building Docker image with tag: $TAG_NAME"
           docker build -t $IMAGE_NAME:$TAG_NAME -f Dockerfile .
           docker push $IMAGE_NAME:$TAG_NAME
