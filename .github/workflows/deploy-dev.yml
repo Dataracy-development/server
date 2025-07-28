@@ -6,7 +6,6 @@ on:
 
 env:
   IMAGE_NAME: juuuunny/backend
-  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   deploy:
@@ -37,9 +36,9 @@ jobs:
           key: ${{ secrets.EC2_DEV_SSH_KEY }}
           script: |
             export IMAGE_NAME=${{ env.IMAGE_NAME }}
-            export IMAGE_TAG=${{ env.IMAGE_TAG }}
             export DEPLOY_COLOR=${{ env.DEPLOY_COLOR }}
             export PREVIOUS_COLOR=${{ env.PREVIOUS_COLOR }}
+
             cd ~/dataracy/deployment/dev/script
             chmod +x deploy.sh
             ./deploy.sh
