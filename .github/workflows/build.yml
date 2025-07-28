@@ -42,7 +42,7 @@ jobs:
       - name: Determine TAG_NAME by branch and server color
         run: |
           if [[ "${{ github.base_ref }}" == "main" ]]; then
-            COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2-prod.pem ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/prod/blue-green/current_color || echo blue")
+            COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2-prod.pem "ubuntu@${{ secrets.EC2_HOST }}" "cat ~/dataracy/deployment/prod/blue-green/current_color || echo blue")
             if [ "$COLOR" = "blue" ]; then
               echo "TAG_NAME=prod-green" >> $GITHUB_ENV
             else
@@ -60,5 +60,5 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           echo "Building Docker image with tag: $TAG_NAME"
-          docker build -t $IMAGE_NAME:$TAG_NAME -f Dockerfile .
-          docker push $IMAGE_NAME:$TAG_NAME
+          docker build -t "${IMAGE_NAME}:${TAG_NAME}" -f Dockerfile .
+          docker push "${IMAGE_NAME}:${TAG_NAME}"
