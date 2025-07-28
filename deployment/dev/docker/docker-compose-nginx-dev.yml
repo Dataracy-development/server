@@ -1,0 +1,16 @@
+services:
+  nginx-proxy-dev:
+    image: nginx:latest
+    container_name: nginx-proxy-dev
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ../nginx/nginx-dev.conf:/etc/nginx/nginx-dev.conf:ro
+      - ../nginx/upstream-blue-green-dev.conf:/etc/nginx/conf.d/upstream-blue-green.conf:ro
+    networks:
+      - dataracy-network-dev
+
+networks:
+  dataracy-network-dev:
+    external: true
