@@ -1,4 +1,4 @@
-name: Deploy to EC2 (DEV - Blue/Green)
+name: Build, Push and Deploy to EC2 (DEV - Blue/Green)
 
 on:
   push:
@@ -9,15 +9,53 @@ env:
   GIT_REPO: https://github.com/Dataracy-development/server.git
 
 jobs:
-  deploy:
+  build-push-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout Source Code
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # 2. Set up JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Make Gradle Executable
+      - name: Make Gradle executable
+        run: chmod +x gradlew
+
+      # 4. Build Spring Boot App (Skip Tests)
+      - name: Build Spring Boot app
+        run: ./gradlew clean build -x test
+
+      # 5. Docker Login
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 6. Build and Tag Docker Image
+      - name: Build Docker image with SHA + latest
+        run: docker build -t "${{ env.IMAGE_NAME }}:${{ github.sha }}" -t "${{ env.IMAGE_NAME }}:latest" .
+
+      # 7. Push Docker Images
+      - name: Push Docker image
+        run: |
+          docker push "${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          docker push "${{ env.IMAGE_NAME }}:latest"
+
+      # 8. Save PEM key for EC2 SSH
       - name: Save PEM key
         run: |
           echo "${{ secrets.EC2_DEV_SSH_KEY }}" > ec2key.pem
           chmod 600 ec2key.pem
 
+      # 9. Determine Deployment Color
       - name: Determine DEPLOY_COLOR via EC2
         run: |
           COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_DEV_HOST }} "cat /home/ubuntu/color-config/current_color_dev || echo blue")
@@ -29,6 +67,7 @@ jobs:
             echo "PREVIOUS_COLOR=green" >> $GITHUB_ENV
           fi
 
+      # 10. SSH into EC2 and Deploy
       - name: SSH into EC2 and Deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -40,12 +79,17 @@ jobs:
             export DEPLOY_COLOR=${{ env.DEPLOY_COLOR }}
             export PREVIOUS_COLOR=${{ env.PREVIOUS_COLOR }}
 
-            echo "✅ 최신 develop 브랜치 코드로 덮어쓰기 중..."
-            cd ~/dataracy || git clone ${{ env.GIT_REPO }} dataracy && cd dataracy
+            echo "✅ GitHub develop 브랜치 강제 덮어쓰기 중..."
+            if [ ! -d ~/dataracy ]; then
+              git clone ${{ env.GIT_REPO }} ~/dataracy
+            fi
+            cd ~/dataracy
             git fetch origin
             git reset --hard origin/develop
+            git clean -fd
 
             echo "🚀 Blue/Green 배포 시작!"
             cd ~/dataracy/deployment/dev/script
             chmod +x deploy.sh
             ./deploy.sh
+      
