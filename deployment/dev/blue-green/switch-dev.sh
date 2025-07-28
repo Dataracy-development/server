@@ -39,7 +39,7 @@ done
 
 if [ "$STATUS" != "\"healthy\"" ]; then
   echo "[ERROR] $BACKEND_NAME 컨테이너가 정상 상태가 아닙니다. 배포 중단"
-  docker rm -f "$BACKEND_NAME" || true
+#  docker rm -f "$BACKEND_NAME" || true
   exit 1
 fi
 
