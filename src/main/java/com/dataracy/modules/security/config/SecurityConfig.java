@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
                                 "/swagger-resources/**", "/swagger-config/**",
                                 "/webjars/**", "/.well-known/**", "/favicon.ico",
+                                "/health", "/actuator/**",
                                 "/static/**", "/webhook").permitAll()
                         .requestMatchers("/api/v1/base", "/api/v1/onboarding").permitAll()
                         .requestMatchers("/login/**", "/login/oauth2/**", "/oauth2/**").permitAll()
