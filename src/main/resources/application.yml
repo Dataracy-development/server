@@ -9,6 +9,10 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+  task:
+    scheduling:
+      pool:
+        size: 2
 
   jwt:
     secret: ${JWT_SECRET}
@@ -68,6 +72,10 @@ spring:
         topic: file-delete-topic
       extract-metadata:
         topic: data-uploaded
+      comment-upload:
+        topic: comment-uploaded-topic
+      comment-delete:
+        topic: comment-deleted-topic
 
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -87,6 +95,12 @@ spring:
       extract-metadata:
         topic: data-uploaded
         group-id: data-upload-metadata-consumer-group
+      comment-upload:
+        topic: comment-uploaded-topic
+        group-id: project-comment-upload-consumer-group
+      comment-delete:
+        topic: comment-deleted-topic
+        group-id: project-comment-delete-consumer-group
 
 logging:
   pattern:
