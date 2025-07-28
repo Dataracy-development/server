@@ -30,7 +30,8 @@ public class CommentCommandService implements
      * 프로젝트에 새로운 댓글을 등록합니다.
      *
      * 부모 댓글 ID가 제공된 경우, 해당 부모 댓글의 존재 여부와 대댓글 제한(1단계까지만 허용)을 검증합니다.
-     * 부모 댓글이 존재하지 않거나, 이미 대댓글인 경우 예외가 발생합니다.
+     * 부모 댓글이 존재하지 않거나 이미 대댓글인 경우 예외가 발생합니다.
+     * 댓글 등록 후, 프로젝트 ID를 기반으로 댓글 등록 이벤트를 발행합니다.
      *
      * @param projectId 댓글이 등록될 프로젝트의 ID
      * @param userId 댓글을 작성하는 사용자의 ID
@@ -78,7 +79,7 @@ public class CommentCommandService implements
     }
 
     /**
-     * 지정된 프로젝트와 댓글 ID에 해당하는 댓글을 삭제합니다.
+     * 프로젝트 내에서 특정 댓글을 삭제하고, 삭제 이벤트를 발행합니다.
      *
      * @param projectId 댓글이 속한 프로젝트의 ID
      * @param commentId 삭제할 댓글의 ID

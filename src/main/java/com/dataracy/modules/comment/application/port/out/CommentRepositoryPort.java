@@ -7,9 +7,10 @@ import java.util.Optional;
 
 public interface CommentRepositoryPort {
     /**
- * 새로운 댓글을 저장합니다.
+ * 새로운 댓글을 저장하고 저장된 댓글 객체를 반환합니다.
  *
  * @param comment 저장할 댓글 객체
+ * @return 저장된 댓글 객체
  */
 Comment upload(Comment comment);
     /**

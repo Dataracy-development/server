@@ -18,6 +18,12 @@ public class ProjectViewUpdateAdapter implements ProjectViewUpdatePort {
     private final ElasticsearchClient client;
     private static final String INDEX = "project_index";
 
+    /**
+     * 지정된 프로젝트의 Elasticsearch 문서에서 viewCount 필드를 주어진 값만큼 증가시킵니다.
+     *
+     * @param projectId viewCount를 증가시킬 프로젝트의 ID
+     * @param increment 증가시킬 값
+     */
     public void increaseViewCount(Long projectId, Long increment) {
         try {
             log.info("Elasticsearch: viewCount 증분 업데이트 시작 - projectId={}, increment={}", projectId, increment);

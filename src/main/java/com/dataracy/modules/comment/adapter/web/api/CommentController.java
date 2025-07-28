@@ -93,12 +93,12 @@ public class CommentController implements CommentApi {
     /**
      * 프로젝트의 댓글 목록을 페이지네이션하여 조회합니다.
      *
-     * 인증 토큰이 요청에 포함된 경우 사용자 정보를 반영하여 댓글 목록을 조회합니다.
+     * 인증된 사용자가 요청한 경우 해당 사용자 정보를 반영하여 댓글 목록을 반환합니다.
      *
-     * @param request HTTP 요청 객체로부터 사용자 인증 정보를 추출합니다.
-     * @param projectId 댓글을 조회할 프로젝트의 ID입니다.
-     * @param pageable 페이지네이션 정보입니다.
-     * @return 조회된 댓글 목록과 성공 상태가 포함된 HTTP 200 응답을 반환합니다.
+     * @param request 인증된 사용자 정보를 추출할 HTTP 요청 객체
+     * @param projectId 댓글을 조회할 프로젝트의 ID
+     * @param pageable 페이지네이션 정보
+     * @return 조회된 댓글 목록과 성공 상태가 포함된 HTTP 200 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<FindCommentWebResponse>>> findComments(HttpServletRequest request, Long projectId, Pageable pageable) {
@@ -112,15 +112,15 @@ public class CommentController implements CommentApi {
     }
 
     /**
-     * 프로젝트 내 특정 댓글에 대한 답글 목록을 페이징하여 조회합니다.
+     * 프로젝트 내 특정 댓글에 대한 답글 목록을 페이지 단위로 조회합니다.
      *
-     * 인증된 사용자의 정보를 활용하여, 지정된 프로젝트와 댓글에 대한 답글 목록을 페이지 단위로 반환합니다.
+     * 인증된 사용자의 정보를 기반으로, 지정된 프로젝트와 댓글에 속한 답글들을 페이징하여 반환합니다.
      *
-     * @param request   HTTP 요청 객체로, JWT 토큰에서 사용자 정보를 추출하는 데 사용됩니다.
-     * @param projectId 답글을 조회할 프로젝트의 고유 식별자입니다.
-     * @param commentId 답글을 조회할 대상 댓글의 고유 식별자입니다.
-     * @param pageable  페이징 및 정렬 정보를 포함하는 객체입니다.
-     * @return          답글 목록과 성공 상태가 포함된 HTTP 200 응답을 반환합니다.
+     * @param request JWT 토큰에서 사용자 정보를 추출하는 HTTP 요청 객체
+     * @param projectId 답글을 조회할 프로젝트의 식별자
+     * @param commentId 답글을 조회할 대상 댓글의 식별자
+     * @param pageable 페이징 및 정렬 정보
+     * @return 답글 목록과 성공 상태가 포함된 HTTP 200 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(HttpServletRequest request, Long projectId, Long commentId, Pageable pageable) {
