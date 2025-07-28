@@ -28,9 +28,6 @@ if [ "$CURRENT" == "blue" ] && ! docker ps --format '{{.Names}}' | grep -q 'back
   echo "[INFO] nginx-proxy-dev 실행"
   docker-compose -f ../docker/docker-compose-nginx-dev.yml up -d nginx-proxy-dev
 
-  echo "[INFO] prometheus-dev 및 grafana-dev 실행"
-  docker-compose -f ../../../infrastructure/prometheus/docker-compose-dev.yml up -d prometheus grafana
-
   echo "[INFO] 초기 배포 완료 (blue)"
   exit 0
 fi
@@ -43,9 +40,7 @@ echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
 echo "[INFO] 새로 배포할 색상: $NEXT"
 
 docker pull juuuunny/backend:latest
-
 docker rm -f "$BACKEND_NAME" || true
-
 docker-compose -f "$NEXT_COMPOSE" up -d --force-recreate --pull always
 
 echo "[INFO] Health Check 시작: $BACKEND_NAME ..."
@@ -94,18 +89,6 @@ EOF
 
 docker restart nginx-proxy-dev || {
   echo "[ERROR] nginx-proxy-dev 재시작 실패"
-  exit 1
-}
-
-PROM_TEMPLATE_PATH="../../../infrastructure/prometheus/prometheus-dev.template.yml"
-PROM_CONFIG_PATH="../../../infrastructure/prometheus/prometheus-dev.yml"
-
-echo "[INFO] Prometheus 설정 갱신: $BACKEND_NAME"
-export BACKEND_SERVICE_HOST="$BACKEND_NAME"
-envsubst < "$PROM_TEMPLATE_PATH" > "$PROM_CONFIG_PATH"
-
-docker restart prometheus-dev || {
-  echo "[ERROR] Prometheus 재시작 실패"
   exit 1
 }
 
