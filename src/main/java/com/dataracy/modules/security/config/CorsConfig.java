@@ -30,10 +30,10 @@ public class CorsConfig {
                 "http://dataracy.co.kr", // 운영용 서버
                 "http://localhost:63342"
         ));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedMethods(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
-        configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+        configuration.setExposedHeaders(Collections.singletonList("*"));
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
