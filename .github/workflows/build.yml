@@ -32,24 +32,23 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Save PEM keys
+      - name: Setup SSH Agent
         run: |
-          echo "${{ secrets.EC2_DEV_SSH_KEY }}" > ec2-dev.pem
-          chmod 600 ec2-dev.pem
-          echo "${{ secrets.EC2_SSH_KEY }}" > ec2-prod.pem
-          chmod 600 ec2-prod.pem
+          eval "$(ssh-agent -s)"
+          echo "${{ secrets.EC2_DEV_SSH_KEY }}" | ssh-add -
+          echo "${{ secrets.EC2_SSH_KEY }}" | ssh-add -
 
       - name: Determine TAG_NAME by branch and server color
         run: |
           if [[ "${{ github.base_ref }}" == "main" ]]; then
-            COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2-prod.pem "ubuntu@${{ secrets.EC2_HOST }}" "cat ~/dataracy/deployment/prod/blue-green/current_color || echo blue")
+            COLOR=$(ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/prod/blue-green/current_color || echo blue")
             if [ "$COLOR" = "blue" ]; then
               echo "TAG_NAME=prod-green" >> $GITHUB_ENV
             else
               echo "TAG_NAME=prod-blue" >> $GITHUB_ENV
             fi
           elif [[ "${{ github.base_ref }}" == "develop" ]]; then
-            COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2-dev.pem ubuntu@${{ secrets.EC2_DEV_HOST }} "cat ~/dataracy/deployment/dev/blue-green/current_color || echo blue")
+            COLOR=$(ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_DEV_HOST }} "cat ~/dataracy/deployment/dev/blue-green/current_color || echo blue")
             if [ "$COLOR" = "blue" ]; then
               echo "TAG_NAME=develop-green" >> $GITHUB_ENV
             else
