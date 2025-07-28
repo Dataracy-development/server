@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e  # 오류 발생 시 즉시 종료
+set -e
 
 echo "========================================"
 echo "[DEPLOY] Blue/Green 무중단 배포 시작"
@@ -38,21 +38,21 @@ for i in {1..20}; do
 done
 
 if [ "$STATUS" != "\"healthy\"" ]; then
-  echo "[ERROR] $BACKEND_NAME 컨테이너가 정상 상태가 아닙니다. 배포를 중단합니다."
+  echo "[ERROR] $BACKEND_NAME 컨테이너가 정상 상태가 아닙니다. 배포 중단"
   docker rm -f "$BACKEND_NAME" || true
   exit 1
 fi
 
-NGINX_CONF_PATH="../nginx/upstream-blue-green-dev.conf"
+NGINX_UPSTREAM="../nginx/upstream-blue-green-dev.conf"
 echo "[INFO] Nginx upstream 설정 갱신: $BACKEND_NAME → localhost:8080"
 
-cat > "$NGINX_CONF_PATH" <<EOF
+cat > "$NGINX_UPSTREAM" <<EOF
 upstream backend {
   server $BACKEND_NAME:8080;
 }
 server {
   listen 80;
-  server_name dataracy.co.kr;
+  server_name dataracy.store;
 
   location / {
     proxy_pass http://backend;
@@ -68,24 +68,15 @@ server {
 }
 EOF
 
-echo "[INFO] nginx-proxy 재시작 중..."
-if docker ps -a --format '{{.Names}}' | grep -q '^nginx-proxy$'; then
-  docker restart nginx-proxy || {
-    echo "[ERROR] nginx-proxy 재시작 실패 → 배포 중단"
-    exit 1
-  }
-else
-  docker compose -f "$NEXT_COMPOSE" up -d nginx || {
-    echo "[ERROR] nginx-proxy 새로 실행 실패 → 배포 중단"
-    exit 1
-  }
-fi
+echo "[INFO] Nginx 설정 반영 중 (nginx-proxy-dev)"
+docker restart nginx-proxy-dev
 
+# 이전 백엔드 종료
 echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}"
 if docker ps --format '{{.Names}}' | grep -q "backend-${CURRENT}"; then
   docker stop "backend-${CURRENT}" || true
 fi
-docker rm -f "backend-${CURRENT}" || echo "[WARN] backend-${CURRENT} 제거 실패 또는 이미 없음"
+docker rm -f "backend-${CURRENT}" || echo "[WARN] backend-${CURRENT} 제거 실패 또는 없음"
 
 echo "$NEXT" > "$CURRENT_COLOR_FILE"
 
