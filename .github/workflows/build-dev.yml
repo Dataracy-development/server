@@ -1,4 +1,4 @@
-name: Build and Push Docker Image (DEV - latest only)
+name: Build and Push Docker Image (DEV - latest + sha)
 
 on:
   pull_request:
@@ -35,7 +35,8 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image with SHA + latest
-        run: docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" -t "${IMAGE_NAME}:latest" .
+        run: |
+          docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" -t "${IMAGE_NAME}:latest" .
 
       - name: Push Docker image (sha + latest)
         run: |
