@@ -62,5 +62,6 @@ management:
   endpoint:
     health:
       show-details: always
+      enabled: true
     prometheus:
       enabled: true
