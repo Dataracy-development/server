@@ -6,6 +6,7 @@ on:
 
 env:
   IMAGE_NAME: juuuunny/backend
+  GIT_REPO: https://github.com/Dataracy-development/server.git
 
 jobs:
   deploy:
@@ -28,7 +29,7 @@ jobs:
             echo "PREVIOUS_COLOR=green" >> $GITHUB_ENV
           fi
 
-      - name: Deploy with switch-dev.sh via SSH
+      - name: SSH into EC2 and Deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_DEV_HOST }}
@@ -39,6 +40,12 @@ jobs:
             export DEPLOY_COLOR=${{ env.DEPLOY_COLOR }}
             export PREVIOUS_COLOR=${{ env.PREVIOUS_COLOR }}
 
+            echo "✅ 최신 develop 브랜치 코드로 덮어쓰기 중..."
+            cd ~/dataracy || git clone ${{ env.GIT_REPO }} dataracy && cd dataracy
+            git fetch origin
+            git reset --hard origin/develop
+
+            echo "🚀 Blue/Green 배포 시작!"
             cd ~/dataracy/deployment/dev/script
             chmod +x deploy.sh
             ./deploy.sh

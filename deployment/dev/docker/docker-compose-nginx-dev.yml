@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   nginx-proxy-dev:
-    image: nginx:1.29.2
+    image: nginx:1.25.3
     container_name: nginx-proxy-dev
     restart: always
     ports:
