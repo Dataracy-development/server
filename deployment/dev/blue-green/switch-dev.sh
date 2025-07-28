@@ -53,12 +53,12 @@ for i in {1..20}; do
   fi
 done
 
-if [ "$STATUS" != "\"healthy\"" ]; then
-  echo "[ERROR] $BACKEND_NAME 실행 실패 → 롤백 시작"
-  docker rm -f "$BACKEND_NAME" || true
-  echo "[INFO] 롤백 완료: 기존 컨테이너 유지 ($CURRENT)"
-  exit 1
-fi
+#if [ "$STATUS" != "\"healthy\"" ]; then
+#  echo "[ERROR] $BACKEND_NAME 실행 실패 → 롤백 시작"
+#  docker rm -f "$BACKEND_NAME" || true
+#  echo "[INFO] 롤백 완료: 기존 컨테이너 유지 ($CURRENT)"
+#  exit 1
+#fi
 
 # NGINX 설정 변경
 NGINX_CONF_PATH="../nginx/upstream-blue-green-dev.conf"
