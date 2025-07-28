@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE_NAME: juuuunny/backend
-  IMAGE_TAG: latest
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   build-and-push:
@@ -34,8 +34,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image with 'latest' tag
-        run: docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+      - name: Build Docker image with SHA + latest
+        run: docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" -t "${IMAGE_NAME}:latest" .
 
-      - name: Push Docker image to Docker Hub
-        run: docker push "${IMAGE_NAME}:${IMAGE_TAG}"
+      - name: Push Docker image (sha + latest)
+        run: |
+          docker push "${IMAGE_NAME}:${IMAGE_TAG}"
+          docker push "${IMAGE_NAME}:latest"
