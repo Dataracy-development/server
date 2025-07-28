@@ -6,7 +6,7 @@ services:
       - elasticsearch-dev-data:/usr/share/elasticsearch/data
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=${ELASTIC_XPACK_ENABLED}
+      - xpack.security.enabled=false
     ports:
       - "9201:9200"
     env_file:
