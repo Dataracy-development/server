@@ -1,15 +1,18 @@
 #!/bin/bash
 
 echo "========================================"
-echo "[DEV DEPLOY] 개발 서버 무중단 배포 실행"
+echo "[DEPLOY] Blue/Green 무중단 배포 시작"
 echo "========================================"
 
-cd "$(dirname "$0")/../blue-green" || { echo "[ERROR] 작업 디렉터리 이동 실패"; exit 1; }
+cd "$(dirname "$0")/../blue-green"
 
-# switch-dev.sh 실행
+if [ ! -f current_color_dev ]; then
+  echo "blue" > current_color_dev
+fi
+
 chmod +x ./switch-dev.sh
 ./switch-dev.sh
 
 echo "========================================"
-echo "[DEPLOY] 배포 완료! 현재 서비스 중인 인스턴스: $(cat /home/ubuntu/color-config/current_color_dev)"
+echo "[DEPLOY] 배포 완료! 현재 서비스 중인 인스턴스: $(cat current_color_dev)"
 echo "========================================"
