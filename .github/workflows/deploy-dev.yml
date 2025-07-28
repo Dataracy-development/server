@@ -1,4 +1,4 @@
-name: Deploy to EC2 (Development - Blue/Green)
+name: Deploy to EC2 (DEV - Blue/Green)
 
 on:
   push:
@@ -17,9 +17,9 @@ jobs:
           echo "${{ secrets.EC2_DEV_SSH_KEY }}" > ec2key.pem
           chmod 600 ec2key.pem
 
-      - name: Get DEPLOY_COLOR from DEV EC2
+      - name: Determine DEPLOY_COLOR via EC2
         run: |
-          COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_DEV_HOST }} "cat ~/dataracy/server/deployment/dev/blue-green/current_color || echo blue")
+          COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_DEV_HOST }} "cat /home/ubuntu/color-config/current_color_dev || echo blue")
           if [ "$COLOR" = "blue" ]; then
             echo "DEPLOY_COLOR=green" >> $GITHUB_ENV
             echo "PREVIOUS_COLOR=blue" >> $GITHUB_ENV
@@ -28,17 +28,17 @@ jobs:
             echo "PREVIOUS_COLOR=green" >> $GITHUB_ENV
           fi
 
-      - name: Pull & Deploy to DEV EC2 (Blue/Green)
+      - name: Deploy with switch-dev.sh via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_DEV_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_DEV_SSH_KEY }}
           script: |
-            cd ~/dataracy
-            git reset --hard
-            git clean -fd
-            git fetch origin develop
-            git reset --hard origin/develop
-            chmod +x server/deployment/dev/script/deploy.sh
-            ./server/deployment/dev/script/deploy.sh
+            export IMAGE_NAME=${{ env.IMAGE_NAME }}
+            export DEPLOY_COLOR=${{ env.DEPLOY_COLOR }}
+            export PREVIOUS_COLOR=${{ env.PREVIOUS_COLOR }}
+
+            cd ~/dataracy/deployment/dev/script
+            chmod +x deploy.sh
+            ./deploy.sh
