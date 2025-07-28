@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  backend-green-dev:
+    image: juuuunny/backend:green-dev
+    container_name: backend-green-dev
+    restart: always
+    networks:
+      - dataracy-network-dev
+    env_file:
+      - /home/ubuntu/env-config/.env.dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8082:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  nginx-proxy-dev:
+    image: nginx:latest
+    container_name: nginx-proxy-dev
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ../nginx/nginx-dev.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx/upstream-blue-green-dev.conf:/etc/nginx/conf.d/upstream-blue-green-dev.conf:ro
+    networks:
+      - dataracy-network-dev
+
+networks:
+  dataracy-network-dev:
+    external: true
