@@ -1,8 +1,8 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Image (Dev Only)
 
 on:
   pull_request:
-    branches: [ develop, main ]
+    branches: [ develop ]
 
 env:
   IMAGE_NAME: juuuunny/backend
@@ -10,6 +10,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
@@ -23,7 +24,7 @@ jobs:
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      - name: Build with Gradle
+      - name: Build with Gradle (skip tests)
         run: ./gradlew clean build -x test
 
       - name: Log in to DockerHub
@@ -32,32 +33,22 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Setup SSH Agent
+      - name: Setup SSH Agent for EC2 access
         run: |
           eval "$(ssh-agent -s)"
           echo "${{ secrets.EC2_DEV_SSH_KEY }}" | ssh-add -
-          echo "${{ secrets.EC2_SSH_KEY }}" | ssh-add -
+          mkdir -p ~/.ssh
+          echo "Host *" > ~/.ssh/config
+          echo "    StrictHostKeyChecking no" >> ~/.ssh/config
 
-      - name: Determine TAG_NAME by branch and server color
+      - name: Determine TAG_NAME from dev server color
         run: |
-          if [[ "${{ github.base_ref }}" == "main" ]]; then
-            COLOR=$(ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "cat ~/dataracy/deployment/prod/blue-green/current_color || echo blue")
-            if [ "$COLOR" = "blue" ]; then
-              echo "TAG_NAME=prod-green" >> $GITHUB_ENV
-            else
-              echo "TAG_NAME=prod-blue" >> $GITHUB_ENV
-            fi
-          elif [[ "${{ github.base_ref }}" == "develop" ]]; then
-            COLOR=$(ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_DEV_HOST }} "cat ~/dataracy/deployment/dev/blue-green/current_color || echo blue")
-            if [ "$COLOR" = "blue" ]; then
-              echo "TAG_NAME=develop-green" >> $GITHUB_ENV
-            else
-              echo "TAG_NAME=develop-blue" >> $GITHUB_ENV
-            fi
-          fi
+          COLOR=$(ssh ubuntu@${{ secrets.EC2_DEV_HOST }} "cat ~/dataracy/deployment/dev/blue-green/current_color || echo blue")
+          echo "Detected color: $COLOR"
+          echo "TAG_NAME=develop-${COLOR}" >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
         run: |
-          echo "Building Docker image with tag: $TAG_NAME"
+          echo "📦 Building Docker image with tag: $TAG_NAME"
           docker build -t "${IMAGE_NAME}:${TAG_NAME}" -f Dockerfile .
           docker push "${IMAGE_NAME}:${TAG_NAME}"
