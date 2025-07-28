@@ -1,4 +1,4 @@
-name: Build and Push Docker Image (Dev Only)
+name: Build and Push Docker Image
 
 on:
   pull_request:
@@ -10,7 +10,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
@@ -24,7 +23,7 @@ jobs:
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      - name: Build with Gradle (skip tests)
+      - name: Build with Gradle
         run: ./gradlew clean build -x test
 
       - name: Log in to DockerHub
@@ -33,26 +32,42 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Setup SSH Agent for EC2 access
+      - name: Setup SSH Agent
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_DEV_SSH_KEY }}" > ~/.ssh/ec2-dev.pem
-          chmod 600 ~/.ssh/ec2-dev.pem
           eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/ec2-dev.pem
-          echo "Host *" > ~/.ssh/config
-          echo "  StrictHostKeyChecking no" >> ~/.ssh/config
-          echo "  UserKnownHostsFile=/dev/null" >> ~/.ssh/config
+          echo "${{ secrets.EC2_DEV_SSH_KEY }}" | ssh-add -
 
-      # TAG_NAME 결정
-      - name: Determine TAG_NAME from dev server color
-        run: |
-          COLOR=$(ssh -i ~/.ssh/ec2-dev.pem ubuntu@${{ secrets.EC2_DEV_HOST }} "cat ~/dataracy/deployment/dev/blue-green/current_color || echo blue")
-          echo "Detected color: $COLOR"
-          echo "TAG_NAME=develop-${COLOR}" >> $GITHUB_ENV
+      - name: Determine DEPLOY_COLOR and Run Remote Deploy Script
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_DEV_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_DEV_SSH_KEY }}
+          script: |
+            cd ~/dataracy
+            git reset --hard
+            git clean -fd
+            git fetch origin develop
+            git reset --hard origin/develop
 
-      - name: Build and Push Docker Image
-        run: |
-          echo "📦 Building Docker image with tag: $TAG_NAME"
-          docker build -t "${IMAGE_NAME}:${TAG_NAME}" -f Dockerfile .
-          docker push "${IMAGE_NAME}:${TAG_NAME}"
+            # 블루/그린 전환 정보 설정
+            if [ -f deployment/dev/blue-green/current_color ]; then
+              PREVIOUS_COLOR=$(cat deployment/dev/blue-green/current_color)
+            else
+              PREVIOUS_COLOR=green
+            fi
+
+            if [ "$PREVIOUS_COLOR" = "blue" ]; then
+              DEPLOY_COLOR=green
+            else
+              DEPLOY_COLOR=blue
+            fi
+
+            echo "Previous color: $PREVIOUS_COLOR"
+            echo "Deploy color: $DEPLOY_COLOR"
+
+            chmod +x deployment/dev/script/deploy.sh
+            IMAGE_NAME=${{ env.IMAGE_NAME }} \
+            DEPLOY_COLOR=$DEPLOY_COLOR \
+            PREVIOUS_COLOR=$PREVIOUS_COLOR \
+            ./deployment/dev/script/deploy.sh
