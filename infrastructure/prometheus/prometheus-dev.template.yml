@@ -1,8 +1,8 @@
 global:
-  scrape_interval: 10s
+  scrape_interval: 5s
 
 scrape_configs:
   - job_name: 'backend-dev'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['backend-blue-dev:8080', 'backend-green-dev:8080']
+      - targets: ['backend-{{COLOR}}-dev:8080']
