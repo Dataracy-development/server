@@ -22,12 +22,17 @@ NEXT_COMPOSE="../docker/docker-compose-${NEXT}-dev.yml"
 echo "[INFO] 현재 배포 중인 컨테이너: $CURRENT"
 echo "[INFO] 새로 배포할 색상: $NEXT"
 
-# Docker 이미지 pull
-echo "[INFO] Docker 이미지 pull: latest"
+# Docker 이미지 강제 pull
+echo "[INFO] Docker 이미지 최신 버전 pull: juuuunny/backend:latest"
 docker pull juuuunny/backend:latest
 
-# 새 컨테이너 실행
-docker-compose -f "$NEXT_COMPOSE" up -d
+# 기존 컨테이너 제거 (이미 떠 있으면 recreate가 안 될 수 있음)
+echo "[INFO] 기존 동일 이름의 컨테이너 제거 시도: $BACKEND_NAME"
+docker rm -f "$BACKEND_NAME" || true
+
+# 새 컨테이너 실행 (항상 최신 이미지로 덮어씌우기)
+echo "[INFO] 새 컨테이너 실행 중..."
+docker-compose -f "$NEXT_COMPOSE" up -d --force-recreate --pull always
 
 # Health Check
 echo "[INFO] Health Check 시작: $BACKEND_NAME ..."
