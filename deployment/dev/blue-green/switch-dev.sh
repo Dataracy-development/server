@@ -93,7 +93,7 @@ else
 fi
 
 # Prometheus 설정 갱신
-PROM_TEMPLATE_PATH="../../../infrastructure/prometheus/prometheus-dev.yml.template"
+PROM_TEMPLATE_PATH="../../../infrastructure/prometheus/prometheus-dev.template.yml"
 PROM_CONFIG_PATH="../../../infrastructure/prometheus/prometheus-dev.yml"
 
 echo "[INFO] Prometheus 설정 갱신 → 대상: $BACKEND_NAME"
