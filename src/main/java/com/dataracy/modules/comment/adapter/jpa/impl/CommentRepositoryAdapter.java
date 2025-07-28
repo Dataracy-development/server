@@ -19,9 +19,10 @@ public class CommentRepositoryAdapter implements CommentRepositoryPort {
  private final CommentJpaRepository commentJpaRepository;
 
  /**
-  * 주어진 댓글 도메인 객체를 JPA 엔티티로 변환하여 데이터베이스에 저장합니다.
+  * 댓글 도메인 객체를 JPA 엔티티로 변환하여 데이터베이스에 저장한 후, 저장된 댓글 도메인 객체를 반환합니다.
   *
   * @param comment 저장할 댓글 도메인 객체
+  * @return 저장된 댓글 도메인 객체
   */
  @Override
  public Comment upload(Comment comment) {

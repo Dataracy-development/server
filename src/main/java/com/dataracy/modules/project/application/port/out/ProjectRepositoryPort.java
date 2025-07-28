@@ -61,14 +61,30 @@ void modify(Long projectId, ProjectModifyRequest requestDto);
  */
 void delete(Long projectId);
 /**
- * 삭제된 프로젝트를 지정된 ID로 복원합니다.
+ * 지정된 ID의 삭제된 프로젝트를 복원합니다.
  *
  * @param projectId 복원할 프로젝트의 ID
  */
 void restore(Long projectId);
 
-    void increaseViewCount(Long projectId, Long count);
+    /**
+ * 지정된 프로젝트의 조회수를 주어진 값만큼 증가시킵니다.
+ *
+ * @param projectId 조회수를 증가시킬 프로젝트의 ID
+ * @param count 증가시킬 조회수 값
+ */
+void increaseViewCount(Long projectId, Long count);
 
-    void increase(Long projectId);
-    void decrease(Long projectId);
+    /**
+ * 지정된 프로젝트의 관련 수치(예: 카운터)를 1만큼 증가시킵니다.
+ *
+ * @param projectId 증가시킬 프로젝트의 ID
+ */
+void increase(Long projectId);
+    /**
+ * 지정된 프로젝트의 특정 수치 속성을 감소시킵니다.
+ *
+ * @param projectId 감소할 프로젝트의 ID
+ */
+void decrease(Long projectId);
 }
