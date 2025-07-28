@@ -18,6 +18,7 @@ import com.dataracy.modules.project.application.dto.response.*;
 import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,8 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 public class ProjectController implements ProjectApi {
+    private final ExtractHeaderUtil extractHeaderUtil;
+
     private final ProjectWebMapper projectWebMapper;
     private final ProjectSearchWebMapper projectSearchWebMapper;
     private final ProjectFilterWebMapper projectFilterWebMapper;
@@ -139,22 +142,20 @@ public class ProjectController implements ProjectApi {
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_FILTERED_PROJECTS, webResponse));
     }
 
-    /**
-     * HTTP 요청에서 JWT 토큰을 추출하여, 인증된 사용자 정보와 함께 주어진 프로젝트 ID의 상세 정보를 반환합니다.
+    /****
+     * HTTP 요청에서 인증된 사용자 ID와 뷰어 ID를 추출하여, 지정된 프로젝트의 상세 정보를 반환합니다.
      *
-     * @param request 프로젝트 상세 정보 조회 시 사용할 HTTP 요청 객체
-     * @param projectId 조회할 프로젝트의 ID
+     * @param request  인증 및 뷰어 식별을 위한 HTTP 요청 객체
+     * @param response 뷰어 ID 추출을 위한 HTTP 응답 객체
+     * @param projectId 상세 정보를 조회할 프로젝트의 ID
      * @return 프로젝트 상세 정보를 포함한 성공 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(HttpServletRequest request, Long projectId) {
-        Long userId = null;
-        Optional<String> accessToken = ExtractHeaderUtil.extractAccessToken(request);
-        if (accessToken.isPresent()) {
-            userId = jwtValidateUseCase.getUserIdFromToken(accessToken.get());
-        }
+    public ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(HttpServletRequest request, HttpServletResponse response, Long projectId) {
+        Long userId = extractHeaderUtil.extractAuthenticatedUserIdFromRequest(request);
+        String viewerId = extractHeaderUtil.extractViewerIdFromRequest(request, response);
 
-        ProjectDetailResponse responseDto = projectDetailUseCase.getProjectDetail(projectId, userId);
+        ProjectDetailResponse responseDto = projectDetailUseCase.getProjectDetail(projectId, userId, viewerId);
         ProjectDetailWebResponse webResponse = projectWebMapper.toWebDto(responseDto);
 
         return ResponseEntity.status(HttpStatus.OK)

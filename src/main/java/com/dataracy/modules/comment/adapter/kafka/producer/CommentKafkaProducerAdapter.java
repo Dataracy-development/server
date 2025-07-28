@@ -1,0 +1,43 @@
+package com.dataracy.modules.comment.adapter.kafka.producer;
+
+import com.dataracy.modules.comment.application.port.out.CommentKafkaProducerPort;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class CommentKafkaProducerAdapter implements CommentKafkaProducerPort {
+    private final KafkaTemplate<String, Long> kafkaTemplate;
+
+    @Value("${spring.kafka.producer.comment-upload.topic:comment-uploaded-topic}")
+    private String TOPIC_UPLOAD;
+
+    @Value("${spring.kafka.producer.comment-delete.topic:comment-deleted-topic}")
+    private String TOPIC_DELETE;
+
+    /**
+     * 댓글이 작성되었음을 나타내는 이벤트를 Kafka 토픽에 발행합니다.
+     *
+     * @param projectId 댓글이 작성된 프로젝트의 ID
+     */
+    @Override
+    public void sendCommentUploadedEvent(Long projectId) {
+        log.info("Kafka 발행: 댓글 작성됨, commentId={}", projectId);
+        kafkaTemplate.send(TOPIC_UPLOAD, String.valueOf(projectId), projectId);
+    }
+
+    /**
+     * 주어진 프로젝트 ID에 대해 댓글 삭제 이벤트를 Kafka 토픽에 발행합니다.
+     *
+     * @param projectId 댓글이 삭제된 프로젝트의 ID
+     */
+    @Override
+    public void sendCommentDeletedEvent(Long projectId) {
+        log.info("Kafka 발행: 댓글 삭제됨, commentId={}", projectId);
+        kafkaTemplate.send(TOPIC_DELETE, String.valueOf(projectId), projectId);
+    }
+}

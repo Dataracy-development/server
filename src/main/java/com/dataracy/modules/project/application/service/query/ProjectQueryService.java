@@ -1,8 +1,8 @@
 package com.dataracy.modules.project.application.service.query;
 
-import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.like.application.port.in.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
+import com.dataracy.modules.project.adapter.redis.ProjectViewCountRedisAdapter;
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.dto.response.*;
 import com.dataracy.modules.project.application.mapper.ConnectedProjectAssociatedDtoMapper;
@@ -13,6 +13,7 @@ import com.dataracy.modules.project.application.port.elasticsearch.ProjectRealTi
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectSimilarSearchPort;
 import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
+import com.dataracy.modules.project.application.port.out.ProjectViewCountRedisPort;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
@@ -60,6 +61,7 @@ public class ProjectQueryService implements
     private final ProjectRealTimeSearchPort projectRealTimeSearchPort;
     private final ProjectSimilarSearchPort projectSimilarSearchPort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
+    private final ProjectViewCountRedisPort projectViewCountRedisPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
     private final FindUserThumbnailUseCase findUserThumbnailUseCase;
@@ -218,16 +220,19 @@ public class ProjectQueryService implements
     /**
      * 지정한 프로젝트의 상세 정보를 조회하여 반환합니다.
      *
-     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 프로젝트 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 사용자의 좋아요 여부, 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 제공합니다.
+     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 프로젝트 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 사용자의 좋아요 여부, 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 제공합니다. 또한, 조회자 식별자를 기반으로 프로젝트의 조회수를 증가시킵니다.
      *
      * @param projectId 상세 정보를 조회할 프로젝트의 ID
      * @param userId 프로젝트를 조회하는 사용자의 ID (좋아요 여부 확인에 사용, null 가능)
+     * @param viewerId 프로젝트를 조회하는 사용자의 식별자(조회수 중복 방지에 사용)
      * @return 프로젝트의 상세 정보를 담은 ProjectDetailResponse 객체
      * @throws ProjectException 프로젝트가 존재하지 않을 경우 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)
-    public ProjectDetailResponse getProjectDetail(Long projectId, Long userId) {
+    public ProjectDetailResponse getProjectDetail(Long projectId, Long userId, String viewerId) {
+
+        // 프로젝트 세부정보 조회
         Project project = projectQueryRepositoryPort.findProjectById(projectId)
                 .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
 
@@ -245,6 +250,10 @@ public class ProjectQueryService implements
         if (userId != null) {
             isLiked = validateTargetLikeUseCase.hasUserLikedTarget(userId, projectId, TargetType.PROJECT);
         }
+
+        // 프로젝트 조회수 증가
+        // 조회수 기록 (중복 방지 TTL)
+        projectViewCountRedisPort.increaseViewCount(projectId, viewerId, "PROJECT");
 
         return new ProjectDetailResponse(
                 project.getId(),

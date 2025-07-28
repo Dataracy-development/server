@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -159,7 +160,7 @@ public interface ProjectApi {
     );
 
     /**
-     * 지정한 프로젝트 ID에 해당하는 프로젝트의 상세 정보를 반환합니다.
+     * 지정한 프로젝트의 상세 정보를 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID (1 이상)
      * @return 프로젝트 상세 정보를 포함한 성공 응답
@@ -175,7 +176,11 @@ public interface ProjectApi {
     })
     @GetMapping("/{projectId}")
     ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(
+            @Parameter(hidden = true)
             HttpServletRequest request,
+
+            @Parameter(hidden = true)
+            HttpServletResponse response,
 
             @PathVariable @Min(1)
             Long projectId

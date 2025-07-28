@@ -7,11 +7,12 @@ import java.util.Optional;
 
 public interface CommentRepositoryPort {
     /**
- * 새로운 댓글을 저장합니다.
+ * 새로운 댓글을 저장하고 저장된 댓글 객체를 반환합니다.
  *
  * @param comment 저장할 댓글 객체
+ * @return 저장된 댓글 객체
  */
-void upload(Comment comment);
+Comment upload(Comment comment);
     /**
  * 지정된 프로젝트와 댓글 ID에 해당하는 댓글을 주어진 수정 요청 정보로 변경합니다.
  *
