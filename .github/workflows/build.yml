@@ -35,15 +35,19 @@ jobs:
 
       - name: Setup SSH Agent for EC2 access
         run: |
-          eval "$(ssh-agent -s)"
-          echo "${{ secrets.EC2_DEV_SSH_KEY }}" | ssh-add -
           mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_DEV_SSH_KEY }}" > ~/.ssh/ec2-dev.pem
+          chmod 600 ~/.ssh/ec2-dev.pem
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/ec2-dev.pem
           echo "Host *" > ~/.ssh/config
-          echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+          echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+          echo "  UserKnownHostsFile=/dev/null" >> ~/.ssh/config
 
+      # TAG_NAME 결정
       - name: Determine TAG_NAME from dev server color
         run: |
-          COLOR=$(ssh ubuntu@${{ secrets.EC2_DEV_HOST }} "cat ~/dataracy/deployment/dev/blue-green/current_color || echo blue")
+          COLOR=$(ssh -i ~/.ssh/ec2-dev.pem ubuntu@${{ secrets.EC2_DEV_HOST }} "cat ~/dataracy/deployment/dev/blue-green/current_color || echo blue")
           echo "Detected color: $COLOR"
           echo "TAG_NAME=develop-${COLOR}" >> $GITHUB_ENV
 
