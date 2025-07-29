@@ -26,13 +26,19 @@ public class DataKafkaConsumerAdapter {
             containerFactory = "dataUploadEventKafkaListenerContainerFactory"
     )
     public void consume(DataUploadEvent event) {
-        log.info("[Kafka] 업로드 이벤트 수신됨: {}", event);
-        metadataParseUseCase.parseAndSaveMetadata(
-                new MetadataParseRequest(
-                        event.getDataId(),
-                        event.getFileUrl(),
-                        event.getOriginalFilename()
-                )
-        );
+        log.info("[Kafka] 데이터셋 업로드 이벤트 수신됨: fileName:{}", event.getOriginalFilename());
+        try {
+            metadataParseUseCase.parseAndSaveMetadata(
+                    new MetadataParseRequest(
+                            event.getDataId(),
+                            event.getFileUrl(),
+                            event.getOriginalFilename()
+                    )
+            );
+            log.info("[Kafka] 데이터셋 업로드 이벤트 처리 완료: fileName:{}", event.getOriginalFilename());
+        } catch (Exception e) {
+            log.error("[Kafka] 데이터셋 업로드 이벤트 처리 실패: fileName:{}", event.getOriginalFilename(), e);
+            throw e; // 재시도를 위해 예외 재던지기
+        }
     }
 }
