@@ -58,7 +58,13 @@ public class ProjectCommentUpdateAdapter implements ProjectCommentUpdatePort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("ctx._source.commentCount -= 1")
+                                            .source("""
+                                            if (ctx._source.commentCount != null && ctx._source.commentCount > 0) {
+                                                ctx._source.commentCount -= 1;
+                                            } else {
+                                                ctx._source.commentCount = 0;
+                                            }
+                                            """)
                                     )
                             ),
                     ProjectSearchDocument.class
