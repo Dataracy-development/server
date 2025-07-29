@@ -74,6 +74,8 @@ public class ProjectQueryService implements
     private final ConnectedProjectAssociatedDtoMapper connectedProjectAssociatedDtoMapper;
     private final ValidateTargetLikeUseCase validateTargetLikeUseCase;
 
+    private static final String VIEW_TARGET_TYPE = "PROJECT";
+
     /**
      * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
      *
@@ -253,7 +255,7 @@ public class ProjectQueryService implements
 
         // 프로젝트 조회수 증가
         // 조회수 기록 (중복 방지 TTL)
-        projectViewCountRedisPort.increaseViewCount(projectId, viewerId, "PROJECT");
+        projectViewCountRedisPort.increaseViewCount(projectId, viewerId, VIEW_TARGET_TYPE);
 
         return new ProjectDetailResponse(
                 project.getId(),
