@@ -87,4 +87,7 @@ void increase(Long projectId);
  * @param projectId 감소할 프로젝트의 ID
  */
 void decrease(Long projectId);
+
+void increaseLikeCount(Long projectId);
+void decreaseLikeCount(Long projectId);
 }

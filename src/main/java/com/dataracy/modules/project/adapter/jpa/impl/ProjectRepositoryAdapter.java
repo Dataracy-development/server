@@ -206,4 +206,14 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
     public void decrease(Long projectId) {
         projectJpaRepository.decreaseCommentCount(projectId);
     }
+
+    @Override
+    public void increaseLikeCount(Long projectId) {
+        projectJpaRepository.increaseLikeCount(projectId);
+    }
+
+    @Override
+    public void decreaseLikeCount(Long projectId) {
+        projectJpaRepository.decreaseLikeCount(projectId);
+    }
 }
