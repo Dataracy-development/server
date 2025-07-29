@@ -20,7 +20,7 @@ public class CommentCommandService implements
         CommentModifyUseCase,
         CommentDeleteUseCase,
         IncreaseLikeCountUseCase,
-        DecreaseLikeCountUseCase,
+        DecreaseLikeCountUseCase
 {
     private final CommentQueryRepositoryPort commentQueryRepositoryPort;
     private final CommentRepositoryPort commentRepositoryPort;
@@ -92,11 +92,13 @@ public class CommentCommandService implements
     }
 
     @Override
+    @Transactional
     public void decreaseLike(Long commentId) {
         commentRepositoryPort.decreaseLikeCount(commentId);
     }
 
     @Override
+    @Transactional
     public void increaseLike(Long commentId) {
         commentRepositoryPort.increaseLikeCount(commentId);
     }
