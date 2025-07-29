@@ -26,9 +26,9 @@ public class ProjectViewCountRedisAdapter implements ProjectViewCountRedisPort {
      */
     public void increaseViewCount(Long projectId, String viewerId, String targetType) {
         String dedupKey = String.format("viewDedup:%s:%s:%s", targetType, projectId, viewerId);
-        Boolean alreadyViewed = redisTemplate.hasKey(dedupKey);
 
-        if (Boolean.FALSE.equals(alreadyViewed)) {
+        Boolean wasSet = redisTemplate.opsForValue().setIfAbsent(dedupKey, "1", TTL);
+         if (Boolean.TRUE.equals(wasSet)) {
             String countKey = String.format("viewCount:%s:%s", targetType, projectId);
 
             redisTemplate.opsForValue().increment(countKey);
