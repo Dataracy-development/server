@@ -54,7 +54,13 @@ public class ProjectLikeUpdateAdapter implements ProjectLikeUpdatePort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("ctx._source.likeCount -= 1")
+                                            .source("""
+                                            if (ctx._source.likeCount != null && ctx._source.likeCount > 0) {
+                                                ctx._source.likeCount -= 1;
+                                            } else {
+                                                ctx._source.likeCount = 0;
+                                            }
+                                            """)
                                     )
                             ),
                     ProjectSearchDocument.class
