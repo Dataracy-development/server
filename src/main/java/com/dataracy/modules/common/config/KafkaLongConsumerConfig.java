@@ -65,7 +65,7 @@ public class KafkaLongConsumerConfig {
     @PostConstruct
     public void validateProperties() {
         if (bootstrapServers.isBlank()) {
-            throw new IllegalStateException("Kafka Producer 설정이 올바르지 않습니다.");
+            throw new IllegalStateException("Kafka Consumer bootstrap-servers 설정이 올바르지 않습니다.");
         }
     }
 }
