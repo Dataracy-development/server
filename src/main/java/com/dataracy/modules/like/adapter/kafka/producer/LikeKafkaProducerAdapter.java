@@ -28,25 +28,53 @@ public class LikeKafkaProducerAdapter implements LikeKafkaProducerPort {
     @Override
     public void sendProjectLikeIncreaseEvent(Long projectId) {
         log.info("Kafka 발행: 프로젝트에 대한 좋아요, projectId={}", projectId);
-        kafkaTemplate.send(TOPIC_PROJECT_LIKE_INCREASE, String.valueOf(projectId), projectId);
+        kafkaTemplate.send(TOPIC_PROJECT_LIKE_INCREASE, String.valueOf(projectId), projectId)
+                .whenComplete((result, ex) -> {
+                    if (ex == null) {
+                        log.debug("프로젝트 좋아요 이벤트 전송 성공: projectId={}", projectId);
+                    } else {
+                        log.error("프로젝트 좋아요 이벤트 전송 실패: projectId={}", projectId, ex);
+                    }
+                });
     }
 
     @Override
     public void sendProjectLikeDecreaseEvent(Long projectId) {
         log.info("Kafka 발행: 프로젝트에 대한 좋아요 취소, projectId={}", projectId);
-        kafkaTemplate.send(TOPIC_PROJECT_LIKE_DECREASE, String.valueOf(projectId), projectId);
+        kafkaTemplate.send(TOPIC_PROJECT_LIKE_DECREASE, String.valueOf(projectId), projectId)
+                .whenComplete((result, ex) -> {
+                    if (ex == null) {
+                        log.debug("프로젝트 좋아요 취소 이벤트 전송 성공: projectId={}", projectId);
+                    } else {
+                        log.error("프로젝트 좋아요 취소 이벤트 전송 실패: projectId={}", projectId, ex);
+                    }
+                });
     }
 
     @Override
     public void sendCommentLikeIncreaseEvent(Long commentId) {
         log.info("Kafka 발행: 댓글에 대한 좋아요, commentId={}", commentId);
-        kafkaTemplate.send(TOPIC_COMMENT_LIKE_INCREASE, String.valueOf(commentId), commentId);
+        kafkaTemplate.send(TOPIC_COMMENT_LIKE_INCREASE, String.valueOf(commentId), commentId)
+                .whenComplete((result, ex) -> {
+                    if (ex == null) {
+                        log.debug("댓글 좋아요 이벤트 전송 성공: commentId={}", commentId);
+                    } else {
+                        log.error("댓글 좋아요 이벤트 전송 실패: commentId={}", commentId, ex);
+                    }
+                });
     }
 
     @Override
     public void sendCommentLikeDecreaseEvent(Long commentId) {
         log.info("Kafka 발행: 댓글에 대한 좋아요 취소, commentId={}", commentId);
-        kafkaTemplate.send(TOPIC_COMMENT_LIKE_DECREASE, String.valueOf(commentId), commentId);
+        kafkaTemplate.send(TOPIC_COMMENT_LIKE_DECREASE, String.valueOf(commentId), commentId)
+                .whenComplete((result, ex) -> {
+                    if (ex == null) {
+                        log.debug("댓글 좋아요 취소 이벤트 전송 성공: commentId={}", commentId);
+                    } else {
+                        log.error("댓글 좋아요 취소 이벤트 전송 실패: commentId={}", commentId, ex);
+                    }
+                });
     }
 
 }
