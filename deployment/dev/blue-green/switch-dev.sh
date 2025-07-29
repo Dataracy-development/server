@@ -39,7 +39,6 @@ done
 
 if [ "$STATUS" != "\"healthy\"" ]; then
   echo "[ERROR] $BACKEND_NAME 컨테이너가 정상 상태가 아닙니다. 배포 중단"
-#  docker rm -f "$BACKEND_NAME" || true
   exit 1
 fi
 
@@ -50,35 +49,59 @@ cat > "$NGINX_UPSTREAM" <<EOF
 upstream backend {
   server $BACKEND_NAME:8080;
 }
+
 server {
   listen 80;
   server_name dataracy.store;
 
-  location / {
+  # 🔥 API 요청 프록시
+  location /api {
     proxy_pass http://backend;
-
-    proxy_set_header Host \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto \$scheme;
-
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade \$http_upgrade;
-    proxy_set_header Connection "upgrade";
-
-    proxy_set_header Cookie \$http_cookie;
   }
 
+  # 🔥 Swagger UI
+  location /swagger-ui/ {
+    proxy_pass http://backend/swagger-ui/;
+  }
+
+  location /v3/api-docs {
+    proxy_pass http://backend/v3/api-docs;
+  }
+
+  location /swagger-config {
+    proxy_pass http://backend/swagger-config;
+  }
+
+  location /webjars/ {
+    proxy_pass http://backend/webjars/;
+  }
+
+  # 🔥 헬스 체크
   location /actuator/health {
     proxy_pass http://backend/actuator/health;
   }
+
+  # 🔥 fallback: 정적 파일, 메인 진입 등
+  location / {
+    proxy_pass http://backend;
+  }
+
+  # 공통 헤더
+  proxy_set_header Host \$host;
+  proxy_set_header X-Real-IP \$remote_addr;
+  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto \$scheme;
+  proxy_http_version 1.1;
+  proxy_set_header Upgrade \$http_upgrade;
+  proxy_set_header Connection "upgrade";
+  proxy_set_header Cookie \$http_cookie;
 }
 EOF
 
 echo "[INFO] Nginx 설정 반영 중 (nginx-proxy-dev)"
 docker restart nginx-proxy-dev
 
-# 이전 백엔드 종료
+# 🔄 이전 백엔드 종료
 echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}"
 if docker ps --format '{{.Names}}' | grep -q "backend-${CURRENT}"; then
   docker stop "backend-${CURRENT}" || true
