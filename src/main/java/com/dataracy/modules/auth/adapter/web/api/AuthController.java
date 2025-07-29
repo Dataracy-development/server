@@ -7,7 +7,6 @@ import com.dataracy.modules.auth.application.dto.response.ReIssueTokenResponse;
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.port.in.auth.ReIssueTokenUseCase;
 import com.dataracy.modules.auth.application.port.in.auth.SelfLoginUseCase;
-import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.auth.domain.status.AuthSuccessStatus;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.util.CookieUtil;
