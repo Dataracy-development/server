@@ -26,11 +26,12 @@ public class FileDeleteConsumer {
             groupId = "${spring.kafka.consumer.file-delete.group-id:file-delete-consumer-group}"
     )
     public void consume(String fileUrl) {
+        log.info("[Kafka] 파일 삭제 이벤트 수신됨: fileUrl:{}", fileUrl);
         try {
             fileStoragePort.delete(fileUrl);
-            log.info("[Kafka] 파일 삭제 완료: {}", fileUrl);
+            log.info("[Kafka] 파일 삭제 이벤트 처리 완료: fileUrl:{}", fileUrl);
         } catch (Exception e) {
-            log.error("[Kafka] 파일 삭제 실패 - DLQ로 이동 예정: {}", fileUrl, e);
+            log.error("[Kafka] 파일 삭제 이벤트 처리 실패: fileUrl:{}", fileUrl, e);
 //            throw e; // DLQ 설정에 따라 이동
         }
     }

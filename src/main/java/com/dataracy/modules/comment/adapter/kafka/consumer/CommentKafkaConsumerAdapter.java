@@ -27,7 +27,13 @@ public class CommentKafkaConsumerAdapter {
     )
     public void consumeLikeIncrease(Long commentId) {
         log.info("[Kafka] 댓글 좋아요 이벤트 수신됨: commentId:{}", commentId);
-        increaseLikeCountUseCase.increaseLike(commentId);
+        try {
+            increaseLikeCountUseCase.increaseLike(commentId);
+            log.info("[Kafka] 댓글 좋아요 이벤트 처리 완료: commentId:{}", commentId);
+        } catch (Exception e) {
+            log.error("[Kafka] 댓글 좋아요 이벤트 처리 실패: commentId:{}", commentId, e);
+            throw e; // 재시도를 위해 예외 재던지기
+        }
     }
 
     /**
@@ -42,6 +48,12 @@ public class CommentKafkaConsumerAdapter {
     )
     public void consumeLikeDecrease(Long commentId) {
         log.info("[Kafka] 댓글 좋아요 취소 이벤트 수신됨: commentId:{}", commentId);
-        decreaseLikeCountUseCase.decreaseLike(commentId);
+        try {
+            decreaseLikeCountUseCase.decreaseLike(commentId);
+            log.info("[Kafka] 댓글 좋아요 취소 이벤트 처리 완료: commentId:{}", commentId);
+        } catch (Exception e) {
+            log.error("[Kafka] 댓글 좋아요 취소 이벤트 처리 실패: commentId:{}", commentId, e);
+            throw e; // 재시도를 위해 예외 재던지기
+        }
     }
 }

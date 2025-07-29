@@ -31,7 +31,13 @@ public class ProjectKafkaConsumerAdapter {
     )
     public void consumeCommentUpload(Long projectId) {
         log.info("[Kafka] 댓글 작성 이벤트 수신됨: projectId:{}", projectId);
-        increaseCommentCountUseCase.increase(projectId);
+        try {
+            increaseCommentCountUseCase.increase(projectId);
+            log.info("[Kafka] 댓글 작성 이벤트 처리 완료: projectId:{}", projectId);
+        } catch (Exception e) {
+            log.error("[Kafka] 댓글 작성 이벤트 처리 실패: projectId:{}", projectId, e);
+            throw e; // 재시도를 위해 예외 재던지기
+        }
     }
 
     /**
@@ -46,7 +52,13 @@ public class ProjectKafkaConsumerAdapter {
     )
     public void consumeCommentDelete(Long projectId) {
         log.info("[Kafka] 댓글 삭제 이벤트 수신됨: projectId:{}", projectId);
-        decreaseCommentCountUseCase.decrease(projectId);
+        try {
+            decreaseCommentCountUseCase.decrease(projectId);
+            log.info("[Kafka] 댓글 삭제 이벤트 처리 완료: projectId:{}", projectId);
+        } catch (Exception e) {
+            log.error("[Kafka] 댓글 삭제 이벤트 처리 실패: projectId:{}", projectId, e);
+            throw e; // 재시도를 위해 예외 재던지기
+        }
     }
 
     /**
@@ -61,7 +73,13 @@ public class ProjectKafkaConsumerAdapter {
     )
     public void consumeLikeIncrease(Long projectId) {
         log.info("[Kafka] 프로젝트 좋아요 이벤트 수신됨: projectId:{}", projectId);
-        increaseLikeCountUseCase.increaseLike(projectId);
+        try {
+            increaseLikeCountUseCase.increaseLike(projectId);
+            log.info("[Kafka] 프로젝트 좋아요 이벤트 처리 완료: projectId:{}", projectId);
+        } catch (Exception e) {
+            log.error("[Kafka] 프로젝트 좋아요 이벤트 처리 실패: projectId:{}", projectId, e);
+            throw e; // 재시도를 위해 예외 재던지기
+        }
     }
 
     /**
@@ -76,6 +94,12 @@ public class ProjectKafkaConsumerAdapter {
     )
     public void consumeLikeDecrease(Long projectId) {
         log.info("[Kafka] 프로젝트 좋아요 취소 이벤트 수신됨: projectId:{}", projectId);
-        decreaseLikeCountUseCase.decreaseLike(projectId);
+        try {
+            decreaseLikeCountUseCase.decreaseLike(projectId);
+            log.info("[Kafka] 프로젝트 좋아요 취소 이벤트 처리 완료: projectId:{}", projectId);
+        } catch (Exception e) {
+            log.error("[Kafka] 프로젝트 좋아요 취소 이벤트 처리 실패: projectId:{}", projectId, e);
+            throw e; // 재시도를 위해 예외 재던지기
+        }
     }
 }

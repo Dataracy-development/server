@@ -26,8 +26,16 @@ public class CommentKafkaProducerAdapter implements CommentKafkaProducerPort {
      */
     @Override
     public void sendCommentUploadedEvent(Long projectId) {
-        log.info("Kafka 발행: 댓글 작성됨, commentId={}", projectId);
-        kafkaTemplate.send(TOPIC_UPLOAD, String.valueOf(projectId), projectId);
+        log.info("Kafka 발행: 댓글 작성됨, projectId={}", projectId);
+        kafkaTemplate.send(TOPIC_UPLOAD, String.valueOf(projectId), projectId)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("[Kafka] 댓글 작성 이벤트 발송 실패: projectId={}", projectId, ex);
+                        // 필요시 재시도 로직 또는 예외 처리
+                    } else {
+                        log.trace("[Kafka] 댓글 작성 이벤트 발송 성공: projectId={}", projectId);
+                    }
+                });
     }
 
     /**
@@ -37,7 +45,15 @@ public class CommentKafkaProducerAdapter implements CommentKafkaProducerPort {
      */
     @Override
     public void sendCommentDeletedEvent(Long projectId) {
-        log.info("Kafka 발행: 댓글 삭제됨, commentId={}", projectId);
-        kafkaTemplate.send(TOPIC_DELETE, String.valueOf(projectId), projectId);
+        log.info("Kafka 발행: 댓글 삭제됨, projectId={}", projectId);
+        kafkaTemplate.send(TOPIC_DELETE, String.valueOf(projectId), projectId)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("[Kafka] 댓글 삭제 이벤트 발송 실패: projectId={}", projectId, ex);
+                        // 필요시 재시도 로직 또는 예외 처리
+                    } else {
+                        log.trace("[Kafka] 댓글 삭제 이벤트 발송 성공: projectId={}", projectId);
+                    }
+                });
     }
 }
