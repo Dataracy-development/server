@@ -65,3 +65,7 @@ management:
       enabled: true
     prometheus:
       enabled: true
+
+app:
+  cookie:
+    secure: false
