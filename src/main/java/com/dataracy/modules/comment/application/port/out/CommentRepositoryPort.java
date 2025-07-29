@@ -43,7 +43,7 @@ Optional<Long> findUserIdByCommentId(Long commentId);
  * @return 댓글이 존재하면 true, 그렇지 않으면 false
  */
 boolean existsByCommentId(Long commentId);
-    void increaseLikeCount(Long projectId);
-    void decreaseLikeCount(Long projectId);
+    void increaseLikeCount(Long commentId);
+    void decreaseLikeCount(Long commentId);
 }
 
