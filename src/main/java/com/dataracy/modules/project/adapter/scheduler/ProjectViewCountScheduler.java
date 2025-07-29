@@ -4,12 +4,14 @@ import com.dataracy.modules.project.application.port.elasticsearch.ProjectViewUp
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.out.ProjectViewCountRedisPort;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ProjectViewCountScheduler {
@@ -30,13 +32,16 @@ public class ProjectViewCountScheduler {
         Set<String> keys = projectViewCountRedisPort.getAllViewCountKeys("PROJECT");
 
         for (String key : keys) {
-            Long projectId = extractProjectId(key);
-            Long count = projectViewCountRedisPort.getViewCount(projectId, "PROJECT");
-
-            if (count > 0) {
-                projectRepositoryPort.increaseViewCount(projectId, count);
-                projectViewUpdatePort.increaseViewCount(projectId, count);
-                projectViewCountRedisPort.clearViewCount(projectId, "PROJECT");
+            try {
+                Long projectId = extractProjectId(key);
+                Long count = projectViewCountRedisPort.getViewCount(projectId, "PROJECT");
+                if (count > 0) {
+                    projectRepositoryPort.increaseViewCount(projectId, count);
+                    projectViewUpdatePort.increaseViewCount(projectId, count);
+                    projectViewCountRedisPort.clearViewCount(projectId, "PROJECT");
+                }
+            } catch (Exception e) {
+                log.error("프로젝트 조회수 플러시 실패 - key: {}", key, e);
             }
         }
     }
