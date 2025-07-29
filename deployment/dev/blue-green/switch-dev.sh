@@ -39,10 +39,10 @@ done
 
 if [ "$STATUS" != "\"healthy\"" ]; then
   echo "[ERROR] $BACKEND_NAME 컨테이너가 정상 상태가 아닙니다. 배포 중단"
-#  docker rm -f "$BACKEND_NAME" || true
   exit 1
 fi
 
+# ✅ nginx upstream 설정 업데이트 (with CORS)
 NGINX_UPSTREAM="../nginx/upstream-blue-green-dev.conf"
 echo "[INFO] Nginx upstream 설정 갱신: $BACKEND_NAME → localhost:8080"
 
@@ -50,20 +50,34 @@ cat > "$NGINX_UPSTREAM" <<EOF
 upstream backend {
   server $BACKEND_NAME:8080;
 }
+
 server {
   listen 80;
   server_name dataracy.store;
 
+  location /actuator/health {
+    proxy_pass http://backend;
+  }
+
   location / {
     proxy_pass http://backend;
+
+    proxy_pass_request_headers on;
     proxy_set_header Host \$host;
     proxy_set_header X-Real-IP \$remote_addr;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto \$scheme;
-  }
+    proxy_set_header Cookie \$http_cookie;
 
-  location /actuator/health {
-    proxy_pass http://backend/actuator/health;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    # CORS 설정 추가
+    add_header 'Access-Control-Allow-Origin' "\$http_origin" always;
+    add_header 'Access-Control-Allow-Credentials' 'true' always;
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, PATCH, OPTIONS' always;
+    add_header 'Access-Control-Allow-Headers' '*' always;
   }
 }
 EOF
@@ -71,7 +85,7 @@ EOF
 echo "[INFO] Nginx 설정 반영 중 (nginx-proxy-dev)"
 docker restart nginx-proxy-dev
 
-# 이전 백엔드 종료
+# 이전 컨테이너 종료
 echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}"
 if docker ps --format '{{.Names}}' | grep -q "backend-${CURRENT}"; then
   docker stop "backend-${CURRENT}" || true
