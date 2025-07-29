@@ -54,7 +54,15 @@ public class ProjectViewCountScheduler {
      */
     private Long extractProjectId(String key) {
         // ex. viewCount:PROJECT:123
-        return Long.parseLong(key.split(":")[2]);
+        String[] parts = key.split(":");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Invalid key format: " + key);
+        }
+        try {
+            return Long.parseLong(parts[2]);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid project ID in key: " + key, e);
+        }
     }
 }
 
