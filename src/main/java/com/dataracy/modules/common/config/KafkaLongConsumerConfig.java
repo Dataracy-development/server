@@ -36,12 +36,12 @@ public class KafkaLongConsumerConfig {
     }
 
     /**
-     * Kafka에서 String 키와 Long 값을 처리하는 ConsumerFactory 빈을 생성합니다.
+     * String 키와 Long 값을 처리하는 Kafka ConsumerFactory 빈을 생성합니다.
      *
-     * Kafka 부트스트랩 서버, 키/값 역직렬화 방식, 컨슈머 그룹 ID 등 필수 속성을 설정하여
-     * String-Key, Long-Value 메시지를 처리할 수 있도록 구성된 DefaultKafkaConsumerFactory를 반환합니다.
+     * Kafka 부트스트랩 서버, 역직렬화 방식, 컨슈머 그룹 ID, 오프셋 리셋 정책, 자동 커밋 비활성화, 최대 폴 레코드 수 등
+     * 주요 속성을 설정하여 String-Key, Long-Value 메시지 처리를 위한 DefaultKafkaConsumerFactory를 반환합니다.
      *
-     * @return String 키와 Long 값을 처리하는 Kafka ConsumerFactory
+     * @return String 키와 Long 값을 처리하는 Kafka ConsumerFactory 인스턴스
      */
     @Bean
     public ConsumerFactory<String, Long> longConsumerFactory() {
@@ -50,19 +50,22 @@ public class KafkaLongConsumerConfig {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class); // ✅ 수정됨
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "long-consumer-group");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 100);
 
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
     /**
-     * Kafka bootstrap 서버 설정이 비어 있는지 검증하며, 비어 있을 경우 예외를 발생시킵니다.
+     * Kafka Consumer의 bootstrap 서버 설정이 비어 있는지 확인하고, 비어 있을 경우 예외를 발생시킵니다.
      *
-     * @throws IllegalStateException Kafka bootstrap 서버 설정이 비어 있을 때 발생합니다.
+     * @throws IllegalStateException bootstrap 서버 설정이 비어 있거나 유효하지 않을 때 발생합니다.
      */
     @PostConstruct
     public void validateProperties() {
         if (bootstrapServers.isBlank()) {
-            throw new IllegalStateException("Kafka Producer 설정이 올바르지 않습니다.");
+            throw new IllegalStateException("Kafka Consumer bootstrap-servers 설정이 올바르지 않습니다.");
         }
     }
 }

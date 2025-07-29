@@ -76,17 +76,17 @@ void restore(Long projectId);
 void increaseViewCount(Long projectId, Long count);
 
     /**
- * 지정된 프로젝트의 관련 수치(예: 카운터)를 1만큼 증가시킵니다.
+ * 지정된 프로젝트의 댓글 수를 1만큼 증가시킵니다.
  *
- * @param projectId 증가시킬 프로젝트의 ID
+ * @param projectId 댓글 수를 증가시킬 프로젝트의 ID
  */
-void increase(Long projectId);
+void increaseCommentCount(Long projectId);
     /**
- * 지정된 프로젝트의 특정 카운터 속성 값을 1 감소시킵니다.
+ * 지정된 프로젝트의 댓글 수를 1 감소시킵니다.
  *
- * @param projectId 값을 감소시킬 프로젝트의 ID
+ * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
  */
-void decrease(Long projectId);
+void decreaseCommentCount(Long projectId);
 
 /**
  * 지정된 프로젝트의 좋아요 수를 1 증가시킵니다.
