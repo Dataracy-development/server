@@ -76,6 +76,14 @@ spring:
         topic: comment-uploaded-topic
       comment-delete:
         topic: comment-deleted-topic
+      project-like-increase:
+        topic: project-like-increase-topic
+      project-like-decrease:
+        topic: project-like-decrease-topic
+      comment-like-increase:
+        topic: comment-like-increase-topic
+      comment-like-decrease:
+        topic: comment-like-decrease-topic
 
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -101,6 +109,18 @@ spring:
       comment-delete:
         topic: comment-deleted-topic
         group-id: project-comment-delete-consumer-group
+      project-like-increase:
+        topic: project-like-increase-topic
+        group-id: project-like-increase-consumer-group
+      project-like-decrease:
+        topic: project-like-decrease-topic
+        group-id: project-like-decrease-consumer-group
+      comment-like-increase:
+        topic: comment-like-increase-topic
+        group-id: comment-like-increase-consumer-group
+      comment-like-decrease:
+        topic: comment-like-decrease-topic
+        group-id: comment-like-decrease-consumer-group
 
 logging:
   pattern:
