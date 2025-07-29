@@ -54,7 +54,3 @@ management:
   endpoint:
     prometheus:
       enabled: true
-
-app:
-  cookie:
-    secure: false

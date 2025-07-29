@@ -3,7 +3,6 @@ package com.dataracy.modules.common.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 
 import java.time.Duration;
@@ -18,9 +17,6 @@ public final class CookieUtil {
     private static final String ANONYMOUS_ID_COOKIE_NAME = "anonymousId";
     private static final int COOKIE_EXPIRE_SECONDS = 60 * 60 * 24 * 30; // 30일
 
-    @Value("${app.cookie.secure:false}")
-    private static boolean COOKIE_SECURE;
-
     /**
      * 지정한 이름, 값, 만료 시간을 가진 HTTP-Only 쿠키를 HTTP 응답에 추가합니다.
      *
@@ -33,8 +29,8 @@ public final class CookieUtil {
     public static void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(COOKIE_SECURE) // 운영시 true
-                .sameSite("Lax") // 또는 운영시 "None"
+                .secure(false) // 운영시 true
+                .sameSite("Lax") // 또는 "None"
                 .path("/")
                 .maxAge(Duration.ofSeconds(maxAge))
                 .build();

@@ -71,7 +71,3 @@ elasticsearch:
     username: ${ELASTIC_USERNAME}
     password: ${ELASTIC_PASSWORD}
     ssl: false
-
-app:
-  cookie:
-    secure: false
