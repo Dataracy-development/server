@@ -32,7 +32,13 @@ public class ProjectCommentUpdateAdapter implements ProjectCommentUpdatePort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("ctx._source.commentCount += 1")
+                                            .source("""
+                                                    if (ctx._source.commentCount == null) {
+                                                        ctx._source.commentCount = 1;
+                                                    } else {
+                                                        ctx._source.commentCount += 1;
+                                                    }
+                                                    """)
                                     )
                             ),
                     ProjectSearchDocument.class
@@ -42,6 +48,8 @@ public class ProjectCommentUpdateAdapter implements ProjectCommentUpdatePort {
             log.error("Elasticsearch: commentCount 증분 업데이트 실패 - projectId={}", projectId, e);
         }
     }
+
+
 
     /**
      * 지정된 프로젝트의 Elasticsearch 문서에서 commentCount 필드를 1 감소시킵니다.
