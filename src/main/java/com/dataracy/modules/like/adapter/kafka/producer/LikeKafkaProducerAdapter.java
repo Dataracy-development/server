@@ -25,6 +25,11 @@ public class LikeKafkaProducerAdapter implements LikeKafkaProducerPort {
     @Value("${spring.kafka.producer.comment-like-decrease.topic:comment-like-decrease-topic}")
     private String TOPIC_COMMENT_LIKE_DECREASE;
 
+    /**
+     * 프로젝트에 대한 좋아요 증가 이벤트를 Kafka 토픽에 발행합니다.
+     *
+     * @param projectId 좋아요가 증가한 프로젝트의 ID
+     */
     @Override
     public void sendProjectLikeIncreaseEvent(Long projectId) {
         log.info("Kafka 발행: 프로젝트에 대한 좋아요, projectId={}", projectId);
@@ -38,6 +43,11 @@ public class LikeKafkaProducerAdapter implements LikeKafkaProducerPort {
                 });
     }
 
+    /**
+     * 프로젝트에 대한 좋아요 취소 이벤트를 Kafka 토픽에 비동기적으로 발행합니다.
+     *
+     * @param projectId 좋아요 취소가 발생한 프로젝트의 ID
+     */
     @Override
     public void sendProjectLikeDecreaseEvent(Long projectId) {
         log.info("Kafka 발행: 프로젝트에 대한 좋아요 취소, projectId={}", projectId);
@@ -51,6 +61,11 @@ public class LikeKafkaProducerAdapter implements LikeKafkaProducerPort {
                 });
     }
 
+    /**
+     * 댓글에 대한 좋아요 증가 이벤트를 Kafka로 발행합니다.
+     *
+     * @param commentId 좋아요가 증가한 댓글의 ID
+     */
     @Override
     public void sendCommentLikeIncreaseEvent(Long commentId) {
         log.info("Kafka 발행: 댓글에 대한 좋아요, commentId={}", commentId);
@@ -64,6 +79,11 @@ public class LikeKafkaProducerAdapter implements LikeKafkaProducerPort {
                 });
     }
 
+    /**
+     * 댓글에 대한 좋아요 취소 이벤트를 Kafka로 비동기 발행합니다.
+     *
+     * @param commentId 좋아요 취소가 발생한 댓글의 ID
+     */
     @Override
     public void sendCommentLikeDecreaseEvent(Long commentId) {
         log.info("Kafka 발행: 댓글에 대한 좋아요 취소, commentId={}", commentId);

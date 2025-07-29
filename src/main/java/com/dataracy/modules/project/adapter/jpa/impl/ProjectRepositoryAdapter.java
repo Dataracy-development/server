@@ -207,11 +207,21 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
         projectJpaRepository.decreaseCommentCount(projectId);
     }
 
+    /**
+     * 지정된 프로젝트의 좋아요 수를 1 증가시킵니다.
+     *
+     * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
+     */
     @Override
     public void increaseLikeCount(Long projectId) {
         projectJpaRepository.increaseLikeCount(projectId);
     }
 
+    /**
+     * 지정된 프로젝트의 좋아요 수를 1 감소시킵니다.
+     *
+     * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
+     */
     @Override
     public void decreaseLikeCount(Long projectId) {
         projectJpaRepository.decreaseLikeCount(projectId);

@@ -261,7 +261,7 @@ public class ProjectCommandService implements
     }
 
     /**
-     * 프로젝트의 댓글 수를 1 감소시키고, 변경된 댓글 수를 Elasticsearch 인덱스에 반영합니다.
+     * 프로젝트의 댓글 수를 1 감소시키고, 변경된 값을 Elasticsearch 인덱스에 동기화합니다.
      *
      * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
      */
@@ -272,6 +272,13 @@ public class ProjectCommandService implements
         projectCommentUpdatePort.decreaseCommentCount(projectId);
     }
 
+    /**
+     * 프로젝트의 좋아요 수를 1 증가시킵니다.
+     *
+     * 데이터베이스와 Elasticsearch 인덱스의 좋아요 수를 모두 동기화합니다.
+     *
+     * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
+     */
     @Override
     @Transactional
     public void increaseLike(Long projectId) {
@@ -279,6 +286,13 @@ public class ProjectCommandService implements
         projectLikeUpdatePort.increaseLikeCount(projectId);
     }
 
+    /**
+     * 프로젝트의 좋아요 수를 1 감소시킵니다.
+     *
+     * 데이터베이스와 Elasticsearch 인덱스의 좋아요 수를 모두 동기화합니다.
+     *
+     * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
+     */
     @Override
     @Transactional
     public void decreaseLike(Long projectId) {

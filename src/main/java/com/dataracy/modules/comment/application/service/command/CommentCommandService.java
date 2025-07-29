@@ -79,7 +79,7 @@ public class CommentCommandService implements
     }
 
     /**
-     * 프로젝트 내에서 특정 댓글을 삭제하고, 삭제 이벤트를 발행합니다.
+     * 프로젝트 내에서 지정된 댓글을 삭제한 후, 해당 프로젝트에 대한 댓글 삭제 이벤트를 발행합니다.
      *
      * @param projectId 댓글이 속한 프로젝트의 ID
      * @param commentId 삭제할 댓글의 ID
@@ -91,12 +91,22 @@ public class CommentCommandService implements
         commentKafkaProducerPort.sendCommentDeletedEvent(projectId);
     }
 
+    /**
+     * 지정된 댓글의 좋아요 수를 1 감소시킵니다.
+     *
+     * @param commentId 좋아요 수를 감소시킬 댓글의 ID
+     */
     @Override
     @Transactional
     public void decreaseLike(Long commentId) {
         commentRepositoryPort.decreaseLikeCount(commentId);
     }
 
+    /**
+     * 지정된 댓글의 좋아요 수를 1 증가시킵니다.
+     *
+     * @param commentId 좋아요 수를 증가시킬 댓글의 ID
+     */
     @Override
     @Transactional
     public void increaseLike(Long commentId) {

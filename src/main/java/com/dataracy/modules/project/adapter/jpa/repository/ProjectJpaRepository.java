@@ -38,7 +38,7 @@ public interface ProjectJpaRepository extends JpaRepository<ProjectEntity, Long>
     void increaseCommentCount(@Param("projectId") Long projectId);
 
     /**
-     * 지정된 프로젝트의 댓글 수를 1 감소시킵니다. 댓글 수는 0 미만으로 내려가지 않습니다.
+     * 지정된 프로젝트의 댓글 수를 1 감소시킵니다. 댓글 수가 0보다 작아지지 않도록 최소값을 0으로 유지합니다.
      *
      * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
      */
@@ -54,10 +54,20 @@ public interface ProjectJpaRepository extends JpaRepository<ProjectEntity, Long>
 """)
     void decreaseCommentCount(@Param("projectId") Long projectId);
 
+    /**
+     * 지정된 프로젝트의 좋아요 수를 1 증가시킵니다.
+     *
+     * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
+     */
     @Modifying
     @Query("UPDATE ProjectEntity p SET p.likeCount = p.likeCount + 1 WHERE p.id = :projectId")
     void increaseLikeCount(@Param("projectId") Long projectId);
 
+    /**
+     * 프로젝트의 좋아요 수를 1 감소시킵니다. 현재 좋아요 수가 0 이하인 경우 0으로 유지됩니다.
+     *
+     * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
+     */
     @Modifying
     @Query("""
     UPDATE ProjectEntity p 
