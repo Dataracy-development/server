@@ -37,12 +37,23 @@ void delete(Long projectId, Long commentId);
 Optional<Long> findUserIdByCommentId(Long commentId);
 
 /**
- * 지정된 댓글 ID에 해당하는 댓글이 존재하는지 여부를 반환합니다.
+ * 주어진 댓글 ID에 해당하는 댓글의 존재 여부를 확인합니다.
  *
  * @param commentId 존재 여부를 확인할 댓글의 ID
- * @return 댓글이 존재하면 true, 그렇지 않으면 false
+ * @return 댓글이 존재하면 true, 존재하지 않으면 false
  */
 boolean existsByCommentId(Long commentId);
-
+    /**
+ * 지정된 댓글의 좋아요 수를 1 증가시킵니다.
+ *
+ * @param commentId 좋아요 수를 증가시킬 댓글의 ID
+ */
+void increaseLikeCount(Long commentId);
+    /**
+ * 지정된 댓글의 좋아요 수를 1 감소시킵니다.
+ *
+ * @param commentId 좋아요 수를 감소시킬 댓글의 ID
+ */
+void decreaseLikeCount(Long commentId);
 }
 
