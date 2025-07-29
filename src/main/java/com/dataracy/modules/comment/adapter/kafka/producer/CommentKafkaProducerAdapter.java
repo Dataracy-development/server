@@ -20,7 +20,7 @@ public class CommentKafkaProducerAdapter implements CommentKafkaProducerPort {
     private String TOPIC_DELETE;
 
     /**
-     * 댓글이 작성되었음을 나타내는 이벤트를 Kafka 토픽에 발행합니다.
+     * 댓글 작성 이벤트를 지정된 Kafka 토픽에 비동기적으로 발행합니다.
      *
      * @param projectId 댓글이 작성된 프로젝트의 ID
      */
@@ -39,7 +39,7 @@ public class CommentKafkaProducerAdapter implements CommentKafkaProducerPort {
     }
 
     /**
-     * 주어진 프로젝트 ID에 대해 댓글 삭제 이벤트를 Kafka 토픽에 발행합니다.
+     * 주어진 프로젝트 ID에 대한 댓글 삭제 이벤트를 Kafka 토픽에 비동기적으로 발행합니다.
      *
      * @param projectId 댓글이 삭제된 프로젝트의 ID
      */

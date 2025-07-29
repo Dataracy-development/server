@@ -49,11 +49,11 @@ public class KafkaLongProducerConfig {
     }
 
     /**
-     * Kafka Producer의 bootstrap 서버 설정이 비어 있는지 검증합니다.
+     * Kafka Producer의 bootstrap-servers 설정이 비어 있는지 검증합니다.
      *
-     * bootstrapServers 값이 비어 있으면 IllegalStateException을 발생시킵니다.
+     * bootstrapServers 값이 비어 있으면 Kafka Producer가 정상적으로 동작하지 않으므로 예외를 발생시킵니다.
      *
-     * @throws IllegalStateException Kafka Producer 설정이 올바르지 않은 경우
+     * @throws IllegalStateException bootstrap-servers 설정이 비어 있거나 올바르지 않은 경우 발생합니다.
      */
     @PostConstruct
     public void validateProperties() {
