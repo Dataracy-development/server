@@ -18,10 +18,21 @@ public interface CommentJpaRepository extends JpaRepository<CommentEntity, Long>
     @Query("select c.userId from CommentEntity c where c.id = :commentId")
     Optional<Long> findUserIdById(@Param("commentId") Long commentId);
 
+    /**
+     * 지정된 댓글의 좋아요 수를 1 증가시킵니다.
+     *
+     * @param commentId 좋아요 수를 증가시킬 댓글의 ID
+     */
     @Modifying
     @Query("UPDATE CommentEntity c SET c.likeCount = c.likeCount + 1 WHERE c.id = :commentId")
     void increaseLikeCount(@Param("commentId") Long commentId);
 
+    /**
+     * 지정된 댓글의 좋아요 수를 1 감소시킵니다.  
+     * 좋아요 수가 0 이하인 경우 0으로 유지됩니다.
+     *
+     * @param commentId 좋아요 수를 감소시킬 댓글의 ID
+     */
     @Modifying
     @Query("""
     UPDATE CommentEntity c 
