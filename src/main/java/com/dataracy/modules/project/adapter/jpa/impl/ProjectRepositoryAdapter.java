@@ -193,7 +193,7 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
      * @param projectId 댓글 수를 증가시킬 프로젝트의 ID
      */
     @Override
-    public void increase(Long projectId) {
+    public void increaseCommentCount(Long projectId) {
         projectJpaRepository.increaseCommentCount(projectId);
     }
 
@@ -203,7 +203,7 @@ public class ProjectRepositoryAdapter implements ProjectRepositoryPort {
      * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
      */
     @Override
-    public void decrease(Long projectId) {
+    public void decreaseCommentCount(Long projectId) {
         projectJpaRepository.decreaseCommentCount(projectId);
     }
 

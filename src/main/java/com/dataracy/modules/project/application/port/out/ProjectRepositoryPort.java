@@ -80,13 +80,13 @@ void increaseViewCount(Long projectId, Long count);
  *
  * @param projectId 증가시킬 프로젝트의 ID
  */
-void increase(Long projectId);
+void increaseCommentCount(Long projectId);
     /**
  * 지정된 프로젝트의 특정 카운터 속성 값을 1 감소시킵니다.
  *
  * @param projectId 값을 감소시킬 프로젝트의 ID
  */
-void decrease(Long projectId);
+void decreaseCommentCount(Long projectId);
 
 /**
  * 지정된 프로젝트의 좋아요 수를 1 증가시킵니다.

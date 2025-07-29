@@ -256,7 +256,7 @@ public class ProjectCommandService implements
     @Override
     @Transactional
     public void increase(Long projectId) {
-        projectRepositoryPort.increase(projectId);
+        projectRepositoryPort.increaseCommentCount(projectId);
         projectCommentUpdatePort.increaseCommentCount(projectId);
     }
 
@@ -268,7 +268,7 @@ public class ProjectCommandService implements
     @Override
     @Transactional
     public void decrease(Long projectId) {
-        projectRepositoryPort.decrease(projectId);
+        projectRepositoryPort.decreaseCommentCount(projectId);
         projectCommentUpdatePort.decreaseCommentCount(projectId);
     }
 
