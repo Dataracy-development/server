@@ -4,6 +4,7 @@ import com.dataracy.modules.comment.application.port.in.ValidateCommentUseCase;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;
 import com.dataracy.modules.like.application.port.in.TargetLikeUseCase;
+import com.dataracy.modules.like.application.port.out.LikeKafkaProducerPort;
 import com.dataracy.modules.like.application.port.out.LikeRepositoryPort;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.like.domain.exception.LikeException;
@@ -23,6 +24,7 @@ public class LikeCommandService implements
 {
 
     private final LikeRepositoryPort likeRepositoryPort;
+    private final LikeKafkaProducerPort likeKafkaProducerPort;
 
     private final ValidateProjectUseCase validateProjectUseCase;
     private final ValidateCommentUseCase validateCommentUseCase;
@@ -59,6 +61,10 @@ public class LikeCommandService implements
         if (requestDto.previouslyLiked()){
             try {
                 likeRepositoryPort.cancelLike(userId, requestDto.targetId(), targetType);
+                switch (targetType) {
+                    case PROJECT -> likeKafkaProducerPort.sendProjectLikeDecreaseEvent(requestDto.targetId());
+                    case COMMENT -> likeKafkaProducerPort.sendCommentLikeDecreaseEvent(requestDto.targetId());
+                };
             } catch (Exception e) {
                 log.error("Database error while saving like: {}", e.getMessage());
                 switch (targetType) {
@@ -75,6 +81,10 @@ public class LikeCommandService implements
             );
             try {
                 likeRepositoryPort.save(like);
+                switch (targetType) {
+                    case PROJECT -> likeKafkaProducerPort.sendProjectLikeIncreaseEvent(requestDto.targetId());
+                    case COMMENT -> likeKafkaProducerPort.sendCommentLikeIncreaseEvent(requestDto.targetId());
+                };
             } catch (Exception e) {
                 switch (targetType) {
                     case PROJECT -> throw new LikeException(LikeErrorStatus.FAIL_LIKE_PROJECT);
