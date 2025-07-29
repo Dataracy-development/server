@@ -36,7 +36,7 @@ swagger:
   title: Dataracy
   description: Dataracy 백엔드 API 개발 문서입니다
   version: v1.2.0
-  server-url: http://${SERVER_HOST}:8083
+  server-url: http://${SERVER_HOST}:${SERVER_PORT}
   server-description: develop server
 
 elasticsearch:
