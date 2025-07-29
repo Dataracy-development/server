@@ -82,12 +82,22 @@ void increaseViewCount(Long projectId, Long count);
  */
 void increase(Long projectId);
     /**
- * 지정된 프로젝트의 특정 수치 속성을 감소시킵니다.
+ * 지정된 프로젝트의 특정 카운터 속성 값을 1 감소시킵니다.
  *
- * @param projectId 감소할 프로젝트의 ID
+ * @param projectId 값을 감소시킬 프로젝트의 ID
  */
 void decrease(Long projectId);
 
+/**
+ * 지정된 프로젝트의 좋아요 수를 1 증가시킵니다.
+ *
+ * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
+ */
 void increaseLikeCount(Long projectId);
+/**
+ * 지정된 프로젝트의 좋아요 수를 1 감소시킵니다.
+ *
+ * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
+ */
 void decreaseLikeCount(Long projectId);
 }
