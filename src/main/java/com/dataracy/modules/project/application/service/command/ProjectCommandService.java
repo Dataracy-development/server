@@ -10,6 +10,7 @@ import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectCommentUpdatePort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectDeletePort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectIndexingPort;
+import com.dataracy.modules.project.application.port.elasticsearch.ProjectLikeUpdatePort;
 import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
@@ -48,6 +49,7 @@ public class ProjectCommandService implements
     private final ProjectDeletePort projectDeletePort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
     private final ProjectCommentUpdatePort projectCommentUpdatePort;
+    private final ProjectLikeUpdatePort projectLikeUpdatePort;
 
     private final FindUsernameUseCase findUsernameUseCase;
     private final FileUploadUseCase fileUploadUseCase;
@@ -273,10 +275,12 @@ public class ProjectCommandService implements
     @Override
     public void increaseLike(Long projectId) {
         projectRepositoryPort.increaseLikeCount(projectId);
+        projectLikeUpdatePort.increaseLikeCount(projectId);
     }
 
     @Override
     public void decreaseLike(Long projectId) {
         projectRepositoryPort.decreaseLikeCount(projectId);
+        projectLikeUpdatePort.decreaseLikeCount(projectId);
     }
 }
