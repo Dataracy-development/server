@@ -20,7 +20,7 @@ public class ProjectKafkaConsumerAdapter {
     private final DecreaseLikeCountUseCase decreaseLikeCountUseCase;
 
     /**
-     * 프로젝트 댓글 작성 이벤트를 수신하여 해당 프로젝트의 댓글 수를 1 증가시킵니다.
+     * 프로젝트에 댓글이 작성되었을 때 해당 프로젝트의 댓글 수를 1 증가시킵니다.
      *
      * @param projectId 댓글이 추가된 프로젝트의 ID
      */
@@ -40,8 +40,8 @@ public class ProjectKafkaConsumerAdapter {
         }
     }
 
-    /**
-     * 프로젝트의 댓글 삭제 이벤트를 수신하여 해당 프로젝트의 댓글 수를 감소시킵니다.
+    /****
+     * Kafka에서 프로젝트의 댓글 삭제 이벤트를 수신하여 해당 프로젝트의 댓글 수를 감소시킵니다.
      *
      * @param projectId 댓글이 삭제된 프로젝트의 ID
      */
@@ -62,9 +62,9 @@ public class ProjectKafkaConsumerAdapter {
     }
 
     /**
-     * Kafka 이벤트를 수신하여 지정된 프로젝트의 좋아요 수를 증가시킵니다.
+     * Kafka 이벤트를 수신하여 지정된 프로젝트의 좋아요 수를 1 증가시킵니다.
      *
-     * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
+     * @param projectId 좋아요 수를 증가시킬 대상 프로젝트의 ID
      */
     @KafkaListener(
             topics = "${spring.kafka.consumer.project-like-increase.topic:project-like-increase-topic}",
@@ -83,7 +83,7 @@ public class ProjectKafkaConsumerAdapter {
     }
 
     /**
-     * Kafka에서 프로젝트 좋아요 취소 이벤트를 수신하여 해당 프로젝트의 좋아요 수를 감소시킵니다.
+     * Kafka에서 프로젝트의 좋아요 취소 이벤트를 수신하여 해당 프로젝트의 좋아요 수를 감소시킵니다.
      *
      * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
      */
