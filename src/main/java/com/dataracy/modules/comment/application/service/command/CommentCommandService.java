@@ -2,9 +2,7 @@ package com.dataracy.modules.comment.application.service.command;
 
 import com.dataracy.modules.comment.application.dto.request.CommentModifyRequest;
 import com.dataracy.modules.comment.application.dto.request.CommentUploadRequest;
-import com.dataracy.modules.comment.application.port.in.CommentDeleteUseCase;
-import com.dataracy.modules.comment.application.port.in.CommentModifyUseCase;
-import com.dataracy.modules.comment.application.port.in.CommentUploadUseCase;
+import com.dataracy.modules.comment.application.port.in.*;
 import com.dataracy.modules.comment.application.port.out.CommentKafkaProducerPort;
 import com.dataracy.modules.comment.application.port.out.CommentRepositoryPort;
 import com.dataracy.modules.comment.application.port.query.CommentQueryRepositoryPort;
@@ -20,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentCommandService implements
         CommentUploadUseCase,
         CommentModifyUseCase,
-        CommentDeleteUseCase
+        CommentDeleteUseCase,
+        IncreaseLikeCountUseCase,
+        DecreaseLikeCountUseCase,
 {
     private final CommentQueryRepositoryPort commentQueryRepositoryPort;
     private final CommentRepositoryPort commentRepositoryPort;
@@ -89,5 +89,15 @@ public class CommentCommandService implements
     public void delete(Long projectId, Long commentId) {
         commentRepositoryPort.delete(projectId, commentId);
         commentKafkaProducerPort.sendCommentDeletedEvent(projectId);
+    }
+
+    @Override
+    public void decreaseLike(Long commentId) {
+        commentRepositoryPort.decreaseLikeCount(commentId);
+    }
+
+    @Override
+    public void increaseLike(Long commentId) {
+        commentRepositoryPort.increaseLikeCount(commentId);
     }
 }

@@ -91,4 +91,14 @@ public class CommentRepositoryAdapter implements CommentRepositoryPort {
   public boolean existsByCommentId(Long commentId) {
    return commentJpaRepository.existsById(commentId);
   }
+
+  @Override
+  public void increaseLikeCount(Long commentId) {
+   commentJpaRepository.increaseLikeCount(commentId);
+  }
+
+  @Override
+  public void decreaseLikeCount(Long commentId) {
+   commentJpaRepository.decreaseLikeCount(commentId);
+  }
  }

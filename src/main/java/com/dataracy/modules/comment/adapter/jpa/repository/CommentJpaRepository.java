@@ -2,6 +2,7 @@ package com.dataracy.modules.comment.adapter.jpa.repository;
 
 import com.dataracy.modules.comment.adapter.jpa.entity.CommentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,4 +17,20 @@ public interface CommentJpaRepository extends JpaRepository<CommentEntity, Long>
      */
     @Query("select c.userId from CommentEntity c where c.id = :commentId")
     Optional<Long> findUserIdById(@Param("commentId") Long commentId);
+
+    @Modifying
+    @Query("UPDATE CommentEntity c SET c.likeCount = c.likeCount + 1 WHERE c.id = :commentId")
+    void increaseLikeCount(@Param("commentId") Long commentId);
+
+    @Modifying
+    @Query("""
+    UPDATE CommentEntity c 
+    SET c.likeCount = 
+        CASE 
+            WHEN c.likeCount > 0 THEN c.likeCount - 1 
+            ELSE 0 
+        END
+    WHERE c.id = :commentId
+    """)
+    void decreaseLikeCount(@Param("commentId") Long commentId);
 }
