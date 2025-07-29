@@ -2,9 +2,7 @@ package com.dataracy.modules.comment.application.service.command;
 
 import com.dataracy.modules.comment.application.dto.request.CommentModifyRequest;
 import com.dataracy.modules.comment.application.dto.request.CommentUploadRequest;
-import com.dataracy.modules.comment.application.port.in.CommentDeleteUseCase;
-import com.dataracy.modules.comment.application.port.in.CommentModifyUseCase;
-import com.dataracy.modules.comment.application.port.in.CommentUploadUseCase;
+import com.dataracy.modules.comment.application.port.in.*;
 import com.dataracy.modules.comment.application.port.out.CommentKafkaProducerPort;
 import com.dataracy.modules.comment.application.port.out.CommentRepositoryPort;
 import com.dataracy.modules.comment.application.port.query.CommentQueryRepositoryPort;
@@ -20,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentCommandService implements
         CommentUploadUseCase,
         CommentModifyUseCase,
-        CommentDeleteUseCase
+        CommentDeleteUseCase,
+        IncreaseLikeCountUseCase,
+        DecreaseLikeCountUseCase
 {
     private final CommentQueryRepositoryPort commentQueryRepositoryPort;
     private final CommentRepositoryPort commentRepositoryPort;
@@ -79,7 +79,7 @@ public class CommentCommandService implements
     }
 
     /**
-     * 프로젝트 내에서 특정 댓글을 삭제하고, 삭제 이벤트를 발행합니다.
+     * 프로젝트 내에서 지정된 댓글을 삭제한 후, 해당 프로젝트에 대한 댓글 삭제 이벤트를 발행합니다.
      *
      * @param projectId 댓글이 속한 프로젝트의 ID
      * @param commentId 삭제할 댓글의 ID
@@ -89,5 +89,27 @@ public class CommentCommandService implements
     public void delete(Long projectId, Long commentId) {
         commentRepositoryPort.delete(projectId, commentId);
         commentKafkaProducerPort.sendCommentDeletedEvent(projectId);
+    }
+
+    /**
+     * 지정된 댓글의 좋아요 수를 1 감소시킵니다.
+     *
+     * @param commentId 좋아요 수를 감소시킬 댓글의 ID
+     */
+    @Override
+    @Transactional
+    public void decreaseLike(Long commentId) {
+        commentRepositoryPort.decreaseLikeCount(commentId);
+    }
+
+    /**
+     * 지정된 댓글의 좋아요 수를 1 증가시킵니다.
+     *
+     * @param commentId 좋아요 수를 증가시킬 댓글의 ID
+     */
+    @Override
+    @Transactional
+    public void increaseLike(Long commentId) {
+        commentRepositoryPort.increaseLikeCount(commentId);
     }
 }

@@ -10,6 +10,7 @@ import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectCommentUpdatePort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectDeletePort;
 import com.dataracy.modules.project.application.port.elasticsearch.ProjectIndexingPort;
+import com.dataracy.modules.project.application.port.elasticsearch.ProjectLikeUpdatePort;
 import com.dataracy.modules.project.application.port.in.*;
 import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
 import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
@@ -39,13 +40,16 @@ public class ProjectCommandService implements
         ProjectDeleteUseCase,
         ProjectRestoreUseCase,
         IncreaseCommentCountUseCase,
-        DecreaseCommentCountUseCase
+        DecreaseCommentCountUseCase,
+        IncreaseLikeCountUseCase,
+        DecreaseLikeCountUseCase
 {
     private final ProjectRepositoryPort projectRepositoryPort;
     private final ProjectIndexingPort projectIndexingPort;
     private final ProjectDeletePort projectDeletePort;
     private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
     private final ProjectCommentUpdatePort projectCommentUpdatePort;
+    private final ProjectLikeUpdatePort projectLikeUpdatePort;
 
     private final FindUsernameUseCase findUsernameUseCase;
     private final FileUploadUseCase fileUploadUseCase;
@@ -257,7 +261,7 @@ public class ProjectCommandService implements
     }
 
     /**
-     * 프로젝트의 댓글 수를 1 감소시키고, 변경된 댓글 수를 Elasticsearch 인덱스에 반영합니다.
+     * 프로젝트의 댓글 수를 1 감소시키고, 변경된 값을 Elasticsearch 인덱스에 동기화합니다.
      *
      * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
      */
@@ -266,5 +270,33 @@ public class ProjectCommandService implements
     public void decrease(Long projectId) {
         projectRepositoryPort.decrease(projectId);
         projectCommentUpdatePort.decreaseCommentCount(projectId);
+    }
+
+    /**
+     * 프로젝트의 좋아요 수를 1 증가시킵니다.
+     *
+     * 데이터베이스와 Elasticsearch 인덱스의 좋아요 수를 모두 동기화합니다.
+     *
+     * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
+     */
+    @Override
+    @Transactional
+    public void increaseLike(Long projectId) {
+        projectRepositoryPort.increaseLikeCount(projectId);
+        projectLikeUpdatePort.increaseLikeCount(projectId);
+    }
+
+    /**
+     * 프로젝트의 좋아요 수를 1 감소시킵니다.
+     *
+     * 데이터베이스와 Elasticsearch 인덱스의 좋아요 수를 모두 동기화합니다.
+     *
+     * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
+     */
+    @Override
+    @Transactional
+    public void decreaseLike(Long projectId) {
+        projectRepositoryPort.decreaseLikeCount(projectId);
+        projectLikeUpdatePort.decreaseLikeCount(projectId);
     }
 }
