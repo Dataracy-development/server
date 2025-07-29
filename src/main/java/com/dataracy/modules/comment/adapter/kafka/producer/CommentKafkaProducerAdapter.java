@@ -20,24 +20,40 @@ public class CommentKafkaProducerAdapter implements CommentKafkaProducerPort {
     private String TOPIC_DELETE;
 
     /**
-     * 댓글이 작성되었음을 나타내는 이벤트를 Kafka 토픽에 발행합니다.
+     * 댓글 작성 이벤트를 지정된 Kafka 토픽에 비동기적으로 발행합니다.
      *
      * @param projectId 댓글이 작성된 프로젝트의 ID
      */
     @Override
     public void sendCommentUploadedEvent(Long projectId) {
-        log.info("Kafka 발행: 댓글 작성됨, commentId={}", projectId);
-        kafkaTemplate.send(TOPIC_UPLOAD, String.valueOf(projectId), projectId);
+        log.info("Kafka 발행: 댓글 작성됨, projectId={}", projectId);
+        kafkaTemplate.send(TOPIC_UPLOAD, String.valueOf(projectId), projectId)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("[Kafka] 댓글 작성 이벤트 발송 실패: projectId={}", projectId, ex);
+                        // 필요시 재시도 로직 또는 예외 처리
+                    } else {
+                        log.trace("[Kafka] 댓글 작성 이벤트 발송 성공: projectId={}", projectId);
+                    }
+                });
     }
 
     /**
-     * 주어진 프로젝트 ID에 대해 댓글 삭제 이벤트를 Kafka 토픽에 발행합니다.
+     * 주어진 프로젝트 ID에 대한 댓글 삭제 이벤트를 Kafka 토픽에 비동기적으로 발행합니다.
      *
      * @param projectId 댓글이 삭제된 프로젝트의 ID
      */
     @Override
     public void sendCommentDeletedEvent(Long projectId) {
-        log.info("Kafka 발행: 댓글 삭제됨, commentId={}", projectId);
-        kafkaTemplate.send(TOPIC_DELETE, String.valueOf(projectId), projectId);
+        log.info("Kafka 발행: 댓글 삭제됨, projectId={}", projectId);
+        kafkaTemplate.send(TOPIC_DELETE, String.valueOf(projectId), projectId)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("[Kafka] 댓글 삭제 이벤트 발송 실패: projectId={}", projectId, ex);
+                        // 필요시 재시도 로직 또는 예외 처리
+                    } else {
+                        log.trace("[Kafka] 댓글 삭제 이벤트 발송 성공: projectId={}", projectId);
+                    }
+                });
     }
 }

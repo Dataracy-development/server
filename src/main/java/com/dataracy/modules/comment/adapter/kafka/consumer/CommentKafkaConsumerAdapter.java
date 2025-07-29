@@ -27,13 +27,19 @@ public class CommentKafkaConsumerAdapter {
     )
     public void consumeLikeIncrease(Long commentId) {
         log.info("[Kafka] 댓글 좋아요 이벤트 수신됨: commentId:{}", commentId);
-        increaseLikeCountUseCase.increaseLike(commentId);
+        try {
+            increaseLikeCountUseCase.increaseLike(commentId);
+            log.info("[Kafka] 댓글 좋아요 이벤트 처리 완료: commentId:{}", commentId);
+        } catch (Exception e) {
+            log.error("[Kafka] 댓글 좋아요 이벤트 처리 실패: commentId:{}", commentId, e);
+            throw e; // 재시도를 위해 예외 재던지기
+        }
     }
 
     /**
      * Kafka에서 댓글 좋아요 취소 이벤트를 수신하여 해당 댓글의 좋아요 수를 감소시킵니다.
      *
-     * @param commentId 좋아요 수를 감소시킬 댓글의 ID
+     * @param commentId 좋아요 수를 감소시킬 대상 댓글의 ID
      */
     @KafkaListener(
             topics = "${spring.kafka.consumer.comment-like-decrease.topic:comment-like-decrease-topic}",
@@ -42,6 +48,12 @@ public class CommentKafkaConsumerAdapter {
     )
     public void consumeLikeDecrease(Long commentId) {
         log.info("[Kafka] 댓글 좋아요 취소 이벤트 수신됨: commentId:{}", commentId);
-        decreaseLikeCountUseCase.decreaseLike(commentId);
+        try {
+            decreaseLikeCountUseCase.decreaseLike(commentId);
+            log.info("[Kafka] 댓글 좋아요 취소 이벤트 처리 완료: commentId:{}", commentId);
+        } catch (Exception e) {
+            log.error("[Kafka] 댓글 좋아요 취소 이벤트 처리 실패: commentId:{}", commentId, e);
+            throw e; // 재시도를 위해 예외 재던지기
+        }
     }
 }

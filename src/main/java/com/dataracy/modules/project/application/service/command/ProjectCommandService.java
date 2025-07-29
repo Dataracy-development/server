@@ -249,26 +249,26 @@ public class ProjectCommandService implements
     /**
      * 프로젝트의 댓글 수를 1 증가시킵니다.
      *
-     * 데이터베이스와 Elasticsearch 인덱스의 댓글 수를 모두 업데이트합니다.
+     * 데이터베이스와 Elasticsearch 인덱스의 댓글 수를 동기화하여 모두 증가시킵니다.
      *
      * @param projectId 댓글 수를 증가시킬 프로젝트의 ID
      */
     @Override
     @Transactional
     public void increase(Long projectId) {
-        projectRepositoryPort.increase(projectId);
+        projectRepositoryPort.increaseCommentCount(projectId);
         projectCommentUpdatePort.increaseCommentCount(projectId);
     }
 
     /**
-     * 프로젝트의 댓글 수를 1 감소시키고, 변경된 값을 Elasticsearch 인덱스에 동기화합니다.
+     * 프로젝트의 댓글 수를 1 감소시키고, 변경된 댓글 수를 Elasticsearch 인덱스에 반영합니다.
      *
      * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
      */
     @Override
     @Transactional
     public void decrease(Long projectId) {
-        projectRepositoryPort.decrease(projectId);
+        projectRepositoryPort.decreaseCommentCount(projectId);
         projectCommentUpdatePort.decreaseCommentCount(projectId);
     }
 
