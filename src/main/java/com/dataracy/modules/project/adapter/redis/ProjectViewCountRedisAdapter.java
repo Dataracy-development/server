@@ -32,7 +32,6 @@ public class ProjectViewCountRedisAdapter implements ProjectViewCountRedisPort {
             String countKey = String.format("viewCount:%s:%s", targetType, projectId);
 
             redisTemplate.opsForValue().increment(countKey);
-            redisTemplate.expire(dedupKey, TTL);
         }
     }
 
