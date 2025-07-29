@@ -24,7 +24,7 @@ public class ProjectViewCountScheduler {
      * 1분마다 실행되며, Redis에서 프로젝트별 조회수 키를 모두 조회한 후 각 프로젝트의 조회수를 가져옵니다.
      * 조회수가 0보다 크면, 해당 값을 프로젝트 저장소와 뷰 표현에 반영하고 Redis의 조회수는 초기화합니다.
      */
-    @Scheduled(fixedRate = 60 * 1000) // 1분
+    @Scheduled(fixedDelay = 60 * 1000) // 1분
     @Transactional
     public void flushProjectViews() {
         Set<String> keys = projectViewCountRedisPort.getAllViewCountKeys("PROJECT");
