@@ -16,9 +16,9 @@ public class ProjectViewCountRedisAdapter implements ProjectViewCountRedisPort {
     private static final Duration TTL = Duration.ofMinutes(5);
 
     /**
-     * 주어진 프로젝트와 뷰어에 대해 중복 방지 기간 내 최초 조회 시 조회수를 1 증가시킵니다.
+     * 주어진 프로젝트와 대상 유형에 대해 뷰어가 5분 이내 최초로 조회할 때만 조회수를 1 증가시킵니다.
      *
-     * 동일 뷰어가 5분 이내에 여러 번 조회해도 조회수는 한 번만 증가합니다.
+     * 동일 뷰어가 5분 내에 여러 번 조회해도 조회수는 한 번만 증가합니다.
      *
      * @param projectId 조회수를 증가시킬 프로젝트의 ID
      * @param viewerId  조회를 시도한 뷰어의 고유 식별자

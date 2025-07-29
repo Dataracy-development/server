@@ -39,7 +39,7 @@ public class CommentKafkaConsumerAdapter {
     /**
      * Kafka에서 댓글 좋아요 취소 이벤트를 수신하여 해당 댓글의 좋아요 수를 감소시킵니다.
      *
-     * @param commentId 좋아요 수를 감소시킬 댓글의 ID
+     * @param commentId 좋아요 수를 감소시킬 대상 댓글의 ID
      */
     @KafkaListener(
             topics = "${spring.kafka.consumer.comment-like-decrease.topic:comment-like-decrease-topic}",

@@ -21,10 +21,10 @@ public class ProjectViewCountScheduler {
     private final ProjectViewUpdatePort projectViewUpdatePort;
 
     /**
-     * Redis에 저장된 프로젝트 조회수를 주기적으로 메인 프로젝트 저장소와 프로젝트 뷰 표현에 동기화합니다.
+     * Redis에 저장된 프로젝트별 조회수를 1분마다 메인 프로젝트 저장소와 프로젝트 뷰에 동기화합니다.
      *
-     * 1분마다 실행되며, Redis에서 프로젝트별 조회수 키를 모두 조회한 후 각 프로젝트의 조회수를 가져옵니다.
-     * 조회수가 0보다 크면, 해당 값을 프로젝트 저장소와 뷰 표현에 반영하고 Redis의 조회수는 초기화합니다.
+     * 각 프로젝트의 조회수를 Redis에서 가져와 0보다 크면 저장소와 뷰에 반영한 뒤, 해당 Redis 조회수를 초기화합니다.
+     * 개별 키 처리 중 예외가 발생해도 전체 동기화 작업은 중단되지 않습니다.
      */
     @Scheduled(fixedDelay = 60 * 1000) // 1분
     @Transactional
@@ -47,10 +47,11 @@ public class ProjectViewCountScheduler {
     }
 
     /**
-     * Redis 키 문자열에서 프로젝트 ID를 추출하여 반환합니다.
+     * Redis 키에서 프로젝트 ID를 추출합니다.
      *
      * @param key "viewCount:PROJECT:<projectId>" 형식의 Redis 키 문자열
      * @return 추출된 프로젝트 ID
+     * @throws IllegalArgumentException 키 형식이 올바르지 않거나 프로젝트 ID가 숫자가 아닐 경우 발생합니다.
      */
     private Long extractProjectId(String key) {
         // ex. viewCount:PROJECT:123
