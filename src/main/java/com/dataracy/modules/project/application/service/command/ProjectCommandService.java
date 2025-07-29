@@ -39,7 +39,9 @@ public class ProjectCommandService implements
         ProjectDeleteUseCase,
         ProjectRestoreUseCase,
         IncreaseCommentCountUseCase,
-        DecreaseCommentCountUseCase
+        DecreaseCommentCountUseCase,
+        IncreaseLikeCountUseCase,
+        DecreaseLikeCountUseCase
 {
     private final ProjectRepositoryPort projectRepositoryPort;
     private final ProjectIndexingPort projectIndexingPort;
@@ -266,5 +268,15 @@ public class ProjectCommandService implements
     public void decrease(Long projectId) {
         projectRepositoryPort.decrease(projectId);
         projectCommentUpdatePort.decreaseCommentCount(projectId);
+    }
+
+    @Override
+    public void increaseLike(Long projectId) {
+        projectRepositoryPort.increaseLikeCount(projectId);
+    }
+
+    @Override
+    public void decreaseLike(Long projectId) {
+        projectRepositoryPort.decreaseLikeCount(projectId);
     }
 }
