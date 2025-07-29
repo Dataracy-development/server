@@ -273,12 +273,14 @@ public class ProjectCommandService implements
     }
 
     @Override
+    @Transactional
     public void increaseLike(Long projectId) {
         projectRepositoryPort.increaseLikeCount(projectId);
         projectLikeUpdatePort.increaseLikeCount(projectId);
     }
 
     @Override
+    @Transactional
     public void decreaseLike(Long projectId) {
         projectRepositoryPort.decreaseLikeCount(projectId);
         projectLikeUpdatePort.decreaseLikeCount(projectId);
