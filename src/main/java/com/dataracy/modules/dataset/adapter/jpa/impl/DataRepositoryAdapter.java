@@ -155,7 +155,7 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
     }
 
     /**
-     * 논리적으로 삭제된 데이터를 복구합니다.
+     * 지정한 ID의 논리적으로 삭제된 데이터를 복구합니다.
      *
      * @param dataId 복구할 데이터의 ID
      * @throws DataException 해당 ID의 데이터를 찾을 수 없는 경우 발생하며, 상태는 NOT_FOUND_DATA입니다.
@@ -166,5 +166,16 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
         data.restore();
         dataJpaRepository.save(data);
+    }
+
+    /**
+     * 주어진 데이터 ID에 해당하는 데이터셋 파일을 조회하여 반환합니다.
+     *
+     * @param dataId 조회할 데이터의 ID
+     * @return 데이터셋 파일이 존재하면 해당 파일의 정보를 포함한 Optional, 없으면 Optional.empty()
+     */
+    @Override
+    public Optional<String> downloadDatasetFile(Long dataId) {
+        return dataJpaRepository.downloadDatasetFile(dataId);
     }
 }

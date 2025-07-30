@@ -21,6 +21,7 @@ public enum DataSuccessStatus implements BaseSuccessCode {
     MODIFY_DATASET(HttpStatus.OK, "200", "수정이 완료되었습니다"),
     DELETE_DATASET(HttpStatus.OK, "200", "데이터셋 삭제가 완료되었습니다."),
     RESTORE_DATASET(HttpStatus.OK, "200", "데이터셋 복원에 완료되었습니다."),
+    DOWNLOAD_DATASET(HttpStatus.OK, "200", "유효기간이 있는 데이터셋 다운로드 URL을 반환된다.."),
     ;
 
     private final HttpStatus httpStatus;
