@@ -311,10 +311,10 @@ public class DataQueryService implements
     }
 
     /**
-     * 삭제된 데이터를 포함하여 주어진 데이터 ID에 해당하는 사용자 ID를 반환합니다.
+     * 삭제된 데이터를 포함하여 지정된 데이터 ID의 소유자 사용자 ID를 반환합니다.
      *
      * @param dataId 사용자 ID를 조회할 데이터의 ID
-     * @return 해당 데이터의 소유자 사용자 ID
+     * @return 데이터의 소유자 사용자 ID
      */
     @Override
     @Transactional(readOnly = true)
@@ -322,6 +322,14 @@ public class DataQueryService implements
         return dataRepositoryPort.findUserIdIncludingDeleted(dataId);
     }
 
+    /**
+     * 지정된 데이터셋 파일의 S3 URL을 조회하여, 주어진 만료 시간으로 프리사인드 다운로드 URL을 반환합니다.
+     *
+     * @param dataId            다운로드할 데이터셋의 ID
+     * @param expirationSeconds 프리사인드 URL의 만료 시간(초)
+     * @return                  프리사인드 S3 다운로드 URL
+     * @throws DataException    데이터셋이 존재하지 않을 경우 발생
+     */
     @Override
     @Transactional(readOnly = true)
     public String download(Long dataId, int expirationSeconds) {
