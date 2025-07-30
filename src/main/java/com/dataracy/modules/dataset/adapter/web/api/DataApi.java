@@ -326,7 +326,7 @@ public interface DataApi {
     })
     @GetMapping("/{dataId}/download")
     ResponseEntity<SuccessResponse<String>> getPreSignedDataUrl(
-            @PathVariable(name = "dataId")
+            @PathVariable(name = "dataId") @Min(1)
             Long dataId
     );
 }
