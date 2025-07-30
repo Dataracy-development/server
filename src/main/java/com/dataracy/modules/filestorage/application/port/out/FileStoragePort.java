@@ -36,4 +36,6 @@ InputStream download(String fileUrl);
  * @return 파일에 접근할 수 있는 URL 문자열
  */
     String getUrl(String key);
+
+    String getPreSignedUrl(String fileUrl, int expirationSeconds);
 }
