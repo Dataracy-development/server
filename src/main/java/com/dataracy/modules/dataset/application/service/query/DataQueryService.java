@@ -16,6 +16,7 @@ import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.vo.DataUser;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import com.dataracy.modules.filestorage.application.port.in.DownloadFileUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
@@ -48,7 +49,8 @@ public class DataQueryService implements
         CountDataGroupByTopicLabelUseCase,
         ConnectedDataAssociatedWithProjectUseCase,
         FindUserIdByDataIdUseCase,
-        FindUserIdIncludingDeletedDataUseCase
+        FindUserIdIncludingDeletedDataUseCase,
+        DownloadDatasetFileUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
     private final FilterDataDtoMapper filterDataDtoMapper;
@@ -67,6 +69,7 @@ public class DataQueryService implements
     private final GetUserInfoUseCase getUserInfoUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
+    private final DownloadFileUseCase downloadFileUseCase;
 
     /**
      * 주어진 데이터 ID에 해당하는 데이터의 존재 여부를 검증합니다.
@@ -317,5 +320,12 @@ public class DataQueryService implements
     @Transactional(readOnly = true)
     public Long findUserIdIncludingDeleted(Long dataId) {
         return dataRepositoryPort.findUserIdIncludingDeleted(dataId);
+    }
+
+    @Override
+    public String download(Long dataId, int expirationSeconds) {
+        String s3Url = dataRepositoryPort.downloadDatasetFile(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        return downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
     }
 }

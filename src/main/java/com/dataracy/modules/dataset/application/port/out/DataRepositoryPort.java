@@ -84,4 +84,6 @@ void delete(Long dataId);
  * @param dataId 복구할 데이터의 고유 식별자
  */
 void restore(Long dataId);
+
+    Optional<String> downloadDatasetFile(Long dataId);
 }

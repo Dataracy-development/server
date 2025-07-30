@@ -44,6 +44,7 @@ public class DataController implements DataApi {
     private final DataModifyUseCase dataModifyUseCase;
     private final DataDeleteUseCase dataDeleteUseCase;
     private final DataRestoreUseCase dataRestoreUseCase;
+    private final DownloadDatasetFileUseCase downloadDatasetFileUseCase;
 
     /**
      * 데이터 업로드 요청을 처리하여 데이터셋을 생성하고, 성공 상태의 HTTP 201(Created) 응답을 반환합니다.
@@ -248,5 +249,13 @@ public class DataController implements DataApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.RESTORE_DATASET));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<String>> getPreSignedDataUrl(Long dataId) {
+        String preSignedUrl = downloadDatasetFileUseCase.download(dataId, 300);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.DOWNLOAD_DATASET, preSignedUrl));
     }
 }

@@ -18,4 +18,7 @@ public interface DataJpaRepository extends JpaRepository<DataEntity, Long> {
      */
     @Query(value = "SELECT * FROM data WHERE data_id = :dataId", nativeQuery = true) // @Where 무시됨
     Optional<DataEntity> findIncludingDeletedData(@Param("dataId") Long dataId);
+
+    @Query(value = "SELECT data_file_url FROM data WHERE data_id = :dataId", nativeQuery = true) // @Where 무시됨
+    Optional<String> downloadDatasetFile(@Param("dataId") Long dataId);
 }
