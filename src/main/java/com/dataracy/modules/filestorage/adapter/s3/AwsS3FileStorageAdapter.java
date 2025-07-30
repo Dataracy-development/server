@@ -1,6 +1,8 @@
 package com.dataracy.modules.filestorage.adapter.s3;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
@@ -16,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
 
 @Slf4j
 @Component
@@ -120,16 +124,41 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
     }
 
     /**
-     * S3 버킷 이름이 올바르게 설정되었는지 검증합니다.
+     * S3 버킷 이름이 비어 있지 않은지 검증합니다.
      *
-     * 버킷 이름이 비어 있으면 애플리케이션 초기화 시 S3UploadException을 발생시킵니다.
+     * 애플리케이션 초기화 시 S3 버킷 이름이 비어 있으면 S3UploadException을 발생시켜 잘못된 설정을 방지합니다.
      *
-     * @throws S3UploadException 버킷 이름이 비어 있을 경우 발생합니다.
+     * @throws S3UploadException S3 버킷 이름이 비어 있거나 공백일 때 발생합니다.
      */
     @PostConstruct
     public void validateProperties() {
         if (bucket.isBlank()) {
             throw new S3UploadException("AWS S3 버켓 설정이 올바르지 않습니다.");
+        }
+    }
+
+    /**
+     * 지정된 파일 URL과 만료 시간(초)을 사용하여 S3 객체에 대한 Pre-Signed URL을 생성합니다.
+     *
+     * @param fileUrl           Pre-Signed URL을 생성할 S3 파일의 전체 URL
+     * @param expirationSeconds Pre-Signed URL의 만료 시간(초)
+     * @return                  생성된 Pre-Signed URL 문자열
+     * @throws S3UploadException Pre-Signed URL 생성에 실패한 경우 발생
+     */
+    @Override
+    public String getPreSignedUrl(String fileUrl, int expirationSeconds) {
+        try {
+            String key = extractKeyFromUrl(fileUrl);
+            Date expiration = new Date(System.currentTimeMillis() + (expirationSeconds * 1000L));
+
+            GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucket, key)
+                    .withMethod(HttpMethod.GET)
+                    .withExpiration(expiration);
+
+            URL preSignedUrl = amazonS3.generatePresignedUrl(request);
+            return preSignedUrl.toString();
+        } catch (Exception e) {
+            throw new S3UploadException("S3 PreSigned URL 생성 실패", e);
         }
     }
 }

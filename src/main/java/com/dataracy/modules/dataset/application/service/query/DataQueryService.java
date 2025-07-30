@@ -16,6 +16,7 @@ import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.vo.DataUser;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import com.dataracy.modules.filestorage.application.port.in.DownloadFileUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
@@ -48,7 +49,8 @@ public class DataQueryService implements
         CountDataGroupByTopicLabelUseCase,
         ConnectedDataAssociatedWithProjectUseCase,
         FindUserIdByDataIdUseCase,
-        FindUserIdIncludingDeletedDataUseCase
+        FindUserIdIncludingDeletedDataUseCase,
+        DownloadDatasetFileUseCase
 {
     private final PopularDataSetsDtoMapper popularDataSetsDtoMapper;
     private final FilterDataDtoMapper filterDataDtoMapper;
@@ -67,6 +69,7 @@ public class DataQueryService implements
     private final GetUserInfoUseCase getUserInfoUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
+    private final DownloadFileUseCase downloadFileUseCase;
 
     /**
      * 주어진 데이터 ID에 해당하는 데이터의 존재 여부를 검증합니다.
@@ -308,14 +311,32 @@ public class DataQueryService implements
     }
 
     /**
-     * 삭제된 데이터를 포함하여 주어진 데이터 ID에 해당하는 사용자 ID를 반환합니다.
+     * 삭제된 데이터를 포함하여 지정된 데이터 ID의 소유자 사용자 ID를 반환합니다.
      *
      * @param dataId 사용자 ID를 조회할 데이터의 ID
-     * @return 해당 데이터의 소유자 사용자 ID
+     * @return 데이터의 소유자 사용자 ID
      */
     @Override
     @Transactional(readOnly = true)
     public Long findUserIdIncludingDeleted(Long dataId) {
         return dataRepositoryPort.findUserIdIncludingDeleted(dataId);
+    }
+
+    /**
+     * 지정된 데이터셋 파일의 S3 URL을 조회하여, 주어진 만료 시간으로 프리사인드 다운로드 URL을 반환합니다.
+     *
+     * @param dataId            다운로드할 데이터셋의 ID
+     * @param expirationSeconds 프리사인드 URL의 만료 시간(초)
+     * @return                  프리사인드 S3 다운로드 URL
+     * @throws DataException    데이터셋이 존재하지 않을 경우 발생
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String download(Long dataId, int expirationSeconds) {
+        log.info("데이터셋 파일 다운로드 요청: dataId={}, expirationSeconds={}", dataId, expirationSeconds);
+        String s3Url = dataRepositoryPort.downloadDatasetFile(dataId)
+                .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        log.debug("S3 URL 조회 완료: dataId={}", dataId);
+        return downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
     }
 }
