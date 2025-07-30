@@ -323,9 +323,12 @@ public class DataQueryService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String download(Long dataId, int expirationSeconds) {
+        log.info("데이터셋 파일 다운로드 요청: dataId={}, expirationSeconds={}", dataId, expirationSeconds);
         String s3Url = dataRepositoryPort.downloadDatasetFile(dataId)
                 .orElseThrow(() -> new DataException(DataErrorStatus.NOT_FOUND_DATA));
+        log.debug("S3 URL 조회 완료: dataId={}", dataId);
         return downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
     }
 }
