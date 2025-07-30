@@ -30,12 +30,19 @@ InputStream download(String fileUrl);
     void delete(String fileUrl);
 
     /**
- * 파일의 고유 키를 사용하여 접근 가능한 URL을 반환합니다.
+ * 파일의 고유 키로 해당 파일에 접근할 수 있는 URL을 반환합니다.
  *
  * @param key 파일을 식별하는 고유 키
- * @return 파일에 접근할 수 있는 URL 문자열
+ * @return 파일 접근용 URL 문자열
  */
     String getUrl(String key);
 
-    String getPreSignedUrl(String fileUrl, int expirationSeconds);
+    /**
+ * 지정된 파일 URL에 대해 주어진 만료 시간(초) 동안 유효한 프리사인드 URL을 생성하여 반환합니다.
+ *
+ * @param fileUrl           프리사인드 URL을 생성할 파일의 URL
+ * @param expirationSeconds 프리사인드 URL의 만료 시간(초)
+ * @return                  만료 시간 동안 접근 가능한 프리사인드 URL 문자열
+ */
+String getPreSignedUrl(String fileUrl, int expirationSeconds);
 }

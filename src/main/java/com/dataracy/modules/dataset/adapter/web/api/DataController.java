@@ -237,10 +237,10 @@ public class DataController implements DataApi {
     }
 
     /**
-     * 데이터셋을 복구 상태로 변경합니다.
+     * 지정한 데이터셋을 복구 상태로 변경합니다.
      *
-     * @param dataId 복구할 데이터셋의 고유 ID
-     * @return 복구 성공 상태를 포함한 HTTP 200 OK 응답
+     * @param dataId 복구할 데이터셋의 ID
+     * @return 복구 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
     @AuthorizationDataEdit(restore = true)
@@ -251,6 +251,12 @@ public class DataController implements DataApi {
                 .body(SuccessResponse.of(DataSuccessStatus.RESTORE_DATASET));
     }
 
+    /**
+     * 지정된 데이터셋 파일을 300초 동안 유효한 사전 서명된 다운로드 URL로 반환합니다.
+     *
+     * @param dataId 다운로드할 데이터셋의 식별자
+     * @return 사전 서명된 다운로드 URL이 포함된 성공 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<String>> getPreSignedDataUrl(Long dataId) {
         String preSignedUrl = downloadDatasetFileUseCase.download(dataId, 300);

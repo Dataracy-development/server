@@ -294,11 +294,11 @@ public interface DataApi {
             Long dataId
     );
 
-    /**
+    /****
      * 삭제된 데이터셋을 복원한다.
      *
      * @param dataId 복원할 데이터셋의 ID (1 이상)
-     * @return 복원 성공 여부를 나타내는 응답
+     * @return 복원 성공 시 성공 응답을 반환한다.
      */
     @Operation(
             summary = "데이터셋을 복원한다.",
@@ -315,6 +315,12 @@ public interface DataApi {
             Long dataId
     );
 
+    /**
+     * 지정한 데이터셋의 파일을 다운로드할 수 있는 사전 서명된 URL을 반환합니다.
+     *
+     * @param dataId 다운로드할 데이터셋의 ID (1 이상)
+     * @return 데이터셋 파일 다운로드를 위한 사전 서명된 URL이 포함된 성공 응답
+     */
     @Operation(
             summary = "해당 데이터셋의 파일을 다운로드한다.",
             description = "해당 데이터셋의 파일을 다운로드한다."
