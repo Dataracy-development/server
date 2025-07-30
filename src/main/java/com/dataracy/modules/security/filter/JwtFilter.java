@@ -87,6 +87,8 @@ public class JwtFilter extends OncePerRequestFilter {
                         || path.equals("/api/v1/nickname/check")
                         || (path.startsWith("/api/v1/projects") && request.getMethod().equals("GET"))
                         || (path.startsWith("/api/v1/datasets") && request.getMethod().equals("GET"))
+                        || path.startsWith("/api/v1/files")
+
                 ;
     }
 

@@ -1,6 +1,8 @@
 package com.dataracy.modules.filestorage.adapter.s3;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
@@ -16,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
 
 @Slf4j
 @Component
@@ -130,6 +134,23 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
     public void validateProperties() {
         if (bucket.isBlank()) {
             throw new S3UploadException("AWS S3 버켓 설정이 올바르지 않습니다.");
+        }
+    }
+
+    @Override
+    public String getPreSignedUrl(String fileUrl, int expirationSeconds) {
+        try {
+            String key = extractKeyFromUrl(fileUrl);
+            Date expiration = new Date(System.currentTimeMillis() + (expirationSeconds * 1000L));
+
+            GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucket, key)
+                    .withMethod(HttpMethod.GET)
+                    .withExpiration(expiration);
+
+            URL preSignedUrl = amazonS3.generatePresignedUrl(request);
+            return preSignedUrl.toString();
+        } catch (Exception e) {
+            throw new S3UploadException("S3 PreSigned URL 생성 실패", e);
         }
     }
 }
