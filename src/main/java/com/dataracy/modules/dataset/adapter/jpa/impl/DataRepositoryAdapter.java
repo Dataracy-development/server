@@ -167,4 +167,9 @@ public class DataRepositoryAdapter implements DataRepositoryPort {
         data.restore();
         dataJpaRepository.save(data);
     }
+
+    @Override
+    public Optional<String> downloadDatasetFile(Long dataId) {
+        return dataJpaRepository.downloadDatasetFile(dataId);
+    }
 }

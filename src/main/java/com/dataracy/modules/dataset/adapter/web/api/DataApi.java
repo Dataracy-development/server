@@ -314,4 +314,19 @@ public interface DataApi {
             @PathVariable @Min(1)
             Long dataId
     );
+
+    @Operation(
+            summary = "해당 데이터셋의 파일을 다운로드한다.",
+            description = "해당 데이터셋의 파일을 다운로드한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "해당 데이터셋의 파일을 다운로드한다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class)))
+    })
+    @GetMapping("/{dataId}/download")
+    ResponseEntity<SuccessResponse<String>> getPreSignedDataUrl(
+            @PathVariable(name = "dataId")
+            Long dataId
+    );
 }
