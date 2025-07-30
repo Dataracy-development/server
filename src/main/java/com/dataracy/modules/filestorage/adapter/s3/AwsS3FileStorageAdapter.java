@@ -124,11 +124,11 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
     }
 
     /**
-     * S3 버킷 이름이 올바르게 설정되었는지 검증합니다.
+     * S3 버킷 이름이 비어 있지 않은지 검증합니다.
      *
-     * 버킷 이름이 비어 있으면 애플리케이션 초기화 시 S3UploadException을 발생시킵니다.
+     * 애플리케이션 초기화 시 S3 버킷 이름이 비어 있으면 S3UploadException을 발생시켜 잘못된 설정을 방지합니다.
      *
-     * @throws S3UploadException 버킷 이름이 비어 있을 경우 발생합니다.
+     * @throws S3UploadException S3 버킷 이름이 비어 있거나 공백일 때 발생합니다.
      */
     @PostConstruct
     public void validateProperties() {
@@ -137,6 +137,14 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
         }
     }
 
+    /**
+     * 지정된 파일 URL과 만료 시간(초)을 사용하여 S3 객체에 대한 Pre-Signed URL을 생성합니다.
+     *
+     * @param fileUrl           Pre-Signed URL을 생성할 S3 파일의 전체 URL
+     * @param expirationSeconds Pre-Signed URL의 만료 시간(초)
+     * @return                  생성된 Pre-Signed URL 문자열
+     * @throws S3UploadException Pre-Signed URL 생성에 실패한 경우 발생
+     */
     @Override
     public String getPreSignedUrl(String fileUrl, int expirationSeconds) {
         try {

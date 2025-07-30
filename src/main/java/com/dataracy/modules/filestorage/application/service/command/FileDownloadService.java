@@ -14,6 +14,14 @@ public class FileDownloadService implements DownloadFileUseCase {
 
     private final FileStoragePort fileStoragePort;
 
+    /****
+     * 지정된 S3 URL과 만료 시간(초)을 사용하여 사전 서명된(pre-signed) URL을 생성합니다.
+     *
+     * @param s3Url 사전 서명된 URL을 생성할 S3 객체의 URL
+     * @param expirationSeconds URL의 만료 시간(초)
+     * @return 생성된 사전 서명된 S3 URL
+     * @throws IllegalArgumentException s3Url이 비어있거나 만료 시간이 0 이하인 경우
+     */
     @Override
     public String generatePreSignedUrl(String s3Url, int expirationSeconds) {
         if (!StringUtils.hasText(s3Url)) {
