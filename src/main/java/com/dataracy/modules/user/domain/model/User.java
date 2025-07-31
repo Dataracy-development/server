@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class User {
-
     private Long id;
 
     private ProviderType provider;
@@ -24,24 +23,22 @@ public class User {
 
     private String email;
     private String password;
-
     private String nickname;
+    private String profileImageUrl;
+    private boolean isAdTermsAgreed;
+
+    // 타 어그리거트는 직접 연관관계 설정을 하지 않고, ID만 보유해서 간접 참조
     private Long authorLevelId;
     private Long occupationId;
-
-    // 타 어그리거트인 Topic 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
     private List<Long> topicIds;
-
     private Long visitSourceId;
 
-    private String profileImageUrl;
-
-    private boolean isAdTermsAgreed;
     private boolean isDeleted;
 
     /**
      * 주어진 원시 비밀번호가 저장된 암호화된 비밀번호와 일치하는지 확인합니다.
      *
+     * @param encoder 비밀번호 암호화 encoder
      * @param rawPassword 사용자가 입력한 원시 비밀번호
      * @return 비밀번호가 일치하면 true, 그렇지 않으면 false
      */
@@ -61,7 +58,7 @@ public class User {
      * @param nickname 사용자 닉네임
      * @param authorLevelId 작가 등급 식별자
      * @param occupationId 직업 식별자
-     * @param topicIds 사용자가 연관된 토픽 ID 목록
+     * @param topicIds 사용자의 흥미있는 토픽 ID 목록
      * @param visitSourceId 방문 경로 식별자
      * @param profileImageUrl 프로필 이미지 URL
      * @param isAdTermsAgreed 광고 약관 동의 여부

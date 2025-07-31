@@ -1,5 +1,6 @@
 package com.dataracy.modules.user.domain.enums;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.Getter;
@@ -20,10 +21,15 @@ public enum RoleType {
     private final String value;
 
     public static RoleType of(String input) {
-
         return Arrays.stream(RoleType.values())
                 .filter(type -> type.value.equalsIgnoreCase(input) || type.name().equalsIgnoreCase(input))
                 .findFirst()
-                .orElseThrow(() -> new UserException(UserErrorStatus.INVALID_ROLE_TYPE));
+                .orElseThrow(() -> {
+                    LoggerFactory.domain().logRuleViolation(
+                            "RoleType",
+                            "잘못된 ENUM 타입입니다. ROLE_USER, ROLE_ADMIN, ROLE_ANONYMOUS만 가능합니다."
+                    );
+                    return new UserException(UserErrorStatus.INVALID_ROLE_TYPE);
+                });
     }
 }
