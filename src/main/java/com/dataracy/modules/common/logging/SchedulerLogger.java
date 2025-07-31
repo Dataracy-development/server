@@ -11,6 +11,6 @@ public class SchedulerLogger extends BaseLogger {
     }
 
     public void logError(String job, String message, Throwable e) {
-        error(e, "[Scheduler 예외] job={}", message);
+        error(e, "[Scheduler 예외] job={} message={}", job, message);
     }
 }
