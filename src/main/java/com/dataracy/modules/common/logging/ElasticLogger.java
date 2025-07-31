@@ -1,6 +1,19 @@
 package com.dataracy.modules.common.logging;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class ElasticLogger extends BaseLogger {
+
+    public Instant logQueryStart(String index, String message) {
+        debug("[Elasticsearch 조회 시작] index={} message={}", index, message);
+        return Instant.now();
+    }
+
+    public void logQueryEnd(String index, String message, Instant startTime) {
+        long durationMs = Duration.between(startTime, Instant.now()).toMillis();
+        debug("[Elasticsearch 조회 완료] index={} message={} duration={}ms", index, message, durationMs);
+    }
 
     public void logIndex(String index, String doc, String message) {
         info("[Elasticsearch 인덱싱] index={} doc={} message={}", index, doc, message);
