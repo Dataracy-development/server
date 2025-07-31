@@ -15,12 +15,12 @@ public class ElasticLogger extends BaseLogger {
         debug("[Elasticsearch 조회 완료] index={} message={} duration={}ms", index, message, durationMs);
     }
 
-    public void logIndex(String index, String doc, String message) {
-        info("[Elasticsearch 인덱싱] index={} doc={} message={}", index, doc, message);
+    public void logIndex(String index, String docId, String message) {
+        info("[Elasticsearch 인덱싱] index={} docId={} message={}", index, docId, message);
     }
 
-    public void logUpdate(String index, String message) {
-        info("[Elasticsearch 업데이트] index={} message={}", index, message);
+    public void logUpdate(String index, String docId, String message) {
+        info("[Elasticsearch 업데이트] index={} docId={} message={}", index, docId, message);
     }
 
     public void logSearch(String index, String query, String message) {
