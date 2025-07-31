@@ -4,36 +4,44 @@ import com.dataracy.modules.common.logging.*;
 
 public class LoggerFactory {
 
+    private static final ApiLogger API_LOGGER = new ApiLogger();
+    private static final ServiceLogger SERVICE_LOGGER = new ServiceLogger();
+    private static final KafkaLogger KAFKA_LOGGER = new KafkaLogger();
+    private static final ElasticLogger ELASTIC_LOGGER = new ElasticLogger();
+    private static final PersistenceLogger PERSISTENCE_LOGGER = new PersistenceLogger();
+    private static final SchedulerLogger SCHEDULER_LOGGER = new SchedulerLogger();
+    private static final FilterLogger FILTER_LOGGER = new FilterLogger();
+    private static final DomainLogger DOMAIN_LOGGER = new DomainLogger();
+
     public static ApiLogger api() {
-        return new ApiLogger();
+        return API_LOGGER;
     }
 
     public static ServiceLogger service() {
-        return new ServiceLogger();
+        return SERVICE_LOGGER;
     }
 
     public static KafkaLogger kafka() {
-        return new KafkaLogger();
+        return KAFKA_LOGGER;
     }
 
     public static ElasticLogger elastic() {
-        return new ElasticLogger();
+        return ELASTIC_LOGGER;
     }
 
     public static PersistenceLogger db() {
-        return new PersistenceLogger();
+        return PERSISTENCE_LOGGER;
     }
 
     public static SchedulerLogger scheduler() {
-        return new SchedulerLogger();
+        return SCHEDULER_LOGGER;
     }
 
     public static FilterLogger filter() {
-        return new FilterLogger();
+        return FILTER_LOGGER;
     }
 
     public static DomainLogger domain() {
-        return new DomainLogger();
+        return DOMAIN_LOGGER;
     }
 }
-
