@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class PersistenceLogger extends BaseLogger {
-
     /**
      * 데이터베이스 조회 작업의 시작을 로그로 기록하고 현재 시각을 반환합니다.
      *
@@ -60,6 +59,16 @@ public class PersistenceLogger extends BaseLogger {
      */
     public void logUpdate(String entityName, String identifier, String message) {
         info("[DB 업데이트] {} - {} - {}", entityName, identifier, message);
+    }
+
+    /**
+     * 데이터베이스에 해당 엔티티가 존재하는지 여부를 확인한다.
+     *
+     * @param entityName 업데이트된 엔티티의 이름
+     * @param message    추가 메시지 또는 설명
+     */
+    public void logExist(String entityName, String message) {
+        info("[DB 존재 여부 확인] {} - {}", entityName, message);
     }
 
     /**

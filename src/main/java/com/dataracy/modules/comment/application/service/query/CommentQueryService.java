@@ -17,9 +17,9 @@ import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
 import com.dataracy.modules.like.application.port.in.FindTargetIdsUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
-import com.dataracy.modules.user.application.port.in.user.FindUserAuthorLevelIdsUseCase;
-import com.dataracy.modules.user.application.port.in.user.FindUserThumbnailUseCase;
-import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.profile.FindUserAuthorLevelIdsUseCase;
+import com.dataracy.modules.user.application.port.in.profile.FindUserThumbnailUseCase;
+import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

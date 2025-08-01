@@ -22,8 +22,8 @@ import com.dataracy.modules.reference.application.port.in.datasource.GetDataSour
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
-import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
-import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
+import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.profile.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

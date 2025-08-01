@@ -1,7 +1,10 @@
 package com.dataracy.modules.user.domain.model;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
+import com.dataracy.modules.user.domain.exception.UserException;
+import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -44,6 +47,19 @@ public class User {
      */
     public boolean isPasswordMatch(PasswordEncoder encoder, String rawPassword) {
         return encoder.matches(rawPassword, this.password);
+    }
+
+    public void validatePasswordChangable() {
+        switch (provider) {
+            case GOOGLE -> {
+                LoggerFactory.domain().logRuleViolation("User Provider", "GOOGLE 유저는 비밀번호 변경이 불가합니다.");
+                throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE);
+            }
+            case KAKAO -> {
+                LoggerFactory.domain().logRuleViolation("User Provider", "KAKAO 유저는 비밀번호 변경이 불가합니다.");
+                throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO);
+            }
+        }
     }
 
     /**

@@ -2,7 +2,6 @@ package com.dataracy.modules.project.application.service.query;
 
 import com.dataracy.modules.like.application.port.in.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
-import com.dataracy.modules.project.adapter.redis.ProjectViewCountRedisAdapter;
 import com.dataracy.modules.project.application.dto.request.ProjectFilterRequest;
 import com.dataracy.modules.project.application.dto.response.*;
 import com.dataracy.modules.project.application.mapper.ConnectedProjectAssociatedDtoMapper;
@@ -25,9 +24,9 @@ import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorL
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
-import com.dataracy.modules.user.application.port.in.user.FindUserThumbnailUseCase;
-import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
-import com.dataracy.modules.user.application.port.in.user.GetUserInfoUseCase;
+import com.dataracy.modules.user.application.port.in.profile.FindUserThumbnailUseCase;
+import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.profile.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
