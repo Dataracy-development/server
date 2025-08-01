@@ -21,7 +21,7 @@ import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAna
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
-import com.dataracy.modules.user.application.port.in.user.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

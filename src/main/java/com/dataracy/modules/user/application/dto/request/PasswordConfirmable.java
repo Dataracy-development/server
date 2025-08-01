@@ -1,5 +1,6 @@
 package com.dataracy.modules.user.application.dto.request;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 
@@ -7,7 +8,7 @@ public interface PasswordConfirmable {
     /**
  * 사용자가 입력한 비밀번호를 반환합니다.
  *
- * @return 입력된 비밀번호
+ * @return 입력된 비밀번호 문자열
  */
     String password();
 
@@ -21,10 +22,13 @@ public interface PasswordConfirmable {
     /**
      * 비밀번호와 비밀번호 확인 값이 일치하는지 검증합니다.
      *
-     * 두 값이 다를 경우 {@code UserException}을 발생시킵니다.
+     * 비밀번호와 비밀번호 확인 값이 다를 경우 {@code UserException}을 {@code UserErrorStatus.NOT_SAME_PASSWORD} 상태로 발생시킵니다.
+     * 
+     * @throws UserException 비밀번호와 비밀번호 확인 값이 일치하지 않을 때 발생합니다.
      */
     default void validatePasswordMatch() {
         if (!password().equals(passwordConfirm())) {
+            LoggerFactory.api().logValidation("비밀번호와 비밀번호 확인 값이 일치하지 않습니다.");
             throw new UserException(UserErrorStatus.NOT_SAME_PASSWORD);
         }
     }
