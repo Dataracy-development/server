@@ -20,9 +20,10 @@ public class UserDuplicateValidator {
     private final UserQueryPort userQueryPort;
 
     /**
-     * 닉네임 중복 확인
+     * 주어진 닉네임이 이미 존재하는지 확인하고, 중복일 경우 예외를 발생시킵니다.
      *
-     * @param nickname 닉네임
+     * @param nickname 중복 여부를 검사할 닉네임
+     * @throws UserException 닉네임이 이미 존재할 경우 발생합니다.
      */
     public void duplicateNickname(String nickname) {
         if (userExistencePort.existsByNickname(nickname)) {
@@ -32,10 +33,10 @@ public class UserDuplicateValidator {
     }
 
     /**
-     * 주어진 이메일로 등록된 사용자가 있는지 확인하여, 중복된 경우 해당 사용자를 반환한다.
+     * 주어진 이메일로 등록된 사용자가 있는지 확인하고, 존재할 경우 해당 사용자를 Optional로 반환한다.
      *
      * @param email 중복 여부를 확인할 이메일 주소
-     * @return 이메일이 중복된 경우 해당 사용자를 포함하는 Optional, 중복이 없으면 빈 Optional
+     * @return 이메일이 이미 등록된 경우 해당 사용자를 포함하는 Optional, 등록되지 않은 경우 빈 Optional
      */
     public Optional<User> duplicateEmail(String email) {
         return userQueryPort.findUserByEmail(email);

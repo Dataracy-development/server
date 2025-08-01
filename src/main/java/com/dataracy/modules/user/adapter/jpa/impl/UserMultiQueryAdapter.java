@@ -19,10 +19,10 @@ public class UserMultiQueryAdapter implements UserMultiQueryPort {
     private final UserJpaRepository userJpaRepository;
 
     /**
-     * 주어진 사용자 ID 목록에 해당하는 사용자들의 닉네임을 사용자 ID별로 매핑하여 반환합니다.
+     * 주어진 사용자 ID 목록에 대해 각 사용자 ID와 해당 사용자의 닉네임을 매핑한 맵을 반환합니다.
      *
-     * @param userIds 조회할 사용자 ID 목록
-     * @return 각 사용자 ID와 해당 닉네임이 매핑된 맵
+     * @param userIds 닉네임을 조회할 사용자 ID 목록
+     * @return 사용자 ID를 키로, 닉네임을 값으로 하는 맵
      */
     @Override
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
@@ -33,10 +33,12 @@ public class UserMultiQueryAdapter implements UserMultiQueryPort {
     }
 
     /**
-     * 주어진 사용자 ID 목록에 대해 각 사용자의 프로필 이미지 URL을 맵으로 반환합니다.
+     * 주어진 사용자 ID 목록에 대해 각 사용자의 프로필 이미지 URL을 반환합니다.
+     *
+     * 사용자 ID를 키로, 해당 사용자의 프로필 이미지 URL을 값으로 하는 맵을 반환합니다. 프로필 이미지가 없는 경우 빈 문자열로 매핑됩니다.
      *
      * @param userIds 프로필 이미지 URL을 조회할 사용자 ID 목록
-     * @return 사용자 ID를 키로 하고, 프로필 이미지 URL(없을 경우 빈 문자열)을 값으로 하는 맵
+     * @return 사용자 ID별 프로필 이미지 URL 맵 (이미지가 없으면 빈 문자열)
      */
     @Override
     public Map<Long, String> findUserThumbnailsByIds(List<Long> userIds) {
@@ -50,12 +52,12 @@ public class UserMultiQueryAdapter implements UserMultiQueryPort {
     }
 
     /**
-     * 주어진 사용자 ID 목록에 대해 각 사용자의 author level ID를 문자열로 반환합니다.
+     * 주어진 사용자 ID 목록에 대해 각 사용자의 author level ID를 문자열로 매핑하여 반환합니다.
      *
-     * author level ID가 없는 경우 기본값 "1"이 반환됩니다.
+     * author level ID가 null인 경우 "1"로 대체됩니다.
      *
      * @param userIds 조회할 사용자 ID 목록
-     * @return 사용자 ID를 키로 하고 author level ID(문자열)를 값으로 하는 맵
+     * @return 사용자 ID를 키, author level ID(문자열)를 값으로 하는 맵
      */
     @Override
     public Map<Long, String> findUserAuthorLevelIds(List<Long> userIds) {
@@ -68,6 +70,13 @@ public class UserMultiQueryAdapter implements UserMultiQueryPort {
                 ));
     }
 
+    /**
+     * 지정된 사용자 ID 목록에 해당하는 UserEntity 객체들을 조회하고, 조회 작업의 시작과 종료를 로깅합니다.
+     *
+     * @param userIds   조회할 사용자 ID 목록
+     * @param operation 로깅에 사용할 작업명
+     * @return          조회된 UserEntity 객체들의 리스트
+     */
     private List<UserEntity> findUserEntitiesWithLogging(List<Long> userIds, String operation) {
         Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", operation + " 시작");
         List<UserEntity> userEntities = userJpaRepository.findAllById(userIds);
