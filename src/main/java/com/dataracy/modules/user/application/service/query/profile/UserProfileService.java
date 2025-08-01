@@ -62,6 +62,9 @@ public class UserProfileService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return Map.of();
+        }
         Instant startTime = LoggerFactory.service().logStart("FindUsernameUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 닉네임을 반환 서비스 시작");
         Map<Long, String> usernames = userMultiQueryPort.findUsernamesByIds(userIds);
         LoggerFactory.service().logSuccess("FindUsernameUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 닉네임을 반환 서비스 성공", startTime);
@@ -78,6 +81,9 @@ public class UserProfileService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> findUserThumbnailsByIds(List<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return Map.of();
+        }
         Instant startTime = LoggerFactory.service().logStart("FindUserThumbnailUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 프로필 이미지를 반환 서비스 시작");
         Map<Long, String> userThumbnails = userMultiQueryPort.findUserThumbnailsByIds(userIds);
         LoggerFactory.service().logSuccess("FindUserThumbnailUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 프로필 이미지를 반환 서비스 성공", startTime);
@@ -94,6 +100,9 @@ public class UserProfileService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> findUserAuthorLevelIds(List<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return Map.of();
+        }
         Instant startTime = LoggerFactory.service().logStart("FindUserAuthorLevelIdsUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 작성자 유형을 반환하는 서비스 시작");
         Map<Long, String> userAuthorLevelIds = userMultiQueryPort.findUserAuthorLevelIds(userIds);
         LoggerFactory.service().logSuccess("FindUserAuthorLevelIdsUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 작성자 유형을 반환하는 서비스 성공", startTime);
