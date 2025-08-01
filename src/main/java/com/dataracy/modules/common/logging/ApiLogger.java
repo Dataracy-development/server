@@ -1,23 +1,30 @@
 package com.dataracy.modules.common.logging;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class ApiLogger extends BaseLogger {
 
     /**
-     * API 요청에 대한 정보를 로그로 기록합니다.
+     * API 요청 메시지를 정보 로그로 기록하고, 요청 시각의 타임스탬프를 반환합니다.
      *
-     * @param message 로그에 기록할 API 요청 메시지
+     * @param message 기록할 API 요청 메시지
+     * @return 요청이 기록된 시점의 {@link Instant} 객체
      */
-    public void logRequest(String message) {
+    public Instant logRequest(String message) {
         info("[API 요청] {}", message);
+        return Instant.now();
     }
 
     /**
-     * API 응답 메시지를 정보 로그로 기록합니다.
+     * API 응답 메시지를 정보 로그로 기록하고, 요청 시작 시각부터의 소요 시간을 함께 기록합니다.
      *
      * @param message 응답에 대한 설명 또는 상세 메시지
+     * @param startTime 요청이 시작된 시각
      */
-    public void logResponse(String message) {
-        info("[API 응답] {}", message);
+    public void logResponse(String message, Instant startTime) {
+        long durationMs = Duration.between(startTime, Instant.now()).toMillis();
+        info("[API 응답] {} duration={}ms", message, durationMs);
     }
 
     /**

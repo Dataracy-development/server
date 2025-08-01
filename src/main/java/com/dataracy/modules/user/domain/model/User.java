@@ -1,7 +1,11 @@
 package com.dataracy.modules.user.domain.model;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
+import com.dataracy.modules.user.domain.exception.UserException;
+import com.dataracy.modules.user.domain.model.vo.UserInfo;
+import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -15,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class User {
-
     private Long id;
 
     private ProviderType provider;
@@ -24,29 +27,65 @@ public class User {
 
     private String email;
     private String password;
-
     private String nickname;
+    private String profileImageUrl;
+    private boolean isAdTermsAgreed;
+
+    // 타 어그리거트는 직접 연관관계 설정을 하지 않고, ID만 보유해서 간접 참조
     private Long authorLevelId;
     private Long occupationId;
-
-    // 타 어그리거트인 Topic 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
     private List<Long> topicIds;
-
     private Long visitSourceId;
 
-    private String profileImageUrl;
-
-    private boolean isAdTermsAgreed;
     private boolean isDeleted;
 
     /**
-     * 주어진 원시 비밀번호가 저장된 암호화된 비밀번호와 일치하는지 확인합니다.
+     * 입력된 원시 비밀번호가 저장된 암호화된 비밀번호와 일치하는지 검사합니다.
      *
+     * @param encoder 비밀번호 일치 여부를 확인할 암호화 인코더
      * @param rawPassword 사용자가 입력한 원시 비밀번호
-     * @return 비밀번호가 일치하면 true, 그렇지 않으면 false
+     * @return 비밀번호가 일치하면 true, 일치하지 않으면 false
      */
     public boolean isPasswordMatch(PasswordEncoder encoder, String rawPassword) {
         return encoder.matches(rawPassword, this.password);
+    }
+
+    /**
+     * 사용자의 인증 제공자에 따라 비밀번호 변경 가능 여부를 검증합니다.
+     *
+     * GOOGLE 또는 KAKAO 제공자를 사용하는 경우 비밀번호 변경이 금지되어 있으며, 이 경우 예외를 발생시킵니다.
+     *
+     * @throws UserException GOOGLE 또는 KAKAO 제공자일 때 비밀번호 변경이 금지된 경우 발생합니다.
+     */
+    public void validatePasswordChangable() {
+        switch (provider) {
+            case GOOGLE -> {
+                LoggerFactory.domain().logRuleViolation("User Provider", "GOOGLE 유저는 비밀번호 변경이 불가합니다.");
+                throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE);
+            }
+            case KAKAO -> {
+                LoggerFactory.domain().logRuleViolation("User Provider", "KAKAO 유저는 비밀번호 변경이 불가합니다.");
+                throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO);
+            }
+        }
+    }
+
+    /**
+     * 현재 User 도메인 객체를 UserInfo 값 객체로 변환합니다.
+     *
+     * @return 사용자 정보가 담긴 UserInfo 객체
+     */
+    public UserInfo toUserInfo() {
+        return new UserInfo(
+                this.id,
+                this.role,
+                this.email,
+                this.nickname,
+                this.authorLevelId,
+                this.occupationId,
+                this.topicIds,
+                this.visitSourceId
+        );
     }
 
     /**
@@ -61,7 +100,7 @@ public class User {
      * @param nickname 사용자 닉네임
      * @param authorLevelId 작가 등급 식별자
      * @param occupationId 직업 식별자
-     * @param topicIds 사용자가 연관된 토픽 ID 목록
+     * @param topicIds 사용자의 흥미있는 토픽 ID 목록
      * @param visitSourceId 방문 경로 식별자
      * @param profileImageUrl 프로필 이미지 URL
      * @param isAdTermsAgreed 광고 약관 동의 여부
