@@ -1,13 +1,12 @@
 package com.dataracy.modules.auth.adapter.redis;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class BlackListRedisAdapter {
@@ -24,10 +23,10 @@ public class BlackListRedisAdapter {
     }
 
     /**
-     * 해당 토큰을 블랙리스트 처리
+     * 주어진 JWT 토큰을 Redis에 블랙리스트로 등록합니다.
      *
-     * @param token jwt 토큰
-     * @param expirationMillis 유효기간
+     * @param token 블랙리스트에 추가할 JWT 토큰
+     * @param expirationMillis 토큰의 블랙리스트 유지 기간(밀리초)
      */
     public void setBlackListToken(
             String token,
@@ -38,15 +37,20 @@ public class BlackListRedisAdapter {
                 "logout",
                 Duration.ofMillis(expirationMillis)
         );
+        LoggerFactory.redis().logSaveOrUpdate(token, "블랙 리스트 처리를 위한 토큰 레디스 저장에 성공했습니다.");
     }
 
     /**
-     * 해당 토큰이 블랙리스트 처리되었는지 여부를 파악
+     * 주어진 토큰이 블랙리스트에 등록되어 있는지 확인합니다.
      *
-     * @param token 토큰
-     * @return 블랙리스트 처리 여부
+     * @param token 확인할 JWT 토큰
+     * @return 토큰이 블랙리스트에 있으면 {@code true}, 아니면 {@code false}
      */
     public boolean isBlacklisted(String token) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(getBlackListKey(token)));
+        boolean isBlacklisted = Boolean.TRUE.equals(redisTemplate.hasKey(getBlackListKey(token)));
+        if (isBlacklisted) {
+            LoggerFactory.redis().logExist(token, "블랙리스트 토큰 확인");
+        }
+        return isBlacklisted;
     }
 }

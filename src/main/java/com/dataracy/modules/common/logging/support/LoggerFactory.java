@@ -12,6 +12,8 @@ public class LoggerFactory {
     private static final SchedulerLogger SCHEDULER_LOGGER = new SchedulerLogger();
     private static final FilterLogger FILTER_LOGGER = new FilterLogger();
     private static final DomainLogger DOMAIN_LOGGER = new DomainLogger();
+    private static final RedisLogger REDIS_LOGGER = new RedisLogger();
+    private static final CommonLogger COMMON_LOGGER = new CommonLogger();
 
     /**
      * API 로깅을 위한 싱글톤 ApiLogger 인스턴스를 반환합니다.
@@ -79,9 +81,29 @@ public class LoggerFactory {
     /**
      * DomainLogger의 싱글톤 인스턴스를 반환합니다.
      *
-     * @return DomainLogger 인스턴스
+     * 이 메서드는 도메인 관련 로깅을 위한 DomainLogger의 전역 인스턴스를 제공합니다.
+     *
+     * @return DomainLogger의 싱글톤 인스턴스
      */
     public static DomainLogger domain() {
         return DOMAIN_LOGGER;
+    }
+
+    /**
+     * Redis 관련 로깅을 위한 싱글톤 RedisLogger 인스턴스를 반환합니다.
+     *
+     * @return RedisLogger 싱글톤 인스턴스
+     */
+    public static RedisLogger redis() {
+        return REDIS_LOGGER;
+    }
+
+    /**
+     * 애플리케이션 전반에서 사용할 수 있는 CommonLogger 싱글톤 인스턴스를 반환합니다.
+     *
+     * @return CommonLogger 싱글톤 인스턴스
+     */
+    public static CommonLogger common() {
+        return COMMON_LOGGER;
     }
 }

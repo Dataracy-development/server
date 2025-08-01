@@ -1,4 +1,4 @@
-package com.dataracy.modules.common.logging;
+package com.dataracy.modules.common.logging.support;
 
 import lombok.extern.slf4j.Slf4j;
 
