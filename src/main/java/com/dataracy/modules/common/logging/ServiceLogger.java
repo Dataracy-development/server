@@ -6,11 +6,11 @@ import java.time.Instant;
 public class ServiceLogger extends BaseLogger {
 
     /**
-     * 서비스 작업의 시작을 기록하고 시작 시각을 반환합니다.
+     * 서비스 작업의 시작을 정보 로그로 기록하고, 작업 시작 시각을 반환합니다.
      *
-     * @param useCase 수행할 서비스의 용도 또는 이름
-     * @param message  서비스 작업 내용
-     * @return        작업 시작 시각의 {@link Instant} 객체
+     * @param useCase 서비스 작업의 용도 또는 이름
+     * @param message 서비스 작업에 대한 설명 또는 메시지
+     * @return 작업 시작 시각을 나타내는 {@link Instant} 객체
      */
     public Instant logStart(String useCase, String message) {
         Instant start = Instant.now();
@@ -19,10 +19,10 @@ public class ServiceLogger extends BaseLogger {
     }
 
     /**
-     * 서비스 작업이 성공적으로 완료되었음을 기록하고, 소요 시간을 로그에 남깁니다.
+     * 서비스 작업이 성공적으로 완료되었음을 기록하고, 작업에 소요된 시간을 밀리초 단위로 로그에 남깁니다.
      *
-     * @param useCase 수행된 서비스의 용도 또는 이름
-     * @param message 서비스 작업 내용
+     * @param useCase 서비스 작업의 용도 또는 이름
+     * @param message 서비스 작업에 대한 설명 또는 메시지
      * @param startTime 서비스 작업이 시작된 시각
      */
     public void logSuccess(String useCase, String message, Instant startTime) {
