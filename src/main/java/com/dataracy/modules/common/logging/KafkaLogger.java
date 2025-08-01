@@ -5,9 +5,9 @@ import com.dataracy.modules.common.logging.support.BaseLogger;
 public class KafkaLogger extends BaseLogger {
 
     /**
-     * 지정된 Kafka 토픽에 메시지가 전송되었음을 정보 로그로 기록합니다.
+     * 지정된 Kafka 토픽으로 메시지가 전송되었음을 디버그 로그로 기록합니다.
      *
-     * @param topic   메시지가 전송된 Kafka 토픽 이름
+     * @param topic 메시지가 전송된 Kafka 토픽 이름
      * @param message 전송된 메시지 내용
      */
     public void logProduce(String topic, String message) {
@@ -15,9 +15,9 @@ public class KafkaLogger extends BaseLogger {
     }
 
     /**
-     * 지정된 Kafka 토픽에서 수신된 메시지를 정보 로그로 기록합니다.
+     * 지정된 Kafka 토픽에서 수신한 메시지를 디버그 로그로 기록합니다.
      *
-     * @param topic   메시지를 수신한 Kafka 토픽 이름
+     * @param topic 메시지를 수신한 Kafka 토픽 이름
      * @param message 수신된 메시지 내용
      */
     public void logConsume(String topic, String message) {

@@ -16,13 +16,14 @@ import java.time.Instant;
 public class JwtCommandService implements JwtGenerateUseCase {
     private final JwtGeneratorPort jwtGeneratorPort;
 
-    /**
-     * Register Token 발급
+    /****
+     * OAuth2 제공자 정보와 이메일을 기반으로 회원가입(Register)용 JWT 토큰을 생성합니다.
      *
-     * @param provider OAuth2 제공자
-     * @param providerId 제공자 ID
-     * @param email 이메일
-     * @return 생성된 Register Token 문자열
+     * @param provider OAuth2 제공자 이름
+     * @param providerId 제공자에서 발급한 사용자 ID
+     * @param email 사용자 이메일 주소
+     * @return 생성된 회원가입(Register)용 JWT 토큰 문자열
+     * @throws AuthException 토큰 생성에 실패한 경우 발생
      */
     @Override
     public String generateRegisterToken(String provider, String providerId, String email) {
@@ -38,11 +39,12 @@ public class JwtCommandService implements JwtGenerateUseCase {
     }
 
     /**
-     * Access Token 발급
+     * 주어진 사용자 ID와 역할을 기반으로 어세스 토큰을 생성합니다.
      *
-     * @param userId 유저 ID
-     * @param role 유저 Role
+     * @param userId 토큰을 발급할 사용자 ID
+     * @param role 사용자의 역할 정보
      * @return 생성된 어세스 토큰 문자열
+     * @throws AuthException 어세스 토큰 생성에 실패한 경우 발생
      */
     @Override
     public String generateAccessToken(Long userId, RoleType role) {
@@ -58,11 +60,12 @@ public class JwtCommandService implements JwtGenerateUseCase {
     }
 
     /**
-     * Refresh Token 발급
+     * 지정된 사용자 ID와 역할을 기반으로 리프레시 토큰을 생성합니다.
      *
-     * @param userId 유저 ID
-     * @param role 유저 Role
+     * @param userId 토큰을 발급할 사용자 ID
+     * @param role 토큰을 발급할 사용자의 역할
      * @return 생성된 리프레시 토큰 문자열
+     * @throws AuthException 토큰 생성에 실패한 경우 발생
      */
     @Override
     public String generateRefreshToken(Long userId, RoleType role) {

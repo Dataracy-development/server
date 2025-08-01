@@ -59,7 +59,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         }
     }
 
-    // 신규 유저 처리
+    /**
+     * 신규 소셜 로그인 유저를 처리하여 레지스터 토큰을 쿠키에 저장하고 온보딩 페이지로 리다이렉트합니다.
+     *
+     * @param oAuthUserInfo 소셜 로그인에서 추출한 유저 정보
+     * @param request 현재 HTTP 요청
+     * @param response 현재 HTTP 응답
+     * @throws IOException 리다이렉트 과정에서 입출력 오류가 발생할 경우
+     */
     private void handleNewUser(OAuthUserInfo oAuthUserInfo, HttpServletRequest request, HttpServletResponse response) throws IOException {
         // 신규 유저일 경우 레지스터 토큰을 발급한다.
         RegisterTokenResponse registerTokenResponse = handleUserUseCase.handleNewUser(oAuthUserInfo);
@@ -79,12 +86,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     }
 
     /**
-     * 기존 유저에게 리프레시 토큰을 발급하고 쿠키에 저장한 후 메인 페이지로 리다이렉트합니다.
+     * 기존 유저에게 리프레시 토큰을 발급하여 쿠키에 저장한 뒤, 메인 페이지로 리다이렉트합니다.
      *
      * @param oAuthUserInfo OAuth2 인증을 통해 추출된 사용자 정보
-     * @param request 현재 HTTP 요청
-     * @param response 현재 HTTP 응답
-     * @throws IOException 리다이렉트 중 입출력 오류가 발생한 경우
+     * @param request 현재 HTTP 요청 객체
+     * @param response 현재 HTTP 응답 객체
+     * @throws IOException 리다이렉트 과정에서 입출력 오류가 발생할 경우
      */
     private void handleExistingUser(OAuthUserInfo oAuthUserInfo, HttpServletRequest request, HttpServletResponse response) throws IOException {
         // 기존 유저일 경우 리프레시 토큰을 발급한다.

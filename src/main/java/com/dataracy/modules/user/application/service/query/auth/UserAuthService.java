@@ -74,7 +74,7 @@ public class UserAuthService implements
     }
 
     /**
-     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고 Redis에 저장한 후, 토큰과 만료 정보를 반환합니다.
+     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고, 해당 토큰을 Redis에 저장한 뒤 토큰과 만료 정보를 반환합니다.
      *
      * 사용자가 존재하지 않을 경우 {@code UserException}이 발생합니다.
      *
@@ -107,6 +107,7 @@ public class UserAuthService implements
      * @param email 로그인에 사용할 이메일 주소
      * @param password 로그인에 사용할 비밀번호
      * @return 인증에 성공한 사용자의 정보
+     * @throws UserException 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 때 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)

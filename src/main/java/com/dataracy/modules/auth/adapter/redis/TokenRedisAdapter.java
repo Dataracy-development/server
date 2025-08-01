@@ -30,10 +30,13 @@ public class TokenRedisAdapter implements TokenRedisPort {
     }
 
     /**
-     * 리프레시 토큰 저장.
+     * 지정한 유저 ID에 대한 리프레시 토큰을 Redis에 저장합니다.
      *
-     * @param userId 유저 ID
-     * @param refreshToken 리프레시 토큰
+     * 토큰은 설정된 만료 기간(일 단위) 동안 유지됩니다.
+     *
+     * @param userId 리프레시 토큰을 저장할 유저의 ID
+     * @param refreshToken 저장할 리프레시 토큰 값
+     * @throws CommonException Redis 연결 실패 또는 데이터 접근 오류 발생 시 예외가 발생합니다.
      */
     @Override
     public void saveRefreshToken(String userId, String refreshToken) {
@@ -55,10 +58,11 @@ public class TokenRedisAdapter implements TokenRedisPort {
     }
 
     /**
-     * Redis에서 저장된 리프레시 토큰 조회.
+     * 주어진 유저 ID에 해당하는 리프레시 토큰을 Redis에서 조회하여 반환합니다.
      *
-     * @param userId 유저 ID
-     * @return 저장된 리프레시 토큰
+     * @param userId 리프레시 토큰을 조회할 유저의 ID
+     * @return 저장된 리프레시 토큰, 존재하지 않으면 null 반환
+     * @throws CommonException Redis 연결 실패 또는 데이터 접근 오류 발생 시 예외를 발생시킵니다.
      */
     @Override
     public String getRefreshToken(String userId) {
@@ -81,8 +85,10 @@ public class TokenRedisAdapter implements TokenRedisPort {
     }
 
     /**
-     * Redis에서 해당 userId의 리프레시 토큰을 삭제한다.
-     * @param userId
+     * 지정된 userId에 해당하는 리프레시 토큰을 Redis에서 삭제합니다.
+     *
+     * @param userId 리프레시 토큰을 삭제할 사용자 ID
+     * @throws CommonException Redis 연결 실패 또는 데이터 접근 오류 발생 시 예외가 발생합니다.
      */
     @Override
     public void deleteRefreshToken(String userId) {

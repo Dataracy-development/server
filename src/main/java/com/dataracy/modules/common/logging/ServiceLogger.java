@@ -33,20 +33,20 @@ public class ServiceLogger extends BaseLogger {
     }
 
     /**
-     * 서비스 작업 중 발생한 경고를 지정된 컨텍스트와 사유와 함께 로그로 기록합니다.
+     * 서비스 작업 중 발생한 경고를 유스케이스와 메시지와 함께 로그로 기록합니다.
      *
-     * @param useCase 예외가 발생한 서비스의 유스케이스 식별자
-     * @param message 예외와 관련된 추가 메시지
+     * @param useCase 경고가 발생한 서비스의 유스케이스 식별자
+     * @param message 경고와 관련된 추가 메시지
      */
     public void logWarning(String useCase, String message) {
         warn("[Service 경고] useCase={} message={}", useCase, message);
     }
 
     /**
-     * 서비스 작업 중 발생한 예외를 useCase와 메시지와 함께 에러 로그로 기록합니다.
+     * 서비스 작업 중 발생한 예외를 유스케이스와 메시지, 예외 객체와 함께 에러 로그로 기록합니다.
      *
-     * @param useCase 예외가 발생한 서비스의 유스케이스 식별자
-     * @param message 예외와 관련된 추가 메시지
+     * @param useCase 예외가 발생한 서비스 작업의 식별자
+     * @param message 예외와 관련된 추가 설명 메시지
      * @param e       기록할 예외 객체
      */
     public void logException(String useCase, String message, Throwable e) {
