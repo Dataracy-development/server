@@ -39,8 +39,8 @@ public class UserAuthService implements
     private final JwtGenerateUseCase jwtGenerateUseCase;
     private final TokenRedisUseCase tokenRedisUseCase;
 
-    /**
-     * 주어진 OAuth 제공자 ID로 사용자가 이미 존재하는지 확인하여 신규 사용자인지 반환합니다.
+    /****
+     * 주어진 OAuth 사용자 정보로 해당 사용자가 기존에 존재하는지 확인하여 신규 사용자인지 여부를 반환합니다.
      *
      * @param oAuthUserInfo 소셜 인증에서 받은 사용자 정보
      * @return 사용자가 존재하지 않으면 true(신규 사용자), 존재하면 false
@@ -56,12 +56,10 @@ public class UserAuthService implements
     }
 
     /**
-     * 신규 사용자에 대해 등록 토큰을 생성하여 반환합니다.
+     * OAuth 제공자 정보를 기반으로 신규 사용자 등록용 JWT 토큰과 만료 시간을 반환합니다.
      *
-     * OAuth 제공자 정보로 등록용 JWT 토큰을 생성하고, 토큰과 만료 시간을 포함한 응답을 반환합니다.
-     *
-     * @param oAuthUserInfo OAuth2 인증을 통해 획득한 사용자 정보
-     * @return 등록 토큰과 만료 시간이 포함된 RegisterTokenResponse 객체
+     * @param oAuthUserInfo OAuth 인증을 통해 획득한 사용자 정보
+     * @return 등록 토큰과 만료 시간이 포함된 RegisterTokenResponse
      */
     @Override
     public RegisterTokenResponse handleNewUser(OAuthUserInfo oAuthUserInfo) {
@@ -78,10 +76,12 @@ public class UserAuthService implements
     }
 
     /**
-     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고 Redis에 저장합니다.
+     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고 Redis에 저장한 후, 토큰과 만료 정보를 반환합니다.
      *
-     * @param oAuthUserInfo OAuth2 사용자 정보
-     * @return 발급된 리프레시 토큰과 만료 시간 정보를 담은 응답 객체
+     * 사용자가 존재하지 않을 경우 {@code UserException}이 발생합니다.
+     *
+     * @param oAuthUserInfo OAuth 제공자에서 받은 사용자 정보
+     * @return 발급된 리프레시 토큰과 만료 시간을 포함하는 응답 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -102,12 +102,12 @@ public class UserAuthService implements
     }
 
     /**
-     * 이메일과 비밀번호로 사용자의 로그인 가능 여부를 확인하고, 성공 시 사용자 정보를 반환합니다.
+     * 이메일과 비밀번호로 사용자의 로그인 자격을 검증하고, 인증에 성공한 경우 사용자 정보를 반환합니다.
      *
-     * 사용자가 존재하지 않거나 비밀번호가 일치하지 않으면 `UserException`이 발생합니다.
+     * 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 경우 `UserException`이 발생합니다.
      *
-     * @param email 로그인에 사용되는 이메일 주소
-     * @param password 로그인에 사용되는 비밀번호
+     * @param email 로그인에 사용할 이메일 주소
+     * @param password 로그인에 사용할 비밀번호
      * @return 인증에 성공한 사용자의 정보
      */
     @Override

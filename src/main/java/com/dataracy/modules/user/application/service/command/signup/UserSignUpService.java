@@ -59,7 +59,8 @@ public class UserSignUpService implements SelfSignUpUseCase, OAuthSignUpUseCase 
      * 자체 회원가입 요청을 처리하여 새로운 사용자를 등록하고 리프레시 토큰을 발급한다.
      *
      * 이메일, 닉네임, 비밀번호 등 필수 정보를 검증하고, 작성자 유형, 직업, 방문 경로, 토픽 등 선택 정보를 유효성 검사한 후 사용자 계정을 생성한다.
-     * 중복 가입을 방지하기 위해 이메일 기준 분산 락을 적용하며, 회원가입 성공 시 리프레시 토큰을 생성하여 Redis에 저장하고 토큰과 만료 시간을 반환한다.
+     * 중복 가입을 방지하기 위해 이메일 기준 분산 락을 적용한다.
+     * 회원가입 성공 시 리프레시 토큰을 생성하여 Redis에 저장하고, 토큰과 만료 시간을 포함한 응답을 반환한다.
      *
      * @param requestDto 자체 회원가입 요청 정보
      * @return 리프레시 토큰과 만료 시간이 포함된 응답 객체
@@ -124,10 +125,10 @@ public class UserSignUpService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     }
 
     /**
-     * 소셜 로그인 기반 회원가입 요청을 처리하고 리프레시 토큰을 발급합니다.
+     * 소셜 로그인 기반 회원가입을 처리하고 리프레시 토큰을 발급합니다.
      *
-     * 소셜 회원가입 토큰의 유효성을 검증하고, 온보딩 정보를 바탕으로 신규 사용자를 등록합니다.
-     * 이메일 및 닉네임 중복, 필수 및 선택 온보딩 항목의 유효성을 확인한 후, 회원 정보를 저장하고 리프레시 토큰을 생성하여 Redis에 저장합니다.
+     * 소셜 회원가입 토큰의 유효성을 검증한 후, 온보딩 정보를 바탕으로 신규 사용자를 등록합니다.
+     * 이메일 및 닉네임 중복, 필수 및 선택 온보딩 항목의 유효성을 확인하고, 회원 정보를 저장한 뒤 리프레시 토큰을 생성하여 Redis에 저장합니다.
      * 동시 닉네임 회원가입을 방지하기 위해 분산 락을 사용합니다.
      *
      * @param registerToken 소셜 회원가입 토큰
@@ -192,6 +193,12 @@ public class UserSignUpService implements SelfSignUpUseCase, OAuthSignUpUseCase 
         return refreshTokenResponse;
     }
 
+    /**
+     * 회원가입 시 입력된 이메일, 닉네임, 작성자 유형, 직업, 방문 경로, 토픽 ID의 유효성을 검증한다.
+     *
+     * 이메일과 닉네임의 중복 여부를 확인하고, 작성자 유형의 존재를 필수로 검증한다.
+     * 직업, 방문 경로, 토픽 ID는 값이 제공된 경우에만 각각의 유효성을 검사한다.
+     */
     private void validateSignUpInfo(
             String email,
             String nickname,

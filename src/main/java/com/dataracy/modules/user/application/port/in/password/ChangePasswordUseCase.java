@@ -4,10 +4,10 @@ import com.dataracy.modules.user.application.dto.request.password.ChangePassword
 
 public interface ChangePasswordUseCase {
     /**
-     * 비밀번호 변경
-     *
-     * @param userId 유저 아이디
-     * @param requestDto 비밀번호 변경 도메인 요청 DTO
-     */
+ * 사용자의 비밀번호를 변경합니다.
+ *
+ * @param userId 비밀번호를 변경할 사용자의 ID
+ * @param requestDto 비밀번호 변경 요청 정보를 담은 객체
+ */
     void changePassword(Long userId, ChangePasswordRequest requestDto);
 }

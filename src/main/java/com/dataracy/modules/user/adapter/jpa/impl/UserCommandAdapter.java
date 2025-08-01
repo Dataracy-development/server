@@ -17,7 +17,7 @@ public class UserCommandAdapter implements UserCommandPort {
     private final UserJpaRepository userJpaRepository;
 
     /**
-     * 주어진 유저 정보를 저장하고 저장된 유저 도메인 객체를 반환합니다.
+     * 유저 도메인 객체를 저장한 후, 저장된 결과를 반환합니다.
      *
      * @param user 저장할 유저 도메인 객체
      * @return 저장된 유저 도메인 객체
@@ -30,9 +30,9 @@ public class UserCommandAdapter implements UserCommandPort {
     }
 
     /**
-     * 사용자의 비밀번호를 새로운 인코딩된 값으로 변경합니다.
+     * 지정한 사용자의 비밀번호를 새로운 인코딩된 값으로 변경합니다.
      *
-     * @param userId 비밀번호를 변경할 사용자의 ID
+     * @param userId 비밀번호를 변경할 대상 사용자의 ID
      * @param encodePassword 새로 설정할 인코딩된 비밀번호
      * @throws UserException 사용자를 찾을 수 없는 경우 발생합니다.
      */
@@ -48,9 +48,9 @@ public class UserCommandAdapter implements UserCommandPort {
     }
 
     /**
-     * 지정된 사용자 ID에 해당하는 사용자를 탈퇴 처리합니다.
+     * 지정된 사용자 ID에 해당하는 사용자를 탈퇴 상태로 변경합니다.
      *
-     * @param userId 탈퇴할 사용자의 ID
+     * @param userId 탈퇴 처리할 사용자의 고유 ID
      */
     public void withdrawalUser(Long userId) {
         userJpaRepository.withdrawalUser(userId);

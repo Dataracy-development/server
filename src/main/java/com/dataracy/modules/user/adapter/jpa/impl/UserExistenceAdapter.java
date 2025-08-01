@@ -11,6 +11,12 @@ import org.springframework.stereotype.Repository;
 public class UserExistenceAdapter implements UserExistencePort {
     private final UserJpaRepository userJpaRepository;
 
+    /**
+     * 주어진 닉네임을 가진 사용자가 존재하는지 확인합니다.
+     *
+     * @param nickname 존재 여부를 확인할 사용자의 닉네임
+     * @return 닉네임을 가진 사용자가 존재하면 true, 그렇지 않으면 false
+     */
     @Override
     public boolean existsByNickname(String nickname) {
         boolean exists = userJpaRepository.existsByNickname(nickname);
@@ -18,6 +24,12 @@ public class UserExistenceAdapter implements UserExistencePort {
         return exists;
     }
 
+    /**
+     * 주어진 이메일을 가진 사용자가 존재하는지 확인합니다.
+     *
+     * @param email 존재 여부를 확인할 사용자의 이메일
+     * @return 사용자가 존재하면 true, 그렇지 않으면 false
+     */
     @Override
     public boolean existsByEmail(String email) {
         boolean exists = userJpaRepository.existsByEmail(email);

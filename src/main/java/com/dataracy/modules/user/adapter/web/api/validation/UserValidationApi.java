@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1")
 public interface UserValidationApi {
     /**
-     * 닉네임 중복유무를 확인한다.
+     * 닉네임의 중복 여부를 확인하는 API 엔드포인트입니다.
      *
-     * @param webRequest 웹 요청 DTO (닉네임)
-     * @return 200 응답 : 닉네임 중복되지 않음, 409 응답 : 닉네임 중복
+     * @param webRequest 중복 확인을 원하는 닉네임 정보를 담은 요청 객체
+     * @return 닉네임이 중복되지 않으면 200 OK, 중복된 경우 409 Conflict 상태 코드와 함께 응답합니다.
      */
     @Operation(
             summary = "닉네임 중복체크를 진행한다.",
