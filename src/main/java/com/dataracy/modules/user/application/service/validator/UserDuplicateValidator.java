@@ -27,7 +27,7 @@ public class UserDuplicateValidator {
      */
     public void duplicateNickname(String nickname) {
         if (userExistencePort.existsByNickname(nickname)) {
-            LoggerFactory.service().logWarning("User", "닉네임: " + nickname + "은 중복된 값입니다.");
+            LoggerFactory.service().logWarning("DuplicateNickname", "[닉네임 중복 검증] 닉네임: " + nickname + "은 중복된 값입니다.");
             throw new UserException(UserErrorStatus.DUPLICATED_NICKNAME);
         }
     }

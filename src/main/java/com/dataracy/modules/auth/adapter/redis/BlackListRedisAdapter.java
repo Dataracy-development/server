@@ -1,5 +1,6 @@
 package com.dataracy.modules.auth.adapter.redis;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -38,6 +39,7 @@ public class BlackListRedisAdapter {
                 "logout",
                 Duration.ofMillis(expirationMillis)
         );
+        LoggerFactory.redis().logSaveOrUpdate(token, "블랙 리스트 처리를 위한 토큰 레디스 저장에 성공했습니다.");
     }
 
     /**
@@ -47,6 +49,8 @@ public class BlackListRedisAdapter {
      * @return 블랙리스트 처리 여부
      */
     public boolean isBlacklisted(String token) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(getBlackListKey(token)));
+        boolean isBlacklisted = Boolean.TRUE.equals(redisTemplate.hasKey(getBlackListKey(token)));
+        LoggerFactory.redis().logExist(token, "해당 토큰은 블랙 리스트 처리 된 토큰입니다.");
+        return isBlacklisted;
     }
 }

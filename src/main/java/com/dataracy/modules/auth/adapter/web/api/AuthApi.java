@@ -15,7 +15,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "Auth", description = "인증 관련 API")
 @RequestMapping("/api/v1/auth")
@@ -53,6 +56,7 @@ public interface AuthApi {
             @Validated @RequestBody
             SelfLoginWebRequest webRequest,
 
+            @Parameter(hidden = true)
             HttpServletResponse response
     );
 
@@ -91,6 +95,7 @@ public interface AuthApi {
             @CookieValue(value = "refreshToken")
             String refreshToken,
 
+            @Parameter(hidden = true)
             HttpServletResponse response
     );
 }

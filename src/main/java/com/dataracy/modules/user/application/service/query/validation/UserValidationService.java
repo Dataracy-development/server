@@ -50,15 +50,15 @@ public class UserValidationService implements DuplicateNicknameUseCase, Duplicat
                     ProviderType providerType = user.getProvider();
                     switch (providerType) {
                         case GOOGLE -> {
-                            LoggerFactory.service().logWarning("User", "이메일 " + email + "은 구글 소셜 로그인으로 가입된 계정입니다.");
+                            LoggerFactory.service().logWarning("DuplicateEmailUseCase", "[중복 이메일 검증] 이메일 " + email + "은 구글 소셜 로그인으로 가입된 계정입니다.");
                             throw new UserException(UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
                         }
                         case KAKAO -> {
-                            LoggerFactory.service().logWarning("User", "이메일 " + email + "은 카카오 소셜 로그인으로 가입된 계정입니다.");
+                            LoggerFactory.service().logWarning("DuplicateEmailUseCase", "[중복 이메일 검증] 이메일 " + email + "은 카카오 소셜 로그인으로 가입된 계정입니다.");
                             throw new UserException(UserErrorStatus.DUPLICATED_KAKAO_EMAIL);
                         }
                         case LOCAL -> {
-                            LoggerFactory.service().logWarning("User", "이메일 " + email + "은 자체 로그인으로 가입된 계정입니다.");
+                            LoggerFactory.service().logWarning("DuplicateEmailUseCase", "[중복 이메일 검증] 이메일 " + email + "은 자체 로그인으로 가입된 계정입니다.");
                             throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
                         }
                     }

@@ -12,6 +12,8 @@ public class LoggerFactory {
     private static final SchedulerLogger SCHEDULER_LOGGER = new SchedulerLogger();
     private static final FilterLogger FILTER_LOGGER = new FilterLogger();
     private static final DomainLogger DOMAIN_LOGGER = new DomainLogger();
+    private static final RedisLogger REDIS_LOGGER = new RedisLogger();
+    private static final CommonLogger COMMON_LOGGER = new CommonLogger();
 
     /**
      * API 로깅을 위한 싱글톤 ApiLogger 인스턴스를 반환합니다.
@@ -83,5 +85,13 @@ public class LoggerFactory {
      */
     public static DomainLogger domain() {
         return DOMAIN_LOGGER;
+    }
+
+    public static RedisLogger redis() {
+        return REDIS_LOGGER;
+    }
+
+    public static CommonLogger common() {
+        return COMMON_LOGGER;
     }
 }

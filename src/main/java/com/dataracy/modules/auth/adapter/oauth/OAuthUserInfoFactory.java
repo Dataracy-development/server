@@ -5,6 +5,7 @@ import com.dataracy.modules.auth.application.port.out.oauth.OAuthUserInfoPort;
 import com.dataracy.modules.auth.application.port.out.oauth.SelectSocialProviderPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,9 @@ public class OAuthUserInfoFactory implements SelectSocialProviderPort {
                 .map(adapter -> adapter.extract(provider, attributes))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new AuthException(AuthErrorStatus.NOT_SUPPORTED_SOCIAL_PROVIDER_TYPE));
+                .orElseThrow(() -> {
+                    LoggerFactory.domain().logRuleViolation("ProviderType", "지원하지 않는 소셜 제공자입니다.");
+                    return new AuthException(AuthErrorStatus.NOT_SUPPORTED_SOCIAL_PROVIDER_TYPE);
+                });
     }
 }

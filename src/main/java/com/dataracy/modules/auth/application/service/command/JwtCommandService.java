@@ -4,10 +4,13 @@ import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtGeneratorPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 
 @Slf4j
 @Service
@@ -26,9 +29,12 @@ public class JwtCommandService implements JwtGenerateUseCase {
     @Override
     public String generateRegisterToken(String provider, String providerId, String email) {
         try {
-            return jwtGeneratorPort.generateRegisterToken(provider, providerId, email);
+            Instant startTime = LoggerFactory.service().logStart("JwtGenerateUseCase", "레지스터 토큰 발급 서비스 시작 email=" + email);
+            String registerToken = jwtGeneratorPort.generateRegisterToken(provider, providerId, email);
+            LoggerFactory.service().logSuccess("JwtGenerateUseCase", "레지스터 토큰 발급 서비스 성공 email=" + email, startTime);
+            return registerToken;
         } catch (Exception e){
-            log.error("Failed to generate register token from provider : {}, email : {}", provider, email);
+            LoggerFactory.service().logException("JwtGenerateUseCase", "[토큰 발급] 레지스터 토큰 발급에 실패했습니다. email=" + email, e);
             throw new AuthException(AuthErrorStatus.FAILED_GENERATE_REGISTER_TOKEN);
         }
     }
@@ -43,9 +49,12 @@ public class JwtCommandService implements JwtGenerateUseCase {
     @Override
     public String generateAccessToken(Long userId, RoleType role) {
         try {
-            return jwtGeneratorPort.generateAccessToken(userId, role);
+            Instant startTime = LoggerFactory.service().logStart("JwtGenerateUseCase", "어세스 토큰 발급 서비스 시작 userId=" + userId);
+            String accessToken = jwtGeneratorPort.generateAccessToken(userId, role);
+            LoggerFactory.service().logSuccess("JwtGenerateUseCase", "어세스 토큰 발급 서비스 성공 userId=" + userId, startTime);
+            return accessToken;
         } catch (Exception e){
-            log.error("Failed to generate access token for userId : {}", userId);
+            LoggerFactory.service().logException("JwtGenerateUseCase", "[토큰 발급] 어세스 토큰 발급에 실패했습니다. userId=" + userId, e);
             throw new AuthException(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN);
         }
     }
@@ -60,9 +69,12 @@ public class JwtCommandService implements JwtGenerateUseCase {
     @Override
     public String generateRefreshToken(Long userId, RoleType role) {
         try {
-            return jwtGeneratorPort.generateRefreshToken(userId, role);
+            Instant startTime = LoggerFactory.service().logStart("JwtGenerateUseCase", "리프레시 토큰 발급 서비스 시작 userId=" + userId);
+            String refreshToken =  jwtGeneratorPort.generateRefreshToken(userId, role);
+            LoggerFactory.service().logSuccess("JwtGenerateUseCase", "리프레시 토큰 발급 서비스 성공 userId=" + userId, startTime);
+            return refreshToken;
         } catch (Exception e){
-            log.error("Failed to generate refresh token for userId : {}", userId);
+            LoggerFactory.service().logException("JwtGenerateUseCase", "[토큰 발급] 리프레시 토큰 발급에 실패했습니다. userId=" + userId, e);
             throw new AuthException(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN);
         }
     }
