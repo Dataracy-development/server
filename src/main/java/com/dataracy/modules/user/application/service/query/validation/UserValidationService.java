@@ -8,13 +8,11 @@ import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserValidationService implements DuplicateNicknameUseCase, DuplicateEmailUseCase {

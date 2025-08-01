@@ -6,7 +6,6 @@ import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TokenRedisAdapter implements TokenRedisPort {

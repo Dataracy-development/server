@@ -11,7 +11,7 @@ public class KafkaLogger extends BaseLogger {
      * @param message 전송된 메시지 내용
      */
     public void logProduce(String topic, String message) {
-        info("[Kafka 전송] topic={} message={}", topic, message);
+        debug("[Kafka 전송] topic={} message={}", topic, message);
     }
 
     /**
@@ -21,7 +21,7 @@ public class KafkaLogger extends BaseLogger {
      * @param message 수신된 메시지 내용
      */
     public void logConsume(String topic, String message) {
-        info("[Kafka 수신] topic={} message={}", topic, message);
+        debug("[Kafka 수신] topic={} message={}", topic, message);
     }
 
     /**
