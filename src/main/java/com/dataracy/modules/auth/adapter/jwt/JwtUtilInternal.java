@@ -25,6 +25,13 @@ public class JwtUtilInternal {
     private final JwtProperties jwtProperties;
     private SecretKey secretKey;
 
+    /**
+     * JWT 시크릿 키를 초기화하고 유효성을 검사합니다.
+     *
+     * 시크릿 키가 32자 미만일 경우 예외를 발생시킵니다.
+     *
+     * @throws AuthException 시크릿 키가 32자 미만인 경우 발생합니다.
+     */
     @PostConstruct
     public void init() {
         String secret = jwtProperties.getSecret();
@@ -66,10 +73,13 @@ public class JwtUtilInternal {
     }
 
     /**
-     * JWT 토큰 파싱 및 유효성 검사
+     * 주어진 JWT 토큰 문자열을 파싱하여 클레임 정보를 반환합니다.
      *
-     * @param token 파싱 하고자 하는 토큰 문자열
-     * @return 토큰의 클레임 정보
+     * 토큰의 서명과 유효성을 검증하며, 만료되었거나 유효하지 않은 경우 각각 `AuthException`이 발생합니다.
+     * 기타 예외 상황에서는 `CommonException`이 발생할 수 있습니다.
+     *
+     * @param token 파싱할 JWT 토큰 문자열
+     * @return 토큰에 포함된 클레임 정보
      */
     public Claims parseToken(String token) {
         try {

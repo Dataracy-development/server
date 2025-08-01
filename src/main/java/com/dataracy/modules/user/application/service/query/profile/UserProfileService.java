@@ -30,8 +30,8 @@ public class UserProfileService implements
     private final UserQueryPort userQueryPort;
     private final UserMultiQueryPort userMultiQueryPort;
 
-    /****
-     * 주어진 사용자 ID로 해당 사용자의 닉네임을 조회합니다.
+    /**
+     * 주어진 사용자 ID로 해당 사용자의 닉네임을 반환합니다.
      *
      * @param userId 닉네임을 조회할 사용자 ID
      * @return 사용자의 닉네임
@@ -51,7 +51,7 @@ public class UserProfileService implements
     }
 
     /**
-     * 여러 사용자 ID에 대해 각 ID에 해당하는 닉네임을 조회하여 반환합니다.
+     * 주어진 여러 사용자 ID에 대해 각 ID에 해당하는 닉네임을 조회하여 Map으로 반환합니다.
      *
      * @param userIds 닉네임을 조회할 사용자 ID 목록
      * @return 사용자 ID를 키, 닉네임을 값으로 하는 Map. 입력 목록이 null이거나 비어 있으면 빈 Map을 반환합니다.
@@ -69,7 +69,7 @@ public class UserProfileService implements
     }
 
     /**
-     * 주어진 사용자 ID 목록에 대해 각 사용자의 프로필 썸네일 URL을 조회하여 반환합니다.
+     * 여러 사용자 ID에 대해 각 사용자의 프로필 썸네일 URL을 조회하여 맵으로 반환합니다.
      *
      * @param userIds 프로필 썸네일을 조회할 사용자 ID 목록
      * @return 사용자 ID를 키, 썸네일 URL을 값으로 하는 맵. 입력이 null이거나 비어 있으면 빈 맵을 반환합니다.
@@ -87,7 +87,7 @@ public class UserProfileService implements
     }
 
     /**
-     * 주어진 사용자 ID 목록에 대해 각 사용자의 작성자 레벨 ID를 반환합니다.
+     * 주어진 사용자 ID 목록에 대해 각 사용자의 작성자 레벨 ID를 조회하여 반환합니다.
      *
      * @param userIds 작성자 레벨 ID를 조회할 사용자 ID 목록
      * @return 사용자 ID와 해당 작성자 레벨 ID의 매핑. 입력이 null이거나 비어 있으면 빈 맵을 반환합니다.
@@ -104,12 +104,12 @@ public class UserProfileService implements
         return userAuthorLevelIds;
     }
 
-    /**
-     * 주어진 사용자 ID로 상세 정보를 조회하여 UserInfo 객체로 반환합니다.
+    /****
+     * 주어진 사용자 ID로 해당 사용자의 상세 정보를 조회하여 UserInfo 객체로 반환합니다.
      *
-     * @param userId 조회할 사용자의 ID
+     * @param userId 상세 정보를 조회할 사용자의 ID
      * @return 조회된 사용자의 상세 정보(UserInfo)
-     * @throws UserException 사용자가 존재하지 않을 경우 {@code UserErrorStatus.NOT_FOUND_USER} 예외가 발생합니다.
+     * @throws UserException 사용자가 존재하지 않을 경우 {@code UserErrorStatus.NOT_FOUND_USER}가 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)

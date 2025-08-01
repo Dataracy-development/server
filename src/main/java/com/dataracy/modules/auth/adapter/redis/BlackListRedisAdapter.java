@@ -23,10 +23,10 @@ public class BlackListRedisAdapter {
     }
 
     /**
-     * 해당 토큰을 블랙리스트 처리
+     * 주어진 JWT 토큰을 Redis에 블랙리스트로 등록합니다.
      *
-     * @param token jwt 토큰
-     * @param expirationMillis 유효기간
+     * @param token 블랙리스트에 추가할 JWT 토큰
+     * @param expirationMillis 토큰의 블랙리스트 유지 기간(밀리초)
      */
     public void setBlackListToken(
             String token,
@@ -41,10 +41,10 @@ public class BlackListRedisAdapter {
     }
 
     /**
-     * 해당 토큰이 블랙리스트 처리되었는지 여부를 파악
+     * 주어진 토큰이 블랙리스트에 등록되어 있는지 확인합니다.
      *
-     * @param token 토큰
-     * @return 블랙리스트 처리 여부
+     * @param token 확인할 JWT 토큰
+     * @return 토큰이 블랙리스트에 있으면 {@code true}, 아니면 {@code false}
      */
     public boolean isBlacklisted(String token) {
         boolean isBlacklisted = Boolean.TRUE.equals(redisTemplate.hasKey(getBlackListKey(token)));
