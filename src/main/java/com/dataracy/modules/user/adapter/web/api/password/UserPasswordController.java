@@ -37,7 +37,7 @@ public class UserPasswordController implements UserPasswordApi {
             Long userId,
             ChangePasswordWebRequest webRequest
     ) {
-        Instant startTime =LoggerFactory.api().logRequest("[ChangePassword] 비밀번호 변경 API 요청 시작");
+        Instant startTime = LoggerFactory.api().logRequest("[ChangePassword] 비밀번호 변경 API 요청 시작");
         ChangePasswordRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
         changePasswordUseCase.changePassword(userId, requestDto);
         LoggerFactory.api().logResponse("[ChangePassword] 비밀번호 변경 API 응답 완료", startTime);
@@ -57,7 +57,7 @@ public class UserPasswordController implements UserPasswordApi {
             Long userId,
             ConfirmPasswordWebRequest webRequest
     ) {
-        Instant startTime =LoggerFactory.api().logRequest("[ConfirmPassword] 비밀번호 확인 API 요청 시작");
+        Instant startTime = LoggerFactory.api().logRequest("[ConfirmPassword] 비밀번호 확인 API 요청 시작");
         ConfirmPasswordRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
         confirmPasswordUseCase.confirmPassword(userId, requestDto);
         LoggerFactory.api().logResponse("[ConfirmPassword] 비밀번호 확인 API 응답 완료", startTime);

@@ -38,7 +38,7 @@ public interface UserPasswordApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "비밀번호 변겅에 성공했습니다.",
+            @ApiResponse(responseCode = "200", description = "비밀번호 변경에 성공했습니다.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class))),
     })

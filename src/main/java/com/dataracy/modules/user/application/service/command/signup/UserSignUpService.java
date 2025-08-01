@@ -73,7 +73,7 @@ public class UserSignUpService implements SelfSignUpUseCase, OAuthSignUpUseCase 
             retry = 2
     )
     public RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("SelfSignUpUseCase", "자체 회원가입 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart("SelfSignUpUseCase", "자체 회원가입 서비스 시작 nickname=" + requestDto.nickname());
 
         // 자체 회원 가입 요청 정보 유효성 검사
         validateSignUpInfo(
@@ -119,7 +119,7 @@ public class UserSignUpService implements SelfSignUpUseCase, OAuthSignUpUseCase 
                 jwtValidateUseCase.getRefreshTokenExpirationTime()
         );
 
-        LoggerFactory.service().logSuccess("SelfSignUpUseCase", "자체 회원가입 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("SelfSignUpUseCase", "자체 회원가입 서비스 성공 nickname=" + requestDto.nickname(), startTime);
         return refreshTokenResponse;
     }
 
@@ -143,7 +143,7 @@ public class UserSignUpService implements SelfSignUpUseCase, OAuthSignUpUseCase 
             retry = 2
     )
     public RefreshTokenResponse signUpOAuth(String registerToken, OnboardingRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("OAuthSignUpUseCase", "소셜 회원가입 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart("OAuthSignUpUseCase", "소셜 회원가입 서비스 시작 nickname=" + requestDto.nickname());
 
         // 레지스터 토큰 유효성 체크 및 정보 조회
         jwtValidateUseCase.validateToken(registerToken);
@@ -188,7 +188,7 @@ public class UserSignUpService implements SelfSignUpUseCase, OAuthSignUpUseCase 
                 jwtValidateUseCase.getRefreshTokenExpirationTime()
         );
 
-        LoggerFactory.service().logSuccess("OAuthSignUpUseCase", "소셜 회원가입 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("OAuthSignUpUseCase", "소셜 회원가입 서비스 성공 nickname=" + requestDto.nickname(), startTime);
         return refreshTokenResponse;
     }
 

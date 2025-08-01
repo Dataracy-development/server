@@ -36,14 +36,14 @@ public class UserPasswordCommandService implements ChangePasswordUseCase {
     @Override
     @Transactional
     public void changePassword(Long userId, ChangePasswordRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("ChangePasswordUseCase", "user " + userId + "의 비밀번호 변경 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart("ChangePasswordUseCase", "비밀번호 변경 서비스 시작 userId=" + userId);
         // 비밀번호 - 비밀번호 확인 검증
         requestDto.validatePasswordMatch();
 
         // 해당 유저가 비밀번호를 변경할 수 있는 상태인지 확인한다.
         User savedUser = userQueryPort.findUserById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("User", "유저 아이디 " + userId + "에 해당하는 유저가 존재하지 않습니다.");
+                    LoggerFactory.service().logWarning("User", "[비밀번호 변경] 사용자를 찾을 수 없습니다. userId=" + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
         savedUser.validatePasswordChangable();
@@ -52,6 +52,6 @@ public class UserPasswordCommandService implements ChangePasswordUseCase {
         String encodedPassword = passwordEncoder.encode(requestDto.password());
         userCommandPort.changePassword(userId, encodedPassword);
 
-        LoggerFactory.service().logSuccess("ChangePasswordUseCase", "user " + userId + "의 비밀번호 변경 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("ChangePasswordUseCase", "비밀번호 변경 서비스 성공 userId=" + userId, startTime);
     }
 }

@@ -25,7 +25,7 @@ public class UserCommandAdapter implements UserCommandPort {
     @Override
     public User saveUser(User user) {
         UserEntity savedUser = userJpaRepository.save(UserEntityMapper.toEntity(user));
-        LoggerFactory.db().logSave("UserEntity", String.valueOf(savedUser.getId()), "유저를 저장하였습니다.");
+        LoggerFactory.db().logSave("UserEntity", String.valueOf(savedUser.getId()),"DB에 유저를 저장하였습니다.");
         return UserEntityMapper.toDomain(savedUser);
     }
 
@@ -39,7 +39,10 @@ public class UserCommandAdapter implements UserCommandPort {
     @Override
     public void changePassword(Long userId, String encodePassword) {
         UserEntity userEntity = userJpaRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorStatus.NOT_FOUND_USER));
+                .orElseThrow(() -> {
+                    LoggerFactory.db().logWarning("UserEntity", "[비밀번호 변경] 사용자를 찾을 수 없습니다. userId=" + userId);
+                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
+                });
         userEntity.changePassword(encodePassword);
         LoggerFactory.db().logUpdate("UserEntity", String.valueOf(userEntity.getId()), "새 비밀번호를 변경하였습니다.");
     }

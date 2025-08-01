@@ -48,9 +48,9 @@ public class UserAuthService implements
     @Override
     @Transactional(readOnly = true)
     public boolean isNewUser(OAuthUserInfo oAuthUserInfo) {
-        Instant startTime = LoggerFactory.service().logStart("IsNewUserUseCase", "신규 유저 여부 확인 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart("IsNewUserUseCase", "신규 유저 여부 확인 서비스 시작 email=" + oAuthUserInfo.email());
         boolean isNew = userQueryPort.findUserByProviderId(oAuthUserInfo.providerId()).isEmpty();
-        LoggerFactory.service().logSuccess("IsNewUserUseCase", "신규 유저 여부 확인 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("IsNewUserUseCase", "신규 유저 여부 확인 서비스 성공 email=" + oAuthUserInfo.email(), startTime);
 
         return isNew;
     }
@@ -65,14 +65,14 @@ public class UserAuthService implements
      */
     @Override
     public RegisterTokenResponse handleNewUser(OAuthUserInfo oAuthUserInfo) {
-        Instant startTime = LoggerFactory.service().logStart("HandleUserUseCase", "신규 유저 시 핸들링 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart("HandleUserUseCase", "신규 유저 시 핸들링 서비스 시작 email=" + oAuthUserInfo.email());
         String registerToken = jwtGenerateUseCase.generateRegisterToken(
                 oAuthUserInfo.provider(),
                 oAuthUserInfo.providerId(),
                 oAuthUserInfo.email()
         );
         RegisterTokenResponse registerTokenResponse = new RegisterTokenResponse(registerToken, jwtValidateUseCase.getRegisterTokenExpirationTime());
-        LoggerFactory.service().logSuccess("HandleUserUseCase", "신규 유저 핸들링 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("HandleUserUseCase", "신규 유저 핸들링 서비스 성공 email=" + oAuthUserInfo.email(), startTime);
 
         return registerTokenResponse;
     }
@@ -86,14 +86,18 @@ public class UserAuthService implements
     @Override
     @Transactional(readOnly = true)
     public RefreshTokenResponse handleExistingUser(OAuthUserInfo oAuthUserInfo) {
-        Instant startTime = LoggerFactory.service().logStart("HandleUserUseCase", "기존 유저 핸들링 서비스 시작");
-        User existUser = userQueryPort.findUserByProviderId(oAuthUserInfo.providerId()).get();
+        Instant startTime = LoggerFactory.service().logStart("HandleUserUseCase", "기존 유저 핸들링 서비스 시작 email=" + oAuthUserInfo.email());
+        User existUser = userQueryPort.findUserByProviderId(oAuthUserInfo.providerId())
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("User", "[기존 유저 처리] 소셜 식별자 아이디에 해당하는 사용자를 찾을 수 없습니다");
+                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
+                });
 
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(existUser.getId(), existUser.getRole());
         tokenRedisUseCase.saveRefreshToken(existUser.getId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(refreshToken, jwtValidateUseCase.getRefreshTokenExpirationTime());
 
-        LoggerFactory.service().logSuccess("HandleUserUseCase", "기존 유저 핸들링 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("HandleUserUseCase", "기존 유저 핸들링 서비스 성공 email=" + oAuthUserInfo.email(), startTime);
         return refreshTokenResponse;
     }
 
@@ -109,11 +113,11 @@ public class UserAuthService implements
     @Override
     @Transactional(readOnly = true)
     public UserInfo isLogin(String email, String password) {
-        Instant startTime = LoggerFactory.service().logStart("IsLoginPossibleUseCase", "입력받은 이메일, 비밀번호로 로그인이 가능한지 여부를 확인하는 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart("IsLoginPossibleUseCase", "입력받은 이메일, 비밀번호로 로그인이 가능한지 여부를 확인하는 서비스 시작 email=" + email);
 
         User user = userQueryPort.findUserByEmail(email)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("User", "이메일 " + email + "에 해당하는 유저가 존재하지 않습니다.");
+                    LoggerFactory.service().logWarning("User", "[로그인 가능 여부] 이메일에 해당하는 유저가 존재하지 않습니다. email=" + email);
                     return new UserException(UserErrorStatus.BAD_REQUEST_LOGIN);
                 });
 
@@ -122,18 +126,9 @@ public class UserAuthService implements
             throw new UserException(UserErrorStatus.BAD_REQUEST_LOGIN);
         }
 
-        UserInfo userInfo = new UserInfo(
-                user.getId(),
-                user.getRole(),
-                user.getEmail(),
-                user.getNickname(),
-                user.getAuthorLevelId(),
-                user.getOccupationId(),
-                user.getTopicIds(),
-                user.getVisitSourceId()
-        );
+        UserInfo userInfo = user.toUserInfo();
 
-        LoggerFactory.service().logSuccess("IsLoginPossibleUseCase", "입력받은 이메일, 비밀번호로 로그인이 가능한지 여부를 확인하는 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("IsLoginPossibleUseCase", "입력받은 이메일, 비밀번호로 로그인이 가능한지 여부를 확인하는 서비스 성공 email=" + email, startTime);
         return userInfo;
     }
 }

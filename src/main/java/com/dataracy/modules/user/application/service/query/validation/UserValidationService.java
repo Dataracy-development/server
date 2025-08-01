@@ -28,9 +28,9 @@ public class UserValidationService implements DuplicateNicknameUseCase, Duplicat
     @Override
     @Transactional(readOnly = true)
     public void validateDuplicatedNickname(String nickname) {
-        Instant startTime = LoggerFactory.service().logStart("DuplicateNicknameUseCase", "닉네임 중복 여부 확인 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart("DuplicateNicknameUseCase", "닉네임 중복 여부 확인 서비스 시작 nickname: " + nickname);
         userDuplicateValidator.duplicateNickname(nickname);
-        LoggerFactory.service().logSuccess("DuplicateNicknameUseCase", "닉네임 중복 여부 확인 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("DuplicateNicknameUseCase", "닉네임 중복 여부 확인 서비스 성공 nickname=" + nickname, startTime);
     }
 
     /**
@@ -44,7 +44,7 @@ public class UserValidationService implements DuplicateNicknameUseCase, Duplicat
     @Override
     @Transactional(readOnly = true)
     public void validateDuplicatedEmail(String email) {
-        Instant startTime = LoggerFactory.service().logStart("DuplicateEmailUseCase", "이메일 중복 여부 확인 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart("DuplicateEmailUseCase", "이메일 중복 여부 확인 서비스 시작 email=" + email);
         userDuplicateValidator.duplicateEmail(email)
                 .ifPresent(user -> {
                     ProviderType providerType = user.getProvider();
@@ -63,6 +63,6 @@ public class UserValidationService implements DuplicateNicknameUseCase, Duplicat
                         }
                     }
                 });
-        LoggerFactory.service().logSuccess("DuplicateEmailUseCase", "이메일 중복 여부 확인 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("DuplicateEmailUseCase", "이메일 중복 여부 확인 서비스 성공 email=" + email, startTime);
     }
 }
