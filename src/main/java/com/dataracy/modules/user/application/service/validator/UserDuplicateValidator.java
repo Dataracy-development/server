@@ -18,10 +18,10 @@ public class UserDuplicateValidator {
     private final UserQueryPort userQueryPort;
 
     /**
-     * 주어진 닉네임이 이미 존재하는지 확인하고, 중복일 경우 예외를 발생시킵니다.
+     * 주어진 닉네임이 이미 등록되어 있는지 검사하고, 중복일 경우 예외를 발생시킵니다.
      *
-     * @param nickname 중복 여부를 검사할 닉네임
-     * @throws UserException 닉네임이 이미 존재할 경우 발생합니다.
+     * @param nickname 중복 여부를 확인할 닉네임
+     * @throws UserException 닉네임이 이미 존재할 때 발생합니다.
      */
     public void duplicateNickname(String nickname) {
         if (userExistencePort.existsByNickname(nickname)) {
