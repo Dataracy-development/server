@@ -18,10 +18,10 @@ public class UserQueryAdapter implements UserQueryPort {
     private final UserJpaRepository userJpaRepository;
 
     /**
-     * 주어진 사용자 ID로 사용자를 조회하여 Optional로 반환합니다.
+     * 주어진 사용자 ID로 사용자를 조회하여 Optional<User>로 반환합니다.
      *
-     * @param userId 조회할 사용자의 ID
-     * @return 사용자가 존재하면 해당 User 객체를, 없으면 빈 Optional을 반환합니다.
+     * @param userId 조회할 사용자의 고유 ID
+     * @return 사용자가 존재하면 해당 User 객체를 포함한 Optional, 존재하지 않으면 빈 Optional
      */
     @Override
     public Optional<User> findUserById(Long userId) {
@@ -31,8 +31,8 @@ public class UserQueryAdapter implements UserQueryPort {
         return userEntity.map(UserEntityMapper::toDomain);
     }
 
-    /**
-     * 소셜 제공자 ID로 사용자를 조회하여 Optional로 반환합니다.
+    /****
+     * 소셜 제공자에서 발급한 ID로 사용자를 조회합니다.
      *
      * @param providerId 소셜 제공자에서 발급한 사용자 ID
      * @return 해당 providerId에 해당하는 사용자가 존재하면 Optional<User>, 없으면 Optional.empty()
@@ -46,7 +46,7 @@ public class UserQueryAdapter implements UserQueryPort {
     }
 
     /**
-     * 이메일을 기준으로 사용자를 조회하여 Optional로 반환합니다.
+     * 이메일로 사용자를 조회하여 Optional<User>로 반환합니다.
      *
      * @param email 조회할 사용자의 이메일 주소
      * @return 해당 이메일을 가진 사용자가 존재하면 Optional<User>, 없으면 Optional.empty()

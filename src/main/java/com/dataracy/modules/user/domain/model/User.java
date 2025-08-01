@@ -40,16 +40,23 @@ public class User {
     private boolean isDeleted;
 
     /**
-     * 주어진 원시 비밀번호가 저장된 암호화된 비밀번호와 일치하는지 확인합니다.
+     * 입력된 원시 비밀번호가 저장된 암호화된 비밀번호와 일치하는지 검사합니다.
      *
-     * @param encoder 비밀번호 암호화 encoder
+     * @param encoder 비밀번호 일치 여부를 확인할 암호화 인코더
      * @param rawPassword 사용자가 입력한 원시 비밀번호
-     * @return 비밀번호가 일치하면 true, 그렇지 않으면 false
+     * @return 비밀번호가 일치하면 true, 일치하지 않으면 false
      */
     public boolean isPasswordMatch(PasswordEncoder encoder, String rawPassword) {
         return encoder.matches(rawPassword, this.password);
     }
 
+    /**
+     * 사용자의 인증 제공자에 따라 비밀번호 변경 가능 여부를 검증합니다.
+     *
+     * GOOGLE 또는 KAKAO 제공자를 사용하는 경우 비밀번호 변경이 금지되어 있으며, 이 경우 예외를 발생시킵니다.
+     *
+     * @throws UserException GOOGLE 또는 KAKAO 제공자일 때 비밀번호 변경이 금지된 경우 발생합니다.
+     */
     public void validatePasswordChangable() {
         switch (provider) {
             case GOOGLE -> {
@@ -63,6 +70,11 @@ public class User {
         }
     }
 
+    /**
+     * 현재 User 도메인 객체를 UserInfo 값 객체로 변환합니다.
+     *
+     * @return 사용자 정보가 담긴 UserInfo 객체
+     */
     public UserInfo toUserInfo() {
         return new UserInfo(
                 this.id,

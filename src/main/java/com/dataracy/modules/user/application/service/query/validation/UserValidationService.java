@@ -21,9 +21,9 @@ public class UserValidationService implements DuplicateNicknameUseCase, Duplicat
     private final UserDuplicateValidator userDuplicateValidator;
 
     /**
-     * 닉네임 중복 확인.
+     * 주어진 닉네임이 이미 사용 중인지 검증합니다.
      *
-     * @param nickname 닉네임
+     * @param nickname 중복 여부를 확인할 닉네임
      */
     @Override
     @Transactional(readOnly = true)
@@ -34,12 +34,12 @@ public class UserValidationService implements DuplicateNicknameUseCase, Duplicat
     }
 
     /**
-     * 주어진 이메일이 이미 등록되어 있는지 검증한다.
+     * 주어진 이메일이 이미 등록되어 있는지 확인한다.
      *
-     * 이메일이 중복된 경우, 해당 이메일의 가입 경로(구글, 카카오, 로컬)에 따라 각각의 중복 예외를 발생시킨다.
+     * 이메일이 이미 등록된 경우, 해당 이메일의 가입 경로(구글, 카카오, 로컬)에 따라 각각 다른 에러 상태의 UserException을 발생시킨다.
      *
-     * @param email 중복 여부를 확인할 이메일 주소
-     * @throws UserException 이메일이 이미 등록된 경우, 가입 경로에 따라 다른 에러 상태로 예외가 발생함
+     * @param email 중복 여부를 검사할 이메일 주소
+     * @throws UserException 이메일이 이미 등록된 경우, 가입 경로에 따라 각각의 중복 에러 상태로 예외가 발생함
      */
     @Override
     @Transactional(readOnly = true)

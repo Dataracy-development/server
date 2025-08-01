@@ -31,7 +31,8 @@ public class UserPasswordCommandService implements ChangePasswordUseCase {
      * Google 또는 Kakao 계정으로 가입한 유저는 비밀번호 변경이 불가하며, 존재하지 않는 유저 ID일 경우 예외가 발생한다.
      *
      * @param userId 비밀번호를 변경할 유저의 ID
-     * @param requestDto 새 비밀번호 및 확인값이 포함된 요청 DTO
+     * @param requestDto 새 비밀번호와 비밀번호 확인값이 포함된 요청 DTO
+     * @throws UserException 존재하지 않는 유저이거나 비밀번호 변경이 허용되지 않는 경우 발생
      */
     @Override
     @Transactional

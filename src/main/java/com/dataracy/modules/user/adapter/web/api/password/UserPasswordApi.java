@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1")
 public interface UserPasswordApi {
     /**
-     * 비밀번호를 변경한다.
+     * 현재 사용자의 비밀번호를 변경한다.
      *
-     * @param webRequest 웹 요청 DTO (비밀번호)
-     * @return 비밀번호 변경 성공
+     * @param webRequest 변경할 비밀번호 정보가 포함된 요청 객체
+     * @return 비밀번호 변경 성공 시 성공 응답을 반환한다.
      */
     @Operation(
             summary = "비밀번호를 변경한다.",
@@ -58,10 +58,10 @@ public interface UserPasswordApi {
     );
 
     /**
-     * 비밀번호 확인한다.
+     * 사용자의 비밀번호가 입력한 값과 일치하는지 확인한다.
      *
-     * @param webRequest 웹 요청 DTO (비밀번호)
-     * @return 비밀번호 확인 성공
+     * @param webRequest 확인할 비밀번호 정보를 담은 요청 객체
+     * @return 비밀번호가 일치할 경우 성공 응답을 반환한다.
      */
     @Operation(
             summary = "비밀번호를 확인한다.",
