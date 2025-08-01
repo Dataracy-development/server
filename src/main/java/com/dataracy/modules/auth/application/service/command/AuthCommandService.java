@@ -34,10 +34,10 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     private final IsLoginPossibleUseCase isLoginPossibleUseCase;
 
     /**
-     * 이메일과 비밀번호로 사용자의 로그인을 수행하고 리프레시 토큰을 발급한다.
+     * 이메일과 비밀번호를 사용하여 사용자의 로그인을 처리하고, 새로운 리프레시 토큰을 발급한다.
      *
      * @param requestDto 로그인 요청 정보(이메일, 비밀번호 등)
-     * @return 발급된 리프레시 토큰과 만료 시간 정보가 포함된 응답 객체
+     * @return 발급된 리프레시 토큰과 만료 시간이 포함된 응답 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -61,13 +61,14 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     }
 
     /**
-     * 리프레시 토큰을 검증하고 새로운 액세스 토큰과 리프레시 토큰을 발급합니다.
+     * 리프레시 토큰을 검증한 후 새로운 액세스 토큰과 리프레시 토큰을 발급합니다.
      *
-     * 분산 락을 적용하여 동일한 리프레시 토큰으로의 동시 재발급을 방지합니다.
-     * 저장된 리프레시 토큰과 입력된 토큰이 일치하는지 확인 후, 새로운 토큰을 생성하여 반환합니다.
+     * 분산 락을 적용하여 동일한 리프레시 토큰으로의 동시 재발급을 방지하며,
+     * 저장된 리프레시 토큰과 입력된 토큰이 일치하는지 확인 후 새로운 토큰을 생성하여 반환합니다.
+     * 토큰이 만료되었거나 일치하지 않을 경우 인증 예외가 발생합니다.
      *
      * @param refreshToken 클라이언트가 제공한 리프레시 토큰
-     * @return 새로 발급된 액세스 토큰과 리프레시 토큰, 각 만료 시간 정보가 포함된 응답 객체
+     * @return 새로 발급된 액세스 토큰과 리프레시 토큰, 각 만료 시간이 포함된 응답 객체
      */
     @Override
     @DistributedLock(key = "'lock:refresh-reissue:' + #refreshToken", waitTime = 200, leaseTime = 3000)

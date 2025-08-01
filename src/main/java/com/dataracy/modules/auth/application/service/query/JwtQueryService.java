@@ -17,9 +17,9 @@ public class JwtQueryService implements JwtValidateUseCase {
     private final JwtProperties jwtProperties;
 
     /**
-     * jwt 토큰 유효성 검사
+     * 주어진 JWT 토큰의 유효성을 검사합니다.
      *
-     * @param token 토큰 문자열
+     * @param token 검사할 JWT 토큰 문자열
      */
     @Override
     public void validateToken(String token) {
@@ -29,10 +29,10 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * JWT 토큰에서 유저 ID 추출
+     * JWT 토큰에서 유저 ID를 추출하여 반환합니다.
      *
-     * @param token 토큰 문자열(어세스 토큰, 리프레시 토큰)
-     * @return 유저 ID
+     * @param token 유저 정보를 포함한 JWT 토큰 문자열
+     * @return 토큰에 포함된 유저 ID
      */
     @Override
     public Long getUserIdFromToken(String token) {
@@ -43,10 +43,10 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * Register Token에서 OAuth2 제공자 추출
+     * 레지스터 토큰에서 OAuth2 제공자 정보를 추출하여 반환합니다.
      *
-     * @param token 토큰 문자열(리프레시 토큰)
-     * @return OAuth2 제공자
+     * @param token 레지스터 토큰 문자열
+     * @return 추출된 OAuth2 제공자 이름
      */
     @Override
     public String getProviderFromRegisterToken(String token) {
@@ -57,10 +57,10 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * Register Token에서 제공자 ID 추출
+     * Register Token에서 소셜 제공자 아이디를 추출하여 반환합니다.
      *
-     * @param token 토큰 문자열(리프레시 토큰)
-     * @return 제공자 ID
+     * @param token 소셜 회원가입에 사용되는 레지스터 토큰 문자열
+     * @return 추출된 소셜 제공자 아이디
      */
     @Override
     public String getProviderIdFromRegisterToken(String token) {
@@ -71,10 +71,10 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * Register Token에서 이메일 추출
+     * Register Token에서 이메일을 추출하여 반환합니다.
      *
-     * @param token 토큰 문자열(리프레시 토큰)
-     * @return 이메일
+     * @param token 이메일을 추출할 레지스터 토큰 문자열
+     * @return 추출된 이메일 주소
      */
     @Override
     public String getEmailFromRegisterToken(String token) {
@@ -85,10 +85,10 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * Token에서 Role 추출
+     * 주어진 토큰에서 유저의 역할(RoleType)을 추출합니다.
      *
-     * @param token 토큰 문자열(어세스 토큰, 리프레시 토큰)
-     * @return 유저 Role
+     * @param token 역할 정보를 추출할 JWT 토큰 문자열
+     * @return 토큰에 포함된 유저의 역할(RoleType)
      */
     @Override
     public RoleType getRoleFromToken(String token) {
@@ -99,9 +99,9 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * Register Token 유효기간 반환
+     * Register Token의 만료 시간을 밀리초 단위로 반환합니다.
      *
-     * @return Register Token 유효기간 (밀리초)
+     * @return Register Token의 만료 시간(밀리초)
      */
     @Override
     public long getRegisterTokenExpirationTime() {
@@ -112,9 +112,9 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * Access Token 유효기간 반환
+     * Access Token의 만료 시간을 밀리초 단위로 반환합니다.
      *
-     * @return Access Token 유효기간 (밀리초)
+     * @return Access Token의 만료 시간(밀리초)
      */
     @Override
     public long getAccessTokenExpirationTime() {
@@ -125,9 +125,9 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * Refresh Token 유효기간 반환
+     * Refresh Token의 만료 시간을 밀리초 단위로 반환합니다.
      *
-     * @return Refresh Token 유효기간 (밀리초)
+     * @return Refresh Token의 만료 시간(밀리초)
      */
     @Override
     public long getRefreshTokenExpirationTime() {
@@ -138,9 +138,9 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * 온보딩 리다이렉트 URL 반환
+     * 소셜 회원가입 시 추가 정보 입력을 위한 온보딩 리다이렉트 URL을 반환합니다.
      *
-     * @return 온보딩 리다이렉트 URL
+     * @return 온보딩 리다이렉트 URL 문자열
      */
     @Override
     public String getRedirectOnboardingUrl() {
@@ -151,9 +151,9 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * 로그인 성공 후 리다이렉트 URL 반환
+     * 로그인 또는 회원가입 완료 후 이동할 기본 리다이렉트 URL을 반환합니다.
      *
-     * @return 로그인 성공 후 리다이렉트 URL
+     * @return 로그인 또는 회원가입 완료 후 사용자를 리다이렉트할 기본 URL
      */
     @Override
     public String getRedirectBaseUrl() {

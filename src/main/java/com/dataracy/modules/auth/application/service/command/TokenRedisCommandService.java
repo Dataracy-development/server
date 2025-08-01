@@ -16,10 +16,10 @@ public class TokenRedisCommandService implements TokenRedisUseCase {
     private final TokenRedisPort tokenRedisPort;
 
     /**
-     * 리프레시 토큰을 저장합니다.
+     * 지정한 사용자 ID에 대해 리프레시 토큰을 Redis에 저장합니다.
      *
-     * @param userId 사용자 ID
-     * @param refreshToken 리프레시 토큰
+     * @param userId 리프레시 토큰을 저장할 사용자 ID
+     * @param refreshToken 저장할 리프레시 토큰
      */
     @Override
     public void saveRefreshToken(String userId, String refreshToken) {
@@ -29,9 +29,11 @@ public class TokenRedisCommandService implements TokenRedisUseCase {
     }
 
     /**
-     * 유저 id에 해당하는 리프레시 토큰을 레디스에서 추출한다.
-     * @param userId 유저 id
-     * @return 레디스의 리프레시 토큰 문자열
+     * 주어진 유저 ID에 해당하는 리프레시 토큰을 레디스에서 조회하여 반환한다.
+     *
+     * @param userId 리프레시 토큰을 조회할 유저의 ID
+     * @return 조회된 리프레시 토큰 문자열
+     * @throws AuthException 리프레시 토큰이 존재하지 않거나 만료된 경우 발생
      */
     @Override
     public String getRefreshToken(String userId) {
@@ -45,8 +47,9 @@ public class TokenRedisCommandService implements TokenRedisUseCase {
     }
 
     /**
-     * 유저 id에 해당하는 리프레시 토큰을 레디스에서 삭제한다.
-     * @param userId 유저 id
+     * 지정된 유저 ID에 해당하는 리프레시 토큰을 레디스에서 삭제한다.
+     *
+     * @param userId 리프레시 토큰을 삭제할 대상 유저의 ID
      */
     @Override
     public void deleteRefreshToken(String userId) {
