@@ -1,5 +1,8 @@
 package com.dataracy.modules.common.logging;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class ApiLogger extends BaseLogger {
 
     /**
@@ -7,8 +10,9 @@ public class ApiLogger extends BaseLogger {
      *
      * @param message 로그에 기록할 API 요청 메시지
      */
-    public void logRequest(String message) {
+    public Instant logRequest(String message) {
         info("[API 요청] {}", message);
+        return Instant.now();
     }
 
     /**
@@ -16,8 +20,9 @@ public class ApiLogger extends BaseLogger {
      *
      * @param message 응답에 대한 설명 또는 상세 메시지
      */
-    public void logResponse(String message) {
-        info("[API 응답] {}", message);
+    public void logResponse(String message, Instant startTime) {
+        long durationMs = Duration.between(startTime, Instant.now()).toMillis();
+        info("[API 응답] {} duration={}ms\"", message, durationMs);
     }
 
     /**

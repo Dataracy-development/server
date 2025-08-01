@@ -77,7 +77,11 @@ public class UserEntity extends BaseTimeEntity {
     @Builder.Default
     private boolean isDeleted = false;
 
-    // 비밀번호 변경
+    /**
+     * 비밀번호 변경
+     *
+     * @param encodedPassword 암호화된 비밀번호
+     */
     public void changePassword(String encodedPassword) {
         this.password = encodedPassword;
     }

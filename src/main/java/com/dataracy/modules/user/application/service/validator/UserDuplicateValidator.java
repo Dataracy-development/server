@@ -1,6 +1,8 @@
 package com.dataracy.modules.user.application.service.validator;
 
-import com.dataracy.modules.user.application.port.out.UserRepositoryPort;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.user.application.port.out.jpa.UserExistencePort;
+import com.dataracy.modules.user.application.port.out.jpa.UserQueryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
@@ -10,21 +12,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/**
- * 유효성, 중복 확인
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserDuplicateValidator {
-    private final UserRepositoryPort userRepositoryPort;
+    private final UserExistencePort userExistencePort;
+    private final UserQueryPort userQueryPort;
 
     /**
      * 닉네임 중복 확인
+     *
      * @param nickname 닉네임
      */
     public void duplicateNickname(String nickname) {
-        if (userRepositoryPort.existsByNickname(nickname)) {
+        if (userExistencePort.existsByNickname(nickname)) {
+            LoggerFactory.service().logWarning("User", "닉네임: " + nickname + "은 중복된 값입니다.");
             throw new UserException(UserErrorStatus.DUPLICATED_NICKNAME);
         }
     }
@@ -36,6 +38,6 @@ public class UserDuplicateValidator {
      * @return 이메일이 중복된 경우 해당 사용자를 포함하는 Optional, 중복이 없으면 빈 Optional
      */
     public Optional<User> duplicateEmail(String email) {
-        return userRepositoryPort.findUserByEmail(email);
+        return userQueryPort.findUserByEmail(email);
     }
 }

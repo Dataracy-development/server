@@ -9,12 +9,12 @@ public class ServiceLogger extends BaseLogger {
      * 서비스 작업의 시작을 기록하고 시작 시각을 반환합니다.
      *
      * @param useCase 수행할 서비스의 용도 또는 이름
-     * @param input   서비스에 전달된 입력 값
+     * @param message  서비스 작업 내용
      * @return        작업 시작 시각의 {@link Instant} 객체
      */
-    public Instant logStart(String useCase, String input) {
+    public Instant logStart(String useCase, String message) {
         Instant start = Instant.now();
-        info("[Service 시작] {} input={}", useCase, input);
+        info("[Service 시작] {} message={}", useCase, message);
         return start;
     }
 
@@ -22,12 +22,12 @@ public class ServiceLogger extends BaseLogger {
      * 서비스 작업이 성공적으로 완료되었음을 기록하고, 소요 시간을 로그에 남깁니다.
      *
      * @param useCase 수행된 서비스의 용도 또는 이름
-     * @param result 서비스 작업의 결과 정보
+     * @param message 서비스 작업 내용
      * @param startTime 서비스 작업이 시작된 시각
      */
-    public void logSuccess(String useCase, String result, Instant startTime) {
+    public void logSuccess(String useCase, String message, Instant startTime) {
         long durationMs = Duration.between(startTime, Instant.now()).toMillis();
-        info("[Service 완료] {} result={} duration={}ms", useCase, result, durationMs);
+        info("[Service 완료] {} message={} duration={}ms", useCase, message, durationMs);
     }
 
     /**
