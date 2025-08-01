@@ -22,7 +22,7 @@ public class ApiLogger extends BaseLogger {
      */
     public void logResponse(String message, Instant startTime) {
         long durationMs = Duration.between(startTime, Instant.now()).toMillis();
-        info("[API 응답] {} duration={}ms\"", message, durationMs);
+        info("[API 응답] {} duration={}ms", message, durationMs);
     }
 
     /**
