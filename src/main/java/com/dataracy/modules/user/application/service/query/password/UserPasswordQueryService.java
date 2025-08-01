@@ -40,7 +40,7 @@ public class UserPasswordQueryService implements
 
         User user = userQueryPort.findUserById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("User", "유저 아이디 " + userId + "에 해당하는 유저가 존재하지 않습니다.");
+                    LoggerFactory.service().logWarning("User", "[비밀번호 확인] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 

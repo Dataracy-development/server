@@ -71,6 +71,10 @@ public class PersistenceLogger extends BaseLogger {
         info("[DB 존재 여부 확인] {} - {}", entityName, message);
     }
 
+    public void logWarning(String entityName, String message) {
+        warn("[DB 경고] {} - {}", entityName, message);
+    }
+
     /**
      * 데이터베이스 작업 중 발생한 오류를 엔터티 이름과 메시지, 예외 정보와 함께 에러 레벨로 기록합니다.
      *

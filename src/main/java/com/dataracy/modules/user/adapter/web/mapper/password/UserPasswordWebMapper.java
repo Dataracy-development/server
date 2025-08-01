@@ -18,7 +18,7 @@ public class UserPasswordWebMapper {
 
     // 비밀번호 확인 웹 요청 DTO -> 비밀번호 확인 도메인 요청 DTO
     public ConfirmPasswordRequest toApplicationDto(ConfirmPasswordWebRequest webRequest) {
-        return new ConfirmPasswordRequest (
+        return new ConfirmPasswordRequest(
                 webRequest.password()
         );
     }

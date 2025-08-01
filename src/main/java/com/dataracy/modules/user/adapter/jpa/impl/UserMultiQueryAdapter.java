@@ -26,9 +26,7 @@ public class UserMultiQueryAdapter implements UserMultiQueryPort {
      */
     @Override
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
-        Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", "findAllById : 유저 아이디로 유저 목록 조회 시작");
-        List<UserEntity> userEntities = userJpaRepository.findAllById(userIds);
-        LoggerFactory.db().logQueryEnd("UserEntity", "findAllById : 유저 아이디로 유저 목록 조회 종료", startTime);
+        List<UserEntity> userEntities = findUserEntitiesWithLogging(userIds, "[findAllById] 유저 아이디로 유저 목록 조회");
         return userEntities
                 .stream()
                 .collect(Collectors.toMap(UserEntity::getId, UserEntity::getNickname));
@@ -42,9 +40,7 @@ public class UserMultiQueryAdapter implements UserMultiQueryPort {
      */
     @Override
     public Map<Long, String> findUserThumbnailsByIds(List<Long> userIds) {
-        Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", "findAllById : 유저 아이디로 유저 목록 조회 시작");
-        List<UserEntity> userEntities = userJpaRepository.findAllById(userIds);
-        LoggerFactory.db().logQueryEnd("UserEntity", "findAllById : 유저 아이디로 유저 목록 조회 종료", startTime);
+        List<UserEntity> userEntities = findUserEntitiesWithLogging(userIds, "[findAllById] 유저 아이디로 유저 목록 조회");
         return userEntities
                 .stream()
                 .collect(Collectors.toMap(
@@ -63,14 +59,19 @@ public class UserMultiQueryAdapter implements UserMultiQueryPort {
      */
     @Override
     public Map<Long, String> findUserAuthorLevelIds(List<Long> userIds) {
-        Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", "findAllById : 유저 아이디로 유저 목록 조회 시작");
-        List<UserEntity> userEntities = userJpaRepository.findAllById(userIds);
-        LoggerFactory.db().logQueryEnd("UserEntity", "findAllById : 유저 아이디로 유저 목록 조회 종료", startTime);
+        List<UserEntity> userEntities = findUserEntitiesWithLogging(userIds, "[findAllById] 유저 아이디로 유저 목록 조회");
         return userEntities
                 .stream()
                 .collect(Collectors.toMap(
                         UserEntity::getId,
                         user -> String.valueOf(Optional.ofNullable(user.getAuthorLevelId()).orElse(1L))
                 ));
+    }
+
+    private List<UserEntity> findUserEntitiesWithLogging(List<Long> userIds, String operation) {
+        Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", operation + " 시작");
+        List<UserEntity> userEntities = userJpaRepository.findAllById(userIds);
+        LoggerFactory.db().logQueryEnd("UserEntity", operation + " 종료", startTime);
+        return userEntities;
     }
 }

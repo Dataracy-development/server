@@ -4,6 +4,7 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.exception.UserException;
+import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,6 +61,19 @@ public class User {
                 throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO);
             }
         }
+    }
+
+    public UserInfo toUserInfo() {
+        return new UserInfo(
+                this.id,
+                this.role,
+                this.email,
+                this.nickname,
+                this.authorLevelId,
+                this.occupationId,
+                this.topicIds,
+                this.visitSourceId
+        );
     }
 
     /**
