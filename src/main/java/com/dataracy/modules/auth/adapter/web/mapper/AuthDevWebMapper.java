@@ -11,7 +11,7 @@ import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import org.springframework.stereotype.Component;
 
 /**
- * Auth 웹 DTO와 Auth 도메인 DTO를 변환하는 매퍼
+ * 개발용 Auth 웹 DTO와 Auth 도메인 DTO를 변환하는 매퍼
  */
 @Component
 public class AuthDevWebMapper {
@@ -20,10 +20,12 @@ public class AuthDevWebMapper {
         return new SelfLoginRequest(webRequest.email(), webRequest.password());
     }
 
+    // 자체 로그인 도메인 응답 DTO -> 자체 로그인 웹 응답 DTO
     public RefreshTokenRequest toApplicationDto(RefreshTokenWebRequest webRequest) {
         return new RefreshTokenRequest(webRequest.refreshToken());
     }
 
+    // 토큰 재발급 웹 요청 DTO -> 토큰 재발급 도메인 요청 DTO
     public RefreshTokenWebResponse toWebDto(RefreshTokenResponse responseDto) {
         return new RefreshTokenWebResponse(
                 responseDto.refreshToken(),
@@ -31,6 +33,7 @@ public class AuthDevWebMapper {
         );
     }
 
+    // 토큰 재발급 도메인 응답 DTO -> 토큰 재발급 웹 응답 DTO
     public ReIssueTokenWebResponse toWebDto(ReIssueTokenResponse responseDto) {
         return new ReIssueTokenWebResponse(
                 responseDto.accessToken(),

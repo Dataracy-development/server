@@ -44,7 +44,7 @@ public class UserPasswordCommandService implements ChangePasswordUseCase {
         // 해당 유저가 비밀번호를 변경할 수 있는 상태인지 확인한다.
         User savedUser = userQueryPort.findUserById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("User", "[비밀번호 변경] 사용자를 찾을 수 없습니다. userId=" + userId);
+                    LoggerFactory.service().logWarning("ChangePasswordUseCase", "[비밀번호 변경] 사용자를 찾을 수 없습니다. userId=" + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
         savedUser.validatePasswordChangable();

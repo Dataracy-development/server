@@ -3,10 +3,13 @@ package com.dataracy.modules.auth.application.service.query;
 import com.dataracy.modules.auth.adapter.jwt.JwtProperties;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtValidatorPort;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 
 @Slf4j
 @Service
@@ -22,7 +25,9 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public void validateToken(String token) {
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "토큰 유효성 검사 서비스 시작");
         jwtValidatorPort.validateToken(token);
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "토큰 유효성 검사 서비스 성공", startTime);
     }
 
     /**
@@ -33,7 +38,10 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public Long getUserIdFromToken(String token) {
-        return jwtValidatorPort.getUserIdFromToken(token);
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "토큰으로부터 유저 아이디 추출 서비스 시작");
+        Long userId = jwtValidatorPort.getUserIdFromToken(token);
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "토큰으로부터 유저 아이디 추출 서비스 성공", startTime);
+        return userId;
     }
 
     /**
@@ -44,7 +52,10 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public String getProviderFromRegisterToken(String token) {
-        return jwtValidatorPort.getProviderFromRegisterToken(token);
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "레지스터 토큰으로부터 소셜 제공자 추출 서비스 시작");
+        String provider = jwtValidatorPort.getProviderFromRegisterToken(token);
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "레지스터 토큰으로부터 소셜 제공자 추출 서비스 성공", startTime);
+        return provider;
     }
 
     /**
@@ -55,7 +66,10 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public String getProviderIdFromRegisterToken(String token) {
-        return jwtValidatorPort.getProviderIdFromRegisterToken(token);
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "레지스터 토큰으로부터 소셜 제공자 아이디 추출 서비스 시작");
+        String providerId = jwtValidatorPort.getProviderIdFromRegisterToken(token);
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "레지스터 토큰으로부터 소셜 제공자 아이디 추출 서비스 성공", startTime);
+        return providerId;
     }
 
     /**
@@ -66,7 +80,10 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public String getEmailFromRegisterToken(String token) {
-        return jwtValidatorPort.getEmailFromRegisterToken(token);
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "레지스터 토큰으로부터 이메일 추출 서비스 시작");
+        String email = jwtValidatorPort.getEmailFromRegisterToken(token);
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "레지스터 토큰으로부터 이메일 추출 서비스 성공", startTime);
+        return email;
     }
 
     /**
@@ -77,7 +94,10 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public RoleType getRoleFromToken(String token) {
-        return jwtValidatorPort.getRoleFromToken(token);
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "토큰으로부터 유저 role 추출 서비스 시작");
+        RoleType role = jwtValidatorPort.getRoleFromToken(token);
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "토큰으로부터 유저 role 추출 서비스 성공", startTime);
+        return role;
     }
 
     /**
@@ -87,7 +107,10 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public long getRegisterTokenExpirationTime() {
-        return jwtProperties.getRegisterTokenExpirationTime();
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "레지스터 토큰 유효기간 반환 서비스 시작");
+        long registerToken = jwtProperties.getRegisterTokenExpirationTime();
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "레지스터 토큰 유효기간 반환 서비스 성공", startTime);
+        return registerToken;
     }
 
     /**
@@ -97,7 +120,10 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public long getAccessTokenExpirationTime() {
-        return jwtProperties.getAccessTokenExpirationTime();
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "어세스 토큰 유효기간 반환 서비스 시작");
+        long accessToken = jwtProperties.getAccessTokenExpirationTime();
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "어세스 토큰 유효기간 반환 서비스 성공", startTime);
+        return accessToken;
     }
 
     /**
@@ -107,7 +133,10 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public long getRefreshTokenExpirationTime() {
-        return jwtProperties.getRefreshTokenExpirationTime();
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "리프레시 토큰 유효기간 반환 서비스 시작");
+        long refreshToken = jwtProperties.getRefreshTokenExpirationTime();
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "리프레시 토큰 유효기간 반환 서비스 성공", startTime);
+        return refreshToken;
     }
 
     /**
@@ -117,7 +146,10 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public String getRedirectOnboardingUrl() {
-        return jwtProperties.getRedirectOnboarding();
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "소셜 회원가입 시 추가정보 입력을 위한 온보딩 url 반환 서비스 시작");
+        String onboardingUrl = jwtProperties.getRedirectOnboarding();
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "소셜 회원가입 시 추가정보 입력을 위한 온보딩 url 반환 서비스 성공", startTime);
+        return onboardingUrl;
     }
 
     /**
@@ -127,6 +159,9 @@ public class JwtQueryService implements JwtValidateUseCase {
      */
     @Override
     public String getRedirectBaseUrl() {
-        return jwtProperties.getRedirectBase();
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "로그인, 회원가입 완료 후 이동하는 메인 url 반환 서비스 시작");
+        String baseUrl = jwtProperties.getRedirectBase();
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "로그인, 회원가입 완료 후 이동하는 메인 url 반환 서비스 성공", startTime);
+        return baseUrl;
     }
 }

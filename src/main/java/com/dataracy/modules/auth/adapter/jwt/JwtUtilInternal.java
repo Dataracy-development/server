@@ -4,6 +4,7 @@ import com.dataracy.modules.auth.domain.enums.TokenType;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.exception.CommonException;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -30,6 +31,7 @@ public class JwtUtilInternal {
 
         // jwt secret은 최소 32자 이상 조건
         if (secret.length() < 32) {
+            LoggerFactory.common().logError("JWT", "시크릿 키는 32자 이상만 가능합니다.");
             throw new AuthException(AuthErrorStatus.SHORT_JWT_SECRET);
         }
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
@@ -78,13 +80,13 @@ public class JwtUtilInternal {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (ExpiredJwtException e) {
-            log.error("Expired Token: {}", token, e);
+            LoggerFactory.common().logError("JWT", "만료된 토큰입니다.", e);
             throw new AuthException(AuthErrorStatus.EXPIRED_TOKEN);
         } catch (JwtException e) {
-            log.error("Invalid Token: {}", token, e);
+            LoggerFactory.common().logError("JWT", "유효하지 않은 토큰입니다.", e);
             throw new AuthException(AuthErrorStatus.INVALID_TOKEN);
         } catch (Exception e) {
-            log.error("Unknown error while parsing token: {}", token, e);
+            LoggerFactory.common().logError("JWT", "토큰을 파싱하는 과정에서 알수 없는 에러가 발생했습닝다.", e);
             throw new CommonException(CommonErrorStatus.INTERNAL_SERVER_ERROR);
         }
     }

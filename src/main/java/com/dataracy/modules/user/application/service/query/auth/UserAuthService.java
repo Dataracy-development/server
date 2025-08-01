@@ -89,7 +89,7 @@ public class UserAuthService implements
         Instant startTime = LoggerFactory.service().logStart("HandleUserUseCase", "기존 유저 핸들링 서비스 시작 email=" + oAuthUserInfo.email());
         User existUser = userQueryPort.findUserByProviderId(oAuthUserInfo.providerId())
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("User", "[기존 유저 처리] 소셜 식별자 아이디에 해당하는 사용자를 찾을 수 없습니다");
+                    LoggerFactory.service().logWarning("HandleUserUseCase", "[기존 유저 처리] 소셜 식별자 아이디에 해당하는 사용자를 찾을 수 없습니다");
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 
@@ -117,12 +117,12 @@ public class UserAuthService implements
 
         User user = userQueryPort.findUserByEmail(email)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("User", "[로그인 가능 여부] 이메일에 해당하는 유저가 존재하지 않습니다. email=" + email);
+                    LoggerFactory.service().logWarning("IsLoginPossibleUseCase", "[로그인 가능 여부] 이메일에 해당하는 유저가 존재하지 않습니다. email=" + email);
                     return new UserException(UserErrorStatus.BAD_REQUEST_LOGIN);
                 });
 
         if (!user.isPasswordMatch(passwordEncoder, password)) {
-            LoggerFactory.service().logWarning("User", "제공받은 비밀번호와 실제 비밀번호가 일치하지 않습니다. 재로그인을 시도해주세요.");
+            LoggerFactory.service().logWarning("IsLoginPossibleUseCase", "[로그인 가능 여부] 제공받은 비밀번호와 실제 비밀번호가 일치하지 않습니다. 재로그인을 시도해주세요.");
             throw new UserException(UserErrorStatus.BAD_REQUEST_LOGIN);
         }
 

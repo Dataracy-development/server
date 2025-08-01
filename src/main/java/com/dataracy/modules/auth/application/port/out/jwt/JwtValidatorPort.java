@@ -9,8 +9,9 @@ public interface JwtValidatorPort {
     void validateToken (String token);
 
     Long getUserIdFromToken(String token);
+    RoleType getRoleFromToken(String token);
+
     String getProviderFromRegisterToken(String token);
     String getProviderIdFromRegisterToken(String token);
     String getEmailFromRegisterToken(String token);
-    RoleType getRoleFromToken(String token);
 }
