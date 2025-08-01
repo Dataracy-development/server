@@ -4,47 +4,57 @@ import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
 import com.dataracy.modules.auth.application.port.out.redis.TokenRedisPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-@Slf4j
+import java.time.Instant;
+
 @Service
 @RequiredArgsConstructor
 public class TokenRedisCommandService implements TokenRedisUseCase {
     private final TokenRedisPort tokenRedisPort;
 
     /**
-     * 리프레시 토큰을 저장합니다.
+     * 지정한 사용자 ID에 대해 리프레시 토큰을 Redis에 저장합니다.
      *
-     * @param userId 사용자 ID
-     * @param refreshToken 리프레시 토큰
+     * @param userId 리프레시 토큰을 저장할 사용자 ID
+     * @param refreshToken 저장할 리프레시 토큰
      */
     @Override
     public void saveRefreshToken(String userId, String refreshToken) {
+        Instant startTime = LoggerFactory.service().logStart("TokenRedisUseCase", "리프레시 토큰 레디스 저장 서비스 시작 userId=" + userId);
         tokenRedisPort.saveRefreshToken(userId, refreshToken);
+        LoggerFactory.service().logSuccess("TokenRedisUseCase", "리프레시 토큰 레디스 저장 서비스 성공 userId=" + userId, startTime);
     }
 
     /**
-     * 유저 id에 해당하는 리프레시 토큰을 레디스에서 추출한다.
-     * @param userId 유저 id
-     * @return 레디스의 리프레시 토큰 문자열
+     * 주어진 유저 ID에 해당하는 리프레시 토큰을 레디스에서 조회하여 반환한다.
+     *
+     * @param userId 리프레시 토큰을 조회할 유저의 ID
+     * @return 조회된 리프레시 토큰 문자열
+     * @throws AuthException 리프레시 토큰이 존재하지 않거나 만료된 경우 발생
      */
     @Override
     public String getRefreshToken(String userId) {
+        Instant startTime = LoggerFactory.service().logStart("TokenRedisUseCase", "레디스에서 리프레시 토큰 추출 서비스 시작 userId=" + userId);
         String refreshToken = tokenRedisPort.getRefreshToken(userId);
         if (refreshToken == null) {
             throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
         }
+        LoggerFactory.service().logSuccess("TokenRedisUseCase", "레디스에서 리프레시 토큰 추출 서비스 성공 userId=" + userId, startTime);
         return refreshToken;
     }
 
     /**
-     * 유저 id에 해당하는 리프레시 토큰을 레디스에서 삭제한다.
-     * @param userId 유저 id
+     * 지정된 유저 ID에 해당하는 리프레시 토큰을 레디스에서 삭제한다.
+     *
+     * @param userId 리프레시 토큰을 삭제할 대상 유저의 ID
      */
     @Override
     public void deleteRefreshToken(String userId) {
+        Instant startTime = LoggerFactory.service().logStart("TokenRedisUseCase", "레디스에서 리프레시 토큰 삭제 서비스 시작 userId=" + userId);
         tokenRedisPort.deleteRefreshToken(userId);
+        LoggerFactory.service().logSuccess("TokenRedisUseCase", "레디스에서 리프레시 토큰 삭제 서비스 성공 userId=" + userId, startTime);
     }
 }

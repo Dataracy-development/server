@@ -16,14 +16,12 @@ import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserAuthService implements
@@ -76,7 +74,7 @@ public class UserAuthService implements
     }
 
     /**
-     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고 Redis에 저장한 후, 토큰과 만료 정보를 반환합니다.
+     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고, 해당 토큰을 Redis에 저장한 뒤 토큰과 만료 정보를 반환합니다.
      *
      * 사용자가 존재하지 않을 경우 {@code UserException}이 발생합니다.
      *
@@ -89,7 +87,7 @@ public class UserAuthService implements
         Instant startTime = LoggerFactory.service().logStart("HandleUserUseCase", "기존 유저 핸들링 서비스 시작 email=" + oAuthUserInfo.email());
         User existUser = userQueryPort.findUserByProviderId(oAuthUserInfo.providerId())
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("User", "[기존 유저 처리] 소셜 식별자 아이디에 해당하는 사용자를 찾을 수 없습니다");
+                    LoggerFactory.service().logWarning("HandleUserUseCase", "[기존 유저 처리] 소셜 식별자 아이디에 해당하는 사용자를 찾을 수 없습니다");
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 
@@ -109,6 +107,7 @@ public class UserAuthService implements
      * @param email 로그인에 사용할 이메일 주소
      * @param password 로그인에 사용할 비밀번호
      * @return 인증에 성공한 사용자의 정보
+     * @throws UserException 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 때 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)
@@ -117,12 +116,12 @@ public class UserAuthService implements
 
         User user = userQueryPort.findUserByEmail(email)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("User", "[로그인 가능 여부] 이메일에 해당하는 유저가 존재하지 않습니다. email=" + email);
+                    LoggerFactory.service().logWarning("IsLoginPossibleUseCase", "[로그인 가능 여부] 이메일에 해당하는 유저가 존재하지 않습니다. email=" + email);
                     return new UserException(UserErrorStatus.BAD_REQUEST_LOGIN);
                 });
 
         if (!user.isPasswordMatch(passwordEncoder, password)) {
-            LoggerFactory.service().logWarning("User", "제공받은 비밀번호와 실제 비밀번호가 일치하지 않습니다. 재로그인을 시도해주세요.");
+            LoggerFactory.service().logWarning("IsLoginPossibleUseCase", "[로그인 가능 여부] 제공받은 비밀번호와 실제 비밀번호가 일치하지 않습니다. 재로그인을 시도해주세요.");
             throw new UserException(UserErrorStatus.BAD_REQUEST_LOGIN);
         }
 

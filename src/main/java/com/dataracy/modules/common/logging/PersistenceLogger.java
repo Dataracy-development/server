@@ -1,5 +1,7 @@
 package com.dataracy.modules.common.logging;
 
+import com.dataracy.modules.common.logging.support.BaseLogger;
+
 import java.time.Duration;
 import java.time.Instant;
 
