@@ -1,5 +1,7 @@
 package com.dataracy.modules.common.logging;
 
+import com.dataracy.modules.common.logging.support.BaseLogger;
+
 public class CommonLogger extends BaseLogger {
     public void logError(String topic, String message) {
         error("[{} 오류] message={}", topic, message);
