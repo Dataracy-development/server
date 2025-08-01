@@ -25,7 +25,7 @@ public class UserCommandAdapter implements UserCommandPort {
     @Override
     public User saveUser(User user) {
         UserEntity savedUser = userJpaRepository.save(UserEntityMapper.toEntity(user));
-        LoggerFactory.db().logSave("UserEntity", String.valueOf(savedUser.getId()),"DB에 유저를 저장하였습니다.");
+        LoggerFactory.db().logSave("UserEntity", String.valueOf(savedUser.getId()), "DB에 유저를 저장하였습니다.");
         return UserEntityMapper.toDomain(savedUser);
     }
 
