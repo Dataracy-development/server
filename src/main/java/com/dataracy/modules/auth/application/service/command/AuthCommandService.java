@@ -18,13 +18,11 @@ import com.dataracy.modules.user.application.port.in.validation.IsLoginPossibleU
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase {

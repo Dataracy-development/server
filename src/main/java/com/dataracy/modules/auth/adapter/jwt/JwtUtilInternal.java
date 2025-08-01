@@ -86,7 +86,7 @@ public class JwtUtilInternal {
             LoggerFactory.common().logError("JWT", "유효하지 않은 토큰입니다.", e);
             throw new AuthException(AuthErrorStatus.INVALID_TOKEN);
         } catch (Exception e) {
-            LoggerFactory.common().logError("JWT", "토큰을 파싱하는 과정에서 알수 없는 에러가 발생했습닝다.", e);
+            LoggerFactory.common().logError("JWT", "토큰을 파싱하는 과정에서 알 수 없는 에러가 발생했습닝다.", e);
             throw new CommonException(CommonErrorStatus.INTERNAL_SERVER_ERROR);
         }
     }

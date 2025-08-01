@@ -12,7 +12,6 @@ import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserProfileService implements

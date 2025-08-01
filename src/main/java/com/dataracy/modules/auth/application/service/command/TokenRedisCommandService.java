@@ -6,12 +6,10 @@ import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TokenRedisCommandService implements TokenRedisUseCase {
