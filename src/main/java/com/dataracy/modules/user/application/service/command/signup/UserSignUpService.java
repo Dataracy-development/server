@@ -216,8 +216,10 @@ public class UserSignUpService implements SelfSignUpUseCase, OAuthSignUpUseCase 
             validateVisitSourceUseCase.validateVisitSource(visitSourceId);
         }
         // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
-        if (topicIds != null) {
-            topicIds.forEach(validateTopicUseCase::validateTopic);
+        if (topicIds != null && !topicIds.isEmpty()) {
+            for (Long topicId : topicIds) {
+                validateTopicUseCase.validateTopic(topicId);
+            }
         }
     }
 }
