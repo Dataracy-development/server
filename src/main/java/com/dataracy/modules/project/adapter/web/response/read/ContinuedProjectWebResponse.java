@@ -16,7 +16,7 @@ public record ContinuedProjectWebResponse(
         String username,
 
         @Schema(description = "작성자 프로필 썸네일 url", example = "http://www.s3~~~~")
-        String userThumnbailUrl,
+        String userThumbnailUrl,
 
         @Schema(description = "프로젝트 썸네일 url", example = "http://www.s3~~~~")
         String fileUrl,
