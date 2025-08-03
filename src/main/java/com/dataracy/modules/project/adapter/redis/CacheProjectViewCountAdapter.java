@@ -108,11 +108,11 @@ public class CacheProjectViewCountAdapter implements CacheProjectViewCountPort {
                     .match(String.format("viewCount:%s:*", targetType))
                     .build();
 
-            Cursor<String> cursor = redisTemplate.scan(options);
-            while (cursor.hasNext()) {
-                keys.add(cursor.next());
+            try (Cursor<String> cursor = redisTemplate.scan(options)) {
+                while (cursor.hasNext()) {
+                    keys.add(cursor.next());
+                }
             }
-            cursor.close();
 
             LoggerFactory.redis().logQueryEnd("viewCount:" + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType, startTime);
             return keys;
@@ -134,7 +134,7 @@ public class CacheProjectViewCountAdapter implements CacheProjectViewCountPort {
     public void clearViewCount(Long targetId, String targetType) {
         try {
             redisTemplate.delete(String.format("viewCount:%s:%s", targetType, targetId));
-            LoggerFactory.redis().logDelete("viewCount:" + targetType + ":" + targetId, "지정된 대상 ID와 대상 타입에 해당하는 조회수 카운트 Redis 키를 삭제. projectId=" + targetId);
+            LoggerFactory.redis().logDelete("viewCount:" + targetType + ":" + targetId, "지정된 대상 ID와 대상 타입에 해당하는 조회수 카운트 Redis 키를 삭제. targetId=" + targetId);
         } catch (RedisConnectionFailureException e) {
             LoggerFactory.redis().logError("viewCount:" + targetType + ":" + targetId, "레디스 서버 연결에 실패했습니다.", e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
