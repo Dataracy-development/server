@@ -23,9 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/v1/projects")
 public interface ProjectCommandApi {
     /**
-     * 프로젝트 정보를 업로드하고 데이터베이스에 저장한다.
+     * 프로젝트 정보를 업로드하여 데이터베이스에 저장한다.
      *
-     * @param file 프로젝트와 연관된 파일(선택 사항)
+     * @param file 프로젝트와 연관된 파일 (선택 사항)
      * @param webRequest 업로드할 프로젝트 정보가 담긴 요청 객체
      * @return 업로드 성공 시 201 Created와 함께 성공 응답을 반환한다.
      */
@@ -57,12 +57,12 @@ public interface ProjectCommandApi {
     );
 
     /**
-     * 주어진 프로젝트 ID에 해당하는 프로젝트를 전달받은 데이터로 수정합니다.
+     * 기존 프로젝트를 전달받은 정보와 파일로 수정합니다.
      *
-     * @param projectId 수정할 프로젝트의 ID (1 이상)
-     * @param file      프로젝트와 연관된 파일 (선택 사항)
-     * @param webRequest 프로젝트 수정 정보를 담은 요청 객체
-     * @return 프로젝트 수정 성공 여부를 나타내는 응답
+     * @param projectId 수정할 프로젝트의 고유 ID (1 이상)
+     * @param file 프로젝트와 연관된 파일 (선택 사항)
+     * @param webRequest 프로젝트 수정 요청 데이터
+     * @return 수정 성공 시 성공 응답을 반환합니다.
      */
     @Operation(
             summary = "프로젝트를 수정한다.",
@@ -91,10 +91,10 @@ public interface ProjectCommandApi {
     );
 
     /**
-     * 지정한 프로젝트를 삭제합니다.
+     * 지정한 ID의 프로젝트를 삭제합니다.
      *
      * @param projectId 삭제할 프로젝트의 ID (1 이상)
-     * @return 삭제 성공 여부를 포함한 응답
+     * @return 삭제 성공 시 성공 응답을 반환합니다.
      */
     @Operation(
             summary = "프로젝트를 삭제한다.",
@@ -120,7 +120,7 @@ public interface ProjectCommandApi {
      * 삭제된 프로젝트를 복원한다.
      *
      * @param projectId 복원할 프로젝트의 ID (1 이상)
-     * @return 복원 성공 여부를 담은 성공 응답
+     * @return 복원 성공 시 성공 응답을 반환한다.
      */
     @Operation(
             summary = "프로젝트를 복원한다.",

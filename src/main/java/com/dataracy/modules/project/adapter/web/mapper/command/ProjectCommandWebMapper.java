@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjectCommandWebMapper {
     /**
-     * 웹 계층의 프로젝트 업로드 요청 DTO를 애플리케이션 계층의 프로젝트 업로드 요청 DTO로 변환합니다.
+     * 웹 계층의 프로젝트 업로드 요청 DTO를 애플리케이션 계층의 업로드 요청 DTO로 변환합니다.
      *
      * @param webRequest 변환할 프로젝트 업로드 웹 요청 DTO
-     * @return 애플리케이션 계층에서 사용할 프로젝트 업로드 요청 DTO
+     * @return 변환된 애플리케이션 계층의 프로젝트 업로드 요청 DTO
      */
     public UploadProjectRequest toApplicationDto(UploadProjectWebRequest webRequest) {
         return new UploadProjectRequest(
@@ -32,7 +32,7 @@ public class ProjectCommandWebMapper {
      * 웹 계층의 프로젝트 수정 요청 DTO를 애플리케이션 계층의 프로젝트 수정 요청 DTO로 변환합니다.
      *
      * @param webRequest 프로젝트 수정 정보를 담은 웹 요청 DTO
-     * @return 변환된 애플리케이션 계층의 프로젝트 수정 요청 DTO
+     * @return 애플리케이션 계층에서 사용하는 프로젝트 수정 요청 DTO
      */
     public ModifyProjectRequest toApplicationDto(ModifyProjectWebRequest webRequest) {
         return new ModifyProjectRequest(

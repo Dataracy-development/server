@@ -74,9 +74,9 @@ public class ProjectReadService implements
     private static final String VIEW_TARGET_TYPE = "PROJECT";
 
     /**
-     * 지정한 프로젝트의 상세 정보를 조회합니다.
+     * 지정한 프로젝트의 상세 정보를 조회하여 반환합니다.
      *
-     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 사용자의 좋아요 여부, 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 반환합니다. 조회자 식별자를 기반으로 프로젝트의 조회수를 1회 증가시킵니다.
+     * 프로젝트의 기본 정보, 작성자 이름, 작성자 레벨 및 직업 라벨, 주제, 분석 목적, 데이터 소스 라벨, 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 사용자의 좋아요 여부, 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 제공합니다. 조회자 식별자를 기반으로 프로젝트의 조회수를 1회 증가시킵니다.
      *
      * @param projectId 상세 정보를 조회할 프로젝트의 ID
      * @param userId 프로젝트를 조회하는 사용자의 ID (좋아요 여부 확인에 사용, null 가능)
@@ -143,9 +143,9 @@ public class ProjectReadService implements
     }
 
     /**
-     * 지정한 프로젝트 ID를 기준으로 이어지는 프로젝트 목록을 페이지 단위로 조회합니다.
+     * 지정한 프로젝트 ID를 기준으로 이어지는 프로젝트 목록을 페이지 단위로 반환합니다.
      *
-     * 각 프로젝트에 대해 작성자 이름, 작성자 썸네일, 주제 라벨, 저자 레벨 라벨 정보를 함께 반환합니다.
+     * 각 프로젝트에는 작성자 이름, 작성자 썸네일, 주제 라벨, 저자 레벨 라벨 정보가 포함됩니다.
      *
      * @param projectId 기준이 되는 프로젝트의 ID
      * @param pageable 페이지네이션 정보
@@ -178,11 +178,11 @@ public class ProjectReadService implements
         return findContinuedProjectsResponse;
     }
     /**
-     * 지정된 데이터 ID와 연결된 프로젝트들을 페이지 단위로 조회하여, 각 프로젝트의 사용자명과 토픽 라벨 정보를 포함한 응답으로 반환합니다.
+     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지 단위로 조회하여, 각 프로젝트의 사용자명과 토픽 라벨 정보를 포함한 응답을 반환합니다.
      *
-     * @param dataId 연결된 데이터를 식별하는 ID
+     * @param dataId 연결된 데이터의 식별자
      * @param pageable 페이지네이션 정보
-     * @return 연결된 프로젝트의 상세 정보가 담긴 페이지 객체
+     * @return 연결된 프로젝트 정보가 담긴 페이지 객체
      */
     @Override
     public Page<ConnectedProjectResponse> findConnectedProjects(Long dataId, Pageable pageable) {

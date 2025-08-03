@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjectSearchWebMapper {
     /**
-     * ProjectRealTimeSearchResponse DTO를 ProjectRealTimeSearchWebResponse 웹 응답 객체로 변환합니다.
+     * 실시간 프로젝트 검색 응답 DTO를 웹 응답 객체로 변환합니다.
      *
-     * @param responseDto 변환할 실시간 프로젝트 검색 응답 DTO
-     * @return 변환된 웹 응답 객체
+     * @param responseDto 실시간 프로젝트 검색 결과를 담고 있는 DTO
+     * @return 변환된 실시간 프로젝트 웹 응답 객체
      */
     public RealTimeProjectWebResponse toWeb(RealTimeProjectResponse responseDto) {
         return new RealTimeProjectWebResponse(
@@ -26,12 +26,12 @@ public class ProjectSearchWebMapper {
     }
 
     /**
-     * ProjectSimilarSearchResponse DTO를 ProjectSimilarSearchWebResponse 웹 응답 객체로 변환합니다.
+     * SimilarProjectResponse DTO를 SimilarProjectWebResponse 웹 응답 객체로 변환합니다.
      *
-     * 유사 프로젝트 검색 결과 DTO의 모든 필드를 웹 응답 객체에 매핑하여 반환합니다.
+     * 유사 프로젝트 검색 결과 DTO의 모든 필드를 동일하게 웹 응답 객체에 매핑하여 반환합니다.
      *
-     * @param responseDto 변환할 ProjectSimilarSearchResponse DTO
-     * @return 변환된 ProjectSimilarSearchWebResponse 객체
+     * @param responseDto 변환할 SimilarProjectResponse DTO
+     * @return 변환된 SimilarProjectWebResponse 객체
      */
     public SimilarProjectWebResponse toWeb(SimilarProjectResponse responseDto) {
         return new SimilarProjectWebResponse(
@@ -51,10 +51,10 @@ public class ProjectSearchWebMapper {
     }
 
     /**
-     * ProjectPopularSearchResponse DTO를 ProjectPopularSearchWebResponse 웹 응답 객체로 변환합니다.
+     * 인기 프로젝트 검색 응답 DTO를 웹 응답 객체로 변환합니다.
      *
-     * @param responseDto 변환할 인기 프로젝트 검색 응답 DTO
-     * @return 변환된 인기 프로젝트 검색 웹 응답 객체
+     * @param responseDto 인기 프로젝트 검색 결과를 담고 있는 DTO
+     * @return 변환된 인기 프로젝트 웹 응답 객체
      */
     public PopularProjectWebResponse toWeb(PopularProjectResponse responseDto) {
         return new PopularProjectWebResponse(

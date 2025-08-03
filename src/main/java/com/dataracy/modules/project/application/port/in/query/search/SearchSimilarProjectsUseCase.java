@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface SearchSimilarProjectsUseCase {
     /**
-     * 지정된 프로젝트와 유사한 프로젝트 목록을 반환합니다.
-     *
-     * @param projectId 기준이 되는 프로젝트의 ID
-     * @param size 반환할 유사 프로젝트의 최대 개수
-     * @return 유사한 프로젝트 정보를 담은 ProjectSimilarSearchResponse 객체의 리스트
-     */
+ * 지정된 프로젝트와 유사한 프로젝트의 목록을 조회합니다.
+ *
+ * @param projectId 유사도를 비교할 기준 프로젝트의 ID
+ * @param size 반환할 유사 프로젝트의 최대 개수
+ * @return 유사한 프로젝트 정보를 담은 SimilarProjectResponse 객체 리스트
+ */
     List<SimilarProjectResponse> searchSimilarProjects(Long projectId, int size);
 }

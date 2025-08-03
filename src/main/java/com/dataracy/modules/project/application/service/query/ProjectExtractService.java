@@ -19,10 +19,10 @@ public class ProjectExtractService implements
     private final ExtractProjectOwnerPort extractProjectOwnerPort;
 
     /**
-     * 주어진 프로젝트 ID에 해당하는 사용자 ID를 반환합니다.
+     * 주어진 프로젝트 ID에 해당하는 소유자(사용자) ID를 조회합니다.
      *
      * @param projectId 사용자 ID를 조회할 프로젝트의 ID
-     * @return 해당 프로젝트의 사용자 ID
+     * @return 해당 프로젝트의 소유자(사용자) ID
      */
     @Override
     @Transactional(readOnly = true)
@@ -34,9 +34,9 @@ public class ProjectExtractService implements
     }
 
     /**
-     * 삭제된 프로젝트를 포함하여 지정된 프로젝트 ID의 소유자 사용자 ID를 반환합니다.
+     * 삭제된 프로젝트를 포함하여 주어진 프로젝트 ID의 소유자 사용자 ID를 조회합니다.
      *
-     * @param projectId 사용자 ID를 조회할 프로젝트의 ID
+     * @param projectId 조회할 프로젝트의 ID
      * @return 해당 프로젝트(삭제된 경우 포함)의 소유자 사용자 ID
      */
     @Override

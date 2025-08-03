@@ -18,10 +18,10 @@ public class ProjectFilterWebMapper {
     private final ChildProjectWebMapper childProjectWebMapper;
 
     /**
-     * 웹 요청 DTO를 애플리케이션 계층의 프로젝트 필터 요청 DTO로 변환합니다.
+     * 웹 계층의 프로젝트 필터링 요청 DTO를 애플리케이션 계층의 필터링 요청 DTO로 변환합니다.
      *
-     * @param webRequest 웹 계층에서 전달된 프로젝트 필터 요청 DTO
-     * @return 변환된 애플리케이션 계층의 프로젝트 필터 요청 DTO
+     * @param webRequest 필터링 조건이 포함된 웹 요청 DTO
+     * @return 변환된 애플리케이션 계층의 필터링 요청 DTO
      */
     public FilteringProjectRequest toApplicationDto(FilteringProjectWebRequest webRequest) {
         return new FilteringProjectRequest(
@@ -35,10 +35,10 @@ public class ProjectFilterWebMapper {
     }
 
     /**
-     * 애플리케이션 계층의 프로젝트 필터 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     * 애플리케이션 계층의 필터링된 프로젝트 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
      *
-     * @param responseDto 애플리케이션 계층의 프로젝트 필터 응답 DTO
-     * @return 웹 계층의 프로젝트 필터 응답 DTO
+     * @param responseDto 필터링된 프로젝트에 대한 애플리케이션 계층 응답 DTO
+     * @return 웹 계층에서 사용하는 필터링된 프로젝트 응답 DTO
      */
     public FilteredProjectWebResponse toWebDto(FilteredProjectResponse responseDto) {
 

@@ -35,11 +35,11 @@ public class SearchProjectQueryDslAdapter implements
     private final QProjectEntity project = QProjectEntity.projectEntity;
 
     /**
-     * 인기 순으로 정렬된 프로젝트를 최대 지정된 개수만큼 조회합니다.
+     * 지정된 개수만큼 인기 순으로 정렬된 프로젝트 목록을 조회합니다.
      *
-     * 프로젝트의 최소 정보만 반환하며, 논리적으로 삭제되지 않은 프로젝트만 포함됩니다.
+     * 논리적으로 삭제되지 않은 프로젝트만 포함되며, 각 프로젝트의 최소 정보만 반환됩니다.
      *
-     * @param size 반환할 프로젝트의 최대 개수
+     * @param size 조회할 프로젝트의 최대 개수
      * @return 인기 순으로 정렬된 프로젝트 도메인 객체 리스트
      */
     @Override
@@ -63,7 +63,7 @@ public class SearchProjectQueryDslAdapter implements
 
     /**
      * 필터 조건, 페이지네이션, 정렬 기준에 따라 프로젝트 목록을 검색하여 페이지 형태로 반환합니다.
-     * 결과에는 최대 2단계의 자식 프로젝트 정보가 포함됩니다.
+     * 최대 2단계의 자식 프로젝트 정보가 포함됩니다.
      *
      * @param request 프로젝트 필터링 조건이 담긴 요청 객체
      * @param pageable 페이지네이션 정보
@@ -108,10 +108,13 @@ public class SearchProjectQueryDslAdapter implements
     }
 
     /**
-     * 프로젝트 필터 요청에 따라 QueryDSL BooleanExpression 조건 배열을 생성합니다.
+     * 프로젝트 필터링 요청에 따라 QueryDSL BooleanExpression 조건 배열을 반환합니다.
      *
-     * @param request 프로젝트 검색에 적용할 필터 조건이 포함된 요청 객체
-     * @return 필터 조건에 해당하는 QueryDSL BooleanExpression 배열
+     * FilteringProjectRequest의 각 필드(키워드, 주제, 분석 목적, 데이터 소스, 작성자 레벨)에 해당하는 조건과
+     * 삭제되지 않은 프로젝트만을 포함하는 조건을 생성하여 배열로 제공합니다.
+     *
+     * @param request 프로젝트 검색에 사용할 다양한 필터 조건이 포함된 요청 객체
+     * @return 요청 조건에 맞는 QueryDSL BooleanExpression 조건 배열
      */
     private BooleanExpression[] buildFilterPredicates(FilteringProjectRequest request) {
         return new BooleanExpression[] {
