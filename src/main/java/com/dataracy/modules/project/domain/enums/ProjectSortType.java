@@ -1,5 +1,6 @@
 package com.dataracy.modules.project.domain.enums;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import lombok.Getter;
@@ -38,6 +39,9 @@ public enum ProjectSortType {
         return Arrays.stream(ProjectSortType.values())
                 .filter(type -> type.value.equalsIgnoreCase(input) || type.name().equalsIgnoreCase(input))
                 .findFirst()
-                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.INVALID_PROJECT_SORT_TYPE));
+                .orElseThrow(() -> {
+                    LoggerFactory.domain().logRuleViolation("ProjectSortType", "잘못된 ENUM 타입입니다. LATEST, OLDEST, MOST_LIKED, MOST_VIEWED, MOST_COMMENTED, LEAST_COMMENTED만 가능합니다.");
+                    return new ProjectException(ProjectErrorStatus.INVALID_PROJECT_SORT_TYPE);
+                });
     }
 }

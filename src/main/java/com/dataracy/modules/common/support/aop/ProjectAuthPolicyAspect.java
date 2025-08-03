@@ -1,8 +1,8 @@
 package com.dataracy.modules.common.support.aop;
 
 import com.dataracy.modules.common.support.annotation.AuthorizationProjectEdit;
-import com.dataracy.modules.project.application.port.in.FindUserIdByProjectIdUseCase;
-import com.dataracy.modules.project.application.port.in.FindUserIdIncludingDeletedProjectUseCase;
+import com.dataracy.modules.project.application.port.in.query.extractor.FindUserIdUseCase;
+import com.dataracy.modules.project.application.port.in.query.extractor.FindUserIdIncludingDeletedUseCase;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import com.dataracy.modules.security.handler.SecurityContextProvider;
@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ProjectAuthPolicyAspect {
 
-    private final FindUserIdByProjectIdUseCase findUserIdByProjectIdUseCase;
-    private final FindUserIdIncludingDeletedProjectUseCase findUserIdIncludingDeletedProjectUseCase;
+    private final FindUserIdUseCase findUserIdUseCase;
+    private final FindUserIdIncludingDeletedUseCase findUserIdIncludingDeletedUseCase;
 
     /**
      * 프로젝트의 수정, 삭제 또는 복원 작업에 대해 현재 인증된 사용자가 프로젝트 작성자인지 확인합니다.
@@ -33,8 +33,8 @@ public class ProjectAuthPolicyAspect {
         Long authenticatedUserId = SecurityContextProvider.getAuthenticatedUserId();
 
         Long ownerId = annotation.restore()
-                ? findUserIdIncludingDeletedProjectUseCase.findUserIdIncludingDeleted(projectId)
-                : findUserIdByProjectIdUseCase.findUserIdByProjectId(projectId);
+                ? findUserIdIncludingDeletedUseCase.findUserIdIncludingDeleted(projectId)
+                : findUserIdUseCase.findUserIdByProjectId(projectId);
 
         if (!ownerId.equals(authenticatedUserId)) {
             log.error("프로젝트 작성자만 {}할 수 있습니다.",

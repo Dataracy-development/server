@@ -1,0 +1,102 @@
+package com.dataracy.modules.project.application.service.command;
+
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.project.application.port.in.command.count.DecreaseCommentCountUseCase;
+import com.dataracy.modules.project.application.port.in.command.count.DecreaseLikeCountUseCase;
+import com.dataracy.modules.project.application.port.in.command.count.IncreaseCommentCountUseCase;
+import com.dataracy.modules.project.application.port.in.command.count.IncreaseLikeCountUseCase;
+import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectCommentPort;
+import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectLikePort;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+
+@Service
+public class ProjectCountService implements
+        IncreaseCommentCountUseCase,
+        DecreaseCommentCountUseCase,
+        IncreaseLikeCountUseCase,
+        DecreaseLikeCountUseCase
+{
+    private final UpdateProjectCommentPort updateProjectCommentDbPort;
+    private final UpdateProjectCommentPort updateProjectCommentEsPort;
+    private final UpdateProjectLikePort updateProjectLikeDbPort;
+    private final UpdateProjectLikePort updateProjectLikeEsPort;
+
+    public ProjectCountService(
+            @Qualifier("updateProjectCommentDbAdapter") UpdateProjectCommentPort updateProjectCommentDbPort,
+            @Qualifier("updateProjectCommentEsAdapter") UpdateProjectCommentPort updateProjectCommentEsPort,
+            @Qualifier("updateProjectLikeDbAdapter") UpdateProjectLikePort updateProjectLikeDbPort,
+            @Qualifier("updateProjectLikeEsAdapter") UpdateProjectLikePort updateProjectLikeEsPort
+    ) {
+        this.updateProjectCommentDbPort = updateProjectCommentDbPort;
+        this.updateProjectCommentEsPort = updateProjectCommentEsPort;
+        this.updateProjectLikeDbPort = updateProjectLikeDbPort;
+        this.updateProjectLikeEsPort = updateProjectLikeEsPort;
+    }
+
+    /**
+     * 프로젝트의 댓글 수를 1 증가시킵니다.
+     *
+     * 데이터베이스와 Elasticsearch 인덱스의 댓글 수를 동기화하여 모두 증가시킵니다.
+     *
+     * @param projectId 댓글 수를 증가시킬 프로젝트의 ID
+     */
+    @Override
+    @Transactional
+    public void increaseCommentCount(Long projectId) {
+        Instant startTime = LoggerFactory.service().logStart("IncreaseCommentCountUseCase", "프로젝트 댓글 수 증가 서비스 시작 projectId=" + projectId);
+        updateProjectCommentDbPort.increaseCommentCount(projectId);
+        updateProjectCommentEsPort.increaseCommentCount(projectId);
+        LoggerFactory.service().logSuccess("IncreaseCommentCountUseCase", "프로젝트 댓글 수 증가 서비스 종료 projectId=" + projectId, startTime);
+
+    }
+
+    /**
+     * 프로젝트의 댓글 수를 1 감소시키고, 변경된 댓글 수를 Elasticsearch 인덱스에 반영합니다.
+     *
+     * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
+     */
+    @Override
+    @Transactional
+    public void decreaseCommentCount(Long projectId) {
+        Instant startTime = LoggerFactory.service().logStart("DecreaseCommentCountUseCase", "프로젝트 댓글 수 감소 서비스 시작 projectId=" + projectId);
+        updateProjectCommentDbPort.decreaseCommentCount(projectId);
+        updateProjectCommentEsPort.decreaseCommentCount(projectId);
+        LoggerFactory.service().logSuccess("DecreaseCommentCountUseCase", "프로젝트 댓글 수 감소 서비스 종료 projectId=" + projectId, startTime);
+    }
+
+    /**
+     * 프로젝트의 좋아요 수를 1 증가시킵니다.
+     *
+     * 데이터베이스와 Elasticsearch 인덱스의 좋아요 수를 모두 동기화합니다.
+     *
+     * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
+     */
+    @Override
+    @Transactional
+    public void increaseLikeCount(Long projectId) {
+        Instant startTime = LoggerFactory.service().logStart("IncreaseLikeCountUseCase", "프로젝트 좋아요 수 증가 서비스 시작 projectId=" + projectId);
+        updateProjectLikeDbPort.increaseLikeCount(projectId);
+        updateProjectLikeEsPort.increaseLikeCount(projectId);
+        LoggerFactory.service().logSuccess("IncreaseLikeCountUseCase", "프로젝트 좋아요 수 증가 서비스 종료 projectId=" + projectId, startTime);
+    }
+
+    /**
+     * 프로젝트의 좋아요 수를 1 감소시킵니다.
+     *
+     * 데이터베이스와 Elasticsearch 인덱스의 좋아요 수를 모두 동기화합니다.
+     *
+     * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
+     */
+    @Override
+    @Transactional
+    public void decreaseLikeCount(Long projectId) {
+        Instant startTime = LoggerFactory.service().logStart("DecreaseLikeCountUseCase", "프로젝트 좋아요 수 감소 서비스 시작 projectId=" + projectId);
+        updateProjectLikeDbPort.decreaseLikeCount(projectId);
+        updateProjectLikeEsPort.decreaseLikeCount(projectId);
+        LoggerFactory.service().logSuccess("DecreaseLikeCountUseCase", "프로젝트 좋아요 수 감소 서비스 종료 projectId=" + projectId, startTime);
+    }
+}

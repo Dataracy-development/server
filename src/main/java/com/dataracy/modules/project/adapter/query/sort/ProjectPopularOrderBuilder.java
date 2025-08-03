@@ -5,9 +5,9 @@ import com.querydsl.core.types.OrderSpecifier;
 
 public final class ProjectPopularOrderBuilder {
     /**
- * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
- */
-private ProjectPopularOrderBuilder() {}
+     * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
+    private ProjectPopularOrderBuilder() {}
 
     /**
      * 프로젝트의 인기 점수를 계산하여 내림차순으로 정렬하는 OrderSpecifier를 반환합니다.

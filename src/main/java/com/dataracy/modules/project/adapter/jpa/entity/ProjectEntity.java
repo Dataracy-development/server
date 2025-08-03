@@ -1,10 +1,9 @@
 package com.dataracy.modules.project.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
-import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
+import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Where;
 
 import java.util.LinkedHashSet;
@@ -31,13 +30,10 @@ public class ProjectEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
-    // 도메인 : 타 어그리거트이므로 id로 간접참조
-    @Column(nullable = false)
-    private Long topicId;
-
     @Column(nullable = false)
     private Long userId;
 
+    // 도메인 : 타 어그리거트이므로 id로 간접참조
     @Column(nullable = false)
     private Long analysisPurposeId;
 
@@ -48,6 +44,9 @@ public class ProjectEntity extends BaseTimeEntity {
     private Long authorLevelId;
 
     @Column(nullable = false)
+    private Long topicId;
+
+    @Column(nullable = false)
     private Boolean isContinue;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,7 +54,6 @@ public class ProjectEntity extends BaseTimeEntity {
     private ProjectEntity parentProject;
 
     @OneToMany(mappedBy = "parentProject", cascade = CascadeType.PERSIST)
-    @BatchSize(size = 10)
     @Builder.Default
     private Set<ProjectEntity> childProjects = new LinkedHashSet<>();
 
@@ -92,7 +90,7 @@ public class ProjectEntity extends BaseTimeEntity {
      * @param requestDto 프로젝트 수정 정보를 담은 DTO
      * @param parentProject 새로 지정할 부모 프로젝트 엔티티
      */
-    public void modify(ProjectModifyRequest requestDto, ProjectEntity parentProject) {
+    public void modify(ModifyProjectRequest requestDto, ProjectEntity parentProject) {
         this.title = requestDto.title();
         this.topicId = requestDto.topicId();
         this.analysisPurposeId = requestDto.analysisPurposeId();
@@ -142,44 +140,6 @@ public class ProjectEntity extends BaseTimeEntity {
     public void restore() {
         this.isDeleted = false;
     }
-
-    /**
-     * 댓글 수를 1 증가시킵니다.
-     */
-    public void increaseCommentCount() {
-        this.commentCount++;
-    }
-    /**
-     * 댓글 수를 1 감소시킵니다. 최소값은 0입니다.
-     */
-    public void decreaseCommentCount() {
-        this.commentCount = Math.max(0, this.commentCount - 1);
-    }
-    /**
-     * 좋아요 수를 1 증가시킵니다.
-     */
-    public void increaseLikeCount() {
-        this.likeCount++;
-    }
-    /**
-     * 좋아요 수를 1 감소시킵니다. 값이 0보다 작아지지 않도록 보장합니다.
-     */
-    public void decreaseLikeCount() {
-        this.likeCount = Math.max(0, this.likeCount - 1);
-    }
-    /**
-     * 프로젝트의 조회수를 1 증가시킵니다.
-     */
-    public void increaseViewCount() {
-        this.viewCount++;
-    }
-    /**
-     * 조회수(viewCount)를 1 감소시킵니다. 값이 0보다 작아지지 않도록 보장합니다.
-     */
-    public void decreaseViewCount() {
-        this.viewCount = Math.max(0, this.viewCount - 1);
-    }
-
 
     /**
      * 주어진 정보로 새로운 ProjectEntity 인스턴스를 생성합니다.

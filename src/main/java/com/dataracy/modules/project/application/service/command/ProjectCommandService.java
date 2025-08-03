@@ -1,21 +1,28 @@
 package com.dataracy.modules.project.application.service.command;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.dataset.application.port.in.ValidateDataUseCase;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
-import com.dataracy.modules.project.application.dto.request.ProjectModifyRequest;
-import com.dataracy.modules.project.application.dto.request.ProjectUploadRequest;
-import com.dataracy.modules.project.application.port.elasticsearch.ProjectCommentUpdatePort;
-import com.dataracy.modules.project.application.port.elasticsearch.ProjectDeletePort;
-import com.dataracy.modules.project.application.port.elasticsearch.ProjectIndexingPort;
-import com.dataracy.modules.project.application.port.elasticsearch.ProjectLikeUpdatePort;
-import com.dataracy.modules.project.application.port.in.*;
-import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
-import com.dataracy.modules.project.application.port.query.ProjectQueryRepositoryPort;
+import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
+import com.dataracy.modules.project.application.dto.request.command.UploadProjectRequest;
+import com.dataracy.modules.project.application.mapper.command.UploadedProjectDtoMapper;
+import com.dataracy.modules.project.application.port.in.command.content.ModifyProjectUseCase;
+import com.dataracy.modules.project.application.port.in.command.content.UploadProjectUseCase;
+import com.dataracy.modules.project.application.port.out.command.create.CreateProjectPort;
+import com.dataracy.modules.project.application.port.out.command.delete.DeleteProjectDataPort;
+import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectFilePort;
+import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectPort;
+import com.dataracy.modules.project.application.port.out.indexing.IndexProjectPort;
+import com.dataracy.modules.project.application.port.out.query.extractor.ExtractProjectOwnerPort;
+import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
+import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByIdPort;
+import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByParentPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
+import com.dataracy.modules.project.domain.model.vo.ValidatedProjectInfo;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAnalysisPurposeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
@@ -23,33 +30,36 @@ import com.dataracy.modules.reference.application.port.in.datasource.GetDataSour
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProjectCommandService implements
-        ProjectUploadUseCase,
-        ProjectModifyUseCase,
-        ProjectDeleteUseCase,
-        ProjectRestoreUseCase,
-        IncreaseCommentCountUseCase,
-        DecreaseCommentCountUseCase,
-        IncreaseLikeCountUseCase,
-        DecreaseLikeCountUseCase
+        UploadProjectUseCase,
+        ModifyProjectUseCase
 {
-    private final ProjectRepositoryPort projectRepositoryPort;
-    private final ProjectIndexingPort projectIndexingPort;
-    private final ProjectDeletePort projectDeletePort;
-    private final ProjectQueryRepositoryPort projectQueryRepositoryPort;
-    private final ProjectCommentUpdatePort projectCommentUpdatePort;
-    private final ProjectLikeUpdatePort projectLikeUpdatePort;
+    private final UploadedProjectDtoMapper uploadedProjectDtoMapper;
+
+    private final IndexProjectPort indexProjectPort;
+
+    private final CreateProjectPort createProjectPort;
+    private final UpdateProjectFilePort updateProjectFilePort;
+    private final UpdateProjectPort updateProjectPort;
+    private final DeleteProjectDataPort deleteProjectDataPort;
+
+    private final CheckProjectExistsByParentPort checkProjectExistsByParentPort;
+    private final CheckProjectExistsByIdPort checkProjectExistsByIdPort;
+    private final FindProjectPort findProjectPort;
+    private final ExtractProjectOwnerPort extractProjectOwnerPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
     private final FileUploadUseCase fileUploadUseCase;
@@ -73,84 +83,51 @@ public class ProjectCommandService implements
      */
     @Override
     @Transactional
-    public void upload(Long userId, MultipartFile file, ProjectUploadRequest requestDto) {
-        log.info("프로젝트 업로드 시작 - userId: {}, title: {}", userId, requestDto.title());
+    public void uploadProject(Long userId, MultipartFile file, UploadProjectRequest requestDto) {
+        Instant startTime = LoggerFactory.service().logStart("UploadProjectUseCase", "프로젝트 업로드 서비스 시작 title=" + requestDto.title());
 
-        // 해당 id가 존재하는지 내부 유효성 검사 및 라벨 값 반환 (elasticsearch 저장을 위해 유효성 검사 뿐만 아니라 label도 반환한다.)
-        String topicLabel = getTopicLabelFromIdUseCase.getLabelById(requestDto.topicId());
-        String analysisPurposeLabel = getAnalysisPurposeLabelFromIdUseCase.getLabelById(requestDto.analysisPurposeId());
-        String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(requestDto.dataSourceId());
-        String authorLevelLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(requestDto.authorLevelId());
-
-        // 데이터셋 id를 통해 데이터셋 존재 유효성 검사를 시행한다.
-        if (requestDto.dataIds() != null) {
-            requestDto.dataIds()
-                    .forEach(validateDataUseCase::validateData);
-        }
-
-        // 파일 유효성 검사
-        FileUtil.validateImageFile(file);
-
-        // 부모 프로젝트 조회
-        Long parentProjectId = null;
-        if (requestDto.parentProjectId() != null) {
-            if (!projectRepositoryPort.existsProjectById(requestDto.parentProjectId())) {
-                throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
-            }
-            parentProjectId = requestDto.parentProjectId();
-        }
-
-        // 프로젝트 업로드 DB 저장
-        Project project = Project.of(
-                null,
-                requestDto.title(),
+        // 요청 DTO의 유효성을 검사한다.
+        ValidatedProjectInfo validatedProjectInfo = getValidatedProjectInfo(
+                file,
                 requestDto.topicId(),
-                userId,
                 requestDto.analysisPurposeId(),
                 requestDto.dataSourceId(),
                 requestDto.authorLevelId(),
-                requestDto.isContinue(),
-                parentProjectId,
-                requestDto.content(),
-                defaultImageUrl,
-                requestDto.dataIds(),
-                null,
-                0L,
-                0L,
-                0L,
-                false,
-                List.of()
-                );
-        Project saveProject = projectRepositoryPort.saveProject(project);
+                requestDto.dataIds()
+        );
 
-        // DB 저장 성공 후 파일 업로드 시도, 외부 서비스로 트랜잭션의 영향을 받지 않는다.
-        if (file != null && !file.isEmpty()) {
-            try {
-                String key = S3KeyGeneratorUtil.generateKey("project", saveProject.getId(), file.getOriginalFilename());
-                String fileUrl = fileUploadUseCase.uploadFile(key, file);
-                log.info("프로젝트 파일 업로드 성공 - url={}", fileUrl);
-
-                // 이미지 업로드 저장
-                project.updateFile(fileUrl);
-                projectRepositoryPort.updateFile(saveProject.getId(), fileUrl);
-            } catch (Exception e) {
-                log.error("프로젝트 파일 업로드 실패. 프로젝트 ID={}, 에러={}", saveProject.getId(), e.getMessage());
-                throw new RuntimeException("파일 업로드 실패", e); // rollback 유도
+        // 부모 프로젝트 유효성 체크
+        if (requestDto.parentProjectId() != null) {
+            if (!checkProjectExistsByParentPort.checkParentProjectExistsById(requestDto.parentProjectId())) {
+                LoggerFactory.service().logWarning("UploadProjectUseCase", "해당 부모 프로젝트가 존재하지 않습니다. parentProjectId=" + requestDto.parentProjectId());
+                throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
             }
         }
 
-        // 검색을 위해 elasticSearch에 프로젝트를 등록한다.
+        // 프로젝트 도메인 변환 및 DB 저장
+        Project project = uploadedProjectDtoMapper.toDomain(
+                requestDto,
+                userId,
+                requestDto.parentProjectId(),
+                defaultImageUrl
+        );
+        Project savedProject = createProjectPort.saveProject(project);
+
+        // DB 저장 성공 후 파일 업로드 시도
+        fileUpload(savedProject.getId(), file);
+
+        // 검색을 위해 elasticSearch에 프로젝트를 등록한다 .
         String username = findUsernameUseCase.findUsernameById(userId);
-        projectIndexingPort.index(ProjectSearchDocument.from(
-                saveProject,
-                topicLabel,
-                analysisPurposeLabel,
-                dataSourceLabel,
-                authorLevelLabel,
+        indexProjectPort.index(ProjectSearchDocument.from(
+                savedProject,
+                validatedProjectInfo.topicLabel(),
+                validatedProjectInfo.analysisPurposeLabel(),
+                validatedProjectInfo.dataSourceLabel(),
+                validatedProjectInfo.authorLevelLabel(),
                 username
         ));
 
-        log.info("프로젝트 업로드 완료 - userId: {}, title: {}", userId, requestDto.title());
+        LoggerFactory.service().logSuccess("UploadProjectUseCase", "프로젝트 업로드 서비스 종료 title=" + requestDto.title(), startTime);
     }
 
     /**
@@ -164,139 +141,108 @@ public class ProjectCommandService implements
      */
     @Override
     @Transactional
-    public void modify(Long projectId, MultipartFile file, ProjectModifyRequest requestDto) {
-        log.info("프로젝트 수정 시작 - projectId: {}, title: {}", projectId, requestDto.title());
+    public void modifyProject(Long projectId, MultipartFile file, ModifyProjectRequest requestDto) {
+        Instant startTime = LoggerFactory.service().logStart("ModifyProjectUseCase", "프로젝트 수정 서비스 시작 projectId=" + projectId);
 
         // 해당 id가 존재하는지 내부 유효성 검사 및 라벨 값 반환 (elasticsearch 저장을 위해 유효성 검사 뿐만 아니라 label도 반환한다.)
-        String topicLabel = getTopicLabelFromIdUseCase.getLabelById(requestDto.topicId());
-        String analysisPurposeLabel = getAnalysisPurposeLabelFromIdUseCase.getLabelById(requestDto.analysisPurposeId());
-        String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(requestDto.dataSourceId());
-        String authorLevelLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(requestDto.authorLevelId());
+        ValidatedProjectInfo validatedProjectInfo = getValidatedProjectInfo(
+                file,
+                requestDto.topicId(),
+                requestDto.analysisPurposeId(),
+                requestDto.dataSourceId(),
+                requestDto.authorLevelId(),
+                requestDto.dataIds()
+        );
+
+        if (!checkProjectExistsByIdPort.checkProjectExistsById(requestDto.parentProjectId())) {
+            LoggerFactory.service().logWarning("ModifyProjectUseCase", "해당 부모 프로젝트가 존재하지 않습니다. parentProjectId=" + requestDto.parentProjectId());
+            throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
+        }
+
+        // 기존 연결과 새로운 연결 비교 후 필요한 것만 추가/삭제
+        Set<Long> existingDataIds = extractProjectOwnerPort.findDataIdsByProjectId(projectId);
+        Set<Long> newDataIds = new HashSet<>(requestDto.dataIds());
+
+        // 삭제할 연결
+        Set<Long> toDelete = existingDataIds.stream()
+                .filter(id -> !newDataIds.contains(id))
+                .collect(Collectors.toSet());
+        if (!toDelete.isEmpty()) {
+            deleteProjectDataPort.deleteByProjectIdAndDataIdIn(projectId, toDelete);
+        }
+
+        // 추가할 연결
+        Set<Long> toAdd =  newDataIds.stream()
+                .filter(id -> !existingDataIds.contains(id))
+                .collect(Collectors.toSet());
+
+        // 프로젝트 수정
+        updateProjectPort.modifyProject(projectId, requestDto, toAdd);
+
+        // DB 저장 성공 후 파일 업로드 시도, 외부 서비스로 트랜잭션의 영향을 받지 않는다.
+        fileUpload(projectId, file);
+
+        // 수정된 프로젝트 도메인 다시 조회
+        Project updatedProject = findProjectPort.findProjectById(projectId)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("ModifyProjectUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+                    return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
+                });
+
+        String username = findUsernameUseCase.findUsernameById(updatedProject.getUserId());
+        // Elasticsearch 업데이트
+        indexProjectPort.index(ProjectSearchDocument.from(
+                updatedProject,
+                validatedProjectInfo.topicLabel(),
+                validatedProjectInfo.analysisPurposeLabel(),
+                validatedProjectInfo.dataSourceLabel(),
+                validatedProjectInfo.authorLevelLabel(),
+                username
+        ));
+        LoggerFactory.service().logSuccess("ModifyProjectUseCase", "프로젝트 수정 서비스 종료 projectId=" + projectId, startTime);
+    }
+
+    private void fileUpload(Long projectId, MultipartFile file) {
+        if (file != null && !file.isEmpty()) {
+            try {
+                String key = S3KeyGeneratorUtil.generateKey("project", projectId, file.getOriginalFilename());
+                String fileUrl = fileUploadUseCase.uploadFile(key, file);
+                updateProjectFilePort.updateFile(projectId, fileUrl);
+            } catch (Exception e) {
+                LoggerFactory.service().logException("UploadProjectRequest", "프로젝트 파일 업로드 실패. projectId=" + projectId, e);
+                throw new RuntimeException("파일 업로드 실패", e);
+            }
+        }
+    }
+
+    private ValidatedProjectInfo getValidatedProjectInfo(
+            MultipartFile file,
+            Long topicId,
+            Long analysisPurposeId,
+            Long datasourceId,
+            Long authorLevelId,
+            List<Long> dataIds
+    ) {
+        // 해당 id가 존재하는지 내부 유효성 검사 및 라벨 값 반환 (elasticsearch 저장 또는 업데이트를 위해 유효성 검사 뿐만 아니라 label도 반환한다.)
+        String topicLabel = getTopicLabelFromIdUseCase.getLabelById(topicId);
+        String analysisPurposeLabel = getAnalysisPurposeLabelFromIdUseCase.getLabelById(analysisPurposeId);
+        String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(datasourceId);
+        String authorLevelLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(authorLevelId);
 
         // 데이터셋 id를 통해 데이터셋 존재 유효성 검사를 시행한다.
-        if (requestDto.dataIds() != null) {
-            requestDto.dataIds()
-                    .forEach(validateDataUseCase::validateData);
+        if (dataIds != null) {
+            dataIds.forEach(validateDataUseCase::validateData);
         }
 
         // 파일 유효성 검사
         FileUtil.validateImageFile(file);
 
-        // 프로젝트 수정
-        projectRepositoryPort.modify(projectId, requestDto);
-
-        // DB 저장 성공 후 파일 업로드 시도, 외부 서비스로 트랜잭션의 영향을 받지 않는다.
-        if (file != null && !file.isEmpty()) {
-            try {
-                String key = S3KeyGeneratorUtil.generateKey("project", projectId, file.getOriginalFilename());
-                String fileUrl = fileUploadUseCase.uploadFile(key, file);
-                log.info("새로운 프로젝트 파일 업로드 성공 - url={}", fileUrl);
-
-                projectRepositoryPort.updateFile(projectId, fileUrl);
-            } catch (Exception e) {
-                log.error("새 프로젝트 파일 업로드 실패. 프로젝트 ID={}, 에러={}", projectId, e.getMessage());
-                throw new RuntimeException("파일 업로드 실패", e); // rollback 유도
-            }
-        }
-
-        // 수정된 프로젝트 도메인 다시 조회
-        Project updatedProject = projectQueryRepositoryPort.findProjectById(projectId)
-                .orElseThrow(() -> new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT));
-
-        String username = findUsernameUseCase.findUsernameById(updatedProject.getUserId());
-
-        // Elasticsearch 업데이트
-        projectIndexingPort.index(ProjectSearchDocument.from(
-                updatedProject,
+        ValidatedProjectInfo validateProjectInfo = new ValidatedProjectInfo(
                 topicLabel,
                 analysisPurposeLabel,
                 dataSourceLabel,
-                authorLevelLabel,
-                username
-        ));
-
-        log.info("프로젝트 수정 완료 - projectId: {}, title: {}", projectId, updatedProject.getTitle());
-    }
-
-    /**
-     * 프로젝트를 삭제 상태로 변경합니다.
-     *
-     * 데이터베이스에서 프로젝트를 삭제 처리하고, Elasticsearch 인덱스에서도 삭제 상태로 동기화합니다.
-     *
-     * @param projectId 삭제할 프로젝트의 ID
-     */
-    @Override
-    @Transactional
-    public void markAsDelete(Long projectId) {
-        projectRepositoryPort.delete(projectId);
-        projectDeletePort.markAsDeleted(projectId);
-    }
-
-    /**
-     * 프로젝트를 복원 상태로 변경합니다.
-     *
-     * 데이터베이스에서 삭제된 프로젝트를 복원하고, Elasticsearch 인덱스에서도 복원 상태로 반영합니다.
-     *
-     * @param projectId 복원할 프로젝트의 ID
-     */
-    @Override
-    @Transactional
-    public void markAsRestore(Long projectId) {
-        projectRepositoryPort.restore(projectId);
-        projectDeletePort.markAsRestore(projectId);
-    }
-
-    /**
-     * 프로젝트의 댓글 수를 1 증가시킵니다.
-     *
-     * 데이터베이스와 Elasticsearch 인덱스의 댓글 수를 동기화하여 모두 증가시킵니다.
-     *
-     * @param projectId 댓글 수를 증가시킬 프로젝트의 ID
-     */
-    @Override
-    @Transactional
-    public void increase(Long projectId) {
-        projectRepositoryPort.increaseCommentCount(projectId);
-        projectCommentUpdatePort.increaseCommentCount(projectId);
-    }
-
-    /**
-     * 프로젝트의 댓글 수를 1 감소시키고, 변경된 댓글 수를 Elasticsearch 인덱스에 반영합니다.
-     *
-     * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
-     */
-    @Override
-    @Transactional
-    public void decrease(Long projectId) {
-        projectRepositoryPort.decreaseCommentCount(projectId);
-        projectCommentUpdatePort.decreaseCommentCount(projectId);
-    }
-
-    /**
-     * 프로젝트의 좋아요 수를 1 증가시킵니다.
-     *
-     * 데이터베이스와 Elasticsearch 인덱스의 좋아요 수를 모두 동기화합니다.
-     *
-     * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
-     */
-    @Override
-    @Transactional
-    public void increaseLike(Long projectId) {
-        projectRepositoryPort.increaseLikeCount(projectId);
-        projectLikeUpdatePort.increaseLikeCount(projectId);
-    }
-
-    /**
-     * 프로젝트의 좋아요 수를 1 감소시킵니다.
-     *
-     * 데이터베이스와 Elasticsearch 인덱스의 좋아요 수를 모두 동기화합니다.
-     *
-     * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
-     */
-    @Override
-    @Transactional
-    public void decreaseLike(Long projectId) {
-        projectRepositoryPort.decreaseLikeCount(projectId);
-        projectLikeUpdatePort.decreaseLikeCount(projectId);
+                authorLevelLabel
+        );
+        return validateProjectInfo;
     }
 }

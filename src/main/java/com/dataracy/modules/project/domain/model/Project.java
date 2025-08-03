@@ -13,29 +13,32 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class Project {
-
     private Long id;
+
     private String title;
-    private Long topicId;
     private Long userId;
+
     private Long analysisPurposeId;
     private Long dataSourceId;
     private Long authorLevelId;
+    private Long topicId;
+
     private Boolean isContinue;
     private Long parentProjectId;
     private String content;
     private String fileUrl;
+
     // 타 어그리거트인 Data 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
     private List<Long> dataIds;
-    private LocalDateTime createdAt;
 
     private Long commentCount;
     private Long likeCount;
     private Long viewCount;
 
-    private Boolean isDeleted;
-
     private List<Project> childProjects;
+
+    private Boolean isDeleted;
+    private LocalDateTime createdAt;
 
     /**
      * 프로젝트의 썸네일 URL을 업데이트합니다.

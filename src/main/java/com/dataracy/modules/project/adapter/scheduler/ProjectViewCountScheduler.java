@@ -1,10 +1,10 @@
 package com.dataracy.modules.project.adapter.scheduler;
 
-import com.dataracy.modules.project.application.port.elasticsearch.ProjectViewUpdatePort;
-import com.dataracy.modules.project.application.port.out.ProjectRepositoryPort;
-import com.dataracy.modules.project.application.port.out.ProjectViewCountRedisPort;
-import lombok.RequiredArgsConstructor;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.project.application.port.out.cache.CacheProjectViewCountPort;
+import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectViewPort;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,12 +13,22 @@ import java.util.Set;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class ProjectViewCountScheduler {
 
-    private final ProjectViewCountRedisPort projectViewCountRedisPort;
-    private final ProjectRepositoryPort projectRepositoryPort;
-    private final ProjectViewUpdatePort projectViewUpdatePort;
+    private final CacheProjectViewCountPort cacheProjectViewCountPort;
+
+    private final UpdateProjectViewPort updateProjectViewDbPort;
+    private final UpdateProjectViewPort updateProjectViewEsPort;
+
+    public ProjectViewCountScheduler(
+            CacheProjectViewCountPort cacheProjectViewCountPort,
+            @Qualifier("updateProjectViewDbAdapter") UpdateProjectViewPort updateProjectViewDbPort,
+            @Qualifier("updateProjectViewEsAdapter") UpdateProjectViewPort updateProjectViewEsPort
+    ) {
+        this.cacheProjectViewCountPort = cacheProjectViewCountPort;
+        this.updateProjectViewDbPort = updateProjectViewDbPort;
+        this.updateProjectViewEsPort = updateProjectViewEsPort;
+    }
 
     /**
      * Redis에 저장된 프로젝트별 조회수를 1분마다 메인 프로젝트 저장소와 프로젝트 뷰에 동기화합니다.
@@ -29,19 +39,21 @@ public class ProjectViewCountScheduler {
     @Scheduled(fixedDelay = 60 * 1000) // 1분
     @Transactional
     public void flushProjectViews() {
-        Set<String> keys = projectViewCountRedisPort.getAllViewCountKeys("PROJECT");
+        LoggerFactory.scheduler().logStart("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 시작");
 
+        Set<String> keys = cacheProjectViewCountPort.getAllViewCountKeys("PROJECT");
         for (String key : keys) {
             try {
                 Long projectId = extractProjectId(key);
-                Long count = projectViewCountRedisPort.getViewCount(projectId, "PROJECT");
+                Long count = cacheProjectViewCountPort.getViewCount(projectId, "PROJECT");
                 if (count > 0) {
-                    projectRepositoryPort.increaseViewCount(projectId, count);
-                    projectViewUpdatePort.increaseViewCount(projectId, count);
-                    projectViewCountRedisPort.clearViewCount(projectId, "PROJECT");
+                    updateProjectViewDbPort.increaseViewCount(projectId, count);
+                    updateProjectViewEsPort.increaseViewCount(projectId, count);
+                    cacheProjectViewCountPort.clearViewCount(projectId, "PROJECT");
                 }
+                LoggerFactory.scheduler().logComplete("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 성공");
             } catch (Exception e) {
-                log.error("프로젝트 조회수 플러시 실패 - key: {}", key, e);
+                LoggerFactory.scheduler().logError("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 실패", e);
             }
         }
     }
@@ -57,13 +69,14 @@ public class ProjectViewCountScheduler {
         // ex. viewCount:PROJECT:123
         String[] parts = key.split(":");
         if (parts.length != 3) {
-            throw new IllegalArgumentException("Invalid key format: " + key);
+            LoggerFactory.scheduler().logError("유효하지 않은 키 format: " + key);
+            throw new IllegalArgumentException("유효하지 않은 키 format: " + key);
         }
         try {
             return Long.parseLong(parts[2]);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid project ID in key: " + key, e);
+            LoggerFactory.scheduler().logError("유효하지 않은 project ID in key: " + key);
+            throw new IllegalArgumentException("유효하지 않은 project ID in key: " + key, e);
         }
     }
 }
-
