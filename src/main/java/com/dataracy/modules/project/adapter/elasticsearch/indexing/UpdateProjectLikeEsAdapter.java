@@ -25,7 +25,7 @@ public class UpdateProjectLikeEsAdapter implements UpdateProjectLikePort {
         try {
             client.update(u -> u
                             .index(INDEX)
-                            .id(projectId.toString())
+                            .id(String.valueOf(projectId))
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
@@ -58,7 +58,7 @@ public class UpdateProjectLikeEsAdapter implements UpdateProjectLikePort {
         try {
             client.update(u -> u
                             .index(INDEX)
-                            .id(projectId.toString())
+                            .id(String.valueOf(projectId))
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")

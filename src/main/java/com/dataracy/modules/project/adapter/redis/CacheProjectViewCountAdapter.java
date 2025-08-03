@@ -7,11 +7,14 @@ import com.dataracy.modules.project.application.port.out.cache.CacheProjectViewC
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 
 @Component
@@ -81,10 +84,36 @@ public class CacheProjectViewCountAdapter implements CacheProjectViewCountPort {
      * @param targetType 조회수 키를 조회할 타겟 타입
      * @return 해당 타겟 타입의 모든 조회수 Redis 키 집합
      */
+//    public Set<String> getAllViewCountKeys(String targetType) {
+//        try {
+//            Instant startTime = LoggerFactory.redis().logQueryStart("viewCount:" + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType);
+//            Set<String> keys = redisTemplate.keys(String.format("viewCount:%s:*", targetType));
+//            LoggerFactory.redis().logQueryEnd("viewCount:" + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType, startTime);
+//            return keys;
+//        } catch (RedisConnectionFailureException e) {
+//            LoggerFactory.redis().logError("viewCount:" + targetType + ":*", "레디스 서버 연결에 실패했습니다.", e);
+//            throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+//        } catch (DataAccessException e) {
+//            LoggerFactory.redis().logError("viewCount:" + targetType + ":*", "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+//            throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+//        }
+//    }
+
     public Set<String> getAllViewCountKeys(String targetType) {
         try {
             Instant startTime = LoggerFactory.redis().logQueryStart("viewCount:" + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType);
-            Set<String> keys = redisTemplate.keys(String.format("viewCount:%s:*", targetType));
+
+            Set<String> keys = new HashSet<>();
+            ScanOptions options = ScanOptions.scanOptions()
+                    .match(String.format("viewCount:%s:*", targetType))
+                    .build();
+
+            Cursor<String> cursor = redisTemplate.scan(options);
+            while (cursor.hasNext()) {
+                keys.add(cursor.next());
+            }
+            cursor.close();
+
             LoggerFactory.redis().logQueryEnd("viewCount:" + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType, startTime);
             return keys;
         } catch (RedisConnectionFailureException e) {

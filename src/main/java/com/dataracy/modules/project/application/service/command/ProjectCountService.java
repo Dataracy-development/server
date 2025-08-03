@@ -1,6 +1,7 @@
 package com.dataracy.modules.project.application.service.command;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.project.application.port.in.command.count.DecreaseCommentCountUseCase;
 import com.dataracy.modules.project.application.port.in.command.count.DecreaseLikeCountUseCase;
 import com.dataracy.modules.project.application.port.in.command.count.IncreaseCommentCountUseCase;
@@ -46,6 +47,12 @@ public class ProjectCountService implements
      */
     @Override
     @Transactional
+    @DistributedLock(
+            key = "'lock:project:comment-count:' + #projectId",
+            waitTime = 300L,
+            leaseTime = 1500L,
+            retry = 2
+    )
     public void increaseCommentCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("IncreaseCommentCountUseCase", "프로젝트 댓글 수 증가 서비스 시작 projectId=" + projectId);
         updateProjectCommentDbPort.increaseCommentCount(projectId);
@@ -61,6 +68,12 @@ public class ProjectCountService implements
      */
     @Override
     @Transactional
+    @DistributedLock(
+            key = "'lock:project:comment-count:' + #projectId",
+            waitTime = 300L,
+            leaseTime = 1500L,
+            retry = 2
+    )
     public void decreaseCommentCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("DecreaseCommentCountUseCase", "프로젝트 댓글 수 감소 서비스 시작 projectId=" + projectId);
         updateProjectCommentDbPort.decreaseCommentCount(projectId);
@@ -77,6 +90,12 @@ public class ProjectCountService implements
      */
     @Override
     @Transactional
+    @DistributedLock(
+            key = "'lock:project:like-count:' + #projectId",
+            waitTime = 300L,
+            leaseTime = 1500L,
+            retry = 2
+    )
     public void increaseLikeCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("IncreaseLikeCountUseCase", "프로젝트 좋아요 수 증가 서비스 시작 projectId=" + projectId);
         updateProjectLikeDbPort.increaseLikeCount(projectId);
@@ -93,6 +112,12 @@ public class ProjectCountService implements
      */
     @Override
     @Transactional
+    @DistributedLock(
+            key = "'lock:project:like-count:' + #projectId",
+            waitTime = 300L,
+            leaseTime = 1500L,
+            retry = 2
+    )
     public void decreaseLikeCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("DecreaseLikeCountUseCase", "프로젝트 좋아요 수 감소 서비스 시작 projectId=" + projectId);
         updateProjectLikeDbPort.decreaseLikeCount(projectId);

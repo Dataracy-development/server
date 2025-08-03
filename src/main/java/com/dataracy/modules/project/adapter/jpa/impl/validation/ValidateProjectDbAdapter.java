@@ -20,7 +20,7 @@ public class ValidateProjectDbAdapter implements CheckProjectExistsByIdPort {
     @Override
     public boolean checkProjectExistsById(Long projectId) {
         boolean isExist = projectJpaRepository.existsById(projectId);
-        LoggerFactory.db().logExist("ProjectEntity", "해당 프로젝트 존재 유무 확인이 완료되었습니다. projectId=" + projectId);
+        LoggerFactory.db().logExist("ProjectEntity", "해당 프로젝트 존재 유무 확인이 완료되었습니다. projectId=" + projectId + ", exists=" + isExist);
         return isExist;
     }
 }

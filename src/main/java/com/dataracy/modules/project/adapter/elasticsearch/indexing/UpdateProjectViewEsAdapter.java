@@ -26,7 +26,7 @@ public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
         try {
             client.update(u -> u
                             .index(INDEX)
-                            .id(projectId.toString())
+                            .id(String.valueOf(projectId))
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")

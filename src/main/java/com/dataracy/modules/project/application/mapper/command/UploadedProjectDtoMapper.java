@@ -18,7 +18,7 @@ public class UploadedProjectDtoMapper {
             String defaultImageUrl
     ) {
         return Project.of(
-                null,
+                null, // id는 생성 시 null
                 requestDto.title(),
                 requestDto.topicId(),
                 userId,
@@ -30,12 +30,12 @@ public class UploadedProjectDtoMapper {
                 requestDto.content(),
                 defaultImageUrl,
                 requestDto.dataIds(),
-                null,
-                0L,
-                0L,
-                0L,
-                false,
-                List.of()
+                null, // thumbnailImageUrl은 기본값
+                0L,   // commentCount 초기값
+                0L,   // likeCount 초기값
+                0L,   // viewCount 초기값
+                false, // isDeleted 초기값
+                List.of() // 자식 프로젝트 리스트 초기값
         );
     }
 }

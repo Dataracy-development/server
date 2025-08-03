@@ -4,7 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 
 import static com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity.projectDataEntity;
 
-public class ProjectDataFilterPredicate {
+public final class ProjectDataFilterPredicate {
     /**
      * `ProjectDataFilterPredicate` 클래스의 인스턴스 생성을 방지합니다.
      *

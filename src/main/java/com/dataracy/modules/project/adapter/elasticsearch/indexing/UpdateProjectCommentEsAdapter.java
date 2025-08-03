@@ -60,7 +60,7 @@ public class UpdateProjectCommentEsAdapter implements UpdateProjectCommentPort {
         try {
             client.update(u -> u
                             .index(INDEX)
-                            .id(projectId.toString())
+                            .id(String.valueOf(projectId))
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
