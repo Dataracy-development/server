@@ -24,5 +24,5 @@ public interface ExtractProjectOwnerPort {
      */
     Long findUserIdIncludingDeleted(Long projectId);
 
-    Set<Long> findDataIdsByProjectId(@Param("projectId") Long projectId);
+    Set<Long> findDataIdsByProjectId(Long projectId);
 }

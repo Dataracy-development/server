@@ -68,12 +68,12 @@ public class ProjectReadController implements ProjectReadApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<ContinuedProjectWebResponse>>> findContinueProjects(Long projectId, Pageable pageable) {
-        Instant startTime = LoggerFactory.api().logRequest("[SearchContinueProjects] 이어가기 프로젝트 목록 조회 API 요청 시작");
+        Instant startTime = LoggerFactory.api().logRequest("[FindContinueProjects] 이어가기 프로젝트 목록 조회 API 요청 시작");
 
         Page<ContinuedProjectResponse> responseDto = findContinuedProjectsUseCase.findContinuedProjects(projectId, pageable);
         Page<ContinuedProjectWebResponse> webResponse = responseDto.map(projectReadWebMapper::toWebDto);
 
-        LoggerFactory.api().logResponse("[SearchContinueProjects] 이어가기 프로젝트 목록 조회 API 응답 완료", startTime);
+        LoggerFactory.api().logResponse("[FindContinueProjects] 이어가기 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONTINUE_PROJECTS, webResponse));
     }
@@ -87,12 +87,12 @@ public class ProjectReadController implements ProjectReadApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<ConnectedProjectWebResponse>>> findConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable) {
-        Instant startTime = LoggerFactory.api().logRequest("[SearchConnectedProjectsAssociatedWithData] 데이터셋과 연결된 프로젝트 목록 조회 API 요청 시작");
+        Instant startTime = LoggerFactory.api().logRequest("[FindConnectedProjectsAssociatedWithData] 데이터셋과 연결된 프로젝트 목록 조회 API 요청 시작");
 
         Page<ConnectedProjectResponse> responseDto = findConnectedProjectsUseCase.findConnectedProjects(dataId, pageable);
         Page<ConnectedProjectWebResponse> webResponse = responseDto.map(projectReadWebMapper::toWebDto);
 
-        LoggerFactory.api().logResponse("[SearchConnectedProjectsAssociatedWithData] 데이터셋과 연결된 프로젝트 목록 조회 API 응답 완료", startTime);
+        LoggerFactory.api().logResponse("[FindConnectedProjectsAssociatedWithData] 데이터셋과 연결된 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONNECTED_PROJECTS_ASSOCIATED_DATA, webResponse));
     }

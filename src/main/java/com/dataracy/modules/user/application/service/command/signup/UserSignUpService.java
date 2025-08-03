@@ -67,8 +67,8 @@ public class UserSignUpService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     @Transactional
     @DistributedLock(
             key = "'lock:signup:email:' + #requestDto.email()",
-            waitTime = 300L,
-            leaseTime = 2000L,
+            waitTime = 500L,
+            leaseTime = 1500L,
             retry = 2
     )
     public RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto) {
@@ -137,8 +137,8 @@ public class UserSignUpService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     @Transactional
     @DistributedLock(
             key = "'lock:signup:nickname:' + #requestDto.nickname()",
-            waitTime = 300L,
-            leaseTime = 2000L,
+            waitTime = 500L,
+            leaseTime = 1500L,
             retry = 2
     )
     public RefreshTokenResponse signUpOAuth(String registerToken, OnboardingRequest requestDto) {

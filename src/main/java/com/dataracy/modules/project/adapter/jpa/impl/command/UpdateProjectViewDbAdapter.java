@@ -20,6 +20,6 @@ public class UpdateProjectViewDbAdapter implements UpdateProjectViewPort {
     @Override
     public void increaseViewCount(Long projectId, Long count) {
         projectJpaRepository.increaseViewCount(projectId, count);
-        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 DB 조회 1증가가 완료되었습니다.");
+        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 DB 조회수 " + count + "증가가 완료되었습니다.");
     }
 }
