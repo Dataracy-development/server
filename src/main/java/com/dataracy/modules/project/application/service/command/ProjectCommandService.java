@@ -97,11 +97,9 @@ public class ProjectCommandService implements
         );
 
         // 부모 프로젝트 유효성 체크
-        if (requestDto.parentProjectId() != null) {
-            if (!checkProjectExistsByParentPort.checkParentProjectExistsById(requestDto.parentProjectId())) {
+        if (requestDto.parentProjectId() != null && !checkProjectExistsByParentPort.checkParentProjectExistsById(requestDto.parentProjectId())) {
                 LoggerFactory.service().logWarning("UploadProjectUseCase", "해당 부모 프로젝트가 존재하지 않습니다. parentProjectId=" + requestDto.parentProjectId());
                 throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
-            }
         }
 
         // 프로젝트 도메인 변환 및 DB 저장
@@ -153,8 +151,7 @@ public class ProjectCommandService implements
                 requestDto.authorLevelId(),
                 requestDto.dataIds()
         );
-
-        if (!checkProjectExistsByIdPort.checkProjectExistsById(requestDto.parentProjectId())) {
+        if (requestDto.parentProjectId() != null && !checkProjectExistsByIdPort.checkProjectExistsById(requestDto.parentProjectId())) {
             LoggerFactory.service().logWarning("ModifyProjectUseCase", "해당 부모 프로젝트가 존재하지 않습니다. parentProjectId=" + requestDto.parentProjectId());
             throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
         }

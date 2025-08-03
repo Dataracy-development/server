@@ -22,7 +22,7 @@ public class ValidateProjectQueryDslAdapter implements
     private final QProjectEntity project = QProjectEntity.projectEntity;
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
-    /****
+    /**
      * 주어진 프로젝트 ID를 부모로 하는 삭제되지 않은 자식 프로젝트가 존재하는지 확인합니다.
      *
      * @param projectId 부모 프로젝트의 ID
@@ -47,7 +47,7 @@ public class ValidateProjectQueryDslAdapter implements
         return isValid;
     }
 
-    /****
+    /**
      * 주어진 프로젝트 ID에 연결된 삭제되지 않은 프로젝트 데이터가 존재하는지 확인합니다.
      *
      * @param projectId 존재 여부를 확인할 프로젝트의 ID
@@ -65,9 +65,9 @@ public class ValidateProjectQueryDslAdapter implements
                 .fetchFirst();
         boolean isValid = result != null;
         if (isValid) {
-            LoggerFactory.query().logExist("ProjectEntity", "[checkProjectDataExistsByProjectId] 주어진 프로젝트 ID에 연결된 프로젝트 데이터가 존재. projectId=" + projectId);
+            LoggerFactory.query().logExist("ProjectDataEntity", "[checkProjectDataExistsByProjectId] 주어진 프로젝트 ID에 연결된 프로젝트 데이터가 존재. projectId=" + projectId);
         } else {
-            LoggerFactory.query().logExist("ProjectEntity", "[checkProjectDataExistsByProjectId] 주어진 프로젝트 ID에 연결된 프로젝트 데이터가 존재하지 않음. projectId=" + projectId);
+            LoggerFactory.query().logExist("ProjectDataEntity", "[checkProjectDataExistsByProjectId] 주어진 프로젝트 ID에 연결된 프로젝트 데이터가 존재하지 않음. projectId=" + projectId);
         }
         return isValid;
     }
