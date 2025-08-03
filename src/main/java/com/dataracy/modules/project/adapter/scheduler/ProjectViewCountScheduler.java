@@ -51,11 +51,11 @@ public class ProjectViewCountScheduler {
                     updateProjectViewEsPort.increaseViewCount(projectId, count);
                     cacheProjectViewCountPort.clearViewCount(projectId, "PROJECT");
                 }
-                LoggerFactory.scheduler().logComplete("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 성공");
             } catch (Exception e) {
                 LoggerFactory.scheduler().logError("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 실패", e);
             }
         }
+        LoggerFactory.scheduler().logComplete("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 성공");
     }
 
     /**
