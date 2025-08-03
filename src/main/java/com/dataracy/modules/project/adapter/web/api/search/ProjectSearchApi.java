@@ -78,7 +78,7 @@ public interface ProjectSearchApi {
             int size
     );
 
-    /****
+    /**
      * 좋아요, 댓글, 조회수를 기준으로 인기 프로젝트 목록을 조회한다.
      *
      * @param size 반환할 최대 프로젝트 개수 (1 이상)
