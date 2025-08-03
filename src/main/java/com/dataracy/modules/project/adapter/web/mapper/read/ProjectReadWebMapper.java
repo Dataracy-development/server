@@ -15,8 +15,8 @@ public class ProjectReadWebMapper {
     /**
      * 애플리케이션 계층의 프로젝트 상세 응답 DTO를 웹 계층의 프로젝트 상세 응답 DTO로 변환합니다.
      *
-     * @param responseDto 애플리케이션 계층의 프로젝트 상세 정보 DTO
-     * @return 웹 계층의 프로젝트 상세 정보 DTO
+     * @param responseDto 변환할 프로젝트 상세 정보 응답 DTO
+     * @return 변환된 웹 계층의 프로젝트 상세 정보 응답 DTO
      */
     public ProjectDetailWebResponse toWebDto(ProjectDetailResponse responseDto) {
         return new ProjectDetailWebResponse(
@@ -43,10 +43,10 @@ public class ProjectReadWebMapper {
     }
 
     /**
-     * 애플리케이션 계층의 프로젝트 이어하기 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     * 애플리케이션 계층의 ContinuedProjectResponse를 웹 계층의 ContinuedProjectWebResponse로 변환합니다.
      *
-     * @param responseDto 변환할 프로젝트 이어하기 응답 DTO
-     * @return 변환된 웹 계층의 프로젝트 이어하기 응답 DTO
+     * @param responseDto 변환할 ContinuedProjectResponse 객체
+     * @return 변환된 ContinuedProjectWebResponse 객체
      */
     public ContinuedProjectWebResponse toWebDto(ContinuedProjectResponse responseDto) {
         return new ContinuedProjectWebResponse(
@@ -65,10 +65,10 @@ public class ProjectReadWebMapper {
     }
 
     /**
-     * 애플리케이션 계층의 ConnectedProjectAssociatedWithDataResponse를 웹 계층의 ConnectedProjectAssociatedWithDataWebResponse로 변환합니다.
+     * 애플리케이션 계층의 ConnectedProjectResponse를 웹 계층의 ConnectedProjectWebResponse로 변환합니다.
      *
-     * @param responseDto 변환할 프로젝트 연결 데이터 응답 DTO
-     * @return 변환된 웹 계층 프로젝트 연결 데이터 응답 DTO
+     * @param responseDto 변환할 프로젝트 연결 응답 DTO
+     * @return 변환된 웹 계층 프로젝트 연결 응답 DTO
      */
     public ConnectedProjectWebResponse toWebDto(ConnectedProjectResponse responseDto) {
         return new ConnectedProjectWebResponse(
@@ -84,10 +84,12 @@ public class ProjectReadWebMapper {
     }
 
     /**
-     * ChildProjectResponse 객체를 ChildProjectWebResponse 객체로 변환합니다.
+     * ChildProjectResponse를 ChildProjectWebResponse로 변환합니다.
      *
-     * @param responseDto 변환할 ChildProjectResponse 객체
-     * @return 변환된 ChildProjectWebResponse 객체
+     * 프로젝트의 ID, 제목, 내용, 작성자, 댓글 수, 좋아요 수 정보를 웹 응답 DTO로 매핑합니다.
+     *
+     * @param responseDto 변환할 프로젝트 자식 응답 DTO
+     * @return 변환된 웹 레이어용 프로젝트 자식 응답 DTO
      */
     public ChildProjectWebResponse toWebDto(ChildProjectResponse responseDto) {
         return new ChildProjectWebResponse(

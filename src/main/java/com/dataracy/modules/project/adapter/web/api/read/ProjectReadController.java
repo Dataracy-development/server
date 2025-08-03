@@ -36,10 +36,12 @@ public class ProjectReadController implements ProjectReadApi {
     private final FindContinuedProjectsUseCase findContinuedProjectsUseCase;
     private final FindConnectedProjectsUseCase findConnectedProjectsUseCase;
 
-    /**
-     * HTTP 요청에서 인증된 사용자 ID와 뷰어 ID를 추출하여, 지정된 프로젝트의 상세 정보를 반환합니다.
+    /****
+     * 지정된 프로젝트의 상세 정보를 조회하여 성공 응답으로 반환합니다.
      *
-     * @param request  인증 및 뷰어 식별을 위한 HTTP 요청 객체
+     * HTTP 요청 및 응답에서 인증된 사용자 ID와 뷰어 ID를 추출한 뒤, 해당 정보를 기반으로 프로젝트 상세 정보를 조회합니다.
+     *
+     * @param request 인증 및 뷰어 식별을 위한 HTTP 요청 객체
      * @param response 뷰어 ID 추출을 위한 HTTP 응답 객체
      * @param projectId 상세 정보를 조회할 프로젝트의 ID
      * @return 프로젝트 상세 정보를 포함한 성공 응답
@@ -59,12 +61,12 @@ public class ProjectReadController implements ProjectReadApi {
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_PROJECT_DETAIL, webResponse));
     }
 
-    /**
-     * 지정한 프로젝트 ID를 기준으로 이어지는 프로젝트 목록을 페이지네이션하여 조회합니다.
+    /****
+     * 지정한 프로젝트 ID를 기준으로 이어지는 프로젝트 목록을 페이지네이션하여 반환합니다.
      *
-     * @param projectId 기준이 되는 프로젝트의 ID
-     * @param pageable 페이지네이션 정보
-     * @return 이어지는 프로젝트 목록과 함께 성공 응답을 반환합니다.
+     * @param projectId 이어지는 프로젝트를 조회할 기준 프로젝트의 ID
+     * @param pageable 결과 페이지네이션 정보
+     * @return 이어지는 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<ContinuedProjectWebResponse>>> findContinueProjects(Long projectId, Pageable pageable) {
@@ -79,11 +81,11 @@ public class ProjectReadController implements ProjectReadApi {
     }
 
     /**
-     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 조회합니다.
+     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 반환합니다.
      *
-     * @param dataId 연결된 데이터를 식별하는 ID
-     * @param pageable 페이지네이션 정보
-     * @return 연결된 프로젝트 목록을 포함한 성공 응답
+     * @param dataId 연결된 데이터를 식별하는 고유 ID
+     * @param pageable 결과 페이지네이션을 위한 정보
+     * @return 연결된 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<ConnectedProjectWebResponse>>> findConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable) {

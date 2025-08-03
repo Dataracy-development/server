@@ -11,6 +11,15 @@ import java.util.List;
  */
 @Component
 public class UploadedProjectDtoMapper {
+    /**
+     * UploadProjectRequest DTO와 추가 정보를 기반으로 새로운 Project 도메인 객체를 생성합니다.
+     *
+     * @param requestDto 업로드할 프로젝트의 정보를 담은 DTO
+     * @param userId 프로젝트를 생성하는 사용자 ID
+     * @param parentProjectId 상위 프로젝트 ID (없을 경우 null)
+     * @param defaultImageUrl 프로젝트의 기본 이미지 URL
+     * @return 생성된 Project 도메인 객체
+     */
     public Project toDomain(
             UploadProjectRequest requestDto,
             Long userId,

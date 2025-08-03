@@ -16,9 +16,9 @@ public class IndexProjectAdapter implements IndexProjectPort {
     private static final String INDEX = "project_index";
 
     /**
-     * 프로젝트 검색 문서를 Elasticsearch 인덱스에 저장하거나 갱신합니다.
+     * 주어진 프로젝트 검색 문서를 Elasticsearch의 "project_index" 인덱스에 저장하거나 갱신합니다.
      *
-     * @param doc Elasticsearch에 인덱싱할 프로젝트 검색 문서
+     * @param doc 인덱싱 또는 갱신할 프로젝트 검색 문서
      */
     @Override
     public void index(ProjectSearchDocument doc) {

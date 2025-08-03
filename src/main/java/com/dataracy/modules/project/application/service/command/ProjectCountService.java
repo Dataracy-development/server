@@ -26,6 +26,14 @@ public class ProjectCountService implements
     private final UpdateProjectLikePort updateProjectLikeDbPort;
     private final UpdateProjectLikePort updateProjectLikeEsPort;
 
+    /**
+     * 프로젝트의 댓글 및 좋아요 수를 동기화하기 위한 서비스 인스턴스를 생성합니다.
+     *
+     * @param updateProjectCommentDbPort 프로젝트 댓글 수를 데이터베이스에 반영하는 포트
+     * @param updateProjectCommentEsPort 프로젝트 댓글 수를 Elasticsearch에 반영하는 포트
+     * @param updateProjectLikeDbPort 프로젝트 좋아요 수를 데이터베이스에 반영하는 포트
+     * @param updateProjectLikeEsPort 프로젝트 좋아요 수를 Elasticsearch에 반영하는 포트
+     */
     public ProjectCountService(
             @Qualifier("updateProjectCommentDbAdapter") UpdateProjectCommentPort updateProjectCommentDbPort,
             @Qualifier("updateProjectCommentEsAdapter") UpdateProjectCommentPort updateProjectCommentEsPort,
@@ -41,7 +49,7 @@ public class ProjectCountService implements
     /**
      * 프로젝트의 댓글 수를 1 증가시킵니다.
      *
-     * 데이터베이스와 Elasticsearch 인덱스의 댓글 수를 동기화하여 모두 증가시킵니다.
+     * 데이터베이스와 Elasticsearch 인덱스의 댓글 수를 동기화하여 모두 1씩 증가시킵니다.
      *
      * @param projectId 댓글 수를 증가시킬 프로젝트의 ID
      */
@@ -62,7 +70,7 @@ public class ProjectCountService implements
     }
 
     /**
-     * 프로젝트의 댓글 수를 1 감소시키고, 변경된 댓글 수를 Elasticsearch 인덱스에 반영합니다.
+     * 프로젝트의 댓글 수를 1 감소시키고, 데이터베이스와 Elasticsearch 인덱스에 동기화합니다.
      *
      * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
      */
@@ -82,9 +90,7 @@ public class ProjectCountService implements
     }
 
     /**
-     * 프로젝트의 좋아요 수를 1 증가시킵니다.
-     *
-     * 데이터베이스와 Elasticsearch 인덱스의 좋아요 수를 모두 동기화합니다.
+     * 지정한 프로젝트의 좋아요 수를 1 증가시키고, 데이터베이스와 Elasticsearch 인덱스의 값을 동기화합니다.
      *
      * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
      */
@@ -104,9 +110,7 @@ public class ProjectCountService implements
     }
 
     /**
-     * 프로젝트의 좋아요 수를 1 감소시킵니다.
-     *
-     * 데이터베이스와 Elasticsearch 인덱스의 좋아요 수를 모두 동기화합니다.
+     * 프로젝트의 좋아요 수를 1 감소시키고, 데이터베이스와 Elasticsearch 인덱스의 값을 동기화합니다.
      *
      * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
      */

@@ -12,7 +12,7 @@ public class UpdateProjectViewDbAdapter implements UpdateProjectViewPort {
     private final ProjectJpaRepository projectJpaRepository;
 
     /**
-     * 지정된 프로젝트의 조회수를 주어진 수만큼 증가시킵니다.
+     * 지정된 프로젝트의 조회수를 특정 수치만큼 증가시킵니다.
      *
      * @param projectId 조회수를 증가시킬 프로젝트의 ID
      * @param count 증가시킬 조회수

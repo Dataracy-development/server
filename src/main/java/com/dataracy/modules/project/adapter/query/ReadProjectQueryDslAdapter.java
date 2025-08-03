@@ -41,10 +41,10 @@ public class ReadProjectQueryDslAdapter implements
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
     /**
-     * 주어진 ID에 해당하며 삭제되지 않은 프로젝트를 조회하여 Optional로 반환합니다.
+     * 주어진 ID에 해당하며 삭제되지 않은 프로젝트를 Optional로 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID
-     * @return 존재하는 경우 최소 정보가 매핑된 프로젝트의 Optional, 없으면 빈 Optional
+     * @return 존재하면 최소 정보가 매핑된 프로젝트, 없으면 빈 Optional
      */
     @Override
     public Optional<Project> findProjectById(Long projectId) {
@@ -62,11 +62,11 @@ public class ReadProjectQueryDslAdapter implements
     }
 
     /**
-     * 부모 프로젝트 ID에 해당하는 자식 프로젝트들을 최신순으로 페이지네이션하여 반환합니다.
+     * 지정된 부모 프로젝트 ID에 속한 자식 프로젝트들을 최신순으로 페이지네이션하여 반환합니다.
      *
      * @param projectId 부모 프로젝트의 ID
-     * @param pageable 페이지네이션 정보
-     * @return 자식 프로젝트들의 페이지 결과
+     * @param pageable 결과 페이지네이션 정보
+     * @return 자식 프로젝트들의 페이지네이션된 목록
      */
     @Override
     public Page<Project> findContinuedProjects(Long projectId, Pageable pageable) {
@@ -106,7 +106,7 @@ public class ReadProjectQueryDslAdapter implements
      *
      * @param dataId 연관된 데이터의 ID
      * @param pageable 페이징 및 정렬 정보
-     * @return 연관된 프로젝트들의 페이징 결과
+     * @return 데이터셋과 연결된 프로젝트들의 페이징 결과. 프로젝트는 최신 생성일 순으로 정렬됩니다.
      */
     @Override
     public Page<Project> findConnectedProjectsAssociatedWithDataset(Long dataId, Pageable pageable) {

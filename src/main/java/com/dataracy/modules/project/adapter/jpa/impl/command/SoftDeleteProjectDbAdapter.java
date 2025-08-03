@@ -18,9 +18,9 @@ public class SoftDeleteProjectDbAdapter implements SoftDeleteProjectPort {
     private final ProjectJpaRepository projectJpaRepository;
 
     /**
-     * 프로젝트를 논리적으로 삭제하고, 모든 자식 프로젝트의 부모 프로젝트 참조를 제거합니다.
+     * 프로젝트를 논리적으로 삭제하고 모든 자식 프로젝트의 부모 프로젝트 참조를 제거합니다.
      *
-     * 주어진 프로젝트 ID에 해당하는 프로젝트를 찾지 못하면 {@code ProjectException}이 발생합니다.
+     * 주어진 프로젝트 ID에 해당하는 프로젝트가 없으면 {@code ProjectException}이 발생합니다.
      */
     @Override
     public void deleteProject(Long projectId) {
@@ -39,7 +39,7 @@ public class SoftDeleteProjectDbAdapter implements SoftDeleteProjectPort {
     }
 
     /**
-     * 지정한 ID의 논리적으로 삭제된 프로젝트를 복구합니다.
+     * 논리적으로 삭제된 프로젝트를 지정한 ID로 복구합니다.
      *
      * @param projectId 복구할 프로젝트의 ID
      * @throws ProjectException 해당 ID의 프로젝트가 존재하지 않을 경우 발생합니다.

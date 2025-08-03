@@ -12,9 +12,9 @@ public class ValidateProjectDbAdapter implements CheckProjectExistsByIdPort {
     private final ProjectJpaRepository projectJpaRepository;
 
     /**
-     * 주어진 프로젝트 ID에 해당하는 프로젝트의 존재 여부를 반환합니다.
+     * 주어진 프로젝트 ID로 프로젝트의 존재 여부를 확인합니다.
      *
-     * @param projectId 확인할 프로젝트의 ID
+     * @param projectId 존재 여부를 확인할 프로젝트의 ID
      * @return 프로젝트가 존재하면 true, 존재하지 않으면 false
      */
     @Override
