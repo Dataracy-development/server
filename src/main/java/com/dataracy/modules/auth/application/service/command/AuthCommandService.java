@@ -64,14 +64,19 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
      * 리프레시 토큰을 검증한 후 새로운 액세스 토큰과 리프레시 토큰을 발급합니다.
      *
      * 분산 락을 적용하여 동일한 리프레시 토큰으로의 동시 재발급을 방지하며,
-     * 저장된 리프레시 토큰과 입력된 토큰이 일치하는지 확인 후 새로운 토큰을 생성하여 반환합니다.
+     * 저장된 리프레시 토큰과 입력된 토큰이 일치하는 경우에만 새로운 토큰을 생성하여 반환합니다.
      * 토큰이 만료되었거나 일치하지 않을 경우 인증 예외가 발생합니다.
      *
      * @param refreshToken 클라이언트가 제공한 리프레시 토큰
      * @return 새로 발급된 액세스 토큰과 리프레시 토큰, 각 만료 시간이 포함된 응답 객체
      */
     @Override
-    @DistributedLock(key = "'lock:refresh-reissue:' + #refreshToken", waitTime = 200, leaseTime = 3000)
+    @DistributedLock(
+            key = "'lock:refresh-reissue:' + #refreshToken",
+            waitTime = 200L,
+            leaseTime = 1000L,
+            retry = 1
+    )
     public ReIssueTokenResponse reIssueToken(String refreshToken) {
         try {
             Instant startTime = LoggerFactory.service().logStart("ReIssueTokenUseCase", "토큰 재발급 서비스 시작");
