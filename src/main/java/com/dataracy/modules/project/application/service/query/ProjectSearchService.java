@@ -69,7 +69,7 @@ public class ProjectSearchService implements
      *
      * @param keyword 검색에 사용할 키워드
      * @param size 반환할 최대 결과 개수
-     * @return 키워드에 매칭되는 프로젝트의 실시간 검색 응답 객체 리스트
+     * @return 키워드에 매칭되는 실시간 프로젝트 응답 객체 리스트
      */
     @Override
     @Transactional(readOnly = true)
@@ -84,12 +84,12 @@ public class ProjectSearchService implements
     }
 
     /**
-     * 주어진 프로젝트와 유사한 프로젝트 목록을 조회합니다.
+     * 기준 프로젝트와 유사한 프로젝트 목록을 조회합니다.
      *
-     * @param projectId 기준이 되는 프로젝트의 ID
+     * @param projectId 유사도를 비교할 기준 프로젝트의 ID
      * @param size 반환할 유사 프로젝트의 최대 개수
      * @return 유사한 프로젝트 응답 객체 리스트
-     * @throws ProjectException 기준 프로젝트가 존재하지 않을 경우 발생
+     * @throws ProjectException 기준 프로젝트가 존재하지 않을 경우 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)
@@ -129,7 +129,7 @@ public class ProjectSearchService implements
 //                .toList();
 //        return responseDto;
 /**
-     * 지정한 개수만큼 인기 프로젝트를 조회하고, 각 프로젝트에 사용자명과 주제, 분석 목적, 데이터 소스, 저자 레벨 등 라벨 정보를 포함한 응답 리스트를 반환합니다.
+     * 지정한 개수만큼 인기 프로젝트를 조회하여, 각 프로젝트에 사용자명과 주제, 분석 목적, 데이터 소스, 저자 레벨 등 라벨 정보를 포함한 응답 리스트를 반환합니다.
      *
      * @param size 조회할 인기 프로젝트의 최대 개수
      * @return 사용자명과 다양한 라벨 정보가 포함된 인기 프로젝트 응답 리스트
@@ -204,7 +204,7 @@ public class ProjectSearchService implements
      * 프로젝트 컬렉션에서 사용자, 토픽, 분석 목적, 데이터 소스, 저자 레벨의 ID를 추출하여 각 ID에 해당하는 사용자명과 레이블 정보를 일괄 조회합니다.
      *
      * @param savedProjects 사용자명 및 레이블 매핑 정보를 조회할 프로젝트 컬렉션
-     * @return 각 ID에 대한 사용자명과 레이블 매핑 정보를 포함하는 ProjectLabelMappingResponse 객체
+     * @return 각 ID에 대한 사용자명과 레이블 매핑 정보를 포함하는 ProjectLabelMapResponse 객체
      */
     private ProjectLabelMapResponse labelMapping(Collection<Project> savedProjects) {
         List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();

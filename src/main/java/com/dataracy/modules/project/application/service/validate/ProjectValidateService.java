@@ -17,11 +17,11 @@ public class ProjectValidateService implements ValidateProjectUseCase {
     private final CheckProjectExistsByIdPort checkProjectExistsByIdPort;
 
     /**
-     * 주어진 프로젝트 ID에 해당하는 프로젝트가 존재하는지 검증합니다.
+     * 주어진 프로젝트 ID에 해당하는 프로젝트의 존재 여부를 검증합니다.
      *
      * 프로젝트가 존재하지 않을 경우 {@code ProjectException}을 발생시킵니다.
      *
-     * @param projectId 검증할 프로젝트의 ID
+     * @param projectId 존재 여부를 확인할 프로젝트의 ID
      * @throws ProjectException 프로젝트가 존재하지 않을 때 발생
      */
     @Override

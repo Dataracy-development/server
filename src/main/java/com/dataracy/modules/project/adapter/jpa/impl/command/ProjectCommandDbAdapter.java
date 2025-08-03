@@ -31,12 +31,12 @@ public class ProjectCommandDbAdapter implements
     private final ProjectJpaRepository projectJpaRepository;
     private final ProjectDataJpaRepository projectDataJpaRepository;
 
-    /**
-     * 프로젝트 도메인 객체를 저장하고, 저장된 최소 정보의 프로젝트 객체를 반환한다.
+    /****
+     * 프로젝트 도메인 객체를 저장하고, 저장된 최소 정보의 프로젝트 객체를 반환합니다.
      *
      * @param project 저장할 프로젝트 도메인 객체
      * @return 저장된 프로젝트의 최소 정보 도메인 객체
-     * @throws ProjectException 저장에 실패한 경우 발생
+     * @throws ProjectException 저장에 실패한 경우 발생합니다.
      */
     @Override
     public Project saveProject(Project project) {
@@ -52,9 +52,9 @@ public class ProjectCommandDbAdapter implements
     }
 
     /**
-     * 지정한 프로젝트의 파일 URL을 새로운 값으로 변경합니다.
+     * 프로젝트의 파일 URL을 새로운 값으로 업데이트합니다.
      *
-     * 프로젝트가 존재하지 않을 경우 {@code ProjectException}이 발생합니다.
+     * 지정한 ID의 프로젝트가 존재하지 않으면 {@code ProjectException}이 발생합니다.
      *
      * @param projectId 파일 URL을 변경할 프로젝트의 ID
      * @param fileUrl 새로 설정할 파일 URL
@@ -74,15 +74,16 @@ public class ProjectCommandDbAdapter implements
     }
 
     /**
-     * 프로젝트 정보를 수정하고 프로젝트-데이터 연관 관계를 동기화합니다.
+     * 프로젝트 정보를 수정하고, 지정된 데이터 ID와의 연관 관계를 추가합니다.
      *
-     * 프로젝트 ID에 해당하는 프로젝트를 조회하여 요청 정보와 부모 프로젝트(필요 시)를 반영해 수정합니다.
-     * 기존 프로젝트-데이터 연결과 요청된 데이터 ID 목록을 비교하여, 불필요한 연결을 삭제하고 새로운 연결을 추가합니다.
-     * 모든 변경 사항은 저장소에 반영됩니다.
+     * 주어진 프로젝트 ID로 프로젝트를 조회하여 요청 정보와 부모 프로젝트(필요한 경우)를 반영해 수정합니다.
+     * 추가할 데이터 ID 목록에 따라 프로젝트-데이터 연관 엔티티를 생성하여 저장합니다.
+     * 프로젝트 또는 부모 프로젝트가 존재하지 않을 경우 `ProjectException`이 발생합니다.
      *
      * @param projectId 수정할 프로젝트의 ID
      * @param requestDto 프로젝트 수정 요청 정보
-     * @throws ProjectException 프로젝트 또는 부모 프로젝트가 존재하지 않을 경우 발생
+     * @param toAdd 새로 추가할 데이터 ID 집합
+     * @throws ProjectException 프로젝트 또는 부모 프로젝트가 존재하지 않을 경우
      */
     @Override
     public void modifyProject(Long projectId, ModifyProjectRequest requestDto, Set<Long> toAdd) {
@@ -113,6 +114,12 @@ public class ProjectCommandDbAdapter implements
         LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 수정이 완료되었습니다.");
     }
 
+    /**
+     * 지정된 프로젝트 ID와 데이터 ID 집합에 해당하는 모든 프로젝트-데이터 연결을 삭제합니다.
+     *
+     * @param projectId 삭제할 프로젝트의 ID
+     * @param dataIds 삭제할 데이터 ID 집합
+     */
     @Override
     public void deleteByProjectIdAndDataIdIn(Long projectId, Set<Long> dataIds) {
         projectDataJpaRepository.deleteByProjectIdAndDataIdIn(projectId, dataIds);

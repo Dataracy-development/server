@@ -18,7 +18,7 @@ public class UpdateProjectCommentEsAdapter implements UpdateProjectCommentPort {
     /**
      * 지정된 프로젝트의 Elasticsearch 문서에서 commentCount 필드를 1 증가시킵니다.
      *
-     * commentCount가 null인 경우 1로 초기화하며, 그렇지 않으면 1을 더합니다.
+     * commentCount가 null이면 1로 초기화하고, 값이 있으면 1을 더합니다.
      *
      * @param projectId commentCount를 증가시킬 프로젝트의 ID
      */

@@ -7,8 +7,8 @@ import static com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity.pro
 
 public class ProjectFilterPredicate {
     /**
-     * `ProjectFilterPredicate` 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
-     */
+ * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+ */
     private ProjectFilterPredicate() {}
 
     /**

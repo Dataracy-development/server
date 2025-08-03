@@ -41,11 +41,11 @@ public class ProjectSearchController implements ProjectSearchApi {
     private final SearchFilteredProjectsUseCase searchFilteredProjectsUsecase;
 
     /**
-     * 주어진 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
+     * 키워드로 실시간 프로젝트를 검색하여 결과 목록을 반환합니다.
      *
      * @param keyword 검색에 사용할 키워드
      * @param size 반환할 최대 결과 수
-     * @return 실시간 프로젝트 검색 결과 목록이 포함된 성공 응답
+     * @return 실시간 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<List<RealTimeProjectWebResponse>>> searchRealTimeProjects(String keyword, int size) {
@@ -64,7 +64,7 @@ public class ProjectSearchController implements ProjectSearchApi {
     /**
      * 지정한 프로젝트와 유사한 프로젝트 목록을 조회하여 반환합니다.
      *
-     * @param projectId 유사 프로젝트를 찾을 기준 프로젝트의 ID
+     * @param projectId 기준이 되는 프로젝트의 ID
      * @param size 반환할 유사 프로젝트의 최대 개수
      * @return 유사 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
@@ -83,9 +83,9 @@ public class ProjectSearchController implements ProjectSearchApi {
     }
 
     /**
-     * 지정한 개수만큼 인기 프로젝트 목록을 조회하여 반환합니다.
+     * 인기 프로젝트를 지정한 개수만큼 조회하여 성공 응답으로 반환합니다.
      *
-     * @param size 조회할 인기 프로젝트의 최대 개수
+     * @param size 반환할 인기 프로젝트의 최대 개수
      * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
@@ -103,11 +103,11 @@ public class ProjectSearchController implements ProjectSearchApi {
     }
 
     /**
-     * 필터 조건과 페이지네이션 정보를 이용해 프로젝트 목록을 검색합니다.
+     * 필터 조건과 페이지네이션 정보를 기반으로 프로젝트 목록을 검색하여 반환합니다.
      *
-     * @param webRequest 프로젝트 필터링 조건이 담긴 요청 객체
+     * @param webRequest 프로젝트 필터링 조건이 포함된 요청 객체
      * @param pageable 페이지네이션 정보
-     * @return 필터링된 프로젝트 목록이 포함된 성공 응답
+     * @return 필터링된 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<FilteredProjectWebResponse>>> searchFilteredProjects(FilteringProjectWebRequest webRequest, Pageable pageable) {

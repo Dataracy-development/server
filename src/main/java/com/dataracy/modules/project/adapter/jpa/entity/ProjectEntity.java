@@ -85,10 +85,10 @@ public class ProjectEntity extends BaseTimeEntity {
     private Boolean isDeleted = false;
 
     /**
-     * 프로젝트의 주요 필드 값을 주어진 수정 요청 DTO와 부모 프로젝트로 갱신합니다.
+     * 프로젝트의 주요 정보를 수정 요청 DTO와 새로운 부모 프로젝트로 갱신합니다.
      *
-     * @param requestDto 프로젝트 수정 정보를 담은 DTO
-     * @param parentProject 새로 지정할 부모 프로젝트 엔티티
+     * @param requestDto 프로젝트의 수정 정보를 포함한 DTO
+     * @param parentProject 새롭게 지정할 부모 프로젝트 엔티티
      */
     public void modify(ModifyProjectRequest requestDto, ProjectEntity parentProject) {
         this.title = requestDto.title();
@@ -135,7 +135,9 @@ public class ProjectEntity extends BaseTimeEntity {
     }
 
     /**
-     * 프로젝트의 삭제 상태를 해제하여 복구합니다.
+     * 프로젝트를 복구하여 삭제 상태를 해제합니다.
+     *
+     * 이 메서드는 소프트 삭제된 프로젝트의 `isDeleted` 플래그를 `false`로 변경하여 프로젝트를 다시 활성화합니다.
      */
     public void restore() {
         this.isDeleted = false;
