@@ -14,6 +14,7 @@ public class LoggerFactory {
     private static final DomainLogger DOMAIN_LOGGER = new DomainLogger();
     private static final RedisLogger REDIS_LOGGER = new RedisLogger();
     private static final CommonLogger COMMON_LOGGER = new CommonLogger();
+    private static final QueryDslLogger QUERY_DSL_LOGGER = new QueryDslLogger();
 
     /**
      * API 로깅을 위한 싱글톤 ApiLogger 인스턴스를 반환합니다.
@@ -99,11 +100,20 @@ public class LoggerFactory {
     }
 
     /**
-     * 애플리케이션 전반에서 사용할 수 있는 CommonLogger 싱글톤 인스턴스를 반환합니다.
+     * 애플리케이션 전체에서 공통적으로 사용할 수 있는 CommonLogger의 싱글톤 인스턴스를 반환합니다.
      *
-     * @return CommonLogger 싱글톤 인스턴스
+     * @return CommonLogger의 싱글톤 인스턴스
      */
     public static CommonLogger common() {
         return COMMON_LOGGER;
+    }
+
+    /**
+     * QueryDSL 관련 로깅을 위한 싱글톤 QueryDslLogger 인스턴스를 반환합니다.
+     *
+     * @return QueryDSL 로깅에 사용되는 QueryDslLogger 인스턴스
+     */
+    public static QueryDslLogger query() {
+        return QUERY_DSL_LOGGER;
     }
 }

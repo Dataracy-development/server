@@ -4,13 +4,13 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 
 import static com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity.projectDataEntity;
 
-public class ProjectDataFilterPredicate {
+public final class ProjectDataFilterPredicate {
     /**
- * `ProjectDataFilterPredicate` 클래스의 인스턴스 생성을 방지합니다.
+ * `ProjectDataFilterPredicate` 클래스의 인스턴스 생성을 방지하는 private 생성자입니다.
  *
- * 이 클래스는 정적 메서드만을 제공하는 유틸리티 클래스이므로, 외부에서 인스턴스화하지 못하도록 private 생성자를 정의합니다.
+ * 이 클래스는 정적 메서드만을 제공하는 유틸리티 클래스이므로 인스턴스화할 수 없습니다.
  */
-private ProjectDataFilterPredicate() {}
+    private ProjectDataFilterPredicate() {}
 
     /**
      * 프로젝트가 삭제되지 않은 경우에 해당하는 필터 조건을 반환합니다.
