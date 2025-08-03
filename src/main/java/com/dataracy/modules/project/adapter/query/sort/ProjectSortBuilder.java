@@ -6,9 +6,9 @@ import com.querydsl.core.types.OrderSpecifier;
 
 public final class ProjectSortBuilder {
     /**
- * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
- */
-private ProjectSortBuilder() {}
+     * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
+    private ProjectSortBuilder() {}
 
     /**
      * 프로젝트 정렬 옵션에 따라 QueryDSL 정렬 조건 배열을 반환합니다.

@@ -51,7 +51,7 @@ public interface ProjectJpaRepository extends JpaRepository<ProjectEntity, Long>
             ELSE 0 
         END
     WHERE p.id = :projectId
-""")
+    """)
     void decreaseCommentCount(@Param("projectId") Long projectId);
 
     /**
@@ -77,6 +77,6 @@ public interface ProjectJpaRepository extends JpaRepository<ProjectEntity, Long>
             ELSE 0 
         END
     WHERE p.id = :projectId
-""")
+    """)
     void decreaseLikeCount(@Param("projectId") Long projectId);
 }
