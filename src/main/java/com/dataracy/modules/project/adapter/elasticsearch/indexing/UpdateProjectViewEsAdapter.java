@@ -20,7 +20,7 @@ public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
      * 지정된 프로젝트의 Elasticsearch 문서에서 viewCount 필드를 주어진 값만큼 증가시킵니다.
      *
      * @param projectId viewCount를 증가시킬 프로젝트의 ID
-     * @param increment 증가시킬 값
+     * @param increment viewCount에 더할 값
      */
     public void increaseViewCount(Long projectId, Long increment) {
         try {

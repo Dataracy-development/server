@@ -27,10 +27,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api/v1/projects")
 public interface ProjectReadApi {
     /**
-     * 지정한 프로젝트의 상세 정보를 반환합니다.
+     * 지정한 프로젝트의 상세 정보를 조회하여 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID (1 이상)
-     * @return 프로젝트 상세 정보를 포함한 성공 응답
+     * @return 프로젝트 상세 정보를 포함한 성공 응답 객체
      */
     @Operation(
             summary = "프로젝트 상세 정보를 조회한다.",
@@ -54,11 +54,11 @@ public interface ProjectReadApi {
     );
 
     /**
-     * 지정한 프로젝트의 이어가기(연속) 프로젝트 목록을 페이지 단위로 조회한다.
+     * 지정한 프로젝트를 기준으로 이어지는(연속) 프로젝트들의 목록을 페이지 단위로 조회한다.
      *
-     * @param projectId 이어가기 프로젝트를 조회할 기준 프로젝트의 ID (1 이상)
-     * @param pageable 페이지네이션 정보 (기본: 페이지 0, 크기 3)
-     * @return 이어가기 프로젝트 목록이 포함된 성공 응답
+     * @param projectId 기준이 되는 프로젝트의 ID (1 이상)
+     * @param pageable 결과 페이지 및 크기 정보 (기본: 페이지 0, 크기 3)
+     * @return 이어가기 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Operation(
             summary = "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회한다.",
@@ -79,10 +79,10 @@ public interface ProjectReadApi {
     );
 
     /**
-     * 지정된 데이터셋과 연결된 프로젝트 목록을 페이지 단위로 조회합니다.
+     * 특정 데이터셋에 연결된 프로젝트들의 목록을 페이지 단위로 반환합니다.
      *
-     * @param dataId 조회할 데이터셋의 고유 식별자
-     * @param pageable 결과 페이지네이션 정보 (기본 페이지 크기: 3)
+     * @param dataId 연결된 프로젝트를 조회할 데이터셋의 식별자 (1 이상)
+     * @param pageable 페이지네이션 정보 (기본: 0페이지, 3개씩)
      * @return 연결된 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Operation(

@@ -52,10 +52,10 @@ public class CacheProjectViewCountAdapter implements CacheProjectViewCountPort {
         }
     }
 
-    /**
-     * 지정된 프로젝트와 대상 유형에 대한 조회수를 Redis에서 조회합니다.
+    /****
+     * 지정된 프로젝트와 대상 유형에 대한 현재 조회수를 Redis에서 조회합니다.
      *
-     * @param projectId 조회수를 확인할 프로젝트의 ID
+     * @param projectId 조회수를 조회할 프로젝트의 ID
      * @param targetType 조회 대상의 유형
      * @return 해당 프로젝트와 대상 유형의 조회수. 값이 없으면 0을 반환합니다.
      */
@@ -97,7 +97,12 @@ public class CacheProjectViewCountAdapter implements CacheProjectViewCountPort {
 //            LoggerFactory.redis().logError("viewCount:" + targetType + ":*", "네트워크 오류로 데이터 접근에 실패했습니다.", e);
 //            throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
 //        }
-//    }
+/**
+     * 지정된 타겟 타입에 해당하는 모든 조회수 Redis 키의 집합을 반환합니다.
+     *
+     * @param targetType 조회수 키를 검색할 타겟 타입
+     * @return 해당 타겟 타입의 모든 조회수 Redis 키 집합
+     */
 
     public Set<String> getAllViewCountKeys(String targetType) {
         try {
@@ -126,9 +131,9 @@ public class CacheProjectViewCountAdapter implements CacheProjectViewCountPort {
     }
 
     /**
-     * 지정된 대상 ID와 대상 타입에 해당하는 조회수 카운트 Redis 키를 삭제합니다.
+     * 지정된 대상 ID와 타입에 해당하는 조회수 카운트 Redis 키를 삭제합니다.
      *
-     * @param targetId  조회수 카운트를 삭제할 대상의 ID
+     * @param targetId 조회수 카운트를 삭제할 대상의 ID
      * @param targetType 조회수 카운트를 삭제할 대상의 타입
      */
     public void clearViewCount(Long targetId, String targetType) {

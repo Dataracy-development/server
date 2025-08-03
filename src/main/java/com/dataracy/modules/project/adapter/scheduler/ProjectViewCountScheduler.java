@@ -20,6 +20,13 @@ public class ProjectViewCountScheduler {
     private final UpdateProjectViewPort updateProjectViewDbPort;
     private final UpdateProjectViewPort updateProjectViewEsPort;
 
+    /**
+     * ProjectViewCountScheduler의 인스턴스를 생성하고, 프로젝트 조회수 캐시 포트와 DB, Elasticsearch 업데이트 포트를 주입합니다.
+     *
+     * @param cacheProjectViewCountPort 프로젝트 조회수 캐시(Redis)와 상호작용하는 포트
+     * @param updateProjectViewDbPort    프로젝트 조회수를 메인 데이터베이스에 반영하는 포트
+     * @param updateProjectViewEsPort    프로젝트 조회수를 Elasticsearch에 반영하는 포트
+     */
     public ProjectViewCountScheduler(
             CacheProjectViewCountPort cacheProjectViewCountPort,
             @Qualifier("updateProjectViewDbAdapter") UpdateProjectViewPort updateProjectViewDbPort,
@@ -31,10 +38,10 @@ public class ProjectViewCountScheduler {
     }
 
     /**
-     * Redis에 저장된 프로젝트별 조회수를 1분마다 메인 프로젝트 저장소와 프로젝트 뷰에 동기화합니다.
+     * Redis에 저장된 프로젝트별 조회수를 1분마다 데이터베이스와 Elasticsearch에 동기화합니다.
      *
-     * 각 프로젝트의 조회수를 Redis에서 가져와 0보다 크면 저장소와 뷰에 반영한 뒤, 해당 Redis 조회수를 초기화합니다.
-     * 개별 키 처리 중 예외가 발생해도 전체 동기화 작업은 중단되지 않습니다.
+     * 각 프로젝트의 조회수를 Redis에서 가져와 0보다 크면 데이터베이스와 Elasticsearch에 반영한 후, 해당 Redis 조회수를 초기화합니다.
+     * 개별 프로젝트 처리 중 예외가 발생해도 전체 동기화 작업은 계속 진행됩니다.
      */
     @Scheduled(fixedDelay = 60 * 1000) // 1분
     @Transactional
@@ -59,9 +66,9 @@ public class ProjectViewCountScheduler {
     }
 
     /**
-     * Redis 키에서 프로젝트 ID를 추출합니다.
+     * "viewCount:PROJECT:<projectId>" 형식의 Redis 키에서 프로젝트 ID를 추출합니다.
      *
-     * @param key "viewCount:PROJECT:<projectId>" 형식의 Redis 키 문자열
+     * @param key 프로젝트 ID가 포함된 Redis 키 문자열
      * @return 추출된 프로젝트 ID
      * @throws IllegalArgumentException 키 형식이 올바르지 않거나 프로젝트 ID가 숫자가 아닐 경우 발생합니다.
      */

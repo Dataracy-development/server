@@ -18,6 +18,11 @@ public class ProjectSoftDeleteService implements
     private final SoftDeleteProjectPort softDeleteProjectDbPort;
     private final SoftDeleteProjectPort softDeleteProjectEsPort;
 
+    /**
+     * ProjectSoftDeleteService의 생성자입니다.
+     *
+     * 데이터베이스와 Elasticsearch에 대한 소프트 삭제 작업을 처리하는 두 포트 구현체를 주입받아 초기화합니다.
+     */
     public ProjectSoftDeleteService(
             @Qualifier("softDeleteProjectDbAdapter") SoftDeleteProjectPort softDeleteProjectDbPort,
             @Qualifier("softDeleteProjectEsAdapter") SoftDeleteProjectPort softDeleteProjectEsPort
@@ -27,11 +32,9 @@ public class ProjectSoftDeleteService implements
     }
 
     /**
-     * 프로젝트를 삭제 상태로 변경합니다.
+     * 프로젝트를 소프트 삭제 처리하여 데이터베이스와 Elasticsearch 인덱스 모두에서 삭제 상태로 동기화합니다.
      *
-     * 데이터베이스에서 프로젝트를 삭제 처리하고, Elasticsearch 인덱스에서도 삭제 상태로 동기화합니다.
-     *
-     * @param projectId 삭제할 프로젝트의 ID
+     * @param projectId 삭제 처리할 프로젝트의 ID
      */
     @Override
     @Transactional
@@ -43,9 +46,9 @@ public class ProjectSoftDeleteService implements
     }
 
     /**
-     * 프로젝트를 복원 상태로 변경합니다.
+     * 프로젝트를 소프트 삭제 상태에서 복원합니다.
      *
-     * 데이터베이스에서 삭제된 프로젝트를 복원하고, Elasticsearch 인덱스에서도 복원 상태로 반영합니다.
+     * 데이터베이스와 Elasticsearch 인덱스에서 지정한 프로젝트를 복원하여 정상 상태로 되돌립니다.
      *
      * @param projectId 복원할 프로젝트의 ID
      */
