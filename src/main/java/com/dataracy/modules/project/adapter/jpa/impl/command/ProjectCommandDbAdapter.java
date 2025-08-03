@@ -116,6 +116,6 @@ public class ProjectCommandDbAdapter implements
     @Override
     public void deleteByProjectIdAndDataIdIn(Long projectId, Set<Long> dataIds) {
         projectDataJpaRepository.deleteByProjectIdAndDataIdIn(projectId, dataIds);
-        LoggerFactory.db().logUpdate("ProjectDataEntity", "projectId=" + projectId, "dataIds 목록에 대해 해당 프로젝트에 연결된 projectData를 제거한다.");
+        LoggerFactory.db().logDelete("ProjectDataEntity", "projectId=" + projectId, "프로젝트-데이터 연결 " + dataIds.size() + "개 삭제");
     }
 }
