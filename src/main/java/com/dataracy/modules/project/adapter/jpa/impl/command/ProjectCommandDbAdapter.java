@@ -92,7 +92,11 @@ public class ProjectCommandDbAdapter implements
 
         ProjectEntity parentProject = null;
         if (requestDto.parentProjectId() != null) {
-            parentProject = projectJpaRepository.findById(requestDto.parentProjectId()).get();
+            parentProject = projectJpaRepository.findById(requestDto.parentProjectId())
+                    .orElseThrow(() -> {
+                        LoggerFactory.db().logWarning("ProjectEntity", "부모 프로젝트가 존재하지 않습니다. parentProjectId=" + requestDto.parentProjectId());
+                        return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
+                    });
         }
         projectEntity.modify(requestDto, parentProject);
 
