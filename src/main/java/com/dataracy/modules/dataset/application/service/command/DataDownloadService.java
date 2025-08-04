@@ -1,0 +1,43 @@
+package com.dataracy.modules.dataset.application.service.command;
+
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.dataset.application.port.in.command.content.DownloadDataFileUseCase;
+import com.dataracy.modules.dataset.application.port.out.query.extractor.FindDownloadDataFileUrlPort;
+import com.dataracy.modules.dataset.domain.exception.DataException;
+import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import com.dataracy.modules.filestorage.application.port.in.DownloadFileUseCase;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+
+@Service
+@RequiredArgsConstructor
+public class DataDownloadService implements DownloadDataFileUseCase {
+    private final FindDownloadDataFileUrlPort findDownloadDataFileUrlPort;
+
+    private final DownloadFileUseCase downloadFileUseCase;
+
+    /**
+     * 지정된 데이터셋 파일의 S3 URL을 조회하여, 주어진 만료 시간으로 프리사인드 다운로드 URL을 반환합니다.
+     *
+     * @param dataId            다운로드할 데이터셋의 ID
+     * @param expirationSeconds 프리사인드 URL의 만료 시간(초)
+     * @return                  프리사인드 S3 다운로드 URL
+     * @throws DataException    데이터셋이 존재하지 않을 경우 발생
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String download(Long dataId, int expirationSeconds) {
+        Instant startTime = LoggerFactory.service().logStart("DownloadDataFileUseCase", "데이터셋 파일 다운로드 서비스 시작 dataId=" + dataId);
+        String s3Url = findDownloadDataFileUrlPort.findDownloadedDataFileUrl(dataId)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("DownloadDataFileUseCase", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                    return new DataException(DataErrorStatus.NOT_FOUND_DATA);
+                });
+        String preSignedUrl = downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
+        LoggerFactory.service().logSuccess("DownloadDataFileUseCase", "데이터셋 파일 다운로드 서비스 종료 dataId=" + dataId, startTime);
+        return preSignedUrl;
+    }
+}

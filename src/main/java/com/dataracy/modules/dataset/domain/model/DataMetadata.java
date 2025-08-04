@@ -11,6 +11,7 @@ import lombok.*;
 @Builder
 public class DataMetadata {
     private Long id;
+
     private Integer rowCount;
     private Integer columnCount;
     private String previewJson;

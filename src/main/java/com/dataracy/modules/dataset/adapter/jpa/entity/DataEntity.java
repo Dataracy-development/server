@@ -1,7 +1,7 @@
 package com.dataracy.modules.dataset.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
-import com.dataracy.modules.dataset.application.dto.request.DataModifyRequest;
+import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
@@ -57,8 +57,6 @@ public class DataEntity extends BaseTimeEntity {
     // 캐싱 필드
     @Column
     private int downloadCount;
-    @Column
-    private int recentWeekDownloadCount;
 
     // 메타데이터 FK (1:1)
     @OneToOne(mappedBy = "data", cascade = CascadeType.PERSIST)
@@ -90,7 +88,7 @@ public class DataEntity extends BaseTimeEntity {
      *
      * @param requestDto 데이터 수정 요청 정보를 담은 DTO
      */
-    public void modify(DataModifyRequest requestDto) {
+    public void modify(ModifyDataRequest requestDto) {
         this.title = requestDto.title();
         this.topicId = requestDto.topicId();
         this.dataSourceId = requestDto.dataSourceId();
@@ -150,7 +148,6 @@ public class DataEntity extends BaseTimeEntity {
      * @param dataFileUrl 데이터 파일의 URL (null 가능)
      * @param thumbnailUrl 썸네일 이미지의 URL (null 가능)
      * @param downloadCount 전체 다운로드 횟수
-     * @param recentWeekDownloadCount 최근 1주일간 다운로드 횟수
      * @param metadata 데이터 메타데이터 엔티티
      * @return 생성된 DataEntity 객체
      */
@@ -167,7 +164,6 @@ public class DataEntity extends BaseTimeEntity {
             String dataFileUrl,
             String thumbnailUrl,
             int downloadCount,
-            int recentWeekDownloadCount,
             DataMetadataEntity metadata
     ) {
         return DataEntity.builder()
@@ -183,7 +179,6 @@ public class DataEntity extends BaseTimeEntity {
                 .dataFileUrl(dataFileUrl)
                 .thumbnailUrl(thumbnailUrl)
                 .downloadCount(downloadCount)
-                .recentWeekDownloadCount(recentWeekDownloadCount)
                 .metadata(metadata)
                 .build();
     }

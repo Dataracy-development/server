@@ -16,18 +16,23 @@ public class Data {
     private Long id;
 
     private String title;
-    private Long topicId;
     private Long userId;
+
     private Long dataSourceId;
     private Long dataTypeId;
+    private Long topicId;
+
     private LocalDate startDate;
     private LocalDate endDate;
+
     private String description;
     private String analysisGuide;
+
     private String dataFileUrl;
     private String thumbnailUrl;
+
     private int downloadCount;
-    private int recentWeekDownloadCount;
+
     private DataMetadata metadata;
     private LocalDateTime createdAt;
 
@@ -68,7 +73,6 @@ public class Data {
             String dataFileUrl,
             String thumbnailUrl,
             int downloadCount,
-            int recentWeekDownloadCount,
             DataMetadata metadata,
             LocalDateTime createdAt
     ) {
@@ -86,7 +90,6 @@ public class Data {
                 .dataFileUrl(dataFileUrl)
                 .thumbnailUrl(thumbnailUrl)
                 .downloadCount(downloadCount)
-                .recentWeekDownloadCount(recentWeekDownloadCount)
                 .metadata(metadata)
                 .createdAt(createdAt)
                 .build();

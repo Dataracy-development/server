@@ -1,6 +1,6 @@
 package com.dataracy.modules.dataset.adapter.elasticsearch.document;
 
-import com.dataracy.modules.dataset.application.dto.response.DataLabels;
+import com.dataracy.modules.dataset.application.dto.response.support.DataLabels;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.DataMetadata;
 import lombok.Builder;
@@ -27,7 +27,6 @@ public record DataSearchDocument(
         String dataFileUrl,
         String thumbnailUrl,
         int downloadCount,
-        int recentWeekDownloadCount,
         Integer rowCount,
         Integer columnCount,
         String previewJson,
@@ -65,7 +64,6 @@ public record DataSearchDocument(
                 .dataFileUrl(data.getDataFileUrl())
                 .thumbnailUrl(data.getThumbnailUrl())
                 .downloadCount(data.getDownloadCount())
-                .recentWeekDownloadCount(data.getRecentWeekDownloadCount())
                 .rowCount(dataMetadata.getRowCount())
                 .columnCount(dataMetadata.getColumnCount())
                 .previewJson(dataMetadata.getPreviewJson())

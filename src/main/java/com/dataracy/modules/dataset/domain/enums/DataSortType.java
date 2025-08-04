@@ -1,5 +1,6 @@
 package com.dataracy.modules.dataset.domain.enums;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import lombok.Getter;
@@ -36,6 +37,9 @@ public enum DataSortType {
         return Arrays.stream(DataSortType.values())
                 .filter(type -> type.value.equalsIgnoreCase(input) || type.name().equalsIgnoreCase(input))
                 .findFirst()
-                .orElseThrow(() -> new DataException(DataErrorStatus.INVALID_DATA_SORT_TYPE));
+                .orElseThrow(() -> {
+                    LoggerFactory.domain().logRuleViolation("DataSortType", "잘못된 ENUM 타입입니다. LATEST, OLDEST, DOWNLOAD, UTILIZE만 가능합니다.");
+                    return new DataException(DataErrorStatus.INVALID_DATA_SORT_TYPE);
+                });
     }
 }

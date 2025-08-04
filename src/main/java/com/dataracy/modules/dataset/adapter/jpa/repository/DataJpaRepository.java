@@ -28,5 +28,5 @@ public interface DataJpaRepository extends JpaRepository<DataEntity, Long> {
      * @return 데이터 파일 URL이 존재하면 해당 값을, 없으면 빈 Optional을 반환
      */
     @Query(value = "SELECT data_file_url FROM data WHERE data_id = :dataId", nativeQuery = true) // @Where 무시됨
-    Optional<String> downloadDatasetFile(@Param("dataId") Long dataId);
+    Optional<String> findDataFileUrlById(@Param("dataId") Long dataId);
 }

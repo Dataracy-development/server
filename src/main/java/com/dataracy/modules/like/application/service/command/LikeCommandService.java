@@ -10,7 +10,7 @@ import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.like.domain.exception.LikeException;
 import com.dataracy.modules.like.domain.model.Like;
 import com.dataracy.modules.like.domain.status.LikeErrorStatus;
-import com.dataracy.modules.project.application.port.in.query.validate.ValidateProjectUseCase;
+import com.dataracy.modules.project.application.port.in.validate.ValidateProjectUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -17,7 +17,7 @@ public record DataUser(
      * @param info DataUser로 변환할 사용자 정보 객체
      * @return UserInfo의 필드 값을 기반으로 생성된 DataUser 인스턴스
      */
-    public static DataUser from(UserInfo info) {
+    public static DataUser toDomain(UserInfo info) {
         return new DataUser(
                 info.id(),
                 info.role(),

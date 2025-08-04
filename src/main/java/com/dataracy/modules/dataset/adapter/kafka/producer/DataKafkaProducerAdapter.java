@@ -1,6 +1,7 @@
 package com.dataracy.modules.dataset.adapter.kafka.producer;
 
-import com.dataracy.modules.dataset.application.port.out.DataKafkaProducerPort;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.dataset.application.port.out.command.event.DataUploadEventPort;
 import com.dataracy.modules.dataset.domain.model.event.DataUploadEvent;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +13,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DataKafkaProducerAdapter implements DataKafkaProducerPort {
-
+public class DataKafkaProducerAdapter implements DataUploadEventPort {
     private final KafkaTemplate<String, DataUploadEvent> kafkaTemplate;
 
     @Value("${spring.kafka.producer.extract-metadata.topic:data-uploaded}")
-    private String topic;
+    private String dataUploadTopic;
 
     /**
      * 지정된 데이터 ID, 파일 URL, 원본 파일명을 기반으로 데이터 업로드 이벤트를 생성하여 Kafka 토픽에 비동기적으로 발송합니다.
@@ -29,14 +29,12 @@ public class DataKafkaProducerAdapter implements DataKafkaProducerPort {
     @Override
     public void sendUploadEvent(Long dataId, String fileUrl, String originalFilename) {
         DataUploadEvent event = new DataUploadEvent(dataId, fileUrl, originalFilename);
-        log.info("[Kafka] 데이터 업로드 이벤트 발송: {}", event);
-        kafkaTemplate.send(topic, String.valueOf(dataId), event)
+        kafkaTemplate.send(dataUploadTopic, String.valueOf(dataId), event)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
-                        log.error("[Kafka] 데이터 업로드 이벤트 발송 실패: {}", event, ex);
-                        // 필요시 재시도 로직 또는 예외 처리
+                        LoggerFactory.kafka().logError(dataUploadTopic, "데이터셋 업로드 이벤트 발송 처리 실패: dataId=" + dataId, ex);
                     } else {
-                        log.trace("[Kafka] 데이터 업로드 이벤트 발송 성공: {}", event);
+                        LoggerFactory.kafka().logProduce(dataUploadTopic, "데이터셋 업로드 이벤트 발송됨: dataId=" + dataId);
                     }
                 });
     }
@@ -48,7 +46,7 @@ public class DataKafkaProducerAdapter implements DataKafkaProducerPort {
      */
     @PostConstruct
     public void validateTopic() {
-        if (topic.isBlank()) {
+        if (dataUploadTopic.isBlank()) {
             throw new IllegalStateException("Kafka topic이 올바르게 설정되지 않았습니다.");
         }
     }

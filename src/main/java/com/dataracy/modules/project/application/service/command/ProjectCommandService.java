@@ -2,7 +2,7 @@ package com.dataracy.modules.project.application.service.command;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.FileUtil;
-import com.dataracy.modules.dataset.application.port.in.ValidateDataUseCase;
+import com.dataracy.modules.dataset.application.port.in.query.validate.ValidateDataUseCase;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
