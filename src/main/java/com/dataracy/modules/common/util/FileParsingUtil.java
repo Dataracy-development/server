@@ -1,6 +1,6 @@
 package com.dataracy.modules.common.util;
 
-import com.dataracy.modules.dataset.application.dto.response.MetadataParseResponse;
+import com.dataracy.modules.dataset.application.dto.response.metadata.ParsedMetadataResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +32,7 @@ public class FileParsingUtil {
      * @throws IllegalArgumentException 입력값이 null이거나 비어 있거나, 지원하지 않는 파일 형식일 때 발생
      * @throws IOException 파일 파싱 중 입출력 오류가 발생할 경우 발생
      */
-    public static MetadataParseResponse parse(InputStream inputStream, String filename) throws IOException {
+    public static ParsedMetadataResponse parse(InputStream inputStream, String filename) throws IOException {
         if (inputStream == null) {
             throw new IllegalArgumentException("입력 스트림은 null일 수 없습니다.");
         }
@@ -61,7 +61,7 @@ public class FileParsingUtil {
      * @return 전체 행 수, 컬럼 수, 미리보기 데이터(JSON 문자열)를 포함한 MetadataParseResponse 객체
      * @throws IOException 스트림 읽기 또는 파싱 중 오류가 발생한 경우
      */
-    private static MetadataParseResponse parseCsv(InputStream originalInputStream) throws IOException {
+    private static ParsedMetadataResponse parseCsv(InputStream originalInputStream) throws IOException {
         // BufferedInputStream으로 wrap하여 mark/reset 지원
         if (!originalInputStream.markSupported()) {
             originalInputStream = new BufferedInputStream(originalInputStream);
@@ -96,7 +96,7 @@ public class FileParsingUtil {
                 }
             }
 
-            return new MetadataParseResponse(
+            return new ParsedMetadataResponse(
                     rowCount,
                     colCount,
                     toJson(preview)
@@ -113,16 +113,16 @@ public class FileParsingUtil {
      * @return 행 수(헤더 제외), 열 수, 미리보기 데이터(JSON 문자열)가 포함된 MetadataParseResponse 객체
      * @throws IOException 파일 읽기 또는 파싱 중 오류가 발생한 경우
      */
-    private static MetadataParseResponse parseXlsx(InputStream is) throws IOException {
+    private static ParsedMetadataResponse parseXlsx(InputStream is) throws IOException {
         try (var wb = WorkbookFactory.create(is)) {
             var sheet = wb.getSheetAt(SHEET_INDEX);
             int rowCount = sheet.getPhysicalNumberOfRows();
             if (rowCount == 0) {
-                return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
+                return new ParsedMetadataResponse(0, 0, toJson(new ArrayList<>()));
             }
             var firstRow = sheet.getRow(0);
             if (firstRow == null) {
-                return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
+                return new ParsedMetadataResponse(0, 0, toJson(new ArrayList<>()));
             }
             int colCount = firstRow.getPhysicalNumberOfCells();
 
@@ -148,7 +148,7 @@ public class FileParsingUtil {
                 preview.add(map);
             }
 
-            return new MetadataParseResponse(
+            return new ParsedMetadataResponse(
                     rowCount - 1, // header 제외
                     colCount,
                     toJson(preview)
@@ -168,7 +168,7 @@ public class FileParsingUtil {
      * @throws IOException 입력 스트림을 읽거나 파싱할 때 오류가 발생한 경우
      * @throws IllegalArgumentException 루트 노드가 배열이 아닌 경우
      */
-    private static MetadataParseResponse parseJson(InputStream is) throws IOException {
+    private static ParsedMetadataResponse parseJson(InputStream is) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(is);
 
@@ -191,7 +191,7 @@ public class FileParsingUtil {
             preview.add(row);
         }
 
-        return new MetadataParseResponse(
+        return new ParsedMetadataResponse(
                 rowCount,
                 colCount,
                 toJson(preview)

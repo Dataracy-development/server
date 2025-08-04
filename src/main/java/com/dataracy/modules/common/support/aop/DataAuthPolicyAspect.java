@@ -1,8 +1,8 @@
 package com.dataracy.modules.common.support.aop;
 
 import com.dataracy.modules.common.support.annotation.AuthorizationDataEdit;
-import com.dataracy.modules.dataset.application.port.in.FindUserIdByDataIdUseCase;
-import com.dataracy.modules.dataset.application.port.in.FindUserIdIncludingDeletedDataUseCase;
+import com.dataracy.modules.dataset.application.port.in.query.extractor.FindUserIdUseCase;
+import com.dataracy.modules.dataset.application.port.in.query.extractor.FindUserIdIncludingDeletedUseCase;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import com.dataracy.modules.security.handler.SecurityContextProvider;
@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DataAuthPolicyAspect {
 
-    private final FindUserIdByDataIdUseCase findUserIdByDataIdUseCase;
-    private final FindUserIdIncludingDeletedDataUseCase findUserIdIncludingDeletedDataUseCase;
+    private final FindUserIdUseCase findUserIdUseCase;
+    private final FindUserIdIncludingDeletedUseCase findUserIdIncludingDeletedUseCase;
 
     /**
      * 데이터 편집, 삭제 또는 복원 작업 전에 현재 인증된 사용자가 해당 데이터의 생성자인지 검증합니다.
@@ -32,8 +32,8 @@ public class DataAuthPolicyAspect {
     public void checkDataEditPermission(AuthorizationDataEdit annotation, Long dataId) {
         Long authenticatedUserId = SecurityContextProvider.getAuthenticatedUserId();
         Long ownerId = annotation.restore()
-                ? findUserIdIncludingDeletedDataUseCase.findUserIdIncludingDeleted(dataId)
-                : findUserIdByDataIdUseCase.findUserIdByDataId(dataId);
+                ? findUserIdIncludingDeletedUseCase.findUserIdIncludingDeleted(dataId)
+                : findUserIdUseCase.findUserIdByDataId(dataId);
 
         if (!ownerId.equals(authenticatedUserId)) {
             log.error("데이터셋 작성자만 {}할 수 있습니다.",

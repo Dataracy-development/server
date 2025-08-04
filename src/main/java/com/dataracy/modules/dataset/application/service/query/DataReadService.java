@@ -1,0 +1,226 @@
+package com.dataracy.modules.dataset.application.service.query;
+
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.dataset.application.dto.response.read.*;
+import com.dataracy.modules.dataset.application.dto.response.support.DataLabelMapResponse;
+import com.dataracy.modules.dataset.application.dto.response.support.DataWithProjectCountDto;
+import com.dataracy.modules.dataset.application.mapper.read.DataReadDtoMapper;
+import com.dataracy.modules.dataset.application.port.in.query.read.*;
+import com.dataracy.modules.dataset.application.port.out.query.read.*;
+import com.dataracy.modules.dataset.domain.exception.DataException;
+import com.dataracy.modules.dataset.domain.model.Data;
+import com.dataracy.modules.dataset.domain.model.vo.DataUser;
+import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.profile.GetUserInfoUseCase;
+import com.dataracy.modules.user.domain.model.vo.UserInfo;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class DataReadService implements
+        GetPopularDataSetsUseCase,
+        GetDataDetailUseCase,
+        GetRecentMinimalDataSetsUseCase,
+        GetDataGroupCountUseCase,
+        FindConnectedDataSetsUseCase
+{
+    private final DataReadDtoMapper dataReadDtoMapper;
+
+    private final GetPopularDataSetsPort getPopularDataSetsPort;
+    private final GetRecentDataSetsPort getRecentDataSetsPort;
+    private final FindDataWithMetadataPort findDataWithMetadataPort;
+    private final GetDataGroupCountPort getDataGroupCountPort;
+    private final GetConnectedDataSetsPort getConnectedDataSetsPort;
+
+    private final GetUserInfoUseCase getUserInfoUseCase;
+    private final FindUsernameUseCase findUsernameUseCase;
+
+    private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
+    private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
+    private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
+    private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+    private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
+
+    /**
+     * 인기 있는 데이터셋을 지정된 개수만큼 조회하고, 각 데이터셋에 사용자명, 주제, 데이터 소스, 데이터 타입 등의 라벨 정보와 연결된 프로젝트 수를 포함한 응답 리스트를 반환합니다.
+     *
+     * @param size 조회할 인기 데이터셋의 최대 개수
+     * @return 인기 데이터셋의 상세 정보와 프로젝트 수가 포함된 응답 리스트
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<PopularDataResponse> getPopularDataSets(int size) {
+        Instant startTime = LoggerFactory.service().logStart("GetPopularDataSetsUseCase", "인기 데이터셋 목록 조회 서비스 시작 size=" + size);
+
+        List<DataWithProjectCountDto> savedDataSets = getPopularDataSetsPort.getPopularDataSets(size);
+        DataLabelMapResponse labelResponse = labelMapping(savedDataSets);
+
+        List<PopularDataResponse> popularDataResponses = savedDataSets.stream()
+                .map(wrapper -> {
+                    Data data = wrapper.data();
+                    return dataReadDtoMapper.toResponseDto(
+                            data,
+                            labelResponse.usernameMap().get(data.getUserId()),
+                            labelResponse.topicLabelMap().get(data.getTopicId()),
+                            labelResponse.dataSourceLabelMap().get(data.getDataSourceId()),
+                            labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
+                            wrapper.countConnectedProjects()
+                    );
+                })
+                .toList();
+
+        LoggerFactory.service().logSuccess("GetPopularDataSetsUseCase", "인기 데이터셋 목록 조회 서비스 종료 size=" + size, startTime);
+        return popularDataResponses;
+    }
+
+    /**
+     * 주어진 데이터 ID에 해당하는 데이터셋의 상세 정보를 반환합니다.
+     *
+     * 데이터셋의 기본 정보, 작성자 닉네임, 작성자 등급 및 직업 라벨, 주제/데이터 소스/데이터 타입 라벨, 기간, 설명, 분석 가이드, 썸네일 URL, 다운로드 수, 최근 일주일 다운로드 수, 메타데이터(행/열 개수, 미리보기 JSON), 생성일시를 포함합니다.
+     *
+     * @param dataId 조회할 데이터셋의 ID
+     * @return 데이터셋의 상세 정보를 담은 DataDetailResponse 객체
+     * @throws DataException 데이터셋이 존재하지 않을 경우 발생
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public DataDetailResponse getDataDetail(Long dataId) {
+        Instant startTime = LoggerFactory.service().logStart("GetDataDetailUseCase", "데이터셋 상세 정보 조회 서비스 시작 dataId=" + dataId);
+
+        Data data = findDataWithMetadataPort.findDataWithMetadataById(dataId)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("GetDataDetailUseCase", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                    return new DataException(DataErrorStatus.NOT_FOUND_DATA);
+                });
+        UserInfo userInfo = getUserInfoUseCase.getUserInfo(data.getUserId());
+        DataUser dataUser = DataUser.toDomain(userInfo);
+
+        String authorLabel = dataUser.authorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(dataUser.authorLevelId());
+        String occupationLabel = dataUser.occupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(dataUser.occupationId());
+
+        DataDetailResponse dataDetailResponse = new DataDetailResponse(
+                data.getId(),
+                data.getTitle(),
+                dataUser.nickname(),
+                authorLabel,
+                occupationLabel,
+                getTopicLabelFromIdUseCase.getLabelById(data.getTopicId()),
+                getDataSourceLabelFromIdUseCase.getLabelById(data.getDataSourceId()),
+                getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId()),
+                data.getStartDate(),
+                data.getEndDate(),
+                data.getDescription(),
+                data.getAnalysisGuide(),
+                data.getThumbnailUrl(),
+                data.getDownloadCount(),
+                data.getMetadata().getRowCount(),
+                data.getMetadata().getColumnCount(),
+                data.getMetadata().getPreviewJson(),
+                data.getCreatedAt()
+        );
+
+        LoggerFactory.service().logSuccess("GetDataDetailUseCase", "데이터셋 상세 정보 조회 서비스 종료 dataId=" + dataId, startTime);
+        return dataDetailResponse;
+    }
+
+    /**
+     * 최신 데이터셋을 지정된 개수만큼 조회하여 최소 정보 응답 리스트로 반환합니다.
+     *
+     * @param size 조회할 데이터셋의 최대 개수
+     * @return 최신 데이터셋의 최소 정보 응답 리스트
+     */
+    @Override
+    public List<RecentMinimalDataResponse> getRecentDataSets(int size) {
+        Instant startTime = LoggerFactory.service().logStart("GetRecentMinimalDataSetsUseCase", "최신 미니 데이터셋 목록 조회 서비스 시작 size=" + size);
+
+        List<Data> recentDataSets = getRecentDataSetsPort.getRecentDataSets(size);
+        List<RecentMinimalDataResponse> recentMinimalDataResponses = recentDataSets.stream()
+                .map(dataReadDtoMapper::toResponseDto)
+                .toList();
+
+        LoggerFactory.service().logSuccess("GetRecentMinimalDataSetsUseCase", "최신 미니 데이터셋 목록 조회 서비스 종료 size=" + size, startTime);
+        return recentMinimalDataResponses;
+    }
+
+    /**
+     * 데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환합니다.
+     *
+     * @return 각 주제별 데이터셋 개수를 담은 CountDataGroupResponse 객체의 리스트
+     */
+    @Override
+    public List<DataGroupCountResponse> getDataGroupCountByTopicLabel() {
+        Instant startTime = LoggerFactory.service().logStart("GetDataGroupCountUseCase", "데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환 서비스 시작");
+        List<DataGroupCountResponse> dataGroupCountResponses = getDataGroupCountPort.getDataGroupCount();
+        LoggerFactory.service().logSuccess("GetDataGroupCountUseCase", "데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환 서비스 종료", startTime);
+        return dataGroupCountResponses;
+    }
+
+    /**
+     * 지정된 프로젝트와 연결된 데이터셋 목록을 페이지네이션하여 조회합니다.
+     *
+     * @param projectId 연결된 프로젝트의 ID
+     * @param pageable 페이지네이션 정보
+     * @return 프로젝트와 연결된 데이터셋의 상세 정보와 연결된 프로젝트 수를 포함하는 응답 객체의 페이지
+     */
+    @Override
+    public Page<ConnectedDataResponse> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
+        Instant startTime = LoggerFactory.service().logStart("FindConnectedDataSetsUseCase", "프로젝트와 연결된 데이터셋 목록 조회 서비스 시작 projectId=" + projectId);
+
+        Page<DataWithProjectCountDto> savedDataSets = getConnectedDataSetsPort.getConnectedDataSetsAssociatedWithProject(projectId, pageable);
+        DataLabelMapResponse labelResponse = labelMapping(savedDataSets.getContent());
+        Page<ConnectedDataResponse> connectedDataResponses = savedDataSets.map(wrapper -> {
+            Data data = wrapper.data();
+            return dataReadDtoMapper.toResponseDto(
+                    data,
+                    labelResponse.topicLabelMap().get(data.getTopicId()),
+                    labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
+                    wrapper.countConnectedProjects()
+            );
+        });
+
+        LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "프로젝트와 연결된 데이터셋 목록 조회 서비스 종료 projectId=" + projectId, startTime);
+        return connectedDataResponses;
+    }
+
+    /**
+     * 데이터셋 DTO 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 해당하는 레이블 매핑 정보를 반환합니다.
+     *
+     * @param savedDataSets 프로젝트 개수가 포함된 데이터셋 DTO 컬렉션
+     * @return 사용자명, 토픽 레이블, 데이터 소스 레이블, 데이터 타입 레이블의 매핑 정보를 담은 응답 객체
+     */
+    private DataLabelMapResponse labelMapping(Collection<DataWithProjectCountDto> savedDataSets) {
+        List<Long> userIds = savedDataSets.stream()
+                .map(dto -> dto.data().getUserId())
+                .toList();
+        List<Long> topicIds = savedDataSets.stream()
+                .map(dto -> dto.data().getTopicId())
+                .toList();
+        List<Long> dataSourceIds = savedDataSets.stream()
+                .map(dto -> dto.data().getDataSourceId())
+                .toList();
+        List<Long> dataTypeIds = savedDataSets.stream()
+                .map(dto -> dto.data().getDataTypeId())
+                .toList();
+
+        return new DataLabelMapResponse(
+                findUsernameUseCase.findUsernamesByIds(userIds),
+                getTopicLabelFromIdUseCase.getLabelsByIds(topicIds),
+                getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds),
+                getDataTypeLabelFromIdUseCase.getLabelsByIds(dataTypeIds)
+        );
+    }
+}

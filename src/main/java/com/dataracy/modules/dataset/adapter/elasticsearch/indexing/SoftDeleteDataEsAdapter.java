@@ -1,0 +1,59 @@
+package com.dataracy.modules.dataset.adapter.elasticsearch.indexing;
+
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.dataset.adapter.elasticsearch.document.DataDeletedUpdate;
+import com.dataracy.modules.dataset.adapter.elasticsearch.document.DataSearchDocument;
+import com.dataracy.modules.dataset.application.port.out.command.delete.SoftDeleteDataPort;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+@Component("softDeleteDataEsAdapter")
+@RequiredArgsConstructor
+public class SoftDeleteDataEsAdapter implements SoftDeleteDataPort {
+    private final ElasticsearchClient client;
+    private static final String INDEX = "data_index";
+
+    /**
+     * 지정된 데이터셋 문서의 삭제 상태를 업데이트합니다.
+     *
+     * @param dataId    삭제 상태를 변경할 데이터셋의 ID
+     * @param update    적용할 삭제 상태 업데이트 정보
+     * @param operation 수행 중인 작업의 설명(예: "soft delete", "복원")
+     */
+    private void updateDeletedStatus(Long dataId, DataDeletedUpdate update, String operation) {
+        try {
+            client.update(u -> u
+                            .index(INDEX)
+                            .id(dataId.toString())
+                            .doc(update),
+                    DataSearchDocument.class
+            );
+            LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(dataId), "데이터셋 " + operation + "완료: dataId=" + dataId);
+        } catch (IOException e) {
+            LoggerFactory.elastic().logError(INDEX, "데이터셋 " + operation + "실패: dataId=" + dataId, e);
+        }
+    }
+
+    /**
+     * 주어진 데이터 ID에 해당하는 문서를 소프트 삭제 처리합니다.
+     *
+     * @param dataId 삭제 처리할 데이터의 ID
+     */
+    @Override
+    public void deleteData(Long dataId) {
+        updateDeletedStatus(dataId, DataDeletedUpdate.deleted(), "soft delete");
+    }
+
+    /**
+     * 삭제된 데이터 문서를 복원 상태로 업데이트합니다.
+     *
+     * @param dataId 복원할 데이터 문서의 ID
+     */
+    @Override
+    public void restoreData(Long dataId) {
+        updateDeletedStatus(dataId, DataDeletedUpdate.restored(), "복원");
+    }
+}

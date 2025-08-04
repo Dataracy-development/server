@@ -47,8 +47,6 @@ public class QDataEntity extends EntityPathBase<DataEntity> {
 
     public final QDataMetadataEntity metadata;
 
-    public final NumberPath<Integer> recentWeekDownloadCount = createNumber("recentWeekDownloadCount", Integer.class);
-
     public final DatePath<java.time.LocalDate> startDate = createDate("startDate", java.time.LocalDate.class);
 
     public final StringPath thumbnailUrl = createString("thumbnailUrl");

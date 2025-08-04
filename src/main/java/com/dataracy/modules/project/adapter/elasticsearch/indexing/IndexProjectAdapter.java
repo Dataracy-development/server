@@ -25,7 +25,7 @@ public class IndexProjectAdapter implements IndexProjectPort {
         try {
             client.index(i -> i
                     .index(INDEX)
-                    .id(doc.id().toString())
+                    .id(String.valueOf(doc.id()))
                     .document(doc)
             );
             LoggerFactory.elastic().logIndex(INDEX, String.valueOf(doc.id()), "프로젝트 인덱싱 완료");

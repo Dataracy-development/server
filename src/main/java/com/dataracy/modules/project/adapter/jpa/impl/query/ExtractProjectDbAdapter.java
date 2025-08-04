@@ -37,9 +37,8 @@ public class ExtractProjectDbAdapter implements ExtractProjectOwnerPort {
                     LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
-        Long userId = projectEntity.getUserId();
         LoggerFactory.db().logQueryEnd("ProjectEntity", "[findById] 아이디를 통한 프로젝트 조회 종료 projectId=" + projectId, startTime);
-        return userId;
+        return projectEntity.getUserId();
     }
 
     /**
@@ -57,9 +56,8 @@ public class ExtractProjectDbAdapter implements ExtractProjectOwnerPort {
                     LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
-        Long userId = projectEntity.getUserId();
         LoggerFactory.db().logQueryEnd("ProjectEntity", "[findIncludingDeleted] 탈퇴한 유저를 포함하여 아이디를 통한 프로젝트 조회 종료 projectId=" + projectId, startTime);
-        return userId;
+        return projectEntity.getUserId();
     }
 
     /**
