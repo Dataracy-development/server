@@ -24,6 +24,11 @@ public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
      */
     public void increaseViewCount(Long projectId, Long increment) {
         try {
+            ProjectSearchDocument upsertDoc = ProjectSearchDocument.builder()
+                    .id(projectId)
+                    .viewCount(increment) // 문서가 없으면 이 값으로 삽입
+                    .build();
+
             client.update(u -> u
                             .index(INDEX)
                             .id(String.valueOf(projectId))
@@ -33,7 +38,8 @@ public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
                                             .source("ctx._source.viewCount += params.count")
                                             .params("count", JsonData.of(increment))
                                     )
-                            ),
+                            )
+                            .upsert(upsertDoc),
                     ProjectSearchDocument.class
             );
             LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(projectId), "프로젝트 viewCount 증분 업데이트 완료 - projectId=" + projectId);
