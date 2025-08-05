@@ -6,11 +6,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface GetConnectedDataSetsPort {
     /**
-     * 지정된 프로젝트와 연결된 데이터셋 목록을 페이지 단위로 조회합니다.
-     *
-     * @param projectId 연결된 데이터셋을 조회할 프로젝트의 식별자
-     * @param pageable 페이지네이션 정보를 담은 객체
-     * @return 프로젝트와 연결된 데이터셋 및 각 데이터셋의 프로젝트 수를 포함하는 페이지 결과
-     */
+ * 특정 프로젝트와 연결된 데이터셋 목록을 페이지네이션하여 반환합니다.
+ *
+ * @param projectId 데이터셋 연결 정보를 조회할 프로젝트의 식별자
+ * @param pageable 결과 페이지네이션을 위한 정보
+ * @return 각 데이터셋과 해당 데이터셋이 연결된 프로젝트 수를 포함하는 페이지 결과
+ */
     Page<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable);
 }

@@ -17,10 +17,10 @@ public class SoftDeleteDataEsAdapter implements SoftDeleteDataPort {
     private static final String INDEX = "data_index";
 
     /**
-     * 지정된 데이터셋 문서의 삭제 상태를 업데이트합니다.
+     * 데이터셋 문서의 삭제 상태를 지정된 작업(예: 소프트 삭제, 복원)에 따라 업데이트합니다.
      *
-     * @param dataId    삭제 상태를 변경할 데이터셋의 ID
-     * @param update    적용할 삭제 상태 업데이트 정보
+     * @param dataId 삭제 상태를 변경할 데이터셋의 ID
+     * @param update 적용할 삭제 상태 업데이트 정보
      * @param operation 수행 중인 작업의 설명(예: "soft delete", "복원")
      */
     private void updateDeletedStatus(Long dataId, DataDeletedUpdate update, String operation) {
@@ -38,9 +38,9 @@ public class SoftDeleteDataEsAdapter implements SoftDeleteDataPort {
     }
 
     /**
-     * 주어진 데이터 ID에 해당하는 문서를 소프트 삭제 처리합니다.
+     * 지정된 데이터 ID의 문서를 소프트 삭제 상태로 변경합니다.
      *
-     * @param dataId 삭제 처리할 데이터의 ID
+     * @param dataId 소프트 삭제할 데이터의 ID
      */
     @Override
     public void deleteData(Long dataId) {
@@ -48,9 +48,9 @@ public class SoftDeleteDataEsAdapter implements SoftDeleteDataPort {
     }
 
     /**
-     * 삭제된 데이터 문서를 복원 상태로 업데이트합니다.
+     * 지정한 데이터 문서의 삭제 상태를 복원 상태로 변경합니다.
      *
-     * @param dataId 복원할 데이터 문서의 ID
+     * @param dataId 복원할 데이터 문서의 고유 식별자
      */
     @Override
     public void restoreData(Long dataId) {

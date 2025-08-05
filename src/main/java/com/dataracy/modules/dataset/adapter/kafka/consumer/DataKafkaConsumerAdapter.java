@@ -18,11 +18,11 @@ public class DataKafkaConsumerAdapter {
     private String dataUploadedTopic;
 
     /**
-     * Kafka에서 데이터 업로드 이벤트를 수신하여 해당 파일의 메타데이터 파싱 및 저장을 수행합니다.
+     * Kafka에서 데이터 업로드 이벤트를 수신하여 해당 파일의 메타데이터를 파싱하고 저장합니다.
      *
      * @param event 데이터 업로드 이벤트 정보
-     * 
-     * 예외 발생 시 Kafka 재시도 메커니즘을 위해 예외를 다시 던집니다.
+     *
+     * 예외 발생 시 Kafka의 재시도 메커니즘을 활성화하기 위해 예외를 다시 던집니다.
      */
     @KafkaListener(
             topics = "${spring.kafka.consumer.extract-metadata.topic:data-uploaded}",

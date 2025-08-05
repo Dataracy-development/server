@@ -54,10 +54,10 @@ public class DataReadService implements
     private final FindDataLabelMapUseCase findDataLabelMapUseCase;
 
     /**
-     * 인기 있는 데이터셋을 지정된 개수만큼 조회하고, 각 데이터셋에 사용자명, 주제, 데이터 소스, 데이터 타입 등의 라벨 정보와 연결된 프로젝트 수를 포함한 응답 리스트를 반환합니다.
+     * 지정된 개수만큼 인기 데이터셋을 조회하여, 각 데이터셋에 사용자명, 주제, 데이터 소스, 데이터 타입 라벨 및 연결된 프로젝트 수를 포함한 응답 리스트를 반환합니다.
      *
      * @param size 조회할 인기 데이터셋의 최대 개수
-     * @return 인기 데이터셋의 상세 정보와 프로젝트 수가 포함된 응답 리스트
+     * @return 인기 데이터셋의 상세 정보와 연결된 프로젝트 수가 포함된 응답 리스트
      */
     @Override
     @Transactional(readOnly = true)
@@ -88,7 +88,7 @@ public class DataReadService implements
     /**
      * 주어진 데이터 ID에 해당하는 데이터셋의 상세 정보를 반환합니다.
      *
-     * 데이터셋의 기본 정보, 작성자 닉네임, 작성자 등급 및 직업 라벨, 주제/데이터 소스/데이터 타입 라벨, 기간, 설명, 분석 가이드, 썸네일 URL, 다운로드 수, 최근 일주일 다운로드 수, 메타데이터(행/열 개수, 미리보기 JSON), 생성일시를 포함합니다.
+     * 데이터셋의 기본 정보, 작성자 닉네임, 작성자 등급 및 직업 라벨, 주제/데이터 소스/데이터 타입 라벨, 기간, 설명, 분석 가이드, 썸네일 URL, 다운로드 수, 최근 일주일 다운로드 수, 메타데이터(행/열 개수, 미리보기 JSON), 생성일시를 포함한 상세 정보를 제공합니다.
      *
      * @param dataId 조회할 데이터셋의 ID
      * @return 데이터셋의 상세 정보를 담은 DataDetailResponse 객체
@@ -125,7 +125,7 @@ public class DataReadService implements
     }
 
     /**
-     * 최신 데이터셋을 지정된 개수만큼 조회하여 최소 정보 응답 리스트로 반환합니다.
+     * 최신 데이터셋을 지정된 개수만큼 조회하여 최소 정보로 구성된 응답 리스트를 반환합니다.
      *
      * @param size 조회할 데이터셋의 최대 개수
      * @return 최신 데이터셋의 최소 정보 응답 리스트
@@ -145,9 +145,9 @@ public class DataReadService implements
     }
 
     /**
-     * 데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환합니다.
+     * 데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 조회합니다.
      *
-     * @return 각 주제별 데이터셋 개수를 담은 CountDataGroupResponse 객체의 리스트
+     * @return 각 주제별 데이터셋 개수를 담은 DataGroupCountResponse 객체의 리스트
      */
     @Override
     @Transactional(readOnly = true)
@@ -159,11 +159,11 @@ public class DataReadService implements
     }
 
     /**
-     * 지정된 프로젝트와 연결된 데이터셋 목록을 페이지네이션하여 조회합니다.
+     * 지정된 프로젝트와 연결된 데이터셋을 페이지네이션하여 조회합니다.
      *
-     * @param projectId 연결된 프로젝트의 ID
+     * @param projectId 연결할 프로젝트의 ID
      * @param pageable 페이지네이션 정보
-     * @return 프로젝트와 연결된 데이터셋의 상세 정보와 연결된 프로젝트 수를 포함하는 응답 객체의 페이지
+     * @return 각 데이터셋의 상세 정보와 연결된 프로젝트 수를 포함하는 응답 객체의 페이지
      */
     @Override
     @Transactional(readOnly = true)

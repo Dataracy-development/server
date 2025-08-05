@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 public class DataFilterWebMapper {
 
     /**
-     * DataFilterWebRequest 객체를 DataFilterRequest 도메인 DTO로 변환합니다.
+     * FilteringDataWebRequest 웹 요청 DTO를 FilteringDataRequest 애플리케이션 도메인 DTO로 변환합니다.
      *
-     * @param webRequest 데이터 필터링 기준이 담긴 웹 요청 DTO
-     * @return 필터링 조건이 반영된 DataFilterRequest 도메인 DTO
+     * @param webRequest 데이터 필터링 조건이 포함된 웹 요청 DTO
+     * @return 필터링 조건이 반영된 FilteringDataRequest 도메인 DTO
      */
     public FilteringDataRequest toApplicationDto(FilteringDataWebRequest webRequest) {
         return new FilteringDataRequest(
@@ -27,10 +27,10 @@ public class DataFilterWebMapper {
     }
 
     /**
-     * DataFilterResponse 객체를 DataFilterWebResponse 객체로 변환합니다.
+     * FilteredDataResponse 객체를 웹 응답용 FilteredDataWebResponse 객체로 변환합니다.
      *
-     * @param responseDto 변환할 DataFilterResponse 객체
-     * @return 변환된 DataFilterWebResponse 객체
+     * @param responseDto 변환할 FilteredDataResponse 객체
+     * @return 변환된 FilteredDataWebResponse 객체
      */
     public FilteredDataWebResponse toWebDto(FilteredDataResponse responseDto) {
         return new FilteredDataWebResponse(

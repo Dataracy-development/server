@@ -86,12 +86,12 @@ public class ProjectReadWebMapper {
     }
 
     /**
-     * ChildProjectResponse를 ChildProjectWebResponse로 변환합니다.
+     * ChildProjectResponse 객체를 ChildProjectWebResponse 객체로 변환합니다.
      *
-     * 프로젝트의 ID, 제목, 내용, 작성자, 댓글 수, 좋아요 수 정보를 웹 응답 DTO로 매핑합니다.
+     * 프로젝트 자식의 ID, 제목, 내용, 작성자, 댓글 수, 좋아요 수를 포함하는 웹 레이어 응답 DTO를 생성합니다.
      *
      * @param responseDto 변환할 프로젝트 자식 응답 DTO
-     * @return 변환된 웹 레이어용 프로젝트 자식 응답 DTO
+     * @return 변환된 ChildProjectWebResponse 객체
      */
     public ChildProjectWebResponse toWebDto(ChildProjectResponse responseDto) {
         return new ChildProjectWebResponse(
@@ -105,10 +105,10 @@ public class ProjectReadWebMapper {
     }
 
     /**
-     * 인기 프로젝트 검색 응답 DTO를 웹 응답 객체로 변환합니다.
+     * 인기 프로젝트 응답 DTO를 웹 계층의 응답 객체로 변환합니다.
      *
-     * @param responseDto 인기 프로젝트 검색 결과를 담고 있는 DTO
-     * @return 변환된 인기 프로젝트 웹 응답 객체
+     * @param responseDto 애플리케이션 계층의 인기 프로젝트 정보를 담은 DTO
+     * @return 웹 계층에서 사용하는 인기 프로젝트 응답 객체
      */
     public PopularProjectWebResponse toWebDto(PopularProjectResponse responseDto) {
         return new PopularProjectWebResponse(

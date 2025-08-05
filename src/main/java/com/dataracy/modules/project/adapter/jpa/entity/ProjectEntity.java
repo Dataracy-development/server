@@ -122,9 +122,10 @@ public class ProjectEntity extends BaseTimeEntity {
     }
 
     /****
-     * 프로젝트의 파일 URL을 새로운 값으로 변경합니다.
+     * 프로젝트의 파일 URL을 유효성 검사 후 새로운 값으로 변경합니다.
      *
-     * @param fileUrl 새로 지정할 파일 URL
+     * @param fileUrl 변경할 파일 URL. null이거나 비어 있으면 예외가 발생합니다.
+     * @throws ProjectException 파일 URL이 null이거나 비어 있을 때 발생합니다.
      */
     public void updateFile(String fileUrl) {
         if (fileUrl == null || fileUrl.isEmpty()) {
