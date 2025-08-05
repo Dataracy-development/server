@@ -2,6 +2,7 @@ package com.dataracy.modules.project.adapter.web.api.search;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.project.adapter.web.mapper.read.ProjectReadWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.search.ProjectFilterWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.search.ProjectSearchWebMapper;
 import com.dataracy.modules.project.adapter.web.request.search.FilteringProjectWebRequest;
@@ -34,10 +35,10 @@ import java.util.List;
 public class ProjectSearchController implements ProjectSearchApi {
     private final ProjectSearchWebMapper projectSearchWebMapper;
     private final ProjectFilterWebMapper projectFilterWebMapper;
+    private final ProjectReadWebMapper projectReadWebMapper;
 
     private final SearchRealTimeProjectsUseCase searchRealTimeProjectsUseCase;
     private final SearchSimilarProjectsUseCase searchSimilarProjectsUseCase;
-    private final GetPopularProjectsUseCase getPopularProjectsUseCase;
     private final SearchFilteredProjectsUseCase searchFilteredProjectsUsecase;
 
     /**
@@ -80,26 +81,6 @@ public class ProjectSearchController implements ProjectSearchApi {
         LoggerFactory.api().logResponse("[SearchSimilarProjects] 유사 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_SIMILAR_PROJECTS, webResponse));
-    }
-
-    /**
-     * 인기 프로젝트를 지정한 개수만큼 조회하여 성공 응답으로 반환합니다.
-     *
-     * @param size 반환할 인기 프로젝트의 최대 개수
-     * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
-     */
-    @Override
-    public ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> searchPopularProjects(int size) {
-        Instant startTime = LoggerFactory.api().logRequest("[SearchPopularProjects] 인기 프로젝트 목록 조회 API 요청 시작");
-
-        List<PopularProjectResponse> responseDto = getPopularProjectsUseCase.searchPopularProjects(size);
-        List<PopularProjectWebResponse> webResponse = responseDto.stream()
-                .map(projectSearchWebMapper::toWeb)
-                .toList();
-
-        LoggerFactory.api().logResponse("[SearchPopularProjects] 인기 프로젝트 목록 조회 API 응답 완료", startTime);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(SuccessResponse.of(ProjectSuccessStatus.FIND_POPULAR_PROJECTS, webResponse));
     }
 
     /**

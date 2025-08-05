@@ -43,7 +43,7 @@ public class GetProjectQueryDslAdapter implements
      * @return 인기 순으로 정렬된 프로젝트 도메인 객체 리스트
      */
     @Override
-    public List<Project> searchPopularProjects(int size) {
+    public List<Project> getPopularProjects(int size) {
         Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[searchPopularProjects] 인기있는 프로젝트 목록 조회 시작.");
         List<Project> popularProjects =  queryFactory
                 .selectFrom(project)
