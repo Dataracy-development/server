@@ -27,9 +27,9 @@ public class DataReadController implements DataReadApi {
     private final FindConnectedDataSetsUseCase findConnectedDataSetsUseCase;
 
     /**
-     * 지정한 개수만큼 인기 데이터셋 목록을 조회하여 반환합니다.
+     * 인기 데이터셋을 지정한 개수만큼 조회하여 반환합니다.
      *
-     * @param size 조회할 인기 데이터셋의 최대 개수
+     * @param size 반환할 인기 데이터셋의 최대 개수
      * @return 인기 데이터셋 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
@@ -44,9 +44,9 @@ public class DataReadController implements DataReadApi {
     }
 
     /**
-     * 주어진 데이터셋 ID에 해당하는 상세 정보를 조회하여 반환합니다.
+     * 데이터셋의 고유 ID를 기반으로 상세 정보를 조회하여 반환합니다.
      *
-     * @param dataId 조회할 데이터셋의 고유 ID
+     * @param dataId 상세 정보를 조회할 데이터셋의 ID
      * @return 데이터셋 상세 정보와 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
@@ -59,10 +59,10 @@ public class DataReadController implements DataReadApi {
     }
 
     /**
-     * 최근 등록된 데이터셋 목록을 조회하여 반환합니다.
+     * 최근 등록된 데이터셋 목록을 최대 지정된 개수만큼 조회하여 반환합니다.
      *
      * @param size 반환할 데이터셋의 최대 개수
-     * @return 최근 데이터셋 목록이 포함된 성공 응답
+     * @return 최근 데이터셋 목록이 포함된 성공 응답 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<List<RecentMinimalDataWebResponse>>> getRecentDataSets(int size) {
@@ -76,9 +76,11 @@ public class DataReadController implements DataReadApi {
     }
 
     /**
-     * 데이터셋을 주제 라벨별로 그룹화하여 각 그룹의 데이터셋 개수를 조회합니다.
+     * 데이터셋을 주제 라벨별로 그룹화하여 각 그룹의 데이터셋 개수를 반환합니다.
      *
-     * @return 주제 라벨별 데이터셋 개수 목록이 포함된 성공 응답
+     * 주제 라벨별로 그룹화된 데이터셋 개수 목록을 성공 응답으로 제공합니다.
+     *
+     * @return 주제 라벨별 데이터셋 개수 목록이 포함된 HTTP 200 성공 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<List<DataGroupCountWebResponse>>> getDataCountByTopicLabel() {
@@ -92,11 +94,11 @@ public class DataReadController implements DataReadApi {
     }
 
     /**
-     * 프로젝트에 연결된 데이터셋 목록을 페이지네이션하여 조회합니다.
+     * 지정한 프로젝트에 연결된 데이터셋 목록을 페이지네이션하여 반환합니다.
      *
-     * @param projectId 데이터셋을 조회할 대상 프로젝트의 ID
+     * @param projectId 데이터셋을 조회할 프로젝트의 ID
      * @param pageable 페이지네이션 정보
-     * @return 프로젝트에 연결된 데이터셋 목록과 성공 상태를 포함한 HTTP 200 응답
+     * @return 프로젝트에 연결된 데이터셋 목록과 성공 상태가 포함된 HTTP 200 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<ConnectedDataWebResponse>>> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {

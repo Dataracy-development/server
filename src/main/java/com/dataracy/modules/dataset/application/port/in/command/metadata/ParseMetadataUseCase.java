@@ -4,9 +4,9 @@ import com.dataracy.modules.dataset.application.dto.request.metadata.ParseMetada
 
 public interface ParseMetadataUseCase {
     /**
- * 주어진 요청을 기반으로 메타데이터를 파싱하고 저장합니다.
+ * 주어진 요청 정보를 바탕으로 메타데이터를 파싱하여 저장합니다.
  *
- * @param request 메타데이터 파싱 및 저장에 필요한 정보를 담은 요청 객체
+ * @param request 메타데이터 파싱과 저장에 필요한 정보를 포함하는 요청 객체
  */
 void parseAndSaveMetadata(ParseMetadataRequest request);
 }

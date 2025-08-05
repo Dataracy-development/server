@@ -14,11 +14,11 @@ import org.springframework.stereotype.Repository;
 public class SoftDeleteDataDbAdapter implements SoftDeleteDataPort {
     private final DataJpaRepository dataJpaRepository;
     /**
-     * 지정된 데이터 ID에 해당하는 데이터를 논리적으로 삭제합니다.
+     * 지정된 ID의 데이터를 논리적으로 삭제(soft delete)합니다.
      *
      * 데이터가 존재하지 않을 경우 {@code DataException}이 발생합니다.
      *
-     * @param dataId 삭제할 데이터의 ID
+     * @param dataId 논리적으로 삭제할 데이터의 ID
      * @throws DataException 데이터가 존재하지 않을 경우 발생
      */
     @Override

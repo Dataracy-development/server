@@ -25,6 +25,12 @@ public class DataCommandDbAdapter implements
 {
     private final DataJpaRepository dataJpaRepository;
 
+    /**
+     * 데이터셋 도메인 객체를 데이터베이스에 저장하고 저장된 결과를 반환합니다.
+     *
+     * @param data 저장할 데이터셋 도메인 객체
+     * @return 저장된 데이터셋 도메인 객체
+     */
     @Override
     public Data saveData(Data data) {
         DataEntity dataEntity = DataEntityMapper.toEntity(data);
@@ -34,12 +40,12 @@ public class DataCommandDbAdapter implements
     }
 
     /**
-     * 데이터 ID에 해당하는 데이터 엔티티의 데이터 파일 URL을 새 값으로 변경합니다.
+     * 지정한 데이터 ID의 데이터 파일 URL을 새로운 값으로 업데이트합니다.
      *
-     * 데이터가 존재하지 않으면 DataException이 발생합니다.
+     * 데이터가 존재하지 않을 경우 {@link DataException}이 발생합니다.
      *
      * @param dataId 데이터 엔티티의 ID
-     * @param dataFileUrl 변경할 데이터 파일의 URL
+     * @param dataFileUrl 새로 설정할 데이터 파일의 URL
      */
     @Override
     public void updateDataFile(Long dataId, String dataFileUrl) {
@@ -54,10 +60,10 @@ public class DataCommandDbAdapter implements
     }
 
     /**
-     * 지정한 데이터 ID의 썸네일 파일 URL을 새로운 값으로 업데이트합니다.
+     * 데이터 ID에 해당하는 데이터셋의 썸네일 파일 URL을 새 값으로 변경합니다.
      *
-     * @param dataId 업데이트할 데이터의 ID
-     * @param thumbnailFileUrl 새로 설정할 썸네일 파일 URL
+     * @param dataId 썸네일 파일 URL을 변경할 데이터의 ID
+     * @param thumbnailFileUrl 새로 지정할 썸네일 파일의 URL
      * @throws DataException 데이터가 존재하지 않을 경우 발생합니다.
      */
     @Override
@@ -73,11 +79,11 @@ public class DataCommandDbAdapter implements
     }
 
     /**
-     * 지정된 데이터 ID에 해당하는 DataEntity를 찾아 DataModifyRequest로 수정한 후 저장합니다.
+     * 데이터 ID에 해당하는 데이터셋 정보를 수정 요청에 따라 변경합니다.
      *
      * 데이터가 존재하지 않을 경우 DataException이 발생합니다.
      *
-     * @param dataId 수정할 데이터의 ID
+     * @param dataId 수정할 데이터셋의 ID
      * @param requestDto 데이터 수정 요청 정보
      */
     @Override

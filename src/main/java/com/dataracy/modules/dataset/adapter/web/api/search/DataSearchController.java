@@ -35,7 +35,7 @@ public class DataSearchController implements DataSearchApi {
     private final SearchRealTimeDataSetsUseCase searchRealTimeDataSetsUseCase;
 
     /**
-     * 주어진 데이터 ID를 기준으로 유사한 데이터셋 목록을 조회합니다.
+     * 주어진 데이터 ID를 기준으로 유사한 데이터셋 목록을 최대 지정된 개수만큼 조회하여 반환합니다.
      *
      * @param dataId 유사 데이터셋 검색의 기준이 되는 데이터 ID
      * @param size 반환할 유사 데이터셋의 최대 개수
@@ -53,10 +53,10 @@ public class DataSearchController implements DataSearchApi {
     }
 
     /**
-     * 필터 조건과 페이지 정보를 기반으로 데이터셋 목록을 검색하여 반환합니다.
+     * 필터 조건과 페이지 정보를 이용해 데이터셋을 검색하고, 페이징된 결과를 반환합니다.
      *
-     * @param webRequest 데이터셋 필터링 조건이 담긴 요청 객체
-     * @param pageable 페이지네이션 정보
+     * @param webRequest 데이터셋 필터링 조건이 포함된 요청 객체
+     * @param pageable 결과의 페이지네이션 정보를 담은 객체
      * @return 필터링 및 페이징된 데이터셋 목록이 포함된 성공 응답
      */
     @Override
@@ -70,11 +70,11 @@ public class DataSearchController implements DataSearchApi {
     }
 
     /**
-     * 실시간으로 키워드에 해당하는 데이터셋 목록을 조회합니다.
+     * 주어진 키워드로 실시간 데이터셋 목록을 최대 지정된 개수만큼 조회하여 반환합니다.
      *
-     * @param keyword 검색할 키워드
-     * @param size 반환할 데이터셋 최대 개수
-     * @return 실시간 데이터셋 목록이 포함된 성공 응답
+     * @param keyword 검색에 사용할 키워드
+     * @param size 반환할 데이터셋의 최대 개수
+     * @return 실시간 데이터셋 목록과 성공 상태가 포함된 HTTP 200 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<List<RecentMinimalDataWebResponse>>> getRealTimeDataSets(String keyword, int size) {
