@@ -64,8 +64,8 @@ public class LikeTargetCommandService implements
             try {
                 likeCommandPort.cancelLike(userId, requestDto.targetId(), targetType);
                 switch (targetType) {
-                    case PROJECT -> sendLikeEventPort.sendProjectLikeDecreaseEvent(requestDto.targetId());
-                    case COMMENT -> sendLikeEventPort.sendCommentLikeDecreaseEvent(requestDto.targetId());
+                    case PROJECT -> sendLikeEventPort.sendLikeEvent(TargetType.PROJECT, requestDto.targetId(), true);
+                    case COMMENT -> sendLikeEventPort.sendLikeEvent(TargetType.COMMENT, requestDto.targetId(), true);
                 };
             } catch (Exception e) {
                 switch (targetType) {
@@ -89,8 +89,8 @@ public class LikeTargetCommandService implements
             try {
                 likeCommandPort.save(like);
                 switch (targetType) {
-                    case PROJECT -> sendLikeEventPort.sendProjectLikeIncreaseEvent(requestDto.targetId());
-                    case COMMENT -> sendLikeEventPort.sendCommentLikeIncreaseEvent(requestDto.targetId());
+                    case PROJECT -> sendLikeEventPort.sendLikeEvent(TargetType.PROJECT, requestDto.targetId(), false);
+                    case COMMENT -> sendLikeEventPort.sendLikeEvent(TargetType.PROJECT, requestDto.targetId(), false);
                 };
             } catch (Exception e) {
                 switch (targetType) {
