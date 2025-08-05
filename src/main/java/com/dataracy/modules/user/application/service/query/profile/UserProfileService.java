@@ -1,12 +1,12 @@
 package com.dataracy.modules.user.application.service.query.profile;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.user.application.port.in.profile.FindUserAuthorLevelIdsUseCase;
-import com.dataracy.modules.user.application.port.in.profile.FindUserThumbnailUseCase;
-import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
-import com.dataracy.modules.user.application.port.in.profile.GetUserInfoUseCase;
-import com.dataracy.modules.user.application.port.out.jpa.UserMultiQueryPort;
-import com.dataracy.modules.user.application.port.out.jpa.UserQueryPort;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserAuthorLevelIdsUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfoUseCase;
+import com.dataracy.modules.user.application.port.out.query.UserMultiQueryPort;
+import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;

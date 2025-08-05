@@ -14,7 +14,7 @@ import com.dataracy.modules.auth.domain.model.vo.AuthUser;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.lock.DistributedLock;
-import com.dataracy.modules.user.application.port.in.validation.IsLoginPossibleUseCase;
+import com.dataracy.modules.user.application.port.in.query.auth.IsLoginPossibleUseCase;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;

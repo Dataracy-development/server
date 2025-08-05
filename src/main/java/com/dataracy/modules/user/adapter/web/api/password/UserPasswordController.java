@@ -7,8 +7,8 @@ import com.dataracy.modules.user.adapter.web.request.password.ChangePasswordWebR
 import com.dataracy.modules.user.adapter.web.request.password.ConfirmPasswordWebRequest;
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.password.ConfirmPasswordRequest;
-import com.dataracy.modules.user.application.port.in.password.ChangePasswordUseCase;
-import com.dataracy.modules.user.application.port.in.password.ConfirmPasswordUseCase;
+import com.dataracy.modules.user.application.port.in.command.password.ChangePasswordUseCase;
+import com.dataracy.modules.user.application.port.in.query.password.ConfirmPasswordUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -9,8 +9,8 @@ import com.dataracy.modules.user.adapter.web.request.signup.OnboardingWebRequest
 import com.dataracy.modules.user.adapter.web.request.signup.SelfSignUpWebRequest;
 import com.dataracy.modules.user.application.dto.request.signup.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.signup.SelfSignUpRequest;
-import com.dataracy.modules.user.application.port.in.signup.OAuthSignUpUseCase;
-import com.dataracy.modules.user.application.port.in.signup.SelfSignUpUseCase;
+import com.dataracy.modules.user.application.port.in.command.signup.OAuthSignUpUseCase;
+import com.dataracy.modules.user.application.port.in.command.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
