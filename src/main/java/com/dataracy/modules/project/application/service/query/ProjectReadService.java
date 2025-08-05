@@ -5,16 +5,22 @@ import com.dataracy.modules.like.application.port.in.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
+import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
+import com.dataracy.modules.project.application.dto.response.support.ProjectLabelMapResponse;
 import com.dataracy.modules.project.application.mapper.read.ConnectedProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.read.ContinuedProjectDtoMapper;
+import com.dataracy.modules.project.application.mapper.read.PopularProjectDtoMapper;
+import com.dataracy.modules.project.application.port.in.query.extractor.FindProjectLabelMapUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.FindConnectedProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
+import com.dataracy.modules.project.application.port.in.query.read.GetPopularProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.GetProjectDetailUseCase;
 import com.dataracy.modules.project.application.port.out.cache.CacheProjectViewCountPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindConnectedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
+import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectDataExistsPort;
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByParentPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
@@ -45,10 +51,12 @@ import java.util.Map;
 public class ProjectReadService implements
         GetProjectDetailUseCase,
         FindContinuedProjectsUseCase,
-        FindConnectedProjectsUseCase
+        FindConnectedProjectsUseCase,
+        GetPopularProjectsUseCase
 {
     private final ContinuedProjectDtoMapper continuedProjectDtoMapper;
     private final ConnectedProjectDtoMapper connectedProjectDtoMapper;
+    private final PopularProjectDtoMapper popularProjectDtoMapper;
 
     private final CacheProjectViewCountPort cacheProjectViewCountPort;
 
@@ -58,6 +66,7 @@ public class ProjectReadService implements
     private final FindProjectPort findProjectPort;
     private final FindContinuedProjectsPort findContinuedProjectsPort;
     private final FindConnectedProjectsPort findConnectedProjectsPort;
+    private final GetPopularProjectsPort getPopularProjectsPort;
 
     private final GetUserInfoUseCase getUserInfoUseCase;
     private final FindUsernameUseCase findUsernameUseCase;
@@ -68,6 +77,7 @@ public class ProjectReadService implements
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
+    private final FindProjectLabelMapUseCase findProjectLabelMapUseCase;
 
     private final ValidateTargetLikeUseCase validateTargetLikeUseCase;
 
@@ -204,5 +214,57 @@ public class ProjectReadService implements
 
         LoggerFactory.service().logSuccess("FindConnectedProjectsUseCase", "데이터셋과 연결된 프로젝트 목록 조회 서비스 종료 dataId=" + dataId, startTime);
         return connectedProjectsResponses;
+    }
+
+    //    @Override
+//    @Transactional(readOnly = true)
+//    public List<ProjectPopularSearchResponse> getPopularProjects(int size) {
+//        List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
+//        List<ProjectPopularSearchResponse> responseDto = savedProjects.stream()
+//                .map(project -> {
+//                    String username = findUsernameUseCase.findUsernameById(project.getUserId());
+//                    String topicLabel = getTopicLabelFromIdUseCase.getLabelById(project.getTopicId());
+//                    String analysisPurposeLabel = getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId());
+//                    String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId());
+//                    String authorLevelLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(project.getAuthorLevelId());
+//
+//                    return popularProjectsDtoMapper.toResponseDto(
+//                            project,
+//                            username,
+//                            topicLabel,
+//                            analysisPurposeLabel,
+//                            dataSourceLabel,
+//                            authorLevelLabel
+//                    );
+//                })
+//                .toList();
+//        return responseDto;
+
+    /**
+     * 지정한 개수만큼 인기 프로젝트를 조회하여, 각 프로젝트에 사용자명과 주제, 분석 목적, 데이터 소스, 저자 레벨 등 라벨 정보를 포함한 응답 리스트를 반환합니다.
+     *
+     * @param size 조회할 인기 프로젝트의 최대 개수
+     * @return 사용자명과 다양한 라벨 정보가 포함된 인기 프로젝트 응답 리스트
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<PopularProjectResponse> getPopularProjects(int size) {
+        Instant startTime = LoggerFactory.service().logStart("SearchPopularProjectsUseCase", "인기 프로젝트 목록 조회 서비스 시작");
+
+        List<Project> savedProjects = getPopularProjectsPort.getPopularProjects(size);
+        ProjectLabelMapResponse labelResponse = findProjectLabelMapUseCase.labelMapping(savedProjects);
+        List<PopularProjectResponse> popularProjectResponses = savedProjects.stream()
+                .map(project -> popularProjectDtoMapper.toResponseDto(
+                        project,
+                        labelResponse.usernameMap().get(project.getUserId()),
+                        labelResponse.topicLabelMap().get(project.getTopicId()),
+                        labelResponse.analysisPurposeLabelMap().get(project.getAnalysisPurposeId()),
+                        labelResponse.dataSourceLabelMap().get(project.getDataSourceId()),
+                        labelResponse.authorLevelLabelMap().get(project.getAuthorLevelId())
+                ))
+                .toList();
+
+        LoggerFactory.service().logSuccess("SearchPopularProjectsUseCase", "인기 프로젝트 목록 조회 서비스 종료", startTime);
+        return popularProjectResponses;
     }
 }

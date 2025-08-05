@@ -1,4 +1,4 @@
-package com.dataracy.modules.project.application.dto.response.search;
+package com.dataracy.modules.project.application.dto.response.read;
 
 public record PopularProjectResponse(
         Long id,
