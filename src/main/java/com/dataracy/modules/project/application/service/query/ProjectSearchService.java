@@ -112,6 +112,7 @@ public class ProjectSearchService implements
      * @return 필터링된 프로젝트 응답 DTO의 페이지 객체
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<FilteredProjectResponse> searchByFilters(FilteringProjectRequest request, Pageable pageable) {
         Instant startTime = LoggerFactory.service().logStart("SearchFilteredProjectsUseCase", "필터링된 프로젝트 목록 조회 서비스 시작 keyword=" + request.keyword());
 
