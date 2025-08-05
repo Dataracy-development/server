@@ -1,7 +1,7 @@
 package com.dataracy.modules.project.application.service.query;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.like.application.port.in.ValidateTargetLikeUseCase;
+import com.dataracy.modules.like.application.port.in.validate.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;

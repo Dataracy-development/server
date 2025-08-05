@@ -1,5 +1,6 @@
 package com.dataracy.modules.like.domain.enums;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.like.domain.exception.LikeException;
 import com.dataracy.modules.like.domain.status.LikeErrorStatus;
 import lombok.Getter;
@@ -34,7 +35,9 @@ public enum TargetType {
         return Arrays.stream(TargetType.values())
                 .filter(type -> type.value.equalsIgnoreCase(input) || type.name().equalsIgnoreCase(input))
                 .findFirst()
-                .orElseThrow(() -> new LikeException(LikeErrorStatus.INVALID_TARGET_TYPE));
+                .orElseThrow(() -> {
+                    LoggerFactory.domain().logRuleViolation("TargetType", "잘못된 ENUM 타입입니다. PROJECT, COMMENT만 가능합니다.");
+                    return new LikeException(LikeErrorStatus.INVALID_TARGET_TYPE);
+                });
     }
 }
-

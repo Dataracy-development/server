@@ -1,9 +1,9 @@
-package com.dataracy.modules.like.application.port.out;
+package com.dataracy.modules.like.application.port.out.command;
 
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.like.domain.model.Like;
 
-public interface LikeRepositoryPort {
+public interface LikeCommandPort {
     /**
  * 새로운 좋아요 정보를 저장합니다.
  *

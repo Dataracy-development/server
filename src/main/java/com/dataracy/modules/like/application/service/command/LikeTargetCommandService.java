@@ -1,11 +1,12 @@
 package com.dataracy.modules.like.application.service.command;
 
 import com.dataracy.modules.comment.application.port.in.ValidateCommentUseCase;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;
-import com.dataracy.modules.like.application.port.in.TargetLikeUseCase;
-import com.dataracy.modules.like.application.port.out.LikeKafkaProducerPort;
-import com.dataracy.modules.like.application.port.out.LikeRepositoryPort;
+import com.dataracy.modules.like.application.port.in.command.LikeTargetUseCase;
+import com.dataracy.modules.like.application.port.out.command.LikeCommandPort;
+import com.dataracy.modules.like.application.port.out.command.SendLikeEventPort;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.like.domain.exception.LikeException;
 import com.dataracy.modules.like.domain.model.Like;
@@ -16,15 +17,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LikeCommandService implements
-        TargetLikeUseCase
+public class LikeTargetCommandService implements
+        LikeTargetUseCase
 {
-
-    private final LikeRepositoryPort likeRepositoryPort;
-    private final LikeKafkaProducerPort likeKafkaProducerPort;
+    private final LikeCommandPort likeCommandPort;
+    private final SendLikeEventPort sendLikeEventPort;
 
     private final ValidateProjectUseCase validateProjectUseCase;
     private final ValidateCommentUseCase validateCommentUseCase;
@@ -47,8 +49,9 @@ public class LikeCommandService implements
             leaseTime = 2000L,
             retry = 2
     )
-    public TargetType targetLike(Long userId, TargetLikeRequest requestDto) {
+    public TargetType likeTarget(Long userId, TargetLikeRequest requestDto) {
 
+        Instant startTime = LoggerFactory.service().logStart("LikeTargetUseCase", requestDto.targetType() + "좋아요 서비스 시작 targetId=" + requestDto.targetId());
         TargetType targetType = TargetType.of(requestDto.targetType());
 
         if (targetType.equals(TargetType.PROJECT)) {
@@ -59,16 +62,21 @@ public class LikeCommandService implements
 
         if (requestDto.previouslyLiked()){
             try {
-                likeRepositoryPort.cancelLike(userId, requestDto.targetId(), targetType);
+                likeCommandPort.cancelLike(userId, requestDto.targetId(), targetType);
                 switch (targetType) {
-                    case PROJECT -> likeKafkaProducerPort.sendProjectLikeDecreaseEvent(requestDto.targetId());
-                    case COMMENT -> likeKafkaProducerPort.sendCommentLikeDecreaseEvent(requestDto.targetId());
+                    case PROJECT -> sendLikeEventPort.sendProjectLikeDecreaseEvent(requestDto.targetId());
+                    case COMMENT -> sendLikeEventPort.sendCommentLikeDecreaseEvent(requestDto.targetId());
                 };
             } catch (Exception e) {
-                log.error("Database error while saving like: {}", e.getMessage());
                 switch (targetType) {
-                    case PROJECT -> throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_PROJECT);
-                    case COMMENT -> throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_COMMENT);
+                    case PROJECT -> {
+                        LoggerFactory.service().logWarning("LikeTargetUseCase", "프로젝트 좋아요 취소 실패. targetId=" + requestDto.targetId());
+                        throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_PROJECT);
+                    }
+                    case COMMENT -> {
+                        LoggerFactory.service().logWarning("LikeTargetUseCase", "댓글 좋아요 취소 실패. targetId=" + requestDto.targetId());
+                        throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_COMMENT);
+                    }
                 };
             }
         } else {
@@ -79,19 +87,26 @@ public class LikeCommandService implements
                     userId
             );
             try {
-                likeRepositoryPort.save(like);
+                likeCommandPort.save(like);
                 switch (targetType) {
-                    case PROJECT -> likeKafkaProducerPort.sendProjectLikeIncreaseEvent(requestDto.targetId());
-                    case COMMENT -> likeKafkaProducerPort.sendCommentLikeIncreaseEvent(requestDto.targetId());
+                    case PROJECT -> sendLikeEventPort.sendProjectLikeIncreaseEvent(requestDto.targetId());
+                    case COMMENT -> sendLikeEventPort.sendCommentLikeIncreaseEvent(requestDto.targetId());
                 };
             } catch (Exception e) {
                 switch (targetType) {
-                    case PROJECT -> throw new LikeException(LikeErrorStatus.FAIL_LIKE_PROJECT);
-                    case COMMENT -> throw new LikeException(LikeErrorStatus.FAIL_LIKE_COMMENT);
+                    case PROJECT -> {
+                        LoggerFactory.service().logWarning("LikeTargetUseCase", "프로젝트 좋아요 실패. targetId=" + requestDto.targetId());
+                        throw new LikeException(LikeErrorStatus.FAIL_LIKE_PROJECT);
+                    }
+                    case COMMENT -> {
+                        LoggerFactory.service().logWarning("LikeTargetUseCase", "댓글 좋아요 실패. targetId=" + requestDto.targetId());
+                        throw new LikeException(LikeErrorStatus.FAIL_LIKE_COMMENT);
+                    }
                 };
             }
         }
 
+        LoggerFactory.service().logSuccess("LikeTargetUseCase", requestDto.targetType() + "좋아요 서비스 종료 targetId=" + requestDto.targetId(), startTime);
         return targetType;
     }
 }

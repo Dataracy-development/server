@@ -5,6 +5,7 @@ import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.like.adapter.web.request.TargetLikeWebRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,6 +32,11 @@ public interface LikeApi {
             summary = "해당 타겟에 대한 좋아요 처리를 한다.",
             description = "해당 타겟에 대한 좋아요 처리를 한다."
     )
+    @Parameter(
+            in = ParameterIn.HEADER,
+            name = "Authorization", required = true,
+            schema = @Schema(type = "string"),
+            description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "해당 타겟에 대한 좋아요 처리를 한다.",
                     content = @Content(mediaType = "application/json",

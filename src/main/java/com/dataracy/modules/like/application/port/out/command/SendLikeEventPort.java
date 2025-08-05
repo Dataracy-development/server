@@ -1,6 +1,6 @@
-package com.dataracy.modules.like.application.port.out;
+package com.dataracy.modules.like.application.port.out.command;
 
-public interface LikeKafkaProducerPort {
+public interface SendLikeEventPort {
 /**
  * 지정된 프로젝트의 좋아요 증가 이벤트를 Kafka로 전송합니다.
  *
