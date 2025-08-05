@@ -1,13 +1,15 @@
 package com.dataracy.modules.reference.adapter.jpa.impl;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.reference.adapter.jpa.entity.AuthorLevelEntity;
 import com.dataracy.modules.reference.adapter.jpa.mapper.AuthorLevelEntityMapper;
 import com.dataracy.modules.reference.adapter.jpa.repository.AuthorLevelJpaRepository;
-import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
+import com.dataracy.modules.reference.application.port.out.AuthorLevelPort;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
+public class AuthorLevelDbAdapter implements AuthorLevelPort {
     private final AuthorLevelJpaRepository authorLevelJpaRepository;
 
     /**
@@ -24,10 +26,13 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
      */
     @Override
     public List<AuthorLevel> findAllAuthorLevels() {
+        Instant startTime = LoggerFactory.db().logQueryStart("AuthorLevelEntity", "[findAll] 작성자 유형 목록 조회 시작");
         List<AuthorLevelEntity> authorLevelEntities = authorLevelJpaRepository.findAll();
-        return authorLevelEntities.stream()
+        List<AuthorLevel> authorLevels = authorLevelEntities.stream()
                 .map(AuthorLevelEntityMapper::toDomain)
                 .toList();
+        LoggerFactory.db().logQueryEnd("AuthorLevelEntity", "[findAll] 작성자 유형 목록 조회 종료", startTime);
+        return authorLevels;
     }
 
     /**
@@ -38,11 +43,14 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
      */
     @Override
     public Optional<AuthorLevel> findAuthorLevelById(Long authorLevelId) {
+        Instant startTime = LoggerFactory.db().logQueryStart("AuthorLevelEntity", "[findById] 작성자 유형 목록 조회 시작 authorLevelId=" + authorLevelId);
         if (authorLevelId == null) {
             return Optional.empty();
         }
-        return authorLevelJpaRepository.findById(authorLevelId)
+        Optional<AuthorLevel> authorLevel = authorLevelJpaRepository.findById(authorLevelId)
                 .map(AuthorLevelEntityMapper::toDomain);
+        LoggerFactory.db().logQueryEnd("AuthorLevelEntity", "[findById] 작성자 유형 목록 조회 종료 authorLevelId=" + authorLevelId, startTime);
+        return authorLevel;
     }
 
     /**
@@ -56,7 +64,9 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
         if (authorLevelId == null) {
             return false;
         }
-        return authorLevelJpaRepository.existsById(authorLevelId);
+        boolean isExists = authorLevelJpaRepository.existsById(authorLevelId);
+        LoggerFactory.db().logExist("AuthorLevelEntity", "[existsById] 작성자 유형 존재 유무 확인 authorLevelId=" + authorLevelId + ", isExists=" + isExists);
+        return isExists;
     }
 
     /**
@@ -67,10 +77,13 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
      */
     @Override
     public Optional<String> getLabelById(Long authorLevelId) {
+        Instant startTime = LoggerFactory.db().logQueryStart("AuthorLevelEntity", "[findLabelById] 작성자 유형 라벨 조회 시작 authorLevelId=" + authorLevelId);
         if (authorLevelId == null) {
             return Optional.empty();
         }
-        return authorLevelJpaRepository.findLabelById(authorLevelId);
+        Optional<String> label = authorLevelJpaRepository.findLabelById(authorLevelId);
+        LoggerFactory.db().logQueryEnd("AuthorLevelEntity", "[findLabelById] 작성자 유형 라벨 조회 종료 authorLevelId=" + authorLevelId + ", label=" + label, startTime);
+        return label;
     }
 
     /**
@@ -81,8 +94,11 @@ public class AuthorLevelRepositoryAdapter implements AuthorLevelRepositoryPort {
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> authorLevelIds) {
-        return authorLevelJpaRepository.findAllById(authorLevelIds)
+        Instant startTime = LoggerFactory.db().logQueryStart("AuthorLevelEntity", "[findAllById] 작성자 유형 라벨 목록 조회 시작");
+        Map<Long, String> labels = authorLevelJpaRepository.findAllById(authorLevelIds)
                 .stream()
                 .collect(Collectors.toMap(AuthorLevelEntity::getId, AuthorLevelEntity::getLabel));
+        LoggerFactory.db().logQueryEnd("AuthorLevelEntity", "[findAllById] 작성자 유형 라벨 목록 조회 종료", startTime);
+        return labels;
     }
 }

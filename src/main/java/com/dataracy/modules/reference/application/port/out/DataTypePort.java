@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * DataType db에 접근하는 포트
  */
-public interface DataTypeRepositoryPort {
+public interface DataTypePort {
     /**
  * 데이터베이스에 저장된 모든 데이터 유형의 리스트를 반환합니다.
  *

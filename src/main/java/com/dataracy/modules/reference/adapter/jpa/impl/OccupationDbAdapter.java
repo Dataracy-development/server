@@ -1,13 +1,15 @@
 package com.dataracy.modules.reference.adapter.jpa.impl;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.reference.adapter.jpa.entity.OccupationEntity;
 import com.dataracy.modules.reference.adapter.jpa.mapper.OccupationEntityMapper;
 import com.dataracy.modules.reference.adapter.jpa.repository.OccupationJpaRepository;
-import com.dataracy.modules.reference.application.port.out.OccupationRepositoryPort;
+import com.dataracy.modules.reference.application.port.out.OccupationPort;
 import com.dataracy.modules.reference.domain.model.Occupation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
+public class OccupationDbAdapter implements OccupationPort {
     private final OccupationJpaRepository occupationJpaRepository;
 
     /**
@@ -24,10 +26,13 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
      */
     @Override
     public List<Occupation> findAllOccupations() {
+        Instant startTime = LoggerFactory.db().logQueryStart("OccupationEntity", "[findAll] 직업 목록 조회 시작");
         List<OccupationEntity> occupationEntities = occupationJpaRepository.findAll();
-        return occupationEntities.stream()
+        List<Occupation> occupations = occupationEntities.stream()
                 .map(OccupationEntityMapper::toDomain)
                 .toList();
+        LoggerFactory.db().logQueryEnd("OccupationEntity", "[findAll] 직업 목록 조회 종료", startTime);
+        return occupations;
     }
 
     /**
@@ -38,11 +43,14 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
      */
     @Override
     public Optional<Occupation> findOccupationById(Long occupationId) {
+        Instant startTime = LoggerFactory.db().logQueryStart("OccupationEntity", "[findById] 직업 목록 조회 시작 occupationId=" + occupationId);
         if (occupationId == null) {
             return Optional.empty();
         }
-        return occupationJpaRepository.findById(occupationId)
+        Optional<Occupation> occupation = occupationJpaRepository.findById(occupationId)
                 .map(OccupationEntityMapper::toDomain);
+        LoggerFactory.db().logQueryEnd("OccupationEntity", "[findById] 직업 목록 조회 종료 occupationId=" + occupationId, startTime);
+        return occupation;
     }
 
     /**
@@ -56,7 +64,9 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
         if (occupationId == null) {
             return false;
         }
-        return occupationJpaRepository.existsById(occupationId);
+        boolean isExists = occupationJpaRepository.existsById(occupationId);
+        LoggerFactory.db().logExist("OccupationEntity", "[existsById] 직업 존재 유무 확인 occupationId=" + occupationId + ", isExists=" + isExists);
+        return isExists;
     }
 
     /**
@@ -67,10 +77,13 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
      */
     @Override
     public Optional<String> getLabelById(Long occupationId) {
+        Instant startTime = LoggerFactory.db().logQueryStart("OccupationEntity", "[findLabelById] 직업 라벨 조회 시작 occupationId=" + occupationId);
         if (occupationId == null) {
             return Optional.empty();
         }
-        return occupationJpaRepository.findLabelById(occupationId);
+        Optional<String> label = occupationJpaRepository.findLabelById(occupationId);
+        LoggerFactory.db().logQueryEnd("OccupationEntity", "[findLabelById] 직업 라벨 조회 종료 occupationId=" + occupationId + ", label=" + label, startTime);
+        return label;
     }
 
     /**
@@ -81,8 +94,11 @@ public class OccupationRepositoryAdapter implements OccupationRepositoryPort {
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> occupationIds) {
-        return occupationJpaRepository.findAllById(occupationIds)
+        Instant startTime = LoggerFactory.db().logQueryStart("OccupationEntity", "[findAllById] 직업 라벨 목록 조회 시작");
+        Map<Long, String> labels = occupationJpaRepository.findAllById(occupationIds)
                 .stream()
                 .collect(Collectors.toMap(OccupationEntity::getId, OccupationEntity::getLabel));
+        LoggerFactory.db().logQueryEnd("OccupationEntity", "[findAllById] 직업 라벨 목록 조회 종료", startTime);
+        return labels;
     }
 }
