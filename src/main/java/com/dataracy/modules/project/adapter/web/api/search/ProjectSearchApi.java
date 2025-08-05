@@ -79,28 +79,6 @@ public interface ProjectSearchApi {
     );
 
     /**
-     * 좋아요, 댓글, 조회수를 기준으로 인기 프로젝트 목록을 조회한다.
-     *
-     * @param size 반환할 최대 프로젝트 개수 (1 이상)
-     * @return 인기 프로젝트 목록이 포함된 성공 응답 객체
-     */
-    @Operation(
-            summary = "인기있는 프로젝트 리스트를 조회한다.",
-            description = "좋아요, 댓글, 조회수를 기준으로 프로젝트 리스트를 조회한다."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "인기있는 프로젝트 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
-    })
-    @GetMapping("/popular")
-    ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> searchPopularProjects(
-            @RequestParam(name = "size")
-            @Min(1)
-            int size
-    );
-
-    /**
      * 필터 조건에 따라 프로젝트 목록을 페이지네이션하여 조회한다.
      *
      * @param webRequest 프로젝트 필터링 조건이 포함된 요청 객체
