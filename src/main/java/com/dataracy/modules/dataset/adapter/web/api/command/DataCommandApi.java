@@ -6,6 +6,7 @@ import com.dataracy.modules.dataset.adapter.web.request.command.ModifyDataWebReq
 import com.dataracy.modules.dataset.adapter.web.request.command.UploadDataWebRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,6 +35,11 @@ public interface DataCommandApi {
             summary = "데이터셋을 업로드한다.",
             description = "제공받은 웹 요청 DTO의 데이터셋 정보를 통해 데이터셋 정보를 db에 저장한다"
     )
+    @Parameter(
+            in = ParameterIn.HEADER,
+            name = "Authorization", required = true,
+            schema = @Schema(type = "string"),
+            description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "데이터셋 업로드에 성공했습니다.",
                     content = @Content(mediaType = "application/json",
@@ -64,6 +70,11 @@ public interface DataCommandApi {
             summary = "데이터셋 수정한다.",
             description = "제공받은 웹 요청 DTO의 데이터셋 정보를 통해 기존 데이터셋을 수정한다."
     )
+    @Parameter(
+            in = ParameterIn.HEADER,
+            name = "Authorization", required = true,
+            schema = @Schema(type = "string"),
+            description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "데이터셋 수정에 성공했습니다.",
                     content = @Content(mediaType = "application/json",
@@ -91,6 +102,11 @@ public interface DataCommandApi {
             summary = "데이터셋을 삭제한다.",
             description = "해당하는 데이터셋을 삭제한다."
     )
+    @Parameter(
+            in = ParameterIn.HEADER,
+            name = "Authorization", required = true,
+            schema = @Schema(type = "string"),
+            description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 삭제에  성공했습니다.",
                     content = @Content(mediaType = "application/json",
@@ -112,6 +128,11 @@ public interface DataCommandApi {
             summary = "데이터셋을 복원한다.",
             description = "해당하는 데이터셋을 복원한다."
     )
+    @Parameter(
+            in = ParameterIn.HEADER,
+            name = "Authorization", required = true,
+            schema = @Schema(type = "string"),
+            description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 복원에  성공했습니다.",
                     content = @Content(mediaType = "application/json",
