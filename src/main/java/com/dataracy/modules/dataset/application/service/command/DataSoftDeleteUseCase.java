@@ -53,9 +53,9 @@ public class DataSoftDeleteUseCase implements
     @Override
     @Transactional
     public void restoreData(Long dataId) {
-        Instant startTime = LoggerFactory.service().logStart("DeleteDataUseCase", "데이터셋 복원 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart("RestoreDataUseCase", "데이터셋 복원 서비스 시작 dataId=" + dataId);
         softDeleteDataDbPort.restoreData(dataId);
         softDeleteDataEsPort.restoreData(dataId);
-        LoggerFactory.service().logSuccess("DeleteDataUseCase", "데이터셋 복원 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess("RestoreDataUseCase", "데이터셋 복원 서비스 종료 dataId=" + dataId, startTime);
     }
 }

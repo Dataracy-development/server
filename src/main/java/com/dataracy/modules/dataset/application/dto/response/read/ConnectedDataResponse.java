@@ -11,7 +11,7 @@ public record ConnectedDataResponse(
         LocalDate startDate,
         LocalDate endDate,
         String thumbnailUrl,
-        int downloadCount,
+        Integer downloadCount,
         Integer rowCount,
         Integer columnCount,
         LocalDateTime createdAt,

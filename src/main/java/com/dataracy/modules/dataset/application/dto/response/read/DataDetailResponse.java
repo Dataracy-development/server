@@ -17,7 +17,7 @@ public record DataDetailResponse(
         String description,
         String analysisGuide,
         String thumbnailUrl,
-        int downloadCount,
+        Integer downloadCount,
         Integer rowCount,
         Integer columnCount,
         String previewJson,

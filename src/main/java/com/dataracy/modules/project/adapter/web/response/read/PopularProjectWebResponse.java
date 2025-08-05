@@ -2,7 +2,7 @@ package com.dataracy.modules.project.adapter.web.response.read;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "인기 프로젝트 검색 웹 응답 DTO")
+@Schema(description = "인기 프로젝트 조회 웹 응답 DTO")
 public record PopularProjectWebResponse(
         @Schema(description = "프로젝트 아이디", example = "1")
         Long id,

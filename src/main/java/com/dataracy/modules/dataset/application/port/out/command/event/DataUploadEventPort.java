@@ -1,8 +1,5 @@
 package com.dataracy.modules.dataset.application.port.out.command.event;
 
-/**
- * 데이터셋 카프카 포트
- */
 public interface DataUploadEventPort {
     /**
      * 데이터 업로드 이벤트를 전송합니다.

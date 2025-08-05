@@ -111,15 +111,15 @@ public class ProjectReadController implements ProjectReadApi {
      * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> searchPopularProjects(int size) {
-        Instant startTime = LoggerFactory.api().logRequest("[SearchPopularProjects] 인기 프로젝트 목록 조회 API 요청 시작");
+    public ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> getPopularProjects(int size) {
+        Instant startTime = LoggerFactory.api().logRequest("[GetPopularProjects] 인기 프로젝트 목록 조회 API 요청 시작");
 
         List<PopularProjectResponse> responseDto = getPopularProjectsUseCase.getPopularProjects(size);
         List<PopularProjectWebResponse> webResponse = responseDto.stream()
-                .map(projectReadWebMapper::toWeb)
+                .map(projectReadWebMapper::toWebDto)
                 .toList();
 
-        LoggerFactory.api().logResponse("[SearchPopularProjects] 인기 프로젝트 목록 조회 API 응답 완료", startTime);
+        LoggerFactory.api().logResponse("[GetPopularProjects] 인기 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_POPULAR_PROJECTS, webResponse));
     }

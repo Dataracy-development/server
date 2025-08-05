@@ -113,7 +113,7 @@ public class ProjectReadService implements
 
         // 작성자 정보
         UserInfo userInfo = getUserInfoUseCase.getUserInfo(project.getUserId());
-        ProjectUser projectUser = ProjectUser.from(userInfo);
+        ProjectUser projectUser = ProjectUser.fromUserInfo(userInfo);
 
         // 선택조건 null 일 경우에 대한 처리
         String authorLevelLabel = projectUser.authorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(projectUser.authorLevelId());

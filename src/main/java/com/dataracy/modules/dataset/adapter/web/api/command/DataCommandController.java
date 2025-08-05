@@ -29,6 +29,8 @@ public class DataCommandController implements DataCommandApi {
     private final RestoreDataUseCase restoreDataUseCase;
     private final DownloadDataFileUseCase downloadDataFileUseCase;
 
+    private static final int PRESIGNED_URL_EXPIRY_SECONDS = 300;
+
     /**
      * 데이터 업로드 요청을 처리하여 데이터셋을 생성하고, 성공 상태의 HTTP 201(Created) 응답을 반환합니다.
      *
@@ -118,7 +120,7 @@ public class DataCommandController implements DataCommandApi {
     @Override
     public ResponseEntity<SuccessResponse<String>> getPreSignedDataUrl(Long dataId) {
         Instant startTime = LoggerFactory.api().logRequest("[GetPreSignedDataUrl] 데이터셋 다운로드 url API 요청 시작");
-        String preSignedUrl = downloadDataFileUseCase.download(dataId, 300);
+        String preSignedUrl = downloadDataFileUseCase.download(dataId, PRESIGNED_URL_EXPIRY_SECONDS);
         LoggerFactory.api().logResponse("[GetPreSignedDataUrl] 데이터셋 다운로드 url 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.DOWNLOAD_DATASET, preSignedUrl));

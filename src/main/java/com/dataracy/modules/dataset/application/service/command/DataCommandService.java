@@ -13,7 +13,7 @@ import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDa
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDataPort;
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateThumbnailFilePort;
 import com.dataracy.modules.dataset.application.port.out.query.read.FindDataPort;
-import com.dataracy.modules.dataset.application.port.out.query.validate.CheckDataExistsByIdPort;
+import com.dataracy.modules.dataset.application.port.out.validate.CheckDataExistsByIdPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
@@ -126,6 +126,7 @@ public class DataCommandService implements
 
         if (!checkDataExistsByIdPort.existsDataById(dataId)) {
             LoggerFactory.service().logWarning("ModifyDataUseCase", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+            throw new DataException(DataErrorStatus.NOT_FOUND_DATA);
         }
 
         // 유효성 검사

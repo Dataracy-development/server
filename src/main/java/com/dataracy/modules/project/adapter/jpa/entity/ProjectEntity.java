@@ -1,7 +1,10 @@
 package com.dataracy.modules.project.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
+import com.dataracy.modules.project.domain.exception.ProjectException;
+import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
@@ -124,6 +127,13 @@ public class ProjectEntity extends BaseTimeEntity {
      * @param fileUrl 새로 지정할 파일 URL
      */
     public void updateFile(String fileUrl) {
+        if (fileUrl == null || fileUrl.isEmpty()) {
+            LoggerFactory.domain().logWarning("잘못된 프로젝트 파일 url 형식입니다.");
+            throw new ProjectException(ProjectErrorStatus.INVALID_FILE_URL);
+        }
+        if (fileUrl.equals(this.fileUrl)) {
+            return;
+        }
         this.fileUrl = fileUrl;
     }
 

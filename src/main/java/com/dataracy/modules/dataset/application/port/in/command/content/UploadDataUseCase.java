@@ -3,9 +3,6 @@ package com.dataracy.modules.dataset.application.port.in.command.content;
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * 데이터셋 업로드 유스케이스
- */
 public interface UploadDataUseCase {
     /**
      * 데이터셋과 썸네일 파일을 업로드하고 업로드된 데이터의 식별자를 반환합니다.

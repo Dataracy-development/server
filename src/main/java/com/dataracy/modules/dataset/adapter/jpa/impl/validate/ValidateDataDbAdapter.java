@@ -2,7 +2,7 @@ package com.dataracy.modules.dataset.adapter.jpa.impl.validate;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataJpaRepository;
-import com.dataracy.modules.dataset.application.port.out.query.validate.CheckDataExistsByIdPort;
+import com.dataracy.modules.dataset.application.port.out.validate.CheckDataExistsByIdPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +20,7 @@ public class ValidateDataDbAdapter implements CheckDataExistsByIdPort {
     @Override
     public boolean existsDataById(Long dataId) {
         boolean isExist = dataJpaRepository.existsById(dataId);
-        LoggerFactory.db().logExist("DataEntity", "주어진 ID의 데이터가 저장소에 존재하ㅈ 완료되었습니다. dataId=" + dataId + ", exists=" + isExist);
+        LoggerFactory.db().logExist("DataEntity", "주어진 ID의 데이터가 저장소에 존재 확인이 완료되었습니다. dataId=" + dataId + ", exists=" + isExist);
         return isExist;
     }
 }

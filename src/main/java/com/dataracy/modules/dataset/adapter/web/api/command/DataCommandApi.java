@@ -108,7 +108,7 @@ public interface DataCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 삭제에  성공했습니다.",
+            @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 삭제에 성공했습니다.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
@@ -134,7 +134,7 @@ public interface DataCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 복원에  성공했습니다.",
+            @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 복원에 성공했습니다.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class)))
     })

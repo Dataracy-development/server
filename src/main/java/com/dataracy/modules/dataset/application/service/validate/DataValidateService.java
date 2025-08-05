@@ -1,8 +1,8 @@
 package com.dataracy.modules.dataset.application.service.validate;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.dataset.application.port.in.query.validate.ValidateDataUseCase;
-import com.dataracy.modules.dataset.application.port.out.query.validate.CheckDataExistsByIdPort;
+import com.dataracy.modules.dataset.application.port.in.validate.ValidateDataUseCase;
+import com.dataracy.modules.dataset.application.port.out.validate.CheckDataExistsByIdPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import lombok.RequiredArgsConstructor;

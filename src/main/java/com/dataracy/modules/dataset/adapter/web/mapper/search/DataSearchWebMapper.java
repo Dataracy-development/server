@@ -4,8 +4,6 @@ import com.dataracy.modules.dataset.adapter.web.response.read.RecentMinimalDataW
 import com.dataracy.modules.dataset.adapter.web.response.search.SimilarDataWebResponse;
 import com.dataracy.modules.dataset.application.dto.response.read.RecentMinimalDataResponse;
 import com.dataracy.modules.dataset.application.dto.response.search.SimilarDataResponse;
-import com.dataracy.modules.project.adapter.web.response.search.RealTimeProjectWebResponse;
-import com.dataracy.modules.project.application.dto.response.search.RealTimeProjectResponse;
 import org.springframework.stereotype.Component;
 
 @Component

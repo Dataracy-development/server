@@ -13,7 +13,7 @@ public record SimilarDataResponse(
         LocalDate endDate,
         String description,
         String thumbnailUrl,
-        int downloadCount,
+        Integer downloadCount,
         Integer rowCount,
         Integer columnCount,
         LocalDateTime createdAt

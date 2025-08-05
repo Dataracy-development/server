@@ -68,10 +68,7 @@ public class ExtractDataFileUrlDbAdapterFind implements
      */
     @Override
     public Optional<String> findDataFileUrlById(Long dataId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("DataEntity", "[findDataFileUrlById] 데이터셋의 파일 url 조회 시작 dataId=" + dataId);
-        Optional<String> dataFileUrl = dataJpaRepository.findDataFileUrlById(dataId);
-        LoggerFactory.db().logQueryEnd("DataEntity", "[findDataFileUrlById] 데이터셋의 파일 url 조회 종료 dataId=" + dataId, startTime);
-        return dataFileUrl;
+        return findDataFileUrl(dataId, "[findDataFileUrlById] 데이터셋의 파일 url 조회");
     }
 
     /**
@@ -82,9 +79,13 @@ public class ExtractDataFileUrlDbAdapterFind implements
      */
     @Override
     public Optional<String> findDownloadedDataFileUrl(Long dataId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("DataEntity", "[findDataFileUrlById] 주어진 데이터 ID에 해당하는 데이터셋 파일 url 조회 시작 dataId=" + dataId);
+        return findDataFileUrl(dataId, "[findDataFileUrlById] 주어진 데이터 ID에 해당하는 데이터셋 파일 url 조회");
+    }
+
+    private Optional<String> findDataFileUrl(Long dataId, String logPrefix) {
+        Instant startTime = LoggerFactory.db().logQueryStart("DataEntity", logPrefix + " 시작 dataId=" + dataId);
         Optional<String> dataFileUrl = dataJpaRepository.findDataFileUrlById(dataId);
-        LoggerFactory.db().logQueryEnd("DataEntity", "[findDataFileUrlById] 주어진 데이터 ID에 해당하는 데이터셋 파일 조회 종료 dataId=" + dataId, startTime);
+        LoggerFactory.db().logQueryEnd("DataEntity", logPrefix + " 종료 dataId=" + dataId, startTime);
         return dataFileUrl;
     }
 }

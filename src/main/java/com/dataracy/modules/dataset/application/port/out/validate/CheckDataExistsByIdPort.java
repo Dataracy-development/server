@@ -1,4 +1,4 @@
-package com.dataracy.modules.dataset.application.port.out.query.validate;
+package com.dataracy.modules.dataset.application.port.out.validate;
 
 public interface CheckDataExistsByIdPort {
     /**
