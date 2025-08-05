@@ -1,19 +1,24 @@
 package com.dataracy.modules.like.adapter.query;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.like.adapter.jpa.entity.QLikeEntity;
 import com.dataracy.modules.like.adapter.query.predicates.LikeFilterPredicate;
-import com.dataracy.modules.like.application.port.query.LikeQueryRepositoryPort;
+import com.dataracy.modules.like.application.port.out.query.ReadLikePort;
+import com.dataracy.modules.like.application.port.out.validate.ValidateLikePort;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
-
 
 @Repository
 @RequiredArgsConstructor
-public class LikeQueryRepositoryPortAdapter implements LikeQueryRepositoryPort {
+public class LikeQueryDslAdapter implements
+        ReadLikePort,
+        ValidateLikePort
+{
     private final JPAQueryFactory queryFactory;
 
     private final QLikeEntity like = QLikeEntity.likeEntity;
@@ -28,6 +33,7 @@ public class LikeQueryRepositoryPortAdapter implements LikeQueryRepositoryPort {
      */
     @Override
     public boolean isLikedTarget(Long userId, Long targetId, TargetType targetType) {
+        Instant startTime = LoggerFactory.query().logQueryStart("LikeEntity", "[isLikedTarget] 사용자가 해당 타겟을 좋아요 했는지 여부 반환 시작. targetType=" + targetType + ", targetId=" + targetId);
         Integer result = queryFactory
                 .selectOne()
                 .from(like)
@@ -37,7 +43,7 @@ public class LikeQueryRepositoryPortAdapter implements LikeQueryRepositoryPort {
                         LikeFilterPredicate.targetTypeEq(targetType)
                 )
                 .fetchFirst();
-
+        LoggerFactory.query().logQueryEnd("LikeEntity", "[isLikedTarget] 사용자가 해당 타겟을 좋아요 했는지 여부 반환 완료. targetType=" + targetType + ", targetId=" + targetId, startTime);
         return result != null;
     }
 
@@ -51,10 +57,11 @@ public class LikeQueryRepositoryPortAdapter implements LikeQueryRepositoryPort {
      */
     @Override
     public List<Long> findLikedTargetIds(Long userId, List<Long> targetIds, TargetType targetType) {
+        Instant startTime = LoggerFactory.query().logQueryStart("LikeEntity", "[findLikedTargetIds] 사용자가 좋아요를 누른 타겟 ID 목록 반환 시작. targetType=" + targetType);
         if (userId == null || targetIds == null || targetIds.isEmpty()) {
             return List.of();
         }
-        return queryFactory
+        List<Long> likedTargetIds = queryFactory
                 .select(like.targetId)
                 .from(like)
                 .where(
@@ -63,5 +70,7 @@ public class LikeQueryRepositoryPortAdapter implements LikeQueryRepositoryPort {
                         LikeFilterPredicate.targetTypeEq(targetType)
                 )
                 .fetch();
+        LoggerFactory.query().logQueryEnd("LikeEntity", "[findLikedTargetIds] 사용자가 좋아요를 누른 타겟 ID 목록 반환 완료. targetType=" + targetType, startTime);
+        return likedTargetIds;
     }
 }

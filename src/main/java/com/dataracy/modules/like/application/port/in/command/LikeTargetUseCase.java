@@ -1,9 +1,9 @@
-package com.dataracy.modules.like.application.port.in;
+package com.dataracy.modules.like.application.port.in.command;
 
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;
 import com.dataracy.modules.like.domain.enums.TargetType;
 
-public interface TargetLikeUseCase {
+public interface LikeTargetUseCase {
     /**
  * 사용자가 지정된 대상을 좋아요 처리하고, 해당 대상의 타입을 반환합니다.
  *
@@ -11,5 +11,5 @@ public interface TargetLikeUseCase {
  * @param requestDto 좋아요 요청 정보를 담은 객체
  * @return 좋아요가 적용된 대상의 타입
  */
-TargetType targetLike(Long userId, TargetLikeRequest requestDto);
+TargetType likeTarget(Long userId, TargetLikeRequest requestDto);
 }

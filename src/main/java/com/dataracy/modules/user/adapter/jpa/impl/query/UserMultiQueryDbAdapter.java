@@ -26,6 +26,7 @@ public class UserMultiQueryDbAdapter implements UserMultiQueryPort {
      */
     @Override
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {
+
         List<UserEntity> userEntities = findUserEntitiesWithLogging(userIds, "[findAllById] 유저 아이디로 유저 목록 조회");
         return userEntities
                 .stream()

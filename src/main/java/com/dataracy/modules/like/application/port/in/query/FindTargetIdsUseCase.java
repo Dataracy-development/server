@@ -1,4 +1,4 @@
-package com.dataracy.modules.like.application.port.in;
+package com.dataracy.modules.like.application.port.in.query;
 
 import com.dataracy.modules.like.domain.enums.TargetType;
 

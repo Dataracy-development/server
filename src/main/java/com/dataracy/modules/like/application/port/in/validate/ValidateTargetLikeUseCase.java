@@ -1,4 +1,4 @@
-package com.dataracy.modules.like.application.port.in;
+package com.dataracy.modules.like.application.port.in.validate;
 
 import com.dataracy.modules.like.domain.enums.TargetType;
 

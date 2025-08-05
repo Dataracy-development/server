@@ -1,21 +1,25 @@
 package com.dataracy.modules.like.application.service.query;
 
-import com.dataracy.modules.like.application.port.in.FindTargetIdsUseCase;
-import com.dataracy.modules.like.application.port.in.ValidateTargetLikeUseCase;
-import com.dataracy.modules.like.application.port.query.LikeQueryRepositoryPort;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.like.application.port.in.query.FindTargetIdsUseCase;
+import com.dataracy.modules.like.application.port.in.validate.ValidateTargetLikeUseCase;
+import com.dataracy.modules.like.application.port.out.query.ReadLikePort;
+import com.dataracy.modules.like.application.port.out.validate.ValidateLikePort;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
-public class LikeQueryService implements ValidateTargetLikeUseCase, FindTargetIdsUseCase {
-
-    private final LikeQueryRepositoryPort likeQueryRepositoryPort;
+public class LikeQueryService implements
+        ValidateTargetLikeUseCase,
+        FindTargetIdsUseCase
+{
+    private final ReadLikePort readLikePort;
+    private final ValidateLikePort validateLikePort;
 
     /**
      * 사용자가 특정 대상에 좋아요를 눌렀는지 여부를 반환합니다.
@@ -27,7 +31,10 @@ public class LikeQueryService implements ValidateTargetLikeUseCase, FindTargetId
      */
     @Override
     public boolean hasUserLikedTarget(Long userId, Long targetId, TargetType targetType) {
-        return likeQueryRepositoryPort.isLikedTarget(userId, targetId, targetType);
+        Instant startTime = LoggerFactory.service().logStart("ValidateTargetLikeUseCase", "사용자가 특정 대상에 좋아요를 눌렀는지 여부 반환 서비스 시작 targetType=" + targetType + ", targetId=" + targetId);
+        boolean hasUser = validateLikePort.isLikedTarget(userId, targetId, targetType);
+        LoggerFactory.service().logSuccess("ValidateTargetLikeUseCase", "사용자가 특정 대상에 좋아요를 눌렀는지 여부 반환 서비스 종료 targetType=" + targetType + ", targetId=" + targetId, startTime);
+        return hasUser;
     }
 
     /**
@@ -40,6 +47,9 @@ public class LikeQueryService implements ValidateTargetLikeUseCase, FindTargetId
      */
     @Override
     public List<Long> findLikedTargetIds(Long userId, List<Long> targetIds, TargetType targetType) {
-        return likeQueryRepositoryPort.findLikedTargetIds(userId, targetIds, targetType);
+        Instant startTime = LoggerFactory.service().logStart("FindTargetIdsUseCase", "사용자가 지정한 대상 타입과 대상 ID 목록 중에서 좋아요를 누른 대상의 ID 목록을 반환 서비스 시작 targetType=" + targetType);
+        List<Long> likedTargetIds = readLikePort.findLikedTargetIds(userId, targetIds, targetType);
+        LoggerFactory.service().logSuccess("FindTargetIdsUseCase", "사용자가 지정한 대상 타입과 대상 ID 목록 중에서 좋아요를 누른 대상의 ID 목록을 반환 서비스 종료 targetType=" + targetType, startTime);
+        return likedTargetIds;
     }
 }
