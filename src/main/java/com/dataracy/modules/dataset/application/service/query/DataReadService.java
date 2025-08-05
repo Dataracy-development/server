@@ -16,7 +16,6 @@ import com.dataracy.modules.reference.application.port.in.datasource.GetDataSour
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
-import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
 import com.dataracy.modules.user.application.port.in.profile.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -111,25 +110,14 @@ public class DataReadService implements
         String authorLabel = dataUser.authorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(dataUser.authorLevelId());
         String occupationLabel = dataUser.occupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(dataUser.occupationId());
 
-        DataDetailResponse dataDetailResponse = new DataDetailResponse(
-                data.getId(),
-                data.getTitle(),
+        DataDetailResponse dataDetailResponse =dataReadDtoMapper.toResponseDto(
+                data,
                 dataUser.nickname(),
                 authorLabel,
                 occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(data.getTopicId()),
                 getDataSourceLabelFromIdUseCase.getLabelById(data.getDataSourceId()),
-                getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId()),
-                data.getStartDate(),
-                data.getEndDate(),
-                data.getDescription(),
-                data.getAnalysisGuide(),
-                data.getThumbnailUrl(),
-                data.getDownloadCount(),
-                data.getMetadata().getRowCount(),
-                data.getMetadata().getColumnCount(),
-                data.getMetadata().getPreviewJson(),
-                data.getCreatedAt()
+                getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId())
         );
 
         LoggerFactory.service().logSuccess("GetDataDetailUseCase", "데이터셋 상세 정보 조회 서비스 종료 dataId=" + dataId, startTime);
@@ -143,6 +131,7 @@ public class DataReadService implements
      * @return 최신 데이터셋의 최소 정보 응답 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public List<RecentMinimalDataResponse> getRecentDataSets(int size) {
         Instant startTime = LoggerFactory.service().logStart("GetRecentMinimalDataSetsUseCase", "최신 미니 데이터셋 목록 조회 서비스 시작 size=" + size);
 
@@ -161,6 +150,7 @@ public class DataReadService implements
      * @return 각 주제별 데이터셋 개수를 담은 CountDataGroupResponse 객체의 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public List<DataGroupCountResponse> getDataGroupCountByTopicLabel() {
         Instant startTime = LoggerFactory.service().logStart("GetDataGroupCountUseCase", "데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환 서비스 시작");
         List<DataGroupCountResponse> dataGroupCountResponses = getDataGroupCountPort.getDataGroupCount();
@@ -176,6 +166,7 @@ public class DataReadService implements
      * @return 프로젝트와 연결된 데이터셋의 상세 정보와 연결된 프로젝트 수를 포함하는 응답 객체의 페이지
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<ConnectedDataResponse> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
         Instant startTime = LoggerFactory.service().logStart("FindConnectedDataSetsUseCase", "프로젝트와 연결된 데이터셋 목록 조회 서비스 시작 projectId=" + projectId);
 

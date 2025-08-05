@@ -9,6 +9,7 @@ import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFro
 import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +30,7 @@ public class DataLabelMapService implements FindDataLabelMapUseCase {
      * @param savedDataSets 프로젝트 개수가 포함된 데이터셋 DTO 컬렉션
      * @return 사용자명, 토픽 레이블, 데이터 소스 레이블, 데이터 타입 레이블의 매핑 정보를 담은 응답 객체
      */
+    @Transactional(readOnly = true)
     public DataLabelMapResponse labelMapping(Collection<DataWithProjectCountDto> savedDataSets) {
         List<Long> userIds = savedDataSets.stream()
                 .map(dto -> dto.data().getUserId())
