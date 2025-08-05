@@ -1,0 +1,28 @@
+package com.dataracy.modules.dataset.application.port.out.query.extractor;
+
+import java.util.Optional;
+
+public interface ExtractDataOwnerPort {
+    /**
+ * 주어진 데이터 ID에 해당하는 소유자(사용자)의 ID를 반환합니다.
+ *
+ * @param dataId 사용자 ID를 조회할 데이터의 고유 식별자
+ * @return 데이터 소유자의 사용자 ID
+ */
+    Long findUserIdByDataId(Long dataId);
+    /**
+ * 삭제된 데이터를 포함하여 주어진 데이터 ID에 해당하는 사용자 ID를 반환합니다.
+ *
+ * @param dataId 사용자 ID를 조회할 데이터의 고유 식별자
+ * @return 데이터에 연결된 사용자 ID
+ */
+    Long findUserIdIncludingDeleted(Long dataId);
+
+    /**
+ * 주어진 데이터 ID에 해당하는 데이터 파일의 URL을 반환합니다.
+ *
+ * @param dataId 데이터의 고유 식별자
+ * @return 데이터 파일의 URL이 존재하면 Optional로 반환하며, 없으면 빈 Optional을 반환합니다.
+ */
+Optional<String> findDataFileUrlById(Long dataId);
+}

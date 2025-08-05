@@ -3,7 +3,7 @@ package com.dataracy.modules.project.adapter.elasticsearch.indexing;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectDeletedUpdate;
-import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
+import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.port.out.command.delete.SoftDeleteProjectPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

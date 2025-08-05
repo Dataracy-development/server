@@ -21,12 +21,12 @@ public class ExtractProjectDbAdapter implements ExtractProjectOwnerPort {
     private final ProjectDataJpaRepository projectDataJpaRepository;
 
     /**
-     * 주어진 프로젝트 ID에 해당하는 프로젝트의 사용자 ID를 반환합니다.
+     * 주어진 프로젝트 ID에 해당하는 프로젝트의 소유자(사용자) ID를 반환합니다.
      *
      * 프로젝트가 존재하지 않을 경우 {@code ProjectException}이 발생합니다.
      *
      * @param projectId 조회할 프로젝트의 ID
-     * @return 해당 프로젝트에 연결된 사용자 ID
+     * @return 해당 프로젝트의 소유자(사용자) ID
      * @throws ProjectException 프로젝트가 존재하지 않을 때 발생합니다.
      */
     @Override
@@ -37,13 +37,12 @@ public class ExtractProjectDbAdapter implements ExtractProjectOwnerPort {
                     LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
-        Long userId = projectEntity.getUserId();
         LoggerFactory.db().logQueryEnd("ProjectEntity", "[findById] 아이디를 통한 프로젝트 조회 종료 projectId=" + projectId, startTime);
-        return userId;
+        return projectEntity.getUserId();
     }
 
     /**
-     * 삭제된 프로젝트를 포함하여 주어진 프로젝트 ID에 연결된 사용자 ID를 반환합니다.
+     * 삭제된 프로젝트를 포함하여 지정된 프로젝트 ID에 연결된 사용자 ID를 반환합니다.
      *
      * @param projectId 사용자 ID를 조회할 프로젝트의 ID
      * @return 프로젝트에 연결된 사용자 ID
@@ -57,9 +56,8 @@ public class ExtractProjectDbAdapter implements ExtractProjectOwnerPort {
                     LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
-        Long userId = projectEntity.getUserId();
         LoggerFactory.db().logQueryEnd("ProjectEntity", "[findIncludingDeleted] 탈퇴한 유저를 포함하여 아이디를 통한 프로젝트 조회 종료 projectId=" + projectId, startTime);
-        return userId;
+        return projectEntity.getUserId();
     }
 
     /**

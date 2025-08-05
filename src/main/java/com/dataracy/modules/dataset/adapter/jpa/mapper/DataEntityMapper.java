@@ -16,7 +16,7 @@ public final class DataEntityMapper {
     /**
      * DataEntity 객체를 Data 도메인 모델 객체로 변환합니다.
      *
-     * 입력이 null이면 null을 반환하며, 모든 필드와 중첩된 메타데이터 및 생성일자를 포함하여 도메인 모델로 매핑합니다.
+     * 입력이 null이면 null을 반환하며, 모든 필드와 중첩된 메타데이터 및 생성일자를 포함하여 Data 도메인 모델로 매핑합니다.
      *
      * @param dataEntity 변환할 DataEntity 객체
      * @return 변환된 Data 도메인 모델 객체 또는 입력이 null인 경우 null
@@ -40,7 +40,6 @@ public final class DataEntityMapper {
                 dataEntity.getDataFileUrl(),
                 dataEntity.getThumbnailUrl(),
                 dataEntity.getDownloadCount(),
-                dataEntity.getRecentWeekDownloadCount(),
                 DataMetadataEntityMapper.toDomain(dataEntity.getMetadata()),
                 dataEntity.getCreatedAt()
                 );
@@ -72,7 +71,6 @@ public final class DataEntityMapper {
                 data.getDataFileUrl(),
                 data.getThumbnailUrl(),
                 data.getDownloadCount(),
-                data.getRecentWeekDownloadCount(),
                 DataMetadataEntityMapper.toEntity(data.getMetadata())
         );
     }

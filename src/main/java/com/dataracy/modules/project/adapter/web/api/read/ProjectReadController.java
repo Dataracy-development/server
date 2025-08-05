@@ -6,12 +6,15 @@ import com.dataracy.modules.common.util.ExtractHeaderUtil;
 import com.dataracy.modules.project.adapter.web.mapper.read.ProjectReadWebMapper;
 import com.dataracy.modules.project.adapter.web.response.read.ConnectedProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.ContinuedProjectWebResponse;
+import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
 import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
+import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
 import com.dataracy.modules.project.application.port.in.query.read.FindConnectedProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
+import com.dataracy.modules.project.application.port.in.query.read.GetPopularProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.GetProjectDetailUseCase;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,6 +39,7 @@ public class ProjectReadController implements ProjectReadApi {
     private final GetProjectDetailUseCase getProjectDetailUseCase;
     private final FindContinuedProjectsUseCase findContinuedProjectsUseCase;
     private final FindConnectedProjectsUseCase findConnectedProjectsUseCase;
+    private final GetPopularProjectsUseCase getPopularProjectsUseCase;
 
     /****
      * 지정된 프로젝트의 상세 정보를 조회하여 성공 응답으로 반환합니다.
@@ -81,10 +86,10 @@ public class ProjectReadController implements ProjectReadApi {
     }
 
     /**
-     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 반환합니다.
+     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 조회합니다.
      *
-     * @param dataId 연결된 데이터를 식별하는 고유 ID
-     * @param pageable 결과 페이지네이션을 위한 정보
+     * @param dataId 연결된 프로젝트를 조회할 데이터의 고유 ID
+     * @param pageable 페이지네이션 정보
      * @return 연결된 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Override
@@ -97,5 +102,25 @@ public class ProjectReadController implements ProjectReadApi {
         LoggerFactory.api().logResponse("[FindConnectedProjectsAssociatedWithData] 데이터셋과 연결된 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONNECTED_PROJECTS_ASSOCIATED_DATA, webResponse));
+    }
+
+    /**
+     * 지정한 개수만큼 인기 프로젝트 목록을 조회하여 성공 응답으로 반환합니다.
+     *
+     * @param size 조회할 인기 프로젝트의 최대 개수
+     * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
+     */
+    @Override
+    public ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> getPopularProjects(int size) {
+        Instant startTime = LoggerFactory.api().logRequest("[GetPopularProjects] 인기 프로젝트 목록 조회 API 요청 시작");
+
+        List<PopularProjectResponse> responseDto = getPopularProjectsUseCase.getPopularProjects(size);
+        List<PopularProjectWebResponse> webResponse = responseDto.stream()
+                .map(projectReadWebMapper::toWebDto)
+                .toList();
+
+        LoggerFactory.api().logResponse("[GetPopularProjects] 인기 프로젝트 목록 조회 API 응답 완료", startTime);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.FIND_POPULAR_PROJECTS, webResponse));
     }
 }

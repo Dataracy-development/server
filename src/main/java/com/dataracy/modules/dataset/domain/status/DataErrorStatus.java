@@ -16,6 +16,9 @@ public enum DataErrorStatus implements BaseErrorCode {
     INVALID_DATA_SORT_TYPE(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-006", "데이터셋 정렬은 LATEST, OLDEST, DOWNLOAD 만 가능합니다."),
     FAIL_REAL_TIME_SEARCH_DATASET(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-007", "데이터셋 자동완성 검색에 실패했습니다."),
     NOT_MATCH_CREATOR(HttpStatus.FORBIDDEN, "DATA-008", "작성자만 수정 및 삭제, 복원이 가능합니다."),
+    FAIL_GET_USER_INFO(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-009", "DataUser을 생성하기 위한 유저 정보가 주입되지 않았습니다."),
+    INVALID_FILE_URL(HttpStatus.BAD_REQUEST, "DATA-010", "유효하지 않은 파일 url입니다."),
+    DOWNLOAD_URL_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "DATA-011", "Pre-signed URL 생성 실패했습니다."),
     ;
     private final HttpStatus httpStatus;
     private final String code;

@@ -16,18 +16,23 @@ public class Data {
     private Long id;
 
     private String title;
-    private Long topicId;
     private Long userId;
+
     private Long dataSourceId;
     private Long dataTypeId;
+    private Long topicId;
+
     private LocalDate startDate;
     private LocalDate endDate;
+
     private String description;
     private String analysisGuide;
+
     private String dataFileUrl;
     private String thumbnailUrl;
+
     private int downloadCount;
-    private int recentWeekDownloadCount;
+
     private DataMetadata metadata;
     private LocalDateTime createdAt;
 
@@ -50,9 +55,11 @@ public class Data {
     }
 
     /**
-     * 모든 필드 값을 지정하여 새로운 Data 도메인 객체를 생성합니다.
+     * 모든 필드 값을 지정하여 새로운 Data 객체를 생성합니다.
      *
-     * @return 지정된 모든 값으로 초기화된 Data 인스턴스
+     * 각 파라미터에 해당하는 값으로 Data 인스턴스를 초기화합니다.
+     *
+     * @return 지정된 값들로 생성된 Data 인스턴스
      */
     public static Data of(
             Long id,
@@ -68,7 +75,6 @@ public class Data {
             String dataFileUrl,
             String thumbnailUrl,
             int downloadCount,
-            int recentWeekDownloadCount,
             DataMetadata metadata,
             LocalDateTime createdAt
     ) {
@@ -86,7 +92,6 @@ public class Data {
                 .dataFileUrl(dataFileUrl)
                 .thumbnailUrl(thumbnailUrl)
                 .downloadCount(downloadCount)
-                .recentWeekDownloadCount(recentWeekDownloadCount)
                 .metadata(metadata)
                 .createdAt(createdAt)
                 .build();

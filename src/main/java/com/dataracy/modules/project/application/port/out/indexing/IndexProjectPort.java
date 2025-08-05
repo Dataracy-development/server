@@ -1,6 +1,6 @@
 package com.dataracy.modules.project.application.port.out.indexing;
 
-import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
+import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
 
 public interface IndexProjectPort {
     /**

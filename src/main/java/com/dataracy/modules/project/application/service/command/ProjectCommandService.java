@@ -2,10 +2,10 @@ package com.dataracy.modules.project.application.service.command;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.FileUtil;
-import com.dataracy.modules.dataset.application.port.in.ValidateDataUseCase;
+import com.dataracy.modules.dataset.application.port.in.validate.ValidateDataUseCase;
 import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
-import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
+import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
 import com.dataracy.modules.project.application.dto.request.command.UploadProjectRequest;
 import com.dataracy.modules.project.application.mapper.command.UploadedProjectDtoMapper;
@@ -19,7 +19,6 @@ import com.dataracy.modules.project.application.port.out.indexing.IndexProjectPo
 import com.dataracy.modules.project.application.port.out.query.extractor.ExtractProjectOwnerPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByIdPort;
-import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByParentPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.model.vo.ValidatedProjectInfo;
@@ -56,7 +55,6 @@ public class ProjectCommandService implements
     private final UpdateProjectPort updateProjectPort;
     private final DeleteProjectDataPort deleteProjectDataPort;
 
-    private final CheckProjectExistsByParentPort checkProjectExistsByParentPort;
     private final CheckProjectExistsByIdPort checkProjectExistsByIdPort;
     private final FindProjectPort findProjectPort;
     private final ExtractProjectOwnerPort extractProjectOwnerPort;
@@ -97,7 +95,7 @@ public class ProjectCommandService implements
         );
 
         // 부모 프로젝트 유효성 체크
-        if (requestDto.parentProjectId() != null && !checkProjectExistsByParentPort.checkParentProjectExistsById(requestDto.parentProjectId())) {
+        if (requestDto.parentProjectId() != null && !checkProjectExistsByIdPort.checkProjectExistsById(requestDto.parentProjectId())) {
                 LoggerFactory.service().logWarning("UploadProjectUseCase", "해당 부모 프로젝트가 존재하지 않습니다. parentProjectId=" + requestDto.parentProjectId());
                 throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
         }
