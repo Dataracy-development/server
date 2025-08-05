@@ -33,9 +33,9 @@ import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorL
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
-import com.dataracy.modules.user.application.port.in.profile.FindUserThumbnailUseCase;
-import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
-import com.dataracy.modules.user.application.port.in.profile.GetUserInfoUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
