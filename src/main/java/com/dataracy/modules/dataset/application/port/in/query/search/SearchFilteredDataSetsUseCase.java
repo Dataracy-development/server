@@ -7,11 +7,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface SearchFilteredDataSetsUseCase {
     /**
-     * 주어진 필터 조건과 페이지 정보를 기반으로 데이터셋을 필터링하여 페이징된 결과를 반환합니다.
-     *
-     * @param requestDto 데이터셋 필터링 조건이 포함된 요청 객체
-     * @param pageable 페이지네이션 정보
-     * @return 필터링된 데이터셋 결과의 페이지 객체
-     */
+ * 필터링 조건과 페이지네이션 정보를 이용해 데이터셋을 검색하고, 조건에 맞는 데이터셋 목록을 페이징 형태로 반환합니다.
+ *
+ * @param requestDto 데이터셋 검색에 사용할 필터링 조건이 담긴 요청 객체
+ * @param pageable 결과의 페이지 크기 및 정렬 등 페이지네이션 정보
+ * @return 조건에 부합하는 데이터셋 목록의 페이징 결과
+ */
     Page<FilteredDataResponse> searchFilteredDataSets(FilteringDataRequest requestDto, Pageable pageable);
 }

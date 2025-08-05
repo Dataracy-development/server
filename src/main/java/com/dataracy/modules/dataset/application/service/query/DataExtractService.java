@@ -19,10 +19,10 @@ public class DataExtractService implements
     private final ExtractDataOwnerPort extractDataOwnerPort;
 
     /**
-     * 주어진 데이터 ID에 해당하는 데이터셋의 사용자 ID를 반환합니다.
+     * 주어진 데이터 ID에 해당하는 데이터셋 소유자의 사용자 ID를 반환합니다.
      *
-     * @param dataId 사용자 ID를 조회할 데이터셋의 ID
-     * @return 데이터셋을 소유한 사용자 ID
+     * @param dataId 소유자 ID를 조회할 데이터셋의 ID
+     * @return 데이터셋 소유자의 사용자 ID
      */
     @Override
     @Transactional(readOnly = true)
@@ -34,10 +34,10 @@ public class DataExtractService implements
     }
 
     /**
-     * 삭제된 데이터를 포함하여 지정된 데이터 ID의 소유자 사용자 ID를 반환합니다.
+     * 삭제된 데이터를 포함하여 주어진 데이터 ID에 해당하는 데이터셋 소유자의 사용자 ID를 반환합니다.
      *
-     * @param dataId 사용자 ID를 조회할 데이터의 ID
-     * @return 데이터의 소유자 사용자 ID
+     * @param dataId 조회할 데이터셋의 ID
+     * @return 데이터셋 소유자의 사용자 ID
      */
     @Override
     @Transactional(readOnly = true)

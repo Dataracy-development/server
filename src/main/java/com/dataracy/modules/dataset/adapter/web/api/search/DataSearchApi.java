@@ -26,7 +26,7 @@ import java.util.List;
 public interface DataSearchApi {
 
     /**
-     * 지정한 데이터셋과 유사한 데이터셋 목록을 반환합니다.
+     * 지정한 데이터셋과 유사한 데이터셋 목록을 조회합니다.
      *
      * @param dataId 유사도를 기준으로 비교할 데이터셋의 고유 ID (1 이상)
      * @param size 반환할 유사 데이터셋의 최대 개수 (1 이상)
@@ -56,8 +56,8 @@ public interface DataSearchApi {
      * 필터 조건에 따라 데이터셋 목록을 페이지 단위로 조회한다.
      *
      * @param webRequest 데이터셋 필터링 조건이 포함된 요청 객체
-     * @param pageable 페이지네이션 정보
-     * @return 필터링 조건에 맞는 데이터셋의 페이지 결과를 포함하는 성공 응답
+     * @param pageable 결과 페이지네이션 정보
+     * @return 필터링 조건에 부합하는 데이터셋 목록의 페이지 결과를 포함한 성공 응답
      */
     @Operation(
             summary = "필터링된 데이터셋 리스트를 조회한다.",
@@ -78,11 +78,11 @@ public interface DataSearchApi {
     );
 
     /**
-     * 키워드 자동완성 검색을 통해 데이터셋의 최소 정보를 리스트로 반환합니다.
+     * 키워드 자동완성 검색을 통해 조건에 맞는 데이터셋의 최소 정보를 리스트로 반환합니다.
      *
-     * @param keyword 자동완성에 사용할 검색 키워드(선택 사항)
+     * @param keyword 자동완성 검색에 사용할 키워드(선택 사항)
      * @param size 반환할 데이터셋 개수(최소 1)
-     * @return 자동완성 결과로 조회된 데이터셋 최소 정보 목록을 포함한 성공 응답
+     * @return 자동완성 키워드에 부합하는 데이터셋 최소 정보 목록을 포함한 성공 응답
      */
     @Operation(
             summary = "키워드 자동완성을 위한 데이터셋 검색 기능",

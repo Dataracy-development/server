@@ -49,7 +49,7 @@ public class DataSearchService implements
     private final SearchFilteredDataSetsPort searchFilteredDataSetsPort;
     private final SearchRealTimeDataSetsPort searchRealTimeDataSetsPort;
     /**
-     * 지정한 데이터 ID를 기준으로 유사한 데이터셋 목록을 반환합니다.
+     * 지정한 데이터 ID를 기준으로 유사한 데이터셋 목록을 조회합니다.
      *
      * @param dataId 유사 데이터셋 검색의 기준이 되는 데이터 ID
      * @param size 반환할 유사 데이터셋의 최대 개수
@@ -71,7 +71,7 @@ public class DataSearchService implements
     }
 
     /**
-     * 필터 조건과 정렬 기준, 페이지 정보를 기반으로 데이터셋 목록을 조회하여 페이지 형태로 반환합니다.
+     * 필터 조건, 정렬 기준, 페이지네이션 정보를 바탕으로 데이터셋 목록을 조회하여 페이지 형태로 반환합니다.
      *
      * @param request 데이터셋 필터 및 정렬 요청 정보
      * @param pageable 페이지네이션 정보
@@ -102,7 +102,7 @@ public class DataSearchService implements
     }
 
     /**
-     * 주어진 키워드로 실시간 데이터셋을 검색하여 결과를 반환합니다.
+     * 주어진 키워드로 실시간 데이터셋을 검색하여 최소 정보 목록을 반환합니다.
      *
      * @param keyword 검색에 사용할 키워드
      * @param size 반환할 최대 데이터셋 개수

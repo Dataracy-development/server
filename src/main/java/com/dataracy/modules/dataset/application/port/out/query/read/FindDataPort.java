@@ -6,10 +6,10 @@ import java.util.Optional;
 
 public interface FindDataPort {
     /**
-     * 주어진 식별자에 해당하는 Data 엔티티를 조회합니다.
-     *
-     * @param dataId 조회할 Data 엔티티의 고유 식별자
-     * @return Data 엔티티가 존재하면 해당 객체를 포함한 Optional, 존재하지 않으면 빈 Optional
-     */
+ * 주어진 식별자에 해당하는 Data 엔티티를 반환합니다.
+ *
+ * @param dataId 조회할 Data 엔티티의 고유 식별자
+ * @return 해당 식별자의 Data 엔티티가 존재하면 Optional에 담아 반환하며, 없으면 빈 Optional을 반환합니다.
+ */
     Optional<Data> findDataById(Long dataId);
 }

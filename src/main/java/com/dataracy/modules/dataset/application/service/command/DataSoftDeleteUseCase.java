@@ -19,9 +19,10 @@ public class DataSoftDeleteUseCase implements
     private final SoftDeleteDataPort softDeleteDataEsPort;
 
     /**
-     * ProjectSoftDeleteService의 생성자입니다.
+     * 데이터셋의 소프트 삭제 및 복구를 위해 데이터베이스와 Elasticsearch 포트 구현체를 주입받아 초기화합니다.
      *
-     * 데이터베이스와 Elasticsearch에 대한 소프트 삭제 작업을 처리하는 두 포트 구현체를 주입받아 초기화합니다.
+     * @param softDeleteDataDbDbPort 데이터베이스에서 소프트 삭제 작업을 수행하는 포트 구현체
+     * @param softDeleteDataEsPort Elasticsearch에서 소프트 삭제 작업을 수행하는 포트 구현체
      */
     public DataSoftDeleteUseCase(
             @Qualifier("softDeleteDataDbAdapter") SoftDeleteDataPort softDeleteDataDbDbPort,
@@ -32,9 +33,9 @@ public class DataSoftDeleteUseCase implements
     }
 
     /**
-     * 데이터셋을 삭제 상태로 표시하고 Elasticsearch 인덱스에서도 삭제 상태로 반영합니다.
+     * 지정한 데이터셋을 소프트 삭제 처리하여 데이터베이스와 Elasticsearch 모두에서 삭제 상태로 반영합니다.
      *
-     * @param dataId 삭제할 데이터셋의 식별자
+     * @param dataId 삭제 처리할 데이터셋의 고유 식별자
      */
     @Override
     @Transactional
@@ -46,9 +47,9 @@ public class DataSoftDeleteUseCase implements
     }
 
     /**
-     * 데이터셋을 복구 상태로 변경하고, Elasticsearch 인덱스도 복구 상태로 동기화합니다.
+     * 지정한 데이터셋을 복구 상태로 전환하고, 해당 변경 사항을 Elasticsearch 인덱스에도 반영합니다.
      *
-     * @param dataId 복구할 데이터셋의 식별자
+     * @param dataId 복구할 데이터셋의 고유 식별자
      */
     @Override
     @Transactional

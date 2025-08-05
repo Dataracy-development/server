@@ -20,12 +20,12 @@ public class DataDownloadService implements DownloadDataFileUseCase {
     private final DownloadFileUseCase downloadFileUseCase;
 
     /**
-     * 지정된 데이터셋 파일의 S3 URL을 조회하여, 주어진 만료 시간으로 프리사인드 다운로드 URL을 반환합니다.
+     * 데이터셋 파일의 S3 URL을 조회하여, 지정된 만료 시간(초) 동안 유효한 프리사인드 다운로드 URL을 반환합니다.
      *
-     * @param dataId            다운로드할 데이터셋의 ID
+     * @param dataId 다운로드할 데이터셋의 ID
      * @param expirationSeconds 프리사인드 URL의 만료 시간(초)
-     * @return                  프리사인드 S3 다운로드 URL
-     * @throws DataException    데이터셋이 존재하지 않을 경우 발생
+     * @return 생성된 프리사인드 S3 다운로드 URL
+     * @throws DataException 데이터셋이 존재하지 않거나, 프리사인드 URL 생성에 실패한 경우 발생
      */
     @Override
     @Transactional(readOnly = true)

@@ -79,11 +79,11 @@ public class ProjectSearchService implements
     }
 
     /**
-     * 기준 프로젝트와 유사한 프로젝트 목록을 조회합니다.
+     * 지정한 프로젝트와 유사한 프로젝트 목록을 조회합니다.
      *
-     * @param projectId 유사도를 비교할 기준 프로젝트의 ID
+     * @param projectId 유사도를 비교할 기준이 되는 프로젝트의 ID
      * @param size 반환할 유사 프로젝트의 최대 개수
-     * @return 유사한 프로젝트 응답 객체 리스트
+     * @return 유사한 프로젝트 정보를 담은 SimilarProjectResponse 리스트
      * @throws ProjectException 기준 프로젝트가 존재하지 않을 경우 발생합니다.
      */
     @Override
@@ -101,7 +101,7 @@ public class ProjectSearchService implements
     }
 
     /**
-     * 필터 조건과 페이지 정보를 기반으로 프로젝트 목록을 조회하고, 각 프로젝트에 사용자명 및 다양한 라벨 정보를 매핑하여 페이지 형태로 반환합니다.
+     * 필터 조건과 페이지 정보를 바탕으로 프로젝트 목록을 조회하고, 각 프로젝트에 라벨 및 사용자명을 매핑하여 페이지 형태로 반환합니다.
      *
      * @param request 프로젝트 필터링 조건이 포함된 요청 객체
      * @param pageable 페이지네이션 및 정렬 정보

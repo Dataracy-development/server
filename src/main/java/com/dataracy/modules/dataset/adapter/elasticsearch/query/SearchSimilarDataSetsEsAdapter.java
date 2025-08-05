@@ -26,11 +26,11 @@ public class SearchSimilarDataSetsEsAdapter implements SearchSimilarDataSetsPort
     private static final String INDEX = "data_index";
 
     /**
-     * 주어진 데이터와 유사한 데이터셋을 Elasticsearch에서 검색하여 추천 결과 목록을 반환합니다.
+     * 주어진 데이터 객체와 유사한 데이터셋을 Elasticsearch에서 검색하여 추천 결과 목록을 반환합니다.
      *
-     * @param data 유사성을 기준으로 검색할 기준 데이터 객체
+     * @param data 유사성 기준이 되는 데이터 객체
      * @param size 반환할 추천 데이터셋의 최대 개수
-     * @return 유사 데이터셋 추천 결과의 리스트
+     * @return 유사 데이터셋 추천 결과 리스트
      * @throws DataException Elasticsearch 검색 중 오류가 발생한 경우
      */
     @Override
@@ -93,10 +93,12 @@ public class SearchSimilarDataSetsEsAdapter implements SearchSimilarDataSetsPort
     }
 
     /**
-     * DataSearchDocument 객체를 DataSimilarSearchResponse 객체로 변환합니다.
+     * DataSearchDocument 객체를 SimilarDataResponse 객체로 변환합니다.
+     *
+     * DataSearchDocument의 주요 필드를 SimilarDataResponse로 매핑하여 반환합니다.
      *
      * @param doc 변환할 DataSearchDocument 객체
-     * @return 변환된 DataSimilarSearchResponse 객체
+     * @return 변환된 SimilarDataResponse 객체
      */
     private SimilarDataResponse mapToSimilarResponse(DataSearchDocument doc) {
         return new SimilarDataResponse(
