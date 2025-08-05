@@ -11,6 +11,7 @@ import com.dataracy.modules.project.application.dto.response.support.ProjectLabe
 import com.dataracy.modules.project.application.mapper.read.ConnectedProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.read.ContinuedProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.read.PopularProjectDtoMapper;
+import com.dataracy.modules.project.application.mapper.read.ProjectDetailDtoMapper;
 import com.dataracy.modules.project.application.port.in.query.extractor.FindProjectLabelMapUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.FindConnectedProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
@@ -57,6 +58,7 @@ public class ProjectReadService implements
     private final ContinuedProjectDtoMapper continuedProjectDtoMapper;
     private final ConnectedProjectDtoMapper connectedProjectDtoMapper;
     private final PopularProjectDtoMapper popularProjectDtoMapper;
+    private final ProjectDetailDtoMapper projectDetailDtoMapper;
 
     private final CacheProjectViewCountPort cacheProjectViewCountPort;
 
@@ -126,23 +128,14 @@ public class ProjectReadService implements
         // 조회수 기록 (중복 방지 TTL)
         cacheProjectViewCountPort.increaseViewCount(projectId, viewerId, VIEW_TARGET_TYPE);
 
-        ProjectDetailResponse projectDetailResponse = new ProjectDetailResponse(
-                project.getId(),
-                project.getTitle(),
+        ProjectDetailResponse projectDetailResponse = projectDetailDtoMapper.toResponseDto(
+                project,
                 findUsernameUseCase.findUsernameById(project.getUserId()),
                 authorLevelLabel,
                 occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),
                 getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId()),
                 getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId()),
-                project.getIsContinue(),
-                project.getParentProjectId(),
-                project.getContent(),
-                project.getFileUrl(),
-                project.getCreatedAt(),
-                project.getCommentCount(),
-                project.getLikeCount(),
-                project.getViewCount(),
                 isLiked,
                 hasChild,
                 hasData
@@ -162,6 +155,7 @@ public class ProjectReadService implements
      * @return 이어지는 프로젝트 응답 DTO의 페이지 객체
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<ContinuedProjectResponse> findContinuedProjects(Long projectId, Pageable pageable) {
         Instant startTime = LoggerFactory.service().logStart("FindContinuedProjectsUseCase", "이어가기 프로젝트 목록 조회 서비스 시작 projectId=" + projectId);
 
@@ -195,6 +189,7 @@ public class ProjectReadService implements
      * @return 연결된 프로젝트 정보가 담긴 페이지 객체
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<ConnectedProjectResponse> findConnectedProjects(Long dataId, Pageable pageable) {
         Instant startTime = LoggerFactory.service().logStart("FindConnectedProjectsUseCase", "데이터셋과 연결된 프로젝트 목록 조회 서비스 시작 dataId=" + dataId);
 
