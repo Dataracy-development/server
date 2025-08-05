@@ -97,9 +97,11 @@ public class DataCommandService implements
         dataFileUpload(dataFile, saveData.getId(), "UploadProjectUseCase");
         thumbnailFileUpload(thumbnailFile, saveData.getId(), "UploadProjectUseCase");
 
+        Data updatedFileUrlData = findDataPort.findDataById(saveData.getId()).get();
+
         // 데이터셋 파일 파싱 후 통계 저장
         if (dataFile != null && !dataFile.isEmpty()) {
-            dataUploadEventPort.sendUploadEvent(saveData.getId(), saveData.getDataFileUrl(), dataFile.getOriginalFilename());
+            dataUploadEventPort.sendUploadEvent(updatedFileUrlData.getId(), updatedFileUrlData.getDataFileUrl(), dataFile.getOriginalFilename());
         }
 
         LoggerFactory.service().logSuccess("UploadProjectUseCase", "데이터셋 업로드 서비스 종료 title=" + requestDto.title(), startTime);
