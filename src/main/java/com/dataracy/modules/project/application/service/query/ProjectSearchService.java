@@ -55,10 +55,6 @@ public class ProjectSearchService implements
     private final SearchFilteredProjectsPort searchFilteredProjectsPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
-    private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
-    private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
-    private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
-    private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final FindProjectLabelMapUseCase findProjectLabelMapUseCase;
 
     /**

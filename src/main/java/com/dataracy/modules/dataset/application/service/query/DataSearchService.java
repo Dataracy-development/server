@@ -43,11 +43,6 @@ public class DataSearchService implements
     private final FilteredDataDtoMapper filteredDataDtoMapper;
 
     private final FindDataPort findDataPort;
-    private final FindUsernameUseCase findUsernameUseCase;
-
-    private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
-    private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
-    private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
     private final FindDataLabelMapUseCase findDataLabelMapUseCase;
 
     private final SearchSimilarDataSetsPort searchSimilarDataSetsPort;
