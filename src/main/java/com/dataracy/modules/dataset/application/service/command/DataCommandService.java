@@ -58,9 +58,9 @@ public class DataCommandService implements
     private String defaultImageUrl;
 
     /**
-     * 데이터셋 파일과 썸네일 파일을 검증 및 업로드하고, 데이터셋 정보를 저장한 후 업로드 이벤트를 발행합니다.
+     * 데이터셋 파일과 썸네일 파일의 유효성을 검증하고 업로드한 뒤, 데이터셋 정보를 저장하고 업로드 이벤트를 발행합니다.
      *
-     * 데이터셋 메타데이터와 파일의 유효성을 검사하고, 주제/데이터소스/데이터유형 ID를 각각 검증합니다. 데이터셋 정보는 데이터베이스에 저장되며, 파일 업로드가 성공하면 해당 URL이 데이터셋에 반영됩니다. 파일 업로드 중 오류가 발생하면 트랜잭션이 롤백됩니다. 데이터셋 파일 업로드가 완료되면 업로드 이벤트가 발행됩니다.
+     * 데이터셋 메타데이터와 파일의 유효성을 검사하며, 주제, 데이터소스, 데이터유형 ID의 존재 여부도 확인합니다. 데이터셋 정보는 저장 후 파일 업로드가 성공하면 해당 URL로 갱신됩니다. 파일 업로드 중 오류 발생 시 트랜잭션이 롤백됩니다. 데이터셋 파일 업로드가 완료되면 업로드 이벤트가 발행됩니다.
      *
      * @param userId 데이터셋을 업로드하는 사용자 ID
      * @param dataFile 업로드할 데이터셋 파일
@@ -113,8 +113,8 @@ public class DataCommandService implements
      *
      * 데이터셋의 제목, 설명, 날짜 범위, 주제, 데이터 소스, 데이터 타입 등 메타데이터를 갱신하고,
      * 새로운 데이터셋 파일 또는 썸네일 파일이 제공된 경우 파일을 업로드하여 해당 URL로 갱신합니다.
-     * 파일 업로드 실패 시 트랜잭션이 롤백됩니다.
-     * 데이터셋 파일이 수정된 경우, 업로드 이벤트를 카프카로 발행합니다.
+     * 데이터셋이 존재하지 않으면 예외를 발생시킵니다.
+     * 파일 업로드 실패 시 트랜잭션이 롤백되며, 데이터셋 파일이 수정된 경우 업로드 이벤트가 발행됩니다.
      *
      * @param dataId        수정할 데이터셋의 ID
      * @param dataFile      새 데이터셋 파일 (선택)
@@ -163,6 +163,13 @@ public class DataCommandService implements
         LoggerFactory.service().logSuccess("ModifyDataUseCase", "데이터셋 수정 서비스 종료 dataId=" + dataId, startTime);
     }
 
+    /**
+     * 데이터셋 파일, 썸네일 파일, 날짜, 주제/데이터소스/데이터타입 ID의 유효성을 검증합니다.
+     *
+     * 시작일이 종료일보다 늦을 경우 예외를 발생시키며, 파일 형식 및 각 ID의 존재 여부를 확인합니다.
+     *
+     * @throws DataException 시작일이 종료일보다 늦거나 유효하지 않은 값이 입력된 경우 발생합니다.
+     */
     private void validateDataRequest(
             MultipartFile dataFile,
             MultipartFile thumbnailFile,
@@ -189,6 +196,15 @@ public class DataCommandService implements
         validateDataTypeUseCase.validateDataType(dataTypeId);
     }
 
+    /**
+     * 지정된 데이터셋 파일을 스토리지에 업로드하고, 해당 데이터셋의 파일 URL을 갱신합니다.
+     *
+     * 파일 업로드 중 오류가 발생하면 트랜잭션 롤백을 위해 런타임 예외를 발생시킵니다.
+     *
+     * @param dataFile 업로드할 데이터셋 파일
+     * @param dataId   파일을 연결할 데이터셋의 식별자
+     * @param useCase  호출한 서비스 또는 유스케이스 식별자
+     */
     private void dataFileUpload(MultipartFile dataFile, Long dataId, String useCase) {
         // 데이터셋 파일 업로드 시도
         if (dataFile != null && !dataFile.isEmpty()) {
@@ -203,6 +219,14 @@ public class DataCommandService implements
         }
     }
 
+    /**
+     * 데이터셋의 썸네일 파일을 스토리지에 업로드하고 데이터셋 레코드의 썸네일 URL을 갱신합니다.
+     *
+     * @param thumbnailFile 업로드할 썸네일 파일
+     * @param dataId        썸네일을 등록할 데이터셋의 ID
+     * @param useCase       로깅 및 예외 메시지에 사용할 업무 구분 문자열
+     * @throws RuntimeException 파일 업로드에 실패할 경우 트랜잭션 롤백을 위해 발생
+     */
     private void thumbnailFileUpload(MultipartFile thumbnailFile, Long dataId, String useCase) {
         // 썸네일 파일 업로드 시도
         if (thumbnailFile != null && !thumbnailFile.isEmpty()) {

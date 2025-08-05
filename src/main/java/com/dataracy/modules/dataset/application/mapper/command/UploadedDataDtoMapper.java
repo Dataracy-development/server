@@ -9,6 +9,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class UploadedDataDtoMapper {
+    /**
+     * UploadDataRequest DTO와 추가 정보를 사용하여 Data 도메인 객체로 변환합니다.
+     *
+     * @param requestDto 업로드 데이터 요청 정보를 담은 DTO
+     * @param userId 데이터 소유자의 사용자 ID
+     * @param defaultImageUrl 데이터에 기본으로 할당할 이미지 URL
+     * @return 변환된 Data 도메인 객체
+     */
     public Data toDomain(
             UploadDataRequest requestDto,
             Long userId,

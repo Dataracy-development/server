@@ -88,10 +88,10 @@ public class SearchDataQueryDslAdapter implements
     }
 
     /**
-     * 주어진 DataFilterRequest의 필터 조건에 따라 QueryDSL BooleanExpression 배열을 생성합니다.
+     * FilteringDataRequest의 조건에 따라 데이터셋 필터링에 사용할 QueryDSL BooleanExpression 배열을 생성합니다.
      *
-     * @param request 데이터 필터링 조건이 포함된 요청 객체
-     * @return 각 필터 조건에 해당하는 BooleanExpression 배열
+     * @param request 데이터셋 필터링에 필요한 키워드, 주제 ID, 데이터 소스 ID, 데이터 타입 ID, 연도 범위 등의 조건이 포함된 요청 객체
+     * @return 각 필터 조건에 대응하는 BooleanExpression 배열
      */
     private BooleanExpression[] buildFilterPredicates(FilteringDataRequest request) {
         return new BooleanExpression[] {

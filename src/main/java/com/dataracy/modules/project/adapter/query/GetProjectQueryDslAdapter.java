@@ -35,11 +35,11 @@ public class GetProjectQueryDslAdapter implements
     private final QProjectEntity project = QProjectEntity.projectEntity;
 
     /**
-     * 지정된 개수만큼 인기 순으로 정렬된 프로젝트 목록을 조회합니다.
+     * 지정된 개수만큼 인기 순으로 정렬된 프로젝트 목록을 반환합니다.
      *
-     * 논리적으로 삭제되지 않은 프로젝트만 포함되며, 각 프로젝트의 최소 정보만 반환됩니다.
+     * 논리적으로 삭제되지 않은 프로젝트만 포함되며, 각 프로젝트는 최소 정보만을 담고 있습니다.
      *
-     * @param size 조회할 프로젝트의 최대 개수
+     * @param size 반환할 프로젝트의 최대 개수
      * @return 인기 순으로 정렬된 프로젝트 도메인 객체 리스트
      */
     @Override

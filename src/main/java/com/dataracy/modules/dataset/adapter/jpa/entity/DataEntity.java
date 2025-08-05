@@ -87,9 +87,9 @@ public class DataEntity extends BaseTimeEntity {
     }
 
     /**
-     * 주어진 요청 DTO의 값으로 데이터 엔티티의 주요 필드를 일괄 수정합니다.
+     * 주어진 수정 요청 DTO의 값으로 데이터 엔티티의 주요 필드를 일괄적으로 갱신합니다.
      *
-     * @param requestDto 데이터 수정 요청 정보를 담은 DTO
+     * @param requestDto 데이터의 새로운 값이 포함된 수정 요청 DTO
      */
     public void modify(ModifyDataRequest requestDto) {
         this.title = requestDto.title();
@@ -110,9 +110,10 @@ public class DataEntity extends BaseTimeEntity {
     }
 
     /**
-     * 데이터셋 파일의 URL을 지정된 값으로 업데이트합니다.
+     * 데이터셋 파일의 URL을 새 값으로 검증 후 변경합니다.
      *
-     * @param dataFileUrl 새로 설정할 데이터셋 파일의 URL
+     * @param dataFileUrl 변경할 데이터셋 파일의 URL. null이거나 빈 값일 경우 예외가 발생합니다.
+     * @throws DataException URL이 null이거나 빈 문자열인 경우 발생합니다.
      */
     public void updateDataFile (String dataFileUrl) {
         if (dataFileUrl == null || dataFileUrl.isEmpty()) {
@@ -126,9 +127,10 @@ public class DataEntity extends BaseTimeEntity {
     }
 
     /**
-     * 썸네일 파일의 URL을 새로운 값으로 업데이트합니다.
+     * 썸네일 파일의 URL을 검증하고, 유효한 경우 새로운 값으로 변경합니다.
      *
-     * @param thumbnailUrl 새로 설정할 썸네일 파일의 URL
+     * @param thumbnailUrl 새로 설정할 썸네일 파일의 URL. null이거나 빈 문자열일 경우 예외가 발생합니다.
+     * @throws DataException thumbnailUrl이 null이거나 빈 문자열일 때 발생합니다.
      */
     public void updateThumbnailFile (String thumbnailUrl) {
         if (thumbnailUrl == null || thumbnailUrl.isEmpty()) {
@@ -151,7 +153,7 @@ public class DataEntity extends BaseTimeEntity {
     }
 
     /**
-     * 주어진 값들로 DataEntity 인스턴스를 생성합니다.
+     * 주어진 값들로 새로운 DataEntity 인스턴스를 생성합니다.
      *
      * @param title 데이터셋의 제목
      * @param topicId 주제 ID

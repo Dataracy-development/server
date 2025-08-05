@@ -12,7 +12,7 @@ public class ValidateDataDbAdapter implements CheckDataExistsByIdPort {
     private final DataJpaRepository dataJpaRepository;
 
     /**
-     * 주어진 ID의 데이터가 저장소에 존재하는지 확인합니다.
+     * 주어진 ID에 해당하는 데이터가 저장소에 존재하는지 반환합니다.
      *
      * @param dataId 존재 여부를 확인할 데이터의 ID
      * @return 데이터가 존재하면 true, 존재하지 않으면 false

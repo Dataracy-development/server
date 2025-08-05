@@ -22,12 +22,13 @@ public class ExtractDataFileUrlDbAdapterFind implements
     private final DataJpaRepository dataJpaRepository;
 
     /**
-     * 주어진 데이터 ID에 해당하는 데이터의 사용자 ID를 반환합니다.
+     * 주어진 데이터 ID에 해당하는 데이터의 소유자(사용자) ID를 반환합니다.
      *
      * 데이터가 존재하지 않을 경우 {@code DataException}이 발생합니다.
      *
      * @param dataId 사용자 ID를 조회할 데이터의 ID
      * @return 데이터에 연결된 사용자 ID
+     * @throws DataException 데이터가 존재하지 않을 때 발생합니다.
      */
     @Override
     public Long findUserIdByDataId(Long dataId) {
@@ -42,9 +43,9 @@ public class ExtractDataFileUrlDbAdapterFind implements
     }
 
     /**
-     * 주어진 데이터 ID에 해당하는 데이터 엔티티(삭제된 데이터 포함)의 사용자 ID를 반환합니다.
+     * 삭제된 데이터를 포함하여 주어진 데이터 ID에 해당하는 데이터의 소유자(사용자) ID를 반환합니다.
      *
-     * @param dataId 사용자 ID를 조회할 데이터의 ID
+     * @param dataId 소유자 ID를 조회할 데이터의 ID
      * @return 데이터에 연결된 사용자 ID
      * @throws DataException 데이터가 존재하지 않을 경우 {@code DataErrorStatus.NOT_FOUND_DATA} 상태로 예외가 발생합니다.
      */
@@ -61,10 +62,12 @@ public class ExtractDataFileUrlDbAdapterFind implements
     }
 
     /**
-     * 주어진 데이터 ID에 해당하는 데이터셋 파일을 조회하여 반환합니다.
+     * 주어진 데이터 ID에 해당하는 데이터셋 파일의 URL을 Optional로 반환합니다.
+     *
+     * 데이터셋 파일이 존재하지 않으면 Optional.empty()를 반환합니다.
      *
      * @param dataId 조회할 데이터의 ID
-     * @return 데이터셋 파일이 존재하면 해당 파일의 정보를 포함한 Optional, 없으면 Optional.empty()
+     * @return 데이터셋 파일 URL이 존재하면 Optional에 담아 반환, 없으면 Optional.empty()
      */
     @Override
     public Optional<String> findDataFileUrlById(Long dataId) {
@@ -72,16 +75,23 @@ public class ExtractDataFileUrlDbAdapterFind implements
     }
 
     /**
-     * 주어진 데이터 ID에 해당하는 데이터셋 파일을 조회하여 반환합니다.
+     * 주어진 데이터 ID에 해당하는 다운로드된 데이터셋 파일의 URL을 Optional로 반환합니다.
      *
      * @param dataId 조회할 데이터의 ID
-     * @return 데이터셋 파일이 존재하면 해당 파일의 정보를 포함한 Optional, 없으면 Optional.empty()
+     * @return 데이터셋 파일 URL이 존재하면 해당 값을 포함한 Optional, 없으면 Optional.empty()
      */
     @Override
     public Optional<String> findDownloadedDataFileUrl(Long dataId) {
         return findDataFileUrl(dataId, "[findDataFileUrlById] 주어진 데이터 ID에 해당하는 데이터셋 파일 url 조회");
     }
 
+    /**
+     * 지정된 데이터 ID에 해당하는 데이터 파일 URL을 Optional로 반환합니다.
+     *
+     * @param dataId    조회할 데이터의 ID
+     * @param logPrefix 로그 메시지에 사용할 접두사
+     * @return 데이터 파일 URL이 존재하면 Optional로 반환하며, 없으면 Optional.empty()를 반환합니다.
+     */
     private Optional<String> findDataFileUrl(Long dataId, String logPrefix) {
         Instant startTime = LoggerFactory.db().logQueryStart("DataEntity", logPrefix + " 시작 dataId=" + dataId);
         Optional<String> dataFileUrl = dataJpaRepository.findDataFileUrlById(dataId);

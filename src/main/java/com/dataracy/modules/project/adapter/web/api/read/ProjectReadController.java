@@ -86,10 +86,10 @@ public class ProjectReadController implements ProjectReadApi {
     }
 
     /**
-     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 반환합니다.
+     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 조회합니다.
      *
-     * @param dataId 연결된 데이터를 식별하는 고유 ID
-     * @param pageable 결과 페이지네이션을 위한 정보
+     * @param dataId 연결된 프로젝트를 조회할 데이터의 고유 ID
+     * @param pageable 페이지네이션 정보
      * @return 연결된 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Override
@@ -105,9 +105,9 @@ public class ProjectReadController implements ProjectReadApi {
     }
 
     /**
-     * 인기 프로젝트를 지정한 개수만큼 조회하여 성공 응답으로 반환합니다.
+     * 지정한 개수만큼 인기 프로젝트 목록을 조회하여 성공 응답으로 반환합니다.
      *
-     * @param size 반환할 인기 프로젝트의 최대 개수
+     * @param size 조회할 인기 프로젝트의 최대 개수
      * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
