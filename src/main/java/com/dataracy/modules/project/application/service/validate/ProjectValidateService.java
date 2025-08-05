@@ -1,7 +1,7 @@
 package com.dataracy.modules.project.application.service.validate;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.project.application.port.in.query.validate.ValidateProjectUseCase;
+import com.dataracy.modules.project.application.port.in.validate.ValidateProjectUseCase;
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByIdPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;

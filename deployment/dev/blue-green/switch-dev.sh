@@ -54,12 +54,22 @@ server {
   listen 80;
   server_name dataracy.store;
 
-  # 🔥 API 요청 프록시
+  # 공통 헤더
+  proxy_set_header Host \$host;
+  proxy_set_header X-Real-IP \$remote_addr;
+  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto \$scheme;
+  proxy_http_version 1.1;
+  proxy_set_header Upgrade \$http_upgrade;
+  proxy_set_header Connection "upgrade";
+  proxy_set_header Cookie \$http_cookie;
+
+  # API 요청 프록시
   location /api {
     proxy_pass http://backend;
   }
 
-  # 🔥 Swagger UI
+  # Swagger UI 요청 프록시
   location /swagger-ui/ {
     proxy_pass http://backend/swagger-ui/;
   }
@@ -72,29 +82,28 @@ server {
     proxy_pass http://backend/swagger-config;
   }
 
+  # 기타 정적 자원 (필요 시)
   location /webjars/ {
     proxy_pass http://backend/webjars/;
   }
 
-  # 🔥 헬스 체크
+  # 헬스 체크
   location /actuator/health {
     proxy_pass http://backend/actuator/health;
   }
 
-  # 🔥 fallback: 정적 파일, 메인 진입 등
+  # 나머지 fallback
   location / {
     proxy_pass http://backend;
+    proxy_set_header Host \$host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto \$scheme;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Cookie \$http_cookie;
   }
-
-  # 공통 헤더
-  proxy_set_header Host \$host;
-  proxy_set_header X-Real-IP \$remote_addr;
-  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-  proxy_set_header X-Forwarded-Proto \$scheme;
-  proxy_http_version 1.1;
-  proxy_set_header Upgrade \$http_upgrade;
-  proxy_set_header Connection "upgrade";
-  proxy_set_header Cookie \$http_cookie;
 }
 EOF
 

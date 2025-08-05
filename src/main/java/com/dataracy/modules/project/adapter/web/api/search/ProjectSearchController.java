@@ -6,16 +6,13 @@ import com.dataracy.modules.project.adapter.web.mapper.search.ProjectFilterWebMa
 import com.dataracy.modules.project.adapter.web.mapper.search.ProjectSearchWebMapper;
 import com.dataracy.modules.project.adapter.web.request.search.FilteringProjectWebRequest;
 import com.dataracy.modules.project.adapter.web.response.search.FilteredProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.search.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.RealTimeProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.SimilarProjectWebResponse;
 import com.dataracy.modules.project.application.dto.request.search.FilteringProjectRequest;
 import com.dataracy.modules.project.application.dto.response.search.FilteredProjectResponse;
-import com.dataracy.modules.project.application.dto.response.search.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.search.RealTimeProjectResponse;
 import com.dataracy.modules.project.application.dto.response.search.SimilarProjectResponse;
 import com.dataracy.modules.project.application.port.in.query.search.SearchFilteredProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.search.SearchPopularProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.search.SearchRealTimeProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.search.SearchSimilarProjectsUseCase;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
@@ -37,7 +34,6 @@ public class ProjectSearchController implements ProjectSearchApi {
 
     private final SearchRealTimeProjectsUseCase searchRealTimeProjectsUseCase;
     private final SearchSimilarProjectsUseCase searchSimilarProjectsUseCase;
-    private final SearchPopularProjectsUseCase searchPopularProjectsUseCase;
     private final SearchFilteredProjectsUseCase searchFilteredProjectsUsecase;
 
     /**
@@ -64,7 +60,7 @@ public class ProjectSearchController implements ProjectSearchApi {
     /**
      * 지정한 프로젝트와 유사한 프로젝트 목록을 조회하여 반환합니다.
      *
-     * @param projectId 기준이 되는 프로젝트의 ID
+     * @param projectId 유사 프로젝트를 찾을 기준이 되는 프로젝트의 ID
      * @param size 반환할 유사 프로젝트의 최대 개수
      * @return 유사 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
@@ -80,26 +76,6 @@ public class ProjectSearchController implements ProjectSearchApi {
         LoggerFactory.api().logResponse("[SearchSimilarProjects] 유사 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_SIMILAR_PROJECTS, webResponse));
-    }
-
-    /**
-     * 인기 프로젝트를 지정한 개수만큼 조회하여 성공 응답으로 반환합니다.
-     *
-     * @param size 반환할 인기 프로젝트의 최대 개수
-     * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
-     */
-    @Override
-    public ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> searchPopularProjects(int size) {
-        Instant startTime = LoggerFactory.api().logRequest("[SearchPopularProjects] 인기 프로젝트 목록 조회 API 요청 시작");
-
-        List<PopularProjectResponse> responseDto = searchPopularProjectsUseCase.searchPopularProjects(size);
-        List<PopularProjectWebResponse> webResponse = responseDto.stream()
-                .map(projectSearchWebMapper::toWeb)
-                .toList();
-
-        LoggerFactory.api().logResponse("[SearchPopularProjects] 인기 프로젝트 목록 조회 API 응답 완료", startTime);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(SuccessResponse.of(ProjectSuccessStatus.FIND_POPULAR_PROJECTS, webResponse));
     }
 
     /**

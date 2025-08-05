@@ -2,10 +2,12 @@ package com.dataracy.modules.project.adapter.web.mapper.read;
 
 import com.dataracy.modules.project.adapter.web.response.read.ConnectedProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.ContinuedProjectWebResponse;
+import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
 import com.dataracy.modules.project.adapter.web.response.support.ChildProjectWebResponse;
 import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
+import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
 import com.dataracy.modules.project.application.dto.response.support.ChildProjectResponse;
 import org.springframework.stereotype.Component;
@@ -84,12 +86,12 @@ public class ProjectReadWebMapper {
     }
 
     /**
-     * ChildProjectResponse를 ChildProjectWebResponse로 변환합니다.
+     * ChildProjectResponse 객체를 ChildProjectWebResponse 객체로 변환합니다.
      *
-     * 프로젝트의 ID, 제목, 내용, 작성자, 댓글 수, 좋아요 수 정보를 웹 응답 DTO로 매핑합니다.
+     * 프로젝트 자식의 ID, 제목, 내용, 작성자, 댓글 수, 좋아요 수를 포함하는 웹 레이어 응답 DTO를 생성합니다.
      *
      * @param responseDto 변환할 프로젝트 자식 응답 DTO
-     * @return 변환된 웹 레이어용 프로젝트 자식 응답 DTO
+     * @return 변환된 ChildProjectWebResponse 객체
      */
     public ChildProjectWebResponse toWebDto(ChildProjectResponse responseDto) {
         return new ChildProjectWebResponse(
@@ -99,6 +101,29 @@ public class ProjectReadWebMapper {
                 responseDto.username(),
                 responseDto.commentCount(),
                 responseDto.likeCount()
+        );
+    }
+
+    /**
+     * 인기 프로젝트 응답 DTO를 웹 계층의 응답 객체로 변환합니다.
+     *
+     * @param responseDto 애플리케이션 계층의 인기 프로젝트 정보를 담은 DTO
+     * @return 웹 계층에서 사용하는 인기 프로젝트 응답 객체
+     */
+    public PopularProjectWebResponse toWebDto(PopularProjectResponse responseDto) {
+        return new PopularProjectWebResponse(
+                responseDto.id(),
+                responseDto.title(),
+                responseDto.content(),
+                responseDto.username(),
+                responseDto.fileUrl(),
+                responseDto.topicLabel(),
+                responseDto.analysisPurposeLabel(),
+                responseDto.dataSourceLabel(),
+                responseDto.authorLevelLabel(),
+                responseDto.commentCount(),
+                responseDto.likeCount(),
+                responseDto.viewCount()
         );
     }
 }

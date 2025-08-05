@@ -1,26 +1,28 @@
 package com.dataracy.modules.dataset.adapter.kafka.consumer;
 
-import com.dataracy.modules.dataset.application.dto.request.MetadataParseRequest;
-import com.dataracy.modules.dataset.application.port.in.MetadataParseUseCase;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.dataset.application.dto.request.metadata.ParseMetadataRequest;
+import com.dataracy.modules.dataset.application.port.in.command.metadata.ParseMetadataUseCase;
 import com.dataracy.modules.dataset.domain.model.event.DataUploadEvent;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DataKafkaConsumerAdapter {
+    private final ParseMetadataUseCase parseMetadataUseCase;
 
-    private final MetadataParseUseCase metadataParseUseCase;
+    @Value("${spring.kafka.consumer.extract-metadata.topic:data-uploaded}")
+    private String dataUploadedTopic;
 
     /**
-     * Kafka에서 데이터 업로드 이벤트를 수신하여 해당 파일의 메타데이터 파싱 및 저장을 수행합니다.
+     * Kafka에서 데이터 업로드 이벤트를 수신하여 해당 파일의 메타데이터를 파싱하고 저장합니다.
      *
      * @param event 데이터 업로드 이벤트 정보
-     * 
-     * 예외 발생 시 Kafka 재시도 메커니즘을 위해 예외를 다시 던집니다.
+     *
+     * 예외 발생 시 Kafka의 재시도 메커니즘을 활성화하기 위해 예외를 다시 던집니다.
      */
     @KafkaListener(
             topics = "${spring.kafka.consumer.extract-metadata.topic:data-uploaded}",
@@ -28,18 +30,18 @@ public class DataKafkaConsumerAdapter {
             containerFactory = "dataUploadEventKafkaListenerContainerFactory"
     )
     public void consume(DataUploadEvent event) {
-        log.info("[Kafka] 데이터셋 업로드 이벤트 수신됨: fileName:{}", event.getOriginalFilename());
         try {
-            metadataParseUseCase.parseAndSaveMetadata(
-                    new MetadataParseRequest(
+            LoggerFactory.kafka().logConsume(dataUploadedTopic, "데이터셋 업로드 이벤트 수신됨: dataId=" + event.getDataId());
+            parseMetadataUseCase.parseAndSaveMetadata(
+                    new ParseMetadataRequest(
                             event.getDataId(),
                             event.getFileUrl(),
                             event.getOriginalFilename()
                     )
             );
-            log.info("[Kafka] 데이터셋 업로드 이벤트 처리 완료: fileName:{}", event.getOriginalFilename());
+            LoggerFactory.kafka().logConsume(dataUploadedTopic, "데이터셋 업로드 이벤트 처리 완료: dataId=" + event.getDataId());
         } catch (Exception e) {
-            log.error("[Kafka] 데이터셋 업로드 이벤트 처리 실패: fileName:{}", event.getOriginalFilename(), e);
+            LoggerFactory.kafka().logError(dataUploadedTopic, "데이터셋 업로드 이벤트 처리 실패: dataId=" + event.getDataId(), e);
             throw e; // 재시도를 위해 예외 재던지기
         }
     }

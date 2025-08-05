@@ -1,6 +1,6 @@
 package com.dataracy.modules.common.util;
 
-import com.dataracy.modules.dataset.application.dto.response.MetadataParseResponse;
+import com.dataracy.modules.dataset.application.dto.response.metadata.ParsedMetadataResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,15 +24,15 @@ public class FileParsingUtil {
     private static final int SHEET_INDEX = 0;
 
     /****
-     * 입력 스트림과 파일명을 기반으로 파일 형식을 자동으로 감지하여(CSV, XLSX, JSON) 메타데이터와 미리보기 데이터를 추출합니다.
+     * 입력 스트림과 파일명을 기반으로 파일 형식을 자동 감지(CSV, XLSX, JSON)하여 행 수, 열 수, 미리보기 데이터를 추출합니다.
      *
      * @param inputStream 파일 데이터가 포함된 입력 스트림
      * @param filename 파일명(확장자를 포함하여 파일 형식 판별에 사용)
-     * @return 행 수, 열 수, 미리보기 데이터를 포함하는 MetadataParseResponse 객체
+     * @return 행 수, 열 수, 미리보기 데이터를 포함하는 ParsedMetadataResponse 객체
      * @throws IllegalArgumentException 입력값이 null이거나 비어 있거나, 지원하지 않는 파일 형식일 때 발생
-     * @throws IOException 파일 파싱 중 입출력 오류가 발생할 경우 발생
+     * @throws IOException 파일 파싱 중 입출력 오류가 발생할 경우
      */
-    public static MetadataParseResponse parse(InputStream inputStream, String filename) throws IOException {
+    public static ParsedMetadataResponse parse(InputStream inputStream, String filename) throws IOException {
         if (inputStream == null) {
             throw new IllegalArgumentException("입력 스트림은 null일 수 없습니다.");
         }
@@ -52,16 +52,16 @@ public class FileParsingUtil {
     }
 
     /**
-     * CSV 파일의 입력 스트림을 파싱하여 전체 행 수, 컬럼 수, 미리보기 데이터를 추출합니다.
+     * CSV 파일 입력 스트림을 파싱하여 전체 행 수, 컬럼 수, 미리보기 데이터를 추출합니다.
      *
-     * 입력 스트림의 인코딩을 자동 감지한 후, 첫 번째 행을 헤더로 인식하여 데이터를 파싱합니다.
+     * 입력 스트림의 문자 인코딩을 자동 감지한 후, 첫 번째 행을 헤더로 인식하여 데이터를 파싱합니다.
      * 최대 5개의 미리보기 행을 헤더-값 쌍의 리스트로 반환합니다.
      *
      * @param originalInputStream CSV 파일의 입력 스트림
-     * @return 전체 행 수, 컬럼 수, 미리보기 데이터(JSON 문자열)를 포함한 MetadataParseResponse 객체
+     * @return 전체 행 수, 컬럼 수, 미리보기 데이터(JSON 문자열)를 포함한 ParsedMetadataResponse 객체
      * @throws IOException 스트림 읽기 또는 파싱 중 오류가 발생한 경우
      */
-    private static MetadataParseResponse parseCsv(InputStream originalInputStream) throws IOException {
+    private static ParsedMetadataResponse parseCsv(InputStream originalInputStream) throws IOException {
         // BufferedInputStream으로 wrap하여 mark/reset 지원
         if (!originalInputStream.markSupported()) {
             originalInputStream = new BufferedInputStream(originalInputStream);
@@ -96,7 +96,7 @@ public class FileParsingUtil {
                 }
             }
 
-            return new MetadataParseResponse(
+            return new ParsedMetadataResponse(
                     rowCount,
                     colCount,
                     toJson(preview)
@@ -110,19 +110,19 @@ public class FileParsingUtil {
      * 첫 번째 행을 헤더로 간주하며, 비어 있는 헤더 셀은 기본 컬럼명으로 대체됩니다. 미리보기 데이터는 최대 5개의 데이터 행(헤더 제외)으로 구성되며, 각 행은 헤더명을 키로 하는 맵 형태로 반환됩니다.
      *
      * @param is XLSX 파일의 입력 스트림
-     * @return 행 수(헤더 제외), 열 수, 미리보기 데이터(JSON 문자열)가 포함된 MetadataParseResponse 객체
+     * @return 행 수(헤더 제외), 열 수, 미리보기 데이터(JSON 문자열)가 포함된 ParsedMetadataResponse 객체
      * @throws IOException 파일 읽기 또는 파싱 중 오류가 발생한 경우
      */
-    private static MetadataParseResponse parseXlsx(InputStream is) throws IOException {
+    private static ParsedMetadataResponse parseXlsx(InputStream is) throws IOException {
         try (var wb = WorkbookFactory.create(is)) {
             var sheet = wb.getSheetAt(SHEET_INDEX);
             int rowCount = sheet.getPhysicalNumberOfRows();
             if (rowCount == 0) {
-                return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
+                return new ParsedMetadataResponse(0, 0, toJson(new ArrayList<>()));
             }
             var firstRow = sheet.getRow(0);
             if (firstRow == null) {
-                return new MetadataParseResponse(0, 0, toJson(new ArrayList<>()));
+                return new ParsedMetadataResponse(0, 0, toJson(new ArrayList<>()));
             }
             int colCount = firstRow.getPhysicalNumberOfCells();
 
@@ -148,7 +148,7 @@ public class FileParsingUtil {
                 preview.add(map);
             }
 
-            return new MetadataParseResponse(
+            return new ParsedMetadataResponse(
                     rowCount - 1, // header 제외
                     colCount,
                     toJson(preview)
@@ -159,16 +159,16 @@ public class FileParsingUtil {
     }
 
     /**
-     * JSON 형식의 입력 스트림을 파싱하여 행 수, 열 수, 미리보기 데이터를 추출합니다.
+     * JSON 형식의 입력 스트림에서 행 수, 열 수, 미리보기 데이터를 추출합니다.
      *
-     * 입력 스트림의 루트 노드는 반드시 배열이어야 하며, 각 요소는 Map으로 변환되어 최대 5개까지 미리보기로 제공됩니다.
-     * 
+     * 입력 스트림의 루트 노드는 반드시 배열이어야 하며, 각 요소는 최대 5개까지 Map으로 변환되어 미리보기로 제공됩니다.
+     *
      * @param is JSON 데이터를 포함하는 입력 스트림
-     * @return 행 수, 열 수, 미리보기 데이터(JSON 문자열)를 포함하는 MetadataParseResponse 객체
+     * @return 행 수, 열 수, 미리보기 데이터(JSON 문자열)를 포함하는 ParsedMetadataResponse 객체
      * @throws IOException 입력 스트림을 읽거나 파싱할 때 오류가 발생한 경우
      * @throws IllegalArgumentException 루트 노드가 배열이 아닌 경우
      */
-    private static MetadataParseResponse parseJson(InputStream is) throws IOException {
+    private static ParsedMetadataResponse parseJson(InputStream is) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(is);
 
@@ -191,7 +191,7 @@ public class FileParsingUtil {
             preview.add(row);
         }
 
-        return new MetadataParseResponse(
+        return new ParsedMetadataResponse(
                 rowCount,
                 colCount,
                 toJson(preview)

@@ -1,9 +1,9 @@
 package com.dataracy.modules.project.adapter.web.mapper.search;
 
-import com.dataracy.modules.project.adapter.web.response.search.PopularProjectWebResponse;
+import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.RealTimeProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.SimilarProjectWebResponse;
-import com.dataracy.modules.project.application.dto.response.search.PopularProjectResponse;
+import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.search.RealTimeProjectResponse;
 import com.dataracy.modules.project.application.dto.response.search.SimilarProjectResponse;
 import org.springframework.stereotype.Component;
@@ -35,29 +35,6 @@ public class ProjectSearchWebMapper {
      */
     public SimilarProjectWebResponse toWeb(SimilarProjectResponse responseDto) {
         return new SimilarProjectWebResponse(
-                responseDto.id(),
-                responseDto.title(),
-                responseDto.content(),
-                responseDto.username(),
-                responseDto.fileUrl(),
-                responseDto.topicLabel(),
-                responseDto.analysisPurposeLabel(),
-                responseDto.dataSourceLabel(),
-                responseDto.authorLevelLabel(),
-                responseDto.commentCount(),
-                responseDto.likeCount(),
-                responseDto.viewCount()
-        );
-    }
-
-    /**
-     * 인기 프로젝트 검색 응답 DTO를 웹 응답 객체로 변환합니다.
-     *
-     * @param responseDto 인기 프로젝트 검색 결과를 담고 있는 DTO
-     * @return 변환된 인기 프로젝트 웹 응답 객체
-     */
-    public PopularProjectWebResponse toWeb(PopularProjectResponse responseDto) {
-        return new PopularProjectWebResponse(
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.content(),

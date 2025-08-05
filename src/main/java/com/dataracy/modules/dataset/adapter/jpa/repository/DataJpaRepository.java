@@ -22,11 +22,11 @@ public interface DataJpaRepository extends JpaRepository<DataEntity, Long> {
     /**
      * 지정된 데이터 ID에 해당하는 데이터 파일 URL을 반환합니다.
      *
-     * 데이터 엔티티의 삭제 여부와 관계없이 `data` 테이블에서 직접 조회하며, 결과가 없으면 빈 Optional을 반환합니다.
+     * 데이터의 삭제 상태와 무관하게 `data` 테이블에서 직접 조회하며, 해당 ID의 URL이 없으면 빈 Optional을 반환합니다.
      *
-     * @param dataId 조회할 데이터의 ID
-     * @return 데이터 파일 URL이 존재하면 해당 값을, 없으면 빈 Optional을 반환
+     * @param dataId 데이터 파일 URL을 조회할 데이터의 ID
+     * @return 데이터 파일 URL이 존재하면 해당 값을, 없으면 빈 Optional
      */
     @Query(value = "SELECT data_file_url FROM data WHERE data_id = :dataId", nativeQuery = true) // @Where 무시됨
-    Optional<String> downloadDatasetFile(@Param("dataId") Long dataId);
+    Optional<String> findDataFileUrlById(@Param("dataId") Long dataId);
 }
