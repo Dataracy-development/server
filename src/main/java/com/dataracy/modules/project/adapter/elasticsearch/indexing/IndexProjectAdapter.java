@@ -2,7 +2,7 @@ package com.dataracy.modules.project.adapter.elasticsearch.indexing;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectSearchDocument;
+import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.port.out.indexing.IndexProjectPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,15 +22,16 @@ public class IndexProjectAdapter implements IndexProjectPort {
      */
     @Override
     public void index(ProjectSearchDocument doc) {
+        String docId = doc.id().toString();
         try {
             client.index(i -> i
                     .index(INDEX)
-                    .id(String.valueOf(doc.id()))
+                    .id(docId)
                     .document(doc)
             );
-            LoggerFactory.elastic().logIndex(INDEX, String.valueOf(doc.id()), "프로젝트 인덱싱 완료");
+            LoggerFactory.elastic().logIndex(INDEX, docId, "프로젝트 인덱싱 완료");
         } catch (IOException e) {
-            LoggerFactory.elastic().logError(INDEX, "프로젝트 인덱싱 실패: docId=" + doc.id(), e);
+            LoggerFactory.elastic().logError(INDEX, "프로젝트 인덱싱 실패: docId=" + docId, e);
         }
     }
 }

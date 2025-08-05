@@ -29,7 +29,7 @@ public class DataCommandDbAdapter implements
     public Data saveData(Data data) {
         DataEntity dataEntity = DataEntityMapper.toEntity(data);
         Data savedData = DataEntityMapper.toDomain(dataJpaRepository.save(dataEntity));
-        LoggerFactory.db().logSave("DataEntity", String.valueOf(data.getId()), "데이터셋 파일 업로드가 완료되었습니다.");
+        LoggerFactory.db().logSave("DataEntity", String.valueOf(savedData.getId()), "데이터셋 파일 업로드가 완료되었습니다.");
         return savedData;
     }
 

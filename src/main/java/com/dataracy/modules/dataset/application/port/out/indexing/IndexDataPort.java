@@ -1,6 +1,6 @@
 package com.dataracy.modules.dataset.application.port.out.indexing;
 
-import com.dataracy.modules.dataset.adapter.elasticsearch.document.DataSearchDocument;
+import com.dataracy.modules.dataset.application.dto.document.DataSearchDocument;
 
 public interface IndexDataPort {
     /**

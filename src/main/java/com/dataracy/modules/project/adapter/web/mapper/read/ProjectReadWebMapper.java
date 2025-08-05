@@ -110,7 +110,7 @@ public class ProjectReadWebMapper {
      * @param responseDto 인기 프로젝트 검색 결과를 담고 있는 DTO
      * @return 변환된 인기 프로젝트 웹 응답 객체
      */
-    public PopularProjectWebResponse toWeb(PopularProjectResponse responseDto) {
+    public PopularProjectWebResponse toWebDto(PopularProjectResponse responseDto) {
         return new PopularProjectWebResponse(
                 responseDto.id(),
                 responseDto.title(),

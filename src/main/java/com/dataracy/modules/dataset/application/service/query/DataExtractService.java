@@ -27,9 +27,9 @@ public class DataExtractService implements
     @Override
     @Transactional(readOnly = true)
     public Long findUserIdByDataId(Long dataId) {
-        Instant startTime = LoggerFactory.service().logStart("FindUserIdUseCase", "아이디를 통한 데이터셋 작성자명 조회 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart("FindUserIdUseCase", "아이디를 통한 데이터셋 작성자 ID 조회 서비스 시작 dataId=" + dataId);
         Long userId = extractDataOwnerPort.findUserIdByDataId(dataId);
-        LoggerFactory.service().logSuccess("FindUserIdUseCase", "아이디를 통한 데이터셋 작성자명 조회 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess("FindUserIdUseCase", "아이디를 통한 데이터셋 작성자 ID 조회 서비스 종료 dataId=" + dataId, startTime);
         return userId;
     }
 
@@ -42,9 +42,9 @@ public class DataExtractService implements
     @Override
     @Transactional(readOnly = true)
     public Long findUserIdIncludingDeleted(Long dataId) {
-        Instant startTime = LoggerFactory.service().logStart("FindUserIdIncludingDeletedUseCase", "삭제된 데이터셋을 포함하여 아이디를 통한 데이터셋 작성자명 조회 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart("FindUserIdIncludingDeletedUseCase", "삭제된 데이터셋을 포함하여 아이디를 통한 데이터셋 작성자 ID 조회 서비스 시작 dataId=" + dataId);
         Long userId = extractDataOwnerPort.findUserIdIncludingDeleted(dataId);
-        LoggerFactory.service().logSuccess("FindUserIdIncludingDeletedUseCase", "삭제된 데이터셋을 포함하여 아이디를 통한 데이터셋 작성자명 조회 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess("FindUserIdIncludingDeletedUseCase", "삭제된 데이터셋을 포함하여 아이디를 통한 데이터셋 작성자 ID 조회 서비스 종료 dataId=" + dataId, startTime);
         return userId;
     }
 }

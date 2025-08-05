@@ -122,7 +122,7 @@ public interface ProjectReadApi {
                             schema = @Schema(implementation = SuccessResponse.class)))
     })
     @GetMapping("/popular")
-    ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> searchPopularProjects(
+    ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> getPopularProjects(
             @RequestParam(name = "size")
             @Min(1)
             int size

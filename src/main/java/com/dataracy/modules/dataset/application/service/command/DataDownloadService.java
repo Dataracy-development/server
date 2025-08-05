@@ -36,7 +36,13 @@ public class DataDownloadService implements DownloadDataFileUseCase {
                     LoggerFactory.service().logWarning("DownloadDataFileUseCase", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
-        String preSignedUrl = downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
+        String preSignedUrl;
+        try {
+            preSignedUrl = downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
+        } catch (Exception e) {
+            LoggerFactory.service().logException("DownloadDataFileUseCase", "Pre-signed URL 생성 실패 dataId=" + dataId, e);
+            throw new DataException(DataErrorStatus.DOWNLOAD_URL_GENERATION_FAILED);
+        }
         LoggerFactory.service().logSuccess("DownloadDataFileUseCase", "데이터셋 파일 다운로드 서비스 종료 dataId=" + dataId, startTime);
         return preSignedUrl;
     }

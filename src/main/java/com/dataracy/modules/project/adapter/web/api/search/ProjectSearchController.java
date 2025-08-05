@@ -2,21 +2,17 @@ package com.dataracy.modules.project.adapter.web.api.search;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.project.adapter.web.mapper.read.ProjectReadWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.search.ProjectFilterWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.search.ProjectSearchWebMapper;
 import com.dataracy.modules.project.adapter.web.request.search.FilteringProjectWebRequest;
 import com.dataracy.modules.project.adapter.web.response.search.FilteredProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.RealTimeProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.SimilarProjectWebResponse;
 import com.dataracy.modules.project.application.dto.request.search.FilteringProjectRequest;
 import com.dataracy.modules.project.application.dto.response.search.FilteredProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.search.RealTimeProjectResponse;
 import com.dataracy.modules.project.application.dto.response.search.SimilarProjectResponse;
 import com.dataracy.modules.project.application.port.in.query.search.SearchFilteredProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.GetPopularProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.search.SearchRealTimeProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.search.SearchSimilarProjectsUseCase;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
@@ -35,7 +31,6 @@ import java.util.List;
 public class ProjectSearchController implements ProjectSearchApi {
     private final ProjectSearchWebMapper projectSearchWebMapper;
     private final ProjectFilterWebMapper projectFilterWebMapper;
-    private final ProjectReadWebMapper projectReadWebMapper;
 
     private final SearchRealTimeProjectsUseCase searchRealTimeProjectsUseCase;
     private final SearchSimilarProjectsUseCase searchSimilarProjectsUseCase;

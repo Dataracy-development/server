@@ -44,7 +44,7 @@ public class GetProjectQueryDslAdapter implements
      */
     @Override
     public List<Project> getPopularProjects(int size) {
-        Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[searchPopularProjects] 인기있는 프로젝트 목록 조회 시작.");
+        Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[getPopularProjects] 인기있는 프로젝트 목록 조회 시작.");
         List<Project> popularProjects =  queryFactory
                 .selectFrom(project)
                 .where(
@@ -57,7 +57,7 @@ public class GetProjectQueryDslAdapter implements
                 .map(ProjectEntityMapper::toMinimal)
                 .toList();
 
-        LoggerFactory.query().logQueryEnd("ProjectEntity", "[searchPopularProjects] 인기있는 프로젝트 목록 조회 완료.", startTime);
+        LoggerFactory.query().logQueryEnd("ProjectEntity", "[getPopularProjects] 인기있는 프로젝트 목록 조회 완료.", startTime);
         return popularProjects;
     }
 

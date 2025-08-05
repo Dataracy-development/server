@@ -42,7 +42,7 @@ public record ProjectDetailWebResponse(
         @Schema(description = "프로젝트 썸네일 url", example = "https://www.s3.~~~")
         String fileUrl,
 
-        @Schema(description = "프로젝트 작성일", example = "2025-08-02")
+        @Schema(description = "생성일", example = "2025-08-04T10:30:00")
         LocalDateTime createdAt,
 
         @Schema(description = "댓글 수", example = "1")

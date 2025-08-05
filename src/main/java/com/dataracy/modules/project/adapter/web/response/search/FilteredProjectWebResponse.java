@@ -44,7 +44,7 @@ public record FilteredProjectWebResponse(
         @Schema(description = "조회 수", example = "100")
         Long viewCount,
 
-        @Schema(description = "프로젝트 작성일", example = "2025-08-02")
+        @Schema(description = "생성일", example = "2025-08-04T10:30:00")
         LocalDateTime createdAt,
 
         @Schema(description = "연결된 자식 프로젝트 리스트")

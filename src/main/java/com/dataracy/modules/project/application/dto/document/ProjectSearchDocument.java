@@ -1,4 +1,4 @@
-package com.dataracy.modules.project.adapter.elasticsearch.document;
+package com.dataracy.modules.project.application.dto.document;
 
 import com.dataracy.modules.project.domain.model.Project;
 import lombok.Builder;

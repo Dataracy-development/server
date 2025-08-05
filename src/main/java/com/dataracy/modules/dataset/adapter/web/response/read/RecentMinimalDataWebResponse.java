@@ -15,6 +15,6 @@ public record RecentMinimalDataWebResponse(
         @Schema(description = "데이터셋 썸네일 url", example = "https://www.s3.~~~")
         String thumbnailUrl,
 
-        @Schema(description = "데이터셋 생성일", example = "2025.08.04T~~")
+        @Schema(description = "생성일", example = "2025-08-04T10:30:00")
         LocalDateTime createdAt
 ) {}

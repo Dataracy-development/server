@@ -1,4 +1,4 @@
-package com.dataracy.modules.dataset.application.port.in.query.validate;
+package com.dataracy.modules.dataset.application.port.in.validate;
 
 public interface ValidateDataUseCase {
     /**

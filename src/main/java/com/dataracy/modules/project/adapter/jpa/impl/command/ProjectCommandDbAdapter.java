@@ -66,10 +66,8 @@ public class ProjectCommandDbAdapter implements
                     LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
-        if (!projectEntity.getFileUrl().equals(fileUrl)) {
-            projectEntity.updateFile(fileUrl);
-            projectJpaRepository.save(projectEntity);
-        }
+        projectEntity.updateFile(fileUrl);
+        projectJpaRepository.save(projectEntity);
         LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 썸네일 이미지 파일 업데이트가 완료되었습니다.");
     }
 

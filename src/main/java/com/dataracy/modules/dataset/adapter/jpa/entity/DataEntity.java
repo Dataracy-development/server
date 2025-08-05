@@ -1,7 +1,10 @@
 package com.dataracy.modules.dataset.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
+import com.dataracy.modules.dataset.domain.exception.DataException;
+import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
@@ -112,6 +115,13 @@ public class DataEntity extends BaseTimeEntity {
      * @param dataFileUrl 새로 설정할 데이터셋 파일의 URL
      */
     public void updateDataFile (String dataFileUrl) {
+        if (dataFileUrl == null || dataFileUrl.isEmpty()) {
+            LoggerFactory.domain().logWarning("잘못된 데이터셋 파일 url 형식입니다.");
+            throw new DataException(DataErrorStatus.INVALID_FILE_URL);
+        }
+        if (dataFileUrl.equals(this.dataFileUrl)) {
+            return;
+        }
         this.dataFileUrl = dataFileUrl;
     }
 
@@ -121,6 +131,13 @@ public class DataEntity extends BaseTimeEntity {
      * @param thumbnailUrl 새로 설정할 썸네일 파일의 URL
      */
     public void updateThumbnailFile (String thumbnailUrl) {
+        if (thumbnailUrl == null || thumbnailUrl.isEmpty()) {
+            LoggerFactory.domain().logWarning("잘못된 데이터셋 썸네일 파일 url 형식입니다.");
+            throw new DataException(DataErrorStatus.INVALID_FILE_URL);
+        }
+        if (thumbnailUrl.equals(this.thumbnailUrl)) {
+            return;
+        }
         this.thumbnailUrl = thumbnailUrl;
     }
 

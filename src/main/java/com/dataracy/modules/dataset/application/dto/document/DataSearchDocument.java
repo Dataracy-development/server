@@ -1,4 +1,4 @@
-package com.dataracy.modules.dataset.adapter.elasticsearch.document;
+package com.dataracy.modules.dataset.application.dto.document;
 
 import com.dataracy.modules.dataset.application.dto.response.support.DataLabels;
 import com.dataracy.modules.dataset.domain.model.Data;

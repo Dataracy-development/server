@@ -139,7 +139,7 @@ public class ProjectSearchService implements
             );
         });
 
-        LoggerFactory.service().logSuccess("SearchFilteredProjectsUseCase", "인기 프로젝트 목록 조회 서비스 종료 keyword=" + request.keyword(), startTime);
+        LoggerFactory.service().logSuccess("SearchFilteredProjectsUseCase", "필터링된 프로젝트 목록 조회 서비스 종료 keyword=" + request.keyword(), startTime);
         return filteredProjectResponses;
     }
 }

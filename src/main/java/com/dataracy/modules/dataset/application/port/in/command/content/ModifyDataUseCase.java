@@ -3,9 +3,6 @@ package com.dataracy.modules.dataset.application.port.in.command.content;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * 데이터셋 업로드 유스케이스
- */
 public interface ModifyDataUseCase {
     /**
      * 지정된 데이터셋의 정보를 새로운 파일 및 썸네일과 함께 수정합니다.

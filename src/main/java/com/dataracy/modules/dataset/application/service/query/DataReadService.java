@@ -105,12 +105,12 @@ public class DataReadService implements
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
         UserInfo userInfo = getUserInfoUseCase.getUserInfo(data.getUserId());
-        DataUser dataUser = DataUser.toDomain(userInfo);
+        DataUser dataUser = DataUser.fromUserInfo(userInfo);
 
         String authorLabel = dataUser.authorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(dataUser.authorLevelId());
         String occupationLabel = dataUser.occupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(dataUser.occupationId());
 
-        DataDetailResponse dataDetailResponse =dataReadDtoMapper.toResponseDto(
+        DataDetailResponse dataDetailResponse = dataReadDtoMapper.toResponseDto(
                 data,
                 dataUser.nickname(),
                 authorLabel,

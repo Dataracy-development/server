@@ -6,7 +6,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.util.ObjectBuilder;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.dataset.adapter.elasticsearch.document.DataSearchDocument;
+import com.dataracy.modules.dataset.application.dto.document.DataSearchDocument;
 import com.dataracy.modules.dataset.application.dto.response.search.SimilarDataResponse;
 import com.dataracy.modules.dataset.application.port.out.query.search.SearchSimilarDataSetsPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;

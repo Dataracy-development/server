@@ -2,7 +2,7 @@ package com.dataracy.modules.dataset.application.service.command;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.FileParsingUtil;
-import com.dataracy.modules.dataset.adapter.elasticsearch.document.DataSearchDocument;
+import com.dataracy.modules.dataset.application.dto.document.DataSearchDocument;
 import com.dataracy.modules.dataset.application.dto.request.metadata.ParseMetadataRequest;
 import com.dataracy.modules.dataset.application.dto.response.metadata.ParsedMetadataResponse;
 import com.dataracy.modules.dataset.application.dto.response.support.DataLabels;
@@ -80,7 +80,6 @@ public class ParseMetadataService implements ParseMetadataUseCase {
             // Elasticsearch 색인
             DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);
             indexDataPort.index(document);
-            LoggerFactory.service().logSuccess("ParseMetadataUseCase", "데이터셋 파일을 파싱하고 내용 저장 서비스 종료. dataId=" + data.getId(), startTime);
         } catch (IOException e) {
             LoggerFactory.service().logException("ParseMetadataUseCase", "파일 다운로드 또는 파싱 실패", e);
         } catch (DataException e) {
@@ -88,5 +87,6 @@ public class ParseMetadataService implements ParseMetadataUseCase {
         } catch (Exception e) {
             LoggerFactory.service().logException("ParseMetadataUseCase", "예상치 못한 오류 발생", e);
         }
+        LoggerFactory.service().logSuccess("ParseMetadataUseCase", "데이터셋 파일을 파싱하고 내용 저장 서비스 종료. dataId=" + request.dataId(), startTime);
     }
 }

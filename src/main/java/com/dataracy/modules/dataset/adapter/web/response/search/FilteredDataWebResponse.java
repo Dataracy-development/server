@@ -35,7 +35,7 @@ public record FilteredDataWebResponse(
         String thumbnailUrl,
 
         @Schema(description = "데이터셋 다운로드 횟수", example = "3")
-        int downloadCount,
+        Integer downloadCount,
 
         @Schema(description = "데이터셋 행 수", example = "55")
         Integer rowCount,
@@ -43,9 +43,9 @@ public record FilteredDataWebResponse(
         @Schema(description = "데이터셋 열 수", example = "100")
         Integer columnCount,
 
-        @Schema(description = "데이터셋 생성일", example = "2025.08.04T~~")
+        @Schema(description = "생성일", example = "2025-08-04T10:30:00")
         LocalDateTime createdAt,
 
-        @Schema(description = "연결된 데이터셋 개수", example = "5")
+        @Schema(description = "연결된 프로젝트 개수", example = "5")
         Long countConnectedProjects
 ) {}

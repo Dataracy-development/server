@@ -36,6 +36,6 @@ public record ContinuedProjectWebResponse(
         @Schema(description = "조회 수", example = "100")
         Long viewCount,
 
-        @Schema(description = "작성 날짜", example = "2025-08-02")
+        @Schema(description = "생성일", example = "2025-08-04T10:30:00")
         LocalDateTime createdAt
 ) {}

@@ -4,7 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.dataset.adapter.elasticsearch.document.DataSearchDocument;
+import com.dataracy.modules.dataset.application.dto.document.DataSearchDocument;
 import com.dataracy.modules.dataset.application.dto.response.read.RecentMinimalDataResponse;
 import com.dataracy.modules.dataset.application.port.out.query.search.SearchRealTimeDataSetsPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
