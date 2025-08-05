@@ -2,10 +2,12 @@ package com.dataracy.modules.project.adapter.web.mapper.read;
 
 import com.dataracy.modules.project.adapter.web.response.read.ConnectedProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.ContinuedProjectWebResponse;
+import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
 import com.dataracy.modules.project.adapter.web.response.support.ChildProjectWebResponse;
 import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
+import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
 import com.dataracy.modules.project.application.dto.response.support.ChildProjectResponse;
 import org.springframework.stereotype.Component;
@@ -99,6 +101,29 @@ public class ProjectReadWebMapper {
                 responseDto.username(),
                 responseDto.commentCount(),
                 responseDto.likeCount()
+        );
+    }
+
+    /**
+     * 인기 프로젝트 검색 응답 DTO를 웹 응답 객체로 변환합니다.
+     *
+     * @param responseDto 인기 프로젝트 검색 결과를 담고 있는 DTO
+     * @return 변환된 인기 프로젝트 웹 응답 객체
+     */
+    public PopularProjectWebResponse toWeb(PopularProjectResponse responseDto) {
+        return new PopularProjectWebResponse(
+                responseDto.id(),
+                responseDto.title(),
+                responseDto.content(),
+                responseDto.username(),
+                responseDto.fileUrl(),
+                responseDto.topicLabel(),
+                responseDto.analysisPurposeLabel(),
+                responseDto.dataSourceLabel(),
+                responseDto.authorLevelLabel(),
+                responseDto.commentCount(),
+                responseDto.likeCount(),
+                responseDto.viewCount()
         );
     }
 }

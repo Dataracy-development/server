@@ -3,7 +3,7 @@ package com.dataracy.modules.project.adapter.web.api.search;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.project.adapter.web.request.search.FilteringProjectWebRequest;
 import com.dataracy.modules.project.adapter.web.response.search.FilteredProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.search.PopularProjectWebResponse;
+import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.RealTimeProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.SimilarProjectWebResponse;
 import io.swagger.v3.oas.annotations.Operation;

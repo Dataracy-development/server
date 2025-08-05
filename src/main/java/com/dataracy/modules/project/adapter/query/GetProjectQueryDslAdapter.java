@@ -9,7 +9,7 @@ import com.dataracy.modules.project.adapter.query.sort.ProjectPopularOrderBuilde
 import com.dataracy.modules.project.adapter.query.sort.ProjectSortBuilder;
 import com.dataracy.modules.project.application.dto.request.search.FilteringProjectRequest;
 import com.dataracy.modules.project.application.port.out.query.search.SearchFilteredProjectsPort;
-import com.dataracy.modules.project.application.port.out.query.search.SearchPopularProjectsPort;
+import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.model.Project;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -26,8 +26,8 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class SearchProjectQueryDslAdapter implements
-        SearchPopularProjectsPort,
+public class GetProjectQueryDslAdapter implements
+        GetPopularProjectsPort,
         SearchFilteredProjectsPort
 {
     private final JPAQueryFactory queryFactory;

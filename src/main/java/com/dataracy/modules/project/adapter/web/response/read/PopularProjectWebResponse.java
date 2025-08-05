@@ -1,4 +1,4 @@
-package com.dataracy.modules.project.adapter.web.response.search;
+package com.dataracy.modules.project.adapter.web.response.read;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

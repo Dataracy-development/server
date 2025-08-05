@@ -1,6 +1,6 @@
-package com.dataracy.modules.project.application.mapper.search;
+package com.dataracy.modules.project.application.mapper.read;
 
-import com.dataracy.modules.project.application.dto.response.search.PopularProjectResponse;
+import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.domain.model.Project;
 import org.springframework.stereotype.Component;
 
