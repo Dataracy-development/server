@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * 토픽 db에 접근하는 포트
  */
-public interface TopicRepositoryPort {
+public interface TopicPort {
     /**
  * 데이터베이스에 저장된 모든 토픽을 조회하여 리스트로 반환합니다.
  *

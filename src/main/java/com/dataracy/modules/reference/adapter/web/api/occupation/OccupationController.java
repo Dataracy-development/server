@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.adapter.web.api.occupation;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.reference.adapter.web.mapper.OccupationWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllOccupationsWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllOccupationsResponse;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +27,12 @@ public class OccupationController implements OccupationApi {
     @Override
     public ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> findAllOccupations (
     ) {
+        Instant startTime = LoggerFactory.api().logRequest("[FindAllOccupations] 전체 직업 목록을 조회 API 요청 시작");
+
         AllOccupationsResponse allOccupationsResponse = findAllOccupationsUseCase.findAllOccupations();
         AllOccupationsWebResponse allOccupationsWebResponse = occupationWebMapper.toWebDto(allOccupationsResponse);
+
+        LoggerFactory.api().logResponse("[FindAllOccupations] 전체 직업 목록을 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_OCCUPATION_LIST, allOccupationsWebResponse));
     }

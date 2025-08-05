@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.adapter.web.api.topic;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.reference.adapter.web.mapper.TopicWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllTopicsWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllTopicsResponse;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +28,12 @@ public class TopicController implements TopicApi {
     @Override
     public ResponseEntity<SuccessResponse<AllTopicsWebResponse>> findAllTopics (
     ) {
+        Instant startTime = LoggerFactory.api().logRequest("[FindAllTopics] 전체 토픽 목록을 조회 API 요청 시작");
+
         AllTopicsResponse allTopicsResponse = findAllTopicsUseCase.findAllTopics();
         AllTopicsWebResponse allTopicsWebResponse = topicWebMapper.toWebDto(allTopicsResponse);
+
+        LoggerFactory.api().logResponse("[FindAllTopics] 전체 토픽 목록을 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_TOPIC_LIST, allTopicsWebResponse));
     }

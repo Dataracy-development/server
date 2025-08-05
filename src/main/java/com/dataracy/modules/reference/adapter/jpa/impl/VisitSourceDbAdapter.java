@@ -1,13 +1,15 @@
 package com.dataracy.modules.reference.adapter.jpa.impl;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.reference.adapter.jpa.entity.VisitSourceEntity;
 import com.dataracy.modules.reference.adapter.jpa.mapper.VisitSourceEntityMapper;
 import com.dataracy.modules.reference.adapter.jpa.repository.VisitSourceJpaRepository;
-import com.dataracy.modules.reference.application.port.out.VisitSourceRepositoryPort;
+import com.dataracy.modules.reference.application.port.out.VisitSourcePort;
 import com.dataracy.modules.reference.domain.model.VisitSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
+public class VisitSourceDbAdapter implements VisitSourcePort {
     private final VisitSourceJpaRepository visitSourceJpaRepository;
 
     /**
@@ -24,10 +26,13 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
      */
     @Override
     public List<VisitSource> findAllVisitSources() {
+        Instant startTime = LoggerFactory.db().logQueryStart("VisitSourceEntity", "[findAll] 방문 경로 목록 조회 시작");
         List<VisitSourceEntity> visitSourceEntities = visitSourceJpaRepository.findAll();
-        return visitSourceEntities.stream()
+        List<VisitSource> visitSources = visitSourceEntities.stream()
                 .map(VisitSourceEntityMapper::toDomain)
                 .toList();
+        LoggerFactory.db().logQueryEnd("VisitSourceEntity", "[findAll] 방문 경로 목록 조회 종료", startTime);
+        return visitSources;
     }
 
     /****
@@ -38,11 +43,14 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
      */
     @Override
     public Optional<VisitSource> findVisitSourceById(Long visitSourceId) {
+        Instant startTime = LoggerFactory.db().logQueryStart("VisitSourceEntity", "[findById] 방문 경로 목록 조회 시작 visitSourceId=" + visitSourceId);
         if (visitSourceId == null) {
             return Optional.empty();
         }
-        return visitSourceJpaRepository.findById(visitSourceId)
+        Optional<VisitSource> visitSource = visitSourceJpaRepository.findById(visitSourceId)
                 .map(VisitSourceEntityMapper::toDomain);
+        LoggerFactory.db().logQueryEnd("VisitSourceEntity", "[findById] 방문 경로 목록 조회 종료 visitSourceId=" + visitSourceId, startTime);
+        return visitSource;
     }
 
     /**
@@ -56,7 +64,9 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
         if (visitSourceId == null) {
             return false;
         }
-        return visitSourceJpaRepository.existsById(visitSourceId);
+        boolean isExists = visitSourceJpaRepository.existsById(visitSourceId);
+        LoggerFactory.db().logExist("VisitSourceEntity", "[existsById] 방문 경로 존재 유무 확인 visitSourceId=" + visitSourceId + ", isExists=" + isExists);
+        return isExists;
     }
 
     /**
@@ -67,10 +77,13 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
      */
     @Override
     public Optional<String> getLabelById(Long visitSourceId) {
+        Instant startTime = LoggerFactory.db().logQueryStart("VisitSourceEntity", "[findLabelById] 방문 경로 라벨 조회 시작 visitSourceId=" + visitSourceId);
         if (visitSourceId == null) {
             return Optional.empty();
         }
-        return visitSourceJpaRepository.findLabelById(visitSourceId);
+        Optional<String> label = visitSourceJpaRepository.findLabelById(visitSourceId);
+        LoggerFactory.db().logQueryEnd("VisitSourceEntity", "[findLabelById] 방문 경로 라벨 조회 종료 visitSourceId=" + visitSourceId + ", label=" + label, startTime);
+        return label;
     }
 
     /**
@@ -81,8 +94,11 @@ public class VisitSourceRepositoryAdapter implements VisitSourceRepositoryPort {
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> visitSourceIds) {
-        return visitSourceJpaRepository.findAllById(visitSourceIds)
+        Instant startTime = LoggerFactory.db().logQueryStart("VisitSourceEntity", "[findAllById] 방문 경로 라벨 목록 조회 시작");
+        Map<Long, String> labels = visitSourceJpaRepository.findAllById(visitSourceIds)
                 .stream()
                 .collect(Collectors.toMap(VisitSourceEntity::getId, VisitSourceEntity::getLabel));
+        LoggerFactory.db().logQueryEnd("VisitSourceEntity", "[findAllById] 방문 경로 라벨 목록 조회 종료", startTime);
+        return labels;
     }
 }

@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * AnalysisPurpose db에 접근하는 포트
  */
-public interface AnalysisPurposeRepositoryPort {
+public interface AnalysisPurposePort {
     /**
  * 데이터베이스에 저장된 모든 분석 목적(AnalysisPurpose) 엔티티의 목록을 반환합니다.
  *

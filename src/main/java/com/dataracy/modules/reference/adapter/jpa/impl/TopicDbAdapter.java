@@ -1,13 +1,15 @@
 package com.dataracy.modules.reference.adapter.jpa.impl;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.reference.adapter.jpa.entity.TopicEntity;
 import com.dataracy.modules.reference.adapter.jpa.mapper.TopicEntityMapper;
 import com.dataracy.modules.reference.adapter.jpa.repository.TopicJpaRepository;
-import com.dataracy.modules.reference.application.port.out.TopicRepositoryPort;
+import com.dataracy.modules.reference.application.port.out.TopicPort;
 import com.dataracy.modules.reference.domain.model.Topic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class TopicRepositoryAdapter implements TopicRepositoryPort {
+public class TopicDbAdapter implements TopicPort {
     private final TopicJpaRepository topicJpaRepository;
 
     /**
@@ -25,10 +27,13 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
      */
     @Override
     public List<Topic> findAllTopics() {
+        Instant startTime = LoggerFactory.db().logQueryStart("TopicEntity", "[findAll] 토픽 목록 조회 시작");
         List<TopicEntity> topicEntities = topicJpaRepository.findAll();
-        return topicEntities.stream()
+        List<Topic> topics = topicEntities.stream()
                 .map(TopicEntityMapper::toDomain)
                 .toList();
+        LoggerFactory.db().logQueryEnd("TopicEntity", "[findAll] 토픽 목록 조회 종료", startTime);
+        return topics;
     }
 
     /**
@@ -39,11 +44,14 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
      */
     @Override
     public Optional<Topic> findTopicById(Long topicId) {
+        Instant startTime = LoggerFactory.db().logQueryStart("TopicEntity", "[findById] 토픽 목록 조회 시작 topicId=" + topicId);
         if (topicId == null) {
             return Optional.empty();
         }
-        return topicJpaRepository.findById(topicId)
+        Optional<Topic> topic = topicJpaRepository.findById(topicId)
                 .map(TopicEntityMapper::toDomain);
+        LoggerFactory.db().logQueryEnd("TopicEntity", "[findById] 토픽 목록 조회 종료 topicId=" + topicId, startTime);
+        return topic;
     }
 
     /**
@@ -57,7 +65,9 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
         if (topicId == null) {
             return false;
         }
-        return topicJpaRepository.existsById(topicId);
+        boolean isExists = topicJpaRepository.existsById(topicId);
+        LoggerFactory.db().logExist("TopicEntity", "[existsById] 토픽 존재 유무 확인 topicId=" + topicId + ", isExists=" + isExists);
+        return isExists;
     }
 
     /**
@@ -68,10 +78,13 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
      */
     @Override
     public Optional<String> getLabelById(Long topicId) {
+        Instant startTime = LoggerFactory.db().logQueryStart("TopicEntity", "[findLabelById] 토픽 라벨 조회 시작 topicId=" + topicId);
         if (topicId == null) {
             return Optional.empty();
         }
-        return topicJpaRepository.findLabelById(topicId);
+        Optional<String> label = topicJpaRepository.findLabelById(topicId);
+        LoggerFactory.db().logQueryEnd("TopicEntity", "[findLabelById] 토픽 라벨 조회 종료 topicId=" + topicId + ", label=" + label, startTime);
+        return label;
     }
 
     /**
@@ -82,8 +95,11 @@ public class TopicRepositoryAdapter implements TopicRepositoryPort {
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> topicIds) {
-        return topicJpaRepository.findAllById(topicIds)
+        Instant startTime = LoggerFactory.db().logQueryStart("TopicEntity", "[findAllById] 토픽 라벨 목록 조회 시작");
+        Map<Long, String> labels = topicJpaRepository.findAllById(topicIds)
                 .stream()
                 .collect(Collectors.toMap(TopicEntity::getId, TopicEntity::getLabel));
+        LoggerFactory.db().logQueryEnd("TopicEntity", "[findAllById] 토픽 라벨 목록 조회 종료", startTime);
+        return labels;
     }
 }

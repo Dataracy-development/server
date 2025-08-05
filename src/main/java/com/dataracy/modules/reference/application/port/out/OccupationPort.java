@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Occupation db에 접근하는 포트
  */
-public interface OccupationRepositoryPort {
+public interface OccupationPort {
     /**
  * 데이터베이스에 저장된 모든 직업 정보를 리스트로 반환합니다.
  *

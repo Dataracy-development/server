@@ -1,5 +1,6 @@
 package com.dataracy.modules.reference.application.service.query;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.reference.application.dto.response.allview.AllAuthorLevelsResponse;
 import com.dataracy.modules.reference.application.dto.response.singleview.AuthorLevelResponse;
 import com.dataracy.modules.reference.application.mapper.AuthorLevelDtoMapper;
@@ -7,7 +8,7 @@ import com.dataracy.modules.reference.application.port.in.authorlevel.FindAllAut
 import com.dataracy.modules.reference.application.port.in.authorlevel.FindAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
-import com.dataracy.modules.reference.application.port.out.AuthorLevelRepositoryPort;
+import com.dataracy.modules.reference.application.port.out.AuthorLevelPort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
 import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
@@ -16,9 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -30,7 +31,7 @@ public class AuthorLevelQueryService implements
         GetAuthorLevelLabelFromIdUseCase
 {
     private final AuthorLevelDtoMapper authorLevelDtoMapper;
-    private final AuthorLevelRepositoryPort authorLevelRepositoryPort;
+    private final AuthorLevelPort authorLevelPort;
 
     /**
      * 모든 AuthorLevel 엔티티의 목록을 조회하여 응답 DTO로 반환한다.
@@ -40,8 +41,11 @@ public class AuthorLevelQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AllAuthorLevelsResponse findAllAuthorLevels() {
-        List<AuthorLevel> authorLevels = authorLevelRepositoryPort.findAllAuthorLevels();
-        return authorLevelDtoMapper.toResponseDto(authorLevels);
+        Instant startTime = LoggerFactory.service().logStart("FindAllAuthorLevelsUseCase", "모든 작성자 유형 정보 조회 서비스 시작");
+        List<AuthorLevel> authorLevels = authorLevelPort.findAllAuthorLevels();
+        AllAuthorLevelsResponse allAuthorLevelsResponse = authorLevelDtoMapper.toResponseDto(authorLevels);
+        LoggerFactory.service().logSuccess("FindAllAuthorLevelsUseCase", "모든 작성자 유형 정보 조회 서비스 종료", startTime);
+        return allAuthorLevelsResponse;
     }
 
     /**
@@ -54,9 +58,15 @@ public class AuthorLevelQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AuthorLevelResponse findAuthorLevel(Long authorLevelId) {
-        AuthorLevel authorLevel = authorLevelRepositoryPort.findAuthorLevelById(authorLevelId)
-                .orElseThrow(() -> new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL));
-        return authorLevelDtoMapper.toResponseDto(authorLevel);
+        Instant startTime = LoggerFactory.service().logStart("FindAuthorLevelUseCase", "주어진 ID로 작성자 유형 조회 서비스 시작 authorLevelId=" + authorLevelId);
+        AuthorLevel authorLevel = authorLevelPort.findAuthorLevelById(authorLevelId)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("FindAuthorLevelUseCase", "해당 작성자 유형이 존재하지 않습니다. authorLevelId=" + authorLevelId);
+                    return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);
+                });
+        AuthorLevelResponse authorLevelResponse = authorLevelDtoMapper.toResponseDto(authorLevel);
+        LoggerFactory.service().logSuccess("FindAuthorLevelUseCase", "주어진 ID로 작성자 유형 조회 서비스 종료 authorLevelId=" + authorLevelId, startTime);
+        return authorLevelResponse;
     }
 
     /**
@@ -70,10 +80,13 @@ public class AuthorLevelQueryService implements
     @Override
     @Transactional(readOnly = true)
     public void validateAuthorLevel(Long authorLevelId) {
-        Boolean isExist = authorLevelRepositoryPort.existsAuthorLevelById(authorLevelId);
+        Instant startTime = LoggerFactory.service().logStart("ValidateAuthorLevelUseCase", "주어진 ID에 해당하는 작성자 유형이 존재하는지 확인 서비스 시작 authorLevelId=" + authorLevelId);
+        Boolean isExist = authorLevelPort.existsAuthorLevelById(authorLevelId);
         if (!isExist) {
+            LoggerFactory.service().logWarning("ValidateAuthorLevelUseCase", "해당 작성자 유형이 존재하지 않습니다. authorLevelId=" + authorLevelId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);
         }
+        LoggerFactory.service().logSuccess("ValidateAuthorLevelUseCase", "주어진 ID에 해당하는 작성자 유형이 존재하는지 확인 서비스 종료 authorLevelId=" + authorLevelId, startTime);
     }
 
     /****
@@ -86,11 +99,14 @@ public class AuthorLevelQueryService implements
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long authorLevelId) {
-        Optional<String> label = authorLevelRepositoryPort.getLabelById(authorLevelId);
-        if (label.isEmpty()) {
-            throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);
-        }
-        return label.get();
+        Instant startTime = LoggerFactory.service().logStart("GetAuthorLevelLabelFromIdUseCase", "주어진 작성자 유형 ID에 해당하는 라벨을 조회 서비스 시작 authorLevelId=" + authorLevelId);
+        String label = authorLevelPort.getLabelById(authorLevelId)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("GetAuthorLevelLabelFromIdUseCase", "해당 작성자 유형이 존재하지 않습니다. authorLevelId=" + authorLevelId);
+                    return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);
+                });
+        LoggerFactory.service().logSuccess("GetAuthorLevelLabelFromIdUseCase", "주어진 작성자 유형 ID에 해당하는 라벨을 조회 서비스 종료 authorLevelId=" + authorLevelId, startTime);
+        return label;
     }
 
     /**
@@ -102,9 +118,12 @@ public class AuthorLevelQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> authorLevelIds) {
+        Instant startTime = LoggerFactory.service().logStart("GetAuthorLevelLabelFromIdUseCase", "작성자 유형 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
         if (authorLevelIds == null || authorLevelIds.isEmpty()) {
             return Map.of();
         }
-        return authorLevelRepositoryPort.getLabelsByIds(authorLevelIds);
+        Map<Long, String> labels = authorLevelPort.getLabelsByIds(authorLevelIds);
+        LoggerFactory.service().logSuccess("GetAuthorLevelLabelFromIdUseCase", "작성자 유형 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
+        return labels;
     }
 }
