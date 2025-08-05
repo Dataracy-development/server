@@ -8,6 +8,7 @@ import com.dataracy.modules.dataset.application.dto.response.search.SimilarDataR
 import com.dataracy.modules.dataset.application.dto.response.support.DataLabelMapResponse;
 import com.dataracy.modules.dataset.application.dto.response.support.DataWithProjectCountDto;
 import com.dataracy.modules.dataset.application.mapper.search.FilteredDataDtoMapper;
+import com.dataracy.modules.dataset.application.port.in.query.read.FindDataLabelMapUseCase;
 import com.dataracy.modules.dataset.application.port.in.query.search.SearchFilteredDataSetsUseCase;
 import com.dataracy.modules.dataset.application.port.in.query.search.SearchRealTimeDataSetsUseCase;
 import com.dataracy.modules.dataset.application.port.in.query.search.SearchSimilarDataSetsUseCase;
@@ -30,7 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -48,6 +48,7 @@ public class DataSearchService implements
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
+    private final FindDataLabelMapUseCase findDataLabelMapUseCase;
 
     private final SearchSimilarDataSetsPort searchSimilarDataSetsPort;
     private final SearchFilteredDataSetsPort searchFilteredDataSetsPort;
@@ -88,7 +89,7 @@ public class DataSearchService implements
 
         DataSortType dataSortType = DataSortType.of(request.sortType());
         Page<DataWithProjectCountDto> savedDataSets = searchFilteredDataSetsPort.searchByFilters(request, pageable, dataSortType);
-        DataLabelMapResponse labelResponse = labelMapping(savedDataSets.getContent());
+        DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets.getContent());
 
         Page<FilteredDataResponse> filteredDataResponses = savedDataSets.map(wrapper -> {
             Data data = wrapper.data();
@@ -103,34 +104,6 @@ public class DataSearchService implements
 
         LoggerFactory.service().logSuccess("SearchFilteredDataSetsUseCase", "필터링된 데이터셋 목록 조회 서비스 종료 keyword=" + request.keyword(), startTime);
         return filteredDataResponses;
-    }
-
-    /**
-     * 데이터셋 DTO 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 해당하는 레이블 매핑 정보를 반환합니다.
-     *
-     * @param savedDataSets 프로젝트 개수가 포함된 데이터셋 DTO 컬렉션
-     * @return 사용자명, 토픽 레이블, 데이터 소스 레이블, 데이터 타입 레이블의 매핑 정보를 담은 응답 객체
-     */
-    private DataLabelMapResponse labelMapping(Collection<DataWithProjectCountDto> savedDataSets) {
-        List<Long> userIds = savedDataSets.stream()
-                .map(dto -> dto.data().getUserId())
-                .toList();
-        List<Long> topicIds = savedDataSets.stream()
-                .map(dto -> dto.data().getTopicId())
-                .toList();
-        List<Long> dataSourceIds = savedDataSets.stream()
-                .map(dto -> dto.data().getDataSourceId())
-                .toList();
-        List<Long> dataTypeIds = savedDataSets.stream()
-                .map(dto -> dto.data().getDataTypeId())
-                .toList();
-
-        return new DataLabelMapResponse(
-                findUsernameUseCase.findUsernamesByIds(userIds),
-                getTopicLabelFromIdUseCase.getLabelsByIds(topicIds),
-                getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds),
-                getDataTypeLabelFromIdUseCase.getLabelsByIds(dataTypeIds)
-        );
     }
 
     /**

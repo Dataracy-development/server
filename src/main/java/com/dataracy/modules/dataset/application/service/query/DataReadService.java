@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -47,13 +46,13 @@ public class DataReadService implements
     private final GetConnectedDataSetsPort getConnectedDataSetsPort;
 
     private final GetUserInfoUseCase getUserInfoUseCase;
-    private final FindUsernameUseCase findUsernameUseCase;
 
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
+    private final FindDataLabelMapUseCase findDataLabelMapUseCase;
 
     /**
      * 인기 있는 데이터셋을 지정된 개수만큼 조회하고, 각 데이터셋에 사용자명, 주제, 데이터 소스, 데이터 타입 등의 라벨 정보와 연결된 프로젝트 수를 포함한 응답 리스트를 반환합니다.
@@ -67,7 +66,7 @@ public class DataReadService implements
         Instant startTime = LoggerFactory.service().logStart("GetPopularDataSetsUseCase", "인기 데이터셋 목록 조회 서비스 시작 size=" + size);
 
         List<DataWithProjectCountDto> savedDataSets = getPopularDataSetsPort.getPopularDataSets(size);
-        DataLabelMapResponse labelResponse = labelMapping(savedDataSets);
+        DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets);
 
         List<PopularDataResponse> popularDataResponses = savedDataSets.stream()
                 .map(wrapper -> {
@@ -181,7 +180,7 @@ public class DataReadService implements
         Instant startTime = LoggerFactory.service().logStart("FindConnectedDataSetsUseCase", "프로젝트와 연결된 데이터셋 목록 조회 서비스 시작 projectId=" + projectId);
 
         Page<DataWithProjectCountDto> savedDataSets = getConnectedDataSetsPort.getConnectedDataSetsAssociatedWithProject(projectId, pageable);
-        DataLabelMapResponse labelResponse = labelMapping(savedDataSets.getContent());
+        DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets.getContent());
         Page<ConnectedDataResponse> connectedDataResponses = savedDataSets.map(wrapper -> {
             Data data = wrapper.data();
             return dataReadDtoMapper.toResponseDto(
@@ -194,33 +193,5 @@ public class DataReadService implements
 
         LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "프로젝트와 연결된 데이터셋 목록 조회 서비스 종료 projectId=" + projectId, startTime);
         return connectedDataResponses;
-    }
-
-    /**
-     * 데이터셋 DTO 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 해당하는 레이블 매핑 정보를 반환합니다.
-     *
-     * @param savedDataSets 프로젝트 개수가 포함된 데이터셋 DTO 컬렉션
-     * @return 사용자명, 토픽 레이블, 데이터 소스 레이블, 데이터 타입 레이블의 매핑 정보를 담은 응답 객체
-     */
-    private DataLabelMapResponse labelMapping(Collection<DataWithProjectCountDto> savedDataSets) {
-        List<Long> userIds = savedDataSets.stream()
-                .map(dto -> dto.data().getUserId())
-                .toList();
-        List<Long> topicIds = savedDataSets.stream()
-                .map(dto -> dto.data().getTopicId())
-                .toList();
-        List<Long> dataSourceIds = savedDataSets.stream()
-                .map(dto -> dto.data().getDataSourceId())
-                .toList();
-        List<Long> dataTypeIds = savedDataSets.stream()
-                .map(dto -> dto.data().getDataTypeId())
-                .toList();
-
-        return new DataLabelMapResponse(
-                findUsernameUseCase.findUsernamesByIds(userIds),
-                getTopicLabelFromIdUseCase.getLabelsByIds(topicIds),
-                getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds),
-                getDataTypeLabelFromIdUseCase.getLabelsByIds(dataTypeIds)
-        );
     }
 }
