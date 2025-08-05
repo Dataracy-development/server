@@ -1,6 +1,7 @@
 package com.dataracy.modules.dataset.application.mapper.read;
 
 import com.dataracy.modules.dataset.application.dto.response.read.ConnectedDataResponse;
+import com.dataracy.modules.dataset.application.dto.response.read.DataDetailResponse;
 import com.dataracy.modules.dataset.application.dto.response.read.PopularDataResponse;
 import com.dataracy.modules.dataset.application.dto.response.read.RecentMinimalDataResponse;
 import com.dataracy.modules.dataset.domain.model.Data;
@@ -94,6 +95,37 @@ public class DataReadDtoMapper {
                 data.getMetadata().getColumnCount(),
                 data.getCreatedAt(),
                 countConnectedProjects
+        );
+    }
+
+    public DataDetailResponse toResponseDto(
+            Data data,
+            String nickname,
+            String authorLabel,
+            String occupationLabel,
+            String topicLabel,
+            String dataSourceLabel,
+            String dataTypeLabel
+    ) {
+        return new DataDetailResponse(
+                data.getId(),
+                data.getTitle(),
+                nickname,
+                authorLabel,
+                occupationLabel,
+                topicLabel,
+                dataSourceLabel,
+                dataTypeLabel,
+                data.getStartDate(),
+                data.getEndDate(),
+                data.getDescription(),
+                data.getAnalysisGuide(),
+                data.getThumbnailUrl(),
+                data.getDownloadCount(),
+                data.getMetadata().getRowCount(),
+                data.getMetadata().getColumnCount(),
+                data.getMetadata().getPreviewJson(),
+                data.getCreatedAt()
         );
     }
 }
