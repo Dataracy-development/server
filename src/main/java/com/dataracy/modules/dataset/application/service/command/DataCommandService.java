@@ -94,8 +94,8 @@ public class DataCommandService implements
         Data saveData = createDataPort.saveData(data);
 
         // 데이터셋 파일
-        dataFileUpload(dataFile, saveData.getId(), "UploadProjectUseCase");
-        thumbnailFileUpload(thumbnailFile, saveData.getId(), "UploadProjectUseCase");
+        dataFileUpload(dataFile, saveData.getId(), "UploadDataUseCase");
+        thumbnailFileUpload(thumbnailFile, saveData.getId(), "UploadDataUseCase");
 
         Data updatedFileUrlData = findDataPort.findDataById(saveData.getId()).get();
 
@@ -104,7 +104,7 @@ public class DataCommandService implements
             dataUploadEventPort.sendUploadEvent(updatedFileUrlData.getId(), updatedFileUrlData.getDataFileUrl(), dataFile.getOriginalFilename());
         }
 
-        LoggerFactory.service().logSuccess("UploadProjectUseCase", "데이터셋 업로드 서비스 종료 title=" + requestDto.title(), startTime);
+        LoggerFactory.service().logSuccess("UploadDataUseCase", "데이터셋 업로드 서비스 종료 title=" + requestDto.title(), startTime);
         return saveData.getId();
     }
 
@@ -160,7 +160,7 @@ public class DataCommandService implements
             dataUploadEventPort.sendUploadEvent(savedData.getId(), savedData.getDataFileUrl(), dataFile.getOriginalFilename());
         }
 
-        LoggerFactory.service().logSuccess("ModifyProjectUseCase", "데이터셋 수정 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess("ModifyDataUseCase", "데이터셋 수정 서비스 종료 dataId=" + dataId, startTime);
     }
 
     private void validateDataRequest(

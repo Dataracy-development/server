@@ -31,9 +31,9 @@ public class SoftDeleteDataEsAdapter implements SoftDeleteDataPort {
                             .doc(update),
                     DataSearchDocument.class
             );
-            LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(dataId), "데이터셋 " + operation + "완료: dataId=" + dataId);
+            LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(dataId), "데이터셋 " + operation + " 완료: dataId=" + dataId);
         } catch (IOException e) {
-            LoggerFactory.elastic().logError(INDEX, "데이터셋 " + operation + "실패: dataId=" + dataId, e);
+            LoggerFactory.elastic().logError(INDEX, "데이터셋 " + operation + " 실패: dataId=" + dataId, e);
         }
     }
 
