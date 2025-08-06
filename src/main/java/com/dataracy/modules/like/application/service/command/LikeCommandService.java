@@ -22,7 +22,7 @@ import java.time.Instant;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LikeTargetCommandService implements
+public class LikeCommandService implements
         LikeTargetUseCase
 {
     private final LikeCommandPort likeCommandPort;
