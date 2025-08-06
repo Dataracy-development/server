@@ -16,7 +16,7 @@ import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor
-public class UserValidationController implements UserValidationApi {
+public class UserValidateController implements UserValidateApi {
     private final UserValidationWebMapper userWebMapper;
 
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
