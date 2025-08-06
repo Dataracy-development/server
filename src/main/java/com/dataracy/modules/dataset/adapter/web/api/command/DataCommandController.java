@@ -49,10 +49,13 @@ public class DataCommandController implements DataCommandApi {
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[UploadData] 데이터셋 업로드 API 요청 시작");
 
-        UploadDataRequest requestDto = dataCommandWebMapper.toApplicationDto(webRequest);
-        uploadDataUseCase.uploadData(userId, dataFile, thumbnailFile, requestDto);
+        try {
+            UploadDataRequest requestDto = dataCommandWebMapper.toApplicationDto(webRequest);
+            uploadDataUseCase.uploadData(userId, dataFile, thumbnailFile, requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[UploadData] 데이터셋 업로드 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[UploadData] 데이터셋 업로드 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(DataSuccessStatus.CREATED_DATASET));
     }
@@ -71,10 +74,13 @@ public class DataCommandController implements DataCommandApi {
     public ResponseEntity<SuccessResponse<Void>> modifyData(Long dataId, MultipartFile dataFile, MultipartFile thumbnailFile, ModifyDataWebRequest webRequest) {
         Instant startTime = LoggerFactory.api().logRequest("[ModifyData] 데이터셋 수정 API 요청 시작");
 
-        ModifyDataRequest requestDto = dataCommandWebMapper.toApplicationDto(webRequest);
-        modifyDataUseCase.modifyData(dataId, dataFile, thumbnailFile, requestDto);
+        try {
+            ModifyDataRequest requestDto = dataCommandWebMapper.toApplicationDto(webRequest);
+            modifyDataUseCase.modifyData(dataId, dataFile, thumbnailFile, requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[ModifyData] 데이터셋 수정 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[ModifyData] 데이터셋 수정 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.MODIFY_DATASET));
     }
@@ -89,8 +95,13 @@ public class DataCommandController implements DataCommandApi {
     @AuthorizationDataEdit
     public ResponseEntity<SuccessResponse<Void>> deleteData(Long dataId) {
         Instant startTime = LoggerFactory.api().logRequest("[DeleteData] 데이터셋 Soft Delete 삭제 API 요청 시작");
-        deleteDataUseCase.deleteData(dataId);
-        LoggerFactory.api().logResponse("[DeleteData] 데이터셋 Soft Delete 삭제 API 응답 완료", startTime);
+
+        try {
+            deleteDataUseCase.deleteData(dataId);
+        } finally {
+            LoggerFactory.api().logResponse("[DeleteData] 데이터셋 Soft Delete 삭제 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.DELETE_DATASET));
     }
@@ -105,8 +116,13 @@ public class DataCommandController implements DataCommandApi {
     @AuthorizationDataEdit(restore = true)
     public ResponseEntity<SuccessResponse<Void>> restoreData(Long dataId) {
         Instant startTime = LoggerFactory.api().logRequest("[RestoreData] 데이터셋 복원 API 요청 시작");
-        restoreDataUseCase.restoreData(dataId);
-        LoggerFactory.api().logResponse("[RestoreData] 데이터셋 복원 API 응답 완료", startTime);
+
+        try {
+            restoreDataUseCase.restoreData(dataId);
+        } finally {
+            LoggerFactory.api().logResponse("[RestoreData] 데이터셋 복원 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.RESTORE_DATASET));
     }
@@ -120,8 +136,14 @@ public class DataCommandController implements DataCommandApi {
     @Override
     public ResponseEntity<SuccessResponse<String>> getPreSignedDataUrl(Long dataId) {
         Instant startTime = LoggerFactory.api().logRequest("[GetPreSignedDataUrl] 데이터셋 다운로드 url API 요청 시작");
-        String preSignedUrl = downloadDataFileUseCase.download(dataId, PRESIGNED_URL_EXPIRY_SECONDS);
-        LoggerFactory.api().logResponse("[GetPreSignedDataUrl] 데이터셋 다운로드 url 응답 완료", startTime);
+        String preSignedUrl;
+
+        try {
+            preSignedUrl = downloadDataFileUseCase.download(dataId, PRESIGNED_URL_EXPIRY_SECONDS);
+        } finally {
+            LoggerFactory.api().logResponse("[GetPreSignedDataUrl] 데이터셋 다운로드 url 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.DOWNLOAD_DATASET, preSignedUrl));
     }

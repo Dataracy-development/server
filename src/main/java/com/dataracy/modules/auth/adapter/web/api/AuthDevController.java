@@ -38,12 +38,16 @@ public class AuthDevController implements AuthDevApi {
     @Override
     public ResponseEntity<SuccessResponse<RefreshTokenWebResponse>> loginDev(SelfLoginWebRequest webRequest) {
         Instant startTime = LoggerFactory.api().logRequest("[Login] 개발용 로그인 API 요청 시작");
-        SelfLoginRequest requestDto = authDevWebMapper.toApplicationDto(webRequest);
-        // 자체 로그인 진행
-        RefreshTokenResponse responseDto = selfLoginUseCase.login(requestDto);
-        RefreshTokenWebResponse webResponse = authDevWebMapper.toWebDto(responseDto);
+        RefreshTokenWebResponse webResponse;
 
-        LoggerFactory.api().logResponse("[Login] 개발용 로그인 API 응답 완료", startTime);
+        try {
+            SelfLoginRequest requestDto = authDevWebMapper.toApplicationDto(webRequest);
+            // 자체 로그인 진행
+            RefreshTokenResponse responseDto = selfLoginUseCase.login(requestDto);
+            webResponse = authDevWebMapper.toWebDto(responseDto);
+        } finally {
+            LoggerFactory.api().logResponse("[Login] 개발용 로그인 API 응답 완료", startTime);
+        }
         return ResponseEntity.ok(SuccessResponse.of(AuthSuccessStatus.OK_SELF_LOGIN, webResponse));
     }
 
@@ -56,12 +60,17 @@ public class AuthDevController implements AuthDevApi {
     @Override
     public ResponseEntity<SuccessResponse<ReIssueTokenWebResponse>> reIssueTokenDev(RefreshTokenWebRequest webRequest) {
         Instant startTime = LoggerFactory.api().logRequest("[ReIssueToken] 개발용 토큰 재발급 API 요청 시작");
-        RefreshTokenRequest requestDto = authDevWebMapper.toApplicationDto(webRequest);
-        // 토큰 재발급 진행
-        ReIssueTokenResponse responseDto = reIssueTokenUseCase.reIssueToken(requestDto.refreshToken());
-        ReIssueTokenWebResponse webResponse = authDevWebMapper.toWebDto(responseDto);
+        ReIssueTokenWebResponse webResponse;
 
-        LoggerFactory.api().logResponse("[ReIssueToken] 개발용 토큰 재발급 API 응답 완료", startTime);
+        try {
+            RefreshTokenRequest requestDto = authDevWebMapper.toApplicationDto(webRequest);
+            // 토큰 재발급 진행
+            ReIssueTokenResponse responseDto = reIssueTokenUseCase.reIssueToken(requestDto.refreshToken());
+            webResponse = authDevWebMapper.toWebDto(responseDto);
+        } finally {
+            LoggerFactory.api().logResponse("[ReIssueToken] 개발용 토큰 재발급 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(AuthSuccessStatus.OK_RE_ISSUE_TOKEN, webResponse));
     }

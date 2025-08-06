@@ -41,15 +41,19 @@ public class UserSignUpController implements UserSignUpApi {
             HttpServletResponse response
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[SignUpUserSelf] 자체 회원가입 API 요청 시작");
-        SelfSignUpRequest requestDto = userSignUpWebMapper.toApplicationDto(webRequest);
-        // 자체 회원가입 진행
-        RefreshTokenResponse responseDto = selfSignUpUseCase.signUpSelf(requestDto);
-        // 리프레시 토큰을 쿠키에 저장
-        long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
-        int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
-        CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
 
-        LoggerFactory.api().logResponse("[SignUpUserSelf] 자체 회원가입 API 응답 완료", startTime);
+        try {
+            SelfSignUpRequest requestDto = userSignUpWebMapper.toApplicationDto(webRequest);
+            // 자체 회원가입 진행
+            RefreshTokenResponse responseDto = selfSignUpUseCase.signUpSelf(requestDto);
+            // 리프레시 토큰을 쿠키에 저장
+            long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
+            int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
+            CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
+        } finally {
+            LoggerFactory.api().logResponse("[SignUpUserSelf] 자체 회원가입 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
     }
@@ -69,15 +73,19 @@ public class UserSignUpController implements UserSignUpApi {
             HttpServletResponse response
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[SignUpUserOAuth] 소셜 회원가입 API 요청 시작");
-        OnboardingRequest requestDto = userSignUpWebMapper.toApplicationDto(webRequest);
-        // 소셜 회원가입 진행
-        RefreshTokenResponse responseDto = oauthSignUpUseCase.signUpOAuth(registerToken, requestDto);
-        // 리프레시 토큰을 쿠키에 저장
-        long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
-        int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
-        CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
 
-        LoggerFactory.api().logResponse("[SignUpUserOAuth] 소셜 회원가입 API 응답 완료", startTime);
+        try {
+            OnboardingRequest requestDto = userSignUpWebMapper.toApplicationDto(webRequest);
+            // 소셜 회원가입 진행
+            RefreshTokenResponse responseDto = oauthSignUpUseCase.signUpOAuth(registerToken, requestDto);
+            // 리프레시 토큰을 쿠키에 저장
+            long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
+            int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
+            CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
+        } finally {
+            LoggerFactory.api().logResponse("[SignUpUserOAuth] 소셜 회원가입 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
     }

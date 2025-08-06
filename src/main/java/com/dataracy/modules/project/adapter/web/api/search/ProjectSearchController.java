@@ -46,13 +46,17 @@ public class ProjectSearchController implements ProjectSearchApi {
     @Override
     public ResponseEntity<SuccessResponse<List<RealTimeProjectWebResponse>>> searchRealTimeProjects(String keyword, int size) {
         Instant startTime = LoggerFactory.api().logRequest("[SearchRealTimeProjects] 자동완성을 위한 실시간 프로젝트 목록 조회 API 요청 시작");
+        List<RealTimeProjectWebResponse> webResponse;
 
-        List<RealTimeProjectResponse> responseDto = searchRealTimeProjectsUseCase.searchByKeyword(keyword, size);
-        List<RealTimeProjectWebResponse> webResponse = responseDto.stream()
-                .map(projectSearchWebMapper::toWeb)
-                .toList();
+        try {
+            List<RealTimeProjectResponse> responseDto = searchRealTimeProjectsUseCase.searchByKeyword(keyword, size);
+            webResponse = responseDto.stream()
+                    .map(projectSearchWebMapper::toWeb)
+                    .toList();
+        } finally {
+            LoggerFactory.api().logResponse("[SearchRealTimeProjects] 자동완성을 위한 실시간 프로젝트 목록 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[SearchRealTimeProjects] 자동완성을 위한 실시간 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_REAL_TIME_PROJECTS, webResponse));
     }
@@ -67,13 +71,17 @@ public class ProjectSearchController implements ProjectSearchApi {
     @Override
     public ResponseEntity<SuccessResponse<List<SimilarProjectWebResponse>>> searchSimilarProjects(Long projectId, int size){
         Instant startTime = LoggerFactory.api().logRequest("[SearchSimilarProjects] 유사 프로젝트 목록 조회 API 요청 시작");
+        List<SimilarProjectWebResponse> webResponse;
 
-        List<SimilarProjectResponse> responseDto = searchSimilarProjectsUseCase.searchSimilarProjects(projectId, size);
-        List<SimilarProjectWebResponse> webResponse = responseDto.stream()
-                .map(projectSearchWebMapper::toWeb)
-                .toList();
+        try {
+            List<SimilarProjectResponse> responseDto = searchSimilarProjectsUseCase.searchSimilarProjects(projectId, size);
+            webResponse = responseDto.stream()
+                    .map(projectSearchWebMapper::toWeb)
+                    .toList();
+        } finally {
+            LoggerFactory.api().logResponse("[SearchSimilarProjects] 유사 프로젝트 목록 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[SearchSimilarProjects] 유사 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_SIMILAR_PROJECTS, webResponse));
     }
@@ -88,12 +96,16 @@ public class ProjectSearchController implements ProjectSearchApi {
     @Override
     public ResponseEntity<SuccessResponse<Page<FilteredProjectWebResponse>>> searchFilteredProjects(FilteringProjectWebRequest webRequest, Pageable pageable) {
         Instant startTime = LoggerFactory.api().logRequest("[SearchFilteredProjects] 필터링된 프로젝트 목록 조회 API 요청 시작");
+        Page<FilteredProjectWebResponse> webResponse;
 
-        FilteringProjectRequest requestDto = projectFilterWebMapper.toApplicationDto(webRequest);
-        Page<FilteredProjectResponse> responseDto = searchFilteredProjectsUsecase.searchByFilters(requestDto, pageable);
-        Page<FilteredProjectWebResponse> webResponse = responseDto.map(projectFilterWebMapper::toWebDto);
+        try {
+            FilteringProjectRequest requestDto = projectFilterWebMapper.toApplicationDto(webRequest);
+            Page<FilteredProjectResponse> responseDto = searchFilteredProjectsUsecase.searchByFilters(requestDto, pageable);
+            webResponse = responseDto.map(projectFilterWebMapper::toWebDto);
+        } finally {
+            LoggerFactory.api().logResponse("[SearchFilteredProjects] 필터링된 프로젝트 목록 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[SearchFilteredProjects] 필터링된 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_FILTERED_PROJECTS, webResponse));
     }

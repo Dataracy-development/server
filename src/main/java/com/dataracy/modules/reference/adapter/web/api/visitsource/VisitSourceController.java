@@ -28,11 +28,15 @@ public class VisitSourceController implements VisitSourceApi {
     public ResponseEntity<SuccessResponse<AllVisitSourcesWebResponse>> findAllVisitSources (
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[FindAllVisitSources] 전체 방문 경로 목록을 조회 API 요청 시작");
+        AllVisitSourcesWebResponse allVisitSourcesWebResponse;
 
-        AllVisitSourcesResponse allVisitSourcesResponse = findAllVisitSourcesUseCase.findAllVisitSources();
-        AllVisitSourcesWebResponse allVisitSourcesWebResponse = visitSourceWebMapper.toWebDto(allVisitSourcesResponse);
+        try {
+            AllVisitSourcesResponse allVisitSourcesResponse = findAllVisitSourcesUseCase.findAllVisitSources();
+            allVisitSourcesWebResponse = visitSourceWebMapper.toWebDto(allVisitSourcesResponse);
+        } finally {
+            LoggerFactory.api().logResponse("[FindAllVisitSources] 전체 방문 경로 목록을 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[FindAllVisitSources] 전체 방문 경로 목록을 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_VISIT_SOURCE_LIST, allVisitSourcesWebResponse));
     }

@@ -32,9 +32,15 @@ public class LikeController implements LikeApi {
     @Override
     public ResponseEntity<SuccessResponse<Void>> modifyTargetLike(Long userId, TargetLikeWebRequest webRequest) {
         Instant startTime = LoggerFactory.api().logRequest("[ModifyTargetLike] 타겟에 대한 좋아요 처리 API 요청 시작");
+        TargetLikeRequest requestDto;
+        TargetType targetType;
 
-        TargetLikeRequest requestDto = likeWebMapper.toApplicationDto(webRequest);
-        TargetType targetType = likeTargetUseCase.likeTarget(userId, requestDto);
+        try {
+            requestDto = likeWebMapper.toApplicationDto(webRequest);
+            targetType = likeTargetUseCase.likeTarget(userId, requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[ModifyTargetLike] 타겟에 대한 좋아요 처리 API 응답 완료", startTime);
+        }
 
         LoggerFactory.api().logResponse("[ModifyTargetLike] 타겟에 대한 좋아요 처리 API 응답 완료", startTime);
         if (requestDto.previouslyLiked()) {

@@ -29,11 +29,15 @@ public class DataTypeController implements DataTypeApi {
     public ResponseEntity<SuccessResponse<AllDataTypesWebResponse>> findAllDataTypes (
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[FindAllDataTypes] 전체 데이터 유형 목록을 조회 API 요청 시작");
+        AllDataTypesWebResponse allDataTypesWebResponse;
 
-        AllDataTypesResponse allDataTypesResponse = findAllDataTypesUseCase.findAllDataTypes();
-        AllDataTypesWebResponse allDataTypesWebResponse = dataTypeWebMapper.toWebDto(allDataTypesResponse);
+        try {
+            AllDataTypesResponse allDataTypesResponse = findAllDataTypesUseCase.findAllDataTypes();
+            allDataTypesWebResponse = dataTypeWebMapper.toWebDto(allDataTypesResponse);
+        } finally {
+            LoggerFactory.api().logResponse("[FindAllDataTypes] 전체 데이터 유형 목록을 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[FindAllDataTypes] 전체 데이터 유형 목록을 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_DATA_TYPE_LIST, allDataTypesWebResponse));
     }
