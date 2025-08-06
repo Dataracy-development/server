@@ -107,10 +107,12 @@ server {
 }
 EOF
 
-echo "[INFO] Nginx 설정 반영 중 (nginx-proxy-dev)"
-docker restart nginx-proxy-dev
+# NGINX 컨테이너 설정 반영을 확실히 하기 위해 강제 재실행
+echo "[INFO] Nginx 컨테이너 재시작 (설정 반영 및 캐시 제거)"
+docker compose -f ../docker/docker-compose-nginx-dev.yml down -v
+docker compose -f ../docker/docker-compose-nginx-dev.yml up -d
 
-# 🔄 이전 백엔드 종료
+# 이전 백엔드 종료
 echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}"
 if docker ps --format '{{.Names}}' | grep -q "backend-${CURRENT}"; then
   docker stop "backend-${CURRENT}" || true
