@@ -57,7 +57,7 @@ public class DataTypeDbAdapter implements DataTypePort {
     }
 
     /**
-     * 주어진 ID의 데이터 타입이 데이터베이스에 존재하는지 여부를 반환합니다.
+     * 주어진 ID에 해당하는 데이터 타입이 데이터베이스에 존재하는지 확인합니다.
      *
      * @param dataTypeId 존재 여부를 확인할 데이터 타입의 ID
      * @return 데이터 타입이 존재하면 true, ID가 null이거나 존재하지 않으면 false
@@ -90,10 +90,10 @@ public class DataTypeDbAdapter implements DataTypePort {
     }
 
     /**
-     * 주어진 ID 목록에 해당하는 데이터 타입의 라벨을 ID별로 매핑하여 반환합니다.
+     * 주어진 데이터 타입 ID 목록에 대해 각 ID에 해당하는 라벨을 맵 형태로 반환합니다.
      *
      * @param dataTypeIds 라벨을 조회할 데이터 타입 ID 목록
-     * @return 각 데이터 타입 ID에 해당하는 라벨의 맵
+     * @return 각 데이터 타입 ID와 해당 라벨의 매핑 맵
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> dataTypeIds) {

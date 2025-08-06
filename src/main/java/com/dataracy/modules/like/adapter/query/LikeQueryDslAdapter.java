@@ -24,11 +24,11 @@ public class LikeQueryDslAdapter implements
     private final QLikeEntity like = QLikeEntity.likeEntity;
 
     /**
-     * 주어진 사용자 ID, 타겟 ID, 타겟 타입에 대해 사용자가 해당 타겟을 좋아요 했는지 여부를 반환합니다.
+     * 사용자가 특정 타겟(타입 및 ID)에 대해 좋아요를 눌렀는지 여부를 확인합니다.
      *
-     * @param userId     사용자 ID
-     * @param targetId   타겟 ID
-     * @param targetType 타겟 타입
+     * @param userId    좋아요를 확인할 사용자 ID
+     * @param targetId  확인할 타겟의 ID
+     * @param targetType 확인할 타겟의 타입
      * @return 사용자가 해당 타겟을 좋아요 했으면 true, 아니면 false
      */
     @Override
@@ -50,10 +50,10 @@ public class LikeQueryDslAdapter implements
     /**
      * 지정한 사용자와 타겟 타입에 대해, 주어진 타겟 ID 목록 중 사용자가 좋아요를 누른 타겟 ID 목록을 반환합니다.
      *
-     * @param userId     사용자 ID
-     * @param targetIds  확인할 타겟 ID 목록
+     * @param userId 사용자 ID
+     * @param targetIds 확인할 타겟 ID 목록
      * @param targetType 타겟 타입
-     * @return 사용자가 좋아요를 누른 타겟 ID 목록. 입력값이 null이거나 비어 있으면 빈 리스트를 반환합니다.
+     * @return 사용자가 좋아요를 누른 타겟 ID 목록. userId, targetIds가 null이거나 targetIds가 비어 있으면 빈 리스트를 반환합니다.
      */
     @Override
     public List<Long> findLikedTargetIds(Long userId, List<Long> targetIds, TargetType targetType) {

@@ -21,12 +21,12 @@ public class DataSourceController implements DataSourceApi {
     private final FindAllDataSourcesUseCase findAllDataSourcesUseCase;
 
     /**
-     * 전체 데이터 출처 목록을 조회하여 성공 응답으로 반환합니다.
+     * 전체 데이터 출처 목록을 조회하여 HTTP 200 OK로 반환합니다.
      *
-     * 데이터 출처 목록을 애플리케이션 계층에서 조회한 후, 웹 응답 DTO로 변환하여
-     * 성공 상태 코드와 함께 HTTP 200 OK로 반환합니다.
+     * 애플리케이션 계층에서 데이터 출처 목록을 조회한 뒤, 웹 응답 DTO로 변환하여
+     * 성공 상태 코드와 함께 반환합니다.
      *
-     * @return 전체 데이터 출처 목록이 포함된 성공 응답
+     * @return 전체 데이터 출처 목록이 포함된 성공 응답 엔티티
      */
     @Override
     public ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> findAllDataSources (

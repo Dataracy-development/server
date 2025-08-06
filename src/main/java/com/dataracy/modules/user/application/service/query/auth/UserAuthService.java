@@ -100,12 +100,12 @@ public class UserAuthService implements
     }
 
     /**
-     * 이메일과 비밀번호로 사용자의 로그인 자격을 검증하고, 인증에 성공한 경우 사용자 정보를 반환합니다.
+     * 이메일과 비밀번호로 사용자를 인증하고, 인증에 성공한 경우 해당 사용자의 정보를 반환합니다.
      *
      * 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 경우 `UserException`이 발생합니다.
      *
-     * @param email 로그인에 사용할 이메일 주소
-     * @param password 로그인에 사용할 비밀번호
+     * @param email 인증에 사용할 이메일 주소
+     * @param password 인증에 사용할 비밀번호
      * @return 인증에 성공한 사용자의 정보
      * @throws UserException 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 때 발생합니다.
      */

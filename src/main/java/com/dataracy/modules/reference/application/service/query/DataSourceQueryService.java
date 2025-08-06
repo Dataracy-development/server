@@ -34,9 +34,9 @@ public class DataSourceQueryService implements
     private final DataSourcePort dataSourcePort;
 
     /**
-     * 모든 데이터 소스의 목록을 조회하여 응답 DTO로 반환한다.
+     * 모든 데이터 소스의 전체 목록을 조회하여 DTO로 반환한다.
      *
-     * @return 전체 데이터 소스 정보를 담은 AllDataSourcesResponse 객체
+     * @return 전체 데이터 소스 정보를 포함하는 AllDataSourcesResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -51,11 +51,11 @@ public class DataSourceQueryService implements
     /**
      * 주어진 ID에 해당하는 데이터 출처 정보를 조회하여 DataSourceResponse DTO로 반환한다.
      *
-     * 데이터 출처가 존재하지 않으면 ReferenceException이 발생한다.
+     * 데이터 출처가 존재하지 않을 경우 ReferenceException을 발생시킨다.
      *
      * @param dataSourceId 조회할 데이터 출처의 ID
      * @return 조회된 데이터 출처 정보를 담은 DataSourceResponse DTO
-     * @throws ReferenceException 데이터 출처가 존재하지 않을 경우 발생
+     * @throws ReferenceException 데이터 출처가 존재하지 않을 경우
      */
     @Override
     @Transactional(readOnly = true)
@@ -71,10 +71,10 @@ public class DataSourceQueryService implements
         return dataSourceResponse;
     }
 
-    /**
-     * 데이터 소스 ID의 존재 여부를 검증합니다.
+    /****
+     * 주어진 데이터 소스 ID가 존재하는지 검증합니다.
      *
-     * 데이터 소스가 존재하지 않으면 {@code ReferenceException}을 발생시킵니다.
+     * 데이터 소스가 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
      *
      * @param dataSourceId 존재 여부를 확인할 데이터 소스의 ID
      * @throws ReferenceException 데이터 소스를 찾을 수 없는 경우
@@ -92,13 +92,13 @@ public class DataSourceQueryService implements
     }
 
     /**
-     * 주어진 데이터 소스 ID에 해당하는 라벨을 반환합니다.
+     * 주어진 데이터 소스 ID로 해당 데이터 소스의 라벨을 반환합니다.
      *
      * 데이터 소스가 존재하지 않을 경우 ReferenceException이 발생합니다.
      *
      * @param dataSourceId 라벨을 조회할 데이터 소스의 ID
      * @return 데이터 소스의 라벨 문자열
-     * @throws ReferenceException 데이터 소스를 찾을 수 없는 경우
+     * @throws ReferenceException 데이터 소스를 찾을 수 없는 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -113,7 +113,7 @@ public class DataSourceQueryService implements
         return label;
     }
 
-    /**
+    /****
      * 주어진 데이터 소스 ID 목록에 대해 각 ID와 해당 라벨을 매핑한 맵을 반환합니다.
      *
      * @param dataSourceIds 라벨을 조회할 데이터 소스 ID 목록

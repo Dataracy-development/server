@@ -34,7 +34,7 @@ public class OccupationQueryService implements
     private final OccupationPort occupationPort;
 
     /**
-     * 모든 직업(occupation) 목록을 조회하여 응답 DTO로 반환한다.
+     * 모든 직업 정보를 조회하여 AllOccupationsResponse DTO로 반환한다.
      *
      * @return 전체 직업 목록이 포함된 AllOccupationsResponse 객체
      */
@@ -49,11 +49,11 @@ public class OccupationQueryService implements
     }
 
     /**
-     * 주어진 직업 ID에 해당하는 직업 정보를 조회하여 OccupationResponse DTO로 반환한다.
+     * 주어진 직업 ID로 직업 정보를 조회하여 OccupationResponse DTO로 반환합니다.
      *
      * @param occupationId 조회할 직업의 ID
      * @return 해당 직업 정보를 담은 OccupationResponse DTO
-     * @throws ReferenceException 직업이 존재하지 않을 경우 발생
+     * @throws ReferenceException 직업이 존재하지 않을 경우 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)
@@ -70,12 +70,12 @@ public class OccupationQueryService implements
     }
 
     /**
-     * 주어진 직업 ID에 해당하는 직업의 존재 여부를 확인합니다.
+     * 주어진 직업 ID에 해당하는 직업이 존재하는지 검증합니다.
      *
-     * 직업이 존재하지 않으면 {@code ReferenceException}을 발생시킵니다.
+     * 직업이 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
      *
-     * @param occupationId 존재 여부를 확인할 직업의 ID
-     * @throws ReferenceException 직업이 존재하지 않을 경우 발생
+     * @param occupationId 존재 여부를 검증할 직업의 ID
+     * @throws ReferenceException 직업이 존재하지 않을 때 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -93,7 +93,7 @@ public class OccupationQueryService implements
      * 주어진 직업 ID에 해당하는 직업명을 반환합니다.
      *
      * @param occupationId 조회할 직업의 ID
-     * @return 해당 직업의 이름(라벨)
+     * @return 직업의 이름(라벨)
      * @throws ReferenceException 직업이 존재하지 않을 경우 NOT_FOUND_OCCUPATION 상태로 예외가 발생합니다.
      */
     @Override
@@ -110,9 +110,9 @@ public class OccupationQueryService implements
     }
 
     /**
-     * 주어진 직업 ID 목록에 대해 각 ID에 해당하는 직업명을 반환합니다.
+     * 주어진 직업 ID 목록에 대해 각 ID에 해당하는 직업명을 맵 형태로 반환합니다.
      *
-     * @param occupationIds 직업 ID의 리스트
+     * @param occupationIds 조회할 직업 ID 리스트
      * @return 각 직업 ID와 해당 직업명(String)으로 이루어진 맵. 입력이 null이거나 비어 있으면 빈 맵을 반환합니다.
      */
     @Override

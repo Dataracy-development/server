@@ -34,9 +34,9 @@ public class AuthorLevelQueryService implements
     private final AuthorLevelPort authorLevelPort;
 
     /**
-     * 모든 AuthorLevel 엔티티의 목록을 조회하여 응답 DTO로 반환한다.
+     * 모든 AuthorLevel 엔티티의 전체 목록을 조회하여 AllAuthorLevelsResponse DTO로 반환한다.
      *
-     * @return 전체 AuthorLevel 정보를 담은 AllAuthorLevelsResponse 객체
+     * @return 전체 AuthorLevel 정보를 포함하는 AllAuthorLevelsResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -49,11 +49,11 @@ public class AuthorLevelQueryService implements
     }
 
     /**
-     * 주어진 ID로 작성자 등급 정보를 조회하여 반환한다.
+     * 주어진 ID에 해당하는 작성자 등급 정보를 반환한다.
      *
      * @param authorLevelId 조회할 작성자 등급의 ID
      * @return 해당 ID의 작성자 등급 정보를 담은 AuthorLevelResponse 객체
-     * @throws ReferenceException 작성자 등급이 존재하지 않을 경우 발생
+     * @throws ReferenceException 해당 ID의 작성자 등급이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -70,11 +70,11 @@ public class AuthorLevelQueryService implements
     }
 
     /**
-     * 주어진 ID에 해당하는 저자 등급의 존재 여부를 검증합니다.
+     * 주어진 ID로 저자 등급의 존재 여부를 확인합니다.
      *
-     * 저자 등급이 존재하지 않으면 {@code ReferenceException}을 발생시킵니다.
+     * 저자 등급이 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
      *
-     * @param authorLevelId 존재 여부를 확인할 저자 등급 ID
+     * @param authorLevelId 확인할 저자 등급의 ID
      * @throws ReferenceException 저자 등급이 존재하지 않을 때 발생
      */
     @Override
@@ -93,8 +93,8 @@ public class AuthorLevelQueryService implements
      * 주어진 작가 등급 ID에 해당하는 라벨을 반환합니다.
      *
      * @param authorLevelId 조회할 작가 등급의 ID
-     * @return 작가 등급의 라벨 문자열
-     * @throws ReferenceException 해당 ID의 작가 등급이 존재하지 않을 경우 발생
+     * @return 해당 작가 등급의 라벨 문자열
+     * @throws ReferenceException 작가 등급이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -110,9 +110,9 @@ public class AuthorLevelQueryService implements
     }
 
     /**
-     * 주어진 작가 레벨 ID 목록에 해당하는 레이블을 매핑하여 반환합니다.
+     * 주어진 작가 레벨 ID 목록에 대해 각 ID에 해당하는 레이블을 맵 형태로 반환합니다.
      *
-     * @param authorLevelIds 조회할 작가 레벨 ID 목록
+     * @param authorLevelIds 레이블을 조회할 작가 레벨 ID 목록
      * @return 각 작가 레벨 ID에 해당하는 레이블의 맵. 입력이 null이거나 비어 있으면 빈 맵을 반환합니다.
      */
     @Override
