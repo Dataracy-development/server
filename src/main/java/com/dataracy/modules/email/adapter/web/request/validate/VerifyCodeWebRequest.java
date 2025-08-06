@@ -1,4 +1,4 @@
-package com.dataracy.modules.email.adapter.web.request;
+package com.dataracy.modules.email.adapter.web.request.validate;
 
 import com.dataracy.modules.common.support.annotation.ValidEnumValue;
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;

@@ -1,26 +1,26 @@
 package com.dataracy.modules.email.adapter.redis;
 
 import com.dataracy.modules.common.exception.CommonException;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonErrorStatus;
-import com.dataracy.modules.email.application.port.out.EmailRedisPort;
+import com.dataracy.modules.email.application.port.out.EmailCachePort;
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 레디스를 이용해 이메일 인증 저장 및 조회
  */
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class EmailRedisAdapter implements EmailRedisPort {
+public class CacheEmailAdapter implements EmailCachePort {
     private final StringRedisTemplate redisTemplate;
 
     @Value("${aws.ses.expire-minutes:5}")
@@ -48,15 +48,15 @@ public class EmailRedisAdapter implements EmailRedisPort {
      */
     @Override
     public void saveCode(String email, String code, EmailVerificationType verificationType) {
+        String emailKey = getEmailKey(email, verificationType);
         try {
-            String emailKey = getEmailKey(email, verificationType);
             redisTemplate.opsForValue().set(emailKey, code, EXPIRE_MINUTES, TimeUnit.MINUTES);
-            log.info("Saved email certification for email: {}", email);
+            LoggerFactory.redis().logSaveOrUpdate(emailKey, "해당 인증 코드를 저장하였습니다. email=" + email);
         } catch (RedisConnectionFailureException e) {
-            log.error("Redis connection failure.", e);
+            LoggerFactory.redis().logError(emailKey, "레디스 서버 연결에 실패했습니다.", e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            log.error("Data access exception while saving refresh token.", e);
+            LoggerFactory.redis().logError(emailKey, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -69,14 +69,17 @@ public class EmailRedisAdapter implements EmailRedisPort {
      */
     @Override
     public String verifyCode(String email, String code, EmailVerificationType verificationType) {
+        String emailKey = getEmailKey(email, verificationType);
         try {
-            String emailKey = getEmailKey(email, verificationType);
-            return redisTemplate.opsForValue().get(emailKey);
+            Instant startTime = LoggerFactory.redis().logQueryStart(emailKey, "이메일 인증 코드 조회 시작. email=" + email);
+            String verificationCode = redisTemplate.opsForValue().get(emailKey);
+            LoggerFactory.redis().logQueryEnd(emailKey, "이메일 인증 코드 조회 종료. email=" + email, startTime);
+            return verificationCode;
         } catch (RedisConnectionFailureException e) {
-            log.error("Redis connection failure.", e);
+            LoggerFactory.redis().logError(emailKey, "레디스 서버 연결에 실패했습니다.", e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            log.error("Data access exception while saving refresh token.", e);
+            LoggerFactory.redis().logError(emailKey, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -89,14 +92,15 @@ public class EmailRedisAdapter implements EmailRedisPort {
      */
     @Override
     public void deleteCode(String email, EmailVerificationType verificationType) {
+        String emailKey = getEmailKey(email, verificationType);
         try {
-            String emailKey = getEmailKey(email, verificationType);
             redisTemplate.delete(emailKey);
+            LoggerFactory.redis().logDelete(emailKey, "이메일 인증 코드 삭제. email=" + email);
         } catch (RedisConnectionFailureException e) {
-            log.error("Redis connection failure.", e);
+            LoggerFactory.redis().logError(emailKey, "레디스 서버 연결에 실패했습니다.", e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            log.error("Data access exception while saving refresh token.", e);
+            LoggerFactory.redis().logError(emailKey, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
