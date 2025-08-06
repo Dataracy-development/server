@@ -40,12 +40,12 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
      * @return 발급된 리프레시 토큰과 만료 시간이 포함된 응답 객체
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public RefreshTokenResponse login(SelfLoginRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("SelfLoginUseCase", "자체 로그인 서비스 시작 email=" + requestDto.email());
 
         // 유저 db로부터 이메일이 일치하는 유저를 조회한다.
-        UserInfo userInfo = isLoginPossibleUseCase.loginAndGetUserInfo(requestDto.email(), requestDto.password());
+        UserInfo userInfo = isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo(requestDto.email(), requestDto.password());
         AuthUser authUser = AuthUser.from(userInfo);
 
         // 로그인 가능한 경우이므로 리프레시 토큰 발급 및 레디스에 저장
@@ -77,6 +77,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
             leaseTime = 1000L,
             retry = 1
     )
+    @Transactional
     public ReIssueTokenResponse reIssueToken(String refreshToken) {
         try {
             Instant startTime = LoggerFactory.service().logStart("ReIssueTokenUseCase", "토큰 재발급 서비스 시작");

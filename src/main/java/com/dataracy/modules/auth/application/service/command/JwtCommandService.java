@@ -16,7 +16,7 @@ import java.time.Instant;
 public class JwtCommandService implements JwtGenerateUseCase {
     private final JwtGeneratorPort jwtGeneratorPort;
 
-    /****
+    /**
      * OAuth2 제공자 정보와 이메일을 기반으로 회원가입(Register)용 JWT 토큰을 생성합니다.
      *
      * @param provider OAuth2 제공자 이름

@@ -63,6 +63,7 @@ public class ChangePasswordService implements ChangePasswordUseCase {
     }
 
     @Override
+    @Transactional
     public void resetPassword(ResetPasswordWithTokenRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart(USE_CASE, "비밀번호 재설정 서비스 시작");
 

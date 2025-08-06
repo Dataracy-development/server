@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.service.query.validation;
+package com.dataracy.modules.user.application.service.query.validate;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.application.port.in.validate.DuplicateEmailUseCase;

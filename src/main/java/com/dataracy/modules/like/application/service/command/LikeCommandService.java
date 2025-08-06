@@ -13,13 +13,11 @@ import com.dataracy.modules.like.domain.model.Like;
 import com.dataracy.modules.like.domain.status.LikeErrorStatus;
 import com.dataracy.modules.project.application.port.in.validate.ValidateProjectUseCase;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LikeCommandService implements
@@ -42,13 +40,13 @@ public class LikeCommandService implements
      * @throws LikeException 좋아요 또는 좋아요 취소 과정에서 실패 시, 대상 및 작업에 따라 도메인별 예외가 발생합니다.
      */
     @Override
-    @Transactional
     @DistributedLock(
             key = "'lock:like:' + #requestDto.targetType + ':' + #requestDto.targetId() + ':user:' + #userId",
             waitTime = 300L,
             leaseTime = 2000L,
             retry = 2
     )
+    @Transactional
     public TargetType likeTarget(Long userId, TargetLikeRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("LikeTargetUseCase", requestDto.targetType() + " 좋아요 서비스 시작 targetId=" + requestDto.targetId());
         TargetType targetType = TargetType.of(requestDto.targetType());

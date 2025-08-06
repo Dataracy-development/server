@@ -54,13 +54,13 @@ public class ProjectCountService implements
      * @param projectId 댓글 수를 증가시킬 프로젝트의 ID
      */
     @Override
-    @Transactional
     @DistributedLock(
             key = "'lock:project:comment-count:' + #projectId",
             waitTime = 300L,
             leaseTime = 1500L,
             retry = 2
     )
+    @Transactional
     public void increaseCommentCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("IncreaseCommentCountUseCase", "프로젝트 댓글 수 증가 서비스 시작 projectId=" + projectId);
         updateProjectCommentDbPort.increaseCommentCount(projectId);
@@ -75,13 +75,13 @@ public class ProjectCountService implements
      * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
      */
     @Override
-    @Transactional
     @DistributedLock(
             key = "'lock:project:comment-count:' + #projectId",
             waitTime = 300L,
             leaseTime = 1500L,
             retry = 2
     )
+    @Transactional
     public void decreaseCommentCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("DecreaseCommentCountUseCase", "프로젝트 댓글 수 감소 서비스 시작 projectId=" + projectId);
         updateProjectCommentDbPort.decreaseCommentCount(projectId);
@@ -95,13 +95,13 @@ public class ProjectCountService implements
      * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
      */
     @Override
-    @Transactional
     @DistributedLock(
             key = "'lock:project:like-count:' + #projectId",
             waitTime = 300L,
             leaseTime = 1500L,
             retry = 2
     )
+    @Transactional
     public void increaseLikeCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("IncreaseLikeCountUseCase", "프로젝트 좋아요 수 증가 서비스 시작 projectId=" + projectId);
         updateProjectLikeDbPort.increaseLikeCount(projectId);
@@ -115,13 +115,13 @@ public class ProjectCountService implements
      * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
      */
     @Override
-    @Transactional
     @DistributedLock(
             key = "'lock:project:like-count:' + #projectId",
             waitTime = 300L,
             leaseTime = 1500L,
             retry = 2
     )
+    @Transactional
     public void decreaseLikeCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("DecreaseLikeCountUseCase", "프로젝트 좋아요 수 감소 서비스 시작 projectId=" + projectId);
         updateProjectLikeDbPort.decreaseLikeCount(projectId);
