@@ -84,6 +84,14 @@ public class JwtQueryService implements JwtValidateUseCase {
         return email;
     }
 
+    @Override
+    public String getEmailFromResetToken(String token) {
+        Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "비밀번호 재설정 토큰으로부터 이메일 추출 서비스 시작");
+        String email = jwtValidatorPort.getEmailFromResetToken(token);
+        LoggerFactory.service().logSuccess("JwtValidateUseCase", "비밀번호 재설정 토큰으로부터 이메일 추출 서비스 성공", startTime);
+        return email;
+    }
+
     /**
      * 주어진 토큰에서 유저의 역할(RoleType)을 추출합니다.
      *

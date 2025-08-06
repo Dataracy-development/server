@@ -1,6 +1,7 @@
 package com.dataracy.modules.user.application.port.in.command.password;
 
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
+import com.dataracy.modules.user.application.dto.request.password.ResetPasswordWithTokenRequest;
 
 public interface ChangePasswordUseCase {
     /**
@@ -10,4 +11,6 @@ public interface ChangePasswordUseCase {
  * @param requestDto 비밀번호 변경 요청 정보를 담은 객체
  */
     void changePassword(Long userId, ChangePasswordRequest requestDto);
+
+    void resetPassword(ResetPasswordWithTokenRequest requestDto);
 }

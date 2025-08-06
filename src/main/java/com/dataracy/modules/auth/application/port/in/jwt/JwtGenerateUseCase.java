@@ -12,6 +12,9 @@ public interface JwtGenerateUseCase {
  * @return 생성된 회원가입용 JWT 토큰 문자열
  */
     String generateRegisterToken(String provider, String providerId, String email);
+
+    String generateResetPasswordToken(String email);
+
     /**
  * 주어진 사용자 ID와 역할을 기반으로 액세스 토큰을 생성합니다.
  *

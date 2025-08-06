@@ -1,7 +1,10 @@
 package com.dataracy.modules.user.application.service.command.password;
 
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.auth.application.port.in.redis.ResetTokenRedisUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
+import com.dataracy.modules.user.application.dto.request.password.ResetPasswordWithTokenRequest;
 import com.dataracy.modules.user.application.port.in.command.password.ChangePasswordUseCase;
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
 import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
@@ -22,6 +25,9 @@ public class ChangePasswordService implements ChangePasswordUseCase {
 
     private final UserQueryPort userQueryPort;
     private final UserCommandPort userCommandPort;
+
+    private final ResetTokenRedisUseCase resetTokenRedisUseCase;
+    private final JwtValidateUseCase jwtValidateUseCase;
 
     private static final String USE_CASE = "ChangePasswordUseCase";
 
@@ -54,5 +60,29 @@ public class ChangePasswordService implements ChangePasswordUseCase {
         userCommandPort.changePassword(userId, encodedPassword);
 
         LoggerFactory.service().logSuccess(USE_CASE, "비밀번호 변경 서비스 성공 userId=" + userId, startTime);
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordWithTokenRequest requestDto) {
+        Instant startTime = LoggerFactory.service().logStart(USE_CASE, "비밀번호 재설정 서비스 시작");
+
+        // 토큰 유효성 검사
+        resetTokenRedisUseCase.isValidResetToken(requestDto.resetPasswordToken());
+        // 비밀번호 - 비밀번호 확인 검증
+        requestDto.validatePasswordMatch();
+
+        String email = jwtValidateUseCase.getEmailFromResetToken(requestDto.resetPasswordToken());
+        User savedUser = userQueryPort.findUserByEmail(email)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning(USE_CASE, "[비밀번호 재설정] 사용자를 찾을 수 없습니다.");
+                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
+                });
+        savedUser.validatePasswordChangable();
+
+        // 패스워드 암호화 및 변경
+        String encodedPassword = passwordEncoder.encode(requestDto.password());
+        userCommandPort.changePassword(savedUser.getId(), encodedPassword);
+
+        LoggerFactory.service().logSuccess(USE_CASE, "비밀번호 재설정 서비스 성공", startTime);
     }
 }

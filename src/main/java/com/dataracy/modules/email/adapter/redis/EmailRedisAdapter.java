@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @RequiredArgsConstructor
-public class CacheEmailAdapter implements EmailCachePort {
+public class EmailRedisAdapter implements EmailCachePort {
     private final StringRedisTemplate redisTemplate;
 
     @Value("${aws.ses.expire-minutes:5}")

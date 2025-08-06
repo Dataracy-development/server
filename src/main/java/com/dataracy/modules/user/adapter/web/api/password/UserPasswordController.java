@@ -5,8 +5,10 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.adapter.web.mapper.password.UserPasswordWebMapper;
 import com.dataracy.modules.user.adapter.web.request.password.ChangePasswordWebRequest;
 import com.dataracy.modules.user.adapter.web.request.password.ConfirmPasswordWebRequest;
+import com.dataracy.modules.user.adapter.web.request.password.ResetPasswordWithTokenWebRequest;
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.password.ConfirmPasswordRequest;
+import com.dataracy.modules.user.application.dto.request.password.ResetPasswordWithTokenRequest;
 import com.dataracy.modules.user.application.port.in.command.password.ChangePasswordUseCase;
 import com.dataracy.modules.user.application.port.in.query.password.ConfirmPasswordUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
@@ -48,6 +50,23 @@ public class UserPasswordController implements UserPasswordApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CHANGE_PASSWORD));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> resetPasswordWithToken(
+            ResetPasswordWithTokenWebRequest webRequest
+    ) {
+        Instant startTime = LoggerFactory.api().logRequest("[ResetPasswordWithToken] 비밀번호 재설정 API 요청 시작");
+
+        try {
+            ResetPasswordWithTokenRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
+            changePasswordUseCase.resetPassword(requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[ResetPasswordWithToken] 비밀번호 재설정 API 응답 완료", startTime);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(UserSuccessStatus.OK_RESET_PASSWORD));
     }
 
     /**

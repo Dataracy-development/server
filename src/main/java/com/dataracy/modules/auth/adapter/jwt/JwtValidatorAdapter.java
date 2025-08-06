@@ -80,4 +80,9 @@ public class JwtValidatorAdapter implements JwtValidatorPort {
         String role = jwtUtilInternal.parseToken(token).get("role", String.class);
         return RoleType.of(role);
     }
+
+    @Override
+    public String getEmailFromResetToken(String token) {
+        return jwtUtilInternal.parseToken(token).get("email", String.class);
+    }
 }
