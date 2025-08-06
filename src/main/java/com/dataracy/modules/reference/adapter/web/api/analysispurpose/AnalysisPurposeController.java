@@ -1,6 +1,7 @@
 package com.dataracy.modules.reference.adapter.web.api.analysispurpose;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.reference.adapter.web.mapper.AnalysisPurposeWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllAnalysisPurposesWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllAnalysisPurposesResponse;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +27,16 @@ public class AnalysisPurposeController implements AnalysisPurposeApi {
     @Override
     public ResponseEntity<SuccessResponse<AllAnalysisPurposesWebResponse>> findAllAnalysisPurposes (
     ) {
-        AllAnalysisPurposesResponse allAnalysisPurposesResponse = findAllAnalysisPurposesUseCase.findAllAnalysisPurposes();
-        AllAnalysisPurposesWebResponse allAnalysisPurposesWebResponse = analysisPurposeWebMapper.toWebDto(allAnalysisPurposesResponse);
+        Instant startTime = LoggerFactory.api().logRequest("[FindAllAnalysisPurposes] 전체 분석 목적 목록을 조회 API 요청 시작");
+        AllAnalysisPurposesWebResponse allAnalysisPurposesWebResponse;
+
+        try {
+            AllAnalysisPurposesResponse allAnalysisPurposesResponse = findAllAnalysisPurposesUseCase.findAllAnalysisPurposes();
+            allAnalysisPurposesWebResponse = analysisPurposeWebMapper.toWebDto(allAnalysisPurposesResponse);
+        } finally {
+            LoggerFactory.api().logResponse("[FindAllAnalysisPurposes] 전체 분석 목적 목록을 조회 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_ANALYSIS_PURPOSE_LIST, allAnalysisPurposesWebResponse));
     }

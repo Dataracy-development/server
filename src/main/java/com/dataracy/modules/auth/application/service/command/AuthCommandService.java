@@ -14,7 +14,7 @@ import com.dataracy.modules.auth.domain.model.vo.AuthUser;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.lock.DistributedLock;
-import com.dataracy.modules.user.application.port.in.validation.IsLoginPossibleUseCase;
+import com.dataracy.modules.user.application.port.in.query.auth.IsLoginPossibleUseCase;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     private final IsLoginPossibleUseCase isLoginPossibleUseCase;
 
     /**
-     * 이메일과 비밀번호를 사용하여 사용자의 로그인을 처리하고, 새로운 리프레시 토큰을 발급한다.
+     * 사용자의 이메일과 비밀번호를 검증하여 로그인하고, 새로운 리프레시 토큰을 발급한다.
      *
      * @param requestDto 로그인 요청 정보(이메일, 비밀번호 등)
      * @return 발급된 리프레시 토큰과 만료 시간이 포함된 응답 객체
@@ -45,7 +45,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
         Instant startTime = LoggerFactory.service().logStart("SelfLoginUseCase", "자체 로그인 서비스 시작 email=" + requestDto.email());
 
         // 유저 db로부터 이메일이 일치하는 유저를 조회한다.
-        UserInfo userInfo = isLoginPossibleUseCase.isLogin(requestDto.email(), requestDto.password());
+        UserInfo userInfo = isLoginPossibleUseCase.loginAndGetUserInfo(requestDto.email(), requestDto.password());
         AuthUser authUser = AuthUser.from(userInfo);
 
         // 로그인 가능한 경우이므로 리프레시 토큰 발급 및 레디스에 저장

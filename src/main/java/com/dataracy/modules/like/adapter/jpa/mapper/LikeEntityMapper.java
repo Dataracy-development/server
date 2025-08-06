@@ -9,13 +9,13 @@ public final class LikeEntityMapper {
  */
 private LikeEntityMapper() {}
 
-    /**
+    /****
      * LikeEntity 객체를 Like 도메인 객체로 변환합니다.
      *
      * @param entity 변환할 LikeEntity 객체
-     * @return 변환된 Like 도메인 객체, 입력이 null이면 null 반환
+     * @return 변환된 Like 도메인 객체. 입력이 null이면 null을 반환합니다.
      */
-    private static Like toDomain(LikeEntity entity) {
+    public static Like toDomain(LikeEntity entity) {
         if (entity == null) return null;
 
         return Like.of(
