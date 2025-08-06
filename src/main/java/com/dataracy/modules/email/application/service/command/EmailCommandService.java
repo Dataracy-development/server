@@ -2,8 +2,8 @@ package com.dataracy.modules.email.application.service.command;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.email.application.port.in.command.SendEmailUseCase;
-import com.dataracy.modules.email.application.port.out.EmailCachePort;
-import com.dataracy.modules.email.application.port.out.EmailSenderPort;
+import com.dataracy.modules.email.application.port.out.cache.CacheEmailPort;
+import com.dataracy.modules.email.application.port.out.command.SendEmailPort;
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 import com.dataracy.modules.email.domain.exception.EmailException;
 import com.dataracy.modules.email.domain.model.EmailContent;
@@ -19,17 +19,17 @@ import java.time.Instant;
 @Slf4j
 @Service
 public class EmailCommandService implements SendEmailUseCase {
-    private final EmailSenderPort emailSenderPort;
-    private final EmailCachePort emailCachePort;
+    private final SendEmailPort sendEmailPort;
+    private final CacheEmailPort cacheEmailPort;
 
     // 이메일 인증 방식이 여러개이므로 명시적으로 설정
     // Qualifier는 생성자 주입시점에 반영되지 않아 필드위에 바로 사용할 수 없다.
     public EmailCommandService(
-            @Qualifier("emailSendGridAdapter") EmailSenderPort emailSenderPort,
-            EmailCachePort emailCachePort
+            @Qualifier("sendEmailSendGridAdapter") SendEmailPort sendEmailPort,
+            CacheEmailPort cacheEmailPort
     ) {
-        this.emailSenderPort = emailSenderPort;
-        this.emailCachePort = emailCachePort;
+        this.sendEmailPort = sendEmailPort;
+        this.cacheEmailPort = cacheEmailPort;
     }
 
     /**
@@ -47,14 +47,14 @@ public class EmailCommandService implements SendEmailUseCase {
 
         // 이메일 전송
         try {
-            emailSenderPort.send(email, content.subject(), content.body());
+            sendEmailPort.send(email, content.subject(), content.body());
         } catch (Exception e) {
             LoggerFactory.service().logException("SendEmailUseCase", "이메일 전송 실패. email=" + email, e);
             throw new EmailException(EmailErrorStatus.FAIL_SEND_EMAIL_CODE);
         }
 
         // 레디스에 이메일 인증 코드 저장
-        emailCachePort.saveCode(email, code, type);
+        cacheEmailPort.saveCode(email, code, type);
         LoggerFactory.service().logSuccess("SendEmailUseCase", "이메일 인증 코드 전송 서비스 종료 email=" + email, startTime);
     }
 

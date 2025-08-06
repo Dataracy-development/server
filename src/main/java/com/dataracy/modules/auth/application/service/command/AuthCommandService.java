@@ -8,7 +8,7 @@ import com.dataracy.modules.auth.application.port.in.auth.ReIssueTokenUseCase;
 import com.dataracy.modules.auth.application.port.in.auth.SelfLoginUseCase;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtGeneratorPort;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtValidatorPort;
-import com.dataracy.modules.auth.application.port.out.redis.TokenRedisPort;
+import com.dataracy.modules.auth.application.port.out.cache.CacheRefreshTokenPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.model.vo.AuthUser;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
@@ -29,7 +29,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     private final JwtProperties jwtProperties;
     private final JwtGeneratorPort jwtGeneratorPort;
     private final JwtValidatorPort jwtValidatorPort;
-    private final TokenRedisPort tokenRedisPort;
+    private final CacheRefreshTokenPort cacheRefreshTokenPort;
 
     private final IsLoginPossibleUseCase isLoginPossibleUseCase;
 
@@ -50,7 +50,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
 
         // 로그인 가능한 경우이므로 리프레시 토큰 발급 및 레디스에 저장
         String refreshToken = jwtGeneratorPort.generateRefreshToken(authUser.userId(), authUser.role());
-        tokenRedisPort.saveRefreshToken(authUser.userId().toString(), refreshToken);
+        cacheRefreshTokenPort.saveRefreshToken(authUser.userId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(
                 refreshToken,
                 jwtProperties.getRefreshTokenExpirationTime()
@@ -89,7 +89,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
             }
 
             // 레디스의 리프레시 토큰과 입력받은 리프레시 토큰을 비교한다.
-            String savedRefreshToken = tokenRedisPort.getRefreshToken(userId.toString());
+            String savedRefreshToken = cacheRefreshTokenPort.getRefreshToken(userId.toString());
             if (!savedRefreshToken.equals(refreshToken)) {
                 LoggerFactory.service().logWarning("ReIssueTokenUseCase", "[토큰 재발급] 입력된 리프레시 토큰이 레디스의 리프레시 토큰과 일치하지 않습니다.");
                 throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
@@ -101,7 +101,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
             String newRefreshToken = jwtGeneratorPort.generateRefreshToken(userId, userRole);
 
             // 레디스에 리프레시 토큰 저장
-            tokenRedisPort.saveRefreshToken(userId.toString(), newRefreshToken);
+            cacheRefreshTokenPort.saveRefreshToken(userId.toString(), newRefreshToken);
             ReIssueTokenResponse reIssueTokenResponse = new ReIssueTokenResponse(
                     newAccessToken,
                     newRefreshToken,

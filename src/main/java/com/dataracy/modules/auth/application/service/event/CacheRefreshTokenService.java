@@ -1,7 +1,7 @@
-package com.dataracy.modules.auth.application.service.command;
+package com.dataracy.modules.auth.application.service.event;
 
-import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
-import com.dataracy.modules.auth.application.port.out.redis.TokenRedisPort;
+import com.dataracy.modules.auth.application.port.in.cache.CacheRefreshTokenUseCase;
+import com.dataracy.modules.auth.application.port.out.cache.CacheRefreshTokenPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
@@ -12,8 +12,8 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class TokenRedisCommandService implements TokenRedisUseCase {
-    private final TokenRedisPort tokenRedisPort;
+public class CacheRefreshTokenService implements CacheRefreshTokenUseCase {
+    private final CacheRefreshTokenPort cacheRefreshTokenPort;
 
     /**
      * 지정한 사용자 ID에 대해 리프레시 토큰을 Redis에 저장합니다.
@@ -24,7 +24,7 @@ public class TokenRedisCommandService implements TokenRedisUseCase {
     @Override
     public void saveRefreshToken(String userId, String refreshToken) {
         Instant startTime = LoggerFactory.service().logStart("TokenRedisUseCase", "리프레시 토큰 레디스 저장 서비스 시작 userId=" + userId);
-        tokenRedisPort.saveRefreshToken(userId, refreshToken);
+        cacheRefreshTokenPort.saveRefreshToken(userId, refreshToken);
         LoggerFactory.service().logSuccess("TokenRedisUseCase", "리프레시 토큰 레디스 저장 서비스 성공 userId=" + userId, startTime);
     }
 
@@ -38,7 +38,7 @@ public class TokenRedisCommandService implements TokenRedisUseCase {
     @Override
     public String getRefreshToken(String userId) {
         Instant startTime = LoggerFactory.service().logStart("TokenRedisUseCase", "레디스에서 리프레시 토큰 추출 서비스 시작 userId=" + userId);
-        String refreshToken = tokenRedisPort.getRefreshToken(userId);
+        String refreshToken = cacheRefreshTokenPort.getRefreshToken(userId);
         if (refreshToken == null) {
             throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
         }
@@ -54,7 +54,7 @@ public class TokenRedisCommandService implements TokenRedisUseCase {
     @Override
     public void deleteRefreshToken(String userId) {
         Instant startTime = LoggerFactory.service().logStart("TokenRedisUseCase", "레디스에서 리프레시 토큰 삭제 서비스 시작 userId=" + userId);
-        tokenRedisPort.deleteRefreshToken(userId);
+        cacheRefreshTokenPort.deleteRefreshToken(userId);
         LoggerFactory.service().logSuccess("TokenRedisUseCase", "레디스에서 리프레시 토큰 삭제 서비스 성공 userId=" + userId, startTime);
     }
 }

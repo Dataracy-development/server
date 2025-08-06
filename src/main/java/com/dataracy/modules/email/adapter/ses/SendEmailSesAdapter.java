@@ -3,7 +3,7 @@ package com.dataracy.modules.email.adapter.ses;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.email.application.port.out.EmailSenderPort;
+import com.dataracy.modules.email.application.port.out.command.SendEmailPort;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class EmailSesAdapter implements EmailSenderPort {
+public class SendEmailSesAdapter implements SendEmailPort {
 
     private final AmazonSimpleEmailService ses;
 

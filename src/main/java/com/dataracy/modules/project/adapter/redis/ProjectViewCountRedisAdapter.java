@@ -19,7 +19,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-public class CacheProjectViewCountAdapter implements CacheProjectViewCountPort {
+public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
 
     private final StringRedisTemplate redisTemplate;
     private static final Duration TTL = Duration.ofMinutes(5);
