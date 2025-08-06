@@ -14,8 +14,8 @@ import com.dataracy.modules.user.application.dto.request.signup.OnboardingReques
 import com.dataracy.modules.user.application.dto.request.signup.SelfSignUpRequest;
 import com.dataracy.modules.user.application.port.in.command.signup.OAuthSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.command.signup.SelfSignUpUseCase;
-import com.dataracy.modules.user.application.port.in.validation.DuplicateEmailUseCase;
-import com.dataracy.modules.user.application.port.in.validation.DuplicateNicknameUseCase;
+import com.dataracy.modules.user.application.port.in.validate.DuplicateEmailUseCase;
+import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;

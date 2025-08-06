@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.port.out.validation;
+package com.dataracy.modules.user.application.port.out.validate;
 
 public interface ValidateUserExistsPort {
     /**

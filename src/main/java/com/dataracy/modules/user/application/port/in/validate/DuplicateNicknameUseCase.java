@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.port.in.validation;
+package com.dataracy.modules.user.application.port.in.validate;
 
 public interface DuplicateNicknameUseCase {
     /**

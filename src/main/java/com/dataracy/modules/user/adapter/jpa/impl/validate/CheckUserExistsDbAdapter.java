@@ -1,8 +1,8 @@
-package com.dataracy.modules.user.adapter.jpa.impl.validation;
+package com.dataracy.modules.user.adapter.jpa.impl.validate;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.adapter.jpa.repository.UserJpaRepository;
-import com.dataracy.modules.user.application.port.out.validation.ValidateUserExistsPort;
+import com.dataracy.modules.user.application.port.out.validate.ValidateUserExistsPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

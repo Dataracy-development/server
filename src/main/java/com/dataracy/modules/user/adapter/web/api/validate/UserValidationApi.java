@@ -1,7 +1,7 @@
-package com.dataracy.modules.user.adapter.web.api.validation;
+package com.dataracy.modules.user.adapter.web.api.validate;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
-import com.dataracy.modules.user.adapter.web.request.validation.DuplicateNicknameWebRequest;
+import com.dataracy.modules.user.adapter.web.request.validate.DuplicateNicknameWebRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
