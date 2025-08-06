@@ -43,7 +43,7 @@ public class LikeCommandAdapter implements LikeCommandPort {
     public void cancelLike(Long userId, Long targetId, TargetType targetType) {
         LikeEntity entity = likeJpaRepository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("LikeEntity", "해당 타겟 좋아요 리소스가 존재하지 않습니다. targetType=" + ", targetId=" + targetId);
+                    LoggerFactory.db().logWarning("LikeEntity", "해당 타겟 좋아요 리소스가 존재하지 않습니다. targetType=" + targetType + ", targetId=" + targetId);
                     return new LikeException(LikeErrorStatus.NOT_FOUND_TARGET_LIKE);
                 });
         likeJpaRepository.delete(entity);

@@ -3,9 +3,6 @@ package com.dataracy.modules.user.application.port.out.query;
 import java.util.List;
 import java.util.Map;
 
-/**
- * user db 다건 조회 포트
- */
 public interface UserMultiQueryPort {
     /**
  * 여러 사용자 ID에 대해 각 사용자 ID와 해당 사용자의 닉네임을 매핑한 Map을 반환합니다.

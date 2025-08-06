@@ -111,7 +111,7 @@ public class UserAuthService implements
      */
     @Override
     @Transactional(readOnly = true)
-    public UserInfo isLogin(String email, String password) {
+    public UserInfo loginAndGetUserInfo(String email, String password) {
         Instant startTime = LoggerFactory.service().logStart("IsLoginPossibleUseCase", "입력받은 이메일, 비밀번호로 로그인이 가능한지 여부를 확인하는 서비스 시작 email=" + email);
 
         User user = userQueryPort.findUserByEmail(email)

@@ -10,5 +10,5 @@ public interface IsLoginPossibleUseCase {
  * @param password 로그인할 사용자의 비밀번호
  * @return 인증에 성공한 사용자의 정보
  */
-    UserInfo isLogin(String email, String password);
+    UserInfo loginAndGetUserInfo(String email, String password);
 }

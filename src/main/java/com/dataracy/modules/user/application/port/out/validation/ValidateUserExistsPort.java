@@ -1,8 +1,5 @@
 package com.dataracy.modules.user.application.port.out.validation;
 
-/**
- * user db 존재 여부 포트
- */
 public interface ValidateUserExistsPort {
     /**
  * 주어진 닉네임을 가진 사용자가 존재하는지 여부를 반환합니다.
