@@ -32,9 +32,14 @@ public class UserValidationController implements UserValidationApi {
             DuplicateNicknameWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[DuplicateNickname] 닉네임 중복 API 요청 시작");
-        DuplicateNicknameRequest requestDto = userWebMapper.toApplicationDto(webRequest);
-        duplicateNicknameUseCase.validateDuplicatedNickname(requestDto.nickname());
-        LoggerFactory.api().logResponse("[DuplicateNickname] 닉네임 중복 API 응답 완료", startTime);
+
+        try {
+            DuplicateNicknameRequest requestDto = userWebMapper.toApplicationDto(webRequest);
+            duplicateNicknameUseCase.validateDuplicatedNickname(requestDto.nickname());
+        } finally {
+            LoggerFactory.api().logResponse("[DuplicateNickname] 닉네임 중복 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_NOT_DUPLICATED_NICKNAME));
     }

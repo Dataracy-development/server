@@ -49,10 +49,13 @@ public class ProjectCommandController implements ProjectCommandApi {
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[UploadProject] 프로젝트 업로드 API 요청 시작");
 
-        UploadProjectRequest requestDto = projectCommandWebMapper.toApplicationDto(webRequest);
-        uploadProjectUseCase.uploadProject(userId, file, requestDto);
+        try {
+            UploadProjectRequest requestDto = projectCommandWebMapper.toApplicationDto(webRequest);
+            uploadProjectUseCase.uploadProject(userId, file, requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[UploadProject] 프로젝트 업로드 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[UploadProject] 프로젝트 업로드 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(ProjectSuccessStatus.CREATED_PROJECT));
     }
@@ -70,10 +73,13 @@ public class ProjectCommandController implements ProjectCommandApi {
     public ResponseEntity<SuccessResponse<Void>> modifyProject(Long projectId, MultipartFile file, ModifyProjectWebRequest webRequest) {
         Instant startTime = LoggerFactory.api().logRequest("[ModifyProject] 프로젝트 수정 API 요청 시작");
 
-        ModifyProjectRequest requestDto = projectCommandWebMapper.toApplicationDto(webRequest);
-        modifyProjectUseCase.modifyProject(projectId, file, requestDto);
+        try {
+            ModifyProjectRequest requestDto = projectCommandWebMapper.toApplicationDto(webRequest);
+            modifyProjectUseCase.modifyProject(projectId, file, requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[ModifyProject] 프로젝트 수정 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[ModifyProject] 프로젝트 수정 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.MODIFY_PROJECT));
     }
@@ -88,8 +94,13 @@ public class ProjectCommandController implements ProjectCommandApi {
     @AuthorizationProjectEdit
     public ResponseEntity<SuccessResponse<Void>> deleteProject(Long projectId) {
         Instant startTime = LoggerFactory.api().logRequest("[DeleteProject] 프로젝트 삭제 API 요청 시작");
-        deleteProjectUseCase.deleteProject(projectId);
-        LoggerFactory.api().logResponse("[DeleteProject] 프로젝트 삭제 API 응답 완료", startTime);
+
+        try {
+            deleteProjectUseCase.deleteProject(projectId);
+        } finally {
+            LoggerFactory.api().logResponse("[DeleteProject] 프로젝트 삭제 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.DELETE_PROJECT));
     }
@@ -104,8 +115,13 @@ public class ProjectCommandController implements ProjectCommandApi {
     @AuthorizationProjectEdit(restore = true)
     public ResponseEntity<SuccessResponse<Void>> restoreProject(Long projectId) {
         Instant startTime = LoggerFactory.api().logRequest("[RestoreProject] 삭제된 프로젝트 복원 API 요청 시작");
-        restoreProjectUseCase.restoreProject(projectId);
-        LoggerFactory.api().logResponse("[RestoreProject] 삭제된 프로젝트 복원 API 응답 완료", startTime);
+
+        try {
+            restoreProjectUseCase.restoreProject(projectId);
+        } finally {
+            LoggerFactory.api().logResponse("[RestoreProject] 삭제된 프로젝트 복원 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.RESTORE_PROJECT));
     }

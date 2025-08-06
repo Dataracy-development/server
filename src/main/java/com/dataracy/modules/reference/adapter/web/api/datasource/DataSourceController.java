@@ -19,7 +19,8 @@ import java.time.Instant;
 public class DataSourceController implements DataSourceApi {
     private final DataSourceWebMapper dataSourceWebMapper;
     private final FindAllDataSourcesUseCase findAllDataSourcesUseCase;
-    /****
+
+    /**
      * 전체 데이터 출처 목록을 조회하여 성공 응답으로 반환합니다.
      *
      * 데이터 출처 목록을 애플리케이션 계층에서 조회한 후, 웹 응답 DTO로 변환하여
@@ -31,11 +32,15 @@ public class DataSourceController implements DataSourceApi {
     public ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> findAllDataSources (
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[FindAllDataSources] 전체 데이터 출처 목록을 조회 API 요청 시작");
+        AllDataSourcesWebResponse allDataSourcesWebResponse;
 
-        AllDataSourcesResponse allDataSourcesResponse = findAllDataSourcesUseCase.findAllDataSources();
-        AllDataSourcesWebResponse allDataSourcesWebResponse = dataSourceWebMapper.toWebDto(allDataSourcesResponse);
+        try {
+            AllDataSourcesResponse allDataSourcesResponse = findAllDataSourcesUseCase.findAllDataSources();
+            allDataSourcesWebResponse = dataSourceWebMapper.toWebDto(allDataSourcesResponse);
+        } finally {
+            LoggerFactory.api().logResponse("[FindAllDataSources] 전체 데이터 출처 목록을 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[FindAllDataSources] 전체 데이터 출처 목록을 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_DATA_SOURCE_LIST, allDataSourcesWebResponse));
     }

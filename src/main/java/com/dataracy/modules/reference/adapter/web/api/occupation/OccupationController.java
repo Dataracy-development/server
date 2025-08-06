@@ -19,7 +19,8 @@ import java.time.Instant;
 public class OccupationController implements OccupationApi {
     private final OccupationWebMapper occupationWebMapper;
     private final FindAllOccupationsUseCase findAllOccupationsUseCase;
-    /****
+
+    /**
      * 전체 직업 목록을 조회하여 성공 응답으로 반환합니다.
      *
      * @return 전체 직업 목록이 포함된 성공 응답 객체
@@ -28,11 +29,15 @@ public class OccupationController implements OccupationApi {
     public ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> findAllOccupations (
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[FindAllOccupations] 전체 직업 목록을 조회 API 요청 시작");
+        AllOccupationsWebResponse allOccupationsWebResponse;
 
-        AllOccupationsResponse allOccupationsResponse = findAllOccupationsUseCase.findAllOccupations();
-        AllOccupationsWebResponse allOccupationsWebResponse = occupationWebMapper.toWebDto(allOccupationsResponse);
+        try {
+            AllOccupationsResponse allOccupationsResponse = findAllOccupationsUseCase.findAllOccupations();
+            allOccupationsWebResponse = occupationWebMapper.toWebDto(allOccupationsResponse);
+        } finally {
+            LoggerFactory.api().logResponse("[FindAllOccupations] 전체 직업 목록을 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[FindAllOccupations] 전체 직업 목록을 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_OCCUPATION_LIST, allOccupationsWebResponse));
     }

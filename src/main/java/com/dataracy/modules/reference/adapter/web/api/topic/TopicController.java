@@ -29,11 +29,15 @@ public class TopicController implements TopicApi {
     public ResponseEntity<SuccessResponse<AllTopicsWebResponse>> findAllTopics (
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[FindAllTopics] 전체 토픽 목록을 조회 API 요청 시작");
+        AllTopicsWebResponse allTopicsWebResponse;
 
-        AllTopicsResponse allTopicsResponse = findAllTopicsUseCase.findAllTopics();
-        AllTopicsWebResponse allTopicsWebResponse = topicWebMapper.toWebDto(allTopicsResponse);
+        try {
+            AllTopicsResponse allTopicsResponse = findAllTopicsUseCase.findAllTopics();
+            allTopicsWebResponse = topicWebMapper.toWebDto(allTopicsResponse);
+        } finally {
+            LoggerFactory.api().logResponse("[FindAllTopics] 전체 토픽 목록을 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[FindAllTopics] 전체 토픽 목록을 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_TOPIC_LIST, allTopicsWebResponse));
     }

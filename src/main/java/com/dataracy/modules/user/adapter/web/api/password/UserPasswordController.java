@@ -38,9 +38,14 @@ public class UserPasswordController implements UserPasswordApi {
             ChangePasswordWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[ChangePassword] 비밀번호 변경 API 요청 시작");
-        ChangePasswordRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
-        changePasswordUseCase.changePassword(userId, requestDto);
-        LoggerFactory.api().logResponse("[ChangePassword] 비밀번호 변경 API 응답 완료", startTime);
+
+        try {
+            ChangePasswordRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
+            changePasswordUseCase.changePassword(userId, requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[ChangePassword] 비밀번호 변경 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CHANGE_PASSWORD));
     }
@@ -58,9 +63,14 @@ public class UserPasswordController implements UserPasswordApi {
             ConfirmPasswordWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[ConfirmPassword] 비밀번호 확인 API 요청 시작");
-        ConfirmPasswordRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
-        confirmPasswordUseCase.confirmPassword(userId, requestDto);
-        LoggerFactory.api().logResponse("[ConfirmPassword] 비밀번호 확인 API 응답 완료", startTime);
+
+        try {
+            ConfirmPasswordRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
+            confirmPasswordUseCase.confirmPassword(userId, requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[ConfirmPassword] 비밀번호 확인 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CONFIRM_PASSWORD));
     }

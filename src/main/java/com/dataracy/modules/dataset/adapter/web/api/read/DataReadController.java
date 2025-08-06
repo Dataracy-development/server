@@ -1,6 +1,7 @@
 package com.dataracy.modules.dataset.adapter.web.api.read;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.adapter.web.mapper.read.DataReadWebMapper;
 import com.dataracy.modules.dataset.adapter.web.response.read.*;
 import com.dataracy.modules.dataset.application.dto.response.read.*;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -51,8 +53,15 @@ public class DataReadController implements DataReadApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<DataDetailWebResponse>> getDataDetail(Long dataId) {
-        DataDetailResponse responseDto = getDataDetailUseCase.getDataDetail(dataId);
-        DataDetailWebResponse webResponse = dataReadWebMapper.toWebDto(responseDto);
+        Instant startTime = LoggerFactory.api().logRequest("[GetDataDetail] 데이터셋 상세 정보 조회 API 요청 시작");
+        DataDetailWebResponse webResponse;
+
+        try {
+            DataDetailResponse responseDto = getDataDetailUseCase.getDataDetail(dataId);
+            webResponse = dataReadWebMapper.toWebDto(responseDto);
+        } finally {
+            LoggerFactory.api().logResponse("[GetDataDetail] 데이터셋 상세 정보 조회 API 응답 완료", startTime);
+        }
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.GET_DATA_DETAIL, webResponse));
@@ -66,10 +75,17 @@ public class DataReadController implements DataReadApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<List<RecentMinimalDataWebResponse>>> getRecentDataSets(int size) {
-        List<RecentMinimalDataResponse> responseDto = getRecentMinimalDataSetsUseCase.getRecentDataSets(size);
-        List<RecentMinimalDataWebResponse> webResponse = responseDto.stream()
-                .map(dataReadWebMapper::toWebDto)
-                .toList();
+        Instant startTime = LoggerFactory.api().logRequest("[GetRecentDataSets] 최신 데이터셋 목록 조회 API 요청 시작");
+        List<RecentMinimalDataWebResponse> webResponse;
+
+        try {
+            List<RecentMinimalDataResponse> responseDto = getRecentMinimalDataSetsUseCase.getRecentDataSets(size);
+            webResponse = responseDto.stream()
+                    .map(dataReadWebMapper::toWebDto)
+                    .toList();
+        } finally {
+            LoggerFactory.api().logResponse("[GetRecentDataSets] 최신 데이터셋 목록 조회 API 응답 완료", startTime);
+        }
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.GET_RECENT_DATASETS, webResponse));
@@ -84,10 +100,17 @@ public class DataReadController implements DataReadApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<List<DataGroupCountWebResponse>>> getDataCountByTopicLabel() {
-        List<DataGroupCountResponse> responseDto = getDataGroupCountUseCase.getDataGroupCountByTopicLabel();
-        List<DataGroupCountWebResponse> webResponse = responseDto.stream()
-                .map(dataReadWebMapper::toWebDto)
-                .toList();
+        Instant startTime = LoggerFactory.api().logRequest("[GetDataCountByTopicLabel] 주제 라벨별로 그룹화하여 각 그룹의 데이터셋 개수 반환 API 요청 시작");
+        List<DataGroupCountWebResponse> webResponse;
+
+        try {
+            List<DataGroupCountResponse> responseDto = getDataGroupCountUseCase.getDataGroupCountByTopicLabel();
+            webResponse = responseDto.stream()
+                    .map(dataReadWebMapper::toWebDto)
+                    .toList();
+        } finally {
+            LoggerFactory.api().logResponse("[GetDataCountByTopicLabel] 주제 라벨별로 그룹화하여 각 그룹의 데이터셋 개수 반환 API 응답 완료", startTime);
+        }
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.COUNT_DATASETS_GROUP_BY_TOPIC, webResponse));
@@ -102,8 +125,15 @@ public class DataReadController implements DataReadApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<ConnectedDataWebResponse>>> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
-        Page<ConnectedDataResponse> responseDto = findConnectedDataSetsUseCase.findConnectedDataSetsAssociatedWithProject(projectId, pageable);
-        Page<ConnectedDataWebResponse> webResponse = responseDto.map(dataReadWebMapper::toWebDto);
+        Instant startTime = LoggerFactory.api().logRequest("[FindConnectedDataSetsAssociatedWithProject] 지정한 프로젝트에 연결된 데이터셋 목록 반환 API 요청 시작");
+        Page<ConnectedDataWebResponse> webResponse;
+
+        try {
+            Page<ConnectedDataResponse> responseDto = findConnectedDataSetsUseCase.findConnectedDataSetsAssociatedWithProject(projectId, pageable);
+            webResponse = responseDto.map(dataReadWebMapper::toWebDto);
+        } finally {
+            LoggerFactory.api().logResponse("[FindConnectedDataSetsAssociatedWithProject] 지정한 프로젝트에 연결된 데이터셋 목록 반환 API 응답 완료", startTime);
+        }
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.GET_CONNECTED_DATASETS_ASSOCIATED_PROJECT, webResponse));

@@ -19,6 +19,7 @@ import java.time.Instant;
 public class AuthorLevelController implements AuthorLevelApi {
     private final AuthorLevelWebMapper authorLevelWebMapper;
     private final FindAllAuthorLevelsUseCase findAllAuthorLevelsUseCase;
+
     /**
      * 전체 작성자 레벨 목록을 조회하여 반환합니다.
      *
@@ -30,11 +31,15 @@ public class AuthorLevelController implements AuthorLevelApi {
     public ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> findAllAuthorLevels (
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[FindAllAuthorLevels] 전체 작성자 유형 목록을 조회 API 요청 시작");
+        AllAuthorLevelsWebResponse allAuthorLevelsWebResponse;
 
-        AllAuthorLevelsResponse allAuthorLevelsResponse = findAllAuthorLevelsUseCase.findAllAuthorLevels();
-        AllAuthorLevelsWebResponse allAuthorLevelsWebResponse = authorLevelWebMapper.toWebDto(allAuthorLevelsResponse);
+        try {
+            AllAuthorLevelsResponse allAuthorLevelsResponse = findAllAuthorLevelsUseCase.findAllAuthorLevels();
+            allAuthorLevelsWebResponse = authorLevelWebMapper.toWebDto(allAuthorLevelsResponse);
+        } finally {
+            LoggerFactory.api().logResponse("[FindAllAuthorLevels] 전체 작성자 유형 목록을 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[FindAllAuthorLevels] 전체 작성자 유형 목록을 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ReferenceSuccessStatus.OK_TOTAL_AUTHOR_LEVEL_LIST, allAuthorLevelsWebResponse));
     }

@@ -1,6 +1,7 @@
 package com.dataracy.modules.dataset.adapter.web.api.search;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.adapter.web.mapper.search.DataFilterWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.search.DataSearchWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.search.FilteringDataWebRequest;
@@ -22,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -43,10 +45,17 @@ public class DataSearchController implements DataSearchApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<List<SimilarDataWebResponse>>> searchSimilarDataSets(Long dataId, int size) {
-        List<SimilarDataResponse> responseDto = searchSimilarDataSetsUseCase.searchSimilarDataSets(dataId, size);
-        List<SimilarDataWebResponse> webResponse = responseDto.stream()
-                .map(dataSearchWebMapper::toWebDto)
-                .toList();
+        Instant startTime = LoggerFactory.api().logRequest("[SearchSimilarDataSets] 유사 데이터셋 목록 반환 API 요청 시작");
+        List<SimilarDataWebResponse> webResponse;
+
+        try {
+            List<SimilarDataResponse> responseDto = searchSimilarDataSetsUseCase.searchSimilarDataSets(dataId, size);
+            webResponse = responseDto.stream()
+                    .map(dataSearchWebMapper::toWebDto)
+                    .toList();
+        } finally {
+            LoggerFactory.api().logResponse("[SearchSimilarDataSets] 유사 데이터셋 목록 반환 API 응답 완료", startTime);
+        }
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_SIMILAR_DATASETS, webResponse));
@@ -61,9 +70,16 @@ public class DataSearchController implements DataSearchApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<FilteredDataWebResponse>>> searchFilteredDataSets(FilteringDataWebRequest webRequest, Pageable pageable) {
-        FilteringDataRequest requestDto = dataFilterWebMapper.toApplicationDto(webRequest);
-        Page<FilteredDataResponse> responseDto = searchFilteredDataSetsUseCase.searchFilteredDataSets(requestDto, pageable);
-        Page<FilteredDataWebResponse> webResponse = responseDto.map(dataFilterWebMapper::toWebDto);
+        Instant startTime = LoggerFactory.api().logRequest("[SearchFilteredDataSets] 필터링된 데이터셋 목록 반환 API 요청 시작");
+        Page<FilteredDataWebResponse> webResponse;
+
+        try {
+            FilteringDataRequest requestDto = dataFilterWebMapper.toApplicationDto(webRequest);
+            Page<FilteredDataResponse> responseDto = searchFilteredDataSetsUseCase.searchFilteredDataSets(requestDto, pageable);
+            webResponse = responseDto.map(dataFilterWebMapper::toWebDto);
+        } finally {
+            LoggerFactory.api().logResponse("[SearchFilteredDataSets] 필터링된 데이터셋 목록 반환 API 응답 완료", startTime);
+        }
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_FILTERED_DATASETS, webResponse));
@@ -78,10 +94,17 @@ public class DataSearchController implements DataSearchApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<List<RecentMinimalDataWebResponse>>> getRealTimeDataSets(String keyword, int size) {
-        List<RecentMinimalDataResponse> responseDto = searchRealTimeDataSetsUseCase.searchRealTimeDataSets(keyword, size);
-        List<RecentMinimalDataWebResponse> webResponse = responseDto.stream()
-                .map(dataSearchWebMapper::toWebDto)
-                .toList();
+        Instant startTime = LoggerFactory.api().logRequest("[GetRealTimeDataSets] 주어진 키워드로 실시간 데이터셋 목록 조회 API 요청 시작");
+        List<RecentMinimalDataWebResponse> webResponse;
+
+        try {
+            List<RecentMinimalDataResponse> responseDto = searchRealTimeDataSetsUseCase.searchRealTimeDataSets(keyword, size);
+            webResponse = responseDto.stream()
+                    .map(dataSearchWebMapper::toWebDto)
+                    .toList();
+        } finally {
+            LoggerFactory.api().logResponse("[GetRealTimeDataSets] 주어진 키워드로 실시간 데이터셋 목록 조회환 API 응답 완료", startTime);
+        }
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_REAL_TIME_DATASETS, webResponse));
