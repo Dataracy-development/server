@@ -36,10 +36,17 @@ public class DataReadController implements DataReadApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<List<PopularDataWebResponse>>> getPopularDataSets(int size) {
-        List<PopularDataResponse> responseDto = getPopularDataSetsUseCase.getPopularDataSets(size);
-        List<PopularDataWebResponse> webResponse = responseDto.stream()
-                .map(dataReadWebMapper::toWebDto)
-                .toList();
+        Instant startTime = LoggerFactory.api().logRequest("[GetPopularDataSets] 인기 데이터셋 목록 조회 API 요청 시작");
+        List<PopularDataWebResponse> webResponse;
+
+        try {
+            List<PopularDataResponse> responseDto = getPopularDataSetsUseCase.getPopularDataSets(size);
+            webResponse = responseDto.stream()
+                    .map(dataReadWebMapper::toWebDto)
+                    .toList();
+        } finally {
+            LoggerFactory.api().logResponse("[GetPopularDataSets] 인기 데이터셋 목록 조회 API 응답 완료", startTime);
+        }
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.FIND_POPULAR_DATASETS, webResponse));
