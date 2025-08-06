@@ -22,11 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/likes")
 public interface LikeApi {
 
-    /**
-     * 지정된 타겟에 대해 좋아요 처리를 수행합니다.
+    /****
+     * 지정된 타겟에 대해 현재 사용자의 좋아요 상태를 변경합니다.
      *
-     * @param webRequest 좋아요를 적용할 타겟 정보를 포함한 요청 객체
-     * @return 성공 여부를 나타내는 응답 객체
+     * @param webRequest 좋아요를 적용할 타겟 정보가 포함된 요청 객체
+     * @return 성공적으로 처리된 경우 성공 응답 객체를 반환합니다.
      */
     @Operation(
             summary = "해당 타겟에 대한 좋아요 처리를 한다.",

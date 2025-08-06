@@ -30,9 +30,9 @@ public class AuthDevController implements AuthDevApi {
     private final ReIssueTokenUseCase reIssueTokenUseCase;
 
     /**
-     * 개발 환경에서 자체 로그인 요청을 처리하고, 성공 시 리프레시 토큰 정보를 반환합니다.
+     * 개발 환경에서 자체 로그인 요청을 처리하여 리프레시 토큰 정보를 반환합니다.
      *
-     * @param webRequest 자체 로그인 요청 정보를 담은 웹 요청 객체
+     * @param webRequest 자체 로그인 요청 정보를 담은 객체
      * @return 로그인 성공 상태와 리프레시 토큰 정보를 포함한 HTTP 200 OK 응답
      */
     @Override
@@ -52,10 +52,10 @@ public class AuthDevController implements AuthDevApi {
     }
 
     /**
-     * 개발 환경에서 토큰 재발급 요청을 처리하고 성공 응답을 반환합니다.
+     * 개발 환경에서 토큰 재발급 요청을 처리하여 새로운 토큰 정보를 반환합니다.
      *
-     * @param webRequest 클라이언트로부터 받은 토큰 재발급 요청 정보
-     * @return 토큰 재발급 결과를 포함한 성공 응답
+     * @param webRequest 클라이언트가 전달한 토큰 재발급 요청 데이터
+     * @return 재발급된 토큰 정보를 포함하는 성공 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<ReIssueTokenWebResponse>> reIssueTokenDev(RefreshTokenWebRequest webRequest) {

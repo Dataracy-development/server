@@ -29,11 +29,11 @@ public class UserSignUpController implements UserSignUpApi {
     private final OAuthSignUpUseCase oauthSignUpUseCase;
 
     /**
-     * 자체 회원가입 요청을 처리하고, 성공적으로 회원이 생성되면 리프레시 토큰을 쿠키에 저장한다.
+     * 자체 회원가입 요청을 처리하고, 회원 생성 시 리프레시 토큰을 쿠키에 저장한다.
      *
      * @param webRequest 자체 회원가입에 필요한 사용자 정보 요청 객체
      * @param response 리프레시 토큰 쿠키를 설정할 HTTP 응답 객체
-     * @return 회원가입 성공 시 201 Created 상태와 성공 응답을 반환
+     * @return 회원가입 성공 시 201 Created 상태와 성공 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> signUpUserSelf(
@@ -59,12 +59,12 @@ public class UserSignUpController implements UserSignUpApi {
     }
 
     /**
-     * OAuth 레지스터 토큰과 온보딩 정보를 사용하여 소셜 회원가입을 처리하고, 발급된 리프레시 토큰을 쿠키에 저장한다.
+     * OAuth 레지스터 토큰과 온보딩 정보를 이용해 소셜 회원가입을 처리하고, 발급된 리프레시 토큰을 쿠키에 저장한다.
      *
-     * @param registerToken OAuth 회원가입을 위한 레지스터 토큰
-     * @param webRequest 온보딩 정보(예: 닉네임 등)가 포함된 요청 객체
+     * @param registerToken 소셜 회원가입을 위한 OAuth 레지스터 토큰
+     * @param webRequest 온보딩 정보가 포함된 요청 객체
      * @param response 리프레시 토큰을 쿠키로 설정할 HTTP 응답 객체
-     * @return 회원가입 성공 시 201(Created) 상태와 성공 응답 반환
+     * @return 회원가입 성공 시 201(Created) 상태와 성공 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> signUpUserOAuth(

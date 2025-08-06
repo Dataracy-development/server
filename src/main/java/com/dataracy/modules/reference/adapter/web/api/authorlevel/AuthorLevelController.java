@@ -21,11 +21,11 @@ public class AuthorLevelController implements AuthorLevelApi {
     private final FindAllAuthorLevelsUseCase findAllAuthorLevelsUseCase;
 
     /**
-     * 전체 작성자 레벨 목록을 조회하여 반환합니다.
+     * 전체 작성자 레벨 목록을 조회하여 성공 응답으로 반환합니다.
      *
-     * 작성자 레벨 정보를 애플리케이션 계층에서 조회한 후, 웹 응답 DTO로 변환하여 성공 응답으로 반환합니다.
+     * 애플리케이션 계층에서 작성자 레벨 정보를 조회한 후, 웹 응답 DTO로 변환하여 HTTP 200 상태의 성공 응답으로 제공합니다.
      *
-     * @return 전체 작성자 레벨 목록이 포함된 성공 응답의 HTTP 200 ResponseEntity
+     * @return 전체 작성자 레벨 목록이 포함된 성공 응답 ResponseEntity
      */
     @Override
     public ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> findAllAuthorLevels (

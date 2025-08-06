@@ -32,14 +32,14 @@ public class ProjectCommandController implements ProjectCommandApi {
     private final RestoreProjectUseCase restoreProjectUseCase;
 
     /**
-     * 새로운 프로젝트를 업로드하여 생성한다.
+     * 새로운 프로젝트를 생성한다.
      *
-     * 사용자의 ID, 프로젝트 썸네일 이미지 파일, 프로젝트 정보가 포함된 요청 객체를 받아 프로젝트를 생성한다.
+     * 사용자의 ID, 프로젝트 썸네일 이미지 파일, 프로젝트 정보가 포함된 요청 객체를 받아 프로젝트를 업로드한다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
      * @param file 프로젝트 썸네일 이미지 파일
      * @param webRequest 업로드할 프로젝트 정보가 담긴 요청 객체
-     * @return 프로젝트 생성 성공 시 201 Created 응답
+     * @return 프로젝트 생성 성공 시 201 Created와 성공 상태를 포함한 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> uploadProject(
@@ -61,12 +61,12 @@ public class ProjectCommandController implements ProjectCommandApi {
     }
 
     /**
-     * 주어진 프로젝트 ID에 대해 프로젝트 정보를 수정한다.
+     * 프로젝트 ID에 해당하는 프로젝트 정보를 수정한다.
      *
      * @param projectId 수정할 프로젝트의 ID
      * @param file 프로젝트 썸네일 파일 (선택 사항)
      * @param webRequest 프로젝트 수정 요청 데이터
-     * @return 프로젝트 수정 성공 시 성공 응답을 반환한다.
+     * @return 프로젝트 수정 성공 시 성공 상태를 포함한 응답
      */
     @Override
     @AuthorizationProjectEdit
@@ -85,10 +85,10 @@ public class ProjectCommandController implements ProjectCommandApi {
     }
 
     /**
-     * 프로젝트를 삭제 상태로 변경합니다.
+     * 지정한 프로젝트를 삭제 상태로 변경합니다.
      *
      * @param projectId 삭제할 프로젝트의 ID
-     * @return 삭제 성공 시 성공 응답을 반환합니다.
+     * @return 프로젝트 삭제 성공 시 성공 상태를 포함한 응답을 반환합니다.
      */
     @Override
     @AuthorizationProjectEdit
@@ -108,8 +108,8 @@ public class ProjectCommandController implements ProjectCommandApi {
     /**
      * 삭제된 프로젝트를 복구하는 REST API 엔드포인트입니다.
      *
-     * @param projectId 복구할 프로젝트의 ID
-     * @return 복구 성공 상태가 포함된 HTTP 200 OK 응답
+     * @param projectId 복구할 프로젝트의 고유 식별자
+     * @return 프로젝트 복구 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
     @AuthorizationProjectEdit(restore = true)

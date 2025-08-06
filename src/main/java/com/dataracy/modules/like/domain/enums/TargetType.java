@@ -21,10 +21,10 @@ public enum TargetType {
     private final String value;
 
     /**
-     * 입력된 문자열에 해당하는 TargetType enum 값을 반환합니다.
+     * 주어진 문자열에 해당하는 TargetType enum 값을 반환합니다.
      *
-     * 입력값이 enum의 value 또는 이름과(대소문자 구분 없이) 일치하는 경우 해당 TargetType을 반환합니다.
-     * 일치하는 값이 없으면 LikeException(INVALID_TARGET_TYPE)을 발생시킵니다.
+     * 입력값이 TargetType의 value 또는 이름과 대소문자 구분 없이 일치하면 해당 enum 값을 반환합니다.
+     * 일치하는 값이 없을 경우 LikeException(INVALID_TARGET_TYPE)을 발생시킵니다.
      *
      * @param input TargetType을 식별할 문자열
      * @return 입력값에 해당하는 TargetType

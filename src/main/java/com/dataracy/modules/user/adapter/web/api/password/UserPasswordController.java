@@ -26,10 +26,10 @@ public class UserPasswordController implements UserPasswordApi {
     private final ConfirmPasswordUseCase confirmPasswordUseCase;
 
     /**
-     * 사용자의 비밀번호를 변경하는 API 엔드포인트이다.
+     * 사용자의 비밀번호를 변경하는 REST API 엔드포인트입니다.
      *
      * @param userId 비밀번호를 변경할 대상 사용자의 ID
-     * @param webRequest 비밀번호 변경 요청 데이터
+     * @param webRequest 비밀번호 변경 요청 정보를 담은 객체
      * @return 비밀번호 변경 성공 시 200 OK와 성공 상태가 포함된 응답
      */
     @Override

@@ -34,9 +34,9 @@ public class VisitSourceQueryService implements
     private final VisitSourcePort visitSourcePort;
 
     /**
-     * 모든 방문 소스(VisitSource) 목록을 조회하여 응답 DTO로 반환한다.
+     * 모든 방문 소스(VisitSource)의 전체 목록을 조회하여 응답 DTO로 반환한다.
      *
-     * @return 전체 방문 소스 정보를 담은 AllVisitSourcesResponse 객체
+     * @return 전체 방문 소스 정보를 포함하는 AllVisitSourcesResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -49,9 +49,9 @@ public class VisitSourceQueryService implements
     }
 
     /**
-     * 주어진 ID로 방문 경로를 조회하여 VisitSourceResponse DTO로 반환한다.
+     * 주어진 ID에 해당하는 방문 경로 정보를 조회하여 VisitSourceResponse DTO로 반환한다.
      *
-     * 방문 경로가 존재하지 않으면 ReferenceException을 발생시킨다.
+     * 방문 경로가 존재하지 않을 경우 ReferenceException이 발생한다.
      *
      * @param visitSourceId 조회할 방문 경로의 ID
      * @return 조회된 방문 경로 정보를 담은 VisitSourceResponse DTO
@@ -72,10 +72,12 @@ public class VisitSourceQueryService implements
     }
 
     /**
-     * 방문 출처 ID의 존재 여부를 확인하고, 존재하지 않으면 예외를 발생시킵니다.
+     * 주어진 방문 출처 ID가 존재하는지 검증합니다.
      *
-     * @param visitSourceId 확인할 방문 출처의 ID
-     * @throws ReferenceException 방문 출처가 존재하지 않을 경우 발생
+     * 방문 출처가 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     *
+     * @param visitSourceId 존재 여부를 확인할 방문 출처의 ID
+     * @throws ReferenceException 방문 출처가 존재하지 않을 때 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -92,10 +94,10 @@ public class VisitSourceQueryService implements
     /**
      * 주어진 방문 출처 ID에 해당하는 라벨을 반환합니다.
      *
-     * 방문 출처가 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 방문 출처가 존재하지 않을 경우 {@code ReferenceException}이 발생합니다.
      *
-     * @param visitSourceId 조회할 방문 출처의 ID
-     * @return 해당 방문 출처의 라벨 문자열
+     * @param visitSourceId 라벨을 조회할 방문 출처의 ID
+     * @return 방문 출처의 라벨 문자열
      * @throws ReferenceException 방문 출처를 찾을 수 없는 경우
      */
     @Override
@@ -114,8 +116,10 @@ public class VisitSourceQueryService implements
     /**
      * 주어진 방문 출처 ID 목록에 대해 각 ID와 해당 라벨을 매핑한 Map을 반환합니다.
      *
+     * 입력된 ID 목록이 null이거나 비어 있으면 빈 Map을 반환합니다.
+     *
      * @param visitSourceIds 방문 출처 ID 목록
-     * @return ID를 키로, 라벨을 값으로 하는 Map. 입력이 null이거나 비어 있으면 빈 Map을 반환합니다.
+     * @return 각 ID를 키로 하고 라벨을 값으로 하는 Map
      */
     @Override
     @Transactional(readOnly = true)

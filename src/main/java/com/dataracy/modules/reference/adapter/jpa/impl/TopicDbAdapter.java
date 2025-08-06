@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 public class TopicDbAdapter implements TopicPort {
     private final TopicJpaRepository topicJpaRepository;
 
-    /**
-     * 모든 토픽을 조회하여 도메인 모델 리스트로 반환한다.
+    /****
+     * 모든 토픽을 조회하여 도메인 `Topic` 객체의 리스트로 반환한다.
      *
-     * @return 조회된 모든 토픽의 도메인 객체 리스트
+     * @return 데이터베이스에 저장된 모든 토픽의 도메인 객체 리스트
      */
     @Override
     public List<Topic> findAllTopics() {
@@ -37,10 +37,10 @@ public class TopicDbAdapter implements TopicPort {
     }
 
     /**
-     * 주어진 ID로 토픽을 조회하여 Optional로 반환합니다.
+     * 주어진 ID에 해당하는 토픽을 조회하여 Optional로 반환합니다.
      *
-     * @param topicId 조회할 토픽의 ID. null인 경우 빈 Optional을 반환합니다.
-     * @return 토픽이 존재하면 해당 도메인 객체를, 없으면 빈 Optional을 반환합니다.
+     * @param topicId 조회할 토픽의 ID. null이면 빈 Optional을 반환합니다.
+     * @return 토픽이 존재하면 도메인 객체를 포함한 Optional, 존재하지 않거나 ID가 null이면 빈 Optional을 반환합니다.
      */
     @Override
     public Optional<Topic> findTopicById(Long topicId) {
@@ -55,10 +55,10 @@ public class TopicDbAdapter implements TopicPort {
     }
 
     /**
-     * 주어진 토픽 ID에 해당하는 토픽이 데이터베이스에 존재하는지 확인한다.
+     * 주어진 토픽 ID가 데이터베이스에 존재하는지 여부를 반환한다.
      *
-     * @param topicId 확인할 토픽의 ID
-     * @return 토픽이 존재하면 true, 존재하지 않거나 ID가 null이면 false
+     * @param topicId 존재 여부를 확인할 토픽의 ID
+     * @return 토픽이 존재하면 true, topicId가 null이거나 존재하지 않으면 false
      */
     @Override
     public boolean existsTopicById(Long topicId) {
@@ -70,11 +70,11 @@ public class TopicDbAdapter implements TopicPort {
         return isExists;
     }
 
-    /**
-     * 주어진 토픽 ID로 토픽의 라벨을 조회합니다.
+    /****
+     * 주어진 토픽 ID에 해당하는 토픽의 라벨을 Optional로 반환합니다.
      *
      * @param topicId 조회할 토픽의 ID
-     * @return 해당 ID의 토픽이 존재하면 라벨을 포함한 Optional, 없으면 빈 Optional
+     * @return 토픽이 존재하면 라벨을 포함한 Optional, 존재하지 않거나 ID가 null이면 빈 Optional
      */
     @Override
     public Optional<String> getLabelById(Long topicId) {
