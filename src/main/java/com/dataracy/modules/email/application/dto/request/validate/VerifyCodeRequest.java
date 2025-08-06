@@ -1,4 +1,4 @@
-package com.dataracy.modules.email.application.dto.request;
+package com.dataracy.modules.email.application.dto.request.validate;
 
 /**
  * 이메일 인증 코드 검증을 위한 도메인 요청 DTO

@@ -2,6 +2,7 @@ package com.dataracy.modules.email.adapter.ses;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.email.application.port.out.EmailSenderPort;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,8 @@ public class EmailSesAdapter implements EmailSenderPort {
 
     @Override
     public void send(String email, String title, String body) {
+        LoggerFactory.common().logStart("이메일 전송 시도 시작", "to=" + email + ", title=" + title);
+
         SendEmailRequest request = new SendEmailRequest()
                 .withDestination(new Destination().withToAddresses(email))
                 .withMessage(new Message()
@@ -29,6 +32,8 @@ public class EmailSesAdapter implements EmailSenderPort {
                         .withBody(new Body().withText(new Content().withCharset("UTF-8").withData(body))))
                 .withSource(sender);
         ses.sendEmail(request);
+
+        LoggerFactory.common().logEnd("이메일 전송 시도 완료", "to=" + email + ", title=" + title);
     }
 
     @PostConstruct

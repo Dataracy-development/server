@@ -1,5 +1,6 @@
 package com.dataracy.modules.email.adapter.sendgrid.config;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.sendgrid.SendGrid;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
