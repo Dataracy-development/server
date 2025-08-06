@@ -6,7 +6,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ../nginx/nginx-dev.conf:/etc/nginx/nginx-dev.conf:ro
+      - ../nginx/nginx-dev.conf:/etc/nginx/nginx.conf:ro
       - ../nginx/upstream-blue-green-dev.conf:/etc/nginx/conf.d/upstream-blue-green.conf:ro
     networks:
       - dataracy-network-dev
