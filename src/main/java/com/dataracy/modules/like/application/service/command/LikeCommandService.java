@@ -1,6 +1,6 @@
 package com.dataracy.modules.like.application.service.command;
 
-import com.dataracy.modules.comment.application.port.in.ValidateCommentUseCase;
+import com.dataracy.modules.comment.application.port.in.query.validate.ValidateCommentUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;

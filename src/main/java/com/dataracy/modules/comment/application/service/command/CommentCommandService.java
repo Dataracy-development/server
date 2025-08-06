@@ -1,30 +1,38 @@
 package com.dataracy.modules.comment.application.service.command;
 
-import com.dataracy.modules.comment.application.dto.request.CommentModifyRequest;
-import com.dataracy.modules.comment.application.dto.request.CommentUploadRequest;
-import com.dataracy.modules.comment.application.port.in.*;
-import com.dataracy.modules.comment.application.port.out.CommentKafkaProducerPort;
-import com.dataracy.modules.comment.application.port.out.CommentRepositoryPort;
-import com.dataracy.modules.comment.application.port.query.CommentQueryRepositoryPort;
+import com.dataracy.modules.comment.application.dto.request.command.ModifyCommentRequest;
+import com.dataracy.modules.comment.application.dto.request.command.UploadCommentRequest;
+import com.dataracy.modules.comment.application.port.in.command.content.DeleteCommentUseCase;
+import com.dataracy.modules.comment.application.port.in.command.content.ModifyCommentUseCase;
+import com.dataracy.modules.comment.application.port.in.command.content.UploadCommentUseCase;
+import com.dataracy.modules.comment.application.port.out.command.create.UploadCommentPort;
+import com.dataracy.modules.comment.application.port.out.command.delete.DeleteCommentPort;
+import com.dataracy.modules.comment.application.port.out.command.event.SendCommentEventPort;
+import com.dataracy.modules.comment.application.port.out.command.update.UpdateCommentPort;
+import com.dataracy.modules.comment.application.port.out.query.read.ReadCommentPort;
 import com.dataracy.modules.comment.domain.exception.CommentException;
 import com.dataracy.modules.comment.domain.model.Comment;
 import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+
 @Service
 @RequiredArgsConstructor
 public class CommentCommandService implements
-        CommentUploadUseCase,
-        CommentModifyUseCase,
-        CommentDeleteUseCase,
-        IncreaseLikeCountUseCase,
-        DecreaseLikeCountUseCase
+        UploadCommentUseCase,
+        ModifyCommentUseCase,
+        DeleteCommentUseCase
 {
-    private final CommentQueryRepositoryPort commentQueryRepositoryPort;
-    private final CommentRepositoryPort commentRepositoryPort;
-    private final CommentKafkaProducerPort commentKafkaProducerPort;
+    private final ReadCommentPort readCommentPort;
+    private final UploadCommentPort uploadCommentPort;
+    private final UpdateCommentPort updateCommentPort;
+    private final DeleteCommentPort deleteCommentPort;
+
+    private final SendCommentEventPort sendCommentEventPort;
 
     /**
      * 프로젝트에 새로운 댓글을 등록합니다.
@@ -40,13 +48,19 @@ public class CommentCommandService implements
      */
     @Override
     @Transactional
-    public void upload(Long projectId, Long userId, CommentUploadRequest requestDto) {
+    public void uploadComment(Long projectId, Long userId, UploadCommentRequest requestDto) {
+        Instant startTime = LoggerFactory.service().logStart("UploadCommentUseCase", "댓글 작성 서비스 시작 projectId=" + projectId);
+
         Long parentId = requestDto.parentCommentId();
 
         if (parentId != null) {
-            Comment parent = commentQueryRepositoryPort.findCommentById(parentId)
-                    .orElseThrow(() -> new CommentException(CommentErrorStatus.NOT_FOUND_PARENT_COMMENT));
+            Comment parent = readCommentPort.findCommentById(parentId)
+                    .orElseThrow(() -> {
+                        LoggerFactory.service().logWarning("UploadCommentUseCase", "답글 작성에 대하여 해당 부모 댓글이 존재하지 않습니다. commentId=" + parentId);
+                        return new CommentException(CommentErrorStatus.NOT_FOUND_PARENT_COMMENT);
+                    });
             if (parent.getParentCommentId() != null) {
+                LoggerFactory.service().logWarning("UploadCommentUseCase", "답글에 대하여 다시 답글을 작성할 순 없습니다. commentId=" + parent.getParentCommentId());
                 throw new CommentException(CommentErrorStatus.FORBIDDEN_REPLY_COMMENT);
             }
         }
@@ -61,8 +75,9 @@ public class CommentCommandService implements
                 null
         );
 
-        Comment savedComment = commentRepositoryPort.upload(comment);
-        commentKafkaProducerPort.sendCommentUploadedEvent(savedComment.getProjectId());
+        Comment savedComment = uploadCommentPort.uploadComment(comment);
+        sendCommentEventPort.sendCommentUploadedEvent(savedComment.getProjectId());
+        LoggerFactory.service().logSuccess("UploadCommentUseCase", "댓글 작성 서비스 종료 projectId=" + projectId, startTime);
     }
 
     /**
@@ -74,8 +89,10 @@ public class CommentCommandService implements
      */
     @Override
     @Transactional
-    public void modify(Long projectId, Long commentId, CommentModifyRequest requestDto) {
-        commentRepositoryPort.modify(projectId, commentId, requestDto);
+    public void modifyComment(Long projectId, Long commentId, ModifyCommentRequest requestDto) {
+        Instant startTime = LoggerFactory.service().logStart("ModifyCommentUseCase", "댓글 수정 서비스 시작 projectId=" + projectId + ", commentId=" + commentId);
+        updateCommentPort.modifyComment(projectId, commentId, requestDto);
+        LoggerFactory.service().logSuccess("ModifyCommentUseCase", "댓글 수정 서비스 종료 projectId=" + projectId + ", commentId=" + commentId, startTime);
     }
 
     /**
@@ -86,30 +103,10 @@ public class CommentCommandService implements
      */
     @Override
     @Transactional
-    public void delete(Long projectId, Long commentId) {
-        commentRepositoryPort.delete(projectId, commentId);
-        commentKafkaProducerPort.sendCommentDeletedEvent(projectId);
-    }
-
-    /**
-     * 지정된 댓글의 좋아요 수를 1 감소시킵니다.
-     *
-     * @param commentId 좋아요 수를 감소시킬 댓글의 ID
-     */
-    @Override
-    @Transactional
-    public void decreaseLike(Long commentId) {
-        commentRepositoryPort.decreaseLikeCount(commentId);
-    }
-
-    /**
-     * 지정된 댓글의 좋아요 수를 1 증가시킵니다.
-     *
-     * @param commentId 좋아요 수를 증가시킬 댓글의 ID
-     */
-    @Override
-    @Transactional
-    public void increaseLike(Long commentId) {
-        commentRepositoryPort.increaseLikeCount(commentId);
+    public void deleteComment(Long projectId, Long commentId) {
+        Instant startTime = LoggerFactory.service().logStart("DeleteCommentUseCase", "댓글 삭제 서비스 시작 projectId=" + projectId + ", commentId=" + commentId);
+        deleteCommentPort.deleteComment(projectId, commentId);
+        sendCommentEventPort.sendCommentDeletedEvent(projectId);
+        LoggerFactory.service().logSuccess("DeleteCommentUseCase", "댓글 삭제 서비스 종료 projectId=" + projectId + ", commentId=" + commentId, startTime);
     }
 }

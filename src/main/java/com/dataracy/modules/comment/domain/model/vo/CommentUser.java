@@ -15,7 +15,7 @@ public record CommentUser(
      * @param info CommentUser로 변환할 사용자 정보 객체
      * @return UserInfo의 필드를 기반으로 생성된 CommentUser 인스턴스
      */
-    public static CommentUser from(UserInfo info) {
+    public static CommentUser fromUserInfo(UserInfo info) {
         return new CommentUser(
                 info.id(),
                 info.role(),
