@@ -5,7 +5,7 @@ import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponse;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
-import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
+import com.dataracy.modules.auth.application.port.in.cache.CacheRefreshTokenUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.application.port.in.command.auth.HandleUserUseCase;
 import com.dataracy.modules.user.application.port.in.query.auth.IsNewUserUseCase;
@@ -35,7 +35,7 @@ public class UserAuthService implements
 
     private final JwtValidateUseCase jwtValidateUseCase;
     private final JwtGenerateUseCase jwtGenerateUseCase;
-    private final TokenRedisUseCase tokenRedisUseCase;
+    private final CacheRefreshTokenUseCase cacheRefreshTokenUseCase;
 
     /****
      * 주어진 OAuth 사용자 정보로 해당 사용자가 기존에 존재하는지 확인하여 신규 사용자인지 여부를 반환합니다.
@@ -92,7 +92,7 @@ public class UserAuthService implements
                 });
 
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(existUser.getId(), existUser.getRole());
-        tokenRedisUseCase.saveRefreshToken(existUser.getId().toString(), refreshToken);
+        cacheRefreshTokenUseCase.saveRefreshToken(existUser.getId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(refreshToken, jwtValidateUseCase.getRefreshTokenExpirationTime());
 
         LoggerFactory.service().logSuccess("HandleUserUseCase", "기존 유저 핸들링 서비스 성공 email=" + oAuthUserInfo.email(), startTime);

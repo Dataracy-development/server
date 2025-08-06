@@ -1,6 +1,6 @@
-package com.dataracy.modules.auth.application.port.in.redis;
+package com.dataracy.modules.auth.application.port.in.cache;
 
-public interface TokenRedisUseCase {
+public interface CacheRefreshTokenUseCase {
     /**
  * 지정된 유저 ID에 해당하는 리프레시 토큰을 Redis에 저장합니다.
  *

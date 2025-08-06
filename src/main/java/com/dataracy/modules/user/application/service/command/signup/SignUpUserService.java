@@ -3,7 +3,7 @@ package com.dataracy.modules.user.application.service.command.signup;
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
-import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
+import com.dataracy.modules.auth.application.port.in.cache.CacheRefreshTokenUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
@@ -48,7 +48,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     private final ValidateVisitSourceUseCase validateVisitSourceUseCase;
     private final ValidateTopicUseCase validateTopicUseCase;
 
-    private final TokenRedisUseCase tokenRedisUseCase;
+    private final CacheRefreshTokenUseCase cacheRefreshTokenUseCase;
 
     @Value("${default.image.url:}")
     private String defaultImageUrl;
@@ -110,7 +110,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
 
         // 리프레시 토큰 발급 및 저장
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(savedUser.getId(), RoleType.ROLE_USER);
-        tokenRedisUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
+        cacheRefreshTokenUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(
                 refreshToken,
                 jwtValidateUseCase.getRefreshTokenExpirationTime()
@@ -178,7 +178,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
 
         // 리프레시 토큰 발급 및 저장
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(savedUser.getId(), RoleType.ROLE_USER);
-        tokenRedisUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
+        cacheRefreshTokenUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(
                 refreshToken,
                 jwtValidateUseCase.getRefreshTokenExpirationTime()

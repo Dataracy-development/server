@@ -1,7 +1,7 @@
 package com.dataracy.modules.email.adapter.sendgrid;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.email.application.port.out.EmailSenderPort;
+import com.dataracy.modules.email.application.port.out.command.SendEmailPort;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -24,7 +24,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class EmailSendGridAdapter implements EmailSenderPort {
+public class SendEmailSendGridAdapter implements SendEmailPort {
 
     private final SendGrid sendGrid;
 

@@ -3,7 +3,7 @@ package com.dataracy.modules.email.adapter.redis;
 import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonErrorStatus;
-import com.dataracy.modules.email.application.port.out.EmailCachePort;
+import com.dataracy.modules.email.application.port.out.cache.CacheEmailPort;
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @RequiredArgsConstructor
-public class EmailRedisAdapter implements EmailCachePort {
+public class EmailRedisAdapter implements CacheEmailPort {
     private final StringRedisTemplate redisTemplate;
 
     @Value("${aws.ses.expire-minutes:5}")
