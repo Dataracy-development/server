@@ -34,9 +34,9 @@ public class TopicQueryService implements
     private final TopicPort topicPort;
 
     /**
-     * 모든 토픽을 조회하여 응답 DTO로 반환한다.
+     * 모든 토픽 정보를 조회하여 AllTopicsResponse DTO로 반환한다.
      *
-     * @return 전체 토픽 정보를 담은 AllTopicsResponse 객체
+     * @return 전체 토픽 정보를 포함하는 AllTopicsResponse 객체
      */
     @Override
     @Transactional(readOnly = true)
@@ -53,7 +53,7 @@ public class TopicQueryService implements
      *
      * @param topicId 조회할 토픽의 ID
      * @return 조회된 토픽의 응답 DTO
-     * @throws ReferenceException 해당 ID의 토픽이 존재하지 않을 경우 발생
+     * @throws ReferenceException 해당 ID의 토픽이 존재하지 않을 경우 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)
@@ -69,12 +69,13 @@ public class TopicQueryService implements
         return topicResponse;
     }
 
-    /**
+    /****
      * 주어진 토픽 ID에 해당하는 토픽의 존재 여부를 검증합니다.
      *
      * 토픽이 존재하지 않을 경우 ReferenceException을 발생시킵니다.
      *
      * @param topicId 존재 여부를 확인할 토픽의 ID
+     * @throws ReferenceException 해당 ID의 토픽이 존재하지 않을 때 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)
@@ -88,12 +89,12 @@ public class TopicQueryService implements
         LoggerFactory.service().logSuccess("ValidateTopicUseCase", "주어진 ID에 해당하는 토픽이 존재하는지 확인 서비스 종료 topicId=" + topicId, startTime);
     }
 
-    /**
-     * 주어진 토픽 ID로 토픽의 라벨을 반환합니다.
+    /****
+     * 주어진 토픽 ID에 해당하는 라벨을 반환합니다.
      *
      * @param topicId 라벨을 조회할 토픽의 ID
-     * @return 해당 토픽의 라벨 문자열
-     * @throws ReferenceException 토픽이 존재하지 않거나 라벨이 없을 때 발생
+     * @return 토픽의 라벨 문자열
+     * @throws ReferenceException 토픽이 존재하지 않거나 라벨이 없을 경우 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)
@@ -108,7 +109,7 @@ public class TopicQueryService implements
         return label;
     }
 
-    /**
+    /****
      * 주어진 토픽 ID 목록에 대해 각 토픽의 라벨을 조회하여 ID와 라벨의 맵으로 반환합니다.
      *
      * @param topicIds 라벨을 조회할 토픽 ID 목록

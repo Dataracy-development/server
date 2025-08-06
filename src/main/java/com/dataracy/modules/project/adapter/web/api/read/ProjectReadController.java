@@ -44,7 +44,7 @@ public class ProjectReadController implements ProjectReadApi {
     /****
      * 지정된 프로젝트의 상세 정보를 조회하여 성공 응답으로 반환합니다.
      *
-     * HTTP 요청 및 응답에서 인증된 사용자 ID와 뷰어 ID를 추출한 뒤, 해당 정보를 기반으로 프로젝트 상세 정보를 조회합니다.
+     * HTTP 요청 및 응답에서 인증된 사용자 ID와 뷰어 ID를 추출한 후, 해당 정보를 기반으로 프로젝트의 상세 정보를 조회하여 반환합니다.
      *
      * @param request 인증 및 뷰어 식별을 위한 HTTP 요청 객체
      * @param response 뷰어 ID 추출을 위한 HTTP 응답 객체
@@ -71,10 +71,10 @@ public class ProjectReadController implements ProjectReadApi {
     }
 
     /****
-     * 지정한 프로젝트 ID를 기준으로 이어지는 프로젝트 목록을 페이지네이션하여 반환합니다.
+     * 기준 프로젝트 ID를 기반으로 이어지는 프로젝트 목록을 페이지네이션하여 조회합니다.
      *
-     * @param projectId 이어지는 프로젝트를 조회할 기준 프로젝트의 ID
-     * @param pageable 결과 페이지네이션 정보
+     * @param projectId 이어지는 프로젝트를 조회할 기준이 되는 프로젝트의 ID
+     * @param pageable 결과의 페이지네이션 정보를 담는 객체
      * @return 이어지는 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Override
@@ -94,10 +94,10 @@ public class ProjectReadController implements ProjectReadApi {
     }
 
     /**
-     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 조회합니다.
+     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 반환합니다.
      *
-     * @param dataId 연결된 프로젝트를 조회할 데이터의 고유 ID
-     * @param pageable 페이지네이션 정보
+     * @param dataId 프로젝트와 연결된 데이터의 고유 ID
+     * @param pageable 결과 페이지네이션을 위한 정보
      * @return 연결된 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Override
@@ -117,9 +117,9 @@ public class ProjectReadController implements ProjectReadApi {
     }
 
     /**
-     * 지정한 개수만큼 인기 프로젝트 목록을 조회하여 성공 응답으로 반환합니다.
+     * 요청된 개수만큼 인기 프로젝트 목록을 조회하여 성공 응답으로 반환합니다.
      *
-     * @param size 조회할 인기 프로젝트의 최대 개수
+     * @param size 반환할 인기 프로젝트의 최대 개수
      * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override

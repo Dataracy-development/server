@@ -18,7 +18,7 @@ public class LikeCommandAdapter implements LikeCommandPort {
     private final LikeJpaRepository likeJpaRepository;
 
     /**
-     * 도메인 Like 객체를 JPA 엔티티로 변환하여 데이터베이스에 저장합니다.
+     * Like 도메인 객체를 JPA 엔티티로 변환하여 데이터베이스에 저장합니다.
      *
      * @param like 저장할 Like 도메인 객체
      */
@@ -32,12 +32,12 @@ public class LikeCommandAdapter implements LikeCommandPort {
     /**
      * 주어진 사용자 ID, 타겟 ID, 타겟 타입에 해당하는 좋아요를 취소합니다.
      *
-     * 해당 조건에 맞는 좋아요가 존재하지 않으면 LikeException이 발생합니다.
+     * 해당 조건에 맞는 좋아요가 존재하지 않을 경우 LikeException이 발생합니다.
      *
-     * @param userId    좋아요를 취소할 사용자 ID
-     * @param targetId  좋아요를 취소할 대상의 ID
+     * @param userId 좋아요를 취소할 사용자 ID
+     * @param targetId 좋아요를 취소할 대상의 ID
      * @param targetType 좋아요를 취소할 대상의 타입
-     * @throws LikeException 해당 조건에 맞는 좋아요가 없을 때 발생
+     * @throws LikeException 해당 조건에 맞는 좋아요가 존재하지 않을 때 발생
      */
     @Override
     public void cancelLike(Long userId, Long targetId, TargetType targetType) {
