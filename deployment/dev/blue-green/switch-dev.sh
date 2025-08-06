@@ -108,9 +108,9 @@ server {
 EOF
 
 # NGINX 컨테이너 설정 반영을 확실히 하기 위해 강제 재실행
-echo "[INFO] Nginx 컨테이너 재시작 (설정 반영 및 캐시 제거)"
+echo "[INFO] NGINX 컨테이너 완전 재시작 중 (CORS 문제 방지)"
 docker compose -f ../docker/docker-compose-nginx-dev.yml down -v
-docker compose -f ../docker/docker-compose-nginx-dev.yml up -d
+docker compose -f ../docker/docker-compose-nginx-dev.yml up -d --build
 
 # 이전 백엔드 종료
 echo "[INFO] 이전 컨테이너 종료 중: backend-${CURRENT}"
