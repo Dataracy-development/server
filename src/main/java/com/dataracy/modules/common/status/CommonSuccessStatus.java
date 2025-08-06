@@ -8,9 +8,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum CommonSuccessStatus implements BaseSuccessCode {
     // Global
-    OK(HttpStatus.OK, "GLOBAL-200", "성공입니다."),
-    CREATED(HttpStatus.CREATED, "GLOBAL-201", "생성에 성공했습니다."),
-    NO_CONTENT(HttpStatus.NO_CONTENT, "GLOBAL-204", "성공입니다."),
+    OK(HttpStatus.OK, "COMMON-200", "성공입니다."),
+    CREATED(HttpStatus.CREATED, "COMMON-201", "생성에 성공했습니다."),
+    NO_CONTENT(HttpStatus.NO_CONTENT, "COMMON-204", "성공입니다."),
     ;
 
     private final HttpStatus httpStatus;

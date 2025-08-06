@@ -8,14 +8,14 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum CommonErrorStatus implements BaseErrorCode {
     // Global Errors
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "GLOBAL-500", "서버 내부 오류가 발생했습니다. 관리자에게 문의하세요."),
-    BAD_REQUEST(HttpStatus.BAD_REQUEST, "GLOBAL-400", "잘못된 요청입니다."),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "GLOBAL-401", "인증이 필요합니다."),
-    FORBIDDEN(HttpStatus.FORBIDDEN, "GLOBAL-403", "접근이 금지된 요청입니다."),
-    NOT_FOUND_HANDLER(HttpStatus.NOT_FOUND, "GLOBAL-404", "요청 경로를 찾을 수 없습니다."),
-    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "GLOBAL-405", "허용되지 않는 HTTP 메서드입니다."),
-    CONFLICT(HttpStatus.CONFLICT, "GLOBAL-409", "중복된 값입니다."),
-    UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "GLOBAL-415", "지원되지 않는 미디어 타입입니다."),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON-500", "서버 내부 오류가 발생했습니다. 관리자에게 문의하세요."),
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON-400", "잘못된 요청입니다."),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON-401", "인증이 필요합니다."),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON-403", "접근이 금지된 요청입니다."),
+    NOT_FOUND_HANDLER(HttpStatus.NOT_FOUND, "COMMON-404", "요청 경로를 찾을 수 없습니다."),
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "COMMON-405", "허용되지 않는 HTTP 메서드입니다."),
+    CONFLICT(HttpStatus.CONFLICT, "COMMON-409", "중복된 값입니다."),
+    UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "COMMON-415", "지원되지 않는 미디어 타입입니다."),
 
     // JSON Serialization Errors
     FAILED_SERIALIZING_JSON(HttpStatus.INTERNAL_SERVER_ERROR, "JSON-001", "JSON 직렬화에 실패했습니다."),
