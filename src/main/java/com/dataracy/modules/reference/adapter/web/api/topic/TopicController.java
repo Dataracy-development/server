@@ -21,7 +21,7 @@ public class TopicController implements TopicApi {
     private final FindAllTopicsUseCase findAllTopicsUseCase;
 
     /**
-     * 데이터베이스에 저장된 모든 토픽 목록을 조회하여 반환합니다.
+     * 데이터베이스에 저장된 모든 토픽 목록을 조회하여 성공 응답으로 반환합니다.
      *
      * @return 모든 토픽 정보를 포함한 성공 응답 객체의 HTTP 200 OK 응답
      */

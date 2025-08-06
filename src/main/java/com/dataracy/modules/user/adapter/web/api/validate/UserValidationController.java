@@ -22,7 +22,7 @@ public class UserValidationController implements UserValidationApi {
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
 
     /**
-     * 닉네임의 중복 여부를 검사하고, 중복이 아닐 경우 성공 상태의 HTTP 200 응답을 반환한다.
+     * 닉네임의 중복 여부를 검사하여 중복이 아닐 경우 성공 상태의 HTTP 200 응답을 반환한다.
      *
      * @param webRequest 중복 검사를 요청하는 닉네임 정보가 포함된 요청 객체
      * @return 닉네임이 중복되지 않을 때 성공 상태를 담은 HTTP 200 응답

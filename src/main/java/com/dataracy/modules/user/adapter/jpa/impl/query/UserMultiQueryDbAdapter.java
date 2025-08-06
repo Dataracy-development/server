@@ -22,7 +22,7 @@ public class UserMultiQueryDbAdapter implements UserMultiQueryPort {
      * 주어진 사용자 ID 목록에 대해 각 사용자 ID와 해당 사용자의 닉네임을 매핑한 맵을 반환합니다.
      *
      * @param userIds 닉네임을 조회할 사용자 ID 목록
-     * @return 사용자 ID를 키로, 닉네임을 값으로 하는 맵
+     * @return 사용자 ID를 키로 하고 닉네임을 값으로 하는 맵
      */
     @Override
     public Map<Long, String> findUsernamesByIds(List<Long> userIds) {

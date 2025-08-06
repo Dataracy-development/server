@@ -21,8 +21,9 @@ public class VisitSourceDbAdapter implements VisitSourcePort {
     private final VisitSourceJpaRepository visitSourceJpaRepository;
 
     /**
-     * visitSource 엔티티의 모든 데이터셋을 조회한다.
-     * @return visitSource 데이터셋
+     * 모든 방문 경로(VisitSource) 데이터를 조회하여 리스트로 반환한다.
+     *
+     * @return 데이터베이스에 저장된 모든 방문 경로의 도메인 객체 리스트
      */
     @Override
     public List<VisitSource> findAllVisitSources() {
@@ -35,11 +36,11 @@ public class VisitSourceDbAdapter implements VisitSourcePort {
         return visitSources;
     }
 
-    /****
+    /**
      * 주어진 ID에 해당하는 방문 경로 도메인 객체를 Optional로 반환한다.
      *
-     * @param visitSourceId 조회할 방문 경로의 ID. null인 경우 빈 Optional을 반환한다.
-     * @return 방문 경로가 존재하면 해당 도메인 객체를 포함한 Optional, 존재하지 않거나 ID가 null이면 빈 Optional
+     * @param visitSourceId 조회할 방문 경로의 ID. null이면 빈 Optional을 반환한다.
+     * @return 해당 ID의 방문 경로가 존재하면 도메인 객체를 포함한 Optional, 존재하지 않거나 ID가 null이면 빈 Optional
      */
     @Override
     public Optional<VisitSource> findVisitSourceById(Long visitSourceId) {
@@ -54,7 +55,7 @@ public class VisitSourceDbAdapter implements VisitSourcePort {
     }
 
     /**
-     * 주어진 ID에 해당하는 방문 소스가 데이터베이스에 존재하는지 반환합니다.
+     * 주어진 ID의 방문 소스가 데이터베이스에 존재하는지 확인합니다.
      *
      * @param visitSourceId 존재 여부를 확인할 방문 소스의 ID
      * @return 방문 소스가 존재하면 true, ID가 null이거나 존재하지 않으면 false
@@ -73,7 +74,7 @@ public class VisitSourceDbAdapter implements VisitSourcePort {
      * 주어진 ID에 해당하는 방문 소스의 라벨을 Optional로 반환합니다.
      *
      * @param visitSourceId 조회할 방문 소스의 ID
-     * @return 방문 소스가 존재하면 라벨을, 없으면 빈 Optional을 반환합니다.
+     * @return 방문 소스가 존재하면 해당 라벨을, 존재하지 않거나 ID가 null이면 빈 Optional을 반환합니다.
      */
     @Override
     public Optional<String> getLabelById(Long visitSourceId) {
@@ -87,10 +88,10 @@ public class VisitSourceDbAdapter implements VisitSourcePort {
     }
 
     /**
-     * 주어진 방문 소스 ID 목록에 해당하는 ID와 라벨의 매핑을 반환합니다.
+     * 주어진 방문 소스 ID 목록에 대해 각 ID와 해당 라벨을 매핑한 Map을 반환합니다.
      *
-     * @param visitSourceIds 조회할 방문 소스 ID 목록
-     * @return 각 ID에 해당하는 라벨의 Map
+     * @param visitSourceIds 라벨을 조회할 방문 소스 ID 목록
+     * @return 각 ID에 해당하는 라벨의 매핑 Map
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> visitSourceIds) {

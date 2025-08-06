@@ -27,6 +27,13 @@ public class LikeKafkaProducerAdapter implements SendLikeEventPort {
     @Value("${spring.kafka.producer.comment-like-decrease.topic:comment-like-decrease-topic}")
     private String TOPIC_COMMENT_LIKE_DECREASE;
 
+    /**
+     * 프로젝트 또는 댓글에 대한 좋아요 또는 좋아요 취소 이벤트를 Kafka로 비동기 전송합니다.
+     *
+     * @param targetType      이벤트 대상의 유형(PROJECT 또는 COMMENT)
+     * @param targetId        이벤트 대상의 고유 식별자
+     * @param previouslyLiked true이면 좋아요 취소 이벤트, false이면 좋아요 이벤트를 전송합니다.
+     */
     @Override
     public void sendLikeEvent(TargetType targetType, Long targetId, boolean previouslyLiked) {
         switch (targetType) {

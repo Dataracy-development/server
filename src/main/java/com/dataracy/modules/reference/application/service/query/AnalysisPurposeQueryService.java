@@ -34,7 +34,7 @@ public class AnalysisPurposeQueryService implements
     private final AnalysisPurposePort analysisPurposePort;
 
     /**
-     * 모든 분석 목적(analysisPurpose) 정보를 조회하여 응답 DTO로 반환한다.
+     * 모든 분석 목적 정보를 조회하여 전체 목록을 응답 DTO로 반환한다.
      *
      * @return 전체 분석 목적 목록이 포함된 AllAnalysisPurposesResponse 객체
      */
@@ -49,12 +49,13 @@ public class AnalysisPurposeQueryService implements
     }
 
     /**
-     * 주어진 ID로 분석 목적을 조회하여 상세 응답 DTO로 반환한다.
+     * 주어진 ID에 해당하는 분석 목적의 상세 정보를 조회하여 반환한다.
      *
-     * 분석 목적이 존재하지 않으면 ReferenceException을 발생시킨다.
+     * 분석 목적이 존재하지 않을 경우 ReferenceException이 발생한다.
      *
      * @param analysisPurposeId 조회할 분석 목적의 ID
-     * @return 조회된 분석 목적의 상세 정보를 담은 응답 DTO
+     * @return 조회된 분석 목적의 상세 정보를 담은 DTO
+     * @throws ReferenceException 해당 ID의 분석 목적이 존재하지 않을 때 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -71,9 +72,9 @@ public class AnalysisPurposeQueryService implements
     }
 
     /**
-     * 주어진 ID에 해당하는 분석 목적이 존재하는지 확인합니다.
+     * 주어진 ID로 분석 목적의 존재 여부를 검증합니다.
      *
-     * 분석 목적이 존재하지 않을 경우 {@link ReferenceException}을 발생시킵니다.
+     * 해당 ID의 분석 목적이 존재하지 않으면 {@link ReferenceException}을 발생시킵니다.
      *
      * @param analysisPurposeId 존재 여부를 확인할 분석 목적의 ID
      * @throws ReferenceException 분석 목적이 존재하지 않을 때 발생
@@ -91,11 +92,11 @@ public class AnalysisPurposeQueryService implements
     }
 
     /**
-     * 주어진 분석 목적 ID에 해당하는 라벨을 조회합니다.
+     * 주어진 분석 목적 ID로 해당 분석 목적의 라벨을 반환합니다.
      *
-     * @param analysisPurposeId 조회할 분석 목적의 ID
-     * @return 분석 목적의 라벨 문자열
-     * @throws ReferenceException 해당 ID의 분석 목적이 존재하지 않을 경우 발생
+     * @param analysisPurposeId 라벨을 조회할 분석 목적의 ID
+     * @return 해당 분석 목적의 라벨 문자열
+     * @throws ReferenceException 분석 목적이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)
@@ -111,7 +112,7 @@ public class AnalysisPurposeQueryService implements
     }
 
     /**
-     * 주어진 분석 목적 ID 목록에 대해 각 ID에 해당하는 라벨을 반환합니다.
+     * 주어진 분석 목적 ID 목록에 대해 각 ID에 해당하는 라벨을 조회하여 반환합니다.
      *
      * @param analysisPurposeIds 라벨을 조회할 분석 목적 ID 목록
      * @return 각 ID와 해당 라벨이 매핑된 Map. 입력이 null이거나 비어 있으면 빈 Map을 반환합니다.

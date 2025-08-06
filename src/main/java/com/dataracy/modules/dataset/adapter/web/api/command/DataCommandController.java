@@ -60,8 +60,8 @@ public class DataCommandController implements DataCommandApi {
                 .body(SuccessResponse.of(DataSuccessStatus.CREATED_DATASET));
     }
 
-    /****
-     * 데이터셋의 정보를 수정합니다.
+    /**
+     * 데이터셋의 정보를 수정하는 API입니다.
      *
      * @param dataId 수정할 데이터셋의 식별자
      * @param dataFile 새로운 데이터 파일 (선택 사항)
@@ -86,10 +86,10 @@ public class DataCommandController implements DataCommandApi {
     }
 
     /**
-     * 지정한 데이터셋을 소프트 삭제 상태로 변경합니다.
+     * 데이터셋을 소프트 삭제 상태로 변경합니다.
      *
      * @param dataId 삭제할 데이터셋의 식별자
-     * @return 데이터셋 삭제 성공 여부를 나타내는 응답
+     * @return 데이터셋 삭제 성공 응답
      */
     @Override
     @AuthorizationDataEdit
@@ -107,10 +107,10 @@ public class DataCommandController implements DataCommandApi {
     }
 
     /**
-     * 삭제된 데이터셋을 복구하여 활성 상태로 전환합니다.
+     * 삭제된 데이터셋을 복구하여 활성화합니다.
      *
-     * @param dataId 복구할 데이터셋의 식별자
-     * @return 복구 성공 상태가 포함된 HTTP 200 OK 응답
+     * @param dataId 복구할 데이터셋의 고유 식별자
+     * @return 데이터셋 복구 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
     @AuthorizationDataEdit(restore = true)
@@ -128,10 +128,10 @@ public class DataCommandController implements DataCommandApi {
     }
 
     /**
-     * 데이터셋 파일의 300초 유효 사전 서명 다운로드 URL을 반환합니다.
+     * 지정한 데이터셋 파일에 대해 300초 동안 유효한 사전 서명 다운로드 URL을 반환합니다.
      *
-     * @param dataId 다운로드할 데이터셋의 ID
-     * @return 사전 서명된 다운로드 URL이 포함된 성공 응답 객체
+     * @param dataId 다운로드할 데이터셋의 식별자
+     * @return 사전 서명된 다운로드 URL이 포함된 성공 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<String>> getPreSignedDataUrl(Long dataId) {

@@ -34,7 +34,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     private final IsLoginPossibleUseCase isLoginPossibleUseCase;
 
     /**
-     * 이메일과 비밀번호를 사용하여 사용자의 로그인을 처리하고, 새로운 리프레시 토큰을 발급한다.
+     * 사용자의 이메일과 비밀번호를 검증하여 로그인하고, 새로운 리프레시 토큰을 발급한다.
      *
      * @param requestDto 로그인 요청 정보(이메일, 비밀번호 등)
      * @return 발급된 리프레시 토큰과 만료 시간이 포함된 응답 객체
