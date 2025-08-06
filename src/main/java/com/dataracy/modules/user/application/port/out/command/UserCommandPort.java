@@ -2,9 +2,6 @@ package com.dataracy.modules.user.application.port.out.command;
 
 import com.dataracy.modules.user.domain.model.User;
 
-/**
- * user db 저장, 수정, 삭제 포트
- */
 public interface UserCommandPort {
     /**
  * 사용자를 데이터베이스에 저장하고, 저장된 사용자 도메인 모델을 반환합니다.

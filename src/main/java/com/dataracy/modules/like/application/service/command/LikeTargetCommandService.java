@@ -50,8 +50,7 @@ public class LikeTargetCommandService implements
             retry = 2
     )
     public TargetType likeTarget(Long userId, TargetLikeRequest requestDto) {
-
-        Instant startTime = LoggerFactory.service().logStart("LikeTargetUseCase", requestDto.targetType() + "좋아요 서비스 시작 targetId=" + requestDto.targetId());
+        Instant startTime = LoggerFactory.service().logStart("LikeTargetUseCase", requestDto.targetType() + " 좋아요 서비스 시작 targetId=" + requestDto.targetId());
         TargetType targetType = TargetType.of(requestDto.targetType());
 
         if (targetType.equals(TargetType.PROJECT)) {
@@ -105,8 +104,7 @@ public class LikeTargetCommandService implements
                 };
             }
         }
-
-        LoggerFactory.service().logSuccess("LikeTargetUseCase", requestDto.targetType() + "좋아요 서비스 종료 targetId=" + requestDto.targetId(), startTime);
+        LoggerFactory.service().logSuccess("LikeTargetUseCase", requestDto.targetType() + " 좋아요 서비스 종료 targetId=" + requestDto.targetId(), startTime);
         return targetType;
     }
 }

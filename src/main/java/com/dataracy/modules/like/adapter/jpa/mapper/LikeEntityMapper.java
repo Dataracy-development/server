@@ -15,7 +15,7 @@ private LikeEntityMapper() {}
      * @param entity 변환할 LikeEntity 객체
      * @return 변환된 Like 도메인 객체, 입력이 null이면 null 반환
      */
-    private static Like toDomain(LikeEntity entity) {
+    public static Like toDomain(LikeEntity entity) {
         if (entity == null) return null;
 
         return Like.of(

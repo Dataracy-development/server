@@ -4,9 +4,6 @@ import com.dataracy.modules.user.domain.model.User;
 
 import java.util.Optional;
 
-/**
- * user db 단건 조회 포트
- */
 public interface UserQueryPort {
     /**
  * 주어진 사용자 ID로 사용자를 조회합니다.
