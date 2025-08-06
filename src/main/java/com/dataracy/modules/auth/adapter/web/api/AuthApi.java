@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(name = "Auth", description = "인증 관련 API")
+@Tag(name = "Auth - Prod", description = "인증 관련 실제 운영용 API")
 @RequestMapping("/api/v1/auth")
 public interface AuthApi {
     /**

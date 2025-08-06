@@ -19,7 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "Project", description = "프로젝트 관련 API")
+@Tag(name = "Project - Command", description = "프로젝트 관련 API - 생성, 수정, 삭제 등")
 @RequestMapping("/api/v1/projects")
 public interface ProjectCommandApi {
     /**

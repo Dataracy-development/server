@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "User", description = "사용자 관련 API")
+@Tag(name = "User - Validate", description = "사용자 관련 API - 유효성 검사")
 @RequestMapping("/api/v1")
 public interface UserValidationApi {
     /**

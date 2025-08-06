@@ -19,7 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "Data", description = "데이터셋 관련 API")
+@Tag(name = "Data - Command", description = "데이터셋 관련 API - 생성, 수정, 삭제 등")
 @RequestMapping("/api/v1/datasets")
 public interface DataCommandApi {
 

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Data", description = "데이터셋 관련 API")
+@Tag(name = "Data - Search", description = "데이터셋 관련 API - 검색")
 @RequestMapping("/api/v1/datasets")
 public interface DataSearchApi {
 

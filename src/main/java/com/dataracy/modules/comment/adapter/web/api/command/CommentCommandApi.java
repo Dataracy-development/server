@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Comment", description = "피드백 댓글 관련 API")
+@Tag(name = "Comment - Command", description = "프로젝트의 피드백 댓글 API - 생성, 수정, 삭제 등")
 @RequestMapping("/api/v1/projects")
 public interface CommentCommandApi {
 
