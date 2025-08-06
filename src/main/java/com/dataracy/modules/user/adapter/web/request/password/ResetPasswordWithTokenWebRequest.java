@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 
 @Schema(description = "비로그인 시 비밀번호를 재설정하는 웹 요청 DTO")
 public record ResetPasswordWithTokenWebRequest(
-        @Schema(description = "비밀번호", example = "juuuunny123@", minLength = 8)
+        @Schema(description = "비밀번호", example = "ezskfj12kj2kjkjr2~~", minLength = 8)
         @NotBlank(message = "비밀번호 재설정을 위한 토큰을 입력해주세요.")
         String resetPasswordToken,
 
