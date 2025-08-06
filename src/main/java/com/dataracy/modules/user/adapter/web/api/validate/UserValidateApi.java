@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "User - Validate", description = "사용자 관련 API - 유효성 검사")
 @RequestMapping("/api/v1")
-public interface UserValidationApi {
+public interface UserValidateApi {
     /**
      * 닉네임의 중복 여부를 확인하는 API 엔드포인트입니다.
      *

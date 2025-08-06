@@ -68,7 +68,7 @@ public interface UserPasswordApi {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SuccessResponse.class))),
     })
-    @PutMapping(value = "/user/password/reset")
+    @PutMapping(value = "/password/reset")
     ResponseEntity<SuccessResponse<Void>> resetPasswordWithToken(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
