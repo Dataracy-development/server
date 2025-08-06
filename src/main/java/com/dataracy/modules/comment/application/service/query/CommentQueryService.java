@@ -14,12 +14,12 @@ import com.dataracy.modules.comment.application.port.query.CommentQueryRepositor
 import com.dataracy.modules.comment.domain.exception.CommentException;
 import com.dataracy.modules.comment.domain.model.Comment;
 import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
-import com.dataracy.modules.like.application.port.in.FindTargetIdsUseCase;
+import com.dataracy.modules.like.application.port.in.query.FindTargetIdsUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
-import com.dataracy.modules.user.application.port.in.profile.FindUserAuthorLevelIdsUseCase;
-import com.dataracy.modules.user.application.port.in.profile.FindUserThumbnailUseCase;
-import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserAuthorLevelIdsUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,7 +1,7 @@
 package com.dataracy;
 
-import com.dataracy.modules.user.application.dto.request.validation.DuplicateNicknameRequest;
-import com.dataracy.modules.user.adapter.web.api.validation.UserValidationController;
+import com.dataracy.modules.user.application.dto.request.validate.DuplicateNicknameRequest;
+import com.dataracy.modules.user.adapter.web.api.validate.UserValidationController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

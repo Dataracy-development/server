@@ -7,8 +7,8 @@ import com.dataracy.modules.user.adapter.web.request.password.ChangePasswordWebR
 import com.dataracy.modules.user.adapter.web.request.password.ConfirmPasswordWebRequest;
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.password.ConfirmPasswordRequest;
-import com.dataracy.modules.user.application.port.in.password.ChangePasswordUseCase;
-import com.dataracy.modules.user.application.port.in.password.ConfirmPasswordUseCase;
+import com.dataracy.modules.user.application.port.in.command.password.ChangePasswordUseCase;
+import com.dataracy.modules.user.application.port.in.query.password.ConfirmPasswordUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,10 +26,10 @@ public class UserPasswordController implements UserPasswordApi {
     private final ConfirmPasswordUseCase confirmPasswordUseCase;
 
     /**
-     * 사용자의 비밀번호를 변경하는 API 엔드포인트이다.
+     * 사용자의 비밀번호를 변경하는 REST API 엔드포인트입니다.
      *
      * @param userId 비밀번호를 변경할 대상 사용자의 ID
-     * @param webRequest 비밀번호 변경 요청 데이터
+     * @param webRequest 비밀번호 변경 요청 정보를 담은 객체
      * @return 비밀번호 변경 성공 시 200 OK와 성공 상태가 포함된 응답
      */
     @Override
@@ -38,9 +38,14 @@ public class UserPasswordController implements UserPasswordApi {
             ChangePasswordWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[ChangePassword] 비밀번호 변경 API 요청 시작");
-        ChangePasswordRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
-        changePasswordUseCase.changePassword(userId, requestDto);
-        LoggerFactory.api().logResponse("[ChangePassword] 비밀번호 변경 API 응답 완료", startTime);
+
+        try {
+            ChangePasswordRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
+            changePasswordUseCase.changePassword(userId, requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[ChangePassword] 비밀번호 변경 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CHANGE_PASSWORD));
     }
@@ -58,9 +63,14 @@ public class UserPasswordController implements UserPasswordApi {
             ConfirmPasswordWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[ConfirmPassword] 비밀번호 확인 API 요청 시작");
-        ConfirmPasswordRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
-        confirmPasswordUseCase.confirmPassword(userId, requestDto);
-        LoggerFactory.api().logResponse("[ConfirmPassword] 비밀번호 확인 API 응답 완료", startTime);
+
+        try {
+            ConfirmPasswordRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
+            confirmPasswordUseCase.confirmPassword(userId, requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[ConfirmPassword] 비밀번호 확인 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CONFIRM_PASSWORD));
     }

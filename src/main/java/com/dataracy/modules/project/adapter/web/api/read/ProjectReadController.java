@@ -44,7 +44,7 @@ public class ProjectReadController implements ProjectReadApi {
     /****
      * 지정된 프로젝트의 상세 정보를 조회하여 성공 응답으로 반환합니다.
      *
-     * HTTP 요청 및 응답에서 인증된 사용자 ID와 뷰어 ID를 추출한 뒤, 해당 정보를 기반으로 프로젝트 상세 정보를 조회합니다.
+     * HTTP 요청 및 응답에서 인증된 사용자 ID와 뷰어 ID를 추출한 후, 해당 정보를 기반으로 프로젝트의 상세 정보를 조회하여 반환합니다.
      *
      * @param request 인증 및 뷰어 식별을 위한 HTTP 요청 객체
      * @param response 뷰어 ID 추출을 위한 HTTP 응답 객체
@@ -54,72 +54,88 @@ public class ProjectReadController implements ProjectReadApi {
     @Override
     public ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(HttpServletRequest request, HttpServletResponse response, Long projectId) {
         Instant startTime = LoggerFactory.api().logRequest("[GetProjectDetail] 프로젝트 상세 정보 조회 API 요청 시작");
+        ProjectDetailWebResponse webResponse;
 
-        Long userId = extractHeaderUtil.extractAuthenticatedUserIdFromRequest(request);
-        String viewerId = extractHeaderUtil.extractViewerIdFromRequest(request, response);
+        try {
+            Long userId = extractHeaderUtil.extractAuthenticatedUserIdFromRequest(request);
+            String viewerId = extractHeaderUtil.extractViewerIdFromRequest(request, response);
 
-        ProjectDetailResponse responseDto = getProjectDetailUseCase.getProjectDetail(projectId, userId, viewerId);
-        ProjectDetailWebResponse webResponse = projectReadWebMapper.toWebDto(responseDto);
+            ProjectDetailResponse responseDto = getProjectDetailUseCase.getProjectDetail(projectId, userId, viewerId);
+            webResponse = projectReadWebMapper.toWebDto(responseDto);
+        } finally {
+            LoggerFactory.api().logResponse("[GetProjectDetail] 프로젝트 상세 정보 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[GetProjectDetail] 프로젝트 상세 정보 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_PROJECT_DETAIL, webResponse));
     }
 
     /****
-     * 지정한 프로젝트 ID를 기준으로 이어지는 프로젝트 목록을 페이지네이션하여 반환합니다.
+     * 기준 프로젝트 ID를 기반으로 이어지는 프로젝트 목록을 페이지네이션하여 조회합니다.
      *
-     * @param projectId 이어지는 프로젝트를 조회할 기준 프로젝트의 ID
-     * @param pageable 결과 페이지네이션 정보
+     * @param projectId 이어지는 프로젝트를 조회할 기준이 되는 프로젝트의 ID
+     * @param pageable 결과의 페이지네이션 정보를 담는 객체
      * @return 이어지는 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<ContinuedProjectWebResponse>>> findContinueProjects(Long projectId, Pageable pageable) {
         Instant startTime = LoggerFactory.api().logRequest("[FindContinueProjects] 이어가기 프로젝트 목록 조회 API 요청 시작");
+        Page<ContinuedProjectWebResponse> webResponse;
 
-        Page<ContinuedProjectResponse> responseDto = findContinuedProjectsUseCase.findContinuedProjects(projectId, pageable);
-        Page<ContinuedProjectWebResponse> webResponse = responseDto.map(projectReadWebMapper::toWebDto);
+        try {
+            Page<ContinuedProjectResponse> responseDto = findContinuedProjectsUseCase.findContinuedProjects(projectId, pageable);
+            webResponse = responseDto.map(projectReadWebMapper::toWebDto);
+        } finally {
+            LoggerFactory.api().logResponse("[FindContinueProjects] 이어가기 프로젝트 목록 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[FindContinueProjects] 이어가기 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONTINUE_PROJECTS, webResponse));
     }
 
     /**
-     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 조회합니다.
+     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지네이션하여 반환합니다.
      *
-     * @param dataId 연결된 프로젝트를 조회할 데이터의 고유 ID
-     * @param pageable 페이지네이션 정보
+     * @param dataId 프로젝트와 연결된 데이터의 고유 ID
+     * @param pageable 결과 페이지네이션을 위한 정보
      * @return 연결된 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<Page<ConnectedProjectWebResponse>>> findConnectedProjectsAssociatedWithData(Long dataId, Pageable pageable) {
         Instant startTime = LoggerFactory.api().logRequest("[FindConnectedProjectsAssociatedWithData] 데이터셋과 연결된 프로젝트 목록 조회 API 요청 시작");
+        Page<ConnectedProjectWebResponse> webResponse;
 
-        Page<ConnectedProjectResponse> responseDto = findConnectedProjectsUseCase.findConnectedProjects(dataId, pageable);
-        Page<ConnectedProjectWebResponse> webResponse = responseDto.map(projectReadWebMapper::toWebDto);
+        try {
+            Page<ConnectedProjectResponse> responseDto = findConnectedProjectsUseCase.findConnectedProjects(dataId, pageable);
+            webResponse = responseDto.map(projectReadWebMapper::toWebDto);
+        } finally {
+            LoggerFactory.api().logResponse("[FindConnectedProjectsAssociatedWithData] 데이터셋과 연결된 프로젝트 목록 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[FindConnectedProjectsAssociatedWithData] 데이터셋과 연결된 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_CONNECTED_PROJECTS_ASSOCIATED_DATA, webResponse));
     }
 
     /**
-     * 지정한 개수만큼 인기 프로젝트 목록을 조회하여 성공 응답으로 반환합니다.
+     * 요청된 개수만큼 인기 프로젝트 목록을 조회하여 성공 응답으로 반환합니다.
      *
-     * @param size 조회할 인기 프로젝트의 최대 개수
+     * @param size 반환할 인기 프로젝트의 최대 개수
      * @return 인기 프로젝트 목록과 성공 상태가 포함된 HTTP 200 OK 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> getPopularProjects(int size) {
         Instant startTime = LoggerFactory.api().logRequest("[GetPopularProjects] 인기 프로젝트 목록 조회 API 요청 시작");
+        List<PopularProjectWebResponse> webResponse;
 
-        List<PopularProjectResponse> responseDto = getPopularProjectsUseCase.getPopularProjects(size);
-        List<PopularProjectWebResponse> webResponse = responseDto.stream()
-                .map(projectReadWebMapper::toWebDto)
-                .toList();
+        try {
+            List<PopularProjectResponse> responseDto = getPopularProjectsUseCase.getPopularProjects(size);
+            webResponse = responseDto.stream()
+                    .map(projectReadWebMapper::toWebDto)
+                    .toList();
+        } finally {
+            LoggerFactory.api().logResponse("[GetPopularProjects] 인기 프로젝트 목록 조회 API 응답 완료", startTime);
+        }
 
-        LoggerFactory.api().logResponse("[GetPopularProjects] 인기 프로젝트 목록 조회 API 응답 완료", startTime);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_POPULAR_PROJECTS, webResponse));
     }

@@ -6,7 +6,7 @@ import com.dataracy.modules.dataset.application.port.in.query.read.FindDataLabel
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
-import com.dataracy.modules.user.application.port.in.profile.FindUsernameUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
