@@ -61,8 +61,7 @@ public class LikeKafkaProducerAdapter implements SendLikeEventPort {
                                     LoggerFactory.kafka().logError(TOPIC_COMMENT_LIKE_DECREASE, "댓글 좋아요 취소 이벤트 발송 처리 실패: commentId=" + targetId, ex);
                                 }
                             });
-                }
-                else {
+                } else {
                     kafkaTemplate.send(TOPIC_COMMENT_LIKE_INCREASE, String.valueOf(targetId), targetId)
                             .whenComplete((result, ex) -> {
                                 if (ex == null) {

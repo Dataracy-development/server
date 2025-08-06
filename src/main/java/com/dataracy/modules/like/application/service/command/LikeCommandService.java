@@ -89,7 +89,7 @@ public class LikeCommandService implements
                 likeCommandPort.save(like);
                 switch (targetType) {
                     case PROJECT -> sendLikeEventPort.sendLikeEvent(TargetType.PROJECT, requestDto.targetId(), false);
-                    case COMMENT -> sendLikeEventPort.sendLikeEvent(TargetType.PROJECT, requestDto.targetId(), false);
+                    case COMMENT -> sendLikeEventPort.sendLikeEvent(TargetType.COMMENT, requestDto.targetId(), false);
                 };
             } catch (Exception e) {
                 switch (targetType) {
