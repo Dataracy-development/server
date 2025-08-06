@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Tag(name = "Data", description = "데이터셋 관련 API")
+@Tag(name = "Data - Read", description = "데이터셋 관련 API - 조회")
 @RequestMapping("/api/v1/datasets")
 public interface DataReadApi {
 

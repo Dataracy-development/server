@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(name = "User - password", description = "사용자 관련 API")
+@Tag(name = "User - Password", description = "사용자 관련 API - 비밀번호")
 @RequestMapping("/api/v1")
 public interface UserPasswordApi {
     /**

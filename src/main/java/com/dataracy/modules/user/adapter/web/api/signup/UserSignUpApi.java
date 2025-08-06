@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(name = "User - SignUp", description = "사용자 관련 API")
+@Tag(name = "User - SignUp", description = "사용자 관련 API - 회원가입")
 @RequestMapping("/api/v1")
 public interface UserSignUpApi {
     /**
