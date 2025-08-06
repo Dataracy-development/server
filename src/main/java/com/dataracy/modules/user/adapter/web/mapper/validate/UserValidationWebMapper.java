@@ -1,7 +1,7 @@
-package com.dataracy.modules.user.adapter.web.mapper.validation;
+package com.dataracy.modules.user.adapter.web.mapper.validate;
 
-import com.dataracy.modules.user.adapter.web.request.validation.DuplicateNicknameWebRequest;
-import com.dataracy.modules.user.application.dto.request.validation.DuplicateNicknameRequest;
+import com.dataracy.modules.user.adapter.web.request.validate.DuplicateNicknameWebRequest;
+import com.dataracy.modules.user.application.dto.request.validate.DuplicateNicknameRequest;
 import org.springframework.stereotype.Component;
 
 @Component

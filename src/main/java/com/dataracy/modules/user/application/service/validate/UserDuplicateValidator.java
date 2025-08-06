@@ -1,7 +1,7 @@
-package com.dataracy.modules.user.application.service.validator;
+package com.dataracy.modules.user.application.service.validate;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.user.application.port.out.validation.ValidateUserExistsPort;
+import com.dataracy.modules.user.application.port.out.validate.ValidateUserExistsPort;
 import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;

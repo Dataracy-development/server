@@ -1,9 +1,9 @@
 package com.dataracy.modules.user.application.service.query.validation;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.user.application.port.in.validation.DuplicateEmailUseCase;
-import com.dataracy.modules.user.application.port.in.validation.DuplicateNicknameUseCase;
-import com.dataracy.modules.user.application.service.validator.UserDuplicateValidator;
+import com.dataracy.modules.user.application.port.in.validate.DuplicateEmailUseCase;
+import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
+import com.dataracy.modules.user.application.service.validate.UserDuplicateValidator;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;

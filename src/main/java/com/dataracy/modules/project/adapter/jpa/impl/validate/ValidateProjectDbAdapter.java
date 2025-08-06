@@ -1,4 +1,4 @@
-package com.dataracy.modules.project.adapter.jpa.impl.validation;
+package com.dataracy.modules.project.adapter.jpa.impl.validate;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.adapter.jpa.repository.ProjectJpaRepository;

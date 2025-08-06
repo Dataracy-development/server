@@ -1,11 +1,11 @@
-package com.dataracy.modules.user.adapter.web.api.validation;
+package com.dataracy.modules.user.adapter.web.api.validate;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.user.adapter.web.mapper.validation.UserValidationWebMapper;
-import com.dataracy.modules.user.adapter.web.request.validation.DuplicateNicknameWebRequest;
-import com.dataracy.modules.user.application.dto.request.validation.DuplicateNicknameRequest;
-import com.dataracy.modules.user.application.port.in.validation.DuplicateNicknameUseCase;
+import com.dataracy.modules.user.adapter.web.mapper.validate.UserValidationWebMapper;
+import com.dataracy.modules.user.adapter.web.request.validate.DuplicateNicknameWebRequest;
+import com.dataracy.modules.user.application.dto.request.validate.DuplicateNicknameRequest;
+import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
