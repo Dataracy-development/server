@@ -104,7 +104,7 @@ public class UserProfileService implements
         return userAuthorLevelIds;
     }
 
-    /****
+    /**
      * 주어진 사용자 ID로 해당 사용자의 상세 정보를 조회하여 UserInfo 객체로 반환합니다.
      *
      * @param userId 상세 정보를 조회할 사용자의 ID

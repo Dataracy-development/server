@@ -82,7 +82,7 @@ public class UserAuthService implements
      * @return 발급된 리프레시 토큰과 만료 시간을 포함하는 응답 객체
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public RefreshTokenResponse handleExistingUser(OAuthUserInfo oAuthUserInfo) {
         Instant startTime = LoggerFactory.service().logStart("HandleUserUseCase", "기존 유저 핸들링 서비스 시작 email=" + oAuthUserInfo.email());
         User existUser = userQueryPort.findUserByProviderId(oAuthUserInfo.providerId())
@@ -110,8 +110,8 @@ public class UserAuthService implements
      * @throws UserException 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 때 발생합니다.
      */
     @Override
-    @Transactional(readOnly = true)
-    public UserInfo loginAndGetUserInfo(String email, String password) {
+    @Transactional
+    public UserInfo checkLoginPossibleAndGetUserInfo(String email, String password) {
         Instant startTime = LoggerFactory.service().logStart("IsLoginPossibleUseCase", "입력받은 이메일, 비밀번호로 로그인이 가능한지 여부를 확인하는 서비스 시작 email=" + email);
 
         User user = userQueryPort.findUserByEmail(email)

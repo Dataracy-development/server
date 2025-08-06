@@ -8,6 +8,7 @@ import com.dataracy.modules.like.application.port.out.validate.ValidateLikePort;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -30,6 +31,7 @@ public class LikeQueryService implements
      * @return 사용자가 해당 대상을 좋아요했다면 true, 아니면 false
      */
     @Override
+    @Transactional(readOnly = true)
     public boolean hasUserLikedTarget(Long userId, Long targetId, TargetType targetType) {
         Instant startTime = LoggerFactory.service().logStart("ValidateTargetLikeUseCase", "사용자가 특정 대상에 좋아요를 눌렀는지 여부 반환 서비스 시작 targetType=" + targetType + ", targetId=" + targetId);
         boolean hasUser = validateLikePort.isLikedTarget(userId, targetId, targetType);
@@ -46,6 +48,7 @@ public class LikeQueryService implements
      * @return 사용자가 좋아요를 누른 대상 ID 목록
      */
     @Override
+    @Transactional(readOnly = true)
     public List<Long> findLikedTargetIds(Long userId, List<Long> targetIds, TargetType targetType) {
         Instant startTime = LoggerFactory.service().logStart("FindTargetIdsUseCase", "사용자가 지정한 대상 타입과 대상 ID 목록 중에서 좋아요를 누른 대상의 ID 목록을 반환 서비스 시작 targetType=" + targetType);
         List<Long> likedTargetIds = readLikePort.findLikedTargetIds(userId, targetIds, targetType);

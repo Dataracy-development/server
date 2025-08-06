@@ -62,13 +62,13 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
      * @return 리프레시 토큰과 만료 시간이 포함된 응답 객체
      */
     @Override
-    @Transactional
     @DistributedLock(
             key = "'lock:signup:email:' + #requestDto.email()",
             waitTime = 500L,
             leaseTime = 1500L,
             retry = 2
     )
+    @Transactional
     public RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("SelfSignUpUseCase", "자체 회원가입 서비스 시작 nickname=" + requestDto.nickname());
 
@@ -131,13 +131,13 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
      * @return 발급된 리프레시 토큰과 만료 시간 정보
      */
     @Override
-    @Transactional
     @DistributedLock(
             key = "'lock:signup:nickname:' + #requestDto.nickname()",
             waitTime = 500L,
             leaseTime = 1500L,
             retry = 2
     )
+    @Transactional
     public RefreshTokenResponse signUpOAuth(String registerToken, OnboardingRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("OAuthSignUpUseCase", "소셜 회원가입 서비스 시작 nickname=" + requestDto.nickname());
 
