@@ -47,6 +47,8 @@ String getProviderIdFromRegisterToken(String token);
  */
 String getEmailFromRegisterToken(String token);
 
+    String getEmailFromResetToken(String token);
+
     /**
  * 회원가입용 토큰의 만료 시간을 반환합니다.
  *
@@ -78,4 +80,5 @@ long getRefreshTokenExpirationTime();
  * @return 메인 리디렉션에 사용되는 기본 URL
  */
 String getRedirectBaseUrl();
+
 }

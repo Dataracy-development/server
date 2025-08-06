@@ -7,6 +7,7 @@ import com.dataracy.modules.user.domain.enums.RoleType;
  */
 public interface JwtGeneratorPort {
     String generateRegisterToken(String provider, String providerId, String email);
+    String generateResetPasswordToken(String email);
     String generateAccessToken(Long userId, RoleType role);
     String generateRefreshToken(Long userId, RoleType role);
 }

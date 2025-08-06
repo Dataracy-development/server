@@ -49,4 +49,6 @@ String getProviderIdFromRegisterToken(String token);
  * @return 추출된 이메일 주소
  */
 String getEmailFromRegisterToken(String token);
+
+    String getEmailFromResetToken(String token);
 }

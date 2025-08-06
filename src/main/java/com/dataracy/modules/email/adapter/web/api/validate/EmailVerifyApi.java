@@ -38,7 +38,7 @@ public interface EmailVerifyApi {
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping(value = "/verify", consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<SuccessResponse<Void>> verifyCode(
+    ResponseEntity<SuccessResponse<String>> verifyCode(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     description = "이메일 인증 코드를 확인한다.",

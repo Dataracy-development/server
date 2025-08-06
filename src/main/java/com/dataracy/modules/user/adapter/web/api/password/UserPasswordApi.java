@@ -4,6 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.user.adapter.web.request.password.ChangePasswordWebRequest;
 import com.dataracy.modules.user.adapter.web.request.password.ConfirmPasswordWebRequest;
+import com.dataracy.modules.user.adapter.web.request.password.ResetPasswordWithTokenWebRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -55,6 +56,27 @@ public interface UserPasswordApi {
             )
             @Validated @RequestBody
             ChangePasswordWebRequest webRequest
+    );
+
+    @Operation(
+            summary = "비밀번호를 재설정한다.",
+            description = "비로그인 시 비밀번호를 재설정하는 API입니다.",
+            security = {}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 재설정에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class))),
+    })
+    @PutMapping(value = "/user/password/reset")
+    ResponseEntity<SuccessResponse<Void>> resetPasswordWithToken(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "변경할 비밀번호",
+                    content = @Content(schema = @Schema(implementation = ResetPasswordWithTokenWebRequest.class))
+            )
+            @Validated @RequestBody
+            ResetPasswordWithTokenWebRequest webRequest
     );
 
     /**

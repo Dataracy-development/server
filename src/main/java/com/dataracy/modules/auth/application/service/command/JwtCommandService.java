@@ -38,6 +38,19 @@ public class JwtCommandService implements JwtGenerateUseCase {
         }
     }
 
+    @Override
+    public String generateResetPasswordToken(String email) {
+        try {
+            Instant startTime = LoggerFactory.service().logStart("JwtGenerateUseCase", "패스워드 재설정 토큰 발급 서비스 시작 email=" + email);
+            String resetPasswordToken = jwtGeneratorPort.generateResetPasswordToken(email);
+            LoggerFactory.service().logSuccess("JwtGenerateUseCase", "패스워드 재설정 토큰 발급 서비스 성공 email=" + email, startTime);
+            return resetPasswordToken;
+        } catch (Exception e){
+            LoggerFactory.service().logException("JwtGenerateUseCase", "[토큰 발급] 패스워드 재설정 토큰 발급에 실패했습니다. email=" + email, e);
+            throw new AuthException(AuthErrorStatus.FAILED_GENERATE_RESET_PASSWORD_TOKEN);
+        }
+    }
+
     /**
      * 주어진 사용자 ID와 역할을 기반으로 어세스 토큰을 생성합니다.
      *

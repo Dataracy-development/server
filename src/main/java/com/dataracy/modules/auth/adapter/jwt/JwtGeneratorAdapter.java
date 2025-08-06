@@ -17,6 +17,17 @@ public class JwtGeneratorAdapter implements JwtGeneratorPort {
     private final JwtUtilInternal jwtUtilInternal;
     private final JwtProperties jwtProperties;
 
+    @Override
+    public String generateResetPasswordToken(
+            String email
+    ) {
+        return jwtUtilInternal.generateToken(
+                Map.of("email", email),
+                jwtProperties.getRegisterTokenExpirationTime(),
+                TokenType.RESET_PASSWORD
+        );
+    }
+
     /**
      * 온보딩 추가 정보 입력에서 사용하는 레지스터 토큰 발급
      *

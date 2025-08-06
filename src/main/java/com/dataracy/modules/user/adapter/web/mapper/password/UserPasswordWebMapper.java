@@ -2,8 +2,10 @@ package com.dataracy.modules.user.adapter.web.mapper.password;
 
 import com.dataracy.modules.user.adapter.web.request.password.ChangePasswordWebRequest;
 import com.dataracy.modules.user.adapter.web.request.password.ConfirmPasswordWebRequest;
+import com.dataracy.modules.user.adapter.web.request.password.ResetPasswordWithTokenWebRequest;
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.password.ConfirmPasswordRequest;
+import com.dataracy.modules.user.application.dto.request.password.ResetPasswordWithTokenRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +18,14 @@ public class UserPasswordWebMapper {
      */
     public ChangePasswordRequest toApplicationDto(ChangePasswordWebRequest webRequest) {
         return new ChangePasswordRequest(
+                webRequest.password(),
+                webRequest.passwordConfirm()
+        );
+    }
+
+    public ResetPasswordWithTokenRequest toApplicationDto(ResetPasswordWithTokenWebRequest webRequest) {
+        return new ResetPasswordWithTokenRequest(
+                webRequest.resetPasswordToken(),
                 webRequest.password(),
                 webRequest.passwordConfirm()
         );
