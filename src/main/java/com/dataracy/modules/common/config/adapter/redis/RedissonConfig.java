@@ -1,4 +1,4 @@
-package com.dataracy.modules.common.config;
+package com.dataracy.modules.common.config.adapter.redis;
 
 import jakarta.annotation.PostConstruct;
 import org.redisson.Redisson;

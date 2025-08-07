@@ -1,5 +1,6 @@
 package com.dataracy.modules.common.util;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.application.dto.response.metadata.ParsedMetadataResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,9 +35,11 @@ public class FileParsingUtil {
      */
     public static ParsedMetadataResponse parse(InputStream inputStream, String filename) throws IOException {
         if (inputStream == null) {
+            LoggerFactory.common().logWarning("메타데이터 파싱", "입력 스트림은 null일 수 없습니다.");
             throw new IllegalArgumentException("입력 스트림은 null일 수 없습니다.");
         }
         if (filename == null || filename.trim().isEmpty()) {
+            LoggerFactory.common().logWarning("메타데이터 파싱", "파일명은 null이거나 비어있을 수 없습니다.");
             throw new IllegalArgumentException("파일명은 null이거나 비어있을 수 없습니다.");
         }
 
@@ -48,6 +51,8 @@ public class FileParsingUtil {
         } else if (lowerName.endsWith(".json")) {
             return parseJson(inputStream);
         }
+
+        LoggerFactory.common().logError("메타데이터 파싱", "지원하지 않는 파일 형식: " + filename);
         throw new IllegalArgumentException("지원하지 않는 파일 형식: " + filename);
     }
 
@@ -173,6 +178,7 @@ public class FileParsingUtil {
         JsonNode node = mapper.readTree(is);
 
         if (!node.isArray()) {
+            LoggerFactory.common().logWarning("메타데이터 파싱", "[parseJson] 루트 노드는 배열이어야 합니다.");
             throw new IllegalArgumentException("루트 노드는 배열이어야 합니다.");
         }
 
@@ -243,7 +249,6 @@ public class FileParsingUtil {
             try {
                 return Charset.forName(encoding);
             } catch (Exception e) {
-                // 지원하지 않는 인코딩인 경우 기본값 사용
                 return StandardCharsets.UTF_8;
             }
         }

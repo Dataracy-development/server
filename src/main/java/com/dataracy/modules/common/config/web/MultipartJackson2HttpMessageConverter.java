@@ -1,4 +1,4 @@
-package com.dataracy.modules.common.config.converter;
+package com.dataracy.modules.common.config.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;

@@ -3,16 +3,15 @@ package com.dataracy.modules.common.support.aop;
 import com.dataracy.modules.comment.application.port.in.query.extractor.FindUserIdByCommentIdUseCase;
 import com.dataracy.modules.comment.domain.exception.CommentException;
 import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.annotation.AuthorizationCommentEdit;
 import com.dataracy.modules.security.handler.SecurityContextProvider;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
 @Aspect
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CommentAuthPolicyAspect {
@@ -34,7 +33,7 @@ public class CommentAuthPolicyAspect {
         Long ownerId = findUserIdByCommentIdUseCase.findUserIdByCommentId(commentId);
 
         if (!ownerId.equals(authenticatedUserId)) {
-            log.error("댓글 작성자만 수정 및 삭제 할 수 있습니다.");
+            LoggerFactory.common().logWarning("Comment", "댓글 작성자만 수정 및 삭제 할 수 있습니다.");
             throw new CommentException(CommentErrorStatus.NOT_MATCH_CREATOR);
         }
     }

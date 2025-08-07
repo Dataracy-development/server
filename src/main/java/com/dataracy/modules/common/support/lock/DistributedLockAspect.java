@@ -1,11 +1,11 @@
 package com.dataracy.modules.common.support.lock;
 
 import com.dataracy.modules.common.exception.BusinessException;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import io.lettuce.core.dynamic.support.ParameterNameDiscoverer;
 import io.lettuce.core.dynamic.support.StandardReflectionParameterNameDiscoverer;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -25,17 +25,17 @@ import java.lang.reflect.Method;
  * 시간과 시도 횟수를 설정할 수 있다.
  */
 @Aspect
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DistributedLockAspect {
+
     private final RedissonDistributedLockManager lockManager;
     private final SpelExpressionParser parser = new SpelExpressionParser();
     private final ParameterNameDiscoverer nameDiscoverer = new StandardReflectionParameterNameDiscoverer();
 
     @PostConstruct
     public void init() {
-        log.info("[AOP] DistributedLockAspect 초기화 완료");
+        LoggerFactory.lock().logInfo("[AOP] DistributedLockAspect 초기화 완료");
     }
 
     @Around("@annotation(lock)")
@@ -44,7 +44,7 @@ public class DistributedLockAspect {
         Method method = signature.getMethod();
         String key = generateLockKey(method, joinPoint.getArgs(), lock);
 
-        log.info("[AOP] 분산 락 진입 - method: {}, key: {}", method.getName(), key);
+        LoggerFactory.lock().logInfo("[AOP] 분산 락 진입 - method: {} key: {}", method.getName(), key);
 
         try {
             return lockManager.execute(
@@ -53,7 +53,7 @@ public class DistributedLockAspect {
                     lock.leaseTime(),
                     lock.retry(),
                     () -> {
-                        log.info("[AOP] 분산 락 진입 - method: {}, key: {}", method.getName(), key);
+                        LoggerFactory.lock().logInfo("[AOP] 분산 락 내부 실행 - method: {} key: {}", method.getName(), key);
                         try {
                             return proceedSafely(joinPoint);
                         } catch (Throwable e) {
@@ -61,12 +61,10 @@ public class DistributedLockAspect {
                         }
                     });
         } catch (BusinessException e) {
-            // 커스텀 비즈니스 예외는 그대로 전파
-            log.warn("[AOP] 비즈니스 예외 - key: {}, message: {}", key, e.getMessage());
+            LoggerFactory.lock().logWarn("[AOP] 비즈니스 예외 - key: {} message: {}", key, e.getMessage());
             throw e;
         } catch (Throwable e) {
-            // 시스템 예외만 RuntimeException으로 감싸기
-            log.error("[AOP] 락 내부 로직 예외 - key: {}", key, e);
+            LoggerFactory.lock().logError("[AOP] 락 내부 로직 예외 - key: {}", key, e);
             throw new RuntimeException(e);
         }
     }
@@ -75,7 +73,6 @@ public class DistributedLockAspect {
         return joinPoint.proceed();
     }
 
-    // 키 생성
     private String generateLockKey(Method method, Object[] args, DistributedLock lock) {
         String[] paramNames = nameDiscoverer.getParameterNames(method);
         EvaluationContext context = new StandardEvaluationContext();
@@ -93,7 +90,7 @@ public class DistributedLockAspect {
             }
             return key;
         } catch (SpelEvaluationException e) {
-            log.error("[AOP] SpEL 키 파싱 오류 - expression: {}", lock.key(), e);
+            LoggerFactory.lock().logError("[AOP] SpEL 키 파싱 오류 - expression: {}", lock.key(), e);
             throw new LockAcquisitionException("분산 락 키 SpEL 파싱 실패: " + lock.key(), e);
         }
     }

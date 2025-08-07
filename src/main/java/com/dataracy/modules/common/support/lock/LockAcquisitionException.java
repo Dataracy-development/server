@@ -8,4 +8,3 @@ public class LockAcquisitionException extends RuntimeException {
         super(message, cause);
     }
 }
-

@@ -1,4 +1,4 @@
-package com.dataracy.modules.common.config;
+package com.dataracy.modules.common.config.adapter.kafka;
 
 import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.producer.ProducerConfig;

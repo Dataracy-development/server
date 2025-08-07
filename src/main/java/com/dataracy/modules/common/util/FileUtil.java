@@ -1,6 +1,7 @@
 package com.dataracy.modules.common.util;
 
 import com.dataracy.modules.common.exception.CommonException;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,7 @@ public final class FileUtil {
      */
     private static void checkFileSize(MultipartFile file, long maxSize, CommonErrorStatus errorStatus) {
         if (file.getSize() > maxSize) {
+            LoggerFactory.common().logError("파일 용량 검증", errorStatus.getMessage());
             throw new CommonException(errorStatus);
         }
     }
@@ -28,6 +30,7 @@ public final class FileUtil {
      */
     private static void checkFileType(String originalFilename, String regex, CommonErrorStatus errorStatus) {
         if (!originalFilename.matches(regex)) {
+            LoggerFactory.common().logError("파일 형식 검증", errorStatus.getMessage());
             throw new CommonException(errorStatus);
         }
     }

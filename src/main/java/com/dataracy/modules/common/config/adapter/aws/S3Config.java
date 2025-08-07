@@ -1,20 +1,19 @@
-package com.dataracy.modules.common.config;
+package com.dataracy.modules.common.config.adapter.aws;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class AwsS3Config {
+public class S3Config {
 
     @Value("${cloud.aws.credentials.access-key:}")
     private String accessKey;
@@ -42,7 +41,7 @@ public class AwsS3Config {
                     .withCredentials(new AWSStaticCredentialsProvider(credentials))
                     .build();
             } catch (Exception e) {
-                log.error("AWS S3 클라이언트 생성 실패", e);
+                LoggerFactory.common().logError("AWS S3 클라이언트 생성", "AWS S3 클라이언트를 생성할 수 없습니다.");
                 throw new IllegalStateException("AWS S3 클라이언트를 생성할 수 없습니다.", e);
             }
     }
