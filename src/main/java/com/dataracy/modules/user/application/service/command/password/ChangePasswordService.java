@@ -62,6 +62,16 @@ public class ChangePasswordService implements ChangePasswordUseCase {
         LoggerFactory.service().logSuccess(USE_CASE, "비밀번호 변경 서비스 성공 userId=" + userId, startTime);
     }
 
+    /**
+     * 비밀번호 재설정 토큰을 사용하여 사용자의 비밀번호를 재설정합니다.
+     *
+     * 비밀번호 재설정 토큰의 유효성을 검증하고, 토큰에서 이메일을 추출하여 해당 사용자를 조회합니다.
+     * 사용자가 존재하지 않거나 비밀번호 변경이 불가능한 경우 예외가 발생합니다.
+     * 새 비밀번호와 비밀번호 확인 값이 일치하는지 검증한 후, 비밀번호를 암호화하여 저장합니다.
+     *
+     * @param requestDto 비밀번호 재설정 요청 정보가 담긴 객체
+     * @throws UserException 사용자를 찾을 수 없거나 비밀번호 변경이 불가능한 경우 발생
+     */
     @Override
     @Transactional
     public void resetPassword(ResetPasswordWithTokenRequest requestDto) {

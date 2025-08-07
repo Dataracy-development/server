@@ -22,6 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "Auth - Dev", description = "인증 관련 개발용 API")
 @RequestMapping("/api/v1/auth")
 public interface AuthDevApi {
+    /**
+     * 개발 환경에서 이메일과 비밀번호를 사용하여 자체 로그인을 수행합니다.
+     *
+     * @param webRequest 로그인에 필요한 이메일과 비밀번호 정보를 포함한 요청 객체
+     * @return 로그인 성공 시 리프레시 토큰 정보를 포함한 성공 응답
+     */
     @Operation(
             summary = "개발용 자체 로그인",
             description = "개발용 자체 로그인(email, password)을 통해 로그인합니다.",

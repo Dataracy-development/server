@@ -32,6 +32,7 @@ public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
      * @param projectId 조회수를 증가시킬 프로젝트의 ID
      * @param viewerId  조회를 시도한 뷰어의 고유 식별자
      * @param targetType 조회 대상의 유형(예: 프로젝트, 게시글 등)
+     * @throws CommonException 레디스 연결 실패 또는 데이터 접근 예외 발생 시
      */
     @Override
     public void increaseViewCount(Long projectId, String viewerId, String targetType) {
@@ -54,7 +55,7 @@ public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
     }
 
     /**
-     * 지정된 프로젝트와 대상 유형에 대한 현재 조회수를 Redis에서 조회합니다.
+     * 지정된 프로젝트와 대상 유형에 대한 현재 조회수를 반환합니다.
      *
      * @param projectId 조회수를 조회할 프로젝트의 ID
      * @param targetType 조회 대상의 유형
@@ -99,11 +100,12 @@ public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
 //            LoggerFactory.redis().logError("viewCount:" + targetType + ":*", "네트워크 오류로 데이터 접근에 실패했습니다.", e);
 //            throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
 //        }
-/**
+/****
      * 지정된 타겟 타입에 해당하는 모든 조회수 Redis 키의 집합을 반환합니다.
      *
      * @param targetType 조회수 키를 검색할 타겟 타입
      * @return 해당 타겟 타입의 모든 조회수 Redis 키 집합
+     * @throws CommonException 레디스 연결 실패 또는 데이터 접근 예외 발생 시
      */
 
     @Override
@@ -138,6 +140,7 @@ public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
      *
      * @param targetId 조회수 카운트를 삭제할 대상의 ID
      * @param targetType 조회수 카운트를 삭제할 대상의 타입
+     * @throws CommonException Redis 연결 실패 또는 데이터 접근 예외 발생 시 예외가 발생합니다.
      */
     @Override
     public void clearViewCount(Long targetId, String targetType) {

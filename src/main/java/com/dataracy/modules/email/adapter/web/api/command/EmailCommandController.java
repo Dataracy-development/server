@@ -23,9 +23,10 @@ public class EmailCommandController implements EmailCommandApi {
     private final SendEmailUseCase sendEmailUseCase;
 
     /**
-     * 회원가입 이메일 인증 코드 발송
-     * @param webRequest 인증 코드 발송 웹 요청 DTO
-     * @return 인증 코드 발송 성공
+     * 이메일 인증 코드 발송 요청을 처리하고, 요청 목적에 따라 성공 응답을 반환합니다.
+     *
+     * @param webRequest 이메일 인증 코드 발송 요청 정보가 담긴 DTO
+     * @return 인증 코드 발송 성공 상태를 포함한 HTTP 200 OK 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> sendCode(

@@ -41,10 +41,12 @@ public class EmailRedisAdapter implements CacheEmailPort {
     }
 
     /**
-     * 이메일 인증코드 저장
-     * @param email 이메일
-     * @param code 인증 코드
-     * @param verificationType 이메일 인증 코드 전송 목적 타입
+     * 이메일 인증 코드를 Redis에 저장합니다.
+     *
+     * @param email 인증 코드를 저장할 대상 이메일 주소
+     * @param code 저장할 인증 코드 값
+     * @param verificationType 인증 코드의 용도(예: 회원가입, 비밀번호 찾기 등)
+     * @throws CommonException Redis 연결 실패 또는 데이터 접근 오류 발생 시 예외가 발생합니다.
      */
     @Override
     public void saveCode(String email, String code, EmailVerificationType verificationType) {
@@ -62,10 +64,13 @@ public class EmailRedisAdapter implements CacheEmailPort {
     }
 
     /**
-     * 레디스에 저장된 인증코드를 추출한다.
-     * @param email 이메일
-     * @param code 클라이언트로부터 받은 입력 코드
-     * @param verificationType 이메일 인증 코드 전송 목적 타입
+     * 지정한 이메일과 인증 타입에 해당하는 인증 코드를 레디스에서 조회하여 반환합니다.
+     *
+     * @param email 인증 코드를 조회할 이메일 주소
+     * @param code 클라이언트가 입력한 인증 코드(비교 목적이 아닌 조회용)
+     * @param verificationType 인증 코드의 용도(예: 회원가입, 비밀번호 찾기 등)
+     * @return 레디스에 저장된 인증 코드 값, 존재하지 않으면 null 반환
+     * @throws CommonException 레디스 연결 실패 또는 데이터 접근 오류 발생 시
      */
     @Override
     public String verifyCode(String email, String code, EmailVerificationType verificationType) {
@@ -85,10 +90,10 @@ public class EmailRedisAdapter implements CacheEmailPort {
     }
 
     /**
-     * 해당 이메일 인증 코드를 레디스에서 삭제한다.
+     * 지정한 이메일과 인증 유형에 해당하는 인증 코드를 레디스에서 삭제합니다.
      *
-     * @param email 이메일
-     * @param verificationType 이메일 인증 코드 전송 목적 타입
+     * @param email 인증 코드를 삭제할 이메일 주소
+     * @param verificationType 인증 코드의 용도(예: 회원가입, 비밀번호 찾기 등)
      */
     @Override
     public void deleteCode(String email, EmailVerificationType verificationType) {

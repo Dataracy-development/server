@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommandCommentWebMapper {
     /**
-     * 웹 요청 객체를 애플리케이션 계층의 댓글 업로드 요청 DTO로 변환합니다.
+     * 댓글 업로드 웹 요청 객체를 애플리케이션 계층의 DTO로 변환합니다.
      *
-     * @param webRequest 댓글 업로드 웹 요청 객체
-     * @return 변환된 댓글 업로드 요청 DTO
+     * @param webRequest 업로드할 댓글의 내용과 부모 댓글 ID를 포함한 웹 요청 객체
+     * @return 댓글 업로드 요청을 나타내는 DTO
      */
     public UploadCommentRequest toApplicationDto(UploadCommentWebRequest webRequest) {
         return new UploadCommentRequest(
@@ -22,10 +22,10 @@ public class CommandCommentWebMapper {
     }
 
     /**
-     * 웹 요청 객체를 애플리케이션 계층의 댓글 수정 요청 DTO로 변환합니다.
+     * 댓글 수정 웹 요청 객체를 애플리케이션 계층의 댓글 수정 요청 DTO로 변환합니다.
      *
-     * @param webRequest 댓글 수정 웹 요청 객체
-     * @return 댓글 수정 요청 DTO
+     * @param webRequest 수정할 댓글의 내용을 포함한 웹 요청 객체
+     * @return 댓글 수정 요청을 나타내는 DTO
      */
     public ModifyCommentRequest toApplicationDto(ModifyCommentWebRequest webRequest) {
         return new ModifyCommentRequest(

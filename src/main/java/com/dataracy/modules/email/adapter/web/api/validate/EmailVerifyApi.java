@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/email")
 public interface EmailVerifyApi {
     /**
-     * 이메일 인증코드의 일치여부를 검증한다.
-     * @param webRequest 이메일, 인증코드
-     * @return 검증 성공
+     * 이메일과 인증코드를 받아 인증코드의 일치 여부를 검증한다.
+     *
+     * @param webRequest 이메일과 인증코드 정보를 포함한 요청 객체
+     * @return 인증 성공 시 성공 메시지를 포함한 응답
      */
     @Operation(
             summary = "이메일 인증코드 일치여부 확인",

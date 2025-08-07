@@ -30,12 +30,12 @@ public class CommentCommandController implements CommentCommandApi {
     private final DeleteCommentUseCase deleteCommentUseCase;
 
     /**
-     * 프로젝트에 새로운 댓글을 등록합니다.
+     * 프로젝트에 새로운 댓글을 등록하는 REST API 엔드포인트입니다.
      *
      * @param projectId 댓글이 등록될 프로젝트의 ID
      * @param userId 댓글을 작성하는 사용자의 ID
-     * @param webRequest 댓글 등록 요청 정보
-     * @return 댓글 등록 성공 시 201 Created 상태와 함께 성공 응답을 반환합니다.
+     * @param webRequest 댓글 등록 요청 데이터
+     * @return 댓글 등록 성공 시 201 Created 상태와 성공 응답을 반환합니다.
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> uploadComment(Long projectId, Long userId, UploadCommentWebRequest webRequest) {
@@ -52,13 +52,13 @@ public class CommentCommandController implements CommentCommandApi {
                 .body(SuccessResponse.of(CommentSuccessStatus.CREATED_COMMENT));
     }
 
-    /**
-     * 프로젝트 내 특정 댓글을 수정합니다.
+    /****
+     * 프로젝트 내 특정 댓글을 수정하는 REST API 엔드포인트입니다.
      *
-     * @param projectId 댓글이 속한 프로젝트의 ID
-     * @param commentId 수정할 댓글의 ID
-     * @param webRequest 댓글 수정 요청 데이터
-     * @return 댓글 수정 성공 상태를 포함한 HTTP 200 OK 응답
+     * @param projectId 댓글이 속한 프로젝트의 ID입니다.
+     * @param commentId 수정할 댓글의 ID입니다.
+     * @param webRequest 댓글 수정 요청 정보를 담고 있습니다.
+     * @return 댓글 수정 성공 상태와 함께 HTTP 200 OK 응답을 반환합니다.
      */
     @Override
     @AuthorizationCommentEdit
@@ -77,7 +77,7 @@ public class CommentCommandController implements CommentCommandApi {
     }
 
     /**
-     * 프로젝트 내에서 지정된 댓글을 삭제합니다.
+     * 프로젝트 내 특정 댓글을 삭제하는 REST API 엔드포인트입니다.
      *
      * @param projectId 댓글이 속한 프로젝트의 ID
      * @param commentId 삭제할 댓글의 ID

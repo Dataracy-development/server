@@ -17,12 +17,13 @@ public class ExtractCommentService implements FindUserIdByCommentIdUseCase {
     private final ExtractCommentPort extractCommentPort;
 
     /**
-     * 주어진 댓글 ID에 해당하는 사용자의 ID를 반환합니다.
+     * 주어진 댓글 ID로 해당 댓글 작성자의 사용자 ID를 반환합니다.
      *
-     * 댓글이 존재하지 않을 경우 {@code CommentException}이 발생합니다.
+     * 댓글이 존재하지 않으면 {@code CommentException}이 발생합니다.
      *
      * @param commentId 조회할 댓글의 ID
      * @return 댓글 작성자의 사용자 ID
+     * @throws CommentException 댓글이 존재하지 않을 경우 발생
      */
     @Override
     @Transactional(readOnly = true)

@@ -17,11 +17,11 @@ public class ValidateCommentService implements ValidateCommentUseCase {
     private final ValidateCommentPort validateCommentPort;
 
     /**
-     * 주어진 댓글 ID에 해당하는 댓글이 존재하는지 검증합니다.
+     * 주어진 댓글 ID에 해당하는 댓글의 존재 여부를 검증합니다.
      *
-     * 댓글이 존재하지 않을 경우 {@code CommentException}이 발생합니다.
+     * 댓글이 존재하지 않을 경우 {@code CommentException}을 발생시킵니다.
      *
-     * @param commentId 검증할 댓글의 ID
+     * @param commentId 존재 여부를 확인할 댓글의 ID
      * @throws CommentException 댓글이 존재하지 않을 때 발생
      */
     @Override

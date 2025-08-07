@@ -13,7 +13,13 @@ public interface JwtGenerateUseCase {
  */
     String generateRegisterToken(String provider, String providerId, String email);
 
-    String generateResetPasswordToken(String email);
+    /**
+ * 사용자의 비밀번호 재설정을 위한 JWT 토큰을 생성합니다.
+ *
+ * @param email 비밀번호를 재설정할 사용자의 이메일 주소
+ * @return 비밀번호 재설정에 사용할 JWT 토큰 문자열
+ */
+String generateResetPasswordToken(String email);
 
     /**
  * 주어진 사용자 ID와 역할을 기반으로 액세스 토큰을 생성합니다.
