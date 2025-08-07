@@ -22,6 +22,11 @@ public class CommonLogger extends BaseLogger {
     public void logEnd(String topic, String message) {
         debug("[{}] message={}", topic, message);
     }
+
+    public void logWarning(String topic, String message) {
+        error("[{} 경고] message={}", topic, message);
+    }
+
     /**
      * 지정된 주제와 메시지를 포함하여 오류 로그를 기록합니다.
      *

@@ -6,11 +6,11 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import com.dataracy.modules.filestorage.domain.exception.S3UploadException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AwsS3FileStorageAdapter implements FileStoragePort {
@@ -48,6 +47,7 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
         try (InputStream inputStream = file.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(bucket, key, inputStream, metadata));
         } catch (IOException e) {
+            LoggerFactory.common().logError("S3 업로드 실패", "S3 업로드 중 에러가 발생하였습니다.", e);
             throw new S3UploadException("S3 업로드 실패", e);
         }
 
@@ -71,7 +71,7 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
                 return new ByteArrayInputStream(s3InputStream.readAllBytes());
             }
         } catch (Exception e) {
-            log.error("S3 파일 다운로드 실패 - url: {}", fileUrl, e);
+            LoggerFactory.common().logError("S3 파일 다운로드 실패", "S3 파일 다운로드 중 에러가 발생하였습니다.", e);
             throw new S3UploadException("S3 다운로드 실패", e);
         }
     }
@@ -87,8 +87,8 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
         try {
             amazonS3.deleteObject(bucket, key);
         } catch (Exception e) {
-            log.warn("S3 파일 삭제 실패: {}", fileUrl, e);
-            // 비즈니스 요구사항에 따라 예외를 던질지 결정
+            LoggerFactory.common().logError("S3 파일 삭제 실패", "S3 파일 삭제 중 에러가 발생하였습니다.", e);
+            throw new S3UploadException("S3 파일 삭제 실패", e);
         }
     }
 
@@ -115,10 +115,12 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
         try {
             String hostPrefix = amazonS3.getUrl(bucket, "").toString(); // 끝에 "/" 있음
             if (!url.startsWith(hostPrefix)) {
+                LoggerFactory.common().logWarning("S3 URL 형식 오류", "S3 URL 형식이 잘못되었습니다.");
                 throw new S3UploadException("S3 URL 형식이 잘못되었습니다: " + url);
             }
             return url.substring(hostPrefix.length());
         } catch (Exception e) {
+            LoggerFactory.common().logError("S3 URL 추출 실패", "S3 URL 추출 중 에러가 발생하였습니다.");
             throw new S3UploadException("S3 URL 추출 실패: " + url, e);
         }
     }
@@ -133,6 +135,7 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
     @PostConstruct
     public void validateProperties() {
         if (bucket.isBlank()) {
+            LoggerFactory.common().logWarning("AWS S3 버켓 설정 오류", "AWS S3 버켓 설정이 올바르지 않습니다.");
             throw new S3UploadException("AWS S3 버켓 설정이 올바르지 않습니다.");
         }
     }
@@ -158,6 +161,7 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
             URL preSignedUrl = amazonS3.generatePresignedUrl(request);
             return preSignedUrl.toString();
         } catch (Exception e) {
+            LoggerFactory.common().logError("S3 PreSigned URL 생성 실패", "S3 PreSigned URL 생성 중 에러가 발생하였습니다.");
             throw new S3UploadException("S3 PreSigned URL 생성 실패", e);
         }
     }

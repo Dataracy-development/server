@@ -3,7 +3,7 @@ package com.dataracy.modules.project.application.service.command;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.dataset.application.port.in.validate.ValidateDataUseCase;
-import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
+import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
@@ -60,7 +60,7 @@ public class ProjectCommandService implements
     private final ExtractProjectOwnerPort extractProjectOwnerPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
-    private final FileUploadUseCase fileUploadUseCase;
+    private final FileCommandUseCase fileCommandUseCase;
 
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
@@ -209,7 +209,7 @@ public class ProjectCommandService implements
         if (file != null && !file.isEmpty()) {
             try {
                 String key = S3KeyGeneratorUtil.generateKey("project", projectId, file.getOriginalFilename());
-                String fileUrl = fileUploadUseCase.uploadFile(key, file);
+                String fileUrl = fileCommandUseCase.uploadFile(key, file);
                 updateProjectFilePort.updateFile(projectId, fileUrl);
             } catch (Exception e) {
                 LoggerFactory.service().logException("UploadProjectRequest", "프로젝트 파일 업로드 실패. projectId=" + projectId, e);

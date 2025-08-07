@@ -1,5 +1,7 @@
 package com.dataracy.modules.filestorage.support.util;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+
 import java.util.UUID;
 
 public final class S3KeyGeneratorUtil {
@@ -19,7 +21,8 @@ public final class S3KeyGeneratorUtil {
      */
     public static String generateKey(String domain, Long entityId, String originalFilename) {
         if (domain == null || entityId == null || originalFilename == null) {
-            throw new IllegalArgumentException("파라미터는 null일 수 없습니다");
+            LoggerFactory.common().logWarning("s3에 저장할 파일의 키 발급", "파라미터는 null일 수 없습니다.");
+            throw new IllegalArgumentException("파라미터는 null일 수 없습니다.");
         }
         String extension = getExtension(originalFilename);
         String uuid = UUID.randomUUID().toString();
@@ -38,6 +41,7 @@ public final class S3KeyGeneratorUtil {
      */
     public static String generateThumbnailKey(String domain, Long entityId, String originalFilename) {
         if (domain == null || entityId == null || originalFilename == null) {
+            LoggerFactory.common().logWarning("썸네일 파일의 고유 키 발급", "파라미터는 null일 수 없습니다.");
             throw new IllegalArgumentException("파라미터는 null일 수 없습니다");
         }
         String extension = getExtension(originalFilename);

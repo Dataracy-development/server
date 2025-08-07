@@ -1,5 +1,6 @@
 package com.dataracy.modules.filestorage.adapter.thumbnail;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,16 +24,19 @@ public class ThumbnailGenerator {
      */
     public ByteArrayOutputStream createThumbnail(MultipartFile originalImage, int width, int height) {
         if (originalImage == null || originalImage.isEmpty()) {
-            throw new IllegalArgumentException("원본 이미지가 필요합니다");
+            LoggerFactory.common().logWarning("원본 이미지 누락", "원본 이미지가 필요합니다.");
+            throw new IllegalArgumentException("원본 이미지가 필요합니다.");
         }
         if (width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("너비와 높이는 양수여야 합니다");
+            LoggerFactory.common().logWarning("너비와 높이 범위", "너비와 높이는 양수여야 합니다.");
+            throw new IllegalArgumentException("너비와 높이는 양수여야 합니다.");
         }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try (InputStream is = originalImage.getInputStream()) {
             Thumbnails.of(is).size(width, height).outputFormat("jpg").toOutputStream(os);
             return os;
         } catch (IOException e) {
+            LoggerFactory.common().logError("썸네일 생성 실패", "썸네일 생성 중 에러가 발생하였습니다.");
             throw new RuntimeException("썸네일 생성 실패", e);
         }
     }

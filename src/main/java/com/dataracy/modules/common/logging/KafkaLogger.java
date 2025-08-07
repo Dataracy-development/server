@@ -24,6 +24,10 @@ public class KafkaLogger extends BaseLogger {
         debug("[Kafka 수신] topic={} message={}", topic, message);
     }
 
+    public void logWarning(String topic, String message) {
+        warn("[Kafka 경고] topic={} message={}", topic, message);
+    }
+
     /**
      * Kafka 작업 중 발생한 예외를 토픽과 메시지 정보와 함께 에러 로그로 기록합니다.
      *
