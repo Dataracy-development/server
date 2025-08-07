@@ -2,7 +2,7 @@ package com.dataracy.modules.filestorage.application.port.in;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public interface FileUploadUseCase {
+public interface FileCommandUseCase {
     /**
  * 지정된 디렉터리에 파일을 업로드하고 업로드된 파일의 URL 또는 식별자를 반환합니다.
  *

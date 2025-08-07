@@ -1,12 +1,11 @@
 package com.dataracy.modules.filestorage.adapter.kafka.producer;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class FileDeleteProducer {
@@ -23,16 +22,16 @@ public class FileDeleteProducer {
      */
     public void sendDeleteEvent(String fileUrl) {
         if (fileUrl == null || fileUrl.trim().isEmpty()) {
-            log.warn("파일 URL이 비어있어 삭제 이벤트를 전송하지 않습니다.");
+            LoggerFactory.kafka().logWarning("fileDeleteTopic", "파일 삭제 이벤트 발송을 위한 파일 url이 존재하지 않습니다.");
             return;
         }
         kafkaTemplate.send(fileDeleteTopic, fileUrl)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
-                        log.error("파일 삭제 이벤트 전송 실패: {}", fileUrl, ex);
+                        LoggerFactory.kafka().logError(fileDeleteTopic, "파일 삭제 이벤트 발송 처리 실패", ex);
                         // 필요시 재시도 로직 또는 예외 처리
                     } else {
-                        log.info("파일 삭제 이벤트 전송 완료: {}", fileUrl);
+                        LoggerFactory.kafka().logProduce(fileDeleteTopic, "파일 삭제 이벤트 발송됨");
                     }
                 });
     }

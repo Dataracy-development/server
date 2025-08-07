@@ -1,11 +1,14 @@
 package com.dataracy.modules.filestorage.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonSuccessStatus;
 import com.dataracy.modules.filestorage.application.port.in.DownloadFileUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +25,15 @@ public class FileDownloadController implements FileApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<String>> getPreSignedUrl(String s3Url, int expirationSeconds) {
-        String url = downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
+        Instant startTime = LoggerFactory.api().logRequest("[GetPreSignedUrl] 파일 다운로드를 위한 프리사인드 URL 반환 API 요청 시작");
+        String url;
+
+        try {
+            url = downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
+        } finally {
+            LoggerFactory.api().logResponse("[GetPreSignedUrl] 파일 다운로드를 위한 preSigned URL 반환 API 응답 완료", startTime);
+        }
+
         return ResponseEntity.ok(SuccessResponse.of(CommonSuccessStatus.OK, url));
     }
 }

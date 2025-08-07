@@ -1,21 +1,20 @@
 package com.dataracy.modules.filestorage.application.service.command;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.filestorage.adapter.s3.CustomMultipartFile;
 import com.dataracy.modules.filestorage.adapter.thumbnail.ThumbnailGenerator;
-import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
+import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
+import java.time.Instant;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
-public class FileUploadService implements FileUploadUseCase {
+public class FileCommandService implements FileCommandUseCase {
 
     private final FileStoragePort fileStoragePort;
     private final ThumbnailGenerator thumbnailGenerator;
@@ -29,8 +28,9 @@ public class FileUploadService implements FileUploadUseCase {
      */
     @Override
     public String uploadFile(String directory, MultipartFile file) {
+        Instant startTime = LoggerFactory.service().logStart("FileCommandUseCase", "파일 업로드 서비스 시작");
         String url = fileStoragePort.upload(directory, file);
-        log.info("[파일 업로드 성공] url={}", url);
+        LoggerFactory.service().logSuccess("FileCommandUseCase", "파일 업로드 서비스 종료", startTime);
         return url;
     }
 
@@ -41,8 +41,9 @@ public class FileUploadService implements FileUploadUseCase {
      */
     @Override
     public void deleteFile(String fileUrl) {
+        Instant startTime = LoggerFactory.service().logStart("FileCommandUseCase", "파일 삭제 서비스 시작");
         fileStoragePort.delete(fileUrl);
-        log.info("[파일 삭제 성공] {}", fileUrl);
+        LoggerFactory.service().logSuccess("FileCommandUseCase", "파일 삭제 서비스 종료", startTime);
     }
 
     /**
@@ -55,8 +56,10 @@ public class FileUploadService implements FileUploadUseCase {
      */
     @Override
     public String replaceFile(String directory, MultipartFile newFile, String oldFileUrl) {
+        Instant startTime = LoggerFactory.service().logStart("FileCommandUseCase", "파일 교체 서비스 시작");
         String newUrl = uploadFile(directory, newFile);
         deleteFile(oldFileUrl);
+        LoggerFactory.service().logSuccess("FileCommandUseCase", "파일 교체 서비스 종료", startTime);
         return newUrl;
     }
 
@@ -71,10 +74,11 @@ public class FileUploadService implements FileUploadUseCase {
      * @return 업로드된 썸네일 파일의 URL
      */
     public String createThumbnail(MultipartFile original, String directory, String fileName, int width, int height) {
+        Instant startTime = LoggerFactory.service().logStart("FileCommandUseCase", "썸네일 이미지 생성 서비스 시작");
         ByteArrayOutputStream baos = thumbnailGenerator.createThumbnail(original, width, height);
         MultipartFile thumb = convertToMultipartFile(baos, fileName, original.getContentType());
         String thumbUrl = fileStoragePort.upload(directory, thumb);
-        log.info("[썸네일 업로드 성공] {}", thumbUrl);
+        LoggerFactory.service().logSuccess("FileCommandUseCase", "썸네일 이미지 생성 서비스 종료", startTime);
         return thumbUrl;
     }
 

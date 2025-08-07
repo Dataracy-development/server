@@ -17,7 +17,7 @@ import com.dataracy.modules.dataset.application.port.out.validate.CheckDataExist
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
-import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
+import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.ValidateDataTypeUseCase;
@@ -49,7 +49,7 @@ public class DataCommandService implements
     private final CheckDataExistsByIdPort checkDataExistsByIdPort;
     private final FindDataPort findDataPort;
 
-    private final FileUploadUseCase fileUploadUseCase;
+    private final FileCommandUseCase fileCommandUseCase;
     private final ValidateTopicUseCase validateTopicUseCase;
     private final ValidateDataSourceUseCase validateDataSourceUseCase;
     private final ValidateDataTypeUseCase validateDataTypeUseCase;
@@ -210,7 +210,7 @@ public class DataCommandService implements
         if (dataFile != null && !dataFile.isEmpty()) {
             try {
                 String key = S3KeyGeneratorUtil.generateKey("data", dataId, dataFile.getOriginalFilename());
-                String dataFileUrl = fileUploadUseCase.uploadFile(key, dataFile);
+                String dataFileUrl = fileCommandUseCase.uploadFile(key, dataFile);
                 updateDataFilePort.updateDataFile(dataId, dataFileUrl);
             } catch (Exception e) {
                 LoggerFactory.service().logException(useCase, "데이터셋 파일 업로드 실패. fileName=" + dataFile.getOriginalFilename(), e);
@@ -232,7 +232,7 @@ public class DataCommandService implements
         if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
             try {
                 String key = S3KeyGeneratorUtil.generateThumbnailKey("data", dataId, thumbnailFile.getOriginalFilename());
-                String thumbnailFileUrl = fileUploadUseCase.uploadFile(key, thumbnailFile);
+                String thumbnailFileUrl = fileCommandUseCase.uploadFile(key, thumbnailFile);
                 updateThumbnailFilePort.updateThumbnailFile(dataId, thumbnailFileUrl);
             } catch (Exception e) {
                 LoggerFactory.service().logException(useCase, "데이터셋 썸네일 파일 업로드 실패. fileName=" + thumbnailFile.getOriginalFilename(), e);
