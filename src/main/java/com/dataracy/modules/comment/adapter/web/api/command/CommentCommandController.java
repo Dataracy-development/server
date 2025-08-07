@@ -23,8 +23,6 @@ import java.time.Instant;
 @RestController
 @RequiredArgsConstructor
 public class CommentCommandController implements CommentCommandApi {
-    private final ExtractHeaderUtil extractHeaderUtil;
-
     private final CommandCommentWebMapper commandCommentWebMapper;
 
     private final UploadCommentUseCase uploadCommentUseCase;

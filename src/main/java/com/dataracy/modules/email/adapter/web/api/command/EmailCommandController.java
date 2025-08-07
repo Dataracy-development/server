@@ -32,7 +32,7 @@ public class EmailCommandController implements EmailCommandApi {
             SendEmailWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[SendCode] 이메일 인증 코드 발송 API 요청 시작");
-        EmailVerificationType verificationType;
+        EmailVerificationType verificationType = null;
 
         try {
             SendEmailRequest requestDto = emailCommandWebMapper.toApplicationDto(webRequest);
