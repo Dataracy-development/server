@@ -18,8 +18,9 @@ public class JacksonModuleConfig {
      */
     @PostConstruct
     public void registerModules() {
-        if (!objectMapper.getRegisteredModuleIds().contains(JavaTimeModule.class.getName())) {
-            objectMapper.registerModule(new JavaTimeModule());
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+        if (!objectMapper.getRegisteredModuleIds().contains(javaTimeModule.getModuleName())) {
+            objectMapper.registerModule(javaTimeModule);
         }
     }
 }
