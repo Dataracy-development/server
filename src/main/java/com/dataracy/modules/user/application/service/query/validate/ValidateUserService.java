@@ -59,6 +59,12 @@ public class ValidateUserService implements DuplicateNicknameUseCase, DuplicateE
                             LoggerFactory.service().logWarning("DuplicateEmailUseCase", "[중복 이메일 검증] 이메일 " + email + "은 자체 로그인으로 가입된 계정입니다.");
                             throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
                         }
+                        default -> {
+                            LoggerFactory.service().logWarning(
+                                    "DuplicateEmailUseCase",
+                                    "[중복 이메일 검증] 이메일 " + email + "은 알 수 없는 ProviderType(" + providerType + ")으로 가입된 계정입니다.");
+                            throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
+                        }
                     }
                 });
         LoggerFactory.service().logSuccess("DuplicateEmailUseCase", "이메일 중복 여부 확인 서비스 성공 email=" + email, startTime);
