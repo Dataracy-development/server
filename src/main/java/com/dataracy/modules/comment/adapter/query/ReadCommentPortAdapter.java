@@ -48,7 +48,7 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
                 .fetchOne();
 
         Optional<Comment> comment = Optional.ofNullable(CommentEntityMapper.toDomain(entity));
-        LoggerFactory.query().logQueryEnd("CommentEntity", "[findCommentById] 주어진 ID에 해당하는 댓글 조회 시작. commentId=" + commentId, startTime);
+        LoggerFactory.query().logQueryEnd("CommentEntity", "[findCommentById] 주어진 ID에 해당하는 댓글 조회 종료. commentId=" + commentId, startTime);
         return comment;
     }
 
@@ -100,7 +100,7 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
                         .fetchOne()
         ).orElse(0L);
 
-        LoggerFactory.query().logQueryEnd("CommentEntity", "[findComments] 댓글당 답글 수를 포함한 댓글 목록 조회 시작. projectId=" + projectId, startTime);
+        LoggerFactory.query().logQueryEnd("CommentEntity", "[findComments] 댓글당 답글 수를 포함한 댓글 목록 조회 종료. projectId=" + projectId, startTime);
         return new PageImpl<>(contents, pageable, total);
     }
 
@@ -143,7 +143,7 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
                         .fetchOne()
         ).orElse(0L);
 
-        LoggerFactory.query().logQueryEnd("CommentEntity", "[findReplyComments] 해당 댓글에 대한 답글 목록 조회 시작. projectId=" + projectId + ", commentId=" + commentId, startTime);
+        LoggerFactory.query().logQueryEnd("CommentEntity", "[findReplyComments] 해당 댓글에 대한 답글 목록 조회 종료. projectId=" + projectId + ", commentId=" + commentId, startTime);
         return new PageImpl<>(contents, pageable, total);
     }
 }
