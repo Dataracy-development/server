@@ -1,4 +1,4 @@
-package com.dataracy.modules.common.config;
+package com.dataracy.modules.common.config.adapter.kafka;
 
 import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -47,7 +47,7 @@ public class KafkaLongConsumerConfig {
     public ConsumerFactory<String, Long> longConsumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class); // ✅ 수정됨
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "long-consumer-group");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");

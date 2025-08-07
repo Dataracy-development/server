@@ -1,4 +1,4 @@
-package com.dataracy.modules.common.config;
+package com.dataracy.modules.common.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

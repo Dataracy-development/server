@@ -1,4 +1,4 @@
-package com.dataracy.modules.common.config;
+package com.dataracy.modules.common.config.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
