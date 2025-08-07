@@ -24,7 +24,7 @@ public class CommonLogger extends BaseLogger {
     }
 
     public void logWarning(String topic, String message) {
-        error("[{} 경고] message={}", topic, message);
+        warn("[{} 경고] message={}", topic, message);
     }
 
     /**
