@@ -33,10 +33,10 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     /**
-     * Spring Security의 보안 필터 체인을 설정하여 HTTP 요청에 대한 인증 및 인가 정책을 적용합니다.
+     * Spring Security의 보안 필터 체인을 구성하여 HTTP 요청에 대한 인증 및 인가 정책을 적용합니다.
      *
-     * CORS 활성화, CSRF 및 기본 인증 방식 비활성화, 세션 무상태화, OAuth2 로그인 처리, JWT 인증 필터 추가, 엔드포인트별 접근 권한 제어를 포함합니다.
-     * 인증 없이 접근 가능한 엔드포인트(예: Swagger, 정적 리소스, 회원가입, 프로젝트/데이터셋/파일 조회 등)와 사용자 또는 관리자 권한이 필요한 엔드포인트를 구분하여 접근을 제한합니다.
+     * CORS 설정, CSRF 및 기본 인증 방식 비활성화, 세션 무상태화, OAuth2 로그인 처리, JWT 인증 필터 추가, 엔드포인트별 접근 권한 제어를 포함합니다.
+     * 인증 없이 접근 가능한 엔드포인트(예: Swagger, 정적 리소스, 회원가입, 비밀번호 재설정, 프로젝트/데이터셋/파일 조회 등)와 사용자 또는 관리자 권한이 필요한 엔드포인트를 구분하여 접근을 제한합니다.
      *
      * @return 구성된 SecurityFilterChain 인스턴스
      */

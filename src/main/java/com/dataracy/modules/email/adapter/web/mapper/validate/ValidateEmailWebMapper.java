@@ -9,7 +9,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ValidateEmailWebMapper {
-    // 이메일 인증 코드 검증 웹 요청 DTO -> 이메일 인증 코드 검증 도메인 요청 DTO
+    /**
+     * 이메일 인증 코드 검증 웹 요청 DTO를 도메인 요청 DTO로 변환합니다.
+     *
+     * @param webRequest 이메일 인증 코드 검증에 필요한 웹 요청 DTO
+     * @return 변환된 도메인 계층의 이메일 인증 코드 검증 요청 DTO
+     */
     public VerifyCodeRequest toApplicationDto(VerifyCodeWebRequest webRequest) {
         return new VerifyCodeRequest(webRequest.email(), webRequest.code(), webRequest.purpose());
     }

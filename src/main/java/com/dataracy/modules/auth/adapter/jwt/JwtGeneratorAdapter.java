@@ -17,6 +17,12 @@ public class JwtGeneratorAdapter implements JwtGeneratorPort {
     private final JwtUtilInternal jwtUtilInternal;
     private final JwtProperties jwtProperties;
 
+    /**
+     * 주어진 이메일을 포함하는 비밀번호 재설정용 JWT 토큰을 생성합니다.
+     *
+     * @param email 비밀번호 재설정 대상 사용자의 이메일 주소
+     * @return 비밀번호 재설정에 사용할 JWT 토큰 문자열
+     */
     @Override
     public String generateResetPasswordToken(
             String email

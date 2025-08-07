@@ -23,7 +23,12 @@ public class EmailCommandService implements SendEmailUseCase {
     private final CacheEmailPort cacheEmailPort;
 
     // 이메일 인증 방식이 여러개이므로 명시적으로 설정
-    // Qualifier는 생성자 주입시점에 반영되지 않아 필드위에 바로 사용할 수 없다.
+    /**
+     * EmailCommandService의 인스턴스를 생성하고 이메일 전송 및 캐시 포트 의존성을 주입합니다.
+     *
+     * @param sendEmailPort 이메일 전송을 담당하는 포트 구현체
+     * @param cacheEmailPort 이메일 인증 코드 캐싱을 담당하는 포트 구현체
+     */
     public EmailCommandService(
             @Qualifier("sendEmailSendGridAdapter") SendEmailPort sendEmailPort,
             CacheEmailPort cacheEmailPort
@@ -33,8 +38,11 @@ public class EmailCommandService implements SendEmailUseCase {
     }
 
     /**
-     * 이메일 인증 코드 전송
-     * @param email 이메일
+     * 지정된 이메일 주소로 인증 코드를 생성하여 전송하고, 해당 코드를 캐시에 저장합니다.
+     *
+     * @param email 인증 코드를 받을 이메일 주소
+     * @param type 인증 코드 전송 목적을 나타내는 타입
+     * @throws EmailException 이메일 전송에 실패한 경우 발생
      */
     @Override
     public void sendEmailVerificationCode(String email, EmailVerificationType type) {

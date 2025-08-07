@@ -32,13 +32,13 @@ public class CommentReadController implements CommentReadApi {
     private final FindReplyCommentListUseCase findReplyCommentListUseCase;
 
     /**
-     * 프로젝트의 댓글 목록을 페이지네이션하여 조회합니다.
+     * 지정한 프로젝트의 댓글 목록을 페이지네이션하여 조회합니다.
      *
-     * 인증된 사용자가 요청한 경우 해당 사용자 정보를 반영하여 댓글 목록을 반환합니다.
+     * 인증된 사용자의 정보를 반영하여 프로젝트에 속한 댓글 목록을 반환합니다.
      *
      * @param request 인증된 사용자 정보를 추출할 HTTP 요청 객체
      * @param projectId 댓글을 조회할 프로젝트의 ID
-     * @param pageable 페이지네이션 정보
+     * @param pageable 페이지네이션 및 정렬 정보
      * @return 조회된 댓글 목록과 성공 상태가 포함된 HTTP 200 응답
      */
     @Override
@@ -60,11 +60,11 @@ public class CommentReadController implements CommentReadApi {
     }
 
     /**
-     * 프로젝트 내 특정 댓글에 대한 답글 목록을 페이지 단위로 조회합니다.
+     * 프로젝트 내 특정 댓글에 대한 답글 목록을 페이지 단위로 조회하여 반환합니다.
      *
-     * 인증된 사용자의 정보를 기반으로, 지정된 프로젝트와 댓글에 속한 답글들을 페이징하여 반환합니다.
+     * 인증된 사용자의 정보를 기반으로, 지정된 프로젝트와 댓글에 속한 답글들을 페이징 처리하여 제공합니다.
      *
-     * @param request JWT 토큰에서 사용자 정보를 추출하는 HTTP 요청 객체
+     * @param request 인증된 사용자 정보를 포함하는 HTTP 요청 객체
      * @param projectId 답글을 조회할 프로젝트의 식별자
      * @param commentId 답글을 조회할 대상 댓글의 식별자
      * @param pageable 페이징 및 정렬 정보

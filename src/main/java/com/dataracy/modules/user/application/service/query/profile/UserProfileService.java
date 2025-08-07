@@ -87,7 +87,7 @@ public class UserProfileService implements
     }
 
     /**
-     * 주어진 사용자 ID 목록에 대해 각 사용자의 작성자 레벨 ID를 조회하여 반환합니다.
+     * 여러 사용자 ID에 대해 각 사용자의 작성자 레벨 ID를 조회하여 반환합니다.
      *
      * @param userIds 작성자 레벨 ID를 조회할 사용자 ID 목록
      * @return 사용자 ID와 해당 작성자 레벨 ID의 매핑. 입력이 null이거나 비어 있으면 빈 맵을 반환합니다.

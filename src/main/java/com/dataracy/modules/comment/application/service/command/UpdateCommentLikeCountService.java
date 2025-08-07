@@ -19,9 +19,9 @@ public class UpdateCommentLikeCountService implements
     private final UpdateCommentLikePort updateCommentLikePort;
 
     /**
-     * 지정된 댓글의 좋아요 수를 1 감소시킵니다.
+     * 지정된 댓글의 좋아요 개수를 1 감소시킵니다.
      *
-     * @param commentId 좋아요 수를 감소시킬 댓글의 ID
+     * @param commentId 좋아요 개수를 감소시킬 대상 댓글의 ID
      */
     @Override
     @Transactional

@@ -24,10 +24,10 @@ public class CommentCommandDbAdapter implements
     private final CommentJpaRepository commentJpaRepository;
 
     /**
-     * 댓글 도메인 객체를 JPA 엔티티로 변환하여 데이터베이스에 저장한 후, 저장된 댓글 도메인 객체를 반환합니다.
+     * 댓글 도메인 객체를 데이터베이스에 저장하고, 저장된 댓글 도메인 객체를 반환합니다.
      *
      * @param comment 저장할 댓글 도메인 객체
-     * @return 저장된 댓글 도메인 객체
+     * @return 데이터베이스에 저장된 댓글 도메인 객체
      */
     @Override
     public Comment uploadComment(Comment comment) {
@@ -38,11 +38,11 @@ public class CommentCommandDbAdapter implements
     }
 
     /**
-     * 주어진 프로젝트 ID와 댓글 ID에 해당하는 댓글의 내용을 수정합니다.
+     * 지정한 프로젝트 ID와 댓글 ID에 해당하는 댓글의 내용을 요청 정보로 수정합니다.
      *
-     * 댓글이 존재하지 않거나 프로젝트 ID가 일치하지 않을 경우 CommentException이 발생합니다.
+     * 댓글이 존재하지 않거나 프로젝트 ID와 댓글의 프로젝트 ID가 일치하지 않을 경우 CommentException이 발생합니다.
      *
-     * @param projectId 수정할 댓글이 속한 프로젝트의 ID
+     * @param projectId 댓글이 속한 프로젝트의 ID
      * @param commentId 수정할 댓글의 ID
      * @param requestDto 수정할 내용을 담은 요청 객체
      * @throws CommentException 댓글이 존재하지 않거나 프로젝트와 댓글이 일치하지 않을 때 발생
@@ -64,11 +64,11 @@ public class CommentCommandDbAdapter implements
     }
 
     /**
-     * 주어진 프로젝트 ID와 댓글 ID를 기반으로 댓글을 삭제합니다.
+     * 프로젝트 ID와 댓글 ID를 기준으로 해당 댓글을 삭제합니다.
      *
-     * 프로젝트와 댓글의 연관성이 일치하지 않거나 댓글이 존재하지 않을 경우 예외가 발생합니다.
+     * 댓글이 존재하지 않거나, 댓글이 지정된 프로젝트에 속하지 않을 경우 `CommentException`이 발생합니다.
      *
-     * @param projectId 삭제할 댓글이 속한 프로젝트의 ID
+     * @param projectId 댓글이 속한 프로젝트의 ID
      * @param commentId 삭제할 댓글의 ID
      * @throws CommentException 댓글이 존재하지 않거나 프로젝트와 댓글의 연관성이 일치하지 않을 때 발생합니다.
      */

@@ -9,7 +9,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class EmailCommandWebMapper {
-    // 이메일 인증 웹 요청 DTO -> 이메일 인증 도메인 요청 DTO
+    /**
+     * 이메일 인증 웹 요청 DTO를 도메인 계층의 이메일 인증 요청 DTO로 변환합니다.
+     *
+     * @param webRequest 변환할 이메일 인증 웹 요청 DTO
+     * @return 변환된 이메일 인증 도메인 요청 DTO
+     */
     public SendEmailRequest toApplicationDto(SendEmailWebRequest webRequest) {
         return new SendEmailRequest(webRequest.email(), webRequest.purpose());
     }
