@@ -30,7 +30,7 @@ public class ExtractCommentService implements FindUserIdByCommentIdUseCase {
         Instant startTime = LoggerFactory.service().logStart("FindUserIdByCommentIdUseCase", "댓글 ID에 해당하는 사용자의 ID 반환 서비스 시작 commentId=" + commentId);
         Long userId = extractCommentPort.findUserIdByCommentId(commentId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindUserIdByCommentIdUseCase", "답글 작성에 대하여 해당 부모 댓글이 존재하지 않습니다. commentId=" + commentId);
+                    LoggerFactory.service().logWarning("FindUserIdByCommentIdUseCase", "해당 댓글이 존재하지 않습니다. commentId=" + commentId);
                     return new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT);
                 });
         LoggerFactory.service().logSuccess("FindUserIdByCommentIdUseCase", "댓글 ID에 해당하는 사용자의 ID 반환 서비스 종료 commentId=" + commentId, startTime);

@@ -125,7 +125,7 @@ public class ReadCommentService implements
             );
         });
 
-        LoggerFactory.service().logSuccess("FindReplyCommentListUseCase", "프로젝트의 댓글에 대한 답글 목록 조회 서비스 종료 projectId=" + projectId + ", commentId" + commentId, startTime);
+        LoggerFactory.service().logSuccess("FindReplyCommentListUseCase", "프로젝트의 댓글에 대한 답글 목록 조회 서비스 종료 projectId=" + projectId + ", commentId=" + commentId, startTime);
         return findReplyCommentResponses;
     }
 

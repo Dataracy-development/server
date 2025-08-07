@@ -34,6 +34,6 @@ public class ValidateCommentService implements ValidateCommentUseCase {
             LoggerFactory.service().logWarning("ValidateCommentUseCase", "해당 댓글이 존재하지 않습니다. commentId=" + commentId);
             throw new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT);
         }
-        LoggerFactory.service().logSuccess("ValidateCommentUseCase", "주어진 댓글 ID에 해당하는 댓글 존재 서비스 종료 commentId" + commentId, startTime);
+        LoggerFactory.service().logSuccess("ValidateCommentUseCase", "주어진 댓글 ID에 해당하는 댓글 존재 서비스 종료 commentId=" + commentId, startTime);
     }
 }
