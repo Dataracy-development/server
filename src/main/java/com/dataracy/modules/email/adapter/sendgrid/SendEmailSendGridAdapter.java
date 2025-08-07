@@ -33,12 +33,12 @@ public class SendEmailSendGridAdapter implements SendEmailPort {
     private String sender;
 
     /**
-     * 지정된 이메일 주소로 SendGrid를 통해 이메일을 전송합니다.
+     * SendGrid를 이용해 지정된 이메일 주소로 제목과 본문이 포함된 이메일을 전송합니다.
      *
      * @param email   수신자 이메일 주소
      * @param subject 이메일 제목
      * @param body    이메일 본문 내용
-     * @throws RuntimeException SendGrid 전송 실패 또는 IO 예외 발생 시
+     * @throws RuntimeException SendGrid API 호출 실패 또는 IO 예외 발생 시
      */
     @Override
     public void send(String email, String subject, String body) {

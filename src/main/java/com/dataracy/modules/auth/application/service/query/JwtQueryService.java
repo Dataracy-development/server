@@ -71,7 +71,7 @@ public class JwtQueryService implements JwtValidateUseCase {
     }
 
     /**
-     * Register Token에서 이메일을 추출하여 반환합니다.
+     * 레지스터 토큰에서 이메일 주소를 추출하여 반환합니다.
      *
      * @param token 이메일을 추출할 레지스터 토큰 문자열
      * @return 추출된 이메일 주소
@@ -84,6 +84,12 @@ public class JwtQueryService implements JwtValidateUseCase {
         return email;
     }
 
+    /**
+     * 비밀번호 재설정 토큰에서 이메일을 추출하여 반환합니다.
+     *
+     * @param token 비밀번호 재설정용 JWT 토큰
+     * @return 토큰에 포함된 이메일 주소
+     */
     @Override
     public String getEmailFromResetToken(String token) {
         Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "비밀번호 재설정 토큰으로부터 이메일 추출 서비스 시작");

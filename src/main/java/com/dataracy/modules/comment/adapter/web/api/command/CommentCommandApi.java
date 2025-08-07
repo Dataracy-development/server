@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.*;
 public interface CommentCommandApi {
 
     /**
-     * 지정한 프로젝트에 피드백 댓글을 작성합니다.
+     * 지정한 프로젝트에 피드백 댓글을 생성합니다.
      *
-     * @param projectId 피드백 댓글을 작성할 프로젝트의 ID (1 이상)
-     * @param webRequest 댓글 내용 및 (선택적으로) 부모 댓글 ID를 포함한 요청 본문
+     * @param projectId 댓글을 작성할 프로젝트의 ID (1 이상)
+     * @param webRequest 댓글 내용과 (선택적으로) 부모 댓글 ID를 포함한 요청 본문
      * @return 댓글 작성 성공 시 201 상태 코드와 함께 반환되는 성공 응답
      */
     @Operation(
@@ -64,10 +64,10 @@ public interface CommentCommandApi {
     /**
      * 프로젝트의 특정 댓글을 수정합니다.
      *
-     * @param projectId  댓글이 속한 프로젝트의 ID (1 이상)
-     * @param commentId  수정할 댓글의 ID (1 이상)
+     * @param projectId 댓글이 속한 프로젝트의 ID (1 이상)
+     * @param commentId 수정할 댓글의 ID (1 이상)
      * @param webRequest 수정할 댓글 내용을 포함한 요청 객체
-     * @return 댓글 수정 성공 여부를 나타내는 응답
+     * @return 댓글 수정 성공 시 성공 응답을 반환합니다.
      */
     @Operation(
             summary = "댓글을 수정한다.",
@@ -101,11 +101,11 @@ public interface CommentCommandApi {
     );
 
     /**
-     * 지정된 프로젝트의 피드백 댓글을 삭제합니다.
+     * 프로젝트의 특정 피드백 댓글을 삭제합니다.
      *
-     * @param projectId 피드백 댓글이 속한 프로젝트의 ID (1 이상)
+     * @param projectId 댓글이 속한 프로젝트의 ID (1 이상)
      * @param commentId 삭제할 피드백 댓글의 ID (1 이상)
-     * @return 삭제 성공 여부를 나타내는 성공 응답
+     * @return 삭제가 성공적으로 처리된 경우의 성공 응답
      */
     @Operation(
             summary = "피드백 댓글을 삭제한다.",

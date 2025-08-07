@@ -21,6 +21,13 @@ public class SendEmailSesAdapter implements SendEmailPort {
     @Value("${aws.ses.sender:}")
     private String sender;
 
+    /**
+     * 지정된 이메일 주소로 AWS SES를 통해 이메일을 발송합니다.
+     *
+     * @param email 수신자 이메일 주소
+     * @param title 이메일 제목
+     * @param body  이메일 본문 내용
+     */
     @Override
     public void send(String email, String title, String body) {
         LoggerFactory.common().logStart("이메일 전송 시도 시작", "to=" + email + ", title=" + title);
@@ -36,6 +43,11 @@ public class SendEmailSesAdapter implements SendEmailPort {
         LoggerFactory.common().logEnd("이메일 전송 시도 완료", "to=" + email + ", title=" + title);
     }
 
+    /**
+     * SES 발신자 이메일 설정이 비어 있는지 검증합니다.
+     *
+     * 발신자 이메일이 비어 있으면 {@code IllegalStateException}을 발생시킵니다.
+     */
     @PostConstruct
     public void validateProperties() {
         if (sender.isBlank()) {

@@ -16,11 +16,11 @@ public interface ReadCommentPort {
  */
 Optional<Comment> findCommentById(Long commentId);
     /**
- * 지정된 프로젝트의 모든 댓글과 각 댓글의 답글 수를 페이지 단위로 조회합니다.
+ * 지정된 프로젝트의 모든 댓글과 각 댓글의 답글 개수를 페이지 단위로 반환합니다.
  *
- * @param projectId 댓글을 조회할 프로젝트의 고유 식별자
- * @param pageable 페이지네이션 정보를 담은 객체
- * @return 댓글 및 답글 수 정보를 포함하는 페이지 결과
+ * @param projectId 댓글을 조회할 프로젝트의 식별자
+ * @param pageable 페이지네이션 정보
+ * @return 각 댓글과 해당 답글 개수를 포함하는 페이지 결과
  */
 Page<FindCommentWithReplyCountResponse> findComments(Long projectId, Pageable pageable);
     /**
