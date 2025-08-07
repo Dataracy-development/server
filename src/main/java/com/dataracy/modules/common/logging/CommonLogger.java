@@ -4,11 +4,11 @@ import com.dataracy.modules.common.logging.support.BaseLogger;
 
 public class CommonLogger extends BaseLogger {
     public void logStart(String topic, String message) {
-        error("[{}] message={}", topic, message);
+        debug("[{}] message={}", topic, message);
     }
 
     public void logEnd(String topic, String message) {
-        error("[{}] message={}", topic, message);
+        debug("[{}] message={}", topic, message);
     }
     /**
      * 지정된 주제와 메시지를 포함하여 오류 로그를 기록합니다.

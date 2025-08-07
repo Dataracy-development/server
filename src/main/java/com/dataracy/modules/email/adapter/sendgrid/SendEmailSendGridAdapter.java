@@ -46,7 +46,6 @@ public class SendEmailSendGridAdapter implements SendEmailPort {
         Email to = new Email(email);
         Content content = new Content("text/plain", body);
         Mail mail = new Mail();
-        LoggerFactory.common().logStart("이메일 전송 시도 시작", "to=" + to + ", subject=" + subject + ",content=" + content);
 
         mail.setFrom(from);
         mail.setSubject(subject);

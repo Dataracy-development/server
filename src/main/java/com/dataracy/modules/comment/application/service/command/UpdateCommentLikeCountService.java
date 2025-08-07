@@ -26,9 +26,9 @@ public class UpdateCommentLikeCountService implements
     @Override
     @Transactional
     public void decreaseLikeCount(Long commentId) {
-        Instant startTime = LoggerFactory.service().logStart("IncreaseLikeCountUseCase", "댓글 좋아요 취소 서비스 시작 commentId=" + commentId);
+        Instant startTime = LoggerFactory.service().logStart("DecreaseLikeCountUseCase", "댓글 좋아요 취소 서비스 시작 commentId=" + commentId);
         updateCommentLikePort.decreaseLikeCount(commentId);
-        LoggerFactory.service().logSuccess("IncreaseLikeCountUseCase", "댓글 좋아요 취소 서비스 종료 commentId=" + commentId, startTime);
+        LoggerFactory.service().logSuccess("DecreaseLikeCountUseCase", "댓글 좋아요 취소 서비스 종료 commentId=" + commentId, startTime);
     }
 
     /**
@@ -39,8 +39,8 @@ public class UpdateCommentLikeCountService implements
     @Override
     @Transactional
     public void increaseLikeCount(Long commentId) {
-        Instant startTime = LoggerFactory.service().logStart("DecreaseLikeCountUseCase", "댓글 좋아요 서비스 시작 commentId=" + commentId);
+        Instant startTime = LoggerFactory.service().logStart("IncreaseLikeCountUseCase", "댓글 좋아요 서비스 시작 commentId=" + commentId);
         updateCommentLikePort.increaseLikeCount(commentId);
-        LoggerFactory.service().logSuccess("DecreaseLikeCountUseCase", "댓글 좋아요 서비스 종료 commentId=" + commentId, startTime);
+        LoggerFactory.service().logSuccess("IncreaseLikeCountUseCase", "댓글 좋아요 서비스 종료 commentId=" + commentId, startTime);
     }
 }
