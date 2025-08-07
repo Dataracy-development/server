@@ -23,9 +23,10 @@ public class EmailVerifyController implements EmailVerifyApi {
     private final VerifyEmailUseCase verifyEmailUseCase;
 
     /**
-     * 이메일 인증 코드 검증
-     * @param webRequest 인증 코드 검증 웹 요청 DTO
-     * @return 검증 성공
+     * 이메일 인증 코드의 유효성을 검증하고, 성공 시 비밀번호 재설정 토큰을 반환합니다.
+     *
+     * @param webRequest 이메일 인증 코드 검증 요청 정보
+     * @return 인증 코드 검증 성공 상태와 비밀번호 재설정 토큰이 포함된 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<String>> verifyCode(VerifyCodeWebRequest webRequest) {

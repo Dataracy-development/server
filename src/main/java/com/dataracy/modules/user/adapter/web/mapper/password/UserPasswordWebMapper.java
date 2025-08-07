@@ -23,6 +23,12 @@ public class UserPasswordWebMapper {
         );
     }
 
+    /**
+     * ResetPasswordWithTokenWebRequest 객체를 ResetPasswordWithTokenRequest 애플리케이션 DTO로 변환합니다.
+     *
+     * @param webRequest 비밀번호 재설정 토큰, 비밀번호, 비밀번호 확인 값을 포함한 웹 요청 DTO
+     * @return 변환된 ResetPasswordWithTokenRequest 애플리케이션 DTO
+     */
     public ResetPasswordWithTokenRequest toApplicationDto(ResetPasswordWithTokenWebRequest webRequest) {
         return new ResetPasswordWithTokenRequest(
                 webRequest.resetPasswordToken(),

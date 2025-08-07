@@ -70,10 +70,10 @@ public class JwtValidatorAdapter implements JwtValidatorPort {
     }
 
     /**
-     * Token에서 Role 추출
+     * JWT 액세스 토큰에서 사용자 역할(RoleType)을 추출합니다.
      *
-     * @param token Access Token 문자열
-     * @return 사용자 Role(String)
+     * @param token JWT 액세스 토큰 문자열
+     * @return 토큰에 포함된 사용자 역할(RoleType)
      */
     @Override
     public RoleType getRoleFromToken(String token) {
@@ -81,6 +81,12 @@ public class JwtValidatorAdapter implements JwtValidatorPort {
         return RoleType.of(role);
     }
 
+    /**
+     * 리셋 토큰에서 이메일 주소를 추출하여 반환합니다.
+     *
+     * @param token 이메일 정보를 포함한 리셋 JWT 토큰
+     * @return 토큰에 포함된 이메일 주소
+     */
     @Override
     public String getEmailFromResetToken(String token) {
         return jwtUtilInternal.parseToken(token).get("email", String.class);

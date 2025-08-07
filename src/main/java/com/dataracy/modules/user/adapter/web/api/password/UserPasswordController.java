@@ -52,6 +52,12 @@ public class UserPasswordController implements UserPasswordApi {
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CHANGE_PASSWORD));
     }
 
+    /**
+     * 비밀번호 재설정 토큰을 사용하여 사용자의 비밀번호를 재설정합니다.
+     *
+     * @param webRequest 비밀번호 재설정 토큰과 새 비밀번호 정보를 포함한 요청 객체
+     * @return 비밀번호 재설정 성공 상태를 포함한 HTTP 200 OK 응답
+     */
     @Override
     public ResponseEntity<SuccessResponse<Void>> resetPasswordWithToken(
             ResetPasswordWithTokenWebRequest webRequest

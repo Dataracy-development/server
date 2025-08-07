@@ -47,9 +47,9 @@ public class ProjectCountService implements
     }
 
     /**
-     * 프로젝트의 댓글 수를 1 증가시킵니다.
+     * 지정한 프로젝트의 댓글 수를 1 증가시킵니다.
      *
-     * 데이터베이스와 Elasticsearch 인덱스의 댓글 수를 동기화하여 모두 1씩 증가시킵니다.
+     * 데이터베이스와 Elasticsearch 인덱스의 댓글 수를 모두 1씩 증가시켜 동기화합니다.
      *
      * @param projectId 댓글 수를 증가시킬 프로젝트의 ID
      */
@@ -72,7 +72,7 @@ public class ProjectCountService implements
     /**
      * 프로젝트의 댓글 수를 1 감소시키고, 데이터베이스와 Elasticsearch 인덱스에 동기화합니다.
      *
-     * @param projectId 댓글 수를 감소시킬 프로젝트의 ID
+     * @param projectId 댓글 수를 감소시킬 대상 프로젝트의 ID
      */
     @Override
     @DistributedLock(
@@ -110,7 +110,7 @@ public class ProjectCountService implements
     }
 
     /**
-     * 프로젝트의 좋아요 수를 1 감소시키고, 데이터베이스와 Elasticsearch 인덱스의 값을 동기화합니다.
+     * 지정한 프로젝트의 좋아요 수를 1 감소시키고, 데이터베이스와 Elasticsearch 인덱스의 값을 동기화합니다.
      *
      * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
      */

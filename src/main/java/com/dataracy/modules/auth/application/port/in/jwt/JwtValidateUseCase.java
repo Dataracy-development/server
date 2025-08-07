@@ -40,14 +40,20 @@ RoleType getRoleFromToken(String token);
  */
 String getProviderIdFromRegisterToken(String token);
     /**
- * 소셜 서버에서 발급된 등록 토큰에서 사용자의 이메일 주소를 추출합니다.
+ * 소셜 서버에서 발급된 등록 토큰에서 사용자의 이메일 주소를 반환합니다.
  *
- * @param token 등록 토큰 문자열
- * @return 토큰에 포함된 사용자의 이메일 주소
+ * @param token 소셜 서버가 발급한 등록(회원가입) 토큰 문자열
+ * @return 토큰에 포함된 이메일 주소
  */
 String getEmailFromRegisterToken(String token);
 
-    String getEmailFromResetToken(String token);
+    /**
+ * 비밀번호 재설정 토큰에서 사용자의 이메일 주소를 추출합니다.
+ *
+ * @param token 비밀번호 재설정용 JWT 토큰 문자열
+ * @return 토큰에 포함된 이메일 주소
+ */
+String getEmailFromResetToken(String token);
 
     /**
  * 회원가입용 토큰의 만료 시간을 반환합니다.

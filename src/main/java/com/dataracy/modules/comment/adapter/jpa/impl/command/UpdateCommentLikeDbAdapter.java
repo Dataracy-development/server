@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public class UpdateCommentLikeDbAdapter implements UpdateCommentLikePort {
  private final CommentJpaRepository commentJpaRepository;
   /**
-   * 지정된 댓글의 좋아요 수를 1 증가시킵니다.
+   * 주어진 댓글 ID에 해당하는 댓글의 좋아요 수를 1 증가시킵니다.
    *
    * @param commentId 좋아요 수를 증가시킬 댓글의 ID
    */

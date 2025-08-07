@@ -16,10 +16,10 @@ public class CacheRefreshTokenService implements CacheRefreshTokenUseCase {
     private final CacheRefreshTokenPort cacheRefreshTokenPort;
 
     /**
-     * 지정한 사용자 ID에 대해 리프레시 토큰을 Redis에 저장합니다.
+     * 지정한 사용자 ID에 대한 리프레시 토큰을 Redis에 저장합니다.
      *
-     * @param userId 리프레시 토큰을 저장할 사용자 ID
-     * @param refreshToken 저장할 리프레시 토큰
+     * @param userId 리프레시 토큰을 저장할 대상 사용자 ID
+     * @param refreshToken 저장할 리프레시 토큰 값
      */
     @Override
     public void saveRefreshToken(String userId, String refreshToken) {
@@ -47,7 +47,7 @@ public class CacheRefreshTokenService implements CacheRefreshTokenUseCase {
     }
 
     /**
-     * 지정된 유저 ID에 해당하는 리프레시 토큰을 레디스에서 삭제한다.
+     * 주어진 유저 ID에 해당하는 리프레시 토큰을 레디스에서 삭제한다.
      *
      * @param userId 리프레시 토큰을 삭제할 대상 유저의 ID
      */

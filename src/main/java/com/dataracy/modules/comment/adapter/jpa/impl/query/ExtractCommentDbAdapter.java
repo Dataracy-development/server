@@ -15,10 +15,10 @@ public class ExtractCommentDbAdapter implements ExtractCommentPort {
     private final CommentJpaRepository commentJpaRepository;
 
     /**
-     * 주어진 댓글 ID에 연결된 사용자 ID를 Optional로 반환합니다.
+     * 주어진 댓글 ID에 해당하는 사용자 ID를 Optional로 반환합니다.
      *
      * @param commentId 사용자 ID를 조회할 댓글의 ID
-     * @return 해당 댓글에 연결된 사용자 ID의 Optional, 존재하지 않으면 빈 Optional 반환
+     * @return 댓글에 연결된 사용자 ID의 Optional, 해당 댓글이 없으면 빈 Optional
      */
     @Override
     public Optional<Long> findUserIdByCommentId(Long commentId) {

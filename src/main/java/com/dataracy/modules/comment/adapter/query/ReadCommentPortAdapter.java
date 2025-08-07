@@ -31,10 +31,10 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
     private final QCommentEntity comment = QCommentEntity.commentEntity;
 
     /**
-     * 주어진 ID에 해당하는 댓글을 조회하여 도메인 모델로 반환합니다.
+     * 주어진 ID로 댓글을 조회하여 도메인 모델로 반환합니다.
      *
      * @param commentId 조회할 댓글의 ID
-     * @return 댓글이 존재하면 해당 댓글의 도메인 모델을, 없으면 빈 Optional을 반환합니다.
+     * @return 댓글이 존재하면 해당 댓글의 도메인 모델을 Optional로 반환하며, 없으면 빈 Optional을 반환합니다.
      */
     @Override
     public Optional<Comment> findCommentById(Long commentId) {
@@ -53,11 +53,11 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
     }
 
     /**
-     * 지정된 프로젝트의 루트 댓글 목록과 각 댓글의 답글 수를 페이지 단위로 조회합니다.
+     * 지정된 프로젝트의 루트 댓글 목록과 각 댓글의 답글 수를 페이지 단위로 반환합니다.
      *
-     * @param projectId 조회할 프로젝트의 ID
+     * @param projectId 댓글을 조회할 프로젝트의 ID
      * @param pageable 페이지네이션 및 정렬 정보
-     * @return 각 댓글과 답글 수를 포함하는 CommentWithReplyCountResponse의 페이지 객체
+     * @return 각 루트 댓글과 해당 댓글의 답글 수를 포함하는 FindCommentWithReplyCountResponse의 페이지 객체
      */
     @Override
     public Page<FindCommentWithReplyCountResponse> findComments(Long projectId, Pageable pageable) {
@@ -105,12 +105,12 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
     }
 
     /**
-     * 지정된 프로젝트와 부모 댓글 ID에 해당하는 답글(대댓글) 목록을 페이지 단위로 조회합니다.
+     * 특정 프로젝트 내에서 지정된 부모 댓글에 대한 답글(대댓글) 목록을 페이지 단위로 조회합니다.
      *
-     * @param projectId 조회할 프로젝트의 ID
+     * @param projectId 답글을 조회할 프로젝트의 ID
      * @param commentId 부모 댓글의 ID
      * @param pageable 페이지네이션 및 정렬 정보
-     * @return 답글 목록과 전체 개수를 포함하는 Page 객체
+     * @return 조회된 답글 목록과 전체 답글 수를 포함하는 Page 객체
      */
     @Override
     public Page<Comment> findReplyComments(Long projectId, Long commentId, Pageable pageable) {
