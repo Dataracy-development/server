@@ -25,7 +25,6 @@ public class FileDownloadService implements DownloadFileUseCase {
      * @throws IllegalArgumentException s3Url이 비어있거나 만료 시간이 0 이하인 경우
      */
     @Override
-    @Transactional
     public String generatePreSignedUrl(String s3Url, int expirationSeconds) {
         Instant startTime = LoggerFactory.service().logStart("DownloadFileUseCase", "서명된(pre-signed) URL을 생성 서비스 시작");
         if (!StringUtils.hasText(s3Url)) {
