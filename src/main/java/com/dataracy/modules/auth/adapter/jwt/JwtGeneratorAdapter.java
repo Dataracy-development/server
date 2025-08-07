@@ -23,7 +23,7 @@ public class JwtGeneratorAdapter implements JwtGeneratorPort {
     ) {
         return jwtUtilInternal.generateToken(
                 Map.of("email", email),
-                jwtProperties.getRegisterTokenExpirationTime(),
+                jwtProperties.getResetTokenExpirationTime(),
                 TokenType.RESET_PASSWORD
         );
     }
