@@ -29,11 +29,11 @@ public class FileDeleteConsumer {
     )
     public void consume(String fileUrl) {
         try {
-            LoggerFactory.kafka().logConsume(fileDeletedTopic, "파일 삭제 이벤트 수신됨");
+            LoggerFactory.kafka().logConsume(fileDeletedTopic, "파일 삭제 이벤트 수신됨: " + fileUrl);
             fileStoragePort.delete(fileUrl);
-            LoggerFactory.kafka().logConsume(fileDeletedTopic, "파일 삭제 이벤트 처리 완료");
+            LoggerFactory.kafka().logConsume(fileDeletedTopic, "파일 삭제 이벤트 처리 완료: " + fileUrl);
         } catch (Exception e) {
-            LoggerFactory.kafka().logError(fileDeletedTopic, "파일 삭제 이벤트 처리 실패", e);
+            LoggerFactory.kafka().logError(fileDeletedTopic, "파일 삭제 이벤트 처리 실패: " + fileUrl, e);
 //            throw e; // DLQ 설정에 따라 이동
         }
     }
