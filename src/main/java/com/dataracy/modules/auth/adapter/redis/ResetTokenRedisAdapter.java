@@ -36,7 +36,7 @@ public class ResetTokenRedisAdapter implements CacheResetTokenPort {
     public void saveResetToken(String token) {
         String key = getResetTokenKey(token);
         try {
-            redisTemplate.opsForValue().set(key, "1", TTL.toMinutes(), TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set(key, token, TTL.toMinutes(), TimeUnit.MINUTES);
             LoggerFactory.redis().logSaveOrUpdate(key, "비밀번호 재설정 토큰을 Redis에 저장했습니다.");
         } catch (RedisConnectionFailureException e) {
             LoggerFactory.redis().logError(key, "레디스 연결 실패", e);

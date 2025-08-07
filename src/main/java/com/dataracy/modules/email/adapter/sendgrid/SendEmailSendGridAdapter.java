@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Instant;
 
 /**
  * SendGrid 이메일 전송 어댑터
@@ -41,6 +42,8 @@ public class SendEmailSendGridAdapter implements SendEmailPort {
      */
     @Override
     public void send(String email, String subject, String body) {
+        LoggerFactory.common().logStart("이메일 전송", "to=" + email + ", subject=" + subject);
+
         // SendGrid API 호출
         Email from = new Email(sender);
         Email to = new Email(email);
@@ -54,8 +57,6 @@ public class SendEmailSendGridAdapter implements SendEmailPort {
             addTo(to);
         }});
 
-        LoggerFactory.common().logStart("이메일 전송 시도 시작", "to=" + to + ", subject=" + subject + ",content=" + content);
-
         Request request = new Request();
         try {
             request.setMethod(Method.POST);
@@ -65,7 +66,7 @@ public class SendEmailSendGridAdapter implements SendEmailPort {
             Response response = sendGrid.api(request);
 
             if (response.getStatusCode() >= 400) {
-                LoggerFactory.common().logError("SendGrid", "인증 코드 전송 실패 - status:" + response.getStatusCode() + ",body:" + response.getBody());
+                LoggerFactory.common().logError("이메일 전송 실패", "status:" + response.getStatusCode() + ", body:" + response.getBody());
                 throw new RuntimeException("SendGrid 전송 실패 - status: " + response.getStatusCode());
             }
             LoggerFactory.common().logEnd("이메일 전송 시도 완료", "to=" + to + ", subject=" + subject + ",content=" + content);

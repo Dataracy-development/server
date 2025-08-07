@@ -33,6 +33,7 @@ public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
      * @param viewerId  조회를 시도한 뷰어의 고유 식별자
      * @param targetType 조회 대상의 유형(예: 프로젝트, 게시글 등)
      */
+    @Override
     public void increaseViewCount(Long projectId, String viewerId, String targetType) {
         try {
             String dedupKey = String.format("viewDedup:%s:%s:%s", targetType, projectId, viewerId);
@@ -52,13 +53,14 @@ public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
         }
     }
 
-    /****
+    /**
      * 지정된 프로젝트와 대상 유형에 대한 현재 조회수를 Redis에서 조회합니다.
      *
      * @param projectId 조회수를 조회할 프로젝트의 ID
      * @param targetType 조회 대상의 유형
      * @return 해당 프로젝트와 대상 유형의 조회수. 값이 없으면 0을 반환합니다.
      */
+    @Override
     public Long getViewCount(Long projectId, String targetType) {
         try {
             Instant startTime = LoggerFactory.redis().logQueryStart("viewCount:" + targetType + ":" + projectId, "해당 프로젝트의 조회수 조회 시작. projectId=" + projectId);
@@ -104,6 +106,7 @@ public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
      * @return 해당 타겟 타입의 모든 조회수 Redis 키 집합
      */
 
+    @Override
     public Set<String> getAllViewCountKeys(String targetType) {
         try {
             Instant startTime = LoggerFactory.redis().logQueryStart("viewCount:" + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType);
@@ -136,6 +139,7 @@ public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
      * @param targetId 조회수 카운트를 삭제할 대상의 ID
      * @param targetType 조회수 카운트를 삭제할 대상의 타입
      */
+    @Override
     public void clearViewCount(Long targetId, String targetType) {
         try {
             redisTemplate.delete(String.format("viewCount:%s:%s", targetType, targetId));

@@ -23,9 +23,9 @@ public class CacheRefreshTokenService implements CacheRefreshTokenUseCase {
      */
     @Override
     public void saveRefreshToken(String userId, String refreshToken) {
-        Instant startTime = LoggerFactory.service().logStart("TokenRedisUseCase", "리프레시 토큰 레디스 저장 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart("CacheRefreshTokenUseCase", "리프레시 토큰 레디스 저장 서비스 시작 userId=" + userId);
         cacheRefreshTokenPort.saveRefreshToken(userId, refreshToken);
-        LoggerFactory.service().logSuccess("TokenRedisUseCase", "리프레시 토큰 레디스 저장 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess("CacheRefreshTokenUseCase", "리프레시 토큰 레디스 저장 서비스 성공 userId=" + userId, startTime);
     }
 
     /**
@@ -37,12 +37,12 @@ public class CacheRefreshTokenService implements CacheRefreshTokenUseCase {
      */
     @Override
     public String getRefreshToken(String userId) {
-        Instant startTime = LoggerFactory.service().logStart("TokenRedisUseCase", "레디스에서 리프레시 토큰 추출 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart("CacheRefreshTokenUseCase", "레디스에서 리프레시 토큰 추출 서비스 시작 userId=" + userId);
         String refreshToken = cacheRefreshTokenPort.getRefreshToken(userId);
         if (refreshToken == null) {
             throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
         }
-        LoggerFactory.service().logSuccess("TokenRedisUseCase", "레디스에서 리프레시 토큰 추출 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess("CacheRefreshTokenUseCase", "레디스에서 리프레시 토큰 추출 서비스 성공 userId=" + userId, startTime);
         return refreshToken;
     }
 
@@ -53,8 +53,8 @@ public class CacheRefreshTokenService implements CacheRefreshTokenUseCase {
      */
     @Override
     public void deleteRefreshToken(String userId) {
-        Instant startTime = LoggerFactory.service().logStart("TokenRedisUseCase", "레디스에서 리프레시 토큰 삭제 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart("CacheRefreshTokenUseCase", "레디스에서 리프레시 토큰 삭제 서비스 시작 userId=" + userId);
         cacheRefreshTokenPort.deleteRefreshToken(userId);
-        LoggerFactory.service().logSuccess("TokenRedisUseCase", "레디스에서 리프레시 토큰 삭제 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess("CacheRefreshTokenUseCase", "레디스에서 리프레시 토큰 삭제 서비스 성공 userId=" + userId, startTime);
     }
 }

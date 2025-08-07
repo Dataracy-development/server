@@ -17,16 +17,16 @@ public class CacheResetTokenService implements CacheResetTokenUseCase {
 
     @Override
     public void saveResetToken(String token) {
-        Instant startTime = LoggerFactory.service().logStart("ResetTokenRedisUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart("CacheResetTokenUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 시작");
         cacheResetTokenPort.saveResetToken(token);
-        LoggerFactory.service().logSuccess("ResetTokenRedisUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("CacheResetTokenUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 성공", startTime);
     }
 
     @Override
     public boolean isValidResetToken(String token) {
         boolean isValid = cacheResetTokenPort.isValidResetToken(token);
         if (!isValid) {
-            LoggerFactory.service().logWarning("ValidateResetPasswordUseCase", "비밀번호 재설정 토큰이 만료되었습니다.");
+            LoggerFactory.service().logWarning("CacheResetTokenUseCase", "비밀번호 재설정 토큰이 만료되었습니다.");
             throw new AuthException(AuthErrorStatus.EXPIRED_RESET_PASSWORD_TOKEN);
         }
         return isValid;
