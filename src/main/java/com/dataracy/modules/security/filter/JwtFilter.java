@@ -38,7 +38,6 @@ public class JwtFilter extends OncePerRequestFilter {
             // 헤더에서 어세스 토큰 추출
             String accessToken = ExtractHeaderUtil.extractAccessToken(request)
                     .orElseThrow(() -> new AuthException(AuthErrorStatus.NOT_FOUND_ACCESS_TOKEN_IN_HEADER));
-            log.debug("Extracted JWT Token: {}", accessToken);
 
             // 어세스 토큰 유효성 검증
             jwtValidateUseCase.validateToken(accessToken);
@@ -46,7 +45,6 @@ public class JwtFilter extends OncePerRequestFilter {
             // 토큰에서 유저 id, 유저 역할 반환
             Long userId = jwtValidateUseCase.getUserIdFromToken(accessToken);
             RoleType role = jwtValidateUseCase.getRoleFromToken(accessToken);
-            log.debug("Authenticated UserId: {}", userId);
 
             // 인증 객체 SecurityContextHolder에 주입
             setAuthentication(request, userId, role);
@@ -70,7 +68,6 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-//        log.info("[JWT FILTER DEBUG] Request URI: {}", request.getRequestURI());
         return
                 path.startsWith("/swagger") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.equals("/swagger-ui.html")
                         || path.startsWith("/swagger-resources") || path.equals("/swagger-config")
