@@ -1,4 +1,4 @@
-package com.dataracy.modules.behaviorlog.adapter.elasticsearch;
+package com.dataracy.modules.common.config.properties;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
