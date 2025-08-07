@@ -18,14 +18,16 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig {
     // 객체 저장 시
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, Object> redisTemplate(
+            RedisConnectionFactory connectionFactory,
+            ObjectMapper objectMapper
+    ) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
         // Key: String, Value: JSON 직렬화
         StringRedisSerializer keySerializer = new StringRedisSerializer();
-        GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer(new ObjectMapper());
-
+        GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
         template.setKeySerializer(keySerializer);
         template.setHashKeySerializer(keySerializer);
         template.setValueSerializer(valueSerializer);
