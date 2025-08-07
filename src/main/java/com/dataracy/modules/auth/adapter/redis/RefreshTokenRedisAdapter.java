@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
-public class RefrehCacheRefreshTokenAdapter implements CacheRefreshTokenPort {
+public class RefreshTokenRedisAdapter implements CacheRefreshTokenPort {
     private final StringRedisTemplate redisTemplate;
     private final JwtProperties jwtProperties;
 
