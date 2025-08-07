@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
-public class ResetTokenRedisAdapterResetToken implements CacheResetTokenPort {
+public class ResetTokenRedisAdapter implements CacheResetTokenPort {
     private final StringRedisTemplate redisTemplate;
 
     private static final Duration TTL = Duration.ofMinutes(10);
