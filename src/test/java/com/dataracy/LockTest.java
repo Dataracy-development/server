@@ -1,7 +1,7 @@
 package com.dataracy;
 
 import com.dataracy.modules.user.application.dto.request.validate.DuplicateNicknameRequest;
-import com.dataracy.modules.user.adapter.web.api.validate.UserValidationController;
+import com.dataracy.modules.user.adapter.web.api.validate.UserValidateController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ public class LockTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private UserValidationController userController; // ✅ 실제 컨트롤러 (nickname 체크가 있는 컨트롤러)
+    private UserValidateController userController; // ✅ 실제 컨트롤러 (nickname 체크가 있는 컨트롤러)
 
     @Autowired
     private RedissonClient redissonClient; // ✅ 실 사용 Redisson 클라이언트

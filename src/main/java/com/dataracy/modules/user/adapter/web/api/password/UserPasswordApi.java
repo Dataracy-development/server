@@ -4,6 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.user.adapter.web.request.password.ChangePasswordWebRequest;
 import com.dataracy.modules.user.adapter.web.request.password.ConfirmPasswordWebRequest;
+import com.dataracy.modules.user.adapter.web.request.password.ResetPasswordWithTokenWebRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -19,11 +20,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Tag(name = "User - password", description = "사용자 관련 API")
+@Tag(name = "User - Password", description = "사용자 관련 API - 비밀번호")
 @RequestMapping("/api/v1")
 public interface UserPasswordApi {
     /**
-     * 현재 사용자의 비밀번호를 변경한다.
+     * 현재 인증된 사용자의 비밀번호를 변경한다.
      *
      * @param webRequest 변경할 비밀번호 정보가 포함된 요청 객체
      * @return 비밀번호 변경 성공 시 성공 응답을 반환한다.
@@ -55,6 +56,33 @@ public interface UserPasswordApi {
             )
             @Validated @RequestBody
             ChangePasswordWebRequest webRequest
+    );
+
+    /**
+     * 비로그인 사용자가 토큰을 이용해 비밀번호를 재설정한다.
+     *
+     * @param webRequest 비밀번호 재설정 토큰과 새로운 비밀번호 정보를 포함한 요청 객체
+     * @return 비밀번호 재설정 성공 여부를 나타내는 응답
+     */
+    @Operation(
+            summary = "비밀번호를 재설정한다.",
+            description = "비로그인 시 비밀번호를 재설정하는 API입니다.",
+            security = {}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 재설정에 성공했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SuccessResponse.class))),
+    })
+    @PutMapping(value = "/password/reset")
+    ResponseEntity<SuccessResponse<Void>> resetPasswordWithToken(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "변경할 비밀번호",
+                    content = @Content(schema = @Schema(implementation = ResetPasswordWithTokenWebRequest.class))
+            )
+            @Validated @RequestBody
+            ResetPasswordWithTokenWebRequest webRequest
     );
 
     /**

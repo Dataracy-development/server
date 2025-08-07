@@ -16,13 +16,13 @@ import java.time.Instant;
 public class JwtCommandService implements JwtGenerateUseCase {
     private final JwtGeneratorPort jwtGeneratorPort;
 
-    /****
-     * OAuth2 제공자 정보와 이메일을 기반으로 회원가입(Register)용 JWT 토큰을 생성합니다.
+    /**
+     * OAuth2 제공자 정보와 이메일을 기반으로 회원가입용 JWT 토큰을 생성합니다.
      *
      * @param provider OAuth2 제공자 이름
      * @param providerId 제공자에서 발급한 사용자 ID
      * @param email 사용자 이메일 주소
-     * @return 생성된 회원가입(Register)용 JWT 토큰 문자열
+     * @return 생성된 회원가입용 JWT 토큰 문자열
      * @throws AuthException 토큰 생성에 실패한 경우 발생
      */
     @Override
@@ -35,6 +35,26 @@ public class JwtCommandService implements JwtGenerateUseCase {
         } catch (Exception e){
             LoggerFactory.service().logException("JwtGenerateUseCase", "[토큰 발급] 레지스터 토큰 발급에 실패했습니다. email=" + email, e);
             throw new AuthException(AuthErrorStatus.FAILED_GENERATE_REGISTER_TOKEN);
+        }
+    }
+
+    /**
+     * 주어진 이메일을 기반으로 패스워드 재설정용 JWT 토큰을 생성합니다.
+     *
+     * @param email 패스워드 재설정 토큰을 발급할 사용자의 이메일
+     * @return 생성된 패스워드 재설정 JWT 토큰 문자열
+     * @throws AuthException 토큰 생성에 실패한 경우 발생
+     */
+    @Override
+    public String generateResetPasswordToken(String email) {
+        try {
+            Instant startTime = LoggerFactory.service().logStart("JwtGenerateUseCase", "패스워드 재설정 토큰 발급 서비스 시작 email=" + email);
+            String resetPasswordToken = jwtGeneratorPort.generateResetPasswordToken(email);
+            LoggerFactory.service().logSuccess("JwtGenerateUseCase", "패스워드 재설정 토큰 발급 서비스 성공 email=" + email, startTime);
+            return resetPasswordToken;
+        } catch (Exception e){
+            LoggerFactory.service().logException("JwtGenerateUseCase", "[토큰 발급] 패스워드 재설정 토큰 발급에 실패했습니다. email=" + email, e);
+            throw new AuthException(AuthErrorStatus.FAILED_GENERATE_RESET_PASSWORD_TOKEN);
         }
     }
 

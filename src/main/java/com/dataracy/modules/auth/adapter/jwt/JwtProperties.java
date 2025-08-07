@@ -24,6 +24,9 @@ public class JwtProperties {
     private long registerTokenExpirationTime;
 
     @Min(1)
+    private long resetTokenExpirationTime;
+
+    @Min(1)
     private long accessTokenExpirationTime;
 
     @Min(1)

@@ -1,6 +1,6 @@
 package com.dataracy.modules.common.support.aop;
 
-import com.dataracy.modules.comment.application.port.in.FindUserIdByCommentIdUseCase;
+import com.dataracy.modules.comment.application.port.in.query.extractor.FindUserIdByCommentIdUseCase;
 import com.dataracy.modules.comment.domain.exception.CommentException;
 import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
 import com.dataracy.modules.common.support.annotation.AuthorizationCommentEdit;

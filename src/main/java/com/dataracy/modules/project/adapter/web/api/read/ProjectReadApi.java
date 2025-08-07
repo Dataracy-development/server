@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Tag(name = "Project", description = "프로젝트 관련 API")
+@Tag(name = "Project - Read", description = "프로젝트 관련 API - 조회")
 @RequestMapping("/api/v1/projects")
 public interface ProjectReadApi {
     /**

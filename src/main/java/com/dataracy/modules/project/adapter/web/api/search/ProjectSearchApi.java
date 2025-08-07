@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Project", description = "프로젝트 관련 API")
+@Tag(name = "Project - Search", description = "프로젝트 관련 API - 검색")
 @RequestMapping("/api/v1/projects")
 public interface ProjectSearchApi {
     /**

@@ -2,8 +2,10 @@ package com.dataracy.modules.user.adapter.web.mapper.password;
 
 import com.dataracy.modules.user.adapter.web.request.password.ChangePasswordWebRequest;
 import com.dataracy.modules.user.adapter.web.request.password.ConfirmPasswordWebRequest;
+import com.dataracy.modules.user.adapter.web.request.password.ResetPasswordWithTokenWebRequest;
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.password.ConfirmPasswordRequest;
+import com.dataracy.modules.user.application.dto.request.password.ResetPasswordWithTokenRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +18,20 @@ public class UserPasswordWebMapper {
      */
     public ChangePasswordRequest toApplicationDto(ChangePasswordWebRequest webRequest) {
         return new ChangePasswordRequest(
+                webRequest.password(),
+                webRequest.passwordConfirm()
+        );
+    }
+
+    /**
+     * ResetPasswordWithTokenWebRequest 객체를 ResetPasswordWithTokenRequest 애플리케이션 DTO로 변환합니다.
+     *
+     * @param webRequest 비밀번호 재설정 토큰, 비밀번호, 비밀번호 확인 값을 포함한 웹 요청 DTO
+     * @return 변환된 ResetPasswordWithTokenRequest 애플리케이션 DTO
+     */
+    public ResetPasswordWithTokenRequest toApplicationDto(ResetPasswordWithTokenWebRequest webRequest) {
+        return new ResetPasswordWithTokenRequest(
+                webRequest.resetPasswordToken(),
                 webRequest.password(),
                 webRequest.passwordConfirm()
         );

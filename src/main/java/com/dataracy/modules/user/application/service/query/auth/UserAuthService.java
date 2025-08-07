@@ -5,7 +5,7 @@ import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.dto.response.RegisterTokenResponse;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
-import com.dataracy.modules.auth.application.port.in.redis.TokenRedisUseCase;
+import com.dataracy.modules.auth.application.port.in.cache.CacheRefreshTokenUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.application.port.in.command.auth.HandleUserUseCase;
 import com.dataracy.modules.user.application.port.in.query.auth.IsNewUserUseCase;
@@ -35,7 +35,7 @@ public class UserAuthService implements
 
     private final JwtValidateUseCase jwtValidateUseCase;
     private final JwtGenerateUseCase jwtGenerateUseCase;
-    private final TokenRedisUseCase tokenRedisUseCase;
+    private final CacheRefreshTokenUseCase cacheRefreshTokenUseCase;
 
     /****
      * 주어진 OAuth 사용자 정보로 해당 사용자가 기존에 존재하는지 확인하여 신규 사용자인지 여부를 반환합니다.
@@ -74,7 +74,7 @@ public class UserAuthService implements
     }
 
     /**
-     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고, 해당 토큰을 Redis에 저장한 뒤 토큰과 만료 정보를 반환합니다.
+     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고, 해당 토큰을 캐시에 저장한 후 토큰과 만료 정보를 반환합니다.
      *
      * 사용자가 존재하지 않을 경우 {@code UserException}이 발생합니다.
      *
@@ -82,7 +82,7 @@ public class UserAuthService implements
      * @return 발급된 리프레시 토큰과 만료 시간을 포함하는 응답 객체
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public RefreshTokenResponse handleExistingUser(OAuthUserInfo oAuthUserInfo) {
         Instant startTime = LoggerFactory.service().logStart("HandleUserUseCase", "기존 유저 핸들링 서비스 시작 email=" + oAuthUserInfo.email());
         User existUser = userQueryPort.findUserByProviderId(oAuthUserInfo.providerId())
@@ -92,7 +92,7 @@ public class UserAuthService implements
                 });
 
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(existUser.getId(), existUser.getRole());
-        tokenRedisUseCase.saveRefreshToken(existUser.getId().toString(), refreshToken);
+        cacheRefreshTokenUseCase.saveRefreshToken(existUser.getId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(refreshToken, jwtValidateUseCase.getRefreshTokenExpirationTime());
 
         LoggerFactory.service().logSuccess("HandleUserUseCase", "기존 유저 핸들링 서비스 성공 email=" + oAuthUserInfo.email(), startTime);
@@ -100,7 +100,7 @@ public class UserAuthService implements
     }
 
     /**
-     * 이메일과 비밀번호로 사용자를 인증하고, 인증에 성공한 경우 해당 사용자의 정보를 반환합니다.
+     * 이메일과 비밀번호로 사용자를 인증하고, 인증에 성공하면 해당 사용자의 정보를 반환합니다.
      *
      * 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 경우 `UserException`이 발생합니다.
      *
@@ -110,8 +110,8 @@ public class UserAuthService implements
      * @throws UserException 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 때 발생합니다.
      */
     @Override
-    @Transactional(readOnly = true)
-    public UserInfo loginAndGetUserInfo(String email, String password) {
+    @Transactional
+    public UserInfo checkLoginPossibleAndGetUserInfo(String email, String password) {
         Instant startTime = LoggerFactory.service().logStart("IsLoginPossibleUseCase", "입력받은 이메일, 비밀번호로 로그인이 가능한지 여부를 확인하는 서비스 시작 email=" + email);
 
         User user = userQueryPort.findUserByEmail(email)

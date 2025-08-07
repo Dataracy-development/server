@@ -16,14 +16,16 @@ import java.util.Arrays;
 public enum TokenType {
     REGISTER("REGISTER"),
     ACCESS("ACCESS"),
-    REFRESH("REFRESH");
+    REFRESH("REFRESH"),
+    RESET_PASSWORD("RESET_PASSWORD"),
+    ;
 
     private final String value;
 
     /**
-     * 주어진 문자열 입력값에 해당하는 TokenType 열거형 상수를 반환합니다.
+     * 주어진 문자열에 해당하는 TokenType 열거형 상수를 반환합니다.
      *
-     * 입력값이 "REGISTER", "ACCESS", "REFRESH" 중 하나와 일치하지 않을 경우 규칙 위반을 로그로 남기고 AuthException을 발생시킵니다.
+     * 입력값이 "REGISTER", "ACCESS", "REFRESH", "RESET_PASSWORD" 중 하나와 일치하지 않으면 규칙 위반을 로그로 남기고 AuthException을 발생시킵니다.
      *
      * @param input 토큰 타입을 나타내는 문자열
      * @return 일치하는 TokenType 열거형 상수
@@ -34,7 +36,7 @@ public enum TokenType {
                 .filter(type -> type.value.equalsIgnoreCase(input) || type.name().equalsIgnoreCase(input))
                 .findFirst()
                 .orElseThrow(() -> {
-                    LoggerFactory.domain().logRuleViolation("TokenType", "잘못된 ENUM 타입입니다. REGISTER, ACCESS, REFRESH만 가능합니다.");
+                    LoggerFactory.domain().logRuleViolation("TokenType", "잘못된 ENUM 타입입니다. REGISTER, ACCESS, REFRESH, RESET_PASSWORD만 가능합니다.");
                     return new AuthException(AuthErrorStatus.BAD_REQUEST_TOKEN_TYPE);
                 });
     }

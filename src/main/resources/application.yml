@@ -18,7 +18,8 @@ spring:
     secret: ${JWT_SECRET}
     redirect-onboarding: ${JWT_REDIRECT_ONBOARDING}
     redirect-base: ${JWT_REDIRECT_BASE}
-    register-token-expiration-time: ${REGISTER_TOKEN_EXPIRATION_TIME}    # 5 minutes
+    register-token-expiration-time: ${REGISTER_TOKEN_EXPIRATION_TIME}    # 10 minutes
+    reset-token-expiration-time: ${RESET_TOKEN_EXPIRATION_TIME}    # 10 minutes
     access-token-expiration-time: ${ACCESS_TOKEN_EXPIRATION_TIME}      # 1 hour
     refresh-token-expiration-time: ${REFRESH_TOKEN_EXPIRATION_TIME}      # 14 days
 
