@@ -8,7 +8,7 @@ import com.dataracy.modules.auth.application.port.in.auth.ReIssueTokenUseCase;
 import com.dataracy.modules.auth.application.port.in.auth.SelfLoginUseCase;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtGeneratorPort;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtValidatorPort;
-import com.dataracy.modules.auth.application.port.out.redis.TokenRedisPort;
+import com.dataracy.modules.auth.application.port.out.cache.CacheRefreshTokenPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.model.vo.AuthUser;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
@@ -29,28 +29,28 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     private final JwtProperties jwtProperties;
     private final JwtGeneratorPort jwtGeneratorPort;
     private final JwtValidatorPort jwtValidatorPort;
-    private final TokenRedisPort tokenRedisPort;
+    private final CacheRefreshTokenPort cacheRefreshTokenPort;
 
     private final IsLoginPossibleUseCase isLoginPossibleUseCase;
 
     /**
-     * 사용자의 이메일과 비밀번호를 검증하여 로그인하고, 새로운 리프레시 토큰을 발급한다.
+     * 사용자의 이메일과 비밀번호를 검증하여 로그인한 후, 새로운 리프레시 토큰을 발급한다.
      *
      * @param requestDto 로그인 요청 정보(이메일, 비밀번호 등)
      * @return 발급된 리프레시 토큰과 만료 시간이 포함된 응답 객체
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public RefreshTokenResponse login(SelfLoginRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("SelfLoginUseCase", "자체 로그인 서비스 시작 email=" + requestDto.email());
 
         // 유저 db로부터 이메일이 일치하는 유저를 조회한다.
-        UserInfo userInfo = isLoginPossibleUseCase.loginAndGetUserInfo(requestDto.email(), requestDto.password());
+        UserInfo userInfo = isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo(requestDto.email(), requestDto.password());
         AuthUser authUser = AuthUser.from(userInfo);
 
         // 로그인 가능한 경우이므로 리프레시 토큰 발급 및 레디스에 저장
         String refreshToken = jwtGeneratorPort.generateRefreshToken(authUser.userId(), authUser.role());
-        tokenRedisPort.saveRefreshToken(authUser.userId().toString(), refreshToken);
+        cacheRefreshTokenPort.saveRefreshToken(authUser.userId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(
                 refreshToken,
                 jwtProperties.getRefreshTokenExpirationTime()
@@ -61,10 +61,10 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     }
 
     /**
-     * 리프레시 토큰을 검증한 후 새로운 액세스 토큰과 리프레시 토큰을 발급합니다.
+     * 리프레시 토큰을 검증하고 새로운 액세스 토큰과 리프레시 토큰을 발급합니다.
      *
      * 분산 락을 적용하여 동일한 리프레시 토큰으로의 동시 재발급을 방지하며,
-     * 저장된 리프레시 토큰과 입력된 토큰이 일치하는 경우에만 새로운 토큰을 생성하여 반환합니다.
+     * 저장된 리프레시 토큰과 입력된 토큰이 일치할 때만 새로운 토큰을 생성합니다.
      * 토큰이 만료되었거나 일치하지 않을 경우 인증 예외가 발생합니다.
      *
      * @param refreshToken 클라이언트가 제공한 리프레시 토큰
@@ -77,6 +77,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
             leaseTime = 1000L,
             retry = 1
     )
+    @Transactional
     public ReIssueTokenResponse reIssueToken(String refreshToken) {
         try {
             Instant startTime = LoggerFactory.service().logStart("ReIssueTokenUseCase", "토큰 재발급 서비스 시작");
@@ -89,7 +90,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
             }
 
             // 레디스의 리프레시 토큰과 입력받은 리프레시 토큰을 비교한다.
-            String savedRefreshToken = tokenRedisPort.getRefreshToken(userId.toString());
+            String savedRefreshToken = cacheRefreshTokenPort.getRefreshToken(userId.toString());
             if (!savedRefreshToken.equals(refreshToken)) {
                 LoggerFactory.service().logWarning("ReIssueTokenUseCase", "[토큰 재발급] 입력된 리프레시 토큰이 레디스의 리프레시 토큰과 일치하지 않습니다.");
                 throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
@@ -101,7 +102,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
             String newRefreshToken = jwtGeneratorPort.generateRefreshToken(userId, userRole);
 
             // 레디스에 리프레시 토큰 저장
-            tokenRedisPort.saveRefreshToken(userId.toString(), newRefreshToken);
+            cacheRefreshTokenPort.saveRefreshToken(userId.toString(), newRefreshToken);
             ReIssueTokenResponse reIssueTokenResponse = new ReIssueTokenResponse(
                     newAccessToken,
                     newRefreshToken,

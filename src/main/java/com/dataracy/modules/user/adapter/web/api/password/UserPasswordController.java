@@ -5,8 +5,10 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.adapter.web.mapper.password.UserPasswordWebMapper;
 import com.dataracy.modules.user.adapter.web.request.password.ChangePasswordWebRequest;
 import com.dataracy.modules.user.adapter.web.request.password.ConfirmPasswordWebRequest;
+import com.dataracy.modules.user.adapter.web.request.password.ResetPasswordWithTokenWebRequest;
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.password.ConfirmPasswordRequest;
+import com.dataracy.modules.user.application.dto.request.password.ResetPasswordWithTokenRequest;
 import com.dataracy.modules.user.application.port.in.command.password.ChangePasswordUseCase;
 import com.dataracy.modules.user.application.port.in.query.password.ConfirmPasswordUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
@@ -48,6 +50,29 @@ public class UserPasswordController implements UserPasswordApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_CHANGE_PASSWORD));
+    }
+
+    /**
+     * 비밀번호 재설정 토큰을 사용하여 사용자의 비밀번호를 재설정합니다.
+     *
+     * @param webRequest 비밀번호 재설정 토큰과 새 비밀번호 정보를 포함한 요청 객체
+     * @return 비밀번호 재설정 성공 상태를 포함한 HTTP 200 OK 응답
+     */
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> resetPasswordWithToken(
+            ResetPasswordWithTokenWebRequest webRequest
+    ) {
+        Instant startTime = LoggerFactory.api().logRequest("[ResetPasswordWithToken] 비밀번호 재설정 API 요청 시작");
+
+        try {
+            ResetPasswordWithTokenRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
+            changePasswordUseCase.resetPassword(requestDto);
+        } finally {
+            LoggerFactory.api().logResponse("[ResetPasswordWithToken] 비밀번호 재설정 API 응답 완료", startTime);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(UserSuccessStatus.OK_RESET_PASSWORD));
     }
 
     /**

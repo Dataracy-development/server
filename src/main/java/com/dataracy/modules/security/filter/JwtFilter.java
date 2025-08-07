@@ -60,9 +60,9 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 현재 HTTP 요청이 JWT 인증 필터를 우회해야 하는지 판단합니다.
+     * 현재 HTTP 요청이 JWT 인증 필터를 우회해야 하는지 여부를 반환합니다.
      *
-     * 사전에 정의된 경로(예: Swagger, API 문서, 정적 리소스, 웹훅, 로그인, OAuth2, 루트, 에러, 공개 API, 파비콘, 프로젝트 및 데이터셋 관련 GET 요청, 파일 관련 경로 등)에 대해서는 true를 반환하여 JWT 인증을 적용하지 않습니다.
+     * 사전에 정의된 경로나 조건(예: Swagger, API 문서, 정적 리소스, 헬스 체크, 로그인, OAuth2, 루트, 에러, 웹훅, 공개 API, 회원가입, 인증, 비밀번호 재설정, 닉네임 중복 확인, 프로젝트 및 데이터셋 GET 요청, 파일 관련 경로 등)에 해당하는 경우 true를 반환하여 JWT 인증을 적용하지 않습니다.
      *
      * @param request 현재 HTTP 요청 객체
      * @return 필터 예외 대상 경로일 경우 true, 그렇지 않으면 false
@@ -84,6 +84,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         || path.startsWith("/api/v1/email")
                         || path.startsWith("/api/v1/signup")
                         || path.startsWith("/api/v1/auth")
+                        || path.equals("/api/v1/password/reset")
                         || path.equals("/api/v1/nickname/check")
                         || (path.startsWith("/api/v1/projects") && request.getMethod().equals("GET"))
                         || (path.startsWith("/api/v1/datasets") && request.getMethod().equals("GET"))
