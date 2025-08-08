@@ -1,4 +1,4 @@
-package com.dataracy.modules.common.config;
+package com.dataracy.modules.common.config.adapter.swagger;
 
 import com.dataracy.modules.common.config.properties.SwaggerProperties;
 import io.swagger.v3.oas.models.Components;

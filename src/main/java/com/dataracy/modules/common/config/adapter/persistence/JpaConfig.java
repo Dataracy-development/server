@@ -1,4 +1,4 @@
-package com.dataracy.modules.common.config;
+package com.dataracy.modules.common.config.adapter.persistence;
 
 import com.dataracy.modules.security.handler.SecurityContextProvider;
 import com.dataracy.modules.security.principal.CustomUserDetails;

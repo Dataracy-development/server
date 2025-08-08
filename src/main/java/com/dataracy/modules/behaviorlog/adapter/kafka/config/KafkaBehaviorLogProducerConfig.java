@@ -18,7 +18,7 @@ import java.util.Map;
 @Configuration
 public class KafkaBehaviorLogProducerConfig {
 
-    @Value("${spring.kafka.bootstrap-servers:}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     /**

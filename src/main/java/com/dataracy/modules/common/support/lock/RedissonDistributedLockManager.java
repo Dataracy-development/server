@@ -2,12 +2,12 @@ package com.dataracy.modules.common.support.lock;
 
 import com.dataracy.modules.common.exception.BusinessException;
 import com.dataracy.modules.common.exception.CommonException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -15,91 +15,105 @@ import java.util.function.Supplier;
  * Redisson 분산락을 실행하여 락을 잡을 경우 수행하고,
  * 실패 시 재시도하며, 예외를 명확하게 처리한다.
  */
-@Slf4j
 @Component
-@RequiredArgsConstructor
 public class RedissonDistributedLockManager {
 
     private final RedissonClient redissonClient;
 
     /**
-     * 지정된 키에 대해 분산 락을 획득하고, 성공 시 주어진 작업을 실행한 후 결과를 반환합니다.
+     * RedissonClient를 사용하여 분산 락 매니저를 생성합니다.
      *
-     * 락 획득을 위해 최대 재시도 횟수만큼 시도하며, 각 시도마다 지정된 대기 시간과 임대 시간을 적용합니다.
-     * 락 획득에 실패하거나, 실행 중 예외가 발생할 경우 적절한 예외를 발생시킵니다.
+     * @param redissonClient 분산 락 처리를 위한 Redisson 클라이언트 인스턴스
+     */
+    public RedissonDistributedLockManager(RedissonClient redissonClient) {
+        this.redissonClient = redissonClient;
+    }
+
+    /**
+     * 지정된 키에 대해 분산 락을 획득한 뒤, 성공적으로 락을 획득하면 주어진 작업을 실행하고 그 결과를 반환합니다.
      *
-     * @param key        분산 락을 식별하는 키
+     * 락 획득을 위해 최대 waitTime(밀리초) 동안 대기하며, 락을 획득하면 leaseTime(밀리초) 동안 소유합니다.
+     * 락 획득에 실패할 경우 최대 retryCount만큼 재시도합니다.
+     * 모든 시도에 실패하면 LockAcquisitionException이 발생합니다.
+     *
+     * @param key        분산 락을 식별하는 고유 키
      * @param waitTime   락 획득을 위해 대기할 최대 시간(밀리초)
      * @param leaseTime  락을 소유할 임대 시간(밀리초)
      * @param retryCount 락 획득 재시도 횟수
      * @param action     락 획득 후 실행할 작업
      * @return           작업 실행 결과
-     * @throws LockAcquisitionException 락 획득 실패 또는 시스템 예외 발생 시
-     * @throws BusinessException        비즈니스 예외 발생 시
-     * @throws CommonException          공통 예외 발생 시
+     * @throws LockAcquisitionException 락 획득 실패 또는 예외 발생 시
+     * @throws BusinessException        작업 실행 중 비즈니스 예외 발생 시
+     * @throws CommonException          작업 실행 중 공통 예외 발생 시
      */
     public <T> T execute(String key, long waitTime, long leaseTime, int retryCount, Supplier<T> action) {
-        log.info("[LOCK DEBUG] 진입 확인 - key: {}", key);
+        Instant startTime = LoggerFactory.lock().logStart(key, "분산 락 작업 시작");
         RLock lock = redissonClient.getLock(key);
-        log.info("[LOCK DEBUG] lock 객체 생성 완료 - key: {}, class: {}", key, lock.getClass().getName());
+        LoggerFactory.lock().logInfo("lock 객체 생성 완료 - key={} class={}", key, lock.getClass().getSimpleName());
 
         int attempts = 0;
 
         while (attempts <= retryCount) {
             try {
-                log.debug("[LOCK] 락 획득 시도 - key: {}, attempt: {}", key, attempts);
+                LoggerFactory.lock().logTry(key, attempts);
                 boolean acquired = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
-                log.debug("[LOCK] tryLock 결과 - acquired: {}, key: {}", acquired, key);
+                LoggerFactory.lock().logInfo("tryLock 결과 - key={} acquired={}", key, acquired);
 
                 if (acquired) {
                     try {
-                        return action.get(); // 여기서 예외 발생 가능
+                        T result = action.get();
+                        LoggerFactory.lock().logSuccess(key, "락 기반 작업 성공", startTime);
+                        return result;
                     } finally {
                         releaseLock(key, lock);
                     }
                 }
 
                 attempts++;
-                log.warn("[LOCK] 락 획득 실패 - key: {}, retry attempt: {}", key, attempts);
-                Thread.sleep(100); // 간단한 재시도 대기
+                LoggerFactory.lock().logFail(key, attempts);
+                Thread.sleep(100);
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                log.error("[LOCK] 인터럽트 발생 - key: {}", key, e);
+                LoggerFactory.lock().logException(key, "인터럽트 발생", e);
                 throw new LockAcquisitionException("스레드 인터럽트로 인해 락 획득 실패", e);
 
             } catch (BusinessException | CommonException e) {
-                log.warn("[LOCK] 비즈니스 예외 발생 - key: {}, message: {}", key, e.getMessage());
-                // 비즈니스 예외는 그대로 던짐
+                LoggerFactory.lock().logWarning(key, "비즈니스/공통 예외 발생 - message=" + e.getMessage());
                 throw e;
+
             } catch (RuntimeException e) {
-                // action.get() 내부에서 발생한 비즈니스 예외가 RuntimeException으로 감싸져 들어온 경우 다시 풀어줌
                 Throwable cause = e.getCause();
                 if (cause instanceof BusinessException || cause instanceof CommonException) {
                     throw (RuntimeException) cause;
                 }
-
-                log.error("[LOCK] Runtime 예외 발생 - key: {}", key, e);
+                LoggerFactory.lock().logException(key, "Runtime 예외 발생", e);
                 throw new LockAcquisitionException("분산 락 실행 중 런타임 예외 발생", e);
 
             } catch (Exception e) {
-                log.error("[LOCK] 시스템 예외 발생 - key: {}", key, e);
+                LoggerFactory.lock().logException(key, "시스템 예외 발생", e);
                 throw new LockAcquisitionException("분산 락 실행 중 시스템 예외 발생", e);
             }
         }
 
-        log.error("[LOCK] 재시도 초과로 락 획득 실패 - key: {}", key);
+        LoggerFactory.lock().logRetryExceeded(key);
         throw new LockAcquisitionException("다른 사용자가 해당 자원에 접근 중입니다. 잠시 후 다시 시도해주세요.");
     }
 
+    /**
+     * 현재 스레드가 보유한 분산 락을 해제합니다.
+     *
+     * @param key  해제할 락의 식별자
+     * @param lock 해제할 Redisson 락 객체
+     */
     private void releaseLock(String key, RLock lock) {
         try {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
-                log.debug("[LOCK] 락 해제 성공 - key: {}", key);
+                LoggerFactory.lock().logUnlock(key);
             }
         } catch (Exception e) {
-            log.error("[LOCK] 락 해제 실패 - key: {}", key, e);
+            LoggerFactory.lock().logUnlockFail(key, e);
         }
     }
 }

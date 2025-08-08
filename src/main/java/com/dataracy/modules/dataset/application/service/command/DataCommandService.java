@@ -17,7 +17,7 @@ import com.dataracy.modules.dataset.application.port.out.validate.CheckDataExist
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
-import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
+import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.reference.application.port.in.datasource.ValidateDataSourceUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.ValidateDataTypeUseCase;
@@ -49,7 +49,7 @@ public class DataCommandService implements
     private final CheckDataExistsByIdPort checkDataExistsByIdPort;
     private final FindDataPort findDataPort;
 
-    private final FileUploadUseCase fileUploadUseCase;
+    private final FileCommandUseCase fileCommandUseCase;
     private final ValidateTopicUseCase validateTopicUseCase;
     private final ValidateDataSourceUseCase validateDataSourceUseCase;
     private final ValidateDataTypeUseCase validateDataTypeUseCase;
@@ -197,20 +197,20 @@ public class DataCommandService implements
     }
 
     /**
-     * 지정된 데이터셋 파일을 스토리지에 업로드하고, 해당 데이터셋의 파일 URL을 갱신합니다.
+     * 데이터셋 파일을 스토리지에 업로드하고 해당 데이터셋의 파일 URL을 갱신합니다.
      *
-     * 파일 업로드 중 오류가 발생하면 트랜잭션 롤백을 위해 런타임 예외를 발생시킵니다.
+     * 파일 업로드 중 예외가 발생하면 트랜잭션 롤백을 위해 런타임 예외를 발생시킵니다.
      *
      * @param dataFile 업로드할 데이터셋 파일
-     * @param dataId   파일을 연결할 데이터셋의 식별자
-     * @param useCase  호출한 서비스 또는 유스케이스 식별자
+     * @param dataId 파일을 연결할 데이터셋의 식별자
+     * @param useCase 호출한 서비스 또는 유스케이스 식별자
      */
     private void dataFileUpload(MultipartFile dataFile, Long dataId, String useCase) {
         // 데이터셋 파일 업로드 시도
         if (dataFile != null && !dataFile.isEmpty()) {
             try {
                 String key = S3KeyGeneratorUtil.generateKey("data", dataId, dataFile.getOriginalFilename());
-                String dataFileUrl = fileUploadUseCase.uploadFile(key, dataFile);
+                String dataFileUrl = fileCommandUseCase.uploadFile(key, dataFile);
                 updateDataFilePort.updateDataFile(dataId, dataFileUrl);
             } catch (Exception e) {
                 LoggerFactory.service().logException(useCase, "데이터셋 파일 업로드 실패. fileName=" + dataFile.getOriginalFilename(), e);
@@ -220,19 +220,19 @@ public class DataCommandService implements
     }
 
     /**
-     * 데이터셋의 썸네일 파일을 스토리지에 업로드하고 데이터셋 레코드의 썸네일 URL을 갱신합니다.
+     * 썸네일 파일을 스토리지에 업로드하고 해당 데이터셋의 썸네일 URL을 갱신합니다.
      *
      * @param thumbnailFile 업로드할 썸네일 파일
-     * @param dataId        썸네일을 등록할 데이터셋의 ID
-     * @param useCase       로깅 및 예외 메시지에 사용할 업무 구분 문자열
-     * @throws RuntimeException 파일 업로드에 실패할 경우 트랜잭션 롤백을 위해 발생
+     * @param dataId 썸네일을 등록할 데이터셋의 ID
+     * @param useCase 로깅 및 예외 메시지에 사용할 업무 구분 문자열
+     * @throws RuntimeException 파일 업로드에 실패할 경우 트랜잭션 롤백을 위해 발생합니다.
      */
     private void thumbnailFileUpload(MultipartFile thumbnailFile, Long dataId, String useCase) {
         // 썸네일 파일 업로드 시도
         if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
             try {
                 String key = S3KeyGeneratorUtil.generateThumbnailKey("data", dataId, thumbnailFile.getOriginalFilename());
-                String thumbnailFileUrl = fileUploadUseCase.uploadFile(key, thumbnailFile);
+                String thumbnailFileUrl = fileCommandUseCase.uploadFile(key, thumbnailFile);
                 updateThumbnailFilePort.updateThumbnailFile(dataId, thumbnailFileUrl);
             } catch (Exception e) {
                 LoggerFactory.service().logException(useCase, "데이터셋 썸네일 파일 업로드 실패. fileName=" + thumbnailFile.getOriginalFilename(), e);

@@ -14,14 +14,25 @@ public class CommonLogger extends BaseLogger {
     }
 
     /**
-     * 지정된 토픽과 메시지로 프로세스 또는 이벤트의 종료를 디버그 레벨로 로그에 기록합니다.
+     * 지정된 토픽과 메시지로 프로세스 또는 이벤트의 종료를 디버그 레벨로 기록합니다.
      *
      * @param topic 로그의 주제를 나타내는 문자열
-     * @param message 로그에 기록할 상세 메시지
+     * @param message 로그에 포함될 상세 메시지
      */
     public void logEnd(String topic, String message) {
         debug("[{}] message={}", topic, message);
     }
+
+    /**
+     * 지정된 토픽과 메시지로 경고 로그를 기록합니다.
+     *
+     * @param topic 경고와 관련된 프로세스 또는 이벤트의 식별자
+     * @param message 경고에 대한 상세 메시지
+     */
+    public void logWarning(String topic, String message) {
+        warn("[{} 경고] message={}", topic, message);
+    }
+
     /**
      * 지정된 주제와 메시지를 포함하여 오류 로그를 기록합니다.
      *

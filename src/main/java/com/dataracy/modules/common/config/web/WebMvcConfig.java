@@ -1,6 +1,5 @@
-package com.dataracy.modules.common.config;
+package com.dataracy.modules.common.config.web;
 
-import com.dataracy.modules.common.config.converter.MultipartJackson2HttpMessageConverter;
 import com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,7 @@
 package com.dataracy.modules.common.util;
 
 import com.dataracy.modules.common.exception.CommonException;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,25 +10,31 @@ public final class FileUtil {
     }
 
     /**
-     * 파일의 크기가 일정 크기를 넘어갈 경우 예외
-     * @param file 파일
-     * @param maxSize 일정 크기
-     * @param errorStatus 예외
+     * 파일의 크기가 지정된 최대 크기를 초과하는지 검사하고, 초과 시 예외를 발생시킵니다.
+     *
+     * @param file 검사할 파일
+     * @param maxSize 허용되는 최대 파일 크기(바이트 단위)
+     * @param errorStatus 파일 크기 초과 시 사용할 에러 상태
+     * @throws CommonException 파일 크기가 최대 허용치를 초과할 경우 발생
      */
     private static void checkFileSize(MultipartFile file, long maxSize, CommonErrorStatus errorStatus) {
         if (file.getSize() > maxSize) {
+            LoggerFactory.common().logError("파일 용량 검증", errorStatus.getMessage());
             throw new CommonException(errorStatus);
         }
     }
 
     /**
-     * 파일 타입이 특정 타입에 맞지 않을 경우
-     * @param originalFilename 파일명
-     * @param regex 특정 확장자 형식
-     * @param errorStatus 예외
+     * 파일의 확장자가 지정된 정규식 패턴과 일치하지 않을 경우 예외를 발생시킵니다.
+     *
+     * @param originalFilename 검증할 파일명
+     * @param regex 허용되는 확장자 정규식 패턴
+     * @param errorStatus 일치하지 않을 때 발생시킬 예외 상태
+     * @throws CommonException 파일 확장자가 허용되지 않은 경우
      */
     private static void checkFileType(String originalFilename, String regex, CommonErrorStatus errorStatus) {
         if (!originalFilename.matches(regex)) {
+            LoggerFactory.common().logError("파일 형식 검증", errorStatus.getMessage());
             throw new CommonException(errorStatus);
         }
     }

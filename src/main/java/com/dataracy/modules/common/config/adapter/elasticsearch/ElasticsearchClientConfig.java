@@ -1,9 +1,9 @@
-package com.dataracy.modules.common.config;
+package com.dataracy.modules.common.config.adapter.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
-import com.dataracy.modules.behaviorlog.adapter.elasticsearch.ElasticsearchConnectionProperties;
+import com.dataracy.modules.common.config.properties.ElasticsearchConnectionProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHost;
