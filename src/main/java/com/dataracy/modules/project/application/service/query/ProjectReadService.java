@@ -1,13 +1,17 @@
 package com.dataracy.modules.project.application.service.query;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.dataset.application.dto.response.read.ConnectedDataResponse;
+import com.dataracy.modules.dataset.application.port.in.query.read.FindConnectedDataSetsUseCase;
 import com.dataracy.modules.like.application.port.in.validate.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
+import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectLabelMapResponse;
+import com.dataracy.modules.project.application.dto.response.support.ProjectWithDataIdsResponse;
 import com.dataracy.modules.project.application.mapper.read.ConnectedProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.read.ContinuedProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.read.PopularProjectDtoMapper;
@@ -46,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +86,7 @@ public class ProjectReadService implements
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
     private final FindProjectLabelMapUseCase findProjectLabelMapUseCase;
 
+    private final FindConnectedDataSetsUseCase findConnectedDataSetsUseCase;
     private final ValidateTargetLikeUseCase validateTargetLikeUseCase;
 
     private static final String VIEW_TARGET_TYPE = "PROJECT";
@@ -102,11 +108,18 @@ public class ProjectReadService implements
         Instant startTime = LoggerFactory.service().logStart("GetProjectDetailUseCase", "프로젝트 세부정보 조회 서비스 시작 projectId=" + projectId);
 
         // 프로젝트 세부정보 조회
-        Project project = findProjectPort.findProjectById(projectId)
+        ProjectWithDataIdsResponse projectWithDataIdsResponse = findProjectPort.findProjectWithDataById(projectId)
                 .orElseThrow(() -> {
                     LoggerFactory.service().logWarning("GetProjectDetailUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
+
+        Project project = projectWithDataIdsResponse.project();
+        List<Long> dataIds = projectWithDataIdsResponse.dataIds();
+
+        List<ProjectConnectedDataResponse> connectedDataSets = findConnectedDataSetsUseCase.findDataSetsByIds(dataIds).stream()
+                .map(ProjectConnectedDataResponse::from)
+                .toList();
 
         boolean hasChild = checkProjectExistsByParentPort.checkParentProjectExistsById(projectId);
         boolean hasData = checkProjectDataExistsPort.checkProjectDataExistsByProjectId(projectId);
@@ -139,7 +152,8 @@ public class ProjectReadService implements
                 getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId()),
                 isLiked,
                 hasChild,
-                hasData
+                hasData,
+                connectedDataSets
         );
 
         LoggerFactory.service().logSuccess("GetProjectDetailUseCase", "프로젝트 세부정보 조회 서비스 종료 projectId=" + projectId, startTime);

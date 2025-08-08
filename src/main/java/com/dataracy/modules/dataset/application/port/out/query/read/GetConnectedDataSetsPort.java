@@ -4,6 +4,8 @@ import com.dataracy.modules.dataset.application.dto.response.support.DataWithPro
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface GetConnectedDataSetsPort {
     /**
  * 특정 프로젝트와 연결된 데이터셋 목록을 페이지네이션하여 반환합니다.
@@ -13,4 +15,5 @@ public interface GetConnectedDataSetsPort {
  * @return 각 데이터셋과 해당 데이터셋이 연결된 프로젝트 수를 포함하는 페이지 결과
  */
     Page<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable);
+    List<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProjectByIds(List<Long> ids);
 }

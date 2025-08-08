@@ -185,4 +185,26 @@ public class DataReadService implements
         LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "프로젝트와 연결된 데이터셋 목록 조회 서비스 종료 projectId=" + projectId, startTime);
         return connectedDataResponses;
     }
+
+    @Override
+    public List<ConnectedDataResponse> findDataSetsByIds(List<Long> dataIds) {
+        Instant startTime = LoggerFactory.service().logStart("FindConnectedDataSetsUseCase", "아이디 목록을 통한 데이터셋 목록 조회 서비스 시작 dataIds=" + dataIds);
+
+        List<DataWithProjectCountDto> savedDataSets = getConnectedDataSetsPort.getConnectedDataSetsAssociatedWithProjectByIds(dataIds);
+        DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets);
+        List<ConnectedDataResponse> connectedDataResponses = savedDataSets.stream()
+                .map(wrapper -> {
+                    Data data = wrapper.data();
+                    return dataReadDtoMapper.toResponseDto(
+                            data,
+                            labelResponse.topicLabelMap().get(data.getTopicId()),
+                            labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
+                            wrapper.countConnectedProjects()
+                    );
+                })
+                .toList();
+
+        LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "아이디 목록을 통한 데이터셋 목록 조회 서비스 종료 dataIds=" + dataIds, startTime);
+        return connectedDataResponses;
+    }
 }

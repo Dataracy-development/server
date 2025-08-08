@@ -158,6 +158,42 @@ public class ReadDataQueryDslAdapter implements
         return new PageImpl<>(contents, pageable, total);
     }
 
+    @Override
+    public List<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProjectByIds(List<Long> dataIds) {
+        if (dataIds == null || dataIds.isEmpty()) {
+            return List.of();
+        }
+
+        Instant startTime = LoggerFactory.query()
+                .logQueryStart("DataEntity", "[getConnectedDataSetsAssociatedWithProjectByIds] 데이터 아이디 목록에 따른 데이터셋 정보 조회 시작 dataIds=" + dataIds);
+
+        NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
+
+        // 한 방 조회: 데이터 + 연결된 프로젝트 수
+        List<Tuple> tuples = queryFactory
+                .select(
+                        data,
+                        projectData.id.count().as(projectCountPath)
+                )
+                .from(data)
+                .innerJoin(projectData).on(projectData.dataId.eq(data.id))
+                .leftJoin(data.metadata).fetchJoin()
+                .where(data.id.in(dataIds))
+                .groupBy(data.id)
+                .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
+                .fetch();
+
+        List<DataWithProjectCountDto> contents = tuples.stream()
+                .map(tuple -> new DataWithProjectCountDto(
+                        DataEntityMapper.toDomain(tuple.get(data)),
+                        tuple.get(projectCountPath)
+                ))
+                .toList();
+
+        LoggerFactory.query().logQueryEnd("DataEntity", "[getConnectedDataSetsAssociatedWithProjectByIds] 데이터 아이디 목록에 따른 데이터셋 정보 조회 완료 dataIds=" + dataIds, startTime);
+        return contents;
+    }
+
     /**
      * 지정된 개수만큼 최신순으로 데이터셋 목록을 조회합니다.
      *

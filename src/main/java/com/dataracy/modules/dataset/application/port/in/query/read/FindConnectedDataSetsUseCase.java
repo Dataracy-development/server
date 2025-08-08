@@ -4,6 +4,8 @@ import com.dataracy.modules.dataset.application.dto.response.read.ConnectedDataR
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface FindConnectedDataSetsUseCase {
     /**
  * 특정 프로젝트에 연결된 데이터셋을 페이지네이션하여 조회합니다.
@@ -13,4 +15,5 @@ public interface FindConnectedDataSetsUseCase {
  * @return 연결된 데이터셋 정보를 담은 페이지 객체
  */
     Page<ConnectedDataResponse> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable);
+    List<ConnectedDataResponse> findDataSetsByIds(List<Long> dataIds);
 }
