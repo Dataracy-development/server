@@ -17,7 +17,7 @@ public record PopularProjectWebResponse(
         String username,
 
         @Schema(description = "프로젝트 썸네일 url", example = "https://www.s3.~~~")
-        String fileUrl,
+        String projectThumbnailUrl,
 
         @Schema(description = "토픽 라벨", example = "디자인")
         String topicLabel,
