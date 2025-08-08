@@ -10,7 +10,7 @@ import java.util.Map;
 
 public abstract class AbstractKafkaConsumerConfig<V> {
 
-    @Value("${spring.kafka.bootstrap-servers:}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     protected Map<String, Object> baseConsumerProps() {
