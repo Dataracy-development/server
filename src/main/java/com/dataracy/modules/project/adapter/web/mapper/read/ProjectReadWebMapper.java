@@ -55,7 +55,7 @@ public class ProjectReadWebMapper {
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.username(),
-                responseDto.userThumbnailUrl(),
+                responseDto.userProfileUrl(),
                 responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.authorLevelLabel(),

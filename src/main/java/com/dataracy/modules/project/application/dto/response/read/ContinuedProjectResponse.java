@@ -6,7 +6,7 @@ public record ContinuedProjectResponse(
         Long id,
         String title,
         String username,
-        String userThumbnailUrl,
+        String userProfileUrl,
         String projectThumbnailUrl,
         String topicLabel,
         String authorLevelLabel,
