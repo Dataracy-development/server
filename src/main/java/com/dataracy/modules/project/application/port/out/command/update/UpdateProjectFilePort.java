@@ -7,5 +7,5 @@ public interface UpdateProjectFilePort {
  * @param projectId 파일 URL을 변경할 프로젝트의 고유 식별자
  * @param fileUrl 새로 저장할 이미지 파일의 URL
  */
-    void updateFile(Long projectId, String fileUrl);
+    void updateThumbnailFile(Long projectId, String fileUrl);
 }

@@ -14,7 +14,7 @@ public record ProjectDetailResponse(
         boolean isContinue,
         Long parentProjectId,
         String content,
-        String fileUrl,
+        String projectThumbnailUrl,
         LocalDateTime createdAt,
         Long commentCount,
         Long likeCount,

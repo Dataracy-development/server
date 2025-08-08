@@ -112,7 +112,7 @@ public class SearchSimilarProjectsEsAdapter implements SearchSimilarProjectsPort
                 doc.title(),
                 doc.content(),
                 doc.username(),
-                doc.fileUrl(),
+                doc.projectThumbnailUrl(),
                 doc.topicLabel(),
                 doc.analysisPurposeLabel(),
                 doc.dataSourceLabel(),

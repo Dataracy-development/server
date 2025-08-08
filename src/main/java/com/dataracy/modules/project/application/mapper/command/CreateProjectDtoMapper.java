@@ -10,7 +10,7 @@ import java.util.List;
  * 도메인 요청 DTO -> 도메인 모델
  */
 @Component
-public class UploadedProjectDtoMapper {
+public class CreateProjectDtoMapper {
     /**
      * UploadProjectRequest DTO와 추가 정보를 기반으로 새로운 Project 도메인 객체를 생성합니다.
      *

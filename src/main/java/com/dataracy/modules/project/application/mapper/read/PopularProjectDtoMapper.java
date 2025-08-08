@@ -33,7 +33,7 @@ public class PopularProjectDtoMapper {
                 project.getTitle(),
                 project.getContent(),
                 username,
-                project.getFileUrl(),
+                project.getThumbnailUrl(),
                 topicLabel,
                 analysisPurposeLabel,
                 dataSourceLabel,

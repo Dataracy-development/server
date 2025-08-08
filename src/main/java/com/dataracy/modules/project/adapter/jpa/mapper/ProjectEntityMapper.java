@@ -94,7 +94,7 @@ private ProjectEntityMapper() {}
                 entity.getIsContinue(),
                 null,
                 entity.getContent(),
-                entity.getFileUrl(),
+                entity.getThumbnailUrl(),
                 dataIds,
                 entity.getCreatedAt(),
                 entity.getCommentCount(),
@@ -134,7 +134,7 @@ private ProjectEntityMapper() {}
                 project.getIsContinue(),
                 parentProject,
                 project.getContent(),
-                project.getFileUrl()
+                project.getThumbnailUrl()
         );
 
         Optional.ofNullable(project.getDataIds())

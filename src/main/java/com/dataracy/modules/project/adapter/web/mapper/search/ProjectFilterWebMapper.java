@@ -51,7 +51,7 @@ public class ProjectFilterWebMapper {
                 responseDto.title(),
                 responseDto.content(),
                 responseDto.username(),
-                responseDto.fileUrl(),
+                responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.analysisPurposeLabel(),
                 responseDto.dataSourceLabel(),

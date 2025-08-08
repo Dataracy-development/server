@@ -46,8 +46,8 @@ public interface ProjectCommandApi {
             @CurrentUserId
             Long userId,
 
-            @RequestPart(value = "file", required = false)
-            MultipartFile file,
+            @RequestPart(value = "thumbnailfile", required = false)
+            MultipartFile thumbnailFile,
 
             @RequestPart @Validated
             UploadProjectWebRequest webRequest
@@ -78,8 +78,8 @@ public interface ProjectCommandApi {
             @PathVariable @Min(1)
             Long projectId,
 
-            @RequestPart(value = "file", required = false)
-            MultipartFile file,
+            @RequestPart(value = "thumbnailFile", required = false)
+            MultipartFile thumbnailFile,
 
             @RequestPart @Validated
             ModifyProjectWebRequest webRequest

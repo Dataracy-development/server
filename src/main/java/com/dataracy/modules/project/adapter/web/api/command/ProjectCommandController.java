@@ -37,21 +37,21 @@ public class ProjectCommandController implements ProjectCommandApi {
      * 사용자의 ID, 프로젝트 썸네일 이미지 파일, 프로젝트 정보가 포함된 요청 객체를 받아 프로젝트를 업로드한다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
-     * @param file 프로젝트 썸네일 이미지 파일
+     * @param thumbnailFile 프로젝트 썸네일 이미지 파일
      * @param webRequest 업로드할 프로젝트 정보가 담긴 요청 객체
      * @return 프로젝트 생성 성공 시 201 Created와 성공 상태를 포함한 응답
      */
     @Override
     public ResponseEntity<SuccessResponse<Void>> uploadProject(
             Long userId,
-            MultipartFile file,
+            MultipartFile thumbnailFile,
             UploadProjectWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[UploadProject] 프로젝트 업로드 API 요청 시작");
 
         try {
             UploadProjectRequest requestDto = projectCommandWebMapper.toApplicationDto(webRequest);
-            uploadProjectUseCase.uploadProject(userId, file, requestDto);
+            uploadProjectUseCase.uploadProject(userId, thumbnailFile, requestDto);
         } finally {
             LoggerFactory.api().logResponse("[UploadProject] 프로젝트 업로드 API 응답 완료", startTime);
         }
@@ -64,18 +64,18 @@ public class ProjectCommandController implements ProjectCommandApi {
      * 프로젝트 ID에 해당하는 프로젝트 정보를 수정한다.
      *
      * @param projectId 수정할 프로젝트의 ID
-     * @param file 프로젝트 썸네일 파일 (선택 사항)
+     * @param thumbnailFile 프로젝트 썸네일 파일 (선택 사항)
      * @param webRequest 프로젝트 수정 요청 데이터
      * @return 프로젝트 수정 성공 시 성공 상태를 포함한 응답
      */
     @Override
     @AuthorizationProjectEdit
-    public ResponseEntity<SuccessResponse<Void>> modifyProject(Long projectId, MultipartFile file, ModifyProjectWebRequest webRequest) {
+    public ResponseEntity<SuccessResponse<Void>> modifyProject(Long projectId, MultipartFile thumbnailFile, ModifyProjectWebRequest webRequest) {
         Instant startTime = LoggerFactory.api().logRequest("[ModifyProject] 프로젝트 수정 API 요청 시작");
 
         try {
             ModifyProjectRequest requestDto = projectCommandWebMapper.toApplicationDto(webRequest);
-            modifyProjectUseCase.modifyProject(projectId, file, requestDto);
+            modifyProjectUseCase.modifyProject(projectId, thumbnailFile, requestDto);
         } finally {
             LoggerFactory.api().logResponse("[ModifyProject] 프로젝트 수정 API 응답 완료", startTime);
         }

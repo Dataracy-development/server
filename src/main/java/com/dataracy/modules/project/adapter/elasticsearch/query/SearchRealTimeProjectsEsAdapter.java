@@ -72,7 +72,7 @@ public class SearchRealTimeProjectsEsAdapter implements SearchRealTimeProjectsPo
                                 doc.id(),
                                 doc.title(),
                                 doc.username(),
-                                doc.fileUrl()
+                                doc.projectThumbnailUrl()
                         );
                     })
                     .toList();
