@@ -178,5 +178,9 @@ cloud:
       bucket: ${AWS_S3_BUCKET_NAME}
 
 default:
-  image:
-    url: ${DEFAULT_IMAGE_FILE_URL}
+  profile:
+    image-url: ${DEFAULT_PROFILE_IMAGE_URL}
+  project:
+    image-url: ${DEFAULT_PROJECT_IMAGE_URL}
+  dataset:
+    image-url: ${DEFAULT_DATASET_IMAGE_URL}
