@@ -52,9 +52,6 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
 
     private final CacheRefreshTokenUseCase cacheRefreshTokenUseCase;
 
-    @Value("${default.profile.image-url}")
-    private String defaultProfileImageUrl;
-
     /**
      * 자체 회원가입 요청을 처리하여 신규 사용자를 등록하고 리프레시 토큰을 발급한다.
      *

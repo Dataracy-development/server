@@ -4,7 +4,7 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
-import com.dataracy.modules.dataset.application.mapper.command.UploadedDataDtoMapper;
+import com.dataracy.modules.dataset.application.mapper.command.CreateDataDtoMapper;
 import com.dataracy.modules.dataset.application.port.in.command.content.ModifyDataUseCase;
 import com.dataracy.modules.dataset.application.port.in.command.content.UploadDataUseCase;
 import com.dataracy.modules.dataset.application.port.out.command.create.CreateDataPort;
@@ -23,7 +23,6 @@ import com.dataracy.modules.reference.application.port.in.datasource.ValidateDat
 import com.dataracy.modules.reference.application.port.in.datatype.ValidateDataTypeUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +36,7 @@ public class DataCommandService implements
         UploadDataUseCase,
         ModifyDataUseCase
 {
-    private final UploadedDataDtoMapper uploadedDataDtoMapper;
+    private final CreateDataDtoMapper createDataDtoMapper;
 
     private final CreateDataPort createDataPort;
     private final UpdateDataPort updateDataPort;
@@ -53,9 +52,6 @@ public class DataCommandService implements
     private final ValidateTopicUseCase validateTopicUseCase;
     private final ValidateDataSourceUseCase validateDataSourceUseCase;
     private final ValidateDataTypeUseCase validateDataTypeUseCase;
-
-    @Value("${default.image.url:}")
-    private String defaultImageUrl;
 
     /**
      * 데이터셋 파일과 썸네일 파일의 유효성을 검증하고 업로드한 뒤, 데이터셋 정보를 저장하고 업로드 이벤트를 발행합니다.
@@ -86,10 +82,9 @@ public class DataCommandService implements
         );
 
         // 데이터셋 저장
-        Data data = uploadedDataDtoMapper.toDomain(
+        Data data = createDataDtoMapper.toDomain(
                 requestDto,
-                userId,
-                defaultImageUrl
+                userId
         );
         Data saveData = createDataPort.saveData(data);
 
