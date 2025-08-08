@@ -66,8 +66,11 @@ public class UserEntity extends BaseTimeEntity {
     @Column
     private Long visitSourceId;
 
-    @Column
+    @Column(nullable = false)
     private String profileImageUrl;
+
+    @Column(nullable = false)
+    private String introductionText;
 
     @Column(nullable = false)
     @Builder.Default
@@ -124,6 +127,7 @@ public class UserEntity extends BaseTimeEntity {
             Long occupationId,
             Long visitSourceId,
             String profileImageUrl,
+            String introductionText,
             Boolean isAdTermsAgreed,
             Boolean isDeleted
     ) {
@@ -138,6 +142,7 @@ public class UserEntity extends BaseTimeEntity {
                 .occupationId(occupationId)
                 .visitSourceId(visitSourceId)
                 .profileImageUrl(profileImageUrl)
+                .introductionText(introductionText)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)
                 .build();
