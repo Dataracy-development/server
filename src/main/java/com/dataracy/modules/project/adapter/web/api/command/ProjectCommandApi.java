@@ -7,7 +7,6 @@ import com.dataracy.modules.project.adapter.web.request.command.UploadProjectWeb
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -39,9 +38,7 @@ public interface ProjectCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "프로젝트 업로드에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "201", description = "프로젝트 업로드에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<SuccessResponse<Void>> uploadProject(
@@ -74,9 +71,7 @@ public interface ProjectCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "프로젝트 수정에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "프로젝트 수정에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PutMapping(value="/{projectId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<SuccessResponse<Void>> modifyProject(
@@ -106,9 +101,7 @@ public interface ProjectCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당하는 프로젝트 삭제에  성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "해당하는 프로젝트 삭제에  성공했습니다.", useReturnTypeSchema = true)
     })
     @DeleteMapping("/{projectId}")
     ResponseEntity<SuccessResponse<Void>> deleteProject(
@@ -132,9 +125,7 @@ public interface ProjectCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당하는 프로젝트 복원에  성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "해당하는 프로젝트 복원에  성공했습니다.", useReturnTypeSchema = true)
     })
     @PatchMapping("/{projectId}/restore")
     ResponseEntity<SuccessResponse<Void>> restoreProject(

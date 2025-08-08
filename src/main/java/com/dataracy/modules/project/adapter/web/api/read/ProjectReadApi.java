@@ -7,8 +7,6 @@ import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebR
 import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,9 +38,7 @@ public interface ProjectReadApi {
             description = "프로젝트 상세 정보를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "프로젝트 상세 정보 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "프로젝트 상세 정보 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{projectId}")
     ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(
@@ -68,9 +64,7 @@ public interface ProjectReadApi {
             description = "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "이어가기 프로젝트 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "이어가기 프로젝트 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{projectId}/continue")
     ResponseEntity<SuccessResponse<Page<ContinuedProjectWebResponse>>> findContinueProjects(
@@ -93,9 +87,7 @@ public interface ProjectReadApi {
             description = "데이터와 연결된 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "데이터와 연결된 프로젝트 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "데이터와 연결된 프로젝트 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/connected-to-dataset")
     ResponseEntity<SuccessResponse<Page<ConnectedProjectWebResponse>>> findConnectedProjectsAssociatedWithData(
@@ -117,9 +109,7 @@ public interface ProjectReadApi {
             description = "좋아요, 댓글, 조회수를 기준으로 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "인기있는 프로젝트 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "인기있는 프로젝트 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/popular")
     ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> getPopularProjects(

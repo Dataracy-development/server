@@ -3,8 +3,6 @@ package com.dataracy.modules.dataset.adapter.web.api.read;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.dataset.adapter.web.response.read.*;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,9 +33,7 @@ public interface DataReadApi {
             description = "다운로드가 많은, 연결된 프로젝트 개수가 많은 데이터셋을 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "인기 있는 데이터셋 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "인기 있는 데이터셋 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/popular")
     ResponseEntity<SuccessResponse<List<PopularDataWebResponse>>> getPopularDataSets(
@@ -57,9 +53,7 @@ public interface DataReadApi {
             description = "데이터셋 세부정보를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "데이터셋 세부정보 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "데이터셋 세부정보 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{dataId}")
     ResponseEntity<SuccessResponse<DataDetailWebResponse>> getDataDetail(
@@ -78,9 +72,7 @@ public interface DataReadApi {
             description = "최신 데이터셋 목록을 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "간단한 최신 데이터셋 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "간단한 최신 데이터셋 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/recent")
     ResponseEntity<SuccessResponse<List<RecentMinimalDataWebResponse>>> getRecentDataSets(
@@ -99,9 +91,7 @@ public interface DataReadApi {
             description = "카테고리별 데이터셋 개수를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "카테고리별 데이터셋 개수를 조회한다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "카테고리별 데이터셋 개수를 조회한다.", useReturnTypeSchema = true)
     })
     @GetMapping("/group-by/topic")
     ResponseEntity<SuccessResponse<List<DataGroupCountWebResponse>>> getDataCountByTopicLabel();
@@ -118,9 +108,7 @@ public interface DataReadApi {
             description = "프로젝트와 연결된 데이터셋 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "프로젝트와 연결된 데이터셋 리스트를 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "프로젝트와 연결된 데이터셋 리스트를 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/connected-to-project")
     ResponseEntity<SuccessResponse<Page<ConnectedDataWebResponse>>> findConnectedDataSetsAssociatedWithProject(

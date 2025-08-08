@@ -3,8 +3,6 @@ package com.dataracy.modules.reference.adapter.web.api.topic;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllTopicsWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,9 +24,7 @@ public interface TopicApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 토픽 리스트 조회",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "200", description = "전체 토픽 리스트 조회", useReturnTypeSchema = true),
     })
     @GetMapping("/topics")
     ResponseEntity<SuccessResponse<AllTopicsWebResponse>> findAllTopics();

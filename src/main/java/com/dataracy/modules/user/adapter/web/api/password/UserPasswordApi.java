@@ -39,9 +39,7 @@ public interface UserPasswordApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "비밀번호 변경에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "200", description = "비밀번호 변경에 성공했습니다.", useReturnTypeSchema = true),
     })
     @PutMapping(value = "/user/password/change")
     ResponseEntity<SuccessResponse<Void>> changePassword(
@@ -70,9 +68,7 @@ public interface UserPasswordApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "비밀번호 재설정에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "200", description = "비밀번호 재설정에 성공했습니다.", useReturnTypeSchema = true),
     })
     @PutMapping(value = "/password/reset")
     ResponseEntity<SuccessResponse<Void>> resetPasswordWithToken(
@@ -101,9 +97,7 @@ public interface UserPasswordApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "비밀번호 확인에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "200", description = "비밀번호 확인에 성공했습니다.", useReturnTypeSchema = true),
     })
     @PostMapping(value = "/user/password/confirm")
     ResponseEntity<SuccessResponse<Void>> confirmPassword(

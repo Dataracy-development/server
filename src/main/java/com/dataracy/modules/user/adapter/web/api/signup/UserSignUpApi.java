@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,12 +37,8 @@ public interface UserSignUpApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "자체 회원가입 성공",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "400", description = "요청 DTO 에러(누락 또는 유효성 검증 실패)",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "201", description = "자체 회원가입 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "요청 DTO 에러(누락 또는 유효성 검증 실패)", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/signup/self", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> signUpUserSelf(
@@ -72,15 +67,9 @@ public interface UserSignUpApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "소셜 회원가입 성공",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "400", description = "요청 DTO 에러(누락 또는 유효성 검증 실패)",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "레지스터 토큰 인증 실패(재 회원가입 진행 요청)",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "201", description = "소셜 회원가입 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "요청 DTO 에러(누락 또는 유효성 검증 실패)", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "401", description = "레지스터 토큰 인증 실패(재 회원가입 진행 요청)", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/signup/oauth", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> signUpUserOAuth(

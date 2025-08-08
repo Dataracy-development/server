@@ -39,9 +39,7 @@ public interface CommentCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "피드백 댓글 작성에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "201", description = "피드백 댓글 작성에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/{projectId}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> uploadComment(
@@ -79,9 +77,7 @@ public interface CommentCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "댓글 수정에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "댓글 수정에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PutMapping(value="/{projectId}/comments/{commentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> modifyComment(
@@ -117,9 +113,7 @@ public interface CommentCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당하는 피드백 댓글 삭제에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "해당하는 피드백 댓글 삭제에 성공했습니다.", useReturnTypeSchema = true)
     })
     @DeleteMapping("/{projectId}/comments/{commentId}")
     ResponseEntity<SuccessResponse<Void>> deleteComment(
