@@ -26,7 +26,7 @@ public class DataReadWebMapper {
                 responseDto.endDate(),
                 responseDto.description(),
                 responseDto.analysisGuide(),
-                responseDto.thumbnailUrl(),
+                responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),
@@ -67,7 +67,7 @@ public class DataReadWebMapper {
                 responseDto.dataTypeLabel(),
                 responseDto.startDate(),
                 responseDto.endDate(),
-                responseDto.thumbnailUrl(),
+                responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),
@@ -86,7 +86,7 @@ public class DataReadWebMapper {
         return new RecentMinimalDataWebResponse(
                 responseDto.id(),
                 responseDto.title(),
-                responseDto.thumbnailUrl(),
+                responseDto.dataThumbnailUrl(),
                 responseDto.createdAt()
         );
     }
@@ -110,7 +110,7 @@ public class DataReadWebMapper {
                 responseDto.startDate(),
                 responseDto.endDate(),
                 responseDto.description(),
-                responseDto.thumbnailUrl(),
+                responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),

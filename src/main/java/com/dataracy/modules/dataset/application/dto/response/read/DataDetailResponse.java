@@ -16,7 +16,7 @@ public record DataDetailResponse(
         LocalDate endDate,
         String description,
         String analysisGuide,
-        String thumbnailUrl,
+        String dataThumbnailUrl,
         Integer downloadCount,
         Integer rowCount,
         Integer columnCount,

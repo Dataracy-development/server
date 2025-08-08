@@ -24,7 +24,7 @@ public class DataSearchWebMapper {
                 responseDto.startDate(),
                 responseDto.endDate(),
                 responseDto.description(),
-                responseDto.thumbnailUrl(),
+                responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),
@@ -42,7 +42,7 @@ public class DataSearchWebMapper {
         return new RecentMinimalDataWebResponse(
                 responseDto.id(),
                 responseDto.title(),
-                responseDto.thumbnailUrl(),
+                responseDto.dataThumbnailUrl(),
                 responseDto.createdAt()
         );
     }

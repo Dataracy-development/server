@@ -51,6 +51,7 @@ public interface DataCommandApi {
 
             @RequestPart(value = "dataFile") MultipartFile dataFile,
             @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
+            
             @RequestPart @Validated
             UploadDataWebRequest webRequest
     );

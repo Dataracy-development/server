@@ -33,6 +33,8 @@ public class QDataEntity extends EntityPathBase<DataEntity> {
 
     public final NumberPath<Long> dataSourceId = createNumber("dataSourceId", Long.class);
 
+    public final StringPath dataThumbnailUrl = createString("dataThumbnailUrl");
+
     public final NumberPath<Long> dataTypeId = createNumber("dataTypeId", Long.class);
 
     public final StringPath description = createString("description");
@@ -48,8 +50,6 @@ public class QDataEntity extends EntityPathBase<DataEntity> {
     public final QDataMetadataEntity metadata;
 
     public final DatePath<java.time.LocalDate> startDate = createDate("startDate", java.time.LocalDate.class);
-
-    public final StringPath thumbnailUrl = createString("thumbnailUrl");
 
     public final StringPath title = createString("title");
 

@@ -110,7 +110,7 @@ public class SearchSimilarDataSetsEsAdapter implements SearchSimilarDataSetsPort
                 doc.startDate(),
                 doc.endDate(),
                 doc.description(),
-                doc.thumbnailUrl(),
+                doc.dataThumbnailUrl(),
                 doc.downloadCount(),
                 doc.rowCount(),
                 doc.columnCount(),

@@ -37,7 +37,7 @@ public class FilteredDataDtoMapper {
                 data.getStartDate(),
                 data.getEndDate(),
                 data.getDescription(),
-                data.getThumbnailUrl(),
+                data.getDataThumbnailUrl(),
                 data.getDownloadCount(),
                 data.getMetadata().getRowCount(),
                 data.getMetadata().getColumnCount(),
