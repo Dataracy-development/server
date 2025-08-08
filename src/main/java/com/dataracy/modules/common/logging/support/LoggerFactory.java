@@ -26,27 +26,27 @@ public class LoggerFactory {
     }
 
     /**
-     * ServiceLogger의 싱글톤 인스턴스를 반환합니다.
+     * ServiceLogger의 전역 싱글톤 인스턴스를 반환합니다.
      *
-     * @return ServiceLogger의 전역 인스턴스
+     * 서비스 계층의 로깅에 사용되는 ServiceLogger 인스턴스를 제공합니다.
+     *
+     * @return ServiceLogger의 싱글톤 인스턴스
      */
     public static ServiceLogger service() {
         return SERVICE_LOGGER;
     }
 
     /**
-     * DomainLogger의 싱글톤 인스턴스를 반환합니다.
+     * 도메인 관련 로깅을 위한 DomainLogger의 싱글톤 인스턴스를 반환합니다.
      *
-     * 이 메서드는 도메인 관련 로깅을 위한 DomainLogger의 전역 인스턴스를 제공합니다.
-     *
-     * @return DomainLogger의 싱글톤 인스턴스
+     * @return DomainLogger의 전역 인스턴스
      */
     public static DomainLogger domain() {
         return DOMAIN_LOGGER;
     }
 
     /**
-     * PersistenceLogger의 싱글톤 인스턴스를 반환합니다.
+     * 데이터베이스 관련 로깅을 위한 PersistenceLogger의 싱글톤 인스턴스를 반환합니다.
      *
      * @return PersistenceLogger 인스턴스
      */
@@ -57,32 +57,32 @@ public class LoggerFactory {
     /**
      * QueryDSL 관련 로깅을 위한 싱글톤 QueryDslLogger 인스턴스를 반환합니다.
      *
-     * @return QueryDSL 로깅에 사용되는 QueryDslLogger 인스턴스
+     * @return QueryDSL 작업에 대한 로깅을 제공하는 QueryDslLogger 인스턴스
      */
     public static QueryDslLogger query() {
         return QUERY_DSL_LOGGER;
     }
 
     /**
-     * Kafka 관련 로그를 기록하는 싱글톤 KafkaLogger 인스턴스를 반환합니다.
+     * Kafka 관련 로그를 위한 싱글톤 KafkaLogger 인스턴스를 반환합니다.
      *
-     * @return KafkaLogger 싱글톤 인스턴스
+     * @return Kafka 로그 기록에 사용되는 KafkaLogger 인스턴스
      */
     public static KafkaLogger kafka() {
         return KAFKA_LOGGER;
     }
 
     /**
-     * ElasticLogger의 싱글톤 인스턴스를 반환합니다.
+     * ElasticSearch 관련 로깅을 위한 ElasticLogger의 싱글톤 인스턴스를 반환합니다.
      *
-     * @return ElasticLogger 인스턴스
+     * @return ElasticLogger의 싱글톤 인스턴스
      */
     public static ElasticLogger elastic() {
         return ELASTIC_LOGGER;
     }
 
     /**
-     * 스케줄러 로거의 싱글톤 인스턴스를 반환합니다.
+     * 스케줄러 관련 로그를 기록하는 SchedulerLogger의 싱글톤 인스턴스를 반환합니다.
      *
      * @return SchedulerLogger의 싱글톤 인스턴스
      */
@@ -91,20 +91,25 @@ public class LoggerFactory {
     }
 
     /**
-     * Redis 관련 로깅을 위한 싱글톤 RedisLogger 인스턴스를 반환합니다.
+     * Redis 작업에 대한 로깅을 위한 싱글톤 RedisLogger 인스턴스를 반환합니다.
      *
-     * @return RedisLogger 싱글톤 인스턴스
+     * @return Redis 관련 로깅에 사용되는 RedisLogger 싱글톤 인스턴스
      */
     public static RedisLogger redis() {
         return REDIS_LOGGER;
     }
 
+    /**
+     * 분산 락 관련 로깅을 위한 싱글톤 DistributedLockLogger 인스턴스를 반환합니다.
+     *
+     * @return 분산 락 로깅에 사용되는 DistributedLockLogger 인스턴스
+     */
     public static DistributedLockLogger lock() {
         return DISTRIBUTED_LOCK_LOGGER;
     }
 
     /**
-     * 애플리케이션 전체에서 공통적으로 사용할 수 있는 CommonLogger의 싱글톤 인스턴스를 반환합니다.
+     * 애플리케이션 전역에서 사용할 수 있는 CommonLogger의 싱글톤 인스턴스를 반환합니다.
      *
      * @return CommonLogger의 싱글톤 인스턴스
      */

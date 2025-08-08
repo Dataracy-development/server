@@ -8,16 +8,16 @@ public final class S3KeyGeneratorUtil {
     private S3KeyGeneratorUtil() {
     }
 
-    /**
-     * S3에 저장할 파일의 키를 생성합니다.
+    /****
+     * 도메인, 엔티티 ID, 원본 파일명을 기반으로 S3에 저장할 파일의 고유 키를 생성합니다.
      *
-     * 입력받은 도메인, 엔티티 ID, 원본 파일명으로부터 확장자를 추출하고, 랜덤 UUID를 조합하여 `도메인/엔티티ID/UUID.확장자` 형식의 S3 키를 반환합니다.
+     * 입력된 도메인, 엔티티 ID, 원본 파일명에서 확장자를 추출하고, 무작위 UUID를 조합하여 `도메인/엔티티ID/UUID.확장자` 형식의 S3 키 문자열을 반환합니다.
      *
      * @param domain S3 경로의 최상위 디렉터리로 사용할 도메인 이름
      * @param entityId 파일과 연관된 엔티티의 ID
-     * @param originalFilename 원본 파일명 (확장자 포함)
+     * @param originalFilename 확장자를 포함한 원본 파일명
      * @return 생성된 S3 키 문자열
-     * @throws IllegalArgumentException 입력 파라미터 중 하나라도 null인 경우
+     * @throws IllegalArgumentException 도메인, 엔티티 ID, 원본 파일명 중 하나라도 null인 경우
      */
     public static String generateKey(String domain, Long entityId, String originalFilename) {
         if (domain == null || entityId == null || originalFilename == null) {
@@ -32,7 +32,8 @@ public final class S3KeyGeneratorUtil {
     /**
      * 도메인, 엔티티 ID, 원본 파일명을 기반으로 S3에 저장할 썸네일 파일의 고유 키를 생성합니다.
      *
-     * 반환되는 키는 `domain/entityId/thumb/uuid.extension` 형식이며, 파일 확장자는 원본 파일명에서 추출됩니다. 입력값이 null인 경우 예외가 발생합니다.
+     * 반환되는 키는 `domain/entityId/thumb/uuid.extension` 형식이며, 파일 확장자는 원본 파일명에서 추출됩니다.
+     * 입력값이 null인 경우 IllegalArgumentException이 발생합니다.
      *
      * @param domain S3 경로에 포함될 도메인 이름
      * @param entityId S3 경로에 포함될 엔티티 ID

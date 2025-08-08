@@ -17,6 +17,14 @@ public class RedissonConfig {
 
     private final RedissonProperties properties;
 
+    /**
+     * Redis 서버에 연결된 RedissonClient 인스턴스를 생성하여 반환합니다.
+     *
+     * 이 메서드는 단일 Redis 서버에 대한 연결 정보를 기반으로 Redisson 클라이언트를 구성하며,
+     * 분산 락 등 Redisson의 기능을 사용할 수 있도록 Spring Bean으로 등록합니다.
+     *
+     * @return 구성된 RedissonClient 인스턴스
+     */
     @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
