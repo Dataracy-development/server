@@ -13,14 +13,14 @@ import java.io.InputStream;
 public class ThumbnailGenerator {
 
     /**
-     * 입력된 이미지 파일로부터 지정된 크기의 썸네일 이미지를 생성하여 반환합니다.
+     * 업로드된 이미지 파일로부터 지정된 크기의 썸네일 이미지를 생성하여 반환합니다.
      *
-     * @param originalImage 썸네일로 생성할 원본 이미지 파일
+     * @param originalImage 썸네일로 변환할 원본 이미지 파일
      * @param width 생성할 썸네일의 너비(픽셀 단위)
      * @param height 생성할 썸네일의 높이(픽셀 단위)
      * @return 생성된 썸네일 이미지 데이터가 담긴 ByteArrayOutputStream
-     * @throws IllegalArgumentException 원본 이미지가 없거나 비어 있거나, 너비 또는 높이가 0 이하인 경우
-     * @throws RuntimeException 썸네일 생성 중 입출력 오류가 발생한 경우
+     * @throws IllegalArgumentException 원본 이미지가 없거나 비어 있거나, 너비 또는 높이가 0 이하인 경우 발생합니다.
+     * @throws RuntimeException 썸네일 생성 과정에서 입출력 오류가 발생한 경우 발생합니다.
      */
     public ByteArrayOutputStream createThumbnail(MultipartFile originalImage, int width, int height) {
         if (originalImage == null || originalImage.isEmpty()) {

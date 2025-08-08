@@ -25,7 +25,7 @@ public class FileParsingUtil {
     private static final int SHEET_INDEX = 0;
 
     /****
-     * 입력 스트림과 파일명을 기반으로 파일 형식을 자동 감지(CSV, XLSX, JSON)하여 행 수, 열 수, 미리보기 데이터를 추출합니다.
+     * 입력 스트림과 파일명을 기반으로 파일 형식을 자동 감지하여(CSV, XLSX, JSON) 행 수, 열 수, 미리보기 데이터를 추출합니다.
      *
      * @param inputStream 파일 데이터가 포함된 입력 스트림
      * @param filename 파일명(확장자를 포함하여 파일 형식 판별에 사용)
@@ -164,9 +164,9 @@ public class FileParsingUtil {
     }
 
     /**
-     * JSON 형식의 입력 스트림에서 행 수, 열 수, 미리보기 데이터를 추출합니다.
+     * JSON 입력 스트림에서 행 수, 열 수, 미리보기 데이터를 추출합니다.
      *
-     * 입력 스트림의 루트 노드는 반드시 배열이어야 하며, 각 요소는 최대 5개까지 Map으로 변환되어 미리보기로 제공됩니다.
+     * 입력 스트림의 루트 노드는 반드시 배열이어야 하며, 각 요소의 필드를 기준으로 열 수를 계산하고 최대 5개의 미리보기 데이터를 제공합니다.
      *
      * @param is JSON 데이터를 포함하는 입력 스트림
      * @return 행 수, 열 수, 미리보기 데이터(JSON 문자열)를 포함하는 ParsedMetadataResponse 객체
@@ -216,10 +216,10 @@ public class FileParsingUtil {
     }
 
     /**
-     * 입력 스트림의 문자 인코딩을 자동으로 감지하여 Charset을 반환합니다.
+     * 입력 스트림에서 문자 인코딩을 자동 감지하여 해당 Charset을 반환합니다.
      *
-     * 입력 스트림에서 최대 4096바이트를 읽어 UniversalDetector로 인코딩을 감지하며,
-     * 감지에 실패하거나 지원하지 않는 인코딩일 경우 기본값으로 UTF-8을 반환합니다.
+     * 입력 스트림의 처음 최대 4096바이트를 분석하여 UniversalDetector로 인코딩을 감지하며,
+     * 감지된 인코딩이 없거나 지원되지 않는 경우 기본적으로 UTF-8 Charset을 반환합니다.
      *
      * @param is 인코딩을 감지할 InputStream (mark/reset 지원 필요)
      * @return 감지된 Charset, 감지 실패 또는 미지원 시 UTF-8

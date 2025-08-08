@@ -27,8 +27,8 @@ public class S3Config {
     /**
      * AWS S3 클라이언트(AmazonS3) 빈을 생성하여 반환합니다.
      *
-     * AWS 접근 키, 시크릿 키, 리전을 기반으로 AmazonS3 클라이언트를 생성하며,
-     * 생성 과정에서 오류가 발생하면 IllegalStateException을 발생시킵니다.
+     * 주어진 접근 키, 시크릿 키, 리전을 사용하여 AmazonS3 클라이언트를 생성합니다.
+     * 클라이언트 생성에 실패할 경우 IllegalStateException이 발생합니다.
      *
      * @return 구성된 AmazonS3 클라이언트 인스턴스
      */
