@@ -3,7 +3,7 @@ package com.dataracy.modules.project.application.service.command;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.dataset.application.port.in.validate.ValidateDataUseCase;
-import com.dataracy.modules.filestorage.application.port.in.FileUploadUseCase;
+import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
@@ -60,7 +60,7 @@ public class ProjectCommandService implements
     private final ExtractProjectOwnerPort extractProjectOwnerPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
-    private final FileUploadUseCase fileUploadUseCase;
+    private final FileCommandUseCase fileCommandUseCase;
 
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
@@ -198,9 +198,9 @@ public class ProjectCommandService implements
     }
 
     /**
-     * 프로젝트 이미지 파일을 외부 스토리지에 업로드하고, 해당 파일 URL로 프로젝트 정보를 업데이트합니다.
+     * 프로젝트 이미지 파일을 외부 스토리지에 업로드하고, 해당 파일의 URL로 프로젝트 정보를 갱신합니다.
      *
-     * 파일이 null이 아니고 비어 있지 않은 경우에만 동작하며, 업로드 실패 시 RuntimeException을 발생시켜 트랜잭션 롤백을 유도합니다.
+     * 파일이 null이 아니고 비어 있지 않은 경우에만 동작하며, 업로드 중 예외 발생 시 RuntimeException을 발생시켜 트랜잭션을 롤백합니다.
      *
      * @param projectId 파일을 업로드할 프로젝트의 ID
      * @param file 업로드할 이미지 파일
@@ -209,7 +209,7 @@ public class ProjectCommandService implements
         if (file != null && !file.isEmpty()) {
             try {
                 String key = S3KeyGeneratorUtil.generateKey("project", projectId, file.getOriginalFilename());
-                String fileUrl = fileUploadUseCase.uploadFile(key, file);
+                String fileUrl = fileCommandUseCase.uploadFile(key, file);
                 updateProjectFilePort.updateFile(projectId, fileUrl);
             } catch (Exception e) {
                 LoggerFactory.service().logException("UploadProjectRequest", "프로젝트 파일 업로드 실패. projectId=" + projectId, e);

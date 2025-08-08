@@ -15,13 +15,23 @@ public class KafkaLogger extends BaseLogger {
     }
 
     /**
-     * 지정된 Kafka 토픽에서 수신한 메시지를 디버그 로그로 기록합니다.
+     * 지정된 Kafka 토픽에서 수신한 메시지를 디버그 레벨로 기록합니다.
      *
      * @param topic 메시지를 수신한 Kafka 토픽 이름
      * @param message 수신된 메시지 내용
      */
     public void logConsume(String topic, String message) {
         debug("[Kafka 수신] topic={} message={}", topic, message);
+    }
+
+    /**
+     * 지정된 Kafka 토픽에서 발생한 경고 메시지를 경고 레벨로 기록합니다.
+     *
+     * @param topic   경고가 발생한 Kafka 토픽 이름
+     * @param message 기록할 경고 메시지 내용
+     */
+    public void logWarning(String topic, String message) {
+        warn("[Kafka 경고] topic={} message={}", topic, message);
     }
 
     /**

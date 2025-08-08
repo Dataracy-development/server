@@ -32,13 +32,25 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtValidateUseCase jwtValidateUseCase;
 
+    /**
+     * HTTP 요청에서 JWT 토큰을 추출하고 검증하여 인증 정보를 설정합니다.
+     *
+     * 요청 헤더에서 JWT 액세스 토큰을 추출하고, 토큰의 유효성을 검증한 후 사용자 ID와 역할 정보를 기반으로 인증 객체를 생성하여 SecurityContextHolder에 등록합니다.
+     * 토큰이 없거나 유효하지 않은 경우 인증 예외를 발생시키며, 예외 정보는 요청 속성에 저장됩니다.
+     *
+     * @param request  현재 HTTP 요청
+     * @param response 현재 HTTP 응답
+     * @param filterChain 필터 체인
+     * @throws BusinessException 비즈니스 로직 처리 중 발생하는 예외
+     * @throws ServletException 서블릿 처리 중 발생하는 예외
+     * @throws IOException 입출력 처리 중 발생하는 예외
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws BusinessException, ServletException, IOException {
         try {
             // 헤더에서 어세스 토큰 추출
             String accessToken = ExtractHeaderUtil.extractAccessToken(request)
                     .orElseThrow(() -> new AuthException(AuthErrorStatus.NOT_FOUND_ACCESS_TOKEN_IN_HEADER));
-            log.debug("Extracted JWT Token: {}", accessToken);
 
             // 어세스 토큰 유효성 검증
             jwtValidateUseCase.validateToken(accessToken);
@@ -46,7 +58,6 @@ public class JwtFilter extends OncePerRequestFilter {
             // 토큰에서 유저 id, 유저 역할 반환
             Long userId = jwtValidateUseCase.getUserIdFromToken(accessToken);
             RoleType role = jwtValidateUseCase.getRoleFromToken(accessToken);
-            log.debug("Authenticated UserId: {}", userId);
 
             // 인증 객체 SecurityContextHolder에 주입
             setAuthentication(request, userId, role);
@@ -59,7 +70,7 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    /**
+    /****
      * 현재 HTTP 요청이 JWT 인증 필터를 우회해야 하는지 여부를 반환합니다.
      *
      * 사전에 정의된 경로나 조건(예: Swagger, API 문서, 정적 리소스, 헬스 체크, 로그인, OAuth2, 루트, 에러, 웹훅, 공개 API, 회원가입, 인증, 비밀번호 재설정, 닉네임 중복 확인, 프로젝트 및 데이터셋 GET 요청, 파일 관련 경로 등)에 해당하는 경우 true를 반환하여 JWT 인증을 적용하지 않습니다.
@@ -70,7 +81,6 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-//        log.info("[JWT FILTER DEBUG] Request URI: {}", request.getRequestURI());
         return
                 path.startsWith("/swagger") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.equals("/swagger-ui.html")
                         || path.startsWith("/swagger-resources") || path.equals("/swagger-config")
