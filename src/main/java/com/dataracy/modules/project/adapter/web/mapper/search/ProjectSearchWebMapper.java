@@ -1,9 +1,7 @@
 package com.dataracy.modules.project.adapter.web.mapper.search;
 
-import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.RealTimeProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.SimilarProjectWebResponse;
-import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.search.RealTimeProjectResponse;
 import com.dataracy.modules.project.application.dto.response.search.SimilarProjectResponse;
 import org.springframework.stereotype.Component;
