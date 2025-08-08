@@ -8,7 +8,7 @@ import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
 import com.dataracy.modules.project.application.dto.request.command.UploadProjectRequest;
-import com.dataracy.modules.project.application.mapper.command.UploadedProjectDtoMapper;
+import com.dataracy.modules.project.application.mapper.command.CreateProjectDtoMapper;
 import com.dataracy.modules.project.application.port.in.command.content.ModifyProjectUseCase;
 import com.dataracy.modules.project.application.port.in.command.content.UploadProjectUseCase;
 import com.dataracy.modules.project.application.port.out.command.create.CreateProjectPort;
@@ -46,7 +46,7 @@ public class ProjectCommandService implements
         UploadProjectUseCase,
         ModifyProjectUseCase
 {
-    private final UploadedProjectDtoMapper uploadedProjectDtoMapper;
+    private final CreateProjectDtoMapper createProjectDtoMapper;
 
     private final IndexProjectPort indexProjectPort;
 
@@ -81,12 +81,12 @@ public class ProjectCommandService implements
      */
     @Override
     @Transactional
-    public void uploadProject(Long userId, MultipartFile file, UploadProjectRequest requestDto) {
+    public void uploadProject(Long userId, MultipartFile thumbnailFile, UploadProjectRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("UploadProjectUseCase", "프로젝트 업로드 서비스 시작 title=" + requestDto.title());
 
         // 요청 DTO의 유효성을 검사한다.
         ValidatedProjectInfo validatedProjectInfo = getValidatedProjectInfo(
-                file,
+                thumbnailFile,
                 requestDto.topicId(),
                 requestDto.analysisPurposeId(),
                 requestDto.dataSourceId(),
@@ -101,7 +101,7 @@ public class ProjectCommandService implements
         }
 
         // 프로젝트 도메인 변환 및 DB 저장
-        Project project = uploadedProjectDtoMapper.toDomain(
+        Project project = createProjectDtoMapper.toDomain(
                 requestDto,
                 userId,
                 requestDto.parentProjectId(),
@@ -110,7 +110,7 @@ public class ProjectCommandService implements
         Project savedProject = createProjectPort.saveProject(project);
 
         // DB 저장 성공 후 파일 업로드 시도
-        fileUpload(savedProject.getId(), file);
+        fileUpload(savedProject.getId(), thumbnailFile);
 
         // 검색을 위해 elasticSearch에 프로젝트를 등록한다 .
         String username = findUsernameUseCase.findUsernameById(userId);
@@ -130,19 +130,19 @@ public class ProjectCommandService implements
      * 프로젝트 정보를 수정하고, 필요 시 새로운 이미지 파일을 업로드한 뒤, 변경된 내용을 검색 인덱스에 반영합니다.
      *
      * @param projectId 수정할 프로젝트의 ID
-     * @param file 새로 업로드할 이미지 파일 (선택 사항)
+     * @param thumbnailFile 새로 업로드할 이미지 파일 (선택 사항)
      * @param requestDto 프로젝트 수정 요청 데이터
      * @throws ProjectException 프로젝트 또는 부모 프로젝트가 존재하지 않을 경우 발생
      * @throws RuntimeException 파일 업로드 실패 시 트랜잭션 롤백을 위해 발생
      */
     @Override
     @Transactional
-    public void modifyProject(Long projectId, MultipartFile file, ModifyProjectRequest requestDto) {
+    public void modifyProject(Long projectId, MultipartFile thumbnailFile, ModifyProjectRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("ModifyProjectUseCase", "프로젝트 수정 서비스 시작 projectId=" + projectId);
 
         // 해당 id가 존재하는지 내부 유효성 검사 및 라벨 값 반환 (elasticsearch 저장을 위해 유효성 검사 뿐만 아니라 label도 반환한다.)
         ValidatedProjectInfo validatedProjectInfo = getValidatedProjectInfo(
-                file,
+                thumbnailFile,
                 requestDto.topicId(),
                 requestDto.analysisPurposeId(),
                 requestDto.dataSourceId(),
@@ -175,7 +175,7 @@ public class ProjectCommandService implements
         updateProjectPort.modifyProject(projectId, requestDto, toAdd);
 
         // DB 저장 성공 후 파일 업로드 시도, 외부 서비스로 트랜잭션의 영향을 받지 않는다.
-        fileUpload(projectId, file);
+        fileUpload(projectId, thumbnailFile);
 
         // 수정된 프로젝트 도메인 다시 조회
         Project updatedProject = findProjectPort.findProjectById(projectId)
@@ -210,7 +210,7 @@ public class ProjectCommandService implements
             try {
                 String key = S3KeyGeneratorUtil.generateKey("project", projectId, file.getOriginalFilename());
                 String fileUrl = fileCommandUseCase.uploadFile(key, file);
-                updateProjectFilePort.updateFile(projectId, fileUrl);
+                updateProjectFilePort.updateThumbnailFile(projectId, fileUrl);
             } catch (Exception e) {
                 LoggerFactory.service().logException("UploadProjectRequest", "프로젝트 파일 업로드 실패. projectId=" + projectId, e);
                 throw new RuntimeException("파일 업로드 실패", e);
@@ -221,7 +221,7 @@ public class ProjectCommandService implements
     /**
      * 프로젝트 관련 ID와 이미지 파일의 유효성을 검사하고, 각 항목의 라벨 정보를 포함한 ValidatedProjectInfo 객체를 반환합니다.
      *
-     * @param file 프로젝트 이미지 파일
+     * @param thumbnailFile 프로젝트 썸네일 이미지 파일
      * @param topicId 주제 ID
      * @param analysisPurposeId 분석 목적 ID
      * @param datasourceId 데이터 소스 ID
@@ -230,7 +230,7 @@ public class ProjectCommandService implements
      * @return 각 항목의 라벨 정보를 포함한 ValidatedProjectInfo 객체
      */
     private ValidatedProjectInfo getValidatedProjectInfo(
-            MultipartFile file,
+            MultipartFile thumbnailFile,
             Long topicId,
             Long analysisPurposeId,
             Long datasourceId,
@@ -249,7 +249,7 @@ public class ProjectCommandService implements
         }
 
         // 파일 유효성 검사
-        FileUtil.validateImageFile(file);
+        FileUtil.validateImageFile(thumbnailFile);
 
         ValidatedProjectInfo validateProjectInfo = new ValidatedProjectInfo(
                 topicLabel,

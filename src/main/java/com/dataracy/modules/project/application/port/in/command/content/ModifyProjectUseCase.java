@@ -8,8 +8,8 @@ public interface ModifyProjectUseCase {
  * 프로젝트의 정보를 수정 요청 데이터와 파일을 기반으로 갱신합니다.
  *
  * @param projectId 수정 대상 프로젝트의 고유 식별자
- * @param file 프로젝트에 첨부할 파일
+ * @param thumbnailFile 프로젝트에 첨부할 썸네일 파일
  * @param requestDto 프로젝트 수정에 필요한 상세 정보가 포함된 요청 객체
  */
-    void modifyProject(Long projectId, MultipartFile file, ModifyProjectRequest requestDto);
+    void modifyProject(Long projectId, MultipartFile thumbnailFile, ModifyProjectRequest requestDto);
 }

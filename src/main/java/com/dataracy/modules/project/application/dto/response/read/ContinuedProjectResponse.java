@@ -7,7 +7,7 @@ public record ContinuedProjectResponse(
         String title,
         String username,
         String userThumbnailUrl,
-        String fileUrl,
+        String projectThumbnailUrl,
         String topicLabel,
         String authorLevelLabel,
         Long commentCount,

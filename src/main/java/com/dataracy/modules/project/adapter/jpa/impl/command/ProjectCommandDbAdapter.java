@@ -60,13 +60,13 @@ public class ProjectCommandDbAdapter implements
      * @param fileUrl 새로 설정할 파일 URL
      */
     @Override
-    public void updateFile(Long projectId, String fileUrl) {
+    public void updateThumbnailFile(Long projectId, String fileUrl) {
         ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> {
                     LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
-        projectEntity.updateFile(fileUrl);
+        projectEntity.updateThumbnailUrl(fileUrl);
         projectJpaRepository.save(projectEntity);
         LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 썸네일 이미지 파일 업데이트가 완료되었습니다.");
     }

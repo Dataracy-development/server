@@ -45,7 +45,7 @@ public class ProjectDetailDtoMapper {
                 project.getIsContinue(),
                 project.getParentProjectId(),
                 project.getContent(),
-                project.getFileUrl(),
+                project.getThumbnailUrl(),
                 project.getCreatedAt(),
                 project.getCommentCount(),
                 project.getLikeCount(),

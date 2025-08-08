@@ -21,7 +21,7 @@ public record ProjectSearchDocument(
         Long authorLevelId,
         String authorLevelLabel,
         Boolean isContinue,
-        String fileUrl,
+        String projectThumbnailUrl,
         LocalDateTime createdAt,
         Long commentCount,
         Long likeCount,
@@ -64,7 +64,7 @@ public record ProjectSearchDocument(
                 .authorLevelId(project.getAuthorLevelId())
                 .authorLevelLabel(authorLevelLabel)
                 .isContinue(project.getIsContinue())
-                .fileUrl(project.getFileUrl())
+                .projectThumbnailUrl(project.getThumbnailUrl())
                 .createdAt(project.getCreatedAt())
                 .commentCount(project.getCommentCount())
                 .likeCount(project.getLikeCount())

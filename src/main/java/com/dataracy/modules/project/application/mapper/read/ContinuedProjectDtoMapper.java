@@ -31,7 +31,7 @@ public class ContinuedProjectDtoMapper {
                 project.getTitle(),
                 username,
                 userThumbnailUrl,
-                project.getFileUrl(),
+                project.getThumbnailUrl(),
                 topicLabel,
                 authorLevelLabel,
                 project.getCommentCount(),

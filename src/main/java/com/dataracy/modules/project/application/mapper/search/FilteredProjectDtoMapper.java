@@ -1,7 +1,7 @@
 package com.dataracy.modules.project.application.mapper.search;
 
-import com.dataracy.modules.project.application.dto.response.support.ChildProjectResponse;
 import com.dataracy.modules.project.application.dto.response.search.FilteredProjectResponse;
+import com.dataracy.modules.project.application.dto.response.support.ChildProjectResponse;
 import com.dataracy.modules.project.domain.model.Project;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +52,7 @@ public class FilteredProjectDtoMapper {
                 project.getTitle(),
                 project.getContent(),
                 username,
-                project.getFileUrl(),
+                project.getThumbnailUrl(),
                 topicLabel,
                 analysisPurposeLabel,
                 dataSourceLabel,
