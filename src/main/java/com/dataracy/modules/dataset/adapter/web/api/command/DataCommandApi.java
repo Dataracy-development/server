@@ -7,7 +7,6 @@ import com.dataracy.modules.dataset.adapter.web.request.command.UploadDataWebReq
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -41,9 +40,7 @@ public interface DataCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "데이터셋 업로드에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "201", description = "데이터셋 업로드에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<SuccessResponse<Void>> uploadData(
@@ -76,9 +73,7 @@ public interface DataCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "데이터셋 수정에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "데이터셋 수정에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PutMapping(value="/{dataId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<SuccessResponse<Void>> modifyData(
@@ -108,9 +103,7 @@ public interface DataCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 삭제에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 삭제에 성공했습니다.", useReturnTypeSchema = true)
     })
     @DeleteMapping("/{dataId}")
     ResponseEntity<SuccessResponse<Void>> deleteData(
@@ -134,9 +127,7 @@ public interface DataCommandApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 복원에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "해당하는 데이터셋 복원에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PatchMapping("/{dataId}/restore")
     ResponseEntity<SuccessResponse<Void>> restoreData(
@@ -155,9 +146,7 @@ public interface DataCommandApi {
             description = "해당 데이터셋의 파일을 다운로드한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당 데이터셋의 파일을 다운로드한다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "해당 데이터셋의 파일을 다운로드한다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{dataId}/download")
     ResponseEntity<SuccessResponse<String>> getPreSignedDataUrl(

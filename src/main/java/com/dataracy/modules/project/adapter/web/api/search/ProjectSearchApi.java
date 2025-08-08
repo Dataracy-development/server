@@ -3,12 +3,9 @@ package com.dataracy.modules.project.adapter.web.api.search;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.project.adapter.web.request.search.FilteringProjectWebRequest;
 import com.dataracy.modules.project.adapter.web.response.search.FilteredProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.RealTimeProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.search.SimilarProjectWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,9 +34,7 @@ public interface ProjectSearchApi {
             description = "제공받은 키워드와 사이즈를 토대로 실시간으로 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "실시간 프로젝트 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "실시간 프로젝트 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/search/real-time")
     ResponseEntity<SuccessResponse<List<RealTimeProjectWebResponse>>> searchRealTimeProjects(
@@ -63,9 +58,7 @@ public interface ProjectSearchApi {
             description = "해당하는 프로젝트와 유사한 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "유사 프로젝트 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "유사 프로젝트 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{projectId}/similar")
     ResponseEntity<SuccessResponse<List<SimilarProjectWebResponse>>> searchSimilarProjects(
@@ -90,9 +83,7 @@ public interface ProjectSearchApi {
             description = "필터링된 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "필터링된 프로젝트 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "필터링된 프로젝트 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/filter")
     ResponseEntity<SuccessResponse<Page<FilteredProjectWebResponse>>> searchFilteredProjects(

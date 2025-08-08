@@ -5,8 +5,6 @@ import com.dataracy.modules.comment.adapter.web.response.read.FindReplyCommentWe
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,9 +34,7 @@ public interface CommentReadApi {
             description = "해당 프로젝트의 댓글 목록을 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당 프로젝트의 댓글 목록 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "해당 프로젝트의 댓글 목록 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{projectId}/comments")
     ResponseEntity<SuccessResponse<Page<FindCommentWebResponse>>> findComments(
@@ -65,9 +61,7 @@ public interface CommentReadApi {
             description = "해당 댓글 대한 답글 목록을 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당 댓글 대한 답글 목록 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "해당 댓글 대한 답글 목록 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{projectId}/comments/{commentId}")
     ResponseEntity<SuccessResponse<Page<FindReplyCommentWebResponse>>> findReplyComments(

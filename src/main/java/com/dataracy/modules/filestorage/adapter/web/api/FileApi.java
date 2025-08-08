@@ -2,8 +2,6 @@ package com.dataracy.modules.filestorage.adapter.web.api;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,9 +26,7 @@ public interface FileApi {
             description = "s3Url을 바탕으로 유효기간이 지정된 PreSigned URL을 발급합니다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "s3Url을 바탕으로 유효기간이 지정된 PreSigned URL을 발급에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "s3Url을 바탕으로 유효기간이 지정된 PreSigned URL을 발급에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/pre-signed-url")
     ResponseEntity<SuccessResponse<String>> getPreSignedUrl(

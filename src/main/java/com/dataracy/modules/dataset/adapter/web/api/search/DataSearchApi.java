@@ -6,8 +6,6 @@ import com.dataracy.modules.dataset.adapter.web.response.read.RecentMinimalDataW
 import com.dataracy.modules.dataset.adapter.web.response.search.FilteredDataWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.search.SimilarDataWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,9 +35,7 @@ public interface DataSearchApi {
             description = "제공받은 데이터와 유사한 데이터셋을 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "유사 데이터셋 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "유사 데이터셋 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{dataId}/similar")
     ResponseEntity<SuccessResponse<List<SimilarDataWebResponse>>> searchSimilarDataSets(
@@ -64,9 +60,7 @@ public interface DataSearchApi {
             description = "필터링된 데이터셋 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "필터링된 데이터셋 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "필터링된 데이터셋 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/filter")
     ResponseEntity<SuccessResponse<Page<FilteredDataWebResponse>>> searchFilteredDataSets(
@@ -89,9 +83,7 @@ public interface DataSearchApi {
             description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다.", useReturnTypeSchema = true)
     })
     @GetMapping("/search/real-time")
     ResponseEntity<SuccessResponse<List<RecentMinimalDataWebResponse>>> getRealTimeDataSets(

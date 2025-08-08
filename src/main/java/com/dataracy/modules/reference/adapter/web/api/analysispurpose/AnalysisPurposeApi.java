@@ -26,9 +26,7 @@ public interface AnalysisPurposeApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 분석 목적 리스트 조회",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "200", description = "전체 분석 목적 리스트 조회", useReturnTypeSchema = true),
     })
     @GetMapping("/analysis-purposes")
     ResponseEntity<SuccessResponse<AllAnalysisPurposesWebResponse>> findAllAnalysisPurposes();

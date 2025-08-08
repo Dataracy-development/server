@@ -11,8 +11,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "User - Validate", description = "사용자 관련 API - 유효성 검사")
 @RequestMapping("/api/v1")
@@ -29,12 +30,8 @@ public interface UserValidateApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "닉네임이 중복되지 않습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "409", description = "닉네임이 중복됩니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "닉네임이 중복되지 않습니다.", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "409", description = "닉네임이 중복됩니다.", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/nickname/check", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> duplicateNickname(
