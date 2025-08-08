@@ -6,7 +6,7 @@ public record FindReplyCommentResponse(
         Long id,
         String username,
         String authorLevelLabel,
-        String userThumbnailUrl,
+        String userProfileUrl,
         String content,
         Long likeCount,
         LocalDateTime createdAt,

@@ -12,7 +12,7 @@ public class FindCommentDtoMapper {
      *
      * @param comment 변환할 댓글 도메인 객체
      * @param username 댓글 작성자의 사용자명
-     * @param userThumbnailUrl 댓글 작성자의 프로필 이미지 URL
+     * @param userProfileUrl 댓글 작성자의 프로필 이미지 URL
      * @param authorLevelLabel 댓글 작성자의 레벨 라벨
      * @param childCommentCount 해당 댓글의 자식 댓글 수
      * @param isLiked 사용자가 해당 댓글을 좋아요 했는지 여부
@@ -21,7 +21,7 @@ public class FindCommentDtoMapper {
     public FindCommentResponse toResponseDto(
             Comment comment,
             String username,
-            String userThumbnailUrl,
+            String userProfileUrl,
             String authorLevelLabel,
             Long childCommentCount,
             boolean isLiked
@@ -30,7 +30,7 @@ public class FindCommentDtoMapper {
                 comment.getId(),
                 username,
                 authorLevelLabel,
-                userThumbnailUrl,
+                userProfileUrl,
                 comment.getContent(),
                 comment.getLikeCount(),
                 childCommentCount,
@@ -44,7 +44,7 @@ public class FindCommentDtoMapper {
      *
      * @param comment 변환할 댓글 도메인 객체
      * @param username 댓글 작성자의 사용자명
-     * @param userThumbnailUrl 댓글 작성자의 프로필 이미지 URL
+     * @param userProfileUrl 댓글 작성자의 프로필 이미지 URL
      * @param authorLevelLabel 댓글 작성자의 등급 라벨
      * @param isLiked 사용자가 해당 댓글에 좋아요를 눌렀는지 여부
      * @return 답글 댓글 응답 DTO
@@ -52,7 +52,7 @@ public class FindCommentDtoMapper {
     public FindReplyCommentResponse toResponseDto(
             Comment comment,
             String username,
-            String userThumbnailUrl,
+            String userProfileUrl,
             String authorLevelLabel,
             boolean isLiked
     ) {
@@ -60,7 +60,7 @@ public class FindCommentDtoMapper {
                 comment.getId(),
                 username,
                 authorLevelLabel,
-                userThumbnailUrl,
+                userProfileUrl,
                 comment.getContent(),
                 comment.getLikeCount(),
                 comment.getCreatedAt(),
