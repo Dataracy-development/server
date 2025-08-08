@@ -21,7 +21,7 @@ public class DataAuthPolicyAspect {
     private final FindUserIdIncludingDeletedUseCase findUserIdIncludingDeletedUseCase;
 
     /**
-     * 데이터 편집, 삭제 또는 복원 작업 전에 현재 인증된 사용자가 해당 데이터의 생성자인지 확인합니다.
+     * 데이터 편집, 삭제 또는 복원 작업 전에 현재 인증된 사용자가 해당 데이터의 생성자인지 검증합니다.
      *
      * @param annotation 데이터 권한 검증을 위한 어노테이션 정보
      * @param dataId 권한 검증 대상 데이터의 식별자

@@ -21,9 +21,9 @@ public class ProjectAuthPolicyAspect {
     private final FindUserIdIncludingDeletedUseCase findUserIdIncludingDeletedUseCase;
 
     /**
-     * 프로젝트의 수정, 삭제 또는 복원 작업 시 현재 인증된 사용자가 해당 프로젝트의 작성자인지 검증합니다.
+     * 프로젝트의 수정, 삭제 또는 복원 작업 시 현재 인증된 사용자가 해당 프로젝트의 작성자인지 확인합니다.
      *
-     * 인증된 사용자가 프로젝트 작성자가 아닐 경우 작업이 차단되며 예외가 발생합니다.
+     * 인증된 사용자가 프로젝트 작성자가 아닐 경우 작업이 차단되고 {@link ProjectException}이 발생합니다.
      *
      * @param annotation 프로젝트 편집 권한 검증에 사용되는 어노테이션 정보
      * @param projectId 권한 검증 대상 프로젝트의 ID

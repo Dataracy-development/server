@@ -20,9 +20,9 @@ public class FileCommandService implements FileCommandUseCase {
     private final ThumbnailGenerator thumbnailGenerator;
 
     /**
-     * 지정된 디렉터리에 MultipartFile을 업로드하고 업로드된 파일의 URL을 반환합니다.
+     * 지정된 디렉터리에 파일을 업로드하고 업로드된 파일의 URL을 반환합니다.
      *
-     * @param directory 파일을 업로드할 디렉터리 경로
+     * @param directory 파일을 저장할 디렉터리 경로
      * @param file 업로드할 파일
      * @return 업로드된 파일의 URL
      */
@@ -35,7 +35,7 @@ public class FileCommandService implements FileCommandUseCase {
     }
 
     /**
-     * 지정된 파일 URL에 해당하는 파일을 삭제합니다.
+     * 지정된 URL의 파일을 삭제합니다.
      *
      * @param fileUrl 삭제할 파일의 URL
      */
@@ -64,13 +64,13 @@ public class FileCommandService implements FileCommandUseCase {
     }
 
     /**
-     * 원본 이미지 파일로부터 지정된 크기의 썸네일을 생성하여 해당 디렉토리에 업로드하고, 업로드된 썸네일의 URL을 반환합니다.
+     * 원본 이미지 파일에서 지정된 크기의 썸네일을 생성하여 주어진 디렉토리에 업로드한 후, 업로드된 썸네일의 URL을 반환합니다.
      *
-     * @param original  썸네일을 생성할 원본 이미지 파일
+     * @param original 썸네일을 생성할 원본 이미지 파일
      * @param directory 썸네일을 업로드할 디렉토리 경로
-     * @param fileName  업로드할 썸네일 파일명
-     * @param width     생성할 썸네일의 너비
-     * @param height    생성할 썸네일의 높이
+     * @param fileName 업로드할 썸네일 파일명
+     * @param width 썸네일의 너비
+     * @param height 썸네일의 높이
      * @return 업로드된 썸네일 파일의 URL
      */
     public String createThumbnail(MultipartFile original, String directory, String fileName, int width, int height) {

@@ -16,8 +16,8 @@ public class FileDownloadService implements DownloadFileUseCase {
 
     private final FileStoragePort fileStoragePort;
 
-    /****
-     * 지정된 S3 URL과 만료 시간(초)을 사용하여 사전 서명된(pre-signed) URL을 생성합니다.
+    /**
+     * 지정된 S3 객체 URL과 만료 시간을 기반으로 사전 서명된(pre-signed) S3 URL을 생성합니다.
      *
      * @param s3Url 사전 서명된 URL을 생성할 S3 객체의 URL
      * @param expirationSeconds URL의 만료 시간(초)
