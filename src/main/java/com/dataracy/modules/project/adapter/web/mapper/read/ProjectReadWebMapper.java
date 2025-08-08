@@ -25,6 +25,7 @@ public class ProjectReadWebMapper {
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.username(),
+                responseDto.userIntroductionText(),
                 responseDto.authorLevelLabel(),
                 responseDto.occupationLabel(),
                 responseDto.topicLabel(),

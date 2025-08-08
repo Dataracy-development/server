@@ -130,7 +130,8 @@ public class ProjectReadService implements
 
         ProjectDetailResponse projectDetailResponse = projectDetailDtoMapper.toResponseDto(
                 project,
-                findUsernameUseCase.findUsernameById(project.getUserId()),
+                projectUser.nickname(),
+                projectUser.introductionText(),
                 authorLevelLabel,
                 occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),

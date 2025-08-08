@@ -85,7 +85,8 @@ public class User {
                 this.authorLevelId,
                 this.occupationId,
                 this.topicIds,
-                this.visitSourceId
+                this.visitSourceId,
+                this.introductionText
         );
     }
 
