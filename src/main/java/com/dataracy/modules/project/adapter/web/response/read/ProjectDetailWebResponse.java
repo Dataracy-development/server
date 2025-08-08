@@ -1,8 +1,10 @@
 package com.dataracy.modules.project.adapter.web.response.read;
 
+import com.dataracy.modules.project.adapter.web.response.support.ProjectConnectedDataWebResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Schema(description = "프로젝트 상세 정보 웹 응답 DTO")
 public record ProjectDetailWebResponse(
@@ -64,5 +66,8 @@ public record ProjectDetailWebResponse(
         boolean hasChild,
 
         @Schema(description = "연결된 데이터셋 존재 유무", example = "false")
-        boolean hasDataSet
+        boolean hasDataSet,
+
+        @Schema(description = "연결된 데이터셋 목록")
+        List<ProjectConnectedDataWebResponse> connectedDataSets
 ) {}
