@@ -16,6 +16,7 @@ import java.time.Instant;
 @RestController
 @RequiredArgsConstructor
 public class FileDownloadController implements FileApi {
+    private final FileDownloadWebMapper fileDownloadWebMapper;
 
     private final DownloadFileUseCase downloadFileUseCase;
 
@@ -33,7 +34,7 @@ public class FileDownloadController implements FileApi {
 
         try {
             GetPresignedUrlResponse responseDto = downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
-            webResponse = FileDownloadWebMapper.toWebDto(responseDto);
+            webResponse = fileDownloadWebMapper.toWebDto(responseDto);
         } finally {
             LoggerFactory.api().logResponse("[GetPreSignedUrl] 파일 다운로드를 위한 preSigned URL 반환 API 응답 완료", startTime);
         }
