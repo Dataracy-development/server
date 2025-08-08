@@ -5,6 +5,6 @@ import java.time.LocalDateTime;
 public record RecentMinimalDataResponse(
         Long id,
         String title,
-        String thumbnailUrl,
+        String dataThumbnailUrl,
         LocalDateTime createdAt
 ) {}

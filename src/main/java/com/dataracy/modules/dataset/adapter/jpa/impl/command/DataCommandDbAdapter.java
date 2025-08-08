@@ -73,7 +73,7 @@ public class DataCommandDbAdapter implements
                     LoggerFactory.db().logWarning("DataEntity", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
-        dataEntity.updateThumbnailFile(thumbnailFileUrl);
+        dataEntity.updateDataThumbnailFile(thumbnailFileUrl);
         dataJpaRepository.save(dataEntity);
         LoggerFactory.db().logUpdate("DataEntity", String.valueOf(dataId), "데이터셋 썸네일 이미지 파일 업데이트가 완료되었습니다.");
     }

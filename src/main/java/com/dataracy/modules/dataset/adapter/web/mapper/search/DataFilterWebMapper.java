@@ -42,7 +42,7 @@ public class DataFilterWebMapper {
                 responseDto.startDate(),
                 responseDto.endDate(),
                 responseDto.description(),
-                responseDto.thumbnailUrl(),
+                responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),

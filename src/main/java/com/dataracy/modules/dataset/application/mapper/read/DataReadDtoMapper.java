@@ -34,7 +34,7 @@ public class DataReadDtoMapper {
                 dataTypeLabel,
                 data.getStartDate(),
                 data.getEndDate(),
-                data.getThumbnailUrl(),
+                data.getDataThumbnailUrl(),
                 data.getDownloadCount(),
                 data.getMetadata().getRowCount(),
                 data.getMetadata().getColumnCount(),
@@ -57,7 +57,7 @@ public class DataReadDtoMapper {
         return new RecentMinimalDataResponse(
                 data.getId(),
                 data.getTitle(),
-                data.getThumbnailUrl(),
+                data.getDataThumbnailUrl(),
                 data.getCreatedAt()
         );
     }
@@ -94,7 +94,7 @@ public class DataReadDtoMapper {
                 data.getStartDate(),
                 data.getEndDate(),
                 data.getDescription(),
-                data.getThumbnailUrl(),
+                data.getDataThumbnailUrl(),
                 data.getDownloadCount(),
                 data.getMetadata().getRowCount(),
                 data.getMetadata().getColumnCount(),
@@ -136,7 +136,7 @@ public class DataReadDtoMapper {
                 data.getEndDate(),
                 data.getDescription(),
                 data.getAnalysisGuide(),
-                data.getThumbnailUrl(),
+                data.getDataThumbnailUrl(),
                 data.getDownloadCount(),
                 data.getMetadata().getRowCount(),
                 data.getMetadata().getColumnCount(),

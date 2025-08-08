@@ -55,7 +55,7 @@ public class DataEntity extends BaseTimeEntity {
     @Column
     private String dataFileUrl;
     @Column
-    private String thumbnailUrl;
+    private String dataThumbnailUrl;
 
     // 캐싱 필드
     @Column
@@ -132,15 +132,15 @@ public class DataEntity extends BaseTimeEntity {
      * @param thumbnailUrl 새로 설정할 썸네일 파일의 URL. null이거나 빈 문자열일 경우 예외가 발생합니다.
      * @throws DataException thumbnailUrl이 null이거나 빈 문자열일 때 발생합니다.
      */
-    public void updateThumbnailFile (String thumbnailUrl) {
+    public void updateDataThumbnailFile (String thumbnailUrl) {
         if (thumbnailUrl == null || thumbnailUrl.isEmpty()) {
             LoggerFactory.domain().logWarning("잘못된 데이터셋 썸네일 파일 url 형식입니다.");
             throw new DataException(DataErrorStatus.INVALID_FILE_URL);
         }
-        if (thumbnailUrl.equals(this.thumbnailUrl)) {
+        if (thumbnailUrl.equals(this.dataThumbnailUrl)) {
             return;
         }
-        this.thumbnailUrl = thumbnailUrl;
+        this.dataThumbnailUrl = thumbnailUrl;
     }
 
     /**
@@ -165,7 +165,7 @@ public class DataEntity extends BaseTimeEntity {
      * @param description 데이터셋 설명
      * @param analysisGuide 분석 가이드
      * @param dataFileUrl 데이터 파일의 URL (null 가능)
-     * @param thumbnailUrl 썸네일 이미지의 URL (null 가능)
+     * @param dataThumbnailUrl 썸네일 이미지의 URL (null 가능)
      * @param downloadCount 전체 다운로드 횟수
      * @param metadata 데이터 메타데이터 엔티티
      * @return 생성된 DataEntity 객체
@@ -181,7 +181,7 @@ public class DataEntity extends BaseTimeEntity {
             String description,
             String analysisGuide,
             String dataFileUrl,
-            String thumbnailUrl,
+            String dataThumbnailUrl,
             int downloadCount,
             DataMetadataEntity metadata
     ) {
@@ -196,7 +196,7 @@ public class DataEntity extends BaseTimeEntity {
                 .description(description)
                 .analysisGuide(analysisGuide)
                 .dataFileUrl(dataFileUrl)
-                .thumbnailUrl(thumbnailUrl)
+                .dataThumbnailUrl(dataThumbnailUrl)
                 .downloadCount(downloadCount)
                 .metadata(metadata)
                 .build();

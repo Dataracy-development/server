@@ -29,7 +29,7 @@ public class Data {
     private String analysisGuide;
 
     private String dataFileUrl;
-    private String thumbnailUrl;
+    private String dataThumbnailUrl;
 
     private int downloadCount;
 
@@ -50,8 +50,8 @@ public class Data {
      *
      * @param thumbnailFileUrl 새로 설정할 썸네일 파일의 URL
      */
-    public void updateThumbnailFileUrl (String thumbnailFileUrl) {
-        this.thumbnailUrl = thumbnailFileUrl;
+    public void updateDataThumbnailFileUrl (String thumbnailFileUrl) {
+        this.dataThumbnailUrl = thumbnailFileUrl;
     }
 
     /**
@@ -73,7 +73,7 @@ public class Data {
             String description,
             String analysisGuide,
             String dataFileUrl,
-            String thumbnailUrl,
+            String dataThumbnailUrl,
             int downloadCount,
             DataMetadata metadata,
             LocalDateTime createdAt
@@ -90,7 +90,7 @@ public class Data {
                 .description(description)
                 .analysisGuide(analysisGuide)
                 .dataFileUrl(dataFileUrl)
-                .thumbnailUrl(thumbnailUrl)
+                .dataThumbnailUrl(dataThumbnailUrl)
                 .downloadCount(downloadCount)
                 .metadata(metadata)
                 .createdAt(createdAt)

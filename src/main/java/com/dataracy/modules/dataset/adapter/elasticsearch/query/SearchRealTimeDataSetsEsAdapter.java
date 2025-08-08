@@ -67,7 +67,7 @@ public class SearchRealTimeDataSetsEsAdapter implements SearchRealTimeDataSetsPo
             List<RecentMinimalDataResponse> recentMinimalDataResponses = response.hits().hits().stream()
                     .map(hit -> {
                         var doc = hit.source();
-                        return new RecentMinimalDataResponse(doc.id(), doc.title(), doc.thumbnailUrl(), doc.createdAt());
+                        return new RecentMinimalDataResponse(doc.id(), doc.title(), doc.dataThumbnailUrl(), doc.createdAt());
                     })
                     .toList();
             LoggerFactory.elastic().logQueryEnd(INDEX, "데이터셋 검색어 자동완성 실시간 검색 종료: keyword=" + keyword + ", size=" + size, startTime);

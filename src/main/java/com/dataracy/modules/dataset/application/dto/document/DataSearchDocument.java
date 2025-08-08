@@ -25,7 +25,7 @@ public record DataSearchDocument(
         String description,
         String analysisGuide,
         String dataFileUrl,
-        String thumbnailUrl,
+        String dataThumbnailUrl,
         int downloadCount,
         Integer rowCount,
         Integer columnCount,
@@ -62,7 +62,7 @@ public record DataSearchDocument(
                 .description(data.getDescription())
                 .analysisGuide(data.getAnalysisGuide())
                 .dataFileUrl(data.getDataFileUrl())
-                .thumbnailUrl(data.getThumbnailUrl())
+                .dataThumbnailUrl(data.getDataThumbnailUrl())
                 .downloadCount(data.getDownloadCount())
                 .rowCount(dataMetadata.getRowCount())
                 .columnCount(dataMetadata.getColumnCount())
