@@ -22,6 +22,7 @@ public class CreateUserDtoMapper {
             String providerId,
             String encodedPassword
     ) {
+        String introductionText = "안녕하세요. " + requestDto.nickname() + "입니다.";
         return User.of(
                 null,
                 ProviderType.LOCAL,
@@ -35,6 +36,7 @@ public class CreateUserDtoMapper {
                 requestDto.topicIds(),
                 requestDto.visitSourceId(),
                 defaultProfileImageUrl,
+                introductionText,
                 requestDto.isAdTermsAgreed(),
                 false
         );
@@ -46,6 +48,7 @@ public class CreateUserDtoMapper {
             String providerId,
             String email
     ) {
+        String introductionText = "안녕하세요. " + requestDto.nickname() + "입니다.";
         return User.of(
                 null,
                 ProviderType.of(provider),
@@ -59,6 +62,7 @@ public class CreateUserDtoMapper {
                 requestDto.topicIds(),
                 requestDto.visitSourceId(),
                 defaultProfileImageUrl,
+                introductionText,
                 requestDto.isAdTermsAgreed(),
                 false
         );

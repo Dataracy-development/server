@@ -29,6 +29,7 @@ public class User {
     private String password;
     private String nickname;
     private String profileImageUrl;
+    private String introductionText;
     private boolean isAdTermsAgreed;
 
     // 타 어그리거트는 직접 연관관계 설정을 하지 않고, ID만 보유해서 간접 참조
@@ -120,6 +121,7 @@ public class User {
             List<Long> topicIds,
             Long visitSourceId,
             String profileImageUrl,
+            String introductionText,
             boolean isAdTermsAgreed,
             boolean isDeleted
     ) {
@@ -136,6 +138,7 @@ public class User {
                 .topicIds(topicIds)
                 .visitSourceId(visitSourceId)
                 .profileImageUrl(profileImageUrl)
+                .introductionText(introductionText)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)
                 .build();

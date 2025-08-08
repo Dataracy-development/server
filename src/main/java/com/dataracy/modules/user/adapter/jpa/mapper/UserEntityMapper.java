@@ -45,6 +45,7 @@ public final class UserEntityMapper {
                 topicIds,
                 userEntity.getVisitSourceId(),
                 userEntity.getProfileImageUrl(),
+                userEntity.getIntroductionText(),
                 userEntity.isAdTermsAgreed(),
                 userEntity.isDeleted()
         );
@@ -75,6 +76,7 @@ public final class UserEntityMapper {
                 user.getOccupationId(),
                 user.getVisitSourceId(),
                 user.getProfileImageUrl(),
+                user.getIntroductionText(),
                 user.isAdTermsAgreed(),
                 user.isDeleted()
         );
