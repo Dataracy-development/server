@@ -33,11 +33,22 @@ public class DistributedLockAspect {
     private final SpelExpressionParser parser = new SpelExpressionParser();
     private final ParameterNameDiscoverer nameDiscoverer = new StandardReflectionParameterNameDiscoverer();
 
+    /**
+     * DistributedLockAspect의 초기화를 수행한 후 로그를 기록합니다.
+     */
     @PostConstruct
     public void init() {
         LoggerFactory.lock().logInfo("[AOP] DistributedLockAspect 초기화 완료");
     }
 
+    /**
+     * 분산 락이 적용된 메서드 실행을 가로채어 락을 획득한 후 원래 메서드를 실행합니다.
+     *
+     * 분산 락 키는 {@link DistributedLock} 어노테이션의 SpEL 표현식을 기반으로 생성됩니다.
+     * 락 획득에 실패하거나 내부 실행 중 예외가 발생하면 런타임 예외로 래핑되어 던져집니다.
+     *
+     * @return 원래 메서드의 실행 결과
+     */
     @Around("@annotation(lock)")
     public Object around(ProceedingJoinPoint joinPoint, DistributedLock lock) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -69,10 +80,26 @@ public class DistributedLockAspect {
         }
     }
 
+    /**
+     * AOP 조인포인트에서 원본 메서드를 안전하게 실행합니다.
+     *
+     * @param joinPoint AOP에서 전달된 실행 지점 정보
+     * @return 원본 메서드의 실행 결과
+     * @throws Throwable 원본 메서드 실행 중 발생한 예외를 그대로 전달
+     */
     private Object proceedSafely(ProceedingJoinPoint joinPoint) throws Throwable {
         return joinPoint.proceed();
     }
 
+    /**
+     * 메서드와 인자, 그리고 DistributedLock 어노테이션의 SpEL 표현식을 이용해 분산 락 키를 생성합니다.
+     *
+     * @param method 분산 락이 적용된 대상 메서드
+     * @param args   메서드의 인자 값 배열
+     * @param lock   DistributedLock 어노테이션 인스턴스
+     * @return 생성된 분산 락 키 문자열
+     * @throws LockAcquisitionException SpEL 파싱 실패 또는 생성된 키가 null/빈 문자열인 경우 발생
+     */
     private String generateLockKey(Method method, Object[] args, DistributedLock lock) {
         String[] paramNames = nameDiscoverer.getParameterNames(method);
         EvaluationContext context = new StandardEvaluationContext();
