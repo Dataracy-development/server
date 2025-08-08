@@ -29,7 +29,6 @@ import com.dataracy.modules.reference.application.port.in.datasource.GetDataSour
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,9 +67,6 @@ public class ProjectCommandService implements
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final ValidateDataUseCase validateDataUseCase;
 
-    @Value("${default.image.url:}")
-    private String defaultImageUrl;
-
     /**
      * 사용자의 프로젝트 업로드 요청을 처리하여 새 프로젝트를 생성하고, 썸네일 이미지를 업로드한 뒤 프로젝트를 검색 시스템에 색인합니다.
      *
@@ -104,8 +100,7 @@ public class ProjectCommandService implements
         Project project = createProjectDtoMapper.toDomain(
                 requestDto,
                 userId,
-                requestDto.parentProjectId(),
-                defaultImageUrl
+                requestDto.parentProjectId()
         );
         Project savedProject = createProjectPort.saveProject(project);
 
