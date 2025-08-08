@@ -24,6 +24,7 @@ public class ProjectDetailDtoMapper {
     public ProjectDetailResponse toResponseDto(
             Project project,
             String username,
+            String userIntroductionText,
             String authorLevelLabel,
             String occupationLabel,
             String topicLabel,
@@ -37,6 +38,7 @@ public class ProjectDetailDtoMapper {
                 project.getId(),
                 project.getTitle(),
                 username,
+                userIntroductionText,
                 authorLevelLabel,
                 occupationLabel,
                 topicLabel,

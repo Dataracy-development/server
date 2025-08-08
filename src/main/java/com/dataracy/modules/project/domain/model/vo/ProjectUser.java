@@ -11,6 +11,7 @@ public record ProjectUser(
         RoleType role,
         String email,
         String nickname,
+        String introductionText,
         Long occupationId,
         Long authorLevelId
 ) {
@@ -32,6 +33,7 @@ public record ProjectUser(
                 info.role(),
                 info.email(),
                 info.nickname(),
+                info.introductionText(),
                 info.occupationId(),
                 info.authorLevelId()
         );

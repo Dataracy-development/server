@@ -6,6 +6,7 @@ public record ProjectDetailResponse(
         Long id,
         String title,
         String username,
+        String userIntroductionText,
         String authorLevelLabel,
         String occupationLabel,
         String topicLabel,
