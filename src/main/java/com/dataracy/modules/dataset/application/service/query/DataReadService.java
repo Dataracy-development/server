@@ -187,10 +187,17 @@ public class DataReadService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ConnectedDataResponse> findDataSetsByIds(List<Long> dataIds) {
         Instant startTime = LoggerFactory.service().logStart("FindConnectedDataSetsUseCase", "아이디 목록을 통한 데이터셋 목록 조회 서비스 시작 dataIds=" + dataIds);
 
-        List<DataWithProjectCountDto> savedDataSets = getConnectedDataSetsPort.getConnectedDataSetsAssociatedWithProjectByIds(dataIds);
+        if (dataIds == null || dataIds.isEmpty()) {
+            LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "빈 ID 목록으로 빈 결과 반환", startTime);
+            return List.of();
+        }
+        List<Long> distinctIds = dataIds.stream().distinct().toList();
+        List<DataWithProjectCountDto> savedDataSets = getConnectedDataSetsPort.getConnectedDataSetsAssociatedWithProjectByIds(distinctIds);
+
         DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets);
         List<ConnectedDataResponse> connectedDataResponses = savedDataSets.stream()
                 .map(wrapper -> {
