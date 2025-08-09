@@ -37,24 +37,6 @@ public class Data {
     private LocalDateTime createdAt;
 
     /**
-     * 데이터 파일 URL을 갱신합니다.
-     *
-     * @param dataFileUrl 새로 설정할 데이터 파일의 URL
-     */
-    public void updateDataFileUrl (String dataFileUrl) {
-        this.dataFileUrl = dataFileUrl;
-    }
-
-    /**
-     * 데이터의 썸네일 파일 URL을 업데이트합니다.
-     *
-     * @param thumbnailFileUrl 새로 설정할 썸네일 파일의 URL
-     */
-    public void updateDataThumbnailFileUrl (String thumbnailFileUrl) {
-        this.dataThumbnailUrl = thumbnailFileUrl;
-    }
-
-    /**
      * 모든 필드 값을 지정하여 새로운 Data 객체를 생성합니다.
      *
      * 각 파라미터에 해당하는 값으로 Data 인스턴스를 초기화합니다.

@@ -74,11 +74,11 @@ public class ReadProjectQueryDslAdapter implements
                 .fetchOne();
 
         if (entity == null) {
-            LoggerFactory.query().logQueryEnd("ProjectEntity", "[findProjectWithDataIdsById] 해당하는 프로젝트 리소스가 존재하지 않습니다.projectId=" + projectId, startTime);
+            LoggerFactory.query().logQueryEnd("ProjectEntity", "[findProjectWithDataById] 해당하는 프로젝트 리소스가 존재하지 않습니다. projectId=" + projectId, startTime);
             return Optional.empty();
         }
 
-        // 2) 연결된 dataId 목록
+        // 연결된 dataId 목록
         List<Long> dataIds = queryFactory
                 .select(projectData.dataId)
                 .from(projectData)

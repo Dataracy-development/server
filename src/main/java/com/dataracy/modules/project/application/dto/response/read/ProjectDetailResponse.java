@@ -25,6 +25,5 @@ public record ProjectDetailResponse(
         Long viewCount,
         boolean isLiked,
         boolean hasChild,
-        boolean hasDataSet,
         List<ProjectConnectedDataResponse> connectedDataSets
 ) {}
