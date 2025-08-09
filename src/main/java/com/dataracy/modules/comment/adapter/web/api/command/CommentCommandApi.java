@@ -25,7 +25,7 @@ public interface CommentCommandApi {
     /**
      * 지정한 프로젝트에 피드백 댓글을 생성합니다.
      *
-     * @param projectId 댓글을 작성할 프로젝트의 ID (1 이상)
+     * @param projectId 댓글을 추가할 프로젝트의 ID (1 이상)
      * @param webRequest 댓글 내용과 (선택적으로) 부모 댓글 ID를 포함한 요청 본문
      * @return 댓글 작성 성공 시 201 상태 코드와 함께 반환되는 성공 응답
      */
@@ -60,7 +60,7 @@ public interface CommentCommandApi {
     );
 
     /**
-     * 프로젝트의 특정 댓글을 수정합니다.
+     * 프로젝트 내 특정 댓글의 내용을 수정합니다.
      *
      * @param projectId 댓글이 속한 프로젝트의 ID (1 이상)
      * @param commentId 수정할 댓글의 ID (1 이상)
@@ -97,11 +97,11 @@ public interface CommentCommandApi {
     );
 
     /**
-     * 프로젝트의 특정 피드백 댓글을 삭제합니다.
+     * 프로젝트에서 특정 피드백 댓글을 삭제합니다.
      *
      * @param projectId 댓글이 속한 프로젝트의 ID (1 이상)
      * @param commentId 삭제할 피드백 댓글의 ID (1 이상)
-     * @return 삭제가 성공적으로 처리된 경우의 성공 응답
+     * @return 성공적으로 삭제된 경우의 응답
      */
     @Operation(
             summary = "피드백 댓글을 삭제한다.",

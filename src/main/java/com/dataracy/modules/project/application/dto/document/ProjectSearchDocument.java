@@ -29,9 +29,9 @@ public record ProjectSearchDocument(
         Boolean isDeleted
 ) {
     /**
-     * Project 도메인 객체와 라벨, 사용자 이름을 기반으로 ProjectSearchDocument 인스턴스를 생성합니다.
+     * Project 도메인 객체와 라벨, 사용자 이름을 기반으로 Elasticsearch 인덱싱용 ProjectSearchDocument 인스턴스를 생성합니다.
      *
-     * 프로젝트의 주요 정보, 관련 라벨, 사용자 이름, 댓글/좋아요/조회수 등 메트릭, 삭제 여부를 포함한 Elasticsearch 인덱싱용 문서를 반환합니다.
+     * 프로젝트의 주요 정보, 각종 라벨, 사용자 이름, 댓글/좋아요/조회수 등 메트릭, 삭제 여부, 썸네일 URL을 포함한 문서를 반환합니다.
      *
      * @param project 변환할 프로젝트 도메인 객체
      * @param topicLabel 프로젝트 주제 라벨
@@ -39,7 +39,7 @@ public record ProjectSearchDocument(
      * @param dataSourceLabel 데이터 소스 라벨
      * @param authorLevelLabel 작성자 등급 라벨
      * @param username 프로젝트와 연관된 사용자 이름
-     * @return 프로젝트 정보와 라벨, 사용자 이름, 메트릭, 삭제 여부가 포함된 ProjectSearchDocument 인스턴스
+     * @return 프로젝트 정보, 라벨, 사용자 이름, 메트릭, 삭제 여부, 썸네일 URL이 포함된 ProjectSearchDocument 인스턴스
      */
     public static ProjectSearchDocument from(
             Project project,

@@ -52,14 +52,14 @@ private ProjectEntityMapper() {}
      * ProjectEntity를 Project 도메인 객체로 변환합니다.
      *
      * @param entity 변환할 ProjectEntity 객체
-     * @param includeChildren 자식 프로젝트를 포함할지 여부
+     * @param includeChildren 자식 프로젝트를 최대 childrenCount개까지 최소 정보로 포함할지 여부
      * @param includeData 프로젝트 데이터 ID 목록을 포함할지 여부
      * @param childrenCount 포함할 자식 프로젝트의 최대 개수
      * @return 변환된 Project 도메인 객체. 입력이 null이면 null을 반환합니다.
      *
      * <p>
-     * 자식 프로젝트는 최소 정보만 포함되며, 최대 childrenCount 개수만큼 반환됩니다.
-     * 프로젝트 데이터 ID 목록은 includeData가 true일 때만 포함됩니다.
+     * 자식 프로젝트는 최소 정보만 포함되며, 최대 childrenCount개까지 반환됩니다.<br>
+     * 프로젝트 데이터 ID 목록은 includeData가 true일 때만 포함됩니다.<br>
      * 부모 프로젝트 정보는 포함되지 않습니다.
      * </p>
      */
@@ -106,12 +106,12 @@ private ProjectEntityMapper() {}
     }
 
     /**
-     * {@link Project} 도메인 객체를 JPA 엔티티인 {@link ProjectEntity}로 변환합니다.
+     * 도메인 객체인 {@link Project}를 JPA 엔티티 {@link ProjectEntity}로 변환합니다.
      *
-     * 프로젝트의 부모 프로젝트 ID가 있을 경우 해당 ID로 부모 엔티티를 생성하여 연관시킵니다.
+     * 프로젝트에 부모 프로젝트 ID가 있으면 해당 ID로 부모 엔티티를 생성하여 연관시킵니다.
      * 프로젝트에 연결된 데이터 ID 목록이 있으면 각각 {@link ProjectDataEntity}로 매핑하여 엔티티에 추가합니다.
      *
-     * @param project 변환할 도메인 {@link Project} 객체
+     * @param project 변환할 {@link Project} 도메인 객체
      * @return 변환된 {@link ProjectEntity} 객체, 입력이 null이면 null을 반환합니다.
      */
     public static ProjectEntity toEntity(Project project) {

@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/auth")
 public interface AuthDevApi {
     /**
-     * 개발 환경에서 이메일과 비밀번호를 사용하여 자체 로그인을 수행합니다.
+     * 개발 환경에서 이메일과 비밀번호로 자체 로그인을 처리합니다.
      *
-     * @param webRequest 로그인에 필요한 이메일과 비밀번호 정보를 포함한 요청 객체
-     * @return 로그인 성공 시 리프레시 토큰 정보를 포함한 성공 응답
+     * @param webRequest 이메일과 비밀번호가 포함된 로그인 요청 객체
+     * @return 로그인 성공 시 리프레시 토큰 정보를 담은 성공 응답
      */
     @Operation(
             summary = "개발용 자체 로그인",
@@ -46,6 +46,12 @@ public interface AuthDevApi {
             SelfLoginWebRequest webRequest
     );
 
+    /**
+     * 개발 환경에서 리프레시 토큰을 사용하여 새로운 인증 토큰을 재발급합니다.
+     *
+     * @param webRequest 리프레시 토큰 정보를 담은 요청 객체
+     * @return 재발급된 토큰 정보를 포함하는 성공 응답
+     */
     @Operation(
             summary = "개발용 토큰 재발급",
             description = "개발용 쿠키의 리프레시 토큰을 통해 토큰 재발급을 시행한다.",

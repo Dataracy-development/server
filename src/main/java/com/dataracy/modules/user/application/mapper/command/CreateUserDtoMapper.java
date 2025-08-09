@@ -17,6 +17,14 @@ public class CreateUserDtoMapper {
     @Value("${default.profile.image-url}")
     private String defaultProfileImageUrl;
 
+    /**
+     * SelfSignUpRequest DTO를 기반으로 로컬 ProviderType의 User 도메인 객체를 생성합니다.
+     *
+     * @param requestDto 회원가입 요청 정보를 담은 DTO
+     * @param providerId 인증 제공자 식별자
+     * @param encodedPassword 암호화된 비밀번호
+     * @return 생성된 User 도메인 객체
+     */
     public User toDomain(
             SelfSignUpRequest requestDto,
             String providerId,
@@ -42,6 +50,15 @@ public class CreateUserDtoMapper {
         );
     }
 
+    /**
+     * OnboardingRequest DTO를 기반으로 새로운 User 도메인 객체를 생성합니다.
+     *
+     * @param requestDto 온보딩 요청 정보를 담은 DTO
+     * @param provider 소셜 로그인 제공자 식별자
+     * @param providerId 소셜 제공자별 사용자 고유 ID
+     * @param email 사용자 이메일 주소
+     * @return 생성된 User 도메인 객체
+     */
     public User toDomain(
             OnboardingRequest requestDto,
             String provider,

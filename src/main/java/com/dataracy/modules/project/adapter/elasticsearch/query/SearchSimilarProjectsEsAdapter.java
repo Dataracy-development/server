@@ -99,12 +99,12 @@ public class SearchSimilarProjectsEsAdapter implements SearchSimilarProjectsPort
     }
 
     /**
-     * 프로젝트 검색 문서를 유사 프로젝트 응답 객체로 변환합니다.
+     * ProjectSearchDocument 객체를 SimilarProjectResponse로 변환합니다.
      *
-     * ProjectSearchDocument의 주요 정보와 통계(댓글 수, 좋아요 수, 조회 수 등)를 SimilarProjectResponse로 매핑하여 반환합니다.
+     * 프로젝트의 주요 정보(제목, 내용, 작성자, 썸네일 URL 등)와 통계(댓글 수, 좋아요 수, 조회 수 등)를 포함하는 유사 프로젝트 응답 객체를 생성합니다.
      *
      * @param doc 변환할 프로젝트 검색 문서
-     * @return 유사 프로젝트의 상세 정보와 통계가 포함된 응답 객체
+     * @return 유사 프로젝트 정보를 담은 SimilarProjectResponse 객체
      */
     private SimilarProjectResponse mapToSimilarResponse(ProjectSearchDocument doc) {
         return new SimilarProjectResponse(

@@ -16,6 +16,8 @@ public interface AuthorLevelApi {
     /**
      * 전체 작성자 유형(Author Level) 목록을 조회한다.
      *
+     * 데이터베이스에 저장된 모든 작성자 유형 정보를 반환한다.
+     *
      * @return 전체 작성자 유형 목록이 포함된 성공 응답
      */
     @Operation(
