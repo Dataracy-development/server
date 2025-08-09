@@ -23,12 +23,12 @@ public class DataKafkaProducerAdapter implements DataUploadEventPort {
      * 데이터 ID, 파일 URL, 원본 파일명을 이용해 데이터 업로드 이벤트를 생성하고, 이를 Kafka 토픽에 비동기적으로 발송합니다.
      *
      * @param dataId 업로드된 데이터의 고유 식별자
-     * @param fileUrl 업로드된 파일의 저장 위치 URL
+     * @param dataFileUrl 업로드된 파일의 저장 위치 URL
      * @param originalFilename 업로드된 파일의 원본 파일명
      */
     @Override
-    public void sendUploadEvent(Long dataId, String fileUrl, String originalFilename) {
-        DataUploadEvent event = new DataUploadEvent(dataId, fileUrl, originalFilename);
+    public void sendUploadEvent(Long dataId, String dataFileUrl, String originalFilename) {
+        DataUploadEvent event = new DataUploadEvent(dataId, dataFileUrl, originalFilename);
         kafkaTemplate.send(dataUploadTopic, String.valueOf(dataId), event)
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
