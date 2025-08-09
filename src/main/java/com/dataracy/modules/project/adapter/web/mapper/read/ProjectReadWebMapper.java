@@ -55,7 +55,6 @@ public class ProjectReadWebMapper {
                 responseDto.viewCount(),
                 responseDto.isLiked(),
                 responseDto.hasChild(),
-                responseDto.hasDataSet(),
                 connectWebDataSets
         );
     }
