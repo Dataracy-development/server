@@ -87,6 +87,7 @@ public final class UserEntityMapper {
         List<UserTopicEntity> userTopicEntities = Optional.ofNullable(user.getTopicIds())
                 .orElseGet(Collections::emptyList)
                 .stream()
+                .distinct()
                 .map(topicId -> UserTopicEntity.of(userEntity, topicId))
                 .toList();
         userTopicEntities.forEach(userEntity::addUserTopic);

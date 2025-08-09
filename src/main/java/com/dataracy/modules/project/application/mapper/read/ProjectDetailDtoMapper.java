@@ -21,7 +21,6 @@ public class ProjectDetailDtoMapper {
      * @param dataSourceLabel 데이터 소스 라벨
      * @param isLiked 사용자가 좋아요를 눌렀는지 여부
      * @param hasChild 하위 프로젝트 존재 여부
-     * @param hasData 데이터 파일 존재 여부
      * @return 프로젝트 상세 정보를 담은 ProjectDetailResponse DTO
      */
     public ProjectDetailResponse toResponseDto(
@@ -35,7 +34,6 @@ public class ProjectDetailDtoMapper {
             String dataSourceLabel,
             boolean isLiked,
             boolean hasChild,
-            boolean hasData,
             List<ProjectConnectedDataResponse> connectedDataSets
     ) {
         return new ProjectDetailResponse(
@@ -58,7 +56,6 @@ public class ProjectDetailDtoMapper {
                 project.getViewCount(),
                 isLiked,
                 hasChild,
-                hasData,
                 connectedDataSets
         );
     }

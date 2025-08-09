@@ -65,9 +65,6 @@ public record ProjectDetailWebResponse(
         @Schema(description = "자식 프로젝트 존재 유무", example = "false")
         boolean hasChild,
 
-        @Schema(description = "연결된 데이터셋 존재 유무", example = "false")
-        boolean hasDataSet,
-
         @Schema(description = "연결된 데이터셋 목록")
         List<ProjectConnectedDataWebResponse> connectedDataSets
 ) {}

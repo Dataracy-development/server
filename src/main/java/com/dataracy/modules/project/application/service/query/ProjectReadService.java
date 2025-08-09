@@ -1,7 +1,6 @@
 package com.dataracy.modules.project.application.service.query;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.dataset.application.dto.response.read.ConnectedDataResponse;
 import com.dataracy.modules.dataset.application.port.in.query.read.FindConnectedDataSetsUseCase;
 import com.dataracy.modules.like.application.port.in.validate.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
@@ -26,7 +25,6 @@ import com.dataracy.modules.project.application.port.out.query.read.FindConnecte
 import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
 import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
-import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectDataExistsPort;
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByParentPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
@@ -50,7 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -67,7 +64,6 @@ public class ProjectReadService implements
 
     private final CacheProjectViewCountPort cacheProjectViewCountPort;
 
-    private final CheckProjectDataExistsPort checkProjectDataExistsPort;
     private final CheckProjectExistsByParentPort checkProjectExistsByParentPort;
 
     private final FindProjectPort findProjectPort;
@@ -122,7 +118,6 @@ public class ProjectReadService implements
                 .toList();
 
         boolean hasChild = checkProjectExistsByParentPort.checkParentProjectExistsById(projectId);
-        boolean hasData = checkProjectDataExistsPort.checkProjectDataExistsByProjectId(projectId);
 
         // 작성자 정보
         UserInfo userInfo = getUserInfoUseCase.getUserInfo(project.getUserId());
@@ -152,7 +147,6 @@ public class ProjectReadService implements
                 getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId()),
                 isLiked,
                 hasChild,
-                hasData,
                 connectedDataSets
         );
 
