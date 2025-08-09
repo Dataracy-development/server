@@ -33,9 +33,7 @@ public interface AuthDevApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "자체로그인 성공", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "잘못된 아이디 또는 비밀번호", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "500", description = "리프레시 토큰 발급 실패", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = "자체로그인 성공", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/dev/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<RefreshTokenWebResponse>> loginDev(
@@ -54,9 +52,7 @@ public interface AuthDevApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "401", description = "리프레시 토큰 검증 실패", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "500", description = "토큰 발급 실패", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/dev/token/re-issue")
     ResponseEntity<SuccessResponse<ReIssueTokenWebResponse>> reIssueTokenDev(
