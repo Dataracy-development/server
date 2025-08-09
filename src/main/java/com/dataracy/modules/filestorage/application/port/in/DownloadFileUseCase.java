@@ -1,6 +1,6 @@
 package com.dataracy.modules.filestorage.application.port.in;
 
-import com.dataracy.modules.filestorage.application.dto.response.GetPresignedUrlResponse;
+import com.dataracy.modules.filestorage.application.dto.response.GetPreSignedUrlResponse;
 
 public interface DownloadFileUseCase {
     /****
@@ -10,5 +10,5 @@ public interface DownloadFileUseCase {
  * @param expirationSeconds 프리사인드 URL의 만료 시간(초)
  * @return 생성된 프리사인드 다운로드 URL
  */
-    GetPresignedUrlResponse generatePreSignedUrl(String s3Url, int expirationSeconds);
+    GetPreSignedUrlResponse generatePreSignedUrl(String s3Url, int expirationSeconds);
 }

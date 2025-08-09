@@ -1,7 +1,7 @@
 package com.dataracy.modules.filestorage.application.service.command;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.filestorage.application.dto.response.GetPresignedUrlResponse;
+import com.dataracy.modules.filestorage.application.dto.response.GetPreSignedUrlResponse;
 import com.dataracy.modules.filestorage.application.port.in.DownloadFileUseCase;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class FileDownloadService implements DownloadFileUseCase {
      * @throws IllegalArgumentException s3Url이 비어있거나 만료 시간이 0 이하인 경우
      */
     @Override
-    public GetPresignedUrlResponse generatePreSignedUrl(String s3Url, int expirationSeconds) {
+    public GetPreSignedUrlResponse generatePreSignedUrl(String s3Url, int expirationSeconds) {
         Instant startTime = LoggerFactory.service().logStart("DownloadFileUseCase", "서명된(pre-signed) URL을 생성 서비스 시작");
         if (!StringUtils.hasText(s3Url)) {
             LoggerFactory.service().logWarning("DownloadFileUseCase", "S3 URL은 비어있을 수 없습니다.");
@@ -36,7 +36,7 @@ public class FileDownloadService implements DownloadFileUseCase {
             throw new IllegalArgumentException("만료 시간은 0보다 커야 합니다.");
         }
         String preSignedUrl = fileStoragePort.getPreSignedUrl(s3Url, expirationSeconds);
-        GetPresignedUrlResponse getPresignedUrlResponse = new GetPresignedUrlResponse(preSignedUrl);
+        GetPreSignedUrlResponse getPresignedUrlResponse = new GetPreSignedUrlResponse(preSignedUrl);
         LoggerFactory.service().logSuccess("DownloadFileUseCase", "서명된(pre-signed) URL을 생성 서비스 종료", startTime);
         return getPresignedUrlResponse;
     }

@@ -7,10 +7,10 @@ import com.dataracy.modules.dataset.adapter.web.mapper.command.DataCommandWebMap
 import com.dataracy.modules.dataset.adapter.web.mapper.download.DataDownloadWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.command.ModifyDataWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.command.UploadDataWebRequest;
-import com.dataracy.modules.dataset.adapter.web.response.download.GetDataPresignedUrlWebResponse;
+import com.dataracy.modules.dataset.adapter.web.response.download.GetDataPreSignedUrlWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
-import com.dataracy.modules.dataset.application.dto.response.download.GetDataPresignedUrlResponse;
+import com.dataracy.modules.dataset.application.dto.response.download.GetDataPreSignedUrlResponse;
 import com.dataracy.modules.dataset.application.port.in.command.content.*;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
 import lombok.RequiredArgsConstructor;
@@ -138,12 +138,12 @@ public class DataCommandController implements DataCommandApi {
      * @return 사전 서명된 다운로드 URL이 포함된 성공 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<GetDataPresignedUrlWebResponse>> getPreSignedDataUrl(Long dataId) {
+    public ResponseEntity<SuccessResponse<GetDataPreSignedUrlWebResponse>> getPreSignedDataUrl(Long dataId) {
         Instant startTime = LoggerFactory.api().logRequest("[GetPreSignedDataUrl] 데이터셋 다운로드 url API 요청 시작");
-        GetDataPresignedUrlWebResponse webResponse;
+        GetDataPreSignedUrlWebResponse webResponse;
 
         try {
-            GetDataPresignedUrlResponse responseDto = downloadDataFileUseCase.downloadDataFile(dataId, PRESIGNED_URL_EXPIRY_SECONDS);
+            GetDataPreSignedUrlResponse responseDto = downloadDataFileUseCase.downloadDataFile(dataId, PRESIGNED_URL_EXPIRY_SECONDS);
             webResponse = dataDownloadWebMapper.toWebDto(responseDto);
         } finally {
             LoggerFactory.api().logResponse("[GetPreSignedDataUrl] 데이터셋 다운로드 url 응답 완료", startTime);

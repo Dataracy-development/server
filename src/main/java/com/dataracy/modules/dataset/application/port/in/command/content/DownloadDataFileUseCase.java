@@ -1,6 +1,6 @@
 package com.dataracy.modules.dataset.application.port.in.command.content;
 
-import com.dataracy.modules.dataset.application.dto.response.download.GetDataPresignedUrlResponse;
+import com.dataracy.modules.dataset.application.dto.response.download.GetDataPreSignedUrlResponse;
 
 public interface DownloadDataFileUseCase {
     /**
@@ -10,5 +10,5 @@ public interface DownloadDataFileUseCase {
  * @param expirationSeconds 다운로드 링크의 유효 기간(초 단위)
  * @return 생성된 다운로드 링크 또는 토큰 문자열
  */
-    GetDataPresignedUrlResponse downloadDataFile(Long dataId, int expirationSeconds);
+    GetDataPreSignedUrlResponse downloadDataFile(Long dataId, int expirationSeconds);
 }
