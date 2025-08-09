@@ -116,7 +116,7 @@ public class DataEntity extends BaseTimeEntity {
      * @throws DataException URL이 null이거나 빈 문자열인 경우 발생합니다.
      */
     public void updateDataFile (String dataFileUrl) {
-        if (dataFileUrl == null || dataFileUrl.isEmpty()) {
+        if (dataFileUrl == null || dataFileUrl.isBlank()) {
             LoggerFactory.domain().logWarning("잘못된 데이터셋 파일 url 형식입니다.");
             throw new DataException(DataErrorStatus.INVALID_FILE_URL);
         }
@@ -133,7 +133,7 @@ public class DataEntity extends BaseTimeEntity {
      * @throws DataException thumbnailUrl이 null이거나 빈 문자열일 때 발생합니다.
      */
     public void updateDataThumbnailFile (String thumbnailUrl) {
-        if (thumbnailUrl == null || thumbnailUrl.isEmpty()) {
+        if (thumbnailUrl == null || thumbnailUrl.isBlank()) {
             LoggerFactory.domain().logWarning("잘못된 데이터셋 썸네일 파일 url 형식입니다.");
             throw new DataException(DataErrorStatus.INVALID_FILE_URL);
         }
