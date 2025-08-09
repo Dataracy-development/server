@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DataUploadEvent {
     private Long dataId;
-    private String fileUrl;
+    private String dataFileUrl;
     private String originalFilename;
 }

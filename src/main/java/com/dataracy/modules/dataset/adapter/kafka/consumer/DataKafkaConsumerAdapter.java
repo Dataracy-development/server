@@ -35,7 +35,7 @@ public class DataKafkaConsumerAdapter {
             parseMetadataUseCase.parseAndSaveMetadata(
                     new ParseMetadataRequest(
                             event.getDataId(),
-                            event.getFileUrl(),
+                            event.getDataFileUrl(),
                             event.getOriginalFilename()
                     )
             );
