@@ -128,7 +128,7 @@ public class ProjectEntity extends BaseTimeEntity {
      * @throws ProjectException 썸네일 파일 URL이 null이거나 비어 있을 때 발생합니다.
      */
     public void updateThumbnailUrl(String thumbnailUrl) {
-        if (thumbnailUrl == null || thumbnailUrl.isEmpty()) {
+        if (!org.springframework.util.StringUtils.hasText(thumbnailUrl)) {
             LoggerFactory.domain().logWarning("잘못된 프로젝트 썸네일 url 형식입니다.");
             throw new ProjectException(ProjectErrorStatus.INVALID_THUMBNAIL_FILE_URL);
         }
