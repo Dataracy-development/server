@@ -28,7 +28,9 @@ public final class UserEntityMapper {
             return null;
         }
 
-        List<Long> topicIds = userEntity.getUserTopicEntities().stream()
+        List<Long> topicIds = Optional.ofNullable(userEntity.getUserTopicEntities())
+                .orElseGet(Collections::emptyList)
+                .stream()
                 .map(UserTopicEntity::getTopicId)
                 .toList();
 
