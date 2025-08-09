@@ -1,8 +1,10 @@
 package com.dataracy.modules.project.adapter.web.response.read;
 
+import com.dataracy.modules.project.adapter.web.response.support.ProjectConnectedDataWebResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Schema(description = "프로젝트 상세 정보 웹 응답 DTO")
 public record ProjectDetailWebResponse(
@@ -14,6 +16,9 @@ public record ProjectDetailWebResponse(
 
         @Schema(description = "작성자명", example = "박준형")
         String username,
+
+        @Schema(description = "작성자 소개글", example = "안녕하세요. 박준형입니다.")
+        String userIntroductionText,
 
         @Schema(description = "작성자 유형 라벨", example = "실무자")
         String authorLevelLabel,
@@ -40,7 +45,7 @@ public record ProjectDetailWebResponse(
         String content,
 
         @Schema(description = "프로젝트 썸네일 url", example = "https://www.s3.~~~")
-        String fileUrl,
+        String projectThumbnailUrl,
 
         @Schema(description = "생성일", example = "2025-08-04T10:30:00")
         LocalDateTime createdAt,
@@ -60,6 +65,6 @@ public record ProjectDetailWebResponse(
         @Schema(description = "자식 프로젝트 존재 유무", example = "false")
         boolean hasChild,
 
-        @Schema(description = "연결된 데이터셋 존재 유무", example = "false")
-        boolean hasDataSet
+        @Schema(description = "연결된 데이터셋 목록")
+        List<ProjectConnectedDataWebResponse> connectedDataSets
 ) {}

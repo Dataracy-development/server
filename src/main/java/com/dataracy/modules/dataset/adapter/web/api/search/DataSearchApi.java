@@ -6,8 +6,6 @@ import com.dataracy.modules.dataset.adapter.web.response.read.RecentMinimalDataW
 import com.dataracy.modules.dataset.adapter.web.response.search.FilteredDataWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.search.SimilarDataWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,20 +24,18 @@ import java.util.List;
 public interface DataSearchApi {
 
     /**
-     * 지정한 데이터셋과 유사한 데이터셋 목록을 조회합니다.
+     * 지정한 데이터셋과 유사한 데이터셋 목록을 반환합니다.
      *
-     * @param dataId 유사도를 기준으로 비교할 데이터셋의 고유 ID (1 이상)
+     * @param dataId 유사한 데이터셋을 찾을 기준 데이터셋의 ID (1 이상)
      * @param size 반환할 유사 데이터셋의 최대 개수 (1 이상)
-     * @return 유사한 데이터셋 목록이 포함된 성공 응답
+     * @return 유사한 데이터셋 목록이 포함된 성공 응답 객체
      */
     @Operation(
             summary = "유사한 데이터셋을 조회한다.",
             description = "제공받은 데이터와 유사한 데이터셋을 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "유사 데이터셋 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "유사 데이터셋 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{dataId}/similar")
     ResponseEntity<SuccessResponse<List<SimilarDataWebResponse>>> searchSimilarDataSets(
@@ -53,7 +49,7 @@ public interface DataSearchApi {
     );
 
     /**
-     * 필터 조건에 따라 데이터셋 목록을 페이지 단위로 조회한다.
+     * 필터 조건에 따라 데이터셋 목록을 페이지네이션하여 조회한다.
      *
      * @param webRequest 데이터셋 필터링 조건이 포함된 요청 객체
      * @param pageable 결과 페이지네이션 정보
@@ -64,9 +60,7 @@ public interface DataSearchApi {
             description = "필터링된 데이터셋 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "필터링된 데이터셋 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "필터링된 데이터셋 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/filter")
     ResponseEntity<SuccessResponse<Page<FilteredDataWebResponse>>> searchFilteredDataSets(
@@ -77,7 +71,7 @@ public interface DataSearchApi {
             Pageable pageable
     );
 
-    /**
+    /****
      * 키워드 자동완성 검색을 통해 조건에 맞는 데이터셋의 최소 정보를 리스트로 반환합니다.
      *
      * @param keyword 자동완성 검색에 사용할 키워드(선택 사항)
@@ -89,9 +83,7 @@ public interface DataSearchApi {
             description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "데이터셋 자동완성 검색 기능으로 데이터셋을 조회한다.", useReturnTypeSchema = true)
     })
     @GetMapping("/search/real-time")
     ResponseEntity<SuccessResponse<List<RecentMinimalDataWebResponse>>> getRealTimeDataSets(

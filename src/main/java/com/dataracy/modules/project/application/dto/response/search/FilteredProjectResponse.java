@@ -10,7 +10,7 @@ public record FilteredProjectResponse(
         String title,
         String content,
         String username,
-        String fileUrl,
+        String projectThumbnailUrl,
         String topicLabel,
         String analysisPurposeLabel,
         String dataSourceLabel,

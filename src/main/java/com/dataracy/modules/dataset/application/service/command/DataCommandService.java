@@ -4,7 +4,7 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
-import com.dataracy.modules.dataset.application.mapper.command.UploadedDataDtoMapper;
+import com.dataracy.modules.dataset.application.mapper.command.CreateDataDtoMapper;
 import com.dataracy.modules.dataset.application.port.in.command.content.ModifyDataUseCase;
 import com.dataracy.modules.dataset.application.port.in.command.content.UploadDataUseCase;
 import com.dataracy.modules.dataset.application.port.out.command.create.CreateDataPort;
@@ -23,7 +23,6 @@ import com.dataracy.modules.reference.application.port.in.datasource.ValidateDat
 import com.dataracy.modules.reference.application.port.in.datatype.ValidateDataTypeUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +36,7 @@ public class DataCommandService implements
         UploadDataUseCase,
         ModifyDataUseCase
 {
-    private final UploadedDataDtoMapper uploadedDataDtoMapper;
+    private final CreateDataDtoMapper createDataDtoMapper;
 
     private final CreateDataPort createDataPort;
     private final UpdateDataPort updateDataPort;
@@ -54,15 +53,12 @@ public class DataCommandService implements
     private final ValidateDataSourceUseCase validateDataSourceUseCase;
     private final ValidateDataTypeUseCase validateDataTypeUseCase;
 
-    @Value("${default.image.url:}")
-    private String defaultImageUrl;
-
     /**
-     * 데이터셋 파일과 썸네일 파일의 유효성을 검증하고 업로드한 뒤, 데이터셋 정보를 저장하고 업로드 이벤트를 발행합니다.
+     * 데이터셋 파일과 썸네일 파일의 유효성을 검증하고 업로드한 후, 데이터셋 정보를 저장하며 업로드 이벤트를 발행합니다.
      *
-     * 데이터셋 메타데이터와 파일의 유효성을 검사하며, 주제, 데이터소스, 데이터유형 ID의 존재 여부도 확인합니다. 데이터셋 정보는 저장 후 파일 업로드가 성공하면 해당 URL로 갱신됩니다. 파일 업로드 중 오류 발생 시 트랜잭션이 롤백됩니다. 데이터셋 파일 업로드가 완료되면 업로드 이벤트가 발행됩니다.
+     * 데이터셋 메타데이터와 파일의 유효성을 확인하고, 관련 ID(주제, 데이터소스, 데이터유형)의 존재 여부를 검증합니다. 파일 업로드가 성공적으로 완료되면 데이터셋 정보에 파일 URL을 반영하고, 데이터셋 파일이 존재할 경우 업로드 이벤트를 발행합니다. 파일 업로드 또는 유효성 검사 중 오류가 발생하면 트랜잭션이 롤백됩니다.
      *
-     * @param userId 데이터셋을 업로드하는 사용자 ID
+     * @param userId 데이터셋을 업로드하는 사용자의 ID
      * @param dataFile 업로드할 데이터셋 파일
      * @param thumbnailFile 업로드할 썸네일 파일
      * @param requestDto 데이터셋 메타데이터 요청 정보
@@ -86,10 +82,9 @@ public class DataCommandService implements
         );
 
         // 데이터셋 저장
-        Data data = uploadedDataDtoMapper.toDomain(
+        Data data = createDataDtoMapper.toDomain(
                 requestDto,
-                userId,
-                defaultImageUrl
+                userId
         );
         Data saveData = createDataPort.saveData(data);
 

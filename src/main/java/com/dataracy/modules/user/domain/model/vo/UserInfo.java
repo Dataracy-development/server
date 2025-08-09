@@ -15,5 +15,6 @@ public record UserInfo(
         Long authorLevelId,
         Long occupationId,
         List<Long> topicIds,
-        Long visitSourceId
+        Long visitSourceId,
+        String introductionText
 ) {}

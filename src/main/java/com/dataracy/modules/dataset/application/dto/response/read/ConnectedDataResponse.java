@@ -10,7 +10,7 @@ public record ConnectedDataResponse(
         String dataTypeLabel,
         LocalDate startDate,
         LocalDate endDate,
-        String thumbnailUrl,
+        String dataThumbnailUrl,
         Integer downloadCount,
         Integer rowCount,
         Integer columnCount,

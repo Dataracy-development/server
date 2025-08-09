@@ -1,30 +1,47 @@
 package com.dataracy.modules.project.adapter.web.mapper.read;
 
+import com.dataracy.modules.project.adapter.web.mapper.support.ProjectConnectedDataWebMapper;
 import com.dataracy.modules.project.adapter.web.response.read.ConnectedProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.ContinuedProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
 import com.dataracy.modules.project.adapter.web.response.support.ChildProjectWebResponse;
+import com.dataracy.modules.project.adapter.web.response.support.ProjectConnectedDataWebResponse;
 import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
 import com.dataracy.modules.project.application.dto.response.support.ChildProjectResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
+@RequiredArgsConstructor
 public class ProjectReadWebMapper {
+
+    private final ProjectConnectedDataWebMapper projectConnectedDataWebMapper;
+
     /**
      * 애플리케이션 계층의 프로젝트 상세 응답 DTO를 웹 계층의 프로젝트 상세 응답 DTO로 변환합니다.
      *
+     * 프로젝트의 상세 정보와 연결된 데이터셋 목록을 포함하여 웹 계층에서 사용할 수 있는 형태로 매핑합니다.
+     *
      * @param responseDto 변환할 프로젝트 상세 정보 응답 DTO
-     * @return 변환된 웹 계층의 프로젝트 상세 정보 응답 DTO
+     * @return 웹 계층의 프로젝트 상세 정보 응답 DTO
      */
     public ProjectDetailWebResponse toWebDto(ProjectDetailResponse responseDto) {
+
+        List<ProjectConnectedDataWebResponse> connectWebDataSets = responseDto.connectedDataSets().stream()
+                .map(projectConnectedDataWebMapper::toWebDto)
+                .toList();
+
         return new ProjectDetailWebResponse(
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.username(),
+                responseDto.userIntroductionText(),
                 responseDto.authorLevelLabel(),
                 responseDto.occupationLabel(),
                 responseDto.topicLabel(),
@@ -33,19 +50,21 @@ public class ProjectReadWebMapper {
                 responseDto.isContinue(),
                 responseDto.parentProjectId(),
                 responseDto.content(),
-                responseDto.fileUrl(),
+                responseDto.projectThumbnailUrl(),
                 responseDto.createdAt(),
                 responseDto.commentCount(),
                 responseDto.likeCount(),
                 responseDto.viewCount(),
                 responseDto.isLiked(),
                 responseDto.hasChild(),
-                responseDto.hasDataSet()
+                connectWebDataSets
         );
     }
 
     /**
-     * 애플리케이션 계층의 ContinuedProjectResponse를 웹 계층의 ContinuedProjectWebResponse로 변환합니다.
+     * ContinuedProjectResponse 객체를 ContinuedProjectWebResponse 객체로 변환합니다.
+     *
+     * 애플리케이션 계층의 프로젝트 연속 정보 DTO를 웹 계층의 응답 DTO로 매핑합니다.
      *
      * @param responseDto 변환할 ContinuedProjectResponse 객체
      * @return 변환된 ContinuedProjectWebResponse 객체
@@ -55,8 +74,8 @@ public class ProjectReadWebMapper {
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.username(),
-                responseDto.userThumbnailUrl(),
-                responseDto.fileUrl(),
+                responseDto.userProfileUrl(),
+                responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.authorLevelLabel(),
                 responseDto.commentCount(),
@@ -105,10 +124,10 @@ public class ProjectReadWebMapper {
     }
 
     /**
-     * 인기 프로젝트 응답 DTO를 웹 계층의 응답 객체로 변환합니다.
+     * 애플리케이션 계층의 인기 프로젝트 정보를 웹 계층의 응답 객체로 변환합니다.
      *
-     * @param responseDto 애플리케이션 계층의 인기 프로젝트 정보를 담은 DTO
-     * @return 웹 계층에서 사용하는 인기 프로젝트 응답 객체
+     * @param responseDto 인기 프로젝트 정보를 담은 애플리케이션 계층 DTO
+     * @return 변환된 인기 프로젝트 웹 응답 객체
      */
     public PopularProjectWebResponse toWebDto(PopularProjectResponse responseDto) {
         return new PopularProjectWebResponse(
@@ -116,7 +135,7 @@ public class ProjectReadWebMapper {
                 responseDto.title(),
                 responseDto.content(),
                 responseDto.username(),
-                responseDto.fileUrl(),
+                responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.analysisPurposeLabel(),
                 responseDto.dataSourceLabel(),

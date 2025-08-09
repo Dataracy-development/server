@@ -1,9 +1,9 @@
 package com.dataracy.modules.user.application.service.command.signup;
 
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
+import com.dataracy.modules.auth.application.port.in.cache.CacheRefreshTokenUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
-import com.dataracy.modules.auth.application.port.in.cache.CacheRefreshTokenUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
@@ -12,12 +12,12 @@ import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUse
 import com.dataracy.modules.reference.application.port.in.visitsource.ValidateVisitSourceUseCase;
 import com.dataracy.modules.user.application.dto.request.signup.OnboardingRequest;
 import com.dataracy.modules.user.application.dto.request.signup.SelfSignUpRequest;
+import com.dataracy.modules.user.application.mapper.command.CreateUserDtoMapper;
 import com.dataracy.modules.user.application.port.in.command.signup.OAuthSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.command.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.validate.DuplicateEmailUseCase;
 import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
-import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.model.User;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +35,8 @@ import java.util.UUID;
 public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase {
     private final PasswordEncoder passwordEncoder;
 
+    private final CreateUserDtoMapper createUserDtoMapper;
+
     private final UserCommandPort userCommandPort;
 
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
@@ -49,9 +51,6 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     private final ValidateTopicUseCase validateTopicUseCase;
 
     private final CacheRefreshTokenUseCase cacheRefreshTokenUseCase;
-
-    @Value("${default.image.url:}")
-    private String defaultImageUrl;
 
     /**
      * 자체 회원가입 요청을 처리하여 신규 사용자를 등록하고 리프레시 토큰을 발급한다.
@@ -89,22 +88,10 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
         String encodedPassword = passwordEncoder.encode(requestDto.password());
         String providerId = UUID.randomUUID().toString();
 
-        // 유저 도메인 모델 생성 및 db 저장
-        User user = User.of(
-                null,
-                ProviderType.LOCAL,
+        User user = createUserDtoMapper.toDomain(
+                requestDto,
                 providerId,
-                RoleType.ROLE_USER,
-                requestDto.email(),
-                encodedPassword,
-                requestDto.nickname(),
-                requestDto.authorLevelId(),
-                requestDto.occupationId(),
-                requestDto.topicIds(),
-                requestDto.visitSourceId(),
-                defaultImageUrl,
-                requestDto.isAdTermsAgreed(),
-                false
+                encodedPassword
         );
         User savedUser = userCommandPort.saveUser(user);
 
@@ -121,12 +108,12 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     }
 
     /**
-     * 소셜 회원가입을 처리하고 리프레시 토큰을 발급합니다.
+     * 소셜 회원가입 요청을 처리하고 리프레시 토큰을 발급합니다.
      *
-     * 소셜 회원가입 토큰의 유효성을 검증하고, 온보딩 정보를 기반으로 신규 사용자를 등록한 후 리프레시 토큰을 생성하여 캐시에 저장합니다. 
-     * 닉네임 중복 회원가입을 방지하기 위해 분산 락이 적용됩니다.
+     * 소셜 회원가입 토큰의 유효성을 검증한 후, 온보딩 정보를 기반으로 신규 사용자를 등록하고 리프레시 토큰을 생성하여 캐시에 저장합니다. 
+     * 닉네임 중복 방지를 위해 분산 락이 적용됩니다.
      *
-     * @param registerToken 소셜 회원가입 토큰
+     * @param registerToken 소셜 회원가입을 위한 JWT 토큰
      * @param requestDto 온보딩 요청 정보
      * @return 발급된 리프레시 토큰과 만료 시간 정보
      */
@@ -158,21 +145,11 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
         );
 
         // 유저 도메인 모델 생성 및 db 저장
-        User user = User.of(
-                null,
-                ProviderType.of(provider),
+        User user = createUserDtoMapper.toDomain(
+                requestDto,
+                provider,
                 providerId,
-                RoleType.ROLE_USER,
-                email,
-                null,
-                requestDto.nickname(),
-                requestDto.authorLevelId(),
-                requestDto.occupationId(),
-                requestDto.topicIds(),
-                requestDto.visitSourceId(),
-                defaultImageUrl,
-                requestDto.isAdTermsAgreed(),
-                false
+                email
         );
         User savedUser = userCommandPort.saveUser(user);
 

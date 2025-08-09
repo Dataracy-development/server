@@ -52,21 +52,21 @@ public class ProjectCommandDbAdapter implements
     }
 
     /**
-     * 지정한 프로젝트의 파일 URL을 새 값으로 업데이트합니다.
+     * 지정한 프로젝트의 썸네일 이미지 파일 URL을 새로운 값으로 업데이트합니다.
      *
      * 프로젝트 ID에 해당하는 프로젝트가 존재하지 않으면 {@code ProjectException}이 발생합니다.
      *
-     * @param projectId 파일 URL을 변경할 프로젝트의 ID
-     * @param fileUrl 새로 설정할 파일 URL
+     * @param projectId 썸네일 URL을 변경할 프로젝트의 ID
+     * @param thumbnailUrl 새로 설정할 썸네일 이미지 파일 URL
      */
     @Override
-    public void updateFile(Long projectId, String fileUrl) {
+    public void updateThumbnailFile(Long projectId, String thumbnailUrl) {
         ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> {
                     LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
-        projectEntity.updateFile(fileUrl);
+        projectEntity.updateThumbnailUrl(thumbnailUrl);
         projectJpaRepository.save(projectEntity);
         LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 썸네일 이미지 파일 업데이트가 완료되었습니다.");
     }

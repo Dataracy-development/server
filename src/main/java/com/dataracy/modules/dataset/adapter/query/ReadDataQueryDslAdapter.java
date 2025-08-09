@@ -114,9 +114,9 @@ public class ReadDataQueryDslAdapter implements
     /**
      * 지정된 프로젝트에 연결된 데이터셋을 최신순으로 조회하여, 각 데이터셋이 연결된 프로젝트의 개수와 함께 페이지 형태로 반환합니다.
      *
-     * @param projectId 조회할 프로젝트의 ID
+     * @param projectId 데이터셋을 조회할 대상 프로젝트의 ID
      * @param pageable 결과의 페이지네이션 정보
-     * @return 프로젝트에 연결된 데이터셋과 각 데이터셋의 프로젝트 연결 개수를 포함하는 페이지 객체
+     * @return 각 데이터셋과 해당 데이터셋이 연결된 프로젝트 개수를 포함하는 페이지 객체
      */
     @Override
     public Page<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
@@ -156,6 +156,48 @@ public class ReadDataQueryDslAdapter implements
 
         LoggerFactory.query().logQueryEnd("DataEntity", "[getConnectedDataSetsAssociatedWithProject] 지정된 프로젝트에 연결된 데이터셋 목록 조회 시작. projectId=" + projectId, startTime);
         return new PageImpl<>(contents, pageable, total);
+    }
+
+    /**
+     * 주어진 데이터 ID 목록에 해당하는 데이터셋과 각 데이터셋에 연결된 프로젝트 수를 조회합니다.
+     *
+     * @param dataIds 조회할 데이터셋의 ID 목록
+     * @return 데이터셋과 연결된 프로젝트 수 정보를 담은 DataWithProjectCountDto 리스트. 입력 목록이 비어 있거나 null이면 빈 리스트를 반환합니다.
+     */
+    @Override
+    public List<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProjectByIds(List<Long> dataIds) {
+        if (dataIds == null || dataIds.isEmpty()) {
+            return List.of();
+        }
+
+        Instant startTime = LoggerFactory.query()
+                .logQueryStart("DataEntity", "[getConnectedDataSetsAssociatedWithProjectByIds] 데이터 아이디 목록에 따른 데이터셋 정보 조회 시작 dataIds=" + dataIds);
+
+        NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
+
+        // 한 방 조회: 데이터 + 연결된 프로젝트 수
+        List<Tuple> tuples = queryFactory
+                .select(
+                        data,
+                        projectData.id.count().as(projectCountPath)
+                )
+                .from(data)
+                .leftJoin(projectData).on(projectData.dataId.eq(data.id))
+                .leftJoin(data.metadata).fetchJoin()
+                .where(data.id.in(dataIds))
+                .groupBy(data.id)
+                .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
+                .fetch();
+
+        List<DataWithProjectCountDto> contents = tuples.stream()
+                .map(tuple -> new DataWithProjectCountDto(
+                        DataEntityMapper.toDomain(tuple.get(data)),
+                        tuple.get(projectCountPath)
+                ))
+                .toList();
+
+        LoggerFactory.query().logQueryEnd("DataEntity", "[getConnectedDataSetsAssociatedWithProjectByIds] 데이터 아이디 목록에 따른 데이터셋 정보 조회 완료 dataIds=" + dataIds, startTime);
+        return contents;
     }
 
     /**

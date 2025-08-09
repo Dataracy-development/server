@@ -14,5 +14,5 @@ public record RealTimeProjectWebResponse(
         String username,
 
         @Schema(description = "프로젝트 썸네일 url", example = "https://www.s3.~~~")
-        String fileUrl
+        String projectThumbnailUrl
 ) {}

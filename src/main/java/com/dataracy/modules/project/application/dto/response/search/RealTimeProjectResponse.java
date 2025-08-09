@@ -4,5 +4,5 @@ public record RealTimeProjectResponse(
         Long id,
         String title,
         String username,
-        String fileUrl
+        String projectThumbnailUrl
 ) {}

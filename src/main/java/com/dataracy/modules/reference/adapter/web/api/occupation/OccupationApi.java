@@ -3,8 +3,6 @@ package com.dataracy.modules.reference.adapter.web.api.occupation;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllOccupationsWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "Reference", description = "참조 데이터 관련 API")
 @RequestMapping("/api/v1/references")
 public interface OccupationApi {
-    /****
-     * 전체 직업 목록을 조회하는 API 엔드포인트입니다.
+    /**
+     * 전체 직업 목록을 반환하는 API 엔드포인트입니다.
      *
-     * @return 모든 직업 정보를 포함하는 성공 응답 객체
+     * 데이터베이스에 저장된 모든 직업 정보를 조회하여 반환합니다.
+     *
+     * @return 전체 직업 정보를 포함한 성공 응답
      */
     @Operation(
             summary = "전체 직업 리스트를 조회",
@@ -26,9 +26,7 @@ public interface OccupationApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 직업 리스트 조회",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "200", description = "전체 직업 리스트 조회", useReturnTypeSchema = true),
     })
     @GetMapping("/occupations")
     ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> findAllOccupations();

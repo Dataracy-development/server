@@ -7,8 +7,6 @@ import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebR
 import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,19 +28,17 @@ import java.util.List;
 @RequestMapping("/api/v1/projects")
 public interface ProjectReadApi {
     /**
-     * 지정한 프로젝트의 상세 정보를 조회하여 반환합니다.
+     * 지정한 프로젝트의 상세 정보를 반환합니다.
      *
-     * @param projectId 조회할 프로젝트의 ID (1 이상)
-     * @return 프로젝트 상세 정보를 포함한 성공 응답 객체
+     * @param projectId 조회할 프로젝트의 고유 ID (1 이상)
+     * @return 프로젝트 상세 정보를 담은 성공 응답 객체
      */
     @Operation(
             summary = "프로젝트 상세 정보를 조회한다.",
             description = "프로젝트 상세 정보를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "프로젝트 상세 정보 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "프로젝트 상세 정보 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{projectId}")
     ResponseEntity<SuccessResponse<ProjectDetailWebResponse>> getProjectDetail(
@@ -57,20 +53,18 @@ public interface ProjectReadApi {
     );
 
     /**
-     * 지정한 프로젝트를 기준으로 이어지는(연속) 프로젝트들의 목록을 페이지 단위로 조회한다.
+     * 지정한 프로젝트를 기준으로 이어지는 프로젝트 목록을 페이지 단위로 반환한다.
      *
-     * @param projectId 기준이 되는 프로젝트의 ID (1 이상)
-     * @param pageable 결과 페이지 및 크기 정보 (기본: 페이지 0, 크기 3)
-     * @return 이어가기 프로젝트 목록이 포함된 성공 응답 객체
+     * @param projectId 이어지는 프로젝트를 조회할 기준 프로젝트의 ID (1 이상)
+     * @param pageable 페이지 번호와 크기 정보 (기본값: 페이지 0, 크기 3)
+     * @return 이어지는 프로젝트 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회한다.",
             description = "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "이어가기 프로젝트 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "이어가기 프로젝트 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{projectId}/continue")
     ResponseEntity<SuccessResponse<Page<ContinuedProjectWebResponse>>> findContinueProjects(
@@ -82,10 +76,10 @@ public interface ProjectReadApi {
     );
 
     /**
-     * 지정한 데이터셋에 연결된 프로젝트 목록을 페이지 단위로 조회합니다.
+     * 지정한 데이터셋에 연결된 프로젝트 목록을 페이지네이션하여 반환합니다.
      *
-     * @param dataId 조회할 데이터셋의 식별자 (1 이상)
-     * @param pageable 결과의 페이지 및 크기 정보 (기본값: 0페이지, 3개씩)
+     * @param dataId 연결된 프로젝트를 조회할 데이터셋의 식별자 (1 이상)
+     * @param pageable 결과 페이지 및 크기 정보 (기본값: 0페이지, 3개씩)
      * @return 연결된 프로젝트 목록이 포함된 성공 응답 객체
      */
     @Operation(
@@ -93,9 +87,7 @@ public interface ProjectReadApi {
             description = "데이터와 연결된 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "데이터와 연결된 프로젝트 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "데이터와 연결된 프로젝트 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/connected-to-dataset")
     ResponseEntity<SuccessResponse<Page<ConnectedProjectWebResponse>>> findConnectedProjectsAssociatedWithData(
@@ -107,19 +99,17 @@ public interface ProjectReadApi {
     );
 
     /**
-     * 좋아요, 댓글, 조회수를 기준으로 인기 프로젝트 목록을 반환한다.
+     * 지정한 개수만큼 좋아요, 댓글, 조회수를 기준으로 인기 프로젝트 목록을 조회한다.
      *
-     * @param size 반환할 프로젝트의 최대 개수 (1 이상)
-     * @return 인기 프로젝트 목록이 포함된 성공 응답 객체
+     * @param size 조회할 인기 프로젝트의 개수 (1 이상)
+     * @return 인기 프로젝트 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "인기있는 프로젝트 리스트를 조회한다.",
             description = "좋아요, 댓글, 조회수를 기준으로 프로젝트 리스트를 조회한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "인기있는 프로젝트 리스트 조회에 성공했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "인기있는 프로젝트 리스트 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
     @GetMapping("/popular")
     ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> getPopularProjects(

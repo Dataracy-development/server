@@ -8,6 +8,7 @@ import com.dataracy.modules.project.adapter.jpa.mapper.ProjectEntityMapper;
 import com.dataracy.modules.project.adapter.query.predicates.ProjectDataFilterPredicate;
 import com.dataracy.modules.project.adapter.query.predicates.ProjectFilterPredicate;
 import com.dataracy.modules.project.adapter.query.sort.ProjectSortBuilder;
+import com.dataracy.modules.project.application.dto.response.support.ProjectWithDataIdsResponse;
 import com.dataracy.modules.project.application.port.out.query.read.FindConnectedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
@@ -41,10 +42,10 @@ public class ReadProjectQueryDslAdapter implements
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
     /**
-     * 주어진 ID에 해당하며 삭제되지 않은 프로젝트를 Optional로 반환합니다.
+     * 주어진 ID에 해당하며 삭제되지 않은 프로젝트를 최소 정보로 조회하여 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID
-     * @return 존재하면 최소 정보가 매핑된 프로젝트, 없으면 빈 Optional
+     * @return 프로젝트가 존재하면 최소 정보가 매핑된 Optional<Project>, 없으면 빈 Optional
      */
     @Override
     public Optional<Project> findProjectById(Long projectId) {
@@ -59,6 +60,46 @@ public class ReadProjectQueryDslAdapter implements
         Optional<Project> savedProject = Optional.ofNullable(ProjectEntityMapper.toMinimal(entity));
         LoggerFactory.query().logQueryEnd("ProjectEntity", "[findProjectById] 아이디를 통해 삭제되지 않은 프로젝트를 조회 완료. projectId=" + projectId, startTime);
         return savedProject;
+    }
+
+    /**
+     * 주어진 프로젝트 ID로 삭제되지 않은 프로젝트와 연결된 데이터셋 ID 목록을 함께 조회합니다.
+     *
+     * @param projectId 조회할 프로젝트의 ID
+     * @return 프로젝트 정보와 연결된 데이터셋 ID 목록을 포함하는 Optional, 해당 프로젝트가 없으면 Optional.empty() 반환
+     */
+    @Override
+    public Optional<ProjectWithDataIdsResponse> findProjectWithDataById(Long projectId) {
+        Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 시작. projectId=" + projectId);
+        ProjectEntity entity = queryFactory
+                .selectFrom(project)
+                .where(
+                        ProjectFilterPredicate.projectIdEq(projectId),
+                        ProjectFilterPredicate.notDeleted()
+                )
+                .fetchOne();
+
+        if (entity == null) {
+            LoggerFactory.query().logQueryEnd("ProjectEntity", "[findProjectWithDataById] 해당하는 프로젝트 리소스가 존재하지 않습니다. projectId=" + projectId, startTime);
+            return Optional.empty();
+        }
+
+        // 연결된 dataId 목록
+        List<Long> dataIds = queryFactory
+                .select(projectData.dataId)
+                .from(projectData)
+                .where(
+                        projectData.project.id.eq(projectId),
+                        ProjectDataFilterPredicate.notDeleted()
+                )
+                .fetch();
+
+        Optional<ProjectWithDataIdsResponse> projectWithDataIdsResponse = Optional.of(new ProjectWithDataIdsResponse(
+                ProjectEntityMapper.toMinimal(entity),
+                dataIds
+        ));
+        LoggerFactory.query().logQueryEnd("ProjectEntity", "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 완료. projectId=" + projectId, startTime);
+        return projectWithDataIdsResponse;
     }
 
     /**

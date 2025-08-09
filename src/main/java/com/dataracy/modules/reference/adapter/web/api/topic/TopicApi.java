@@ -3,8 +3,6 @@ package com.dataracy.modules.reference.adapter.web.api.topic;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllTopicsWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/references")
 public interface TopicApi {
     /**
-     * 전체 토픽 리스트를 조회한다.
+     * 데이터베이스에서 전체 토픽 목록을 조회하여 반환한다.
      *
-     * @return 전체 토픽 리스트
+     * @return 전체 토픽 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "전체 토픽 리스트를 조회",
@@ -26,9 +24,7 @@ public interface TopicApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 토픽 리스트 조회",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "200", description = "전체 토픽 리스트 조회", useReturnTypeSchema = true),
     })
     @GetMapping("/topics")
     ResponseEntity<SuccessResponse<AllTopicsWebResponse>> findAllTopics();

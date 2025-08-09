@@ -65,7 +65,7 @@ public class ProjectEntity extends BaseTimeEntity {
     private String content;
 
     @Column
-    private String fileUrl;
+    private String thumbnailUrl;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     @Builder.Default
@@ -115,27 +115,27 @@ public class ProjectEntity extends BaseTimeEntity {
     }
 
     /**
-     * 부모 프로젝트 참조를 제거합니다.
+     * 프로젝트에서 부모 프로젝트와의 연관 관계를 해제합니다.
      */
     public void deleteParentProject() {
         this.parentProject = null;
     }
 
-    /****
-     * 프로젝트의 파일 URL을 유효성 검사 후 새로운 값으로 변경합니다.
+    /**
+     * 프로젝트의 썸네일 URL을 검증하고 새로운 값으로 업데이트합니다.
      *
-     * @param fileUrl 변경할 파일 URL. null이거나 비어 있으면 예외가 발생합니다.
-     * @throws ProjectException 파일 URL이 null이거나 비어 있을 때 발생합니다.
+     * @param thumbnailUrl 새로 설정할 썸네일 URL. null이거나 비어 있으면 예외가 발생합니다.
+     * @throws ProjectException 썸네일 URL이 null이거나 비어 있을 경우 발생합니다.
      */
-    public void updateFile(String fileUrl) {
-        if (fileUrl == null || fileUrl.isEmpty()) {
-            LoggerFactory.domain().logWarning("잘못된 프로젝트 파일 url 형식입니다.");
-            throw new ProjectException(ProjectErrorStatus.INVALID_FILE_URL);
+    public void updateThumbnailUrl(String thumbnailUrl) {
+        if (thumbnailUrl == null || thumbnailUrl.isBlank()) {
+            LoggerFactory.domain().logWarning("잘못된 프로젝트 썸네일 url 형식입니다.");
+            throw new ProjectException(ProjectErrorStatus.INVALID_THUMBNAIL_FILE_URL);
         }
-        if (fileUrl.equals(this.fileUrl)) {
+        if (thumbnailUrl.equals(this.thumbnailUrl)) {
             return;
         }
-        this.fileUrl = fileUrl;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     /**
@@ -166,7 +166,7 @@ public class ProjectEntity extends BaseTimeEntity {
      * @param isContinue 프로젝트의 연속 여부
      * @param parentProject 상위 프로젝트 엔티티, 없으면 null
      * @param content 프로젝트의 상세 내용
-     * @param fileUrl 첨부 파일의 URL, 없으면 null
+     * @param thumbnailUrl 프로젝트 썸네일 파일의 URL, 없으면 null
      * @return 생성된 ProjectEntity 객체
      */
     public static ProjectEntity of(
@@ -179,7 +179,7 @@ public class ProjectEntity extends BaseTimeEntity {
             Boolean isContinue,
             ProjectEntity parentProject,
             String content,
-            String fileUrl
+            String thumbnailUrl
     ) {
         return ProjectEntity.builder()
                 .title(title)
@@ -191,7 +191,7 @@ public class ProjectEntity extends BaseTimeEntity {
                 .isContinue(isContinue)
                 .parentProject(parentProject)
                 .content(content)
-                .fileUrl(fileUrl)
+                .thumbnailUrl(thumbnailUrl)
                 .build();
     }
 }

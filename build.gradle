@@ -50,7 +50,7 @@ ext {
 	sendGridVersion = '4.9.3'
 	sesVersion = '1.12.3'
 	s3Version = '1.12.787'
-	swaggerVersion = '2.5.0'
+	swaggerVersion = '2.6.0'
 	jjwtVersion = '0.12.3'
 	commonsPool2Version = '2.11.1'
 	lombokVersion = '1.18.30'

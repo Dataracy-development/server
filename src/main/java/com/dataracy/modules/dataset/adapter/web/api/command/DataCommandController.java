@@ -4,10 +4,13 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.annotation.AuthorizationDataEdit;
 import com.dataracy.modules.dataset.adapter.web.mapper.command.DataCommandWebMapper;
+import com.dataracy.modules.dataset.adapter.web.mapper.download.DataDownloadWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.command.ModifyDataWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.command.UploadDataWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.download.GetDataPreSignedUrlWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
+import com.dataracy.modules.dataset.application.dto.response.download.GetDataPreSignedUrlResponse;
 import com.dataracy.modules.dataset.application.port.in.command.content.*;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class DataCommandController implements DataCommandApi {
     private final DataCommandWebMapper dataCommandWebMapper;
+    private final DataDownloadWebMapper dataDownloadWebMapper;
 
     private final UploadDataUseCase uploadDataUseCase;
     private final ModifyDataUseCase modifyDataUseCase;
@@ -128,23 +132,24 @@ public class DataCommandController implements DataCommandApi {
     }
 
     /**
-     * 지정한 데이터셋 파일에 대해 300초 동안 유효한 사전 서명 다운로드 URL을 반환합니다.
+     * 지정한 데이터셋 파일에 대해 300초 동안 유효한 사전 서명 다운로드 URL을 생성하여 반환합니다.
      *
      * @param dataId 다운로드할 데이터셋의 식별자
-     * @return 사전 서명된 다운로드 URL이 포함된 성공 응답
+     * @return 사전 서명된 다운로드 URL 정보가 포함된 성공 응답 객체
      */
     @Override
-    public ResponseEntity<SuccessResponse<String>> getPreSignedDataUrl(Long dataId) {
+    public ResponseEntity<SuccessResponse<GetDataPreSignedUrlWebResponse>> getPreSignedDataUrl(Long dataId) {
         Instant startTime = LoggerFactory.api().logRequest("[GetPreSignedDataUrl] 데이터셋 다운로드 url API 요청 시작");
-        String preSignedUrl;
+        GetDataPreSignedUrlWebResponse webResponse;
 
         try {
-            preSignedUrl = downloadDataFileUseCase.download(dataId, PRESIGNED_URL_EXPIRY_SECONDS);
+            GetDataPreSignedUrlResponse responseDto = downloadDataFileUseCase.downloadDataFile(dataId, PRESIGNED_URL_EXPIRY_SECONDS);
+            webResponse = dataDownloadWebMapper.toWebDto(responseDto);
         } finally {
             LoggerFactory.api().logResponse("[GetPreSignedDataUrl] 데이터셋 다운로드 url 응답 완료", startTime);
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(SuccessResponse.of(DataSuccessStatus.DOWNLOAD_DATASET, preSignedUrl));
+                .body(SuccessResponse.of(DataSuccessStatus.DOWNLOAD_DATASET, webResponse));
     }
 }

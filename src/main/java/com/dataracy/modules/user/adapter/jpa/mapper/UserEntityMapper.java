@@ -18,7 +18,7 @@ public final class UserEntityMapper {
     /**
      * UserEntity 객체를 User 도메인 모델로 변환합니다.
      *
-     * UserEntity가 null이면 null을 반환합니다. 변환 시 연관된 토픽 ID 목록과 프로필 이미지 URL 등 모든 주요 필드를 함께 매핑합니다.
+     * 입력된 UserEntity가 null이면 null을 반환하며, 연관된 토픽 ID 목록과 소개글 등 모든 주요 필드를 User 도메인 모델에 매핑합니다.
      *
      * @param userEntity 변환할 UserEntity 객체
      * @return 변환된 User 도메인 모델 객체 또는 입력이 null인 경우 null
@@ -28,7 +28,9 @@ public final class UserEntityMapper {
             return null;
         }
 
-        List<Long> topicIds = userEntity.getUserTopicEntities().stream()
+        List<Long> topicIds = Optional.ofNullable(userEntity.getUserTopicEntities())
+                .orElseGet(Collections::emptyList)
+                .stream()
                 .map(UserTopicEntity::getTopicId)
                 .toList();
 
@@ -45,6 +47,7 @@ public final class UserEntityMapper {
                 topicIds,
                 userEntity.getVisitSourceId(),
                 userEntity.getProfileImageUrl(),
+                userEntity.getIntroductionText(),
                 userEntity.isAdTermsAgreed(),
                 userEntity.isDeleted()
         );
@@ -75,6 +78,7 @@ public final class UserEntityMapper {
                 user.getOccupationId(),
                 user.getVisitSourceId(),
                 user.getProfileImageUrl(),
+                user.getIntroductionText(),
                 user.isAdTermsAgreed(),
                 user.isDeleted()
         );
@@ -83,6 +87,7 @@ public final class UserEntityMapper {
         List<UserTopicEntity> userTopicEntities = Optional.ofNullable(user.getTopicIds())
                 .orElseGet(Collections::emptyList)
                 .stream()
+                .distinct()
                 .map(topicId -> UserTopicEntity.of(userEntity, topicId))
                 .toList();
         userTopicEntities.forEach(userEntity::addUserTopic);

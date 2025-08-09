@@ -44,7 +44,7 @@ public record DataDetailWebResponse(
         String analysisGuide,
 
         @Schema(description = "데이터셋 썸네일 url", example = "https://www.s3.~~~")
-        String thumbnailUrl,
+        String dataThumbnailUrl,
 
         @Schema(description = "데이터셋 다운로드 횟수", example = "3")
         Integer downloadCount,
