@@ -23,7 +23,7 @@ import java.util.List;
 public interface DataReadApi {
 
     /**
-     * 다운로드 수와 연결된 프로젝트 수를 기준으로 인기 있는 데이터셋 목록을 반환합니다.
+     * 다운로드 수와 연결된 프로젝트 수를 기준으로 인기 있는 데이터셋 목록을 조회합니다.
      *
      * @param size 반환할 데이터셋의 최대 개수 (1 이상)
      * @return 인기 데이터셋 목록이 포함된 성공 응답
@@ -43,10 +43,10 @@ public interface DataReadApi {
     );
 
     /****
-     * 주어진 데이터셋 ID에 해당하는 데이터셋의 상세 정보를 반환합니다.
+     * 지정된 데이터셋 ID에 해당하는 데이터셋의 상세 정보를 조회합니다.
      *
      * @param dataId 조회할 데이터셋의 고유 식별자
-     * @return 데이터셋의 상세 정보를 포함한 성공 응답 객체
+     * @return 데이터셋의 상세 정보를 담은 성공 응답 객체
      */
     @Operation(
             summary = "데이터셋 세부정보를 조회한다.",
@@ -61,8 +61,8 @@ public interface DataReadApi {
             Long dataId
     );
 
-    /****
-     * 최근에 추가된 데이터셋의 최소 정보 목록을 조회합니다.
+    /**
+     * 최근에 추가된 데이터셋의 최소 정보 목록을 반환합니다.
      *
      * @param size 반환할 데이터셋의 개수 (1 이상)
      * @return 최근 추가된 데이터셋의 최소 정보 목록이 포함된 성공 응답
@@ -82,9 +82,9 @@ public interface DataReadApi {
     );
 
     /**
-     * 데이터셋을 카테고리(토픽)별로 그룹화하여 각 카테고리별 데이터셋 개수를 조회합니다.
+     * 데이터셋을 카테고리(토픽)별로 그룹화하여 각 카테고리별 데이터셋 개수를 반환합니다.
      *
-     * @return 각 카테고리별 데이터셋 개수 정보를 담은 성공 응답 객체
+     * @return 각 카테고리별 데이터셋 개수 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "카테고리별 데이터셋 개수를 카운트한다.",
@@ -96,10 +96,10 @@ public interface DataReadApi {
     @GetMapping("/group-by/topic")
     ResponseEntity<SuccessResponse<List<DataGroupCountWebResponse>>> getDataCountByTopicLabel();
 
-    /****
-     * 지정한 프로젝트에 연결된 데이터셋 목록을 페이지네이션하여 조회합니다.
+    /**
+     * 지정한 프로젝트에 연결된 데이터셋 목록을 페이지네이션하여 반환합니다.
      *
-     * @param projectId 연결된 데이터셋을 조회할 프로젝트의 고유 ID (1 이상)
+     * @param projectId 데이터셋을 조회할 프로젝트의 고유 ID (1 이상)
      * @param pageable 페이지네이션 정보 (기본 페이지 크기 3, 0페이지부터 시작)
      * @return 프로젝트에 연결된 데이터셋 목록이 포함된 성공 응답 객체
      */

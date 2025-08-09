@@ -16,12 +16,13 @@ public record ProjectUser(
         Long authorLevelId
 ) {
     /**
-     * 주어진 UserInfo 객체로부터 ProjectUser 인스턴스를 생성합니다.
+     * UserInfo 객체를 기반으로 ProjectUser 인스턴스를 생성합니다.
      *
-     * info가 null인 경우 ProjectException이 발생합니다.
+     * info가 null이면 ProjectException이 발생합니다.
      *
-     * @param info ProjectUser로 변환할 사용자 정보 객체
+     * @param info ProjectUser로 변환할 사용자 정보
      * @return 변환된 ProjectUser 인스턴스
+     * @throws ProjectException info가 null인 경우 발생
      */
     public static ProjectUser fromUserInfo(UserInfo info) {
         if (info == null) {

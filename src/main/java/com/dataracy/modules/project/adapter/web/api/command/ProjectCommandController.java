@@ -32,9 +32,7 @@ public class ProjectCommandController implements ProjectCommandApi {
     private final RestoreProjectUseCase restoreProjectUseCase;
 
     /**
-     * 새로운 프로젝트를 생성한다.
-     *
-     * 사용자의 ID, 프로젝트 썸네일 이미지 파일, 프로젝트 정보가 포함된 요청 객체를 받아 프로젝트를 업로드한다.
+     * 사용자의 ID와 프로젝트 썸네일 이미지, 프로젝트 정보를 받아 새로운 프로젝트를 생성한다.
      *
      * @param userId 프로젝트를 업로드하는 사용자의 ID
      * @param thumbnailFile 프로젝트 썸네일 이미지 파일
@@ -61,7 +59,7 @@ public class ProjectCommandController implements ProjectCommandApi {
     }
 
     /**
-     * 프로젝트 ID에 해당하는 프로젝트 정보를 수정한다.
+     * 주어진 프로젝트 ID에 해당하는 프로젝트 정보를 수정한다.
      *
      * @param projectId 수정할 프로젝트의 ID
      * @param thumbnailFile 프로젝트 썸네일 파일 (선택 사항)

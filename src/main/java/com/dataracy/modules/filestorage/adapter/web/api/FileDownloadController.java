@@ -21,11 +21,11 @@ public class FileDownloadController implements FileApi {
     private final DownloadFileUseCase downloadFileUseCase;
 
     /**
-     * 지정된 S3 파일 URL과 만료 시간(초)을 이용해 파일 다운로드용 프리사인드 URL을 반환합니다.
+     * S3 파일의 URL과 만료 시간을 받아 다운로드용 프리사인드 URL을 생성하여 반환합니다.
      *
      * @param s3Url 프리사인드 URL을 생성할 S3 파일의 URL
      * @param expirationSeconds 프리사인드 URL의 만료 시간(초)
-     * @return preSigned URL이 포함된 성공 응답의 HTTP 200 OK 객체
+     * @return 프리사인드 URL 정보가 포함된 성공 응답의 HTTP 200 OK 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<GetPreSignedUrlWebResponse>> getPreSignedUrl(String s3Url, int expirationSeconds) {

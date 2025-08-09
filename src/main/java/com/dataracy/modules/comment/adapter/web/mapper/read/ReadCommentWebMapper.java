@@ -12,7 +12,7 @@ public class ReadCommentWebMapper {
      * 애플리케이션 계층의 댓글 응답 DTO를 웹 계층의 댓글 응답 객체로 변환합니다.
      *
      * @param responseDto 변환할 댓글 응답 DTO
-     * @return 댓글 ID, 작성자 정보, 내용, 좋아요 수, 대댓글 수, 생성 시각, 좋아요 여부 등을 포함한 웹 계층 댓글 응답 객체
+     * @return 댓글 ID, 작성자 정보, 프로필 이미지 URL, 내용, 좋아요 수, 대댓글 수, 생성 시각, 좋아요 여부를 포함한 웹 계층 댓글 응답 객체
      */
     public FindCommentWebResponse toWebDto(FindCommentResponse responseDto) {
         return new FindCommentWebResponse(
@@ -29,7 +29,7 @@ public class ReadCommentWebMapper {
     }
 
     /**
-     * 애플리케이션 계층의 답글 댓글 응답 DTO를 웹 계층의 응답 객체로 변환합니다.
+     * 애플리케이션 계층의 답글 댓글 응답 DTO를 웹 계층의 답글 댓글 응답 객체로 변환합니다.
      *
      * @param responseDto 변환할 답글 댓글 응답 DTO
      * @return 변환된 웹 계층의 답글 댓글 응답 객체

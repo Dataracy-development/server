@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/auth")
 public interface AuthApi {
     /**
-     * 자체 로그인(email, password) 정보를 받아 인증을 수행하고, 성공 시 리프레시 토큰을 쿠키에 저장한다.
+     * 이메일과 비밀번호를 이용해 자체 로그인을 수행하고, 성공 시 리프레시 토큰을 쿠키에 저장한다.
      *
-     * @param webRequest 로그인에 필요한 이메일과 비밀번호 정보가 포함된 요청 객체
+     * @param webRequest 로그인에 필요한 이메일과 비밀번호가 포함된 요청 객체
      * @return 로그인 성공 여부를 나타내는 응답 객체
      */
     @Operation(
@@ -52,9 +52,9 @@ public interface AuthApi {
     );
 
     /**
-     * 리프레시 토큰을 사용하여 새로운 액세스 토큰과 리프레시 토큰을 발급하고, 이를 쿠키에 저장합니다.
+     * 리프레시 토큰을 이용해 새로운 액세스 토큰과 리프레시 토큰을 발급하고, 이를 쿠키에 저장합니다.
      *
-     * @param refreshToken 쿠키에서 추출한 리프레시 토큰 값
+     * @param refreshToken 쿠키에서 추출한 리프레시 토큰 문자열
      * @return 토큰 재발급 성공 시 성공 응답을 반환합니다.
      */
     @Operation(

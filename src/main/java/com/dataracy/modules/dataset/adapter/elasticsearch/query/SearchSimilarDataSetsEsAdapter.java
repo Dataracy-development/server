@@ -93,12 +93,12 @@ public class SearchSimilarDataSetsEsAdapter implements SearchSimilarDataSetsPort
     }
 
     /**
-     * DataSearchDocument 객체를 SimilarDataResponse 객체로 변환합니다.
+     * DataSearchDocument를 SimilarDataResponse로 변환합니다.
      *
-     * DataSearchDocument의 주요 필드를 SimilarDataResponse로 매핑하여 반환합니다.
+     * DataSearchDocument의 각 필드를 SimilarDataResponse의 대응 필드에 매핑하여 새로운 응답 객체를 생성합니다.
      *
-     * @param doc 변환할 DataSearchDocument 객체
-     * @return 변환된 SimilarDataResponse 객체
+     * @param doc 변환할 DataSearchDocument 인스턴스
+     * @return 매핑된 SimilarDataResponse 인스턴스
      */
     private SimilarDataResponse mapToSimilarResponse(DataSearchDocument doc) {
         return new SimilarDataResponse(

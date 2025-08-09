@@ -20,7 +20,7 @@ public class FilteredProjectDtoMapper {
      *
      * @param project 변환할 프로젝트 도메인 객체
      * @param username 프로젝트 작성자 이름
-     * @param topicLabel 주제 라벨
+     * @param topicLabel 프로젝트 주제 라벨
      * @param analysisPurposeLabel 분석 목적 라벨
      * @param dataSourceLabel 데이터 소스 라벨
      * @param authorLevelLabel 작성자 등급 라벨

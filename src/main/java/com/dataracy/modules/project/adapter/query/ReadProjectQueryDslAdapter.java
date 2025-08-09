@@ -42,10 +42,10 @@ public class ReadProjectQueryDslAdapter implements
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
     /**
-     * 주어진 ID에 해당하며 삭제되지 않은 프로젝트를 Optional로 반환합니다.
+     * 주어진 ID에 해당하며 삭제되지 않은 프로젝트를 최소 정보로 조회하여 반환합니다.
      *
      * @param projectId 조회할 프로젝트의 ID
-     * @return 존재하면 최소 정보가 매핑된 프로젝트, 없으면 빈 Optional
+     * @return 프로젝트가 존재하면 최소 정보가 매핑된 Optional<Project>, 없으면 빈 Optional
      */
     @Override
     public Optional<Project> findProjectById(Long projectId) {
@@ -62,6 +62,12 @@ public class ReadProjectQueryDslAdapter implements
         return savedProject;
     }
 
+    /**
+     * 주어진 프로젝트 ID로 삭제되지 않은 프로젝트와 연결된 데이터셋 ID 목록을 함께 조회합니다.
+     *
+     * @param projectId 조회할 프로젝트의 ID
+     * @return 프로젝트 정보와 연결된 데이터셋 ID 목록을 포함하는 Optional, 해당 프로젝트가 없으면 Optional.empty() 반환
+     */
     @Override
     public Optional<ProjectWithDataIdsResponse> findProjectWithDataById(Long projectId) {
         Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 시작. projectId=" + projectId);

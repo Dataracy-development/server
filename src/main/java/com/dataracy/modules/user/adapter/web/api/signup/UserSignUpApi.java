@@ -24,12 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1")
 public interface UserSignUpApi {
     /**
-     * 사용자가 자체 회원가입을 요청할 때 회원 정보를 처리하여 회원가입을 완료한다.
+     * 사용자가 자체 회원가입 정보를 제출하여 회원가입을 완료한다.
      *
-     * 회원가입 성공 시 리프레시 토큰을 쿠키와 Redis에 저장하고, 이후 리다이렉트가 수행된다.
+     * 회원가입이 성공하면 리프레시 토큰이 쿠키와 Redis에 저장되며, 이후 리다이렉트가 수행된다.
      *
-     * @param webRequest 회원가입에 필요한 사용자 정보가 담긴 요청 객체
-     * @return 회원가입 성공 여부를 나타내는 응답 엔티티
+     * @param webRequest 회원가입에 필요한 사용자 정보 요청 객체
+     * @return 회원가입 성공 시 성공 응답 엔티티
      */
     @Operation(
             summary = "자체 회원가입",
@@ -54,7 +54,7 @@ public interface UserSignUpApi {
     );
 
     /**
-     * 소셜 로그인 온보딩 과정에서 레지스터 토큰과 추가 정보를 이용해 회원가입을 완료한다.
+     * 소셜 로그인 온보딩 과정에서 레지스터 토큰과 추가 정보를 사용하여 회원가입을 완료한다.
      *
      * @param registerToken 소셜 회원가입을 위한 레지스터 토큰 값
      * @param webRequest 온보딩 시 입력한 추가 정보(예: 닉네임 등)
