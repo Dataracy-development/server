@@ -82,7 +82,10 @@ public class ReadProjectQueryDslAdapter implements
         List<Long> dataIds = queryFactory
                 .select(projectData.dataId)
                 .from(projectData)
-                .where(projectData.project.id.eq(projectId))
+                .where(
+                        projectData.project.id.eq(projectId),
+                        ProjectDataFilterPredicate.notDeleted()
+                )
                 .fetch();
 
         Optional<ProjectWithDataIdsResponse> projectWithDataIdsResponse = Optional.of(new ProjectWithDataIdsResponse(
