@@ -176,7 +176,7 @@ public class ReadDataQueryDslAdapter implements
                         projectData.id.count().as(projectCountPath)
                 )
                 .from(data)
-                .innerJoin(projectData).on(projectData.dataId.eq(data.id))
+                .leftJoin(projectData).on(projectData.dataId.eq(data.id))
                 .leftJoin(data.metadata).fetchJoin()
                 .where(data.id.in(dataIds))
                 .groupBy(data.id)
