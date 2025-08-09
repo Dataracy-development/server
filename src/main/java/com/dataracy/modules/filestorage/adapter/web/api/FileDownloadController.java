@@ -4,8 +4,8 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonSuccessStatus;
 import com.dataracy.modules.filestorage.adapter.web.mapper.FileDownloadWebMapper;
-import com.dataracy.modules.filestorage.adapter.web.response.GetPresignedUrlWebResponse;
-import com.dataracy.modules.filestorage.application.dto.response.GetPresignedUrlResponse;
+import com.dataracy.modules.filestorage.adapter.web.response.GetPreSignedUrlWebResponse;
+import com.dataracy.modules.filestorage.application.dto.response.GetPreSignedUrlResponse;
 import com.dataracy.modules.filestorage.application.port.in.DownloadFileUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +28,12 @@ public class FileDownloadController implements FileApi {
      * @return preSigned URL이 포함된 성공 응답의 HTTP 200 OK 객체
      */
     @Override
-    public ResponseEntity<SuccessResponse<GetPresignedUrlWebResponse>> getPreSignedUrl(String s3Url, int expirationSeconds) {
+    public ResponseEntity<SuccessResponse<GetPreSignedUrlWebResponse>> getPreSignedUrl(String s3Url, int expirationSeconds) {
         Instant startTime = LoggerFactory.api().logRequest("[GetPreSignedUrl] 파일 다운로드를 위한 프리사인드 URL 반환 API 요청 시작");
-        GetPresignedUrlWebResponse webResponse;
+        GetPreSignedUrlWebResponse webResponse;
 
         try {
-            GetPresignedUrlResponse responseDto = downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
+            GetPreSignedUrlResponse responseDto = downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds);
             webResponse = fileDownloadWebMapper.toWebDto(responseDto);
         } finally {
             LoggerFactory.api().logResponse("[GetPreSignedUrl] 파일 다운로드를 위한 preSigned URL 반환 API 응답 완료", startTime);

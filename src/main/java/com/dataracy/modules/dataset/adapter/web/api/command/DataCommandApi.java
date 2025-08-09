@@ -4,7 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.dataset.adapter.web.request.command.ModifyDataWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.command.UploadDataWebRequest;
-import com.dataracy.modules.dataset.adapter.web.response.download.GetDataPresignedUrlWebResponse;
+import com.dataracy.modules.dataset.adapter.web.response.download.GetDataPreSignedUrlWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -51,7 +51,7 @@ public interface DataCommandApi {
 
             @RequestPart(value = "dataFile") MultipartFile dataFile,
             @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
-            
+
             @RequestPart @Validated
             UploadDataWebRequest webRequest
     );
@@ -151,7 +151,7 @@ public interface DataCommandApi {
             @ApiResponse(responseCode = "200", description = "해당 데이터셋의 파일을 다운로드한다.", useReturnTypeSchema = true)
     })
     @GetMapping("/{dataId}/download")
-    ResponseEntity<SuccessResponse<GetDataPresignedUrlWebResponse>> getPreSignedDataUrl(
+    ResponseEntity<SuccessResponse<GetDataPreSignedUrlWebResponse>> getPreSignedDataUrl(
             @PathVariable(name = "dataId") @Min(1)
             Long dataId
     );
