@@ -5,8 +5,8 @@ import com.dataracy.modules.filestorage.application.dto.response.GetPreSignedUrl
 import com.dataracy.modules.filestorage.application.port.in.DownloadFileUseCase;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import lombok.RequiredArgsConstructor;
-import nl.basjes.shaded.org.springframework.util.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 

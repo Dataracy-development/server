@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,9 @@ public interface FileApi {
     @GetMapping("/pre-signed-url")
     ResponseEntity<SuccessResponse<GetPreSignedUrlWebResponse>> getPreSignedUrl(
             @RequestParam String s3Url,
-            @RequestParam(defaultValue = "300") int expirationSeconds
+
+            @RequestParam(defaultValue = "300")
+            @Min(1) @Max(3600)
+            int expirationSeconds
     );
 }
