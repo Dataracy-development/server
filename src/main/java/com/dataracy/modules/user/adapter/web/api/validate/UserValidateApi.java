@@ -30,8 +30,7 @@ public interface UserValidateApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "닉네임이 중복되지 않습니다.", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "409", description = "닉네임이 중복됩니다.", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = "닉네임이 중복되지 않습니다.", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/nickname/check", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> duplicateNickname(

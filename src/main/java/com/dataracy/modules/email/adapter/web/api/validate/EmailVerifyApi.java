@@ -30,8 +30,7 @@ public interface EmailVerifyApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "이메일 인증코드가 같은지 확인한다.", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "이메일 인증코드가 일치하지 않습니다.", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = "이메일 인증코드가 같은지 확인한다.", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/verify", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<String>> verifyCode(

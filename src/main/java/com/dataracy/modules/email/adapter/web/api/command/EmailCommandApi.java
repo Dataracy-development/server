@@ -30,10 +30,7 @@ public interface EmailCommandApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "이메일 인증코드 전송 성공",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "500", description = "인증번호 발송에 실패했습니다. 다시 시도해주세요", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = "이메일 인증코드 전송 성공", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/send", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> sendCode(
