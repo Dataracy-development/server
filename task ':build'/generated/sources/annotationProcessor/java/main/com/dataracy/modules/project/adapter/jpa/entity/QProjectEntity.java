@@ -39,8 +39,6 @@ public class QProjectEntity extends EntityPathBase<ProjectEntity> {
 
     public final NumberPath<Long> dataSourceId = createNumber("dataSourceId", Long.class);
 
-    public final StringPath fileUrl = createString("fileUrl");
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final BooleanPath isContinue = createBoolean("isContinue");
@@ -52,6 +50,8 @@ public class QProjectEntity extends EntityPathBase<ProjectEntity> {
     public final QProjectEntity parentProject;
 
     public final SetPath<ProjectDataEntity, QProjectDataEntity> projectDataEntities = this.<ProjectDataEntity, QProjectDataEntity>createSet("projectDataEntities", ProjectDataEntity.class, QProjectDataEntity.class, PathInits.DIRECT2);
+
+    public final StringPath thumbnailUrl = createString("thumbnailUrl");
 
     public final StringPath title = createString("title");
 

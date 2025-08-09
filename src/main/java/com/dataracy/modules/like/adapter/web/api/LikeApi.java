@@ -38,9 +38,7 @@ public interface LikeApi {
             schema = @Schema(type = "string"),
             description = "Bearer [Access 토큰]")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "해당 타겟에 대한 좋아요 처리를 한다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)))
+            @ApiResponse(responseCode = "200", description = "해당 타겟에 대한 좋아요 처리를 한다.", useReturnTypeSchema = true)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> modifyTargetLike(

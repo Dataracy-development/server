@@ -1,13 +1,16 @@
 package com.dataracy.modules.project.application.service.query;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.dataset.application.port.in.query.read.FindConnectedDataSetsUseCase;
 import com.dataracy.modules.like.application.port.in.validate.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
+import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectLabelMapResponse;
+import com.dataracy.modules.project.application.dto.response.support.ProjectWithDataIdsResponse;
 import com.dataracy.modules.project.application.mapper.read.ConnectedProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.read.ContinuedProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.read.PopularProjectDtoMapper;
@@ -22,7 +25,6 @@ import com.dataracy.modules.project.application.port.out.query.read.FindConnecte
 import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
 import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
-import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectDataExistsPort;
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByParentPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
@@ -62,7 +64,6 @@ public class ProjectReadService implements
 
     private final CacheProjectViewCountPort cacheProjectViewCountPort;
 
-    private final CheckProjectDataExistsPort checkProjectDataExistsPort;
     private final CheckProjectExistsByParentPort checkProjectExistsByParentPort;
 
     private final FindProjectPort findProjectPort;
@@ -81,6 +82,7 @@ public class ProjectReadService implements
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
     private final FindProjectLabelMapUseCase findProjectLabelMapUseCase;
 
+    private final FindConnectedDataSetsUseCase findConnectedDataSetsUseCase;
     private final ValidateTargetLikeUseCase validateTargetLikeUseCase;
 
     private static final String VIEW_TARGET_TYPE = "PROJECT";
@@ -88,7 +90,7 @@ public class ProjectReadService implements
     /**
      * 지정한 프로젝트의 상세 정보를 조회하여 반환합니다.
      *
-     * 프로젝트의 기본 정보, 작성자 정보(이름, 레벨, 직업), 주제, 분석 목적, 데이터 소스, 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 사용자의 좋아요 여부, 자식 프로젝트 및 데이터 존재 여부를 포함한 상세 정보를 제공합니다. 조회자 식별자를 기반으로 프로젝트의 조회수를 1회 증가시킵니다.
+     * 프로젝트의 기본 정보, 작성자 정보(닉네임, 소개, 레벨, 직업), 주제, 분석 목적, 데이터 소스, 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 사용자의 좋아요 여부, 자식 프로젝트 존재 여부, 연결된 데이터셋 목록을 포함한 상세 정보를 제공합니다. 조회자 식별자를 기반으로 프로젝트의 조회수를 1회 증가시킵니다.
      *
      * @param projectId 상세 정보를 조회할 프로젝트의 ID
      * @param userId 프로젝트를 조회하는 사용자의 ID (좋아요 여부 확인에 사용, null 가능)
@@ -102,14 +104,20 @@ public class ProjectReadService implements
         Instant startTime = LoggerFactory.service().logStart("GetProjectDetailUseCase", "프로젝트 세부정보 조회 서비스 시작 projectId=" + projectId);
 
         // 프로젝트 세부정보 조회
-        Project project = findProjectPort.findProjectById(projectId)
+        ProjectWithDataIdsResponse projectWithDataIdsResponse = findProjectPort.findProjectWithDataById(projectId)
                 .orElseThrow(() -> {
                     LoggerFactory.service().logWarning("GetProjectDetailUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
 
+        Project project = projectWithDataIdsResponse.project();
+        List<Long> dataIds = projectWithDataIdsResponse.dataIds();
+
+        List<ProjectConnectedDataResponse> connectedDataSets = findConnectedDataSetsUseCase.findDataSetsByIds(dataIds).stream()
+                .map(ProjectConnectedDataResponse::from)
+                .toList();
+
         boolean hasChild = checkProjectExistsByParentPort.checkParentProjectExistsById(projectId);
-        boolean hasData = checkProjectDataExistsPort.checkProjectDataExistsByProjectId(projectId);
 
         // 작성자 정보
         UserInfo userInfo = getUserInfoUseCase.getUserInfo(project.getUserId());
@@ -130,7 +138,8 @@ public class ProjectReadService implements
 
         ProjectDetailResponse projectDetailResponse = projectDetailDtoMapper.toResponseDto(
                 project,
-                findUsernameUseCase.findUsernameById(project.getUserId()),
+                projectUser.nickname(),
+                projectUser.introductionText(),
                 authorLevelLabel,
                 occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),
@@ -138,7 +147,7 @@ public class ProjectReadService implements
                 getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId()),
                 isLiked,
                 hasChild,
-                hasData
+                connectedDataSets
         );
 
         LoggerFactory.service().logSuccess("GetProjectDetailUseCase", "프로젝트 세부정보 조회 서비스 종료 projectId=" + projectId, startTime);

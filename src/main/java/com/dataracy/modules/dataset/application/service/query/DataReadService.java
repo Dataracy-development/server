@@ -163,7 +163,7 @@ public class DataReadService implements
      *
      * @param projectId 연결할 프로젝트의 ID
      * @param pageable 페이지네이션 정보
-     * @return 각 데이터셋의 상세 정보와 연결된 프로젝트 수를 포함하는 응답 객체의 페이지
+     * @return 각 데이터셋의 상세 정보와 연결된 프로젝트 수를 포함하는 ConnectedDataResponse 객체의 페이지
      */
     @Override
     @Transactional(readOnly = true)
@@ -183,6 +183,43 @@ public class DataReadService implements
         });
 
         LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "프로젝트와 연결된 데이터셋 목록 조회 서비스 종료 projectId=" + projectId, startTime);
+        return connectedDataResponses;
+    }
+
+    /**
+     * 주어진 데이터셋 ID 목록에 해당하는 연결된 데이터셋 목록을 조회하여 반환합니다.
+     *
+     * ID 목록이 비어 있거나 null인 경우 빈 리스트를 반환합니다. 중복된 ID는 제거되며, 각 데이터셋은 토픽 및 데이터 타입 라벨, 연결된 프로젝트 수와 함께 DTO로 매핑되어 반환됩니다.
+     *
+     * @param dataIds 조회할 데이터셋의 ID 목록
+     * @return 연결된 데이터셋 정보가 담긴 ConnectedDataResponse 리스트
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<ConnectedDataResponse> findDataSetsByIds(List<Long> dataIds) {
+        Instant startTime = LoggerFactory.service().logStart("FindConnectedDataSetsUseCase", "아이디 목록을 통한 데이터셋 목록 조회 서비스 시작 dataIds=" + dataIds);
+
+        if (dataIds == null || dataIds.isEmpty()) {
+            LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "빈 ID 목록으로 빈 결과 반환", startTime);
+            return List.of();
+        }
+        List<Long> distinctIds = dataIds.stream().distinct().toList();
+        List<DataWithProjectCountDto> savedDataSets = getConnectedDataSetsPort.getConnectedDataSetsAssociatedWithProjectByIds(distinctIds);
+
+        DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets);
+        List<ConnectedDataResponse> connectedDataResponses = savedDataSets.stream()
+                .map(wrapper -> {
+                    Data data = wrapper.data();
+                    return dataReadDtoMapper.toResponseDto(
+                            data,
+                            labelResponse.topicLabelMap().get(data.getTopicId()),
+                            labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
+                            wrapper.countConnectedProjects()
+                    );
+                })
+                .toList();
+
+        LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "아이디 목록을 통한 데이터셋 목록 조회 서비스 종료 dataIds=" + dataIds, startTime);
         return connectedDataResponses;
     }
 }

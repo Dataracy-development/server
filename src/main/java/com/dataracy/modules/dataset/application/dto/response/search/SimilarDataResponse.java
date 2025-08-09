@@ -12,7 +12,7 @@ public record SimilarDataResponse(
         LocalDate startDate,
         LocalDate endDate,
         String description,
-        String thumbnailUrl,
+        String dataThumbnailUrl,
         Integer downloadCount,
         Integer rowCount,
         Integer columnCount,

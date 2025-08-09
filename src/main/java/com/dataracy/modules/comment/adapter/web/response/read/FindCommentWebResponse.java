@@ -16,7 +16,7 @@ public record FindCommentWebResponse(
         String authorLevelLabel,
 
         @Schema(description = "작성자 프로필 이미지", example = "https://www.s3.~~~")
-        String userThumbnailUrl,
+        String userProfileUrl,
 
         @Schema(description = "댓글 내용", example = "해당 프로젝트에 대하여 댓글이 ~~~")
         String content,

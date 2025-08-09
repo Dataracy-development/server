@@ -11,8 +11,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "User - Validate", description = "사용자 관련 API - 유효성 검사")
 @RequestMapping("/api/v1")
@@ -20,8 +21,11 @@ public interface UserValidateApi {
     /**
      * 닉네임의 중복 여부를 확인하는 API 엔드포인트입니다.
      *
+     * 요청된 닉네임이 이미 존재하는지 검사하여, 중복이 없으면 200 OK를 반환합니다.
+     * 닉네임이 중복된 경우 409 Conflict 상태 코드로 응답합니다.
+     *
      * @param webRequest 중복 확인을 원하는 닉네임 정보를 담은 요청 객체
-     * @return 닉네임이 중복되지 않으면 200 OK, 중복된 경우 409 Conflict 상태 코드와 함께 응답합니다.
+     * @return 닉네임이 중복되지 않으면 200 OK, 중복된 경우 409 Conflict 상태 코드의 응답
      */
     @Operation(
             summary = "닉네임 중복체크를 진행한다.",
@@ -29,12 +33,7 @@ public interface UserValidateApi {
             security = {}
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "닉네임이 중복되지 않습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "409", description = "닉네임이 중복됩니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "닉네임이 중복되지 않습니다.", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/nickname/check", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SuccessResponse<Void>> duplicateNickname(

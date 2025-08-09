@@ -29,6 +29,7 @@ public class User {
     private String password;
     private String nickname;
     private String profileImageUrl;
+    private String introductionText;
     private boolean isAdTermsAgreed;
 
     // 타 어그리거트는 직접 연관관계 설정을 하지 않고, ID만 보유해서 간접 참조
@@ -71,9 +72,9 @@ public class User {
     }
 
     /**
-     * 현재 User 도메인 객체를 UserInfo 값 객체로 변환합니다.
+     * 현재 User 도메인 객체의 주요 정보를 UserInfo 값 객체로 변환합니다.
      *
-     * @return 사용자 정보가 담긴 UserInfo 객체
+     * @return 사용자 식별자, 역할, 이메일, 닉네임, 저자 레벨, 직업, 관심 주제, 유입 경로, 자기소개를 포함한 UserInfo 객체
      */
     public UserInfo toUserInfo() {
         return new UserInfo(
@@ -84,12 +85,13 @@ public class User {
                 this.authorLevelId,
                 this.occupationId,
                 this.topicIds,
-                this.visitSourceId
+                this.visitSourceId,
+                this.introductionText
         );
     }
 
     /**
-     * 주어진 사용자 속성 값들로 새로운 User 도메인 객체를 생성합니다.
+     * 주어진 모든 사용자 속성 값으로 새로운 User 도메인 객체를 생성합니다.
      *
      * @param id 사용자 식별자
      * @param provider 인증 제공자 유형
@@ -100,9 +102,10 @@ public class User {
      * @param nickname 사용자 닉네임
      * @param authorLevelId 작가 등급 식별자
      * @param occupationId 직업 식별자
-     * @param topicIds 사용자의 흥미있는 토픽 ID 목록
+     * @param topicIds 사용자의 관심 토픽 ID 목록
      * @param visitSourceId 방문 경로 식별자
      * @param profileImageUrl 프로필 이미지 URL
+     * @param introductionText 자기소개 텍스트
      * @param isAdTermsAgreed 광고 약관 동의 여부
      * @param isDeleted 삭제 여부
      * @return 생성된 User 객체
@@ -120,6 +123,7 @@ public class User {
             List<Long> topicIds,
             Long visitSourceId,
             String profileImageUrl,
+            String introductionText,
             boolean isAdTermsAgreed,
             boolean isDeleted
     ) {
@@ -136,6 +140,7 @@ public class User {
                 .topicIds(topicIds)
                 .visitSourceId(visitSourceId)
                 .profileImageUrl(profileImageUrl)
+                .introductionText(introductionText)
                 .isAdTermsAgreed(isAdTermsAgreed)
                 .isDeleted(isDeleted)
                 .build();

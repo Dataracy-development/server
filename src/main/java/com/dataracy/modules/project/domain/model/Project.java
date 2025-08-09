@@ -26,7 +26,7 @@ public class Project {
     private Boolean isContinue;
     private Long parentProjectId;
     private String content;
-    private String fileUrl;
+    private String thumbnailUrl;
 
     // 타 어그리거트인 Data 자체를 직접 들고 있지 않고, ID만 보유해서 간접 참조
     private List<Long> dataIds;
@@ -41,12 +41,12 @@ public class Project {
     private LocalDateTime createdAt;
 
     /**
-     * 프로젝트의 썸네일 URL을 업데이트합니다.
+     * 프로젝트의 썸네일 이미지를 새로운 URL로 변경합니다.
      *
-     * @param fileUrl 새로 설정할 썸네일 URL
+     * @param thumbnailUrl 변경할 썸네일 이미지의 URL
      */
-    public void updateFile(String fileUrl) {
-        this.fileUrl = fileUrl;
+    public void updateThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     /**
@@ -62,7 +62,7 @@ public class Project {
      * @param isContinue 프로젝트의 진행 여부
      * @param parentProjectId 상위 프로젝트의 식별자
      * @param content 프로젝트 설명 또는 내용
-     * @param fileUrl 프로젝트 썸네일 또는 관련 파일의 URL
+     * @param thumbnailUrl 프로젝트 썸네일 이미지의 URL
      * @param dataIds 연관된 데이터 엔티티의 식별자 목록
      * @param createdAt 프로젝트 생성 시각
      * @param commentCount 댓글 수
@@ -83,7 +83,7 @@ public class Project {
             Boolean isContinue,
             Long parentProjectId,
             String content,
-            String fileUrl,
+            String thumbnailUrl,
             List<Long> dataIds,
             LocalDateTime createdAt,
             Long commentCount,
@@ -103,7 +103,7 @@ public class Project {
                 .isContinue(isContinue)
                 .parentProjectId(parentProjectId)
                 .content(content)
-                .fileUrl(fileUrl)
+                .thumbnailUrl(thumbnailUrl)
                 .dataIds(dataIds)
                 .createdAt(createdAt)
                 .commentCount(commentCount)

@@ -15,11 +15,11 @@ public record ContinuedProjectWebResponse(
         @Schema(description = "작성자명", example = "박준형")
         String username,
 
-        @Schema(description = "작성자 프로필 썸네일 url", example = "http://www.s3~~~~")
-        String userThumbnailUrl,
+        @Schema(description = "작성자 프로필 url", example = "http://www.s3~~~~")
+        String userProfileUrl,
 
         @Schema(description = "프로젝트 썸네일 url", example = "http://www.s3~~~~")
-        String fileUrl,
+        String projectThumbnailUrl,
 
         @Schema(description = "토픽 라벨", example = "디자인")
         String topicLabel,

@@ -31,6 +31,8 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath introductionText = createString("introductionText");
+
     public final BooleanPath isAdTermsAgreed = createBoolean("isAdTermsAgreed");
 
     public final BooleanPath isDeleted = createBoolean("isDeleted");

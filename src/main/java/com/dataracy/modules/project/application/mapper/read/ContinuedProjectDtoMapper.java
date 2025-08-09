@@ -10,19 +10,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class ContinuedProjectDtoMapper {
     /**
-     * Project 도메인 객체와 사용자 및 라벨 정보를 결합하여 ContinuedProjectResponse DTO로 변환합니다.
+     * Project 도메인 객체와 사용자 및 라벨 정보를 결합하여 ContinuedProjectResponse DTO로 생성합니다.
      *
      * @param project 변환할 프로젝트 도메인 객체
      * @param username 프로젝트와 연관된 사용자의 이름
-     * @param userThumbnailUrl 사용자의 썸네일 이미지 URL
+     * @param userProfileUrl 사용자의 프로필 이미지 URL
      * @param topicLabel 프로젝트의 주제 라벨
      * @param authorLevelLabel 작성자의 레벨 라벨
-     * @return 프로젝트 정보와 사용자, 라벨 정보를 포함하는 ContinuedProjectResponse DTO
+     * @return 프로젝트, 사용자, 라벨 정보를 포함하는 ContinuedProjectResponse DTO
      */
     public ContinuedProjectResponse toResponseDto(
             Project project,
             String username,
-            String userThumbnailUrl,
+            String userProfileUrl,
             String topicLabel,
             String authorLevelLabel
     ) {
@@ -30,8 +30,8 @@ public class ContinuedProjectDtoMapper {
                 project.getId(),
                 project.getTitle(),
                 username,
-                userThumbnailUrl,
-                project.getFileUrl(),
+                userProfileUrl,
+                project.getThumbnailUrl(),
                 topicLabel,
                 authorLevelLabel,
                 project.getCommentCount(),

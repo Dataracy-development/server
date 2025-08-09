@@ -29,7 +29,7 @@ public class Data {
     private String analysisGuide;
 
     private String dataFileUrl;
-    private String thumbnailUrl;
+    private String dataThumbnailUrl;
 
     private int downloadCount;
 
@@ -37,29 +37,11 @@ public class Data {
     private LocalDateTime createdAt;
 
     /**
-     * 데이터 파일 URL을 갱신합니다.
+     * 모든 필드 값을 지정하여 새로운 Data 인스턴스를 생성합니다.
      *
-     * @param dataFileUrl 새로 설정할 데이터 파일의 URL
-     */
-    public void updateDataFileUrl (String dataFileUrl) {
-        this.dataFileUrl = dataFileUrl;
-    }
-
-    /**
-     * 데이터의 썸네일 파일 URL을 업데이트합니다.
+     * 각 파라미터에 전달된 값으로 Data 객체의 모든 속성을 초기화합니다.
      *
-     * @param thumbnailFileUrl 새로 설정할 썸네일 파일의 URL
-     */
-    public void updateThumbnailFileUrl (String thumbnailFileUrl) {
-        this.thumbnailUrl = thumbnailFileUrl;
-    }
-
-    /**
-     * 모든 필드 값을 지정하여 새로운 Data 객체를 생성합니다.
-     *
-     * 각 파라미터에 해당하는 값으로 Data 인스턴스를 초기화합니다.
-     *
-     * @return 지정된 값들로 생성된 Data 인스턴스
+     * @return 지정된 값들로 초기화된 Data 객체
      */
     public static Data of(
             Long id,
@@ -73,7 +55,7 @@ public class Data {
             String description,
             String analysisGuide,
             String dataFileUrl,
-            String thumbnailUrl,
+            String dataThumbnailUrl,
             int downloadCount,
             DataMetadata metadata,
             LocalDateTime createdAt
@@ -90,7 +72,7 @@ public class Data {
                 .description(description)
                 .analysisGuide(analysisGuide)
                 .dataFileUrl(dataFileUrl)
-                .thumbnailUrl(thumbnailUrl)
+                .dataThumbnailUrl(dataThumbnailUrl)
                 .downloadCount(downloadCount)
                 .metadata(metadata)
                 .createdAt(createdAt)

@@ -27,10 +27,10 @@ public class DataFilterWebMapper {
     }
 
     /**
-     * FilteredDataResponse 객체를 웹 응답용 FilteredDataWebResponse 객체로 변환합니다.
+     * FilteredDataResponse 객체를 웹 계층의 FilteredDataWebResponse 객체로 변환합니다.
      *
-     * @param responseDto 변환할 FilteredDataResponse 객체
-     * @return 변환된 FilteredDataWebResponse 객체
+     * @param responseDto 변환할 도메인 계층의 데이터 필터링 결과 DTO
+     * @return 웹 응답에 사용되는 FilteredDataWebResponse 객체
      */
     public FilteredDataWebResponse toWebDto(FilteredDataResponse responseDto) {
         return new FilteredDataWebResponse(
@@ -42,7 +42,7 @@ public class DataFilterWebMapper {
                 responseDto.startDate(),
                 responseDto.endDate(),
                 responseDto.description(),
-                responseDto.thumbnailUrl(),
+                responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),
