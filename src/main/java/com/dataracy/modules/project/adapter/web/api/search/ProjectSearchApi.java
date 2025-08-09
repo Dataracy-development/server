@@ -25,9 +25,9 @@ public interface ProjectSearchApi {
     /**
      * 실시간 키워드 자동완성을 위해 프로젝트 목록을 조회합니다.
      *
-     * @param keyword 자동완성에 사용할 검색 키워드입니다. 입력하지 않으면 전체에서 조회합니다.
-     * @param size 반환할 프로젝트 최대 개수로, 1 이상이어야 합니다.
-     * @return 실시간 검색 결과에 해당하는 프로젝트 목록이 포함된 성공 응답 객체
+     * @param keyword 자동완성에 사용할 검색 키워드입니다. 입력하지 않으면 전체 프로젝트를 조회합니다.
+     * @param size 반환할 프로젝트 최대 개수(1 이상)
+     * @return 실시간 검색 결과에 해당하는 프로젝트 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "키워드 자동완성을 위한 실시간으로 프로젝트 리스트를 조회한다.",
@@ -47,11 +47,11 @@ public interface ProjectSearchApi {
     );
 
     /**
-     * 지정한 프로젝트와 유사한 프로젝트 목록을 반환합니다.
+     * 지정한 프로젝트와 유사한 프로젝트의 목록을 조회합니다.
      *
-     * @param projectId 유사 프로젝트를 찾을 기준이 되는 프로젝트의 ID
-     * @param size 반환할 유사 프로젝트의 최대 개수
-     * @return 유사한 프로젝트 목록이 포함된 성공 응답
+     * @param projectId 유사한 프로젝트를 찾을 기준이 되는 프로젝트의 ID입니다.
+     * @param size 반환할 유사 프로젝트의 최대 개수입니다.
+     * @return 유사한 프로젝트 목록이 포함된 성공 응답을 반환합니다.
      */
     @Operation(
             summary = "유사 프로젝트 리스트를 조회한다.",
@@ -76,7 +76,7 @@ public interface ProjectSearchApi {
      *
      * @param webRequest 프로젝트 필터링 조건이 포함된 요청 객체
      * @param pageable 페이지네이션 정보 (기본: 1페이지, 5개씩)
-     * @return 필터링 조건에 맞는 프로젝트 목록의 페이지를 성공 응답으로 반환한다.
+     * @return 필터링 조건에 맞는 프로젝트 목록을 페이지 형태로 성공 응답에 담아 반환한다.
      */
     @Operation(
             summary = "필터링된 프로젝트 리스트를 조회한다.",

@@ -70,7 +70,7 @@ public class ProjectCommandService implements
     /**
      * 사용자의 프로젝트 업로드 요청을 처리하여 새 프로젝트를 생성하고, 썸네일 이미지를 업로드한 뒤 프로젝트를 검색 시스템에 색인합니다.
      *
-     * 프로젝트 생성 시 주제, 분석 목적, 데이터 소스, 저자 레벨 등 주요 라벨의 유효성을 검증하고, 데이터셋 및 부모 프로젝트의 존재 여부를 확인합니다. 이미지 파일이 제공되면 외부 저장소에 업로드 후 프로젝트 정보에 반영하며, 모든 정보가 저장된 후 검색 시스템에 색인하여 검색이 가능하도록 처리합니다.
+     * 프로젝트 생성 시 주제, 분석 목적, 데이터 소스, 저자 레벨 등 주요 라벨의 유효성을 검증하고, 데이터셋 및 부모 프로젝트의 존재 여부를 확인합니다. 썸네일 이미지가 제공되면 외부 저장소에 업로드 후 프로젝트 정보에 반영하며, 모든 정보가 저장된 후 검색 시스템에 색인하여 검색이 가능하도록 처리합니다.
      *
      * @throws ProjectException 부모 프로젝트가 존재하지 않을 경우 발생합니다.
      * @throws RuntimeException 파일 업로드 실패 시 트랜잭션 롤백을 위해 발생합니다.
@@ -121,11 +121,11 @@ public class ProjectCommandService implements
         LoggerFactory.service().logSuccess("UploadProjectUseCase", "프로젝트 업로드 서비스 종료 title=" + requestDto.title(), startTime);
     }
 
-    /**
-     * 프로젝트 정보를 수정하고, 필요 시 새로운 이미지 파일을 업로드한 뒤, 변경된 내용을 검색 인덱스에 반영합니다.
+    /****
+     * 기존 프로젝트의 정보를 수정하고, 필요 시 새로운 썸네일 이미지를 업로드한 후, 변경된 내용을 검색 인덱스에 반영합니다.
      *
      * @param projectId 수정할 프로젝트의 ID
-     * @param thumbnailFile 새로 업로드할 이미지 파일 (선택 사항)
+     * @param thumbnailFile 새로 업로드할 썸네일 이미지 파일 (선택 사항)
      * @param requestDto 프로젝트 수정 요청 데이터
      * @throws ProjectException 프로젝트 또는 부모 프로젝트가 존재하지 않을 경우 발생
      * @throws RuntimeException 파일 업로드 실패 시 트랜잭션 롤백을 위해 발생
@@ -193,12 +193,12 @@ public class ProjectCommandService implements
     }
 
     /**
-     * 프로젝트 이미지 파일을 외부 스토리지에 업로드하고, 해당 파일의 URL로 프로젝트 정보를 갱신합니다.
+     * 프로젝트 썸네일 이미지를 외부 스토리지에 업로드하고, 해당 파일의 URL로 프로젝트의 썸네일 정보를 갱신합니다.
      *
-     * 파일이 null이 아니고 비어 있지 않은 경우에만 동작하며, 업로드 중 예외 발생 시 RuntimeException을 발생시켜 트랜잭션을 롤백합니다.
+     * 파일이 null이 아니고 비어 있지 않은 경우에만 동작하며, 업로드 중 예외가 발생하면 트랜잭션 롤백을 위해 RuntimeException을 발생시킵니다.
      *
-     * @param projectId 파일을 업로드할 프로젝트의 ID
-     * @param file 업로드할 이미지 파일
+     * @param projectId 썸네일을 업로드할 프로젝트의 ID
+     * @param file 업로드할 썸네일 이미지 파일
      */
     private void fileUpload(Long projectId, MultipartFile file) {
         if (file != null && !file.isEmpty()) {
@@ -214,7 +214,7 @@ public class ProjectCommandService implements
     }
 
     /**
-     * 프로젝트 관련 ID와 이미지 파일의 유효성을 검사하고, 각 항목의 라벨 정보를 포함한 ValidatedProjectInfo 객체를 반환합니다.
+     * 프로젝트 관련 ID와 썸네일 이미지 파일의 유효성을 검사하고, 각 항목의 라벨 정보를 포함한 ValidatedProjectInfo 객체를 반환합니다.
      *
      * @param thumbnailFile 프로젝트 썸네일 이미지 파일
      * @param topicId 주제 ID
@@ -223,6 +223,8 @@ public class ProjectCommandService implements
      * @param authorLevelId 작성자 레벨 ID
      * @param dataIds 데이터셋 ID 목록
      * @return 각 항목의 라벨 정보를 포함한 ValidatedProjectInfo 객체
+     *
+     * @throws IllegalArgumentException 유효하지 않은 ID나 이미지 파일이 전달된 경우 발생합니다.
      */
     private ValidatedProjectInfo getValidatedProjectInfo(
             MultipartFile thumbnailFile,

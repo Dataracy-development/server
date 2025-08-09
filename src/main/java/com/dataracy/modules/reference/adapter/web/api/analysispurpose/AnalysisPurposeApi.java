@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/references")
 public interface AnalysisPurposeApi {
     /**
-     * 전체 분석 목적(analysis purpose) 목록을 조회한다.
+     * 전체 분석 목적 목록을 조회하여 반환한다.
      *
-     * @return 전체 분석 목적 목록이 포함된 성공 응답
+     * 데이터베이스에 저장된 모든 분석 목적 정보를 조회하여 성공 응답 형태로 반환한다.
+     *
+     * @return 전체 분석 목적 목록이 포함된 성공 응답 객체
      */
     @Operation(
             summary = "전체 분석 목적 리스트를 조회",

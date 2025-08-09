@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "User - Password", description = "사용자 관련 API - 비밀번호")
 @RequestMapping("/api/v1")
 public interface UserPasswordApi {
-    /**
+    /****
      * 현재 인증된 사용자의 비밀번호를 변경한다.
      *
      * @param webRequest 변경할 비밀번호 정보가 포함된 요청 객체
@@ -57,10 +57,10 @@ public interface UserPasswordApi {
     );
 
     /**
-     * 비로그인 사용자가 토큰을 이용해 비밀번호를 재설정한다.
+     * 토큰을 이용해 비로그인 사용자의 비밀번호를 재설정한다.
      *
      * @param webRequest 비밀번호 재설정 토큰과 새로운 비밀번호 정보를 포함한 요청 객체
-     * @return 비밀번호 재설정 성공 여부를 나타내는 응답
+     * @return 비밀번호 재설정 성공 시 성공 응답을 반환한다.
      */
     @Operation(
             summary = "비밀번호를 재설정한다.",
@@ -82,9 +82,9 @@ public interface UserPasswordApi {
     );
 
     /**
-     * 사용자의 비밀번호가 입력한 값과 일치하는지 확인한다.
+     * 현재 사용자의 비밀번호가 입력한 값과 일치하는지 검증한다.
      *
-     * @param webRequest 확인할 비밀번호 정보를 담은 요청 객체
+     * @param webRequest 확인할 비밀번호 정보를 포함한 요청 객체
      * @return 비밀번호가 일치할 경우 성공 응답을 반환한다.
      */
     @Operation(

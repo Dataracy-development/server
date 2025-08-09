@@ -8,12 +8,18 @@ import java.util.List;
 
 public interface FindConnectedDataSetsUseCase {
     /**
- * 특정 프로젝트에 연결된 데이터셋을 페이지네이션하여 조회합니다.
+ * 특정 프로젝트에 연결된 데이터셋을 페이지 단위로 조회합니다.
  *
- * @param projectId 데이터셋을 조회할 대상 프로젝트의 식별자
- * @param pageable 결과 페이지 및 정렬 정보를 포함하는 페이지네이션 객체
+ * @param projectId 연결된 데이터셋을 조회할 프로젝트의 식별자
+ * @param pageable 페이지네이션 및 정렬 정보를 포함하는 객체
  * @return 연결된 데이터셋 정보를 담은 페이지 객체
  */
     Page<ConnectedDataResponse> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable);
-    List<ConnectedDataResponse> findDataSetsByIds(List<Long> dataIds);
+    /**
+ * 주어진 데이터셋 ID 목록에 해당하는 데이터셋 정보를 조회합니다.
+ *
+ * @param dataIds 조회할 데이터셋의 ID 목록
+ * @return 요청한 ID에 해당하는 데이터셋 응답 객체 리스트
+ */
+List<ConnectedDataResponse> findDataSetsByIds(List<Long> dataIds);
 }

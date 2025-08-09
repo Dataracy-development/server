@@ -6,6 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataDownloadWebMapper {
+    /**
+     * 애플리케이션 계층의 데이터 사전 서명 URL 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     *
+     * @param responseDto 변환할 데이터 사전 서명 URL 응답 DTO
+     * @return 변환된 웹 계층 데이터 사전 서명 URL 응답 DTO
+     */
     public GetDataPreSignedUrlWebResponse toWebDto(GetDataPreSignedUrlResponse responseDto) {
         return new GetDataPreSignedUrlWebResponse(
                 responseDto.preSignedUrl()

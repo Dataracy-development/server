@@ -15,11 +15,11 @@ public class CreateDataDtoMapper {
     private String defaultDatasetImageUrl;
 
     /**
-     * UploadDataRequest DTO와 추가 정보를 사용하여 Data 도메인 객체로 변환합니다.
+     * 업로드 데이터 요청 DTO와 사용자 ID를 기반으로 Data 도메인 객체를 생성합니다.
      *
-     * @param requestDto 업로드 데이터 요청 정보를 담은 DTO
+     * @param requestDto 업로드할 데이터의 정보를 담은 요청 DTO
      * @param userId 데이터 소유자의 사용자 ID
-     * @return 변환된 Data 도메인 객체
+     * @return 생성된 Data 도메인 객체
      */
     public Data toDomain(
             UploadDataRequest requestDto,
