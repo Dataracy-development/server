@@ -115,17 +115,17 @@ public class ProjectEntity extends BaseTimeEntity {
     }
 
     /**
-     * 부모 프로젝트 참조를 제거합니다.
+     * 프로젝트에서 부모 프로젝트와의 연관 관계를 해제합니다.
      */
     public void deleteParentProject() {
         this.parentProject = null;
     }
 
-    /****
-     * 프로젝트의 썸네일 파일 URL을 유효성 검사 후 새로운 값으로 변경합니다.
+    /**
+     * 프로젝트의 썸네일 URL을 검증하고 새로운 값으로 업데이트합니다.
      *
-     * @param thumbnailUrl 변경할 썸네일 파일 URL. null이거나 비어 있으면 예외가 발생합니다.
-     * @throws ProjectException 썸네일 파일 URL이 null이거나 비어 있을 때 발생합니다.
+     * @param thumbnailUrl 새로 설정할 썸네일 URL. null이거나 비어 있으면 예외가 발생합니다.
+     * @throws ProjectException 썸네일 URL이 null이거나 비어 있을 경우 발생합니다.
      */
     public void updateThumbnailUrl(String thumbnailUrl) {
         if (thumbnailUrl == null || thumbnailUrl.isBlank()) {

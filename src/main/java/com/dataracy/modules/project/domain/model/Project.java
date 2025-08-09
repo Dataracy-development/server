@@ -41,9 +41,9 @@ public class Project {
     private LocalDateTime createdAt;
 
     /**
-     * 프로젝트의 썸네일 URL을 업데이트합니다.
+     * 프로젝트의 썸네일 이미지를 새로운 URL로 변경합니다.
      *
-     * @param thumbnailUrl 새로 설정할 썸네일 URL
+     * @param thumbnailUrl 변경할 썸네일 이미지의 URL
      */
     public void updateThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
@@ -62,7 +62,7 @@ public class Project {
      * @param isContinue 프로젝트의 진행 여부
      * @param parentProjectId 상위 프로젝트의 식별자
      * @param content 프로젝트 설명 또는 내용
-     * @param thumbnailUrl 프로젝트 썸네일 파일의 URL
+     * @param thumbnailUrl 프로젝트 썸네일 이미지의 URL
      * @param dataIds 연관된 데이터 엔티티의 식별자 목록
      * @param createdAt 프로젝트 생성 시각
      * @param commentCount 댓글 수

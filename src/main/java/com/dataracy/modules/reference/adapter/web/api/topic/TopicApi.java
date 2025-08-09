@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/references")
 public interface TopicApi {
     /**
-     * 전체 토픽 리스트를 조회한다.
+     * 데이터베이스에서 전체 토픽 목록을 조회하여 반환한다.
      *
-     * @return 전체 토픽 리스트
+     * @return 전체 토픽 목록이 포함된 성공 응답
      */
     @Operation(
             summary = "전체 토픽 리스트를 조회",

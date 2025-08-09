@@ -132,10 +132,10 @@ public class DataCommandController implements DataCommandApi {
     }
 
     /**
-     * 지정한 데이터셋 파일에 대해 300초 동안 유효한 사전 서명 다운로드 URL을 반환합니다.
+     * 지정한 데이터셋 파일에 대해 300초 동안 유효한 사전 서명 다운로드 URL을 생성하여 반환합니다.
      *
      * @param dataId 다운로드할 데이터셋의 식별자
-     * @return 사전 서명된 다운로드 URL이 포함된 성공 응답
+     * @return 사전 서명된 다운로드 URL 정보가 포함된 성공 응답 객체
      */
     @Override
     public ResponseEntity<SuccessResponse<GetDataPreSignedUrlWebResponse>> getPreSignedDataUrl(Long dataId) {

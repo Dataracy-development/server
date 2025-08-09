@@ -60,7 +60,7 @@ public class DataCommandDbAdapter implements
     }
 
     /**
-     * 데이터 ID에 해당하는 데이터셋의 썸네일 파일 URL을 새 값으로 변경합니다.
+     * 지정한 데이터 ID의 데이터셋 썸네일 파일 URL을 새로운 값으로 변경합니다.
      *
      * @param dataId 썸네일 파일 URL을 변경할 데이터의 ID
      * @param thumbnailFileUrl 새로 지정할 썸네일 파일의 URL

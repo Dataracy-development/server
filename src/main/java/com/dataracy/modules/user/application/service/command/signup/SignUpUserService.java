@@ -108,12 +108,12 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     }
 
     /**
-     * 소셜 회원가입을 처리하고 리프레시 토큰을 발급합니다.
+     * 소셜 회원가입 요청을 처리하고 리프레시 토큰을 발급합니다.
      *
-     * 소셜 회원가입 토큰의 유효성을 검증하고, 온보딩 정보를 기반으로 신규 사용자를 등록한 후 리프레시 토큰을 생성하여 캐시에 저장합니다. 
-     * 닉네임 중복 회원가입을 방지하기 위해 분산 락이 적용됩니다.
+     * 소셜 회원가입 토큰의 유효성을 검증한 후, 온보딩 정보를 기반으로 신규 사용자를 등록하고 리프레시 토큰을 생성하여 캐시에 저장합니다. 
+     * 닉네임 중복 방지를 위해 분산 락이 적용됩니다.
      *
-     * @param registerToken 소셜 회원가입 토큰
+     * @param registerToken 소셜 회원가입을 위한 JWT 토큰
      * @param requestDto 온보딩 요청 정보
      * @return 발급된 리프레시 토큰과 만료 시간 정보
      */

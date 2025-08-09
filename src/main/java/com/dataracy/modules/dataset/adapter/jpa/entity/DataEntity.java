@@ -110,10 +110,10 @@ public class DataEntity extends BaseTimeEntity {
     }
 
     /**
-     * 데이터셋 파일의 URL을 새 값으로 검증 후 변경합니다.
+     * 데이터셋 파일의 URL을 검증하고 변경합니다.
      *
-     * @param dataFileUrl 변경할 데이터셋 파일의 URL. null이거나 빈 값일 경우 예외가 발생합니다.
-     * @throws DataException URL이 null이거나 빈 문자열인 경우 발생합니다.
+     * @param dataFileUrl 새로 설정할 데이터셋 파일의 URL. null이거나 공백일 경우 예외가 발생합니다.
+     * @throws DataException dataFileUrl이 null이거나 공백 문자열인 경우 발생합니다.
      */
     public void updateDataFile (String dataFileUrl) {
         if (dataFileUrl == null || dataFileUrl.isBlank()) {
@@ -127,10 +127,10 @@ public class DataEntity extends BaseTimeEntity {
     }
 
     /**
-     * 썸네일 파일의 URL을 검증하고, 유효한 경우 새로운 값으로 변경합니다.
+     * 데이터셋 썸네일 파일의 URL을 검증하여 유효할 경우 해당 값으로 갱신합니다.
      *
-     * @param thumbnailUrl 새로 설정할 썸네일 파일의 URL. null이거나 빈 문자열일 경우 예외가 발생합니다.
-     * @throws DataException thumbnailUrl이 null이거나 빈 문자열일 때 발생합니다.
+     * @param thumbnailUrl 새로 설정할 썸네일 파일의 URL. null이거나 공백일 경우 예외가 발생합니다.
+     * @throws DataException thumbnailUrl이 null이거나 공백일 때 발생합니다.
      */
     public void updateDataThumbnailFile (String thumbnailUrl) {
         if (thumbnailUrl == null || thumbnailUrl.isBlank()) {
@@ -153,22 +153,24 @@ public class DataEntity extends BaseTimeEntity {
     }
 
     /**
-     * 주어진 값들로 새로운 DataEntity 인스턴스를 생성합니다.
+     * 주어진 값들로 DataEntity 객체를 생성합니다.
      *
-     * @param title 데이터셋의 제목
+     * 데이터셋의 주요 정보와 메타데이터를 포함하여 새로운 DataEntity 인스턴스를 반환합니다.
+     *
+     * @param title 데이터셋 제목
      * @param topicId 주제 ID
      * @param userId 사용자 ID
      * @param dataSourceId 데이터 소스 ID
      * @param dataTypeId 데이터 유형 ID
-     * @param startDate 데이터셋의 시작 날짜 (null 가능)
-     * @param endDate 데이터셋의 종료 날짜 (null 가능)
+     * @param startDate 데이터셋 시작일 (null 가능)
+     * @param endDate 데이터셋 종료일 (null 가능)
      * @param description 데이터셋 설명
      * @param analysisGuide 분석 가이드
-     * @param dataFileUrl 데이터 파일의 URL (null 가능)
-     * @param dataThumbnailUrl 썸네일 이미지의 URL (null 가능)
-     * @param downloadCount 전체 다운로드 횟수
+     * @param dataFileUrl 데이터 파일 URL (null 가능)
+     * @param dataThumbnailUrl 썸네일 이미지 URL (null 가능)
+     * @param downloadCount 다운로드 횟수
      * @param metadata 데이터 메타데이터 엔티티
-     * @return 생성된 DataEntity 객체
+     * @return 생성된 DataEntity 인스턴스
      */
     public static DataEntity of(
             String title,
