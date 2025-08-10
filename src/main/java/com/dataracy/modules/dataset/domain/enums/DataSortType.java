@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-/**
- * 데이터셋 정렬 enum
- */
 @Getter
 @RequiredArgsConstructor
 public enum DataSortType {
@@ -22,7 +19,7 @@ public enum DataSortType {
 
     private final String value;
 
-    /****
+    /**
      * 입력된 문자열에 해당하는 DataSortType 열거형 상수를 반환합니다.
      *
      * 입력값은 열거형 이름 또는 value 필드와 대소문자 구분 없이 비교됩니다.
@@ -33,7 +30,6 @@ public enum DataSortType {
      * @throws DataException 유효하지 않은 정렬 타입 입력 시 발생
      */
     public static DataSortType of(String input) {
-
         return Arrays.stream(DataSortType.values())
                 .filter(type -> type.value.equalsIgnoreCase(input) || type.name().equalsIgnoreCase(input))
                 .findFirst()

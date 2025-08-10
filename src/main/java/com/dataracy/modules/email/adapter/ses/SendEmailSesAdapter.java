@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class SendEmailSesAdapter implements SendEmailPort {
-
     private final AmazonSimpleEmailService ses;
 
     @Value("${aws.ses.sender:}")

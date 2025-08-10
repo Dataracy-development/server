@@ -6,10 +6,7 @@ import org.springframework.util.StringUtils;
 import static com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity.dataEntity;
 
 public class DataFilterPredicate {
-    /****
- * DataFilterPredicate 클래스의 인스턴스 생성을 방지합니다.
- */
-private DataFilterPredicate() {}
+    private DataFilterPredicate() {}
 
     /**
      * 주어진 데이터 ID와 일치하는 데이터 엔터티를 필터링하는 QueryDSL 조건식을 반환합니다.
@@ -63,6 +60,4 @@ private DataFilterPredicate() {}
     public static BooleanExpression dataTypeIdEq(Long dataTypeId) {
         return dataTypeId == null ? null : dataEntity.dataTypeId.eq(dataTypeId);
     }
-
-
 }

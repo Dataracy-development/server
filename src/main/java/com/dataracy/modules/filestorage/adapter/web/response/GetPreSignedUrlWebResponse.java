@@ -6,4 +6,4 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record GetPreSignedUrlWebResponse(
     @Schema(description = "유효기간이 있는 다운로드 링크", example = "https://~~~~")
     String preSignedUrl
-){}
+) {}

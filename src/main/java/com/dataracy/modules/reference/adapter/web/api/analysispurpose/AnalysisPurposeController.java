@@ -19,6 +19,7 @@ import java.time.Instant;
 public class AnalysisPurposeController implements AnalysisPurposeApi {
     private final AnalysisPurposeWebMapper analysisPurposeWebMapper;
     private final FindAllAnalysisPurposesUseCase findAllAnalysisPurposesUseCase;
+
     /**
      * 전체 분석 목적 목록을 조회하여 성공 응답으로 반환합니다.
      *

@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class ElasticsearchClientConfig {
-
     private final ElasticsearchConnectionProperties properties;
     private final ObjectMapper objectMapper;
 

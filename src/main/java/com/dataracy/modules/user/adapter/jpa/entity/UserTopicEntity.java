@@ -4,9 +4,6 @@ import com.dataracy.modules.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-/**
- * users, topic 다대다 연결 테이블
- */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

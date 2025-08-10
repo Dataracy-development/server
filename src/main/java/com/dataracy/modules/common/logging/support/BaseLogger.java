@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class BaseLogger {
-
     /**
      * 지정된 형식 문자열과 인자를 사용하여 정보 수준의 로그 메시지를 기록합니다.
      *

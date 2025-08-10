@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "User - Password", description = "사용자 관련 API - 비밀번호")
 @RequestMapping("/api/v1")
 public interface UserPasswordApi {
-    /****
+    /**
      * 현재 인증된 사용자의 비밀번호를 변경한다.
      *
      * @param webRequest 변경할 비밀번호 정보가 포함된 요청 객체

@@ -6,11 +6,11 @@ import static com.dataracy.modules.comment.adapter.jpa.entity.QCommentEntity.com
 
 public class CommentFilterPredicate {
     /**
- * `CommentFilterPredicate` 클래스의 인스턴스 생성을 방지하는 private 생성자입니다.
- *
- * 이 클래스는 정적 메서드만을 제공하는 유틸리티 클래스이므로 외부에서 인스턴스화할 수 없습니다.
- */
-private CommentFilterPredicate() {}
+     * `CommentFilterPredicate` 클래스의 인스턴스 생성을 방지하는 private 생성자입니다.
+     *
+     * 이 클래스는 정적 메서드만을 제공하는 유틸리티 클래스이므로 외부에서 인스턴스화할 수 없습니다.
+     */
+    private CommentFilterPredicate() {}
 
     /**
      * 주어진 댓글 ID와 일치하는 댓글을 필터링하는 QueryDSL BooleanExpression을 반환합니다.
@@ -50,5 +50,4 @@ private CommentFilterPredicate() {}
     public static BooleanExpression isRootComment() {
         return commentEntity.parentCommentId.isNull();
     }
-
 }

@@ -16,7 +16,6 @@ import lombok.*;
         name = "data_metadata"
 )
 public class DataMetadataEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "data_metadata_id")

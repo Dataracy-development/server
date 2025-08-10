@@ -7,7 +7,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 @Configuration
 public class KafkaStringProducerConfig extends AbstractKafkaProducerConfig<String> {
-
     /**
      * Kafka 부트스트랩 서버 설정이 올바른지 검증합니다.
      *

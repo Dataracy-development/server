@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-/**
- * 토큰 유형 enum
- */
 @Getter
 @RequiredArgsConstructor
 public enum TokenType {

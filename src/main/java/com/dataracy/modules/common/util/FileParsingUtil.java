@@ -19,12 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 public class FileParsingUtil {
-
     private static final int PREVIEW_LIMIT = 5;
     private static final String COL_PREFIX = "col";
     private static final int SHEET_INDEX = 0;
 
-    /****
+    /**
      * 입력 스트림과 파일명을 기반으로 파일 형식을 자동 감지하여(CSV, XLSX, JSON) 행 수, 열 수, 미리보기 데이터를 추출합니다.
      *
      * @param inputStream 파일 데이터가 포함된 입력 스트림

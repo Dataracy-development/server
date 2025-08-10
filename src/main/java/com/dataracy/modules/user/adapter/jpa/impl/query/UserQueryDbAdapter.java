@@ -31,7 +31,7 @@ public class UserQueryDbAdapter implements UserQueryPort {
         return userEntity.map(UserEntityMapper::toDomain);
     }
 
-    /****
+    /**
      * 소셜 제공자에서 발급한 ID로 사용자를 조회합니다.
      *
      * @param providerId 소셜 제공자에서 발급한 사용자 ID

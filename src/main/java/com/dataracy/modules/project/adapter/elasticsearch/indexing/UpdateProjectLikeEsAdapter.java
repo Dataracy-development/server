@@ -15,7 +15,7 @@ public class UpdateProjectLikeEsAdapter implements UpdateProjectLikePort {
     private final ElasticsearchClient client;
     private static final String INDEX = "project_index";
 
-    /****
+    /**
      * 지정된 프로젝트의 Elasticsearch 문서에서 likeCount 필드를 1 증가시킵니다.
      *
      * @param projectId likeCount를 증가시킬 프로젝트의 ID
@@ -46,7 +46,7 @@ public class UpdateProjectLikeEsAdapter implements UpdateProjectLikePort {
         }
     }
 
-    /****
+    /**
      * 지정된 프로젝트의 Elasticsearch 문서에서 likeCount 필드를 1 감소시킵니다.
      *
      * likeCount가 0보다 크면 1 감소시키고, 그렇지 않으면 0으로 설정합니다.

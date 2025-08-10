@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class SesConfig {
-
     @Value("${aws.ses.access-key:}")
     private String accessKey;
 
@@ -27,6 +26,10 @@ public class SesConfig {
     @Value("${aws.ses.region:}")
     private String region;
 
+    /**
+     *
+     * @return
+     */
     @Bean
     public AmazonSimpleEmailService amazonSimpleEmailService() {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);

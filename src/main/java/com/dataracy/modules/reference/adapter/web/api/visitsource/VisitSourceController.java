@@ -19,6 +19,7 @@ import java.time.Instant;
 public class VisitSourceController implements VisitSourceApi {
     private final VisitSourceWebMapper visitSourceWebMapper;
     private final FindAllVisitSourcesUseCase findAllVisitSourcesUseCase;
+
     /**
      * 전체 방문 경로 목록을 조회하여 HTTP 200 성공 응답으로 반환합니다.
      *

@@ -4,6 +4,7 @@ public class LockAcquisitionException extends RuntimeException {
     public LockAcquisitionException(String message) {
         super(message);
     }
+
     /**
      * 지정한 메시지와 원인으로 새로운 LockAcquisitionException을 생성합니다.
      *

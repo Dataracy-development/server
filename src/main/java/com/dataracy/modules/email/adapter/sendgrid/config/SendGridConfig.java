@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class SendGridConfig {
-
     @Value("${sendgrid.api-key:}")
     private String sendGridApiKey;
 

@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-/**
- * 프로젝트 정렬 enum
- */
 @Getter
 @RequiredArgsConstructor
 public enum ProjectSortType {

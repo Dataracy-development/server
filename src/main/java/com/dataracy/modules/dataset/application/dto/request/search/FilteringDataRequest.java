@@ -1,5 +1,14 @@
 package com.dataracy.modules.dataset.application.dto.request.search;
 
+/**
+ *
+ * @param keyword
+ * @param sortType
+ * @param topicId
+ * @param dataSourceId
+ * @param dataTypeId
+ * @param year
+ */
 public record FilteringDataRequest(
         String keyword,
         String sortType,

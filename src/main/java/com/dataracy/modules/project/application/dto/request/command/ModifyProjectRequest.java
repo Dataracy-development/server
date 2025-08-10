@@ -2,6 +2,18 @@ package com.dataracy.modules.project.application.dto.request.command;
 
 import java.util.List;
 
+/**
+ *
+ * @param title
+ * @param topicId
+ * @param analysisPurposeId
+ * @param dataSourceId
+ * @param authorLevelId
+ * @param isContinue
+ * @param parentProjectId
+ * @param content
+ * @param dataIds
+ */
 public record ModifyProjectRequest(
         String title,
         Long topicId,

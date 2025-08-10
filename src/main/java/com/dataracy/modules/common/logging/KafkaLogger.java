@@ -3,7 +3,6 @@ package com.dataracy.modules.common.logging;
 import com.dataracy.modules.common.logging.support.BaseLogger;
 
 public class KafkaLogger extends BaseLogger {
-
     /**
      * 지정된 Kafka 토픽으로 메시지가 전송되었음을 디버그 로그로 기록합니다.
      *

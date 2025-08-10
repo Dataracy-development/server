@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class ElasticLogger extends BaseLogger {
-
     /**
      * Elasticsearch 쿼리의 시작을 로그로 기록하고 현재 시각을 반환합니다.
      *

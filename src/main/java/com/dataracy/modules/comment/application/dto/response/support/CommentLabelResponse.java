@@ -2,6 +2,13 @@ package com.dataracy.modules.comment.application.dto.response.support;
 
 import java.util.Map;
 
+/**
+ *
+ * @param usernameMap
+ * @param userThumbnailMap
+ * @param userAuthorLevelIds
+ * @param userAuthorLevelLabelMap
+ */
 public record CommentLabelResponse(
         Map<Long, String> usernameMap,
         Map<Long, String> userThumbnailMap,

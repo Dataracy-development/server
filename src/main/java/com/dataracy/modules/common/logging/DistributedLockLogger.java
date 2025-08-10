@@ -10,7 +10,6 @@ import java.time.Instant;
  * 락 획득 시도, 성공, 실패, 예외 등에 대한 로그를 일관된 포맷으로 출력합니다.
  */
 public class DistributedLockLogger extends BaseLogger {
-
     private static final String PREFIX = "[Lock]";
 
     /**

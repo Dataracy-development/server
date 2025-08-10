@@ -7,12 +7,15 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * 제공자가 구글일 경우
- * 구글 유저 정보 저장
- */
 @Component
 public class GoogleOAuthUserInfoAdapter implements OAuthUserInfoPort {
+
+    /**
+     *
+     * @param provider
+     * @param attributes
+     * @return
+     */
     @Override
     public OAuthUserInfo extract(String provider, Map<String, Object> attributes) {
         if (!provider.equals("google")) return null;

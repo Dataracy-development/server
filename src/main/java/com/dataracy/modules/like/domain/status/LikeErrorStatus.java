@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum LikeErrorStatus implements BaseErrorCode {
-
     NOT_FOUND_TARGET_LIKE(HttpStatus.INTERNAL_SERVER_ERROR, "LIKE-001", "해당 좋아요 리소스를 찾을 수 없습니다."),
     FAIL_LIKE_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "LIKE-002", "프로젝트에 대한 좋아요 처리에 실패했습니다."),
     FAIL_UNLIKE_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "LIKE-003", "프로젝트에 대한 좋아요 취소 처리에 실패했습니다."),

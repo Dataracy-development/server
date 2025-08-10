@@ -3,13 +3,8 @@ package com.dataracy.modules.auth.adapter.jwt;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtValidatorPort;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-/**
- * Jwt 토큰 유효성 검증 로직
- */
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtValidatorAdapter implements JwtValidatorPort {

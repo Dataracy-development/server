@@ -10,7 +10,12 @@ public final class OccupationEntityMapper {
     private OccupationEntityMapper() {
     }
 
-    // Occupation 엔티티 -> Occupation 도메인 모델
+    /**
+     * OccupationEntity 객체를 Occupation 도메인 모델로 변환합니다.
+     *
+     * @param occupationEntity 변환할 OccupationEntity 객체
+     * @return 변환된 Occupation 도메인 모델 객체, 입력이 null이면 null 반환
+     */
     public static Occupation toDomain(OccupationEntity occupationEntity) {
         if (occupationEntity == null) {
             return null;

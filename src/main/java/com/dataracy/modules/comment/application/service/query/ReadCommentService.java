@@ -32,7 +32,6 @@ public class ReadCommentService implements
         FindCommentListUseCase,
         FindReplyCommentListUseCase
 {
-
     private final FindCommentDtoMapper findCommentDtoMapper;
 
     private final ReadCommentPort readCommentPort;

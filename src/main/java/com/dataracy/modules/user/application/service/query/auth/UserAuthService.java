@@ -37,7 +37,7 @@ public class UserAuthService implements
     private final JwtGenerateUseCase jwtGenerateUseCase;
     private final CacheRefreshTokenUseCase cacheRefreshTokenUseCase;
 
-    /****
+    /**
      * 주어진 OAuth 사용자 정보로 해당 사용자가 기존에 존재하는지 확인하여 신규 사용자인지 여부를 반환합니다.
      *
      * @param oAuthUserInfo 소셜 인증에서 받은 사용자 정보
