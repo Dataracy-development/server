@@ -16,13 +16,25 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 @Component
 public class CurrentUserIdArgumentResolver implements HandlerMethodArgumentResolver {
-
+    /**
+     *
+     * @param parameter
+     * @return
+     */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterAnnotation(CurrentUserId.class) != null
                 && parameter.getParameterType().equals(Long.class);
     }
 
+    /**
+     *
+     * @param parameter
+     * @param mavContainer
+     * @param webRequest
+     * @param binderFactory
+     * @return
+     */
     @Override
     public Object resolveArgument(MethodParameter parameter,
                                   ModelAndViewContainer mavContainer,

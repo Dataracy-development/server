@@ -21,7 +21,6 @@ import java.util.List;
 @Tag(name = "Data - Read", description = "데이터셋 관련 API - 조회")
 @RequestMapping("/api/v1/datasets")
 public interface DataReadApi {
-
     /**
      * 다운로드 수와 연결된 프로젝트 수를 기준으로 인기 있는 데이터셋 목록을 조회합니다.
      *
@@ -42,7 +41,7 @@ public interface DataReadApi {
             int size
     );
 
-    /****
+    /**
      * 지정된 데이터셋 ID에 해당하는 데이터셋의 상세 정보를 조회합니다.
      *
      * @param dataId 조회할 데이터셋의 고유 식별자

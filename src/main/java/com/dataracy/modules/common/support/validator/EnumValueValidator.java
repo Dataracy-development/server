@@ -14,6 +14,10 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
     private boolean required;
     private String enumValuesString;
 
+    /**
+     *
+     * @param annotation
+     */
     @Override
     public void initialize(ValidEnumValue annotation) {
         this.required = annotation.required();
@@ -37,6 +41,12 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
         }
     }
 
+    /**
+     *
+     * @param input
+     * @param context
+     * @return
+     */
     @Override
     public boolean isValid(Object input, ConstraintValidatorContext context) {
         // null 처리
@@ -70,6 +80,10 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
         return false;
     }
 
+    /**
+     * 
+     * @param context
+     */
     private void injectCustomMessage(ConstraintValidatorContext context) {
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate("허용되지 않는 값입니다. 사용 가능한 값: " + enumValuesString)

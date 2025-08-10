@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class RedissonConfig {
-
     private final RedissonProperties properties;
 
     /**

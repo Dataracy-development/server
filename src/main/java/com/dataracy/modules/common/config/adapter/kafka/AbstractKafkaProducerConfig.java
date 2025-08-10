@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractKafkaProducerConfig<V> {
-
     @Value("${spring.kafka.bootstrap-servers:}")
     private String bootstrapServers;
 
@@ -42,19 +41,20 @@ public abstract class AbstractKafkaProducerConfig<V> {
     }
 
     /**
- * Kafka 프로듀서의 키 직렬화에 사용할 클래스 타입을 반환합니다.
- *
- * 구체 서브클래스에서 반드시 구현해야 하며, 키 직렬화에 적합한 Serializer 클래스를 지정해야 합니다.
- *
- * @return Kafka 프로듀서 키 직렬화에 사용할 클래스
- */
+     * Kafka 프로듀서의 키 직렬화에 사용할 클래스 타입을 반환합니다.
+     *
+     * 구체 서브클래스에서 반드시 구현해야 하며, 키 직렬화에 적합한 Serializer 클래스를 지정해야 합니다.
+     *
+     * @return Kafka 프로듀서 키 직렬화에 사용할 클래스
+     */
     protected abstract Class<?> keySerializer();
+
     /**
- * Kafka 프로듀서의 값(Value) 직렬화에 사용할 직렬화 클래스 타입을 반환합니다.
- *
- * @return 값 직렬화에 사용할 클래스 타입
- */
-protected abstract Class<?> valueSerializer();
+     * Kafka 프로듀서의 값(Value) 직렬화에 사용할 직렬화 클래스 타입을 반환합니다.
+     *
+     * @return 값 직렬화에 사용할 클래스 타입
+     */
+    protected abstract Class<?> valueSerializer();
 
     /**
      * Kafka 프로듀서를 위한 ProducerFactory 인스턴스를 생성합니다.

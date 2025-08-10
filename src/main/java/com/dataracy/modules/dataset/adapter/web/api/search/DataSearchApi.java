@@ -22,7 +22,6 @@ import java.util.List;
 @Tag(name = "Data - Search", description = "데이터셋 관련 API - 검색")
 @RequestMapping("/api/v1/datasets")
 public interface DataSearchApi {
-
     /**
      * 지정한 데이터셋과 유사한 데이터셋 목록을 반환합니다.
      *
@@ -71,7 +70,7 @@ public interface DataSearchApi {
             Pageable pageable
     );
 
-    /****
+    /**
      * 키워드 자동완성 검색을 통해 조건에 맞는 데이터셋의 최소 정보를 리스트로 반환합니다.
      *
      * @param keyword 자동완성 검색에 사용할 키워드(선택 사항)

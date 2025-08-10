@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-/**
- * 좋아요 대상 enum
- */
 @Getter
 @RequiredArgsConstructor
 public enum TargetType {

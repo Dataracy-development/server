@@ -6,10 +6,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.NumberPath;
 
 public final class DataSortBuilder {
-    /**
- * DataSortBuilder 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
- */
-private DataSortBuilder() {}
+    private DataSortBuilder() {}
 
     /**
      * 주어진 정렬 옵션과 프로젝트 수 경로에 따라 데이터 쿼리의 정렬 기준 배열을 반환합니다.

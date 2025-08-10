@@ -11,7 +11,6 @@ import java.io.InputStream;
 
 @Component
 public class ThumbnailGenerator {
-
     /**
      * 업로드된 이미지 파일로부터 지정된 크기의 썸네일 이미지를 생성하여 반환합니다.
      *

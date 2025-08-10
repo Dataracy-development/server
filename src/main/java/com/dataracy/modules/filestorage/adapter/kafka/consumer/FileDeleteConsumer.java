@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class FileDeleteConsumer {
-
     private final FileStoragePort fileStoragePort;
 
     @Value("${spring.kafka.consumer.file-delete.topic:file-delete-topic}")

@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-/**
- * 제공자 enum
- */
 @Getter
 @RequiredArgsConstructor
 public enum ProviderType {

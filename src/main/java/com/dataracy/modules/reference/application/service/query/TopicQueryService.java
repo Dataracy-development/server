@@ -13,7 +13,6 @@ import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.Topic;
 import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TopicQueryService implements
@@ -69,7 +67,7 @@ public class TopicQueryService implements
         return topicResponse;
     }
 
-    /****
+    /**
      * 주어진 토픽 ID에 해당하는 토픽의 존재 여부를 검증합니다.
      *
      * 토픽이 존재하지 않을 경우 ReferenceException을 발생시킵니다.
@@ -89,7 +87,7 @@ public class TopicQueryService implements
         LoggerFactory.service().logSuccess("ValidateTopicUseCase", "주어진 ID에 해당하는 토픽이 존재하는지 확인 서비스 종료 topicId=" + topicId, startTime);
     }
 
-    /****
+    /**
      * 주어진 토픽 ID에 해당하는 라벨을 반환합니다.
      *
      * @param topicId 라벨을 조회할 토픽의 ID
@@ -109,7 +107,7 @@ public class TopicQueryService implements
         return label;
     }
 
-    /****
+    /**
      * 주어진 토픽 ID 목록에 대해 각 토픽의 라벨을 조회하여 ID와 라벨의 맵으로 반환합니다.
      *
      * @param topicIds 라벨을 조회할 토픽 ID 목록

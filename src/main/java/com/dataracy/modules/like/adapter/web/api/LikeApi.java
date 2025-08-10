@@ -21,8 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "Like", description = "좋아요 관련 API")
 @RequestMapping("/api/v1/likes")
 public interface LikeApi {
-
-    /****
+    /**
      * 지정된 타겟에 대해 현재 사용자의 좋아요 상태를 변경합니다.
      *
      * @param webRequest 좋아요를 적용할 타겟 정보가 포함된 요청 객체

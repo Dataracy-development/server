@@ -8,9 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-/**
- * jwt 토큰 발급 로직
- */
 @Component
 @RequiredArgsConstructor
 public class JwtGeneratorAdapter implements JwtGeneratorPort {

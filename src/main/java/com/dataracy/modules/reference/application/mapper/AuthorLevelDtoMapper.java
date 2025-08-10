@@ -26,7 +26,12 @@ public class AuthorLevelDtoMapper {
         );
     }
 
-    // 전체 AuthorLevel 리스트 조회 도메인 모델 -> 전체 AuthorLevel 리스트 조회 도메인 응답 DTO
+    /**
+     * AnalysisPurpose 도메인 모델 리스트를 전체 AnalysisPurpose 응답 DTO로 변환합니다.
+     *
+     * @param authorLevels 변환할 AnalysisPurpose 도메인 모델 리스트
+     * @return 변환된 전체 AnalysisPurpose 응답 DTO
+     */
     public AllAuthorLevelsResponse toResponseDto(List<AuthorLevel> authorLevels) {
         return new AllAuthorLevelsResponse(
                 authorLevels.stream()

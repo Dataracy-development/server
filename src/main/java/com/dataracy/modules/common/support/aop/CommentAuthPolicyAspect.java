@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CommentAuthPolicyAspect {
-
     private final FindUserIdByCommentIdUseCase findUserIdByCommentIdUseCase;
 
     /**

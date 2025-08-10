@@ -4,12 +4,9 @@ import com.dataracy.modules.like.adapter.jpa.entity.LikeEntity;
 import com.dataracy.modules.like.domain.model.Like;
 
 public final class LikeEntityMapper {
-    /**
- * LikeEntityMapper 클래스의 인스턴스 생성을 방지하는 private 생성자입니다.
- */
-private LikeEntityMapper() {}
+    private LikeEntityMapper() {}
 
-    /****
+    /**
      * LikeEntity 객체를 Like 도메인 객체로 변환합니다.
      *
      * @param entity 변환할 LikeEntity 객체

@@ -9,7 +9,11 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AuthWebMapper {
-    // 자체 로그인 웹 요청 DTO -> 자체 로그인 도메인 요청 DTO
+    /**
+     *
+     * @param webRequest
+     * @return
+     */
     public SelfLoginRequest toApplicationDto(SelfLoginWebRequest webRequest) {
         return new SelfLoginRequest(webRequest.email(), webRequest.password());
     }

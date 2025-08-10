@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class ServiceLogger extends BaseLogger {
-
     /**
      * 서비스 작업의 시작을 정보 로그로 기록하고, 작업 시작 시각을 반환합니다.
      *

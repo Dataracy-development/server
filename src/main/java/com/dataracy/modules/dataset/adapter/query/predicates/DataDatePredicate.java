@@ -6,10 +6,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 
 public class DataDatePredicate {
-    /**
- * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
- */
-private DataDatePredicate() {}
+    private DataDatePredicate() {}
 
     private static final QDataEntity data = QDataEntity.dataEntity;
 

@@ -24,7 +24,6 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class AwsS3FileStorageAdapter implements FileStoragePort {
-
     private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket:}")
@@ -141,7 +140,7 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
         }
     }
 
-    /****
+    /**
      * 지정된 파일 URL과 만료 시간을 기준으로 S3 객체에 대한 Pre-Signed URL을 반환합니다.
      *
      * @param fileUrl Pre-Signed URL을 생성할 S3 파일의 전체 URL

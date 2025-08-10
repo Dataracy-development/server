@@ -3,7 +3,6 @@ package com.dataracy.modules.common.logging;
 import com.dataracy.modules.common.logging.support.BaseLogger;
 
 public class SchedulerLogger extends BaseLogger {
-
     /**
      * 스케줄러 작업이 시작됨을 정보 로그로 기록합니다.
      *

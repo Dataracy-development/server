@@ -20,7 +20,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ProjectReadWebMapper {
-
     private final ProjectConnectedDataWebMapper projectConnectedDataWebMapper;
 
     /**
@@ -32,7 +31,6 @@ public class ProjectReadWebMapper {
      * @return 웹 계층의 프로젝트 상세 정보 응답 DTO
      */
     public ProjectDetailWebResponse toWebDto(ProjectDetailResponse responseDto) {
-
         List<ProjectConnectedDataWebResponse> connectWebDataSets = responseDto.connectedDataSets().stream()
                 .map(projectConnectedDataWebMapper::toWebDto)
                 .toList();

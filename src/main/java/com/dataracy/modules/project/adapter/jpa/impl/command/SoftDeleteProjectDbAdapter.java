@@ -14,7 +14,6 @@ import java.util.Set;
 @Repository("softDeleteProjectDbAdapter")
 @RequiredArgsConstructor
 public class SoftDeleteProjectDbAdapter implements SoftDeleteProjectPort {
-
     private final ProjectJpaRepository projectJpaRepository;
 
     /**

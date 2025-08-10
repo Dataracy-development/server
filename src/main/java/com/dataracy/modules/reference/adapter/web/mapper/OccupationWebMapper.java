@@ -27,7 +27,12 @@ public class OccupationWebMapper {
         );
     }
 
-    // 전체 occupation 리스트 조회 도메인 응답 DTO -> 전체 occupation 리스트 조회 웹 응답 DTO
+    /**
+     * 도메인 전체 직업 응답 DTO를 웹 전체 직업 응답 DTO로 변환합니다.
+     *
+     * @param allOccupationsResponse 변환할 도메인 전체 직업 응답 DTO
+     * @return 변환된 웹 전체 직업 응답 DTO. 입력값이나 내부 리스트가 null인 경우 빈 리스트를 포함합니다.
+     */
     public AllOccupationsWebResponse toWebDto(AllOccupationsResponse allOccupationsResponse) {
         if (allOccupationsResponse == null || allOccupationsResponse.occupations() == null) {
             return new AllOccupationsWebResponse(List.of());

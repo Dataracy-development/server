@@ -16,9 +16,7 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class ConfirmPasswordService implements
-        ConfirmPasswordUseCase
-{
+public class ConfirmPasswordService implements ConfirmPasswordUseCase {
     private final PasswordEncoder passwordEncoder;
 
     private final UserQueryPort userQueryPort;

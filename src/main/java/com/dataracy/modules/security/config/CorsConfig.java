@@ -12,7 +12,6 @@ import java.util.List;
 
 @Configuration
 public class CorsConfig {
-
     /**
      * 애플리케이션의 모든 경로에 대해 지정된 출처와 HTTP 메서드에 대한 CORS(Cross-Origin Resource Sharing) 정책을 적용하는 CorsConfigurationSource 빈을 생성합니다.
      *
