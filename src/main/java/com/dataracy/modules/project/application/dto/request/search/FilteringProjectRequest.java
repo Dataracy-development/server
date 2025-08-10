@@ -1,7 +1,7 @@
 package com.dataracy.modules.project.application.dto.request.search;
 
 /**
- *
+ *요청
  * @param keyword
  * @param sortType
  * @param topicId

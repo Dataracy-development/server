@@ -3,7 +3,7 @@ package com.dataracy.modules.dataset.application.dto.response.read;
 import java.time.LocalDateTime;
 
 /**
- *
+ *요청
  * @param id
  * @param title
  * @param dataThumbnailUrl
