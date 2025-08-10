@@ -41,7 +41,7 @@ public class ProjectReadController implements ProjectReadApi {
     private final FindConnectedProjectsUseCase findConnectedProjectsUseCase;
     private final GetPopularProjectsUseCase getPopularProjectsUseCase;
 
-    /****
+    /**
      * 지정된 프로젝트의 상세 정보를 조회하여 성공 응답으로 반환합니다.
      *
      * HTTP 요청 및 응답에서 인증된 사용자 ID와 뷰어 ID를 추출한 후, 해당 정보를 기반으로 프로젝트의 상세 정보를 조회하여 반환합니다.
@@ -70,7 +70,7 @@ public class ProjectReadController implements ProjectReadApi {
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_PROJECT_DETAIL, webResponse));
     }
 
-    /****
+    /**
      * 기준 프로젝트 ID를 기반으로 이어지는 프로젝트 목록을 페이지네이션하여 조회합니다.
      *
      * @param projectId 이어지는 프로젝트를 조회할 기준이 되는 프로젝트의 ID

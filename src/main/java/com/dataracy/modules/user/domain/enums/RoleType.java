@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-/**
- * 역할 enum
- */
 @Getter
 @RequiredArgsConstructor
 public enum RoleType {

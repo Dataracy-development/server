@@ -121,7 +121,7 @@ public class ProjectCommandService implements
         LoggerFactory.service().logSuccess("UploadProjectUseCase", "프로젝트 업로드 서비스 종료 title=" + requestDto.title(), startTime);
     }
 
-    /****
+    /**
      * 기존 프로젝트의 정보를 수정하고, 필요 시 새로운 썸네일 이미지를 업로드한 후, 변경된 내용을 검색 인덱스에 반영합니다.
      *
      * @param projectId 수정할 프로젝트의 ID

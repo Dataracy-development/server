@@ -4,9 +4,6 @@ import com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity;
 import com.querydsl.core.types.OrderSpecifier;
 
 public final class ProjectPopularOrderBuilder {
-    /**
- * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
- */
     private ProjectPopularOrderBuilder() {}
 
     /**

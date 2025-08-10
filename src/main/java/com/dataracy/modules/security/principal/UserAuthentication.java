@@ -8,11 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
-/**
- * 시스템 내 인증된 사용자 표현을 위한 클래스입니다.
- */
 public class UserAuthentication extends UsernamePasswordAuthenticationToken {
-
     public UserAuthentication(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);
     }

@@ -9,14 +9,12 @@ import com.dataracy.modules.email.domain.exception.EmailException;
 import com.dataracy.modules.email.domain.model.EmailContent;
 import com.dataracy.modules.email.domain.status.EmailErrorStatus;
 import com.dataracy.modules.email.domain.support.EmailContentFactory;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.Instant;
 
-@Slf4j
 @Service
 public class EmailCommandService implements SendEmailUseCase {
     private final SendEmailPort sendEmailPort;

@@ -22,7 +22,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-
 @Repository
 @RequiredArgsConstructor
 public class ReadCommentPortAdapter implements ReadCommentPort {

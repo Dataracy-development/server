@@ -3,9 +3,6 @@ package com.dataracy.modules.reference.adapter.jpa.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-/**
- * 방문 경로 엔티티
- */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

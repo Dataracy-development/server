@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-/**
- * 이메일 전송 enum
- */
 @Getter
 @RequiredArgsConstructor
 public enum EmailVerificationType {

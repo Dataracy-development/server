@@ -3,6 +3,27 @@ package com.dataracy.modules.dataset.application.dto.response.read;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ *
+ * @param id
+ * @param title
+ * @param username
+ * @param authorLabel
+ * @param occupationLabel
+ * @param topicLabel
+ * @param dataSourceLabel
+ * @param dataTypeLabel
+ * @param startDate
+ * @param endDate
+ * @param description
+ * @param analysisGuide
+ * @param dataThumbnailUrl
+ * @param downloadCount
+ * @param rowCount
+ * @param columnCount
+ * @param previewJson
+ * @param createdAt
+ */
 public record DataDetailResponse(
         Long id,
         String title,

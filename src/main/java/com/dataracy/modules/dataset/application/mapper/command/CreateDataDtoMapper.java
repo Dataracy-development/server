@@ -6,11 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * 도메인 요청 DTO -> 도메인 모델
+ * Data 도메인 요청 DTO -> Data 도메인 모델
  */
 @Component
 public class CreateDataDtoMapper {
-
     @Value("${default.dataset.image-url}")
     private String defaultDatasetImageUrl;
 

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class FileDeleteProducer {
-
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Value("${spring.kafka.producer.file-delete.topic:file-delete-topic}")

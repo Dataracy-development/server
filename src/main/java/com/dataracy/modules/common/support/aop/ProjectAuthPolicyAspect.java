@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ProjectAuthPolicyAspect {
-
     private final FindUserIdUseCase findUserIdUseCase;
     private final FindUserIdIncludingDeletedUseCase findUserIdIncludingDeletedUseCase;
 

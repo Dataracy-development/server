@@ -20,6 +20,7 @@ public class EmailVerifyService implements VerifyEmailUseCase {
     private final CacheResetTokenUseCase cacheResetTokenUseCase;
 
     private final JwtGenerateUseCase jwtGenerateUseCase;
+
     /**
      * 이메일 인증코드를 검증하고, 비밀번호 찾기 용도일 경우 리셋 토큰을 반환합니다.
      *

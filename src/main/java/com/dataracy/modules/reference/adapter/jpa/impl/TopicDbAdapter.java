@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class TopicDbAdapter implements TopicPort {
     private final TopicJpaRepository topicJpaRepository;
 
-    /****
+    /**
      * 모든 토픽을 조회하여 도메인 `Topic` 객체의 리스트로 반환한다.
      *
      * @return 데이터베이스에 저장된 모든 토픽의 도메인 객체 리스트
@@ -70,7 +70,7 @@ public class TopicDbAdapter implements TopicPort {
         return isExists;
     }
 
-    /****
+    /**
      * 주어진 토픽 ID에 해당하는 토픽의 라벨을 Optional로 반환합니다.
      *
      * @param topicId 조회할 토픽의 ID

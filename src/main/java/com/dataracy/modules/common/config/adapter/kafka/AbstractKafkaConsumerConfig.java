@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractKafkaConsumerConfig<V> {
-
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
@@ -44,25 +43,27 @@ public abstract class AbstractKafkaConsumerConfig<V> {
     }
 
     /**
- * Kafka 메시지 키에 사용할 역직렬화 클래스 타입을 반환합니다.
- *
- * @return Kafka 메시지 키 역직렬화에 사용될 클래스 타입
- */
-protected abstract Class<?> keyDeserializer();
+     * Kafka 메시지 키에 사용할 역직렬화 클래스 타입을 반환합니다.
+     *
+     * @return Kafka 메시지 키 역직렬화에 사용될 클래스 타입
+     */
+    protected abstract Class<?> keyDeserializer();
+
     /**
- * Kafka 값 역직렬화에 사용할 Deserializer 클래스 타입을 반환합니다.
- *
- * @return 값 역직렬화에 사용되는 Deserializer 클래스
- */
-protected abstract Class<?> valueDeserializer();
+     * Kafka 값 역직렬화에 사용할 Deserializer 클래스 타입을 반환합니다.
+     *
+     * @return 값 역직렬화에 사용되는 Deserializer 클래스
+     */
+    protected abstract Class<?> valueDeserializer();
+
     /**
- * Kafka 컨슈머 그룹 ID를 반환합니다.
- *
- * 이 메서드는 구체적인 컨슈머 그룹 ID를 지정하기 위해 하위 클래스에서 구현되어야 합니다.
- *
- * @return 사용할 Kafka 컨슈머 그룹 ID
- */
-protected abstract String groupId();
+     * Kafka 컨슈머 그룹 ID를 반환합니다.
+     *
+     * 이 메서드는 구체적인 컨슈머 그룹 ID를 지정하기 위해 하위 클래스에서 구현되어야 합니다.
+     *
+     * @return 사용할 Kafka 컨슈머 그룹 ID
+     */
+    protected abstract String groupId();
 
     /**
      * Kafka Consumer의 bootstrap-servers 설정이 비어 있는지 검증합니다.

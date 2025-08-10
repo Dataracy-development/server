@@ -2,6 +2,17 @@ package com.dataracy.modules.comment.application.dto.response.read;
 
 import java.time.LocalDateTime;
 
+/**
+ *
+ * @param id
+ * @param username
+ * @param authorLevelLabel
+ * @param userProfileUrl
+ * @param content
+ * @param likeCount
+ * @param createdAt
+ * @param isLiked
+ */
 public record FindReplyCommentResponse(
         Long id,
         String username,

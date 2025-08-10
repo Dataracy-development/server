@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataFilterWebMapper {
-
     /**
      * FilteringDataWebRequest 웹 요청 DTO를 FilteringDataRequest 애플리케이션 도메인 DTO로 변환합니다.
      *

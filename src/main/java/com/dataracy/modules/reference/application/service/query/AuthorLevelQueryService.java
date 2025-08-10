@@ -13,7 +13,6 @@ import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.AuthorLevel;
 import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthorLevelQueryService implements
@@ -89,7 +87,7 @@ public class AuthorLevelQueryService implements
         LoggerFactory.service().logSuccess("ValidateAuthorLevelUseCase", "주어진 ID에 해당하는 작성자 유형이 존재하는지 확인 서비스 종료 authorLevelId=" + authorLevelId, startTime);
     }
 
-    /****
+    /**
      * 주어진 작가 등급 ID에 해당하는 라벨을 반환합니다.
      *
      * @param authorLevelId 조회할 작가 등급의 ID

@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ProjectErrorStatus implements BaseErrorCode {
-
     FAIL_SAVE_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-001", "프로젝트 업로드에 실패했습니다."),
     NOT_FOUND_PROJECT(HttpStatus.NOT_FOUND, "PROJECT-002", "해당 프로젝트 리소스가 존재하지 않습니다."),
     NOT_FOUND_PARENT_PROJECT(HttpStatus.NOT_FOUND, "PROJECT-003", "해당 부모 프로젝트 리소스가 존재하지 않습니다."),
@@ -20,6 +19,7 @@ public enum ProjectErrorStatus implements BaseErrorCode {
     FAIL_GET_USER_INFO(HttpStatus.INTERNAL_SERVER_ERROR, "PROJECT-009", "ProjectUser을 생성하기 위한 유저 정보가 주입되지 않았습니다."),
     INVALID_THUMBNAIL_FILE_URL(HttpStatus.BAD_REQUEST, "PROJECT-010", "유효하지 않은 프로젝트 썸네일 파일 url입니다."),
     ;
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

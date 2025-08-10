@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
     /**
      * 비즈니스 예외를 처리하여 해당 HTTP 상태 코드와 표준화된 에러 응답을 반환합니다.
      *

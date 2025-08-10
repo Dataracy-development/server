@@ -7,12 +7,14 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * 제공자가 카카오일 경우
- * 카카오 유저 정보 저장
- */
 @Component
 public class KakaoOAuthUserInfoAdapter implements OAuthUserInfoPort {
+    /**
+     *
+     * @param provider
+     * @param attributes
+     * @return
+     */
     @Override
     public OAuthUserInfo extract(String provider, Map<String, Object> attributes) {
         if (!provider.equals("kakao")) return null;

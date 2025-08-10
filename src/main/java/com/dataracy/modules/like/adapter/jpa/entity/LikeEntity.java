@@ -5,9 +5,6 @@ import com.dataracy.modules.like.domain.enums.TargetType;
 import jakarta.persistence.*;
 import lombok.*;
 
-/**
- * like 테이블
- */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -4,10 +4,7 @@ import com.dataracy.modules.comment.adapter.jpa.entity.CommentEntity;
 import com.dataracy.modules.comment.domain.model.Comment;
 
 public final class CommentEntityMapper {
-    /**
- * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
- */
-private CommentEntityMapper() {}
+    private CommentEntityMapper() {}
 
     /**
      * CommentEntity 객체를 Comment 도메인 객체로 변환합니다.

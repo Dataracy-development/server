@@ -3,7 +3,6 @@ package com.dataracy.modules.project.adapter.scheduler;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.application.port.out.cache.CacheProjectViewCountPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectViewPort;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,10 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
-@Slf4j
 @Component
 public class ProjectViewCountScheduler {
-
     private final CacheProjectViewCountPort cacheProjectViewCountPort;
 
     private final UpdateProjectViewPort updateProjectViewDbPort;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FindCommentDtoMapper {
-    /****
+    /**
      * 댓글 도메인 객체와 사용자 정보를 기반으로 FindCommentResponse DTO로 변환합니다.
      *
      * @param comment 변환할 댓글 도메인 객체

@@ -20,7 +20,6 @@ import java.util.Set;
 @Component
 @RequiredArgsConstructor
 public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
-
     private final StringRedisTemplate redisTemplate;
     private static final Duration TTL = Duration.ofMinutes(5);
 
@@ -81,12 +80,6 @@ public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
         }
     }
 
-    /**
-     * 지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환합니다.
-     *
-     * @param targetType 조회수 키를 조회할 타겟 타입
-     * @return 해당 타겟 타입의 모든 조회수 Redis 키 집합
-     */
 //    public Set<String> getAllViewCountKeys(String targetType) {
 //        try {
 //            Instant startTime = LoggerFactory.redis().logQueryStart("viewCount:" + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType);
@@ -100,14 +93,14 @@ public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
 //            LoggerFactory.redis().logError("viewCount:" + targetType + ":*", "네트워크 오류로 데이터 접근에 실패했습니다.", e);
 //            throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
 //        }
-/****
+
+    /**
      * 지정된 타겟 타입에 해당하는 모든 조회수 Redis 키의 집합을 반환합니다.
      *
      * @param targetType 조회수 키를 검색할 타겟 타입
      * @return 해당 타겟 타입의 모든 조회수 Redis 키 집합
      * @throws CommonException 레디스 연결 실패 또는 데이터 접근 예외 발생 시
      */
-
     @Override
     public Set<String> getAllViewCountKeys(String targetType) {
         try {

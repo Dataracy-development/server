@@ -20,9 +20,7 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class LikeCommandService implements
-        LikeTargetUseCase
-{
+public class LikeCommandService implements LikeTargetUseCase {
     private final LikeCommandPort likeCommandPort;
     private final SendLikeEventPort sendLikeEventPort;
 

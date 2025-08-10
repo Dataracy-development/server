@@ -10,9 +10,6 @@ import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
 
-/**
- * 작성자, 수정자 자동 주입
- */
 @Configuration
 @EnableJpaAuditing
 public class JpaConfig {

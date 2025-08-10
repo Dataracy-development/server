@@ -10,9 +10,6 @@ import org.hibernate.annotations.Where;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * users 테이블
- */
 @Entity
 @Where(clause = "is_deleted = false")
 @Getter

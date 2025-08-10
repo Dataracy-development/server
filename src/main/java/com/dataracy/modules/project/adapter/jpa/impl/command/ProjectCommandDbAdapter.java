@@ -31,7 +31,7 @@ public class ProjectCommandDbAdapter implements
     private final ProjectJpaRepository projectJpaRepository;
     private final ProjectDataJpaRepository projectDataJpaRepository;
 
-    /****
+    /**
      * 프로젝트 도메인 객체를 저장하고, 저장된 최소 정보의 프로젝트 객체를 반환합니다.
      *
      * @param project 저장할 프로젝트 도메인 객체

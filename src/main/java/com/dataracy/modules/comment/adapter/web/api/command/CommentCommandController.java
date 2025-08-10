@@ -52,7 +52,7 @@ public class CommentCommandController implements CommentCommandApi {
                 .body(SuccessResponse.of(CommentSuccessStatus.CREATED_COMMENT));
     }
 
-    /****
+    /**
      * 프로젝트 내 특정 댓글을 수정하는 REST API 엔드포인트입니다.
      *
      * @param projectId 댓글이 속한 프로젝트의 ID입니다.

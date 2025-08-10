@@ -26,7 +26,12 @@ public class VisitSourceDtoMapper {
         );
     }
 
-    // 전체 VisitSource 리스트 조회 도메인 모델 -> 전체 VisitSource 리스트 조회 도메인 응답 DTO
+    /**
+     * 데이터 유형 도메인 객체 리스트를 전체 데이터 유형 응답 DTO로 변환합니다.
+     *
+     * @param visitSources 변환할 데이터 유형 도메인 객체 리스트
+     * @return 변환된 데이터 유형 응답 DTO
+     */
     public AllVisitSourcesResponse toResponseDto(List<VisitSource> visitSources) {
         return new AllVisitSourcesResponse(
                 visitSources.stream()

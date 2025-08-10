@@ -7,9 +7,6 @@ import com.dataracy.modules.dataset.domain.model.DataMetadata;
  * 데이터 메타데이터 엔티티와 데이터 메타데이터 도메인 모델을 변환하는 매퍼
  */
 public final class DataMetadataEntityMapper {
-    /**
-     * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
-     */
     private DataMetadataEntityMapper() {
     }
 

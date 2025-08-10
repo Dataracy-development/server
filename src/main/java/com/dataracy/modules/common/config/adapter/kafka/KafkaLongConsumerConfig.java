@@ -9,7 +9,6 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 
 @Configuration
 public class KafkaLongConsumerConfig extends AbstractKafkaConsumerConfig<Long> {
-
     /**
      * Kafka 메시지 키를 역직렬화할 때 사용할 역직렬화 클래스(StringDeserializer)를 반환합니다.
      *

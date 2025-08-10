@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * 프로젝트 상세정보 도메인 DTO와 프로젝트 상세정보 도메인 모델을 변환하는 매퍼
+ */
 @Component
 public class ProjectDetailDtoMapper {
     /**

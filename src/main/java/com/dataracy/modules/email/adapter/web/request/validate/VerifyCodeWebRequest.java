@@ -7,11 +7,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-/**
- * 이메일 인증 코드 검증을 위한 웹 요청 DTO
- * @param email 이메일
- * @param code 인증코드
- */
+@Schema(description = "이메일 인증코드 확인 웹 요청 DTO")
 public record VerifyCodeWebRequest(
         @Schema(description = "이메일", example = "example@gmail.com")
         @NotBlank(message = "이메일을 입력해주세요")

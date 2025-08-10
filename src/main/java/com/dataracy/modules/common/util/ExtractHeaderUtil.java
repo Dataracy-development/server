@@ -13,7 +13,7 @@ import java.util.Optional;
 public class ExtractHeaderUtil {
     private final JwtValidateUseCase jwtValidateUseCase;
 
-    /****
+    /**
      * HTTP 요청의 Authorization 헤더에서 Bearer 타입의 액세스 토큰을 추출합니다.
      *
      * @param request 액세스 토큰을 추출할 HttpServletRequest 객체

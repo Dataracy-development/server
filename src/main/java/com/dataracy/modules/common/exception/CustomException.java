@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public class CustomException extends RuntimeException {
-
     private final BaseErrorCode errorCode;
 
     public HttpStatus getHttpStatus() {

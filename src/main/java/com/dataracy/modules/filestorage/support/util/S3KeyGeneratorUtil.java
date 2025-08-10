@@ -8,7 +8,7 @@ public final class S3KeyGeneratorUtil {
     private S3KeyGeneratorUtil() {
     }
 
-    /****
+    /**
      * 도메인, 엔티티 ID, 원본 파일명을 기반으로 S3에 저장할 파일의 고유 키를 생성합니다.
      *
      * 입력된 도메인, 엔티티 ID, 원본 파일명에서 확장자를 추출하고, 무작위 UUID를 조합하여 `도메인/엔티티ID/UUID.확장자` 형식의 S3 키 문자열을 반환합니다.

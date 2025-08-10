@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CreateUserDtoMapper {
-
     @Value("${default.profile.image-url}")
     private String defaultProfileImageUrl;
 
