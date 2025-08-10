@@ -10,7 +10,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ErrorResponse {
-
     private int httpStatus;
     private String code;
     private String message;

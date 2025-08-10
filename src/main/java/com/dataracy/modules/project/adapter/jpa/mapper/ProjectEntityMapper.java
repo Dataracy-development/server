@@ -9,10 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public final class ProjectEntityMapper {
-    /**
- * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
- */
-private ProjectEntityMapper() {}
+    private ProjectEntityMapper() {}
 
     /**
      * ProjectEntity를 자식 프로젝트와 데이터 정보를 제외한 최소 정보만 포함하는 Project 도메인 객체로 변환합니다.

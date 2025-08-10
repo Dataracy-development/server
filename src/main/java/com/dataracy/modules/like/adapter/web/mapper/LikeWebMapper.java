@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LikeWebMapper {
-
     /**
      * TargetLikeWebRequest 객체를 TargetLikeRequest 애플리케이션 DTO로 변환합니다.
      *

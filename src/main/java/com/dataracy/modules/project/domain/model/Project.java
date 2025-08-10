@@ -5,9 +5,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * 프로젝트 도메인 모델
- */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

@@ -5,9 +5,9 @@ import com.querydsl.core.types.OrderSpecifier;
 
 public final class CommentSortBuilder {
     /**
- * CommentSortBuilder 클래스의 인스턴스 생성을 방지합니다.
- */
-private CommentSortBuilder() {}
+     * CommentSortBuilder 클래스의 인스턴스 생성을 방지합니다.
+     */
+    private CommentSortBuilder() {}
 
     private static final QCommentEntity comment = QCommentEntity.commentEntity;
 

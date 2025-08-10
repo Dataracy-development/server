@@ -10,7 +10,11 @@ public final class AuthorLevelEntityMapper {
     private AuthorLevelEntityMapper() {
     }
 
-    // AuthorLevel 엔티티 -> AuthorLevel 도메인 모델
+    /**
+     *
+     * @param authorLevelEntity
+     * @return
+     */
     public static AuthorLevel toDomain(AuthorLevelEntity authorLevelEntity) {
         if (authorLevelEntity == null) {
             return null;

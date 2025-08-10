@@ -3,7 +3,6 @@ package com.dataracy.modules.common.logging;
 import com.dataracy.modules.common.logging.support.BaseLogger;
 
 public class DomainLogger extends BaseLogger {
-
     /**
      * 도메인 규칙 위반이 발생했을 때 경고 로그를 남깁니다.
      *

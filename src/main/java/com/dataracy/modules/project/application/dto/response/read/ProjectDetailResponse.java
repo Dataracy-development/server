@@ -5,6 +5,29 @@ import com.dataracy.modules.project.application.dto.response.support.ProjectConn
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ *
+ * @param id
+ * @param title
+ * @param username
+ * @param userIntroductionText
+ * @param authorLevelLabel
+ * @param occupationLabel
+ * @param topicLabel
+ * @param analysisPurposeLabel
+ * @param dataSourceLabel
+ * @param isContinue
+ * @param parentProjectId
+ * @param content
+ * @param projectThumbnailUrl
+ * @param createdAt
+ * @param commentCount
+ * @param likeCount
+ * @param viewCount
+ * @param isLiked
+ * @param hasChild
+ * @param connectedDataSets
+ */
 public record ProjectDetailResponse(
         Long id,
         String title,

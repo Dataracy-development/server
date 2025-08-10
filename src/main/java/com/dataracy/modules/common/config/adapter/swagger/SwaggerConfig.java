@@ -20,7 +20,6 @@ import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
 @Configuration
 @RequiredArgsConstructor
 public class SwaggerConfig {
-
     private final SwaggerProperties swaggerProperties;
 
     @Bean

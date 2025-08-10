@@ -8,10 +8,7 @@ import java.util.List;
 import static com.dataracy.modules.like.adapter.jpa.entity.QLikeEntity.likeEntity;
 
 public class LikeFilterPredicate {
-/**
- * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
- */
-private LikeFilterPredicate() {}
+    private LikeFilterPredicate() {}
 
     /**
      * 주어진 userId와 일치하는 LikeEntity를 필터링하는 QueryDSL BooleanExpression을 반환합니다.

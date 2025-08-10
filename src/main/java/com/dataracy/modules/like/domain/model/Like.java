@@ -3,9 +3,6 @@ package com.dataracy.modules.like.domain.model;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import lombok.*;
 
-/**
- * like 모델
- */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

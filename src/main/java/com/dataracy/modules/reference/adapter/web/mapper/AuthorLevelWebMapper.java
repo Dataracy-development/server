@@ -27,7 +27,12 @@ public class AuthorLevelWebMapper {
         );
     }
 
-    // 전체 authorLevel 리스트 조회 도메인 응답 DTO -> 전체 authorLevel 리스트 조회 웹 응답 DTO
+    /**
+     * 도메인 계층의 전체 작성자 유형 리스트 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     *
+     * @param allAuthorLevelsResponse 도메인 계층의 전체 작성자 유형 리스트 응답 DTO
+     * @return 변환된 웹 계층의 전체 작성자 유형 리스트 응답 DTO
+     */
     public AllAuthorLevelsWebResponse toWebDto(AllAuthorLevelsResponse allAuthorLevelsResponse) {
         if (allAuthorLevelsResponse == null || allAuthorLevelsResponse.authorLevels() == null) {
             return new AllAuthorLevelsWebResponse(List.of());

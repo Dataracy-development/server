@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 @Configuration
 @ConfigurationProperties(prefix = "swagger")
 public class SwaggerProperties {
-
     @NotBlank(message = "Swagger title은 필수입니다.")
     private String title;
 

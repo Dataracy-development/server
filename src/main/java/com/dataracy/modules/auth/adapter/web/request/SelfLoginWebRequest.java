@@ -5,12 +5,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-/**
- * 자체 로그인을 위한 웹 요청 DTO
- *
- * @param email 이메일
- * @param password 비밀번호
- */
 @Schema(description = "자체 로그인을 위한 Web 요청")
 public record SelfLoginWebRequest(
         @Schema(description = "이메일", example = "example@gmail.com")

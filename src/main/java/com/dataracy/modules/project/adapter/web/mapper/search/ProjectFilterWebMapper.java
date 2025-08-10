@@ -14,7 +14,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ProjectFilterWebMapper {
-
     private final ChildProjectWebMapper childProjectWebMapper;
 
     /**

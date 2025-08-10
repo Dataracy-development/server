@@ -13,7 +13,6 @@ import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.DataSource;
 import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DataSourceQueryService implements
@@ -71,7 +69,7 @@ public class DataSourceQueryService implements
         return dataSourceResponse;
     }
 
-    /****
+    /**
      * 주어진 데이터 소스 ID가 존재하는지 검증합니다.
      *
      * 데이터 소스가 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
@@ -113,7 +111,7 @@ public class DataSourceQueryService implements
         return label;
     }
 
-    /****
+    /**
      * 주어진 데이터 소스 ID 목록에 대해 각 ID와 해당 라벨을 매핑한 맵을 반환합니다.
      *
      * @param dataSourceIds 라벨을 조회할 데이터 소스 ID 목록

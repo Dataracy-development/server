@@ -13,10 +13,9 @@ import java.time.Instant;
 @Service
 @RequiredArgsConstructor
 public class FileDownloadService implements DownloadFileUseCase {
-
     private final FileStoragePort fileStoragePort;
 
-    /****
+    /**
      * 지정된 S3 객체 URL과 만료 시간을 기반으로 사전 서명된 S3 URL을 생성하여 반환합니다.
      *
      * @param s3Url 사전 서명된 URL을 생성할 S3 객체의 URL

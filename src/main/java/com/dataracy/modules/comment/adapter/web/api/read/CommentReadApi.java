@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "Comment - Read", description = "피드백 댓글 관련 API - 조회")
 @RequestMapping("/api/v1/projects")
 public interface CommentReadApi {
-
     /**
      * 지정된 프로젝트의 댓글 목록을 페이지네이션하여 조회합니다.
      *

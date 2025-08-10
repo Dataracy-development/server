@@ -13,7 +13,6 @@ import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.DataType;
 import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DataTypeQueryService implements
@@ -33,7 +31,7 @@ public class DataTypeQueryService implements
     private final DataTypeDtoMapper dataTypeDtoMapper;
     private final DataTypePort dataTypePort;
 
-    /****
+    /**
      * 모든 데이터 유형 정보를 조회하여 AllDataTypesResponse DTO로 반환한다.
      *
      * @return 전체 데이터 유형 정보를 포함하는 AllDataTypesResponse 객체

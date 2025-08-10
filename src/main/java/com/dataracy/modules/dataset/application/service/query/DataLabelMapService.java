@@ -17,7 +17,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DataLabelMapService implements FindDataLabelMapUseCase {
-
     private final FindUsernameUseCase findUsernameUseCase;
 
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;

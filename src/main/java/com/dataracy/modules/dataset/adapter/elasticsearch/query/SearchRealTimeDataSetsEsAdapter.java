@@ -22,7 +22,7 @@ public class SearchRealTimeDataSetsEsAdapter implements SearchRealTimeDataSetsPo
     private final ElasticsearchClient client;
     private static final String INDEX = "data_index";
 
-    /****
+    /**
      * 주어진 키워드로 Elasticsearch에서 삭제되지 않은 데이터셋을 실시간으로 검색하여 최소 정보 목록을 반환합니다.
      *
      * 키워드는 "title"(가중치 2)와 "description" 필드에 대해 자동 퍼지 멀티매치 쿼리로 검색되며,

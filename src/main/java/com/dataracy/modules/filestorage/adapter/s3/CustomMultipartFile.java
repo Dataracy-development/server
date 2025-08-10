@@ -5,7 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 
 public class CustomMultipartFile implements MultipartFile {
-
     private final byte[] content;
     private final String name;
     private final String originalFilename;
@@ -27,51 +26,68 @@ public class CustomMultipartFile implements MultipartFile {
     }
 
     /**
- * 이 파일의 이름을 반환합니다.
- *
- * @return 파일의 이름
- */
-    @Override public String getName() { return name; }
+     * 이 파일의 이름을 반환합니다.
+     *
+     * @return 파일의 이름
+     */
+    @Override public String getName() {
+        return name;
+    }
+
     /**
- * 업로드된 파일의 원본 파일명을 반환합니다.
- *
- * @return 업로드 시 사용된 원본 파일명
- */
-    @Override public String getOriginalFilename() { return originalFilename; }
+     * 업로드된 파일의 원본 파일명을 반환합니다.
+     *
+     * @return 업로드 시 사용된 원본 파일명
+     */
+    @Override public String getOriginalFilename() {
+        return originalFilename;
+    }
+
     /**
      * 파일의 MIME 콘텐츠 타입을 반환합니다.
      *
      * @return 파일의 MIME 타입 문자열
      */
-    @Override public String getContentType() { return contentType; }
+    @Override public String getContentType() {
+        return contentType;
+    }
+
     /**
- * 파일의 내용이 비어 있는지 확인합니다.
- *
- * @return 파일 내용이 없으면 true, 그렇지 않으면 false입니다.
- */
-    @Override public boolean isEmpty() { return content.length == 0; }
+     * 파일의 내용이 비어 있는지 확인합니다.
+     *
+     * @return 파일 내용이 없으면 true, 그렇지 않으면 false입니다.
+     */
+    @Override public boolean isEmpty() {
+        return content.length == 0;
+    }
+
     /**
- * 파일의 크기를 바이트 단위로 반환합니다.
- *
- * @return 파일 데이터의 총 바이트 수
- */
-    @Override public long getSize() { return content.length; }
+     * 파일의 크기를 바이트 단위로 반환합니다.
+     *
+     * @return 파일 데이터의 총 바이트 수
+     */
+    @Override public long getSize() {
+        return content.length;
+    }
+
     /**
-         * 파일의 내용을 복제된 바이트 배열로 반환합니다.
-         *
-         * @return 파일 데이터의 복제본 바이트 배열
-         */
+     * 파일의 내용을 복제된 바이트 배열로 반환합니다.
+     *
+     * @return 파일 데이터의 복제본 바이트 배열
+     */
     @Override public byte[] getBytes() {
         return content.clone();
     }
+
     /**
-         * 파일 데이터에 대한 새로운 ByteArrayInputStream을 반환합니다.
-         *
-         * @return 파일 내용을 읽기 위한 입력 스트림
-         */
+     * 파일 데이터에 대한 새로운 ByteArrayInputStream을 반환합니다.
+     *
+     * @return 파일 내용을 읽기 위한 입력 스트림
+     */
     @Override public InputStream getInputStream() {
         return new ByteArrayInputStream(content);
     }
+
     /**
      * 파일의 내용을 지정된 파일로 복사합니다.
      *

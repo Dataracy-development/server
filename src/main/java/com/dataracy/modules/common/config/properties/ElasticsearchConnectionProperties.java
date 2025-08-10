@@ -20,7 +20,6 @@ import org.springframework.validation.annotation.Validated;
 @Component
 @ConfigurationProperties(prefix = "elasticsearch.connection")
 public class ElasticsearchConnectionProperties {
-
     /**
      * 예: localhost
      */

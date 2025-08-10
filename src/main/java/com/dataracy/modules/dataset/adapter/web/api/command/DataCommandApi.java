@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "Data - Command", description = "데이터셋 관련 API - 생성, 수정, 삭제 등")
 @RequestMapping("/api/v1/datasets")
 public interface DataCommandApi {
-
     /**
      * 새로운 데이터셋 파일과 선택적 썸네일, 메타데이터를 업로드하여 데이터셋을 생성한다.
      *

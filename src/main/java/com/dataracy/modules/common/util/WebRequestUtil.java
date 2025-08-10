@@ -43,6 +43,7 @@ public final class WebRequestUtil {
                 || EXCLUDED_EQUALS.stream().anyMatch(uri::equals);
     }
 
+
     private static final List<String> EXCLUDED_PREFIXES = List.of(
             "/swagger", "/v3/api-docs", "/swagger-ui", "/swagger-resources",
             "/.well-known", "/webjars", "/static", "/error"

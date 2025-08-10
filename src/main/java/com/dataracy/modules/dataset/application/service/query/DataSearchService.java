@@ -44,6 +44,7 @@ public class DataSearchService implements
     private final SearchSimilarDataSetsPort searchSimilarDataSetsPort;
     private final SearchFilteredDataSetsPort searchFilteredDataSetsPort;
     private final SearchRealTimeDataSetsPort searchRealTimeDataSetsPort;
+
     /**
      * 지정한 데이터 ID를 기준으로 유사한 데이터셋 목록을 조회합니다.
      *

@@ -17,7 +17,6 @@ import java.util.function.Supplier;
  */
 @Component
 public class RedissonDistributedLockManager {
-
     private final RedissonClient redissonClient;
 
     /**

@@ -9,12 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * 인증 유저 정보를 답는 커스텀 정보
- */
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
-
     private final Long userId;
     private final RoleType role;
 

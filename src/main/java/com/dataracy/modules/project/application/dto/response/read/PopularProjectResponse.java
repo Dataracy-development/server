@@ -1,5 +1,20 @@
 package com.dataracy.modules.project.application.dto.response.read;
 
+/**
+ *
+ * @param id
+ * @param title
+ * @param content
+ * @param username
+ * @param projectThumbnailUrl
+ * @param topicLabel
+ * @param analysisPurposeLabel
+ * @param dataSourceLabel
+ * @param authorLevelLabel
+ * @param commentCount
+ * @param likeCount
+ * @param viewCount
+ */
 public record PopularProjectResponse(
         Long id,
         String title,

@@ -15,9 +15,6 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 레디스를 이용해 이메일 인증 저장 및 조회
- */
 @Component
 @RequiredArgsConstructor
 public class EmailRedisAdapter implements CacheEmailPort {

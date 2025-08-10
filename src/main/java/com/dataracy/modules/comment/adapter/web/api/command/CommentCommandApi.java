@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Comment - Command", description = "프로젝트의 피드백 댓글 API - 생성, 수정, 삭제 등")
 @RequestMapping("/api/v1/projects")
 public interface CommentCommandApi {
-
     /**
      * 지정한 프로젝트에 피드백 댓글을 생성합니다.
      *

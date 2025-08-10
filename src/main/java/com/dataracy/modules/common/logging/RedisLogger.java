@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class RedisLogger extends BaseLogger {
-
     /**
      * Redis 조회 작업의 시작을 디버그 레벨로 로그에 기록하고 현재 시각을 반환합니다.
      *

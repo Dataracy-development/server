@@ -4,10 +4,7 @@ import com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity;
 import com.querydsl.core.types.dsl.NumberExpression;
 
 public final class DataPopularOrderBuilder {
-    /**
- * 이 클래스의 인스턴스 생성을 방지하기 위한 private 생성자입니다.
- */
-private DataPopularOrderBuilder() {}
+    private DataPopularOrderBuilder() {}
 
     /**
      * 인기 점수 계산식을 생성하여 반환합니다.

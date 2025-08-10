@@ -10,7 +10,12 @@ public final class VisitSourceEntityMapper {
     private VisitSourceEntityMapper() {
     }
 
-    // VisitSource 엔티티 -> VisitSource 도메인 모델
+    /**
+     * VisitSourceEntity 객체를 VisitSource 도메인 모델로 변환합니다.
+     *
+     * @param visitSourceEntity 변환할 VisitSourceEntity 객체
+     * @return 변환된 VisitSource 도메인 모델 객체, 입력이 null이면 null 반환
+     */
     public static VisitSource toDomain(VisitSourceEntity visitSourceEntity) {
         if (visitSourceEntity == null) {
             return null;

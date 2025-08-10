@@ -16,7 +16,7 @@ public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
     private final ElasticsearchClient client;
     private static final String INDEX = "project_index";
 
-    /****
+    /**
      * 지정된 프로젝트의 Elasticsearch 문서에서 viewCount 필드를 주어진 값만큼 증가시킵니다.
      *
      * 프로젝트 문서가 존재하지 않을 경우, viewCount를 increment 값으로 하여 새로 생성합니다.

@@ -85,7 +85,7 @@ public interface ProjectCommandApi {
             ModifyProjectWebRequest webRequest
     );
 
-    /****
+    /**
      * 지정한 ID의 프로젝트를 삭제합니다.
      *
      * @param projectId 삭제할 프로젝트의 ID (1 이상)

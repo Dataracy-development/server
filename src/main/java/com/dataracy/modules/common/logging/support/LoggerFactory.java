@@ -3,7 +3,6 @@ package com.dataracy.modules.common.logging.support;
 import com.dataracy.modules.common.logging.*;
 
 public class LoggerFactory {
-
     private static final ApiLogger API_LOGGER = new ApiLogger();
     private static final ServiceLogger SERVICE_LOGGER = new ServiceLogger();
     private static final DomainLogger DOMAIN_LOGGER = new DomainLogger();

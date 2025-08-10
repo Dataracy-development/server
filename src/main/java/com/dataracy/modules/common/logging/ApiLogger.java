@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class ApiLogger extends BaseLogger {
-
     /**
      * API 요청 메시지를 정보 로그로 기록하고, 요청 시각의 타임스탬프를 반환합니다.
      *

@@ -13,7 +13,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -22,14 +21,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * JWT 인증을 하는 커스텀 필터
- */
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-
     private final JwtValidateUseCase jwtValidateUseCase;
 
     /**
@@ -70,7 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    /****
+    /**
      * 현재 HTTP 요청이 JWT 인증 필터를 우회해야 하는지 여부를 반환합니다.
      *
      * 사전에 정의된 경로나 조건(예: Swagger, API 문서, 정적 리소스, 헬스 체크, 로그인, OAuth2, 루트, 에러, 웹훅, 공개 API, 회원가입, 인증, 비밀번호 재설정, 닉네임 중복 확인, 프로젝트 및 데이터셋 GET 요청, 파일 관련 경로 등)에 해당하는 경우 true를 반환하여 JWT 인증을 적용하지 않습니다.
@@ -103,7 +97,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 ;
     }
 
-    // 사용자 인증 설정
+    /**
+     *
+     * @param request
+     * @param userId
+     * @param role
+     */
     private void setAuthentication(HttpServletRequest request, Long userId, RoleType role) {
         CustomUserDetails userDetails = new CustomUserDetails(userId, role);
         UserAuthentication authentication = new UserAuthentication(userDetails, null, userDetails.getAuthorities());

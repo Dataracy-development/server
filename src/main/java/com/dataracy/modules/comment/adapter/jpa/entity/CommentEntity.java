@@ -4,9 +4,6 @@ import com.dataracy.modules.common.base.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-/**
- * comment 테이블
- */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -61,6 +58,7 @@ public class CommentEntity extends BaseTimeEntity {
     public void increaseLikeCount() {
         this.likeCount++;
     }
+
     /**
      * 댓글의 좋아요 수를 1 감소시킵니다.
      * 좋아요 수는 0보다 작아지지 않습니다.

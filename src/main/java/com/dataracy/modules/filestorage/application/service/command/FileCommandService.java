@@ -15,7 +15,6 @@ import java.time.Instant;
 @Service
 @RequiredArgsConstructor
 public class FileCommandService implements FileCommandUseCase {
-
     private final FileStoragePort fileStoragePort;
     private final ThumbnailGenerator thumbnailGenerator;
 

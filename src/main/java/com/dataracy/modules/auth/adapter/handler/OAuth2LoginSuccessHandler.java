@@ -19,9 +19,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * 소셜 로그인 성공 핸들러
- */
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {

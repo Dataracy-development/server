@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Tag(name = "File", description = "파일 관련 API")
 @RequestMapping("/api/v1/files")
 public interface FileApi {
-
     /**
      * 지정된 S3 URL과 유효기간(초)을 기반으로 S3 PreSigned URL을 발급합니다.
      *
