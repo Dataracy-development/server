@@ -10,7 +10,7 @@ import java.util.Optional;
 @Component
 public class KakaoOAuthUserInfoAdapter implements OAuthUserInfoPort {
     /**
-     *
+     * 추출
      * @param provider
      * @param attributes
      * @return

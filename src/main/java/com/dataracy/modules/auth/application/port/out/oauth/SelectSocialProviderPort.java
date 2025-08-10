@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface SelectSocialProviderPort {
     /**
-     *
+     * 프로바이더 선택
      * @param provider
      * @param attributes
      * @return

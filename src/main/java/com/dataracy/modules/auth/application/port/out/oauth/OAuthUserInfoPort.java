@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface OAuthUserInfoPort {
     /**
-     *
+     * 추출
      * @param provider
      * @param attributes
      * @return

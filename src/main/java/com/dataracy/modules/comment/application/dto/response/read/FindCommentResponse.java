@@ -3,7 +3,7 @@ package com.dataracy.modules.comment.application.dto.response.read;
 import java.time.LocalDateTime;
 
 /**
- *
+ *요청
  * @param id
  * @param username
  * @param authorLevelLabel

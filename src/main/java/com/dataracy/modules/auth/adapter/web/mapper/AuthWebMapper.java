@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthWebMapper {
     /**
-     *
+     * 자체 로그인
      * @param webRequest
      * @return
      */
