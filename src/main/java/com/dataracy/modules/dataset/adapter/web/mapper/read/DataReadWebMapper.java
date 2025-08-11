@@ -4,6 +4,9 @@ import com.dataracy.modules.dataset.adapter.web.response.read.*;
 import com.dataracy.modules.dataset.application.dto.response.read.*;
 import org.springframework.stereotype.Component;
 
+/**
+ * 데이터 조회 웹 DTO와 애플리케이션 DTO를 변환하는 매퍼
+ */
 @Component
 public class DataReadWebMapper {
     /**
@@ -37,7 +40,6 @@ public class DataReadWebMapper {
 
     /**
      * DataGroupCountResponse 객체를 DataGroupCountWebResponse 객체로 변환합니다.
-     *
      * 주어진 주제별 데이터 개수 정보를 웹 응답 객체로 매핑합니다.
      *
      * @param responseDto 주제별 데이터 개수 정보를 담은 애플리케이션 계층 DTO
@@ -53,7 +55,6 @@ public class DataReadWebMapper {
 
     /**
      * ConnectedDataResponse DTO를 ConnectedDataWebResponse로 변환합니다.
-     *
      * 데이터셋의 기본 정보와 연결된 프로젝트 수를 웹 응답 객체로 매핑합니다.
      *
      * @param responseDto 데이터셋 및 연결 프로젝트 수 정보를 포함한 DTO
@@ -79,7 +80,7 @@ public class DataReadWebMapper {
     /**
      * 최근 최소 데이터 정보를 웹 응답 DTO로 변환합니다.
      *
-     * @param responseDto 최근 최소 데이터 정보를 담은 도메인 DTO
+     * @param responseDto 최근 최소 데이터 정보를 담은 애플리케이션 응답 DTO
      * @return 데이터셋 ID, 제목, 썸네일 URL, 생성일시를 포함하는 웹 응답 DTO
      */
     public RecentMinimalDataWebResponse toWebDto(RecentMinimalDataResponse responseDto) {
@@ -92,11 +93,11 @@ public class DataReadWebMapper {
     }
 
     /**
-     * 인기 데이터 검색 도메인 DTO를 웹 응답 DTO로 변환합니다.
+     * 인기 데이터 검색 애플리케이션 응답 DTO를 웹 응답 DTO로 변환합니다.
+     * 데이터셋의 식별자, 제목, 사용자명, 주제, 데이터 소스 및 타입 라벨, 날짜 범위, 설명, 썸네일 URL,
+     * 다운로드 수, 행/열 개수, 생성일, 연결된 프로젝트 수를 포함한 정보를 매핑하여 반환합니다.
      *
-     * 데이터셋의 식별자, 제목, 사용자명, 주제, 데이터 소스 및 타입 라벨, 날짜 범위, 설명, 썸네일 URL, 다운로드 수, 행/열 개수, 생성일, 연결된 프로젝트 수를 포함한 정보를 매핑하여 반환합니다.
-     *
-     * @param responseDto 인기 데이터 검색 도메인 DTO
+     * @param responseDto 인기 데이터 검색 애플리케이션 응답 DTO
      * @return 인기 데이터 검색 웹 응답 DTO
      */
     public PopularDataWebResponse toWebDto(PopularDataResponse responseDto) {

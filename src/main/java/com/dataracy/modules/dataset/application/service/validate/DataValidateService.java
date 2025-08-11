@@ -18,8 +18,7 @@ public class DataValidateService implements ValidateDataUseCase {
 
     /**
      * 주어진 데이터 ID에 해당하는 데이터가 존재하는지 검증합니다.
-     *
-     * 데이터가 존재하지 않을 경우 {@code DataException}을 {@code NOT_FOUND_DATA} 상태로 발생시킵니다.
+     * 데이터가 존재하지 않을 경우 DataException을 NOT_FOUND_DATA 상태로 발생시킵니다.
      *
      * @param dataId 존재 여부를 확인할 데이터의 ID
      * @throws DataException 데이터가 존재하지 않을 때 발생

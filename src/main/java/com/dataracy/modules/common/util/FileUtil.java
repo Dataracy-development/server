@@ -6,6 +6,9 @@ import com.dataracy.modules.common.status.CommonErrorStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 public final class FileUtil {
+    /**
+     * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
     private FileUtil() {
     }
 
@@ -57,8 +60,7 @@ public final class FileUtil {
 
     /**
      * 일반 파일 업로드 시 파일의 크기와 확장자를 검증합니다.
-     *
-     * 파일이 null이거나 비어 있으면 검증을 건너뜁니다. 파일 크기가 10MB를 초과하거나 확장자가 xlsx, csv, json이 아닌 경우 {@code CommonException}이 발생합니다.
+     * 파일이 null이거나 비어 있으면 검증을 건너뜁니다. 파일 크기가 10MB를 초과하거나 확장자가 xlsx, csv, json이 아닌 경우 CommonException이 발생합니다.
      *
      * @param file 업로드할 파일
      * @throws CommonException 파일 크기가 10MB를 초과하거나 허용되지 않은 확장자인 경우 발생

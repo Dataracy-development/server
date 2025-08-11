@@ -22,7 +22,7 @@ public class ResetTokenRedisAdapter implements CacheResetTokenPort {
     private static final String PREFIX = "resetPasswordToken:";
 
     /**
-     * 주어진 토큰에 접두사를 붙여 Redis에 저장할 키를 생성합니다.
+     * 주어진 비밀번호 재설정용 토큰에 접두사를 붙여 Redis에 저장할 키를 생성합니다.
      *
      * @param token Redis 키에 사용할 리셋 토큰 문자열
      * @return 접두사가 포함된 Redis 키 문자열

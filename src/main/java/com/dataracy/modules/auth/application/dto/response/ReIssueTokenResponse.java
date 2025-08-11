@@ -1,7 +1,7 @@
 package com.dataracy.modules.auth.application.dto.response;
 
 /**
- * 쿠키의 리프레시 토큰을 통한 토큰 재발급을 위한 도메인 응답 객체
+ * 쿠키의 리프레시 토큰을 통한 토큰 재발급을 위한 애플리케이션 응답 객체
  *
  * @param accessToken 새롭게 발급한 어세스토큰
  * @param refreshToken 새롭게 발급한 리프레시토큰

@@ -20,6 +20,7 @@ public class OAuthUserInfoFactory implements SelectSocialProviderPort {
 
     /**
      * 주어진 소셜 제공자 이름과 속성 정보를 기반으로 적합한 OAuth 사용자 정보를 추출합니다.
+     * 구글, 카카오 등 어떤 소셜 서버로부터 로그인을 진행하는지 모르기에 stream으로 각자 찾아 반환한다.
      *
      * @param provider 소셜 제공자 이름
      * @param attributes 소셜 제공자에서 제공한 사용자 속성 정보

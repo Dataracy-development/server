@@ -79,7 +79,7 @@ public class JwtQueryService implements JwtValidateUseCase {
     @Override
     public String getEmailFromRegisterToken(String token) {
         Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "레지스터 토큰으로부터 이메일 추출 서비스 시작");
-        String email = jwtValidatorPort.getEmailFromRegisterToken(token);
+        String email = jwtValidatorPort.getEmailFromToken(token);
         LoggerFactory.service().logSuccess("JwtValidateUseCase", "레지스터 토큰으로부터 이메일 추출 서비스 성공", startTime);
         return email;
     }
@@ -93,7 +93,7 @@ public class JwtQueryService implements JwtValidateUseCase {
     @Override
     public String getEmailFromResetToken(String token) {
         Instant startTime = LoggerFactory.service().logStart("JwtValidateUseCase", "비밀번호 재설정 토큰으로부터 이메일 추출 서비스 시작");
-        String email = jwtValidatorPort.getEmailFromResetToken(token);
+        String email = jwtValidatorPort.getEmailFromToken(token);
         LoggerFactory.service().logSuccess("JwtValidateUseCase", "비밀번호 재설정 토큰으로부터 이메일 추출 서비스 성공", startTime);
         return email;
     }

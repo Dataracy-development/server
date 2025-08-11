@@ -9,7 +9,7 @@ public class EmailContentFactory {
      *
      * @param type 이메일 전송 목적 enum
      * @param code 6자리 숫자
-     * @return
+     * @return 이메일 내용
      */
     public static EmailContent generate(EmailVerificationType type, String code) {
         return switch (type) {

@@ -6,7 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * 패스워드 검증 설정
+ * 패스워드 암호화 설정
  */
 @Configuration
 public class PasswordEncoderConfig {

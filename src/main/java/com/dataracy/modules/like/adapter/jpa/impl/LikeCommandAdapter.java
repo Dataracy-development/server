@@ -31,7 +31,6 @@ public class LikeCommandAdapter implements LikeCommandPort {
 
     /**
      * 주어진 사용자 ID, 타겟 ID, 타겟 타입에 해당하는 좋아요를 취소합니다.
-     *
      * 해당 조건에 맞는 좋아요가 존재하지 않을 경우 LikeException이 발생합니다.
      *
      * @param userId 좋아요를 취소할 사용자 ID

@@ -45,7 +45,7 @@ public class SendEmailSesAdapter implements SendEmailPort {
     /**
      * SES 발신자 이메일 설정이 비어 있는지 검증합니다.
      *
-     * 발신자 이메일이 비어 있으면 {@code IllegalStateException}을 발생시킵니다.
+     * 발신자 이메일이 비어 있으면 IllegalStateException을 발생시킵니다.
      */
     @PostConstruct
     public void validateProperties() {

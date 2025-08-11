@@ -4,7 +4,7 @@ import com.dataracy.modules.common.logging.support.BaseLogger;
 
 public class CommonLogger extends BaseLogger {
     /**
-     * 지정된 주제와 메시지로 프로세스 또는 이벤트의 시작을 디버그 레벨로 기록합니다.
+     * 지정된 주제와 메시지로 프로세스의 시작을 디버그 레벨로 기록합니다.
      *
      * @param topic 로그의 주제 또는 카테고리
      * @param message 시작 시 기록할 메시지
@@ -14,7 +14,7 @@ public class CommonLogger extends BaseLogger {
     }
 
     /**
-     * 지정된 토픽과 메시지로 프로세스 또는 이벤트의 종료를 디버그 레벨로 기록합니다.
+     * 지정된 토픽과 메시지로 프로세스의 종료를 디버그 레벨로 기록합니다.
      *
      * @param topic 로그의 주제를 나타내는 문자열
      * @param message 로그에 포함될 상세 메시지

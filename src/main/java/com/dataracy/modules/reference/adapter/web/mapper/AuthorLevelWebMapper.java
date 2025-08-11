@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * authorLevel 웹 DTO와 authorLevel 도메인 DTO를 변환하는 매퍼
+ * authorLevel 웹 DTO와 authorLevel 애플리케이션 DTO를 변환하는 매퍼
  */
 @Component
 public class AuthorLevelWebMapper {
     /**
-     * 도메인 계층의 AuthorLevelResponse 객체를 웹 계층의 AuthorLevelWebResponse 객체로 변환합니다.
+     * 애플리케이션 계층의 AuthorLevelResponse 객체를 웹 계층의 AuthorLevelWebResponse 객체로 변환합니다.
      *
-     * @param authorLevelResponse 변환할 도메인 응답 DTO
+     * @param authorLevelResponse 변환할 애플리케이션 응답 DTO
      * @return 변환된 웹 응답 DTO
      */
     public AuthorLevelWebResponse toWebDto(AuthorLevelResponse authorLevelResponse) {
@@ -28,9 +28,9 @@ public class AuthorLevelWebMapper {
     }
 
     /**
-     * 도메인 계층의 전체 작성자 유형 리스트 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     * 애플리케이션 계층의 전체 작성자 유형 리스트 응답 DTO를 웹 계층의 응답 DTO로 변환합니다.
      *
-     * @param allAuthorLevelsResponse 도메인 계층의 전체 작성자 유형 리스트 응답 DTO
+     * @param allAuthorLevelsResponse 애플리케이션 계층의 전체 작성자 유형 리스트 응답 DTO
      * @return 변환된 웹 계층의 전체 작성자 유형 리스트 응답 DTO
      */
     public AllAuthorLevelsWebResponse toWebDto(AllAuthorLevelsResponse allAuthorLevelsResponse) {

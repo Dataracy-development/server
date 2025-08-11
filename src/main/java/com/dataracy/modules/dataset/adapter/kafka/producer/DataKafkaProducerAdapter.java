@@ -40,7 +40,7 @@ public class DataKafkaProducerAdapter implements DataUploadEventPort {
     /**
      * Kafka 데이터 업로드 이벤트 토픽 설정이 비어 있는지 검증합니다.
      *
-     * 토픽 이름이 비어 있을 경우 애플리케이션 실행을 중단하기 위해 {@code IllegalStateException}을 발생시킵니다.
+     * 토픽 이름이 비어 있을 경우 애플리케이션 실행을 중단하기 위해 IllegalStateException을 발생시킵니다.
      */
     @PostConstruct
     public void validateTopic() {

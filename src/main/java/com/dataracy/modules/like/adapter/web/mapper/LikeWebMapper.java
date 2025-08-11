@@ -4,6 +4,9 @@ import com.dataracy.modules.like.adapter.web.request.TargetLikeWebRequest;
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;
 import org.springframework.stereotype.Component;
 
+/**
+ * 좋아요 웹 DTO와 애플리케이션 DTO를 변환하는 매퍼
+ */
 @Component
 public class LikeWebMapper {
     /**

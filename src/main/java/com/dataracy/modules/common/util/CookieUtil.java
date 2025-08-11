@@ -11,6 +11,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public final class CookieUtil {
+    /**
+     * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
     private CookieUtil() {
     }
 
@@ -19,7 +22,6 @@ public final class CookieUtil {
 
     /**
      * 지정한 이름, 값, 만료 시간을 가진 HTTP-Only 쿠키를 HTTP 응답에 추가합니다.
-     *
      * 쿠키는 SameSite=Lax, path="/"로 설정되며, Secure 플래그는 비활성화되어 있습니다.
      *
      * @param name   쿠키의 이름
@@ -40,7 +42,6 @@ public final class CookieUtil {
 
     /**
      * HTTP 요청의 쿠키에서 "refreshToken" 값을 찾아 반환합니다.
-     *
      * 요청에 "refreshToken" 쿠키가 없으면 빈 Optional을 반환합니다.
      *
      * @param request HTTP 요청 객체

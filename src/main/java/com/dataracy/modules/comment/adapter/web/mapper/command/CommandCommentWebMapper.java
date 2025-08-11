@@ -6,6 +6,9 @@ import com.dataracy.modules.comment.application.dto.request.command.ModifyCommen
 import com.dataracy.modules.comment.application.dto.request.command.UploadCommentRequest;
 import org.springframework.stereotype.Component;
 
+/**
+ * 댓글 command 웹 DTO와 애플리케이션 DTO를 변환하는 매퍼
+ */
 @Component
 public class CommandCommentWebMapper {
     /**

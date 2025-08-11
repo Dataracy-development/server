@@ -7,6 +7,9 @@ import com.dataracy.modules.reference.domain.model.VisitSource;
  * VisitSource 엔티티와 VisitSource 도메인 모델을 변환하는 매퍼
  */
 public final class VisitSourceEntityMapper {
+    /**
+     * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
     private VisitSourceEntityMapper() {
     }
 

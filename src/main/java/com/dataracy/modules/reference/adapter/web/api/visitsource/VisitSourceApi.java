@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface VisitSourceApi {
     /**
      * 전체 방문 경로(visit source) 목록을 조회한다.
-     *
      * 데이터베이스에 저장된 모든 방문 경로 정보를 반환한다.
      *
      * @return 전체 방문 경로 목록이 포함된 성공 응답 객체

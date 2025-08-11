@@ -69,8 +69,7 @@ public class OccupationQueryService implements
 
     /**
      * 주어진 직업 ID에 해당하는 직업이 존재하는지 검증합니다.
-     *
-     * 직업이 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 직업이 존재하지 않을 경우 ReferenceException을 발생시킵니다.
      *
      * @param occupationId 존재 여부를 검증할 직업의 ID
      * @throws ReferenceException 직업이 존재하지 않을 때 발생

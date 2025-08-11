@@ -38,11 +38,11 @@ public interface FileStoragePort {
     String getUrl(String key);
 
     /**
-     * 지정된 파일 URL에 대해 주어진 만료 시간(초) 동안 유효한 프리사인드 URL을 생성하여 반환합니다.
+     * 지정된 파일 URL에 대해 주어진 만료 시간(초) 동안 유효한 PreSigned URL을 생성하여 반환합니다.
      *
-     * @param fileUrl           프리사인드 URL을 생성할 파일의 URL
-     * @param expirationSeconds 프리사인드 URL의 만료 시간(초)
-     * @return                  만료 시간 동안 접근 가능한 프리사인드 URL 문자열
+     * @param fileUrl           PreSigned URL을 생성할 파일의 URL
+     * @param expirationSeconds PreSigned URL의 만료 시간(초)
+     * @return                  만료 시간 동안 접근 가능한 PreSigned URL 문자열
      */
     String getPreSignedUrl(String fileUrl, int expirationSeconds);
 }

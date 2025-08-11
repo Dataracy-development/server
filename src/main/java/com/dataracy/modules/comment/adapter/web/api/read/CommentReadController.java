@@ -33,7 +33,6 @@ public class CommentReadController implements CommentReadApi {
 
     /**
      * 지정한 프로젝트의 댓글 목록을 페이지네이션하여 조회합니다.
-     *
      * 인증된 사용자의 정보를 반영하여 프로젝트에 속한 댓글 목록을 반환합니다.
      *
      * @param request 인증된 사용자 정보를 추출할 HTTP 요청 객체
@@ -61,7 +60,6 @@ public class CommentReadController implements CommentReadApi {
 
     /**
      * 프로젝트 내 특정 댓글에 대한 답글 목록을 페이지 단위로 조회하여 반환합니다.
-     *
      * 인증된 사용자의 정보를 기반으로, 지정된 프로젝트와 댓글에 속한 답글들을 페이징 처리하여 제공합니다.
      *
      * @param request 인증된 사용자 정보를 포함하는 HTTP 요청 객체

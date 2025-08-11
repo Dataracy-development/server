@@ -27,34 +27,26 @@ public interface JwtValidatorPort {
     RoleType getRoleFromToken(String token);
 
     /**
-     * 등록 토큰에서 제공자(provider) 이름을 추출하여 반환합니다.
+     * 토큰에서 이메일 주소를 추출하여 반환합니다.
+     *
+     * @param token 이메일 정보를 포함하고 있는 JWT 토큰
+     * @return 토큰에서 추출된 이메일 주소
+     */
+    String getEmailFromToken(String token);
+
+    /**
+     * 레지스터 토큰에서 제공자(provider) 이름을 추출하여 반환합니다.
      *
      * @param token 등록 토큰 문자열
-     * @return 토큰에 포함된 제공자 이름
+     * @return 토큰에 포함된 소셜 제공자
      */
     String getProviderFromRegisterToken(String token);
 
     /**
-     * 등록 토큰에서 공급자 ID를 추출하여 반환합니다.
+     * 레지스터 토큰에서 소셜 제공자 개인별 ID를 추출하여 반환합니다.
      *
-     * @param token 공급자 ID를 포함하는 등록용 JWT 토큰
-     * @return 추출된 공급자 ID 문자열
+     * @param token 소셜 제공자 개인별 ID를 포함하는 레지스터 토큰
+     * @return 소셜 제공자 개인별 ID 문자열
      */
     String getProviderIdFromRegisterToken(String token);
-
-    /**
-     * 등록 토큰에서 이메일 주소를 추출하여 반환합니다.
-     *
-     * @param token 이메일 정보를 포함하고 있는 등록용 JWT 토큰
-     * @return 토큰에서 추출된 이메일 주소
-     */
-    String getEmailFromRegisterToken(String token);
-
-    /**
-     * 비밀번호 재설정 JWT 토큰에서 이메일 주소를 추출합니다.
-     *
-     * @param token 비밀번호 재설정용 JWT 토큰 문자열
-     * @return 토큰에 포함된 이메일 주소
-     */
-    String getEmailFromResetToken(String token);
 }

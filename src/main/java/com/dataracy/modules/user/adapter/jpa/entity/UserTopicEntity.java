@@ -23,6 +23,13 @@ public class UserTopicEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private Long topicId;
 
+    /**
+     * 유저 - 토픽 연결 테이블을 생성하여 연관 관계를 설정한다.
+     *
+     * @param user 유저
+     * @param topicId 주제 아이디
+     * @return 생성된 UserTopicEntity 객체
+     */
     public static UserTopicEntity of(UserEntity user, Long topicId) {
         UserTopicEntity userTopicEntity = UserTopicEntity.builder()
                 .topicId(topicId)

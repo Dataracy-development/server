@@ -69,8 +69,7 @@ public class AuthorLevelQueryService implements
 
     /**
      * 주어진 ID로 저자 등급의 존재 여부를 확인합니다.
-     *
-     * 저자 등급이 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 저자 등급이 존재하지 않을 경우 ReferenceException을 발생시킵니다.
      *
      * @param authorLevelId 확인할 저자 등급의 ID
      * @throws ReferenceException 저자 등급이 존재하지 않을 때 발생

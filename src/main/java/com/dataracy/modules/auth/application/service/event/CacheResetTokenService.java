@@ -30,10 +30,10 @@ public class CacheResetTokenService implements CacheResetTokenUseCase {
     /**
      * 주어진 비밀번호 재설정 토큰의 유효성을 검사합니다.
      *
-     * 토큰이 유효하지 않은 경우 {@code AuthException}을 발생시키며, 유효한 경우 {@code true}를 반환합니다.
+     * 토큰이 유효하지 않은 경우 AuthException을 발생시키며, 유효한 경우 true를 반환합니다.
      *
      * @param token 검사할 비밀번호 재설정 토큰
-     * @return 토큰이 유효하면 {@code true}
+     * @return 토큰이 유효하면 true
      * @throws AuthException 토큰이 만료되었거나 유효하지 않은 경우
      */
     @Override

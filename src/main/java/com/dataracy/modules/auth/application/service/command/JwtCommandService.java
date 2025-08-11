@@ -17,12 +17,12 @@ public class JwtCommandService implements JwtGenerateUseCase {
     private final JwtGeneratorPort jwtGeneratorPort;
 
     /**
-     * OAuth2 제공자 정보와 이메일을 기반으로 회원가입용 JWT 토큰을 생성합니다.
+     * OAuth2 제공자 정보와 이메일을 기반으로 추가정보 입력용 JWT 토큰을 생성합니다.
      *
      * @param provider OAuth2 제공자 이름
      * @param providerId 제공자에서 발급한 사용자 ID
      * @param email 사용자 이메일 주소
-     * @return 생성된 회원가입용 JWT 토큰 문자열
+     * @return 생성된 추가정보 입력용 JWT 토큰 문자열
      * @throws AuthException 토큰 생성에 실패한 경우 발생
      */
     @Override

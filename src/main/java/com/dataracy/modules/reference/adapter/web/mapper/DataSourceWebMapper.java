@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * dataSource 웹 DTO와 dataSource 도메인 DTO를 변환하는 매퍼
+ * dataSource 웹 DTO와 dataSource 애플리케이션 DTO를 변환하는 매퍼
  */
 @Component
 public class DataSourceWebMapper {
     /**
-     * 도메인 계층의 DataSourceResponse 객체를 웹 계층의 DataSourceWebResponse 객체로 변환합니다.
+     * 애플리케이션 계층의 DataSourceResponse 객체를 웹 계층의 DataSourceWebResponse 객체로 변환합니다.
      *
-     * @param dataSourceResponse 변환 대상 도메인 DataSourceResponse 객체
+     * @param dataSourceResponse 변환 대상 애플리케이션 DataSourceResponse 객체
      * @return 변환된 DataSourceWebResponse 객체
      */
     public DataSourceWebResponse toWebDto(DataSourceResponse dataSourceResponse) {
@@ -28,9 +28,9 @@ public class DataSourceWebMapper {
     }
 
     /**
-     * 도메인 계층의 전체 데이터 소스 응답 DTO를 웹 계층의 전체 데이터 소스 응답 DTO로 변환합니다.
+     * 애플리케이션 계층의 전체 데이터 소스 응답 DTO를 웹 계층의 전체 데이터 소스 응답 DTO로 변환합니다.
      *
-     * @param allDataSourcesResponse 변환할 도메인 전체 데이터 소스 응답 DTO
+     * @param allDataSourcesResponse 변환할 애플리케이션 전체 데이터 소스 응답 DTO
      * @return 변환된 웹 계층 전체 데이터 소스 응답 DTO
      */
     public AllDataSourcesWebResponse toWebDto(AllDataSourcesResponse allDataSourcesResponse) {

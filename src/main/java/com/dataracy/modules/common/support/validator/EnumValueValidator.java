@@ -15,8 +15,9 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
     private String enumValuesString;
 
     /**
+     * enum value값을 주입받아 초기화한다.
      *
-     * @param annotation
+     * @param annotation Enum 유효성 애노테이션
      */
     @Override
     public void initialize(ValidEnumValue annotation) {
@@ -42,10 +43,11 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
     }
 
     /**
+     * 클라이언트로부터 전달받은 enum 값의 유효성을 검증한다.
      *
-     * @param input
-     * @param context
-     * @return
+     * @param input 클라이언트로부터 전달받은 입력 값
+     * @param context enum 유효성 검증
+     * @return 유효성 검증 성공 여부
      */
     @Override
     public boolean isValid(Object input, ConstraintValidatorContext context) {
@@ -81,8 +83,9 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
     }
 
     /**
-     * 
-     * @param context
+     * 잘못된 값을 입력받았을 경우 예외처리
+     *
+     * @param context enum 유효성 검증
      */
     private void injectCustomMessage(ConstraintValidatorContext context) {
         context.disableDefaultConstraintViolation();

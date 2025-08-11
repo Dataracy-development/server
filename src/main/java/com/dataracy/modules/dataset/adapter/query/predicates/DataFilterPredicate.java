@@ -6,6 +6,9 @@ import org.springframework.util.StringUtils;
 import static com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity.dataEntity;
 
 public class DataFilterPredicate {
+    /**
+     * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
     private DataFilterPredicate() {}
 
     /**

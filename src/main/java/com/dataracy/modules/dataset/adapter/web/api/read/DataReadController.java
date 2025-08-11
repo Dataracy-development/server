@@ -100,7 +100,6 @@ public class DataReadController implements DataReadApi {
 
     /**
      * 데이터셋을 주제 라벨별로 그룹화하여 각 그룹의 데이터셋 개수를 조회합니다.
-     *
      * 주제 라벨별로 그룹화된 데이터셋 개수 목록을 성공 응답으로 반환합니다.
      *
      * @return 주제 라벨별 데이터셋 개수 목록이 포함된 HTTP 200 성공 응답

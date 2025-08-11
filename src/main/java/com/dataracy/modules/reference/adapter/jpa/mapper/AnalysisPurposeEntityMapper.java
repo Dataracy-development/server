@@ -7,6 +7,9 @@ import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
  * 분석 목적 엔티티와 분석 목적 도메인 모델을 변환하는 매퍼
  */
 public final class AnalysisPurposeEntityMapper {
+    /**
+     * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
     private AnalysisPurposeEntityMapper() {
     }
 
