@@ -4,6 +4,9 @@ import com.dataracy.modules.filestorage.adapter.web.response.GetPreSignedUrlWebR
 import com.dataracy.modules.filestorage.application.dto.response.GetPreSignedUrlResponse;
 import org.springframework.stereotype.Component;
 
+/**
+ * 파일 다운로드 웹 DTO와 애플리케이션 DTO를 변환하는 매퍼
+ */
 @Component
 public class FileDownloadWebMapper {
     /**

@@ -11,7 +11,7 @@ public class RedisLogger extends BaseLogger {
      *
      * @param key     Redis 키 값
      * @param message 조회 작업에 대한 설명 메시지
-     * @return        작업 시작 시각의 {@link Instant} 객체
+     * @return        작업 시작 시각의 Instant 객체
      */
     public Instant logQueryStart(String key, String message) {
         debug("[Redis 조회 시작] key={} message={}", key, message);

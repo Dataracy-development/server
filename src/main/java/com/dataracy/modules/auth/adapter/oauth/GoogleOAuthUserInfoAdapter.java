@@ -11,10 +11,11 @@ import java.util.Optional;
 public class GoogleOAuthUserInfoAdapter implements OAuthUserInfoPort {
 
     /**
+     * 구글 서버로부터 받은 유저 정보를 추출하여 DTO로 변환한다.
      *
-     * @param provider
-     * @param attributes
-     * @return
+     * @param provider 소셜 제공자
+     * @param attributes 소셜 제공자로부터 반환받은 속성 정보
+     * @return 추출된 OAuth 사용자 정보
      */
     @Override
     public OAuthUserInfo extract(String provider, Map<String, Object> attributes) {

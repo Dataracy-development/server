@@ -1,8 +1,9 @@
 package com.dataracy.modules.email.application.service.query;
 
-import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.cache.CacheResetTokenUseCase;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.email.application.dto.response.GetResetTokenResponse;
 import com.dataracy.modules.email.application.port.in.validate.VerifyEmailUseCase;
 import com.dataracy.modules.email.application.port.out.cache.CacheEmailPort;
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;
@@ -35,7 +36,7 @@ public class EmailVerifyService implements VerifyEmailUseCase {
      * @throws EmailException 인증코드가 만료되었거나 일치하지 않을 때 발생
      */
     @Override
-    public String verifyCode(String email, String code, EmailVerificationType verificationType) {
+    public GetResetTokenResponse verifyCode(String email, String code, EmailVerificationType verificationType) {
         Instant startTime = LoggerFactory.service().logStart("VerifyEmailUseCase", "이메일 인증코드 검증 서비스 시작 email=" + email);
 
         // 레디스에서 이메일 인증 코드 조회
@@ -60,8 +61,9 @@ public class EmailVerifyService implements VerifyEmailUseCase {
             resetPasswordToken = jwtGenerateUseCase.generateResetPasswordToken(email);
             cacheResetTokenUseCase.saveResetToken(resetPasswordToken);
         }
+        GetResetTokenResponse getResetTokenResponse = new GetResetTokenResponse(resetPasswordToken);
 
         LoggerFactory.service().logSuccess("VerifyEmailUseCase", "이메일 인증코드 검증 서비스 종료 email=" + email, startTime);
-        return resetPasswordToken;
+        return getResetTokenResponse;
     }
 }

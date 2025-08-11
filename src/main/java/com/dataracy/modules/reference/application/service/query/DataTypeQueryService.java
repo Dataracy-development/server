@@ -48,7 +48,6 @@ public class DataTypeQueryService implements
 
     /**
      * 주어진 ID에 해당하는 데이터 유형을 조회하여 DataTypeResponse DTO로 반환한다.
-     *
      * 데이터 유형이 존재하지 않을 경우 ReferenceException이 발생한다.
      *
      * @param dataTypeId 조회할 데이터 유형의 ID
@@ -71,8 +70,7 @@ public class DataTypeQueryService implements
 
     /**
      * 주어진 데이터 타입 ID의 존재 여부를 검증합니다.
-     *
-     * 데이터 타입이 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 데이터 타입이 존재하지 않을 경우 ReferenceException을 발생시킵니다.
      *
      * @param dataTypeId 존재 여부를 확인할 데이터 타입의 ID
      * @throws ReferenceException 데이터 타입이 존재하지 않을 때 발생
@@ -91,8 +89,7 @@ public class DataTypeQueryService implements
 
     /**
      * 주어진 데이터 타입 ID에 해당하는 라벨을 반환합니다.
-     *
-     * 데이터 타입이 존재하지 않으면 {@code ReferenceException}이 발생합니다.
+     * 데이터 타입이 존재하지 않으면 ReferenceException이 발생합니다.
      *
      * @param dataTypeId 라벨을 조회할 데이터 타입의 ID
      * @return 해당 데이터 타입의 라벨 문자열

@@ -132,10 +132,24 @@ logging:
     com.dataracy.modules.behaviorlog: DEBUG
 
 springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui
+    # 태그/오퍼레이션 정렬
+    tags-sorter: alpha
+    operations-sorter: method  # or alpha
+    # 펼침(문서 트리/응답 모델)
+    doc-expansion: list        # none | list | full (원하면 full)
+    default-models-expand-depth: 0   # 좌측 Models 목록 접기
+    default-model-expand-depth: 3    # 응답/요청 모델 기본 펼침 깊이
+    default-model-rendering: example # model | example
+    # 편의 옵션
+    display-request-duration: true
+    try-it-out-enabled: true
+    filter: true
+    persist-authorization: true
 
 management:
   endpoints:

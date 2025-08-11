@@ -35,7 +35,6 @@ public class UserMultiQueryDbAdapter implements UserMultiQueryPort {
 
     /**
      * 주어진 사용자 ID 목록에 대해 각 사용자의 프로필 이미지 URL을 반환합니다.
-     *
      * 사용자 ID를 키로, 해당 사용자의 프로필 이미지 URL을 값으로 하는 맵을 반환합니다. 프로필 이미지가 없는 경우 빈 문자열로 매핑됩니다.
      *
      * @param userIds 프로필 이미지 URL을 조회할 사용자 ID 목록
@@ -54,7 +53,6 @@ public class UserMultiQueryDbAdapter implements UserMultiQueryPort {
 
     /**
      * 주어진 사용자 ID 목록에 대해 각 사용자의 author level ID를 문자열로 매핑하여 반환합니다.
-     *
      * author level ID가 null인 경우 "1"로 대체됩니다.
      *
      * @param userIds 조회할 사용자 ID 목록

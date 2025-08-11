@@ -33,7 +33,6 @@ public class ChangePasswordService implements ChangePasswordUseCase {
 
     /**
      * 주어진 유저의 비밀번호를 새 비밀번호로 변경한다.
-     *
      * Google 또는 Kakao 계정으로 가입한 유저는 비밀번호를 변경할 수 없으며, 존재하지 않는 유저 ID가 입력된 경우 예외가 발생한다.
      *
      * @param userId 비밀번호를 변경할 유저의 ID

@@ -4,21 +4,22 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
+ * 검색 조건에 해당하는 데이터셋의 메타 정보를 포함합니다.
  *
- * @param id
- * @param title
- * @param topicLabel
- * @param dataSourceLabel
- * @param dataTypeLabel
- * @param startDate
- * @param endDate
- * @param description
- * @param dataThumbnailUrl
- * @param downloadCount
- * @param rowCount
- * @param columnCount
- * @param createdAt
- * @param countConnectedProjects
+ * @param id 데이터 ID
+ * @param title 제목
+ * @param topicLabel 주제 라벨
+ * @param dataSourceLabel 데이터 소스 라벨
+ * @param dataTypeLabel 데이터 유형 라벨
+ * @param startDate 데이터 시작일
+ * @param endDate 데이터 종료일
+ * @param description 설명
+ * @param dataThumbnailUrl 썸네일 URL
+ * @param downloadCount 다운로드 수
+ * @param rowCount 행 수
+ * @param columnCount 열 수
+ * @param createdAt 생성 일시
+ * @param countConnectedProjects 연결된 프로젝트 수
  */
 public record FilteredDataResponse(
         Long id,

@@ -38,7 +38,6 @@ public class DataTypeDbAdapter implements DataTypePort {
 
     /**
      * 주어진 ID에 해당하는 데이터 유형 도메인 객체를 Optional로 반환한다.
-     *
      * ID가 null이거나 해당 데이터 유형이 존재하지 않으면 빈 Optional을 반환한다.
      *
      * @param dataTypeId 조회할 데이터 유형의 ID

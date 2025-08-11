@@ -109,7 +109,7 @@ public class UserProfileService implements
      *
      * @param userId 상세 정보를 조회할 사용자의 ID
      * @return 조회된 사용자의 상세 정보(UserInfo)
-     * @throws UserException 사용자가 존재하지 않을 경우 {@code UserErrorStatus.NOT_FOUND_USER}가 발생합니다.
+     * @throws UserException 사용자가 존재하지 않을 경우 UserErrorStatus.NOT_FOUND_USER가 발생합니다.
      */
     @Override
     @Transactional(readOnly = true)

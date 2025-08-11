@@ -98,10 +98,11 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     /**
+     * 해당 유저를 인증 객체를 SecurityContextHolder에 추가한다.
      *
-     * @param request
-     * @param userId
-     * @param role
+     * @param request 현재 HTTP 요청 객체
+     * @param userId 유저 아이디
+     * @param role 유저 역할
      */
     private void setAuthentication(HttpServletRequest request, Long userId, RoleType role) {
         CustomUserDetails userDetails = new CustomUserDetails(userId, role);

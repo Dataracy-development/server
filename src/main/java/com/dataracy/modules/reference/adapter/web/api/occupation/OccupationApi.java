@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface OccupationApi {
     /**
      * 전체 직업 목록을 반환하는 API 엔드포인트입니다.
-     *
      * 데이터베이스에 저장된 모든 직업 정보를 조회하여 반환합니다.
      *
      * @return 전체 직업 정보를 포함한 성공 응답

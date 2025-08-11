@@ -85,7 +85,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 잘못된 인자가 전달된 경우 발생하는 IllegalArgumentException을 처리합니다.
-     *
      * 클라이언트가 유효하지 않은 파라미터를 전달했을 때 HTTP 400 Bad Request와 함께 에러 메시지를 반환합니다.
      *
      * @return HTTP 400 상태 코드와 에러 응답 본문
@@ -152,7 +151,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 필수 HTTP 요청 헤더가 누락된 경우 400 Bad Request 응답을 반환합니다.
-     *
      * 누락된 헤더 이름과 함께 오류 메시지를 포함한 표준 에러 응답을 제공합니다.
      *
      * @param e 누락된 요청 헤더 예외
@@ -168,7 +166,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 데이터베이스 무결성 제약 조건 위반 예외를 처리합니다.
-     *
      * 데이터 무결성 제약 조건이 위반될 경우 HTTP 400 Bad Request와 함께 오류 응답을 반환합니다.
      *
      * @return 데이터 무결성 위반에 대한 오류 응답
@@ -221,7 +218,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 요청 경로에 매핑된 핸들러가 없을 때 404 Not Found 응답을 반환합니다.
-     *
      * 요청된 URL에 해당하는 컨트롤러가 존재하지 않을 경우 호출되며, 표준화된 에러 응답을 제공합니다.
      *
      * @return 404 상태 코드와 NOT_FOUND_HANDLER 에러 정보를 포함한 응답
@@ -275,7 +271,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 읽을 수 없는 HTTP 메시지(예: 잘못된 JSON 형식) 예외를 처리합니다.
-     *
      * 잘못된 요청 본문으로 인해 역직렬화에 실패한 경우 400 Bad Request와 표준 에러 응답을 반환합니다.
      *
      * @return 400 Bad Request와 에러 메시지를 포함한 응답

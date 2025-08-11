@@ -16,16 +16,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityContextProvider {
 
     /**
+     * 인증 객체 추출
      *
-     * @return
+     * @return 인증 객체
      */
     public static Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
     /**
+     * 익명 유저인지 여부 확인
      *
-     * @return
+     * @return 추출한 인증 객체가 익명 유저인지 확인한다.
      */
     public static boolean isAnonymous() {
         Authentication auth = getAuthentication();
@@ -44,7 +46,6 @@ public class SecurityContextProvider {
 
     /**
      * 현재 인증된 사용자의 ID를 반환합니다.
-     *
      * 인증 정보가 존재하고, principal이 CustomUserDetails인 경우 해당 사용자의 ID를 반환합니다.
      *
      * @return 인증된 사용자의 ID
@@ -58,7 +59,7 @@ public class SecurityContextProvider {
     /**
      * 현재 인증된 사용자의 ID를 반환합니다.
      *
-     * 인증되지 않은 경우 {@code AuthException}이 발생합니다.
+     * 인증되지 않은 경우 AuthException이 발생합니다.
      *
      * @return 인증된 사용자의 ID
      * @throws AuthException 사용자가 인증되지 않은 경우 발생
@@ -72,7 +73,6 @@ public class SecurityContextProvider {
 
     /**
      * 현재 인증된 사용자의 ID를 반환합니다.
-     *
      * 인증된 사용자가 없는 경우 null을 반환합니다.
      *
      * @return 인증된 사용자의 ID 또는 인증되지 않은 경우 null
@@ -85,8 +85,11 @@ public class SecurityContextProvider {
     }
 
     /**
+     * 현재 인증된 사용자의 역할을 반환합니다.
+     * 인증되지 않은 경우 AuthException이 발생합니다.
      *
-     * @return
+     * @return 인증된 사용자의 역할
+     * @throws AuthException 사용자가 인증되지 않은 경우 발생
      */
     public static RoleType getAuthenticatedUserRole() {
         if (!isAuthenticated()) {
@@ -98,9 +101,10 @@ public class SecurityContextProvider {
     }
 
     /**
+     * 익명 유저 아이디를 반환한다.
      *
-     * @param request
-     * @return
+     * @param request Http 요청 객체
+     * @return 익명 아이디
      */
     public static String getAnonymousId(HttpServletRequest request) {
         if (isAnonymous()) {
@@ -113,9 +117,10 @@ public class SecurityContextProvider {
     }
 
     /**
+     * 테스트를 위한 인증 객체를 추가한다.
      *
-     * @param userId
-     * @param role
+     * @param userId 유저 아이디
+     * @param role 유저 역할
      */
     public static void setupSecurityContextForTest(Long userId, RoleType role) {
         CustomUserDetails userDetails = new CustomUserDetails(userId, role);
@@ -124,7 +129,7 @@ public class SecurityContextProvider {
     }
 
     /**
-     *
+     * 시큐리티 컨텍스트 초기화
      */
     public static void clearSecurityContext() {
         SecurityContextHolder.clearContext();

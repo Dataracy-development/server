@@ -10,6 +10,16 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 @Configuration
 public class KafkaLongConsumerConfig extends AbstractKafkaConsumerConfig<Long> {
     /**
+     * Kafka 부트스트랩 서버 구성을 검증합니다.
+     *
+     * 빈 생성 후 Kafka 연결 설정이 올바른지 확인하기 위해 호출됩니다.
+     */
+    @PostConstruct
+    public void validate() {
+        validateBootstrap();
+    }
+
+    /**
      * Kafka 메시지 키를 역직렬화할 때 사용할 역직렬화 클래스(StringDeserializer)를 반환합니다.
      *
      * @return Kafka 메시지 키에 사용할 StringDeserializer 클래스
@@ -37,16 +47,6 @@ public class KafkaLongConsumerConfig extends AbstractKafkaConsumerConfig<Long> {
     @Override
     protected String groupId() {
         return "long-consumer-group";
-    }
-
-    /**
-     * Kafka 부트스트랩 서버 구성을 검증합니다.
-     *
-     * 빈 생성 후 Kafka 연결 설정이 올바른지 확인하기 위해 호출됩니다.
-     */
-    @PostConstruct
-    public void validate() {
-        validateBootstrap();
     }
 
     /**

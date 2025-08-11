@@ -25,7 +25,6 @@ public class JwtUtilInternal {
 
     /**
      * JWT 시크릿 키를 초기화하고 유효성을 검사합니다.
-     *
      * 시크릿 키가 32자 미만일 경우 예외를 발생시킵니다.
      *
      * @throws AuthException 시크릿 키가 32자 미만인 경우 발생합니다.

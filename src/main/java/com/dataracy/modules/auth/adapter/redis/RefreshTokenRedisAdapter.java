@@ -22,6 +22,7 @@ public class RefreshTokenRedisAdapter implements CacheRefreshTokenPort {
 
     /**
      * 리프레시 토큰 키 설정
+     *
      * @param userId 유저 id
      * @return 레디스 키
      */
@@ -31,7 +32,6 @@ public class RefreshTokenRedisAdapter implements CacheRefreshTokenPort {
 
     /**
      * 지정한 유저 ID에 대한 리프레시 토큰을 Redis에 저장합니다.
-     *
      * 토큰은 설정된 만료 기간(일 단위) 동안 유지됩니다.
      *
      * @param userId 리프레시 토큰을 저장할 유저의 ID

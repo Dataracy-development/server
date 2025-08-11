@@ -17,7 +17,7 @@ public class DistributedLockLogger extends BaseLogger {
      *
      * @param key     락의 식별자
      * @param message 작업에 대한 설명 메시지
-     * @return        작업 시작 시각의 {@link Instant} 객체
+     * @return        작업 시작 시각의 Instant 객체
      */
     public Instant logStart(String key, String message) {
         Instant start = Instant.now();

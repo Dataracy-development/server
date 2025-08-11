@@ -18,8 +18,7 @@ public class ValidateCommentService implements ValidateCommentUseCase {
 
     /**
      * 주어진 댓글 ID에 해당하는 댓글의 존재 여부를 검증합니다.
-     *
-     * 댓글이 존재하지 않을 경우 {@code CommentException}을 발생시킵니다.
+     * 댓글이 존재하지 않을 경우 CommentException을 발생시킵니다.
      *
      * @param commentId 존재 여부를 확인할 댓글의 ID
      * @throws CommentException 댓글이 존재하지 않을 때 발생

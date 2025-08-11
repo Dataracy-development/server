@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 public interface FindReplyCommentListUseCase {
     /**
      * 특정 프로젝트 내의 댓글에 대한 답글 목록을 페이지 단위로 조회합니다.
+     * 해당 유저가 답글을 좋아요 했는지 여부를 함께 판단한다.
      *
      * @param userId     답글 목록을 조회하는 사용자의 ID
      * @param projectId  답글을 조회할 댓글이 속한 프로젝트의 ID

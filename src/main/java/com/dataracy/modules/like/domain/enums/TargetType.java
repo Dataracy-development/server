@@ -28,7 +28,6 @@ public enum TargetType {
      * @throws LikeException 유효하지 않은 TargetType 입력 시 발생
      */
     public static TargetType of(String input) {
-
         return Arrays.stream(TargetType.values())
                 .filter(type -> type.value.equalsIgnoreCase(input) || type.name().equalsIgnoreCase(input))
                 .findFirst()

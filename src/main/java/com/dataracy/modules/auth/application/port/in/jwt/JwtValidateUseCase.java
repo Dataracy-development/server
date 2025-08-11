@@ -27,25 +27,25 @@ public interface JwtValidateUseCase {
     RoleType getRoleFromToken(String token);
 
     /**
-     * 리프레시 토큰에서 소셜 서버가 발급한 등록 토큰을 파싱하여 소셜 제공자 정보를 반환합니다.
+     * 레지스터 토큰을 파싱하여 소셜 제공자 정보를 반환합니다.
      *
-     * @param token 소셜 서버로부터 발급받은 등록 토큰
-     * @return 소셜 제공자 식별자
+     * @param token 소셜 회원가입을 위해 발급된 레지스터 토큰
+     * @return 소셜 제공자
      */
     String getProviderFromRegisterToken(String token);
 
     /**
-     * 소셜 서버에서 발급된 등록 토큰에서 제공자별 사용자 ID를 추출합니다.
+     * 레지스터 토큰을 파싱하여 소셜 제공자 ID를 반환합니다.
      *
      * @param token 등록 토큰 문자열
-     * @return 제공자별 사용자 ID
+     * @return 소셜 제공자 사용자별 ID
      */
     String getProviderIdFromRegisterToken(String token);
 
     /**
-     * 소셜 서버에서 발급된 등록 토큰에서 사용자의 이메일 주소를 반환합니다.
+     * 추가정보 입력 토큰에서 사용자의 이메일 주소를 반환합니다.
      *
-     * @param token 소셜 서버가 발급한 등록(회원가입) 토큰 문자열
+     * @param token 소셜 로그인 추가정보 입력용 JWT 토큰 문자열
      * @return 토큰에 포함된 이메일 주소
      */
     String getEmailFromRegisterToken(String token);
@@ -59,7 +59,7 @@ public interface JwtValidateUseCase {
     String getEmailFromResetToken(String token);
 
     /**
-     * 회원가입용 토큰의 만료 시간을 반환합니다.
+     * 소셜 회원가입용 토큰의 만료 시간을 반환합니다.
      *
      * @return 회원가입 토큰의 만료 시간(밀리초 단위)
      */
@@ -87,7 +87,7 @@ public interface JwtValidateUseCase {
     String getRedirectOnboardingUrl();
 
     /**
-     * 메인 애플리케이션 리디렉션을 위한 기본 URL을 반환합니다.
+     * 메인 페이지 리디렉션을 위한 기본 URL을 반환합니다.
      *
      * @return 메인 리디렉션에 사용되는 기본 URL
      */

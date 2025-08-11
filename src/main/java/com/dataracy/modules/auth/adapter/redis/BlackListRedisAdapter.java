@@ -44,7 +44,7 @@ public class BlackListRedisAdapter {
      * 주어진 토큰이 블랙리스트에 등록되어 있는지 확인합니다.
      *
      * @param token 확인할 JWT 토큰
-     * @return 토큰이 블랙리스트에 있으면 {@code true}, 아니면 {@code false}
+     * @return 토큰이 블랙리스트에 있으면 true, 아니면 false
      */
     public boolean isBlacklisted(String token) {
         boolean isBlacklisted = Boolean.TRUE.equals(redisTemplate.hasKey(getBlackListKey(token)));

@@ -3,7 +3,13 @@ package com.dataracy.modules.comment.adapter.jpa.mapper;
 import com.dataracy.modules.comment.adapter.jpa.entity.CommentEntity;
 import com.dataracy.modules.comment.domain.model.Comment;
 
+/**
+ * 댓글 엔티티와 도메인 모델을 변환하는 매퍼
+ */
 public final class CommentEntityMapper {
+    /**
+     * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
     private CommentEntityMapper() {}
 
     /**
@@ -28,7 +34,6 @@ public final class CommentEntityMapper {
 
     /**
      * 도메인 모델 Comment 객체를 CommentEntity로 변환합니다.
-     *
      * 입력이 null인 경우 null을 반환합니다. 변환 시 프로젝트 ID, 사용자 ID, 내용, 부모 댓글 ID만 매핑되며, ID, 좋아요 수, 생성일시는 설정되지 않습니다.
      *
      * @param comment 변환할 Comment 도메인 객체

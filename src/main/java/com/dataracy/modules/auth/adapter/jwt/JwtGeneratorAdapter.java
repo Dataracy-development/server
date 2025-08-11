@@ -37,7 +37,7 @@ public class JwtGeneratorAdapter implements JwtGeneratorPort {
      * @param provider 소셜 제공자
      * @param providerId 소셜에서 받은 유저 고유 아이디
      * @param email 이메일
-     * @return 레지스터 토큰
+     * @return 소셜 회원 가입 추가 정보 입력에 사용할 JWT 토큰 문자열
      */
     @Override
     public String generateRegisterToken(
@@ -53,11 +53,11 @@ public class JwtGeneratorAdapter implements JwtGeneratorPort {
     }
 
     /**
-     * 어세스 토큰 발급
+     * 인증에 사용될 어세스 토큰 발급
      *
      * @param userId 유저 아이디
      * @param role 유저 역할
-     * @return 어세스 토큰
+     * @return 인증에 사용할 JWT 토큰 문자열
      */
     @Override
     public String generateAccessToken(Long userId, RoleType role) {
@@ -69,11 +69,11 @@ public class JwtGeneratorAdapter implements JwtGeneratorPort {
     }
 
     /**
-     * 리프레시 토큰 발급
+     * 토큰 재발급에 사용할 리프레시 토큰 발급
      *
      * @param userId 유저 아이디
      * @param role 유저 역할
-     * @return 리프레시 토큰
+     * @return 토큰 재발급에 사용할 수 있는 리프레시 토큰
      */
     @Override
     public String generateRefreshToken(Long userId, RoleType role) {

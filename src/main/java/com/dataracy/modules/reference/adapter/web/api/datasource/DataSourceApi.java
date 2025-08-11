@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface DataSourceApi {
     /**
      * 전체 데이터 소스 목록을 반환한다.
-     *
      * 데이터베이스에 저장된 모든 데이터 소스 정보를 성공 응답으로 제공한다.
      *
      * @return 전체 데이터 소스 목록이 포함된 성공 응답 객체

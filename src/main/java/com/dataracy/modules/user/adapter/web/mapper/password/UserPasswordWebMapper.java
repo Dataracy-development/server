@@ -8,6 +8,9 @@ import com.dataracy.modules.user.application.dto.request.password.ConfirmPasswor
 import com.dataracy.modules.user.application.dto.request.password.ResetPasswordWithTokenRequest;
 import org.springframework.stereotype.Component;
 
+/**
+ * 유저 비밀번호 웹 DTO와 애플리케이션 DTO를 변환하는 매퍼
+ */
 @Component
 public class UserPasswordWebMapper {
     /**
@@ -38,10 +41,10 @@ public class UserPasswordWebMapper {
     }
 
     /**
-     * 비밀번호 확인 웹 요청 DTO를 비밀번호 확인 도메인 요청 DTO로 변환합니다.
+     * 비밀번호 확인 웹 요청 DTO를 비밀번호 확인 애플리케이션 요청 DTO로 변환합니다.
      *
      * @param webRequest 비밀번호 확인 정보를 담고 있는 웹 요청 DTO
-     * @return 변환된 비밀번호 확인 도메인 요청 DTO
+     * @return 변환된 비밀번호 확인 애플리케이션 요청 DTO
      */
     public ConfirmPasswordRequest toApplicationDto(ConfirmPasswordWebRequest webRequest) {
         return new ConfirmPasswordRequest(

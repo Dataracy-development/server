@@ -23,8 +23,7 @@ public class ConfirmPasswordService implements ConfirmPasswordUseCase {
 
     /**
      * 주어진 사용자 ID와 비밀번호로 해당 사용자의 비밀번호가 일치하는지 확인한다.
-     *
-     * 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 경우 {@code UserException}이 발생한다.
+     * 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 경우 UserException이 발생한다.
      *
      * @param userId 비밀번호를 확인할 사용자의 ID
      * @param requestDto 확인할 비밀번호가 포함된 요청 객체

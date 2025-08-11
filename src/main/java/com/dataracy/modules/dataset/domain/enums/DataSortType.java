@@ -21,7 +21,6 @@ public enum DataSortType {
 
     /**
      * 입력된 문자열에 해당하는 DataSortType 열거형 상수를 반환합니다.
-     *
      * 입력값은 열거형 이름 또는 value 필드와 대소문자 구분 없이 비교됩니다.
      * 일치하는 값이 없으면 로그를 남기고 DataException을 발생시킵니다.
      *

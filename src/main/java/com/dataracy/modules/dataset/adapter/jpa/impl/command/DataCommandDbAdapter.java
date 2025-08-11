@@ -41,7 +41,6 @@ public class DataCommandDbAdapter implements
 
     /**
      * 지정한 데이터 ID의 데이터 파일 URL을 새로운 값으로 업데이트합니다.
-     *
      * 데이터가 존재하지 않을 경우 {@link DataException}이 발생합니다.
      *
      * @param dataId 데이터 엔티티의 ID
@@ -80,7 +79,6 @@ public class DataCommandDbAdapter implements
 
     /**
      * 데이터 ID에 해당하는 데이터셋 정보를 수정 요청에 따라 변경합니다.
-     *
      * 데이터가 존재하지 않을 경우 DataException이 발생합니다.
      *
      * @param dataId 수정할 데이터셋의 ID

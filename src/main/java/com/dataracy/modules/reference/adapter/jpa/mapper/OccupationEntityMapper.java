@@ -7,6 +7,9 @@ import com.dataracy.modules.reference.domain.model.Occupation;
  * Occupation 엔티티와 Occupation 도메인 모델을 변환하는 매퍼
  */
 public final class OccupationEntityMapper {
+    /**
+     * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
     private OccupationEntityMapper() {
     }
 

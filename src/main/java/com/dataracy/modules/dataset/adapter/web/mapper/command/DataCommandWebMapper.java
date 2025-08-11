@@ -6,15 +6,17 @@ import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRe
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
 import org.springframework.stereotype.Component;
 
+/**
+ * 데이터 command 웹 DTO와 애플리케이션 DTO를 변환하는 매퍼
+ */
 @Component
 public class DataCommandWebMapper {
     /**
-     * UploadDataWebRequest 객체를 UploadDataRequest DTO로 변환합니다.
-     *
+     * 객체를 UploadDataRequest DTO로 변환합니다.
      * 웹 계층의 데이터 업로드 요청을 애플리케이션 계층에서 사용하는 DTO로 매핑합니다.
      *
      * @param webRequest 변환할 데이터 업로드 웹 요청 객체
-     * @return 매핑된 UploadDataRequest DTO
+     * @return 매핑된 데이터 업로드 애플리케이션 요청 DTO
      */
     public UploadDataRequest toApplicationDto(UploadDataWebRequest webRequest) {
         return new UploadDataRequest(
@@ -30,10 +32,10 @@ public class DataCommandWebMapper {
     }
 
     /**
-     * 웹 요청 객체를 애플리케이션 계층의 데이터 수정 요청 DTO로 변환합니다.
+     * 데이터 수정 웹 요청 객체를 애플리케이션 계층의 데이터 수정 요청 DTO로 변환합니다.
      *
      * @param webRequest 데이터 수정 정보를 포함한 웹 요청 객체
-     * @return 변환된 데이터 수정 요청 DTO
+     * @return 변환된 데이터 수정 애플리케이션 요청 DTO
      */
     public ModifyDataRequest toApplicationDto(ModifyDataWebRequest webRequest) {
         return new ModifyDataRequest(

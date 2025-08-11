@@ -57,7 +57,7 @@ public class DataReadService implements
      * 지정된 개수만큼 인기 데이터셋을 조회하여, 각 데이터셋에 사용자명, 주제, 데이터 소스, 데이터 타입 라벨 및 연결된 프로젝트 수를 포함한 응답 리스트를 반환합니다.
      *
      * @param size 조회할 인기 데이터셋의 최대 개수
-     * @return 인기 데이터셋의 상세 정보와 연결된 프로젝트 수가 포함된 응답 리스트
+     * @return 인기 데이터셋의 정보와 연결된 프로젝트 수가 포함된 응답 리스트
      */
     @Override
     @Transactional(readOnly = true)
@@ -87,8 +87,7 @@ public class DataReadService implements
 
     /**
      * 주어진 데이터 ID에 해당하는 데이터셋의 상세 정보를 반환합니다.
-     *
-     * 데이터셋의 기본 정보, 작성자 닉네임, 작성자 등급 및 직업 라벨, 주제/데이터 소스/데이터 타입 라벨, 기간, 설명, 분석 가이드, 썸네일 URL, 다운로드 수, 최근 일주일 다운로드 수, 메타데이터(행/열 개수, 미리보기 JSON), 생성일시를 포함한 상세 정보를 제공합니다.
+     * 데이터셋의 기본 정보, 작성자 닉네임, 작성자 등급 및 직업 라벨, 주제/데이터 소스/데이터 타입 라벨, 기간, 설명, 분석 가이드, 썸네일 URL, 다운로드 수, 메타데이터(행/열 개수, 미리보기 JSON), 생성일시를 포함한 상세 정보를 제공합니다.
      *
      * @param dataId 조회할 데이터셋의 ID
      * @return 데이터셋의 상세 정보를 담은 DataDetailResponse 객체
@@ -161,9 +160,9 @@ public class DataReadService implements
     /**
      * 지정된 프로젝트와 연결된 데이터셋을 페이지네이션하여 조회합니다.
      *
-     * @param projectId 연결할 프로젝트의 ID
+     * @param projectId 연결된 프로젝트의 ID
      * @param pageable 페이지네이션 정보
-     * @return 각 데이터셋의 상세 정보와 연결된 프로젝트 수를 포함하는 ConnectedDataResponse 객체의 페이지
+     * @return 각 데이터셋과 연결된 프로젝트 수를 포함하는 ConnectedDataResponse 객체의 페이지
      */
     @Override
     @Transactional(readOnly = true)
@@ -188,7 +187,6 @@ public class DataReadService implements
 
     /**
      * 주어진 데이터셋 ID 목록에 해당하는 연결된 데이터셋 목록을 조회하여 반환합니다.
-     *
      * ID 목록이 비어 있거나 null인 경우 빈 리스트를 반환합니다. 중복된 ID는 제거되며, 각 데이터셋은 토픽 및 데이터 타입 라벨, 연결된 프로젝트 수와 함께 DTO로 매핑되어 반환됩니다.
      *
      * @param dataIds 조회할 데이터셋의 ID 목록
