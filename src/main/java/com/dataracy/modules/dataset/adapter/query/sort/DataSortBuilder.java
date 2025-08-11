@@ -9,7 +9,7 @@ public final class DataSortBuilder {
     private DataSortBuilder() {}
 
     /**
-     * 주어진 정렬 옵션과 프로젝트 수 경로에 따라 데이터 쿼리의 정렬 기준 배열을 반환합니다.
+     * 주어진 정렬 옵션에 따라 데이터 쿼리의 정렬 기준 배열을 반환합니다.
      *
      * @param sort 데이터 정렬 기준을 지정하는 열거형 값입니다. null이면 생성일 기준 내림차순으로 정렬합니다.
      * @param projectCountPath 프로젝트 수를 나타내는 NumberPath로, UTILIZE 정렬 옵션에서 사용됩니다.

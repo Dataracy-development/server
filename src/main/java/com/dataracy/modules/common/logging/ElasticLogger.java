@@ -11,7 +11,7 @@ public class ElasticLogger extends BaseLogger {
      *
      * @param index   조회 대상 Elasticsearch 인덱스 이름
      * @param message 추가 메시지 또는 설명
-     * @return        쿼리 시작 시점의 {@link Instant}
+     * @return        쿼리 시작 시점의 Instant
      */
     public Instant logQueryStart(String index, String message) {
         debug("[Elasticsearch 조회 시작] index={} message={}", index, message);

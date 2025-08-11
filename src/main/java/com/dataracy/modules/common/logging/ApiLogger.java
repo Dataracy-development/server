@@ -10,7 +10,7 @@ public class ApiLogger extends BaseLogger {
      * API 요청 메시지를 정보 로그로 기록하고, 요청 시각의 타임스탬프를 반환합니다.
      *
      * @param message 기록할 API 요청 메시지
-     * @return 요청이 기록된 시점의 {@link Instant} 객체
+     * @return 요청이 기록된 시점의 Instant 객체
      */
     public Instant logRequest(String message) {
         info("[API 요청] {}", message);

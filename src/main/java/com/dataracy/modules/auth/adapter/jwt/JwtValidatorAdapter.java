@@ -32,6 +32,29 @@ public class JwtValidatorAdapter implements JwtValidatorPort {
     }
 
     /**
+     * JWT 토큰에서 사용자 역할(RoleType)을 추출
+     *
+     * @param token JWT 토큰 문자열
+     * @return 토큰에 포함된 사용자 역할(RoleType)
+     */
+    @Override
+    public RoleType getRoleFromToken(String token) {
+        String role = jwtUtilInternal.parseToken(token).get("role", String.class);
+        return RoleType.of(role);
+    }
+
+    /**
+     * JWT 토큰에서 Token에서 이메일 추출
+     *
+     * @param token Token 문자열
+     * @return 이메일
+     */
+    @Override
+    public String getEmailFromToken(String token) {
+        return jwtUtilInternal.parseToken(token).get("email", String.class);
+    }
+
+    /**
      * Register Token에서 OAuth2 제공자 추출
      *
      * @param token Register Token 문자열
@@ -51,39 +74,5 @@ public class JwtValidatorAdapter implements JwtValidatorPort {
     @Override
     public String getProviderIdFromRegisterToken(String token) {
         return jwtUtilInternal.parseToken(token).get("providerId", String.class);
-    }
-
-    /**
-     * Register Token에서 이메일 추출
-     *
-     * @param token Register Token 문자열
-     * @return 이메일
-     */
-    @Override
-    public String getEmailFromRegisterToken(String token) {
-        return jwtUtilInternal.parseToken(token).get("email", String.class);
-    }
-
-    /**
-     * JWT 액세스 토큰에서 사용자 역할(RoleType)을 추출합니다.
-     *
-     * @param token JWT 액세스 토큰 문자열
-     * @return 토큰에 포함된 사용자 역할(RoleType)
-     */
-    @Override
-    public RoleType getRoleFromToken(String token) {
-        String role = jwtUtilInternal.parseToken(token).get("role", String.class);
-        return RoleType.of(role);
-    }
-
-    /**
-     * 리셋 토큰에서 이메일 주소를 추출하여 반환합니다.
-     *
-     * @param token 이메일 정보를 포함한 리셋 JWT 토큰
-     * @return 토큰에 포함된 이메일 주소
-     */
-    @Override
-    public String getEmailFromResetToken(String token) {
-        return jwtUtilInternal.parseToken(token).get("email", String.class);
     }
 }

@@ -54,7 +54,7 @@ public class AuthDevController implements AuthDevApi {
     /**
      * 개발 환경에서 토큰 재발급 요청을 처리하여 새로운 토큰 정보를 반환합니다.
      *
-     * @param webRequest 클라이언트가 전달한 토큰 재발급 요청 데이터
+     * @param webRequest 클라이언트가 전달한 토큰 재발급 요청 데이터(리프레시 토큰)
      * @return 재발급된 토큰 정보를 포함하는 성공 응답
      */
     @Override

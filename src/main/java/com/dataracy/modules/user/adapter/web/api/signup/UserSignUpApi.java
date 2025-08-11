@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface UserSignUpApi {
     /**
      * 사용자가 자체 회원가입 정보를 제출하여 회원가입을 완료한다.
-     *
      * 회원가입이 성공하면 리프레시 토큰이 쿠키와 Redis에 저장되며, 이후 리다이렉트가 수행된다.
      *
      * @param webRequest 회원가입에 필요한 사용자 정보 요청 객체

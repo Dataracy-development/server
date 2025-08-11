@@ -154,7 +154,6 @@ public class DataEntity extends BaseTimeEntity {
 
     /**
      * 주어진 값들로 DataEntity 객체를 생성합니다.
-     *
      * 데이터셋의 주요 정보와 메타데이터를 포함하여 새로운 DataEntity 인스턴스를 반환합니다.
      *
      * @param title 데이터셋 제목

@@ -6,12 +6,15 @@ import com.dataracy.modules.dataset.application.dto.response.read.RecentMinimalD
 import com.dataracy.modules.dataset.application.dto.response.search.SimilarDataResponse;
 import org.springframework.stereotype.Component;
 
+/**
+ * 데이터 검색 웹 DTO와 애플리케이션 DTO를 변환하는 매퍼
+ */
 @Component
 public class DataSearchWebMapper {
     /**
-     * SimilarDataResponse 도메인 DTO를 SimilarDataWebResponse 웹 응답 DTO로 변환합니다.
+     * SimilarDataResponse 애플리케이션 응답 DTO를 SimilarDataWebResponse 웹 응답 DTO로 변환합니다.
      *
-     * @param responseDto 변환할 도메인 DTO
+     * @param responseDto 변환할 애플리케이션 DTO
      * @return 변환된 웹 응답 DTO
      */
     public SimilarDataWebResponse toWebDto(SimilarDataResponse responseDto) {
@@ -33,9 +36,9 @@ public class DataSearchWebMapper {
     }
 
     /**
-     * 최근 최소 데이터 도메인 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     * 최근 최소 데이터 애플리케이션 DTO를 웹 계층의 응답 DTO로 변환합니다.
      *
-     * @param responseDto 변환할 최근 최소 데이터 도메인 DTO
+     * @param responseDto 변환할 최근 최소 데이터 애플리케이션 응답 DTO
      * @return id, 제목, 썸네일 URL, 생성일시 정보를 포함하는 웹 응답 DTO
      */
     public RecentMinimalDataWebResponse toWebDto(RecentMinimalDataResponse responseDto) {

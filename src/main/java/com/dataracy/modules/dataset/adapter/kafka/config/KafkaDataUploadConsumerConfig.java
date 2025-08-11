@@ -21,7 +21,6 @@ public class KafkaDataUploadConsumerConfig {
 
     /**
      * DataUploadEvent 메시지를 처리하기 위한 Kafka ConsumerFactory 빈을 생성합니다.
-     *
      * Kafka bootstrap 서버, consumer group ID, key/value deserializer 등 필요한 설정을 적용하여
      * DataUploadEvent 객체를 안전하게 역직렬화할 수 있도록 구성된 ConsumerFactory를 반환합니다.
      *

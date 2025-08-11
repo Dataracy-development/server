@@ -22,9 +22,8 @@ public class ExtractDataFileUrlDbAdapterFind implements
     private final DataJpaRepository dataJpaRepository;
 
     /**
-     * 주어진 데이터 ID에 해당하는 데이터의 소유자(사용자) ID를 반환합니다.
-     *
-     * 데이터가 존재하지 않을 경우 {@code DataException}이 발생합니다.
+     * 주어진 데이터 ID에 해당하는 데이터의 업로드 유저 ID를 반환합니다.
+     * 데이터가 존재하지 않을 경우 DataException이 발생합니다.
      *
      * @param dataId 사용자 ID를 조회할 데이터의 ID
      * @return 데이터에 연결된 사용자 ID
@@ -43,11 +42,11 @@ public class ExtractDataFileUrlDbAdapterFind implements
     }
 
     /**
-     * 삭제된 데이터를 포함하여 주어진 데이터 ID에 해당하는 데이터의 소유자(사용자) ID를 반환합니다.
+     * 삭제된 데이터를 포함하여 주어진 데이터 ID에 해당하는 데이터의 업로드 유저 ID를 반환합니다.
      *
      * @param dataId 소유자 ID를 조회할 데이터의 ID
      * @return 데이터에 연결된 사용자 ID
-     * @throws DataException 데이터가 존재하지 않을 경우 {@code DataErrorStatus.NOT_FOUND_DATA} 상태로 예외가 발생합니다.
+     * @throws DataException 데이터가 존재하지 않을 경우 DataErrorStatus.NOT_FOUND_DATA 상태로 예외가 발생합니다.
      */
     @Override
     public Long findUserIdIncludingDeleted(Long dataId) {
@@ -59,19 +58,6 @@ public class ExtractDataFileUrlDbAdapterFind implements
                 });
         LoggerFactory.db().logQueryEnd("DataEntity", "[findIncludingDeletedData] 삭제된 데이터셋을 포함하여 데이터셋의 작성자 아이디 조회 종료 dataId=" + dataId, startTime);
         return dataEntity.getUserId();
-    }
-
-    /**
-     * 주어진 데이터 ID에 해당하는 데이터셋 파일의 URL을 Optional로 반환합니다.
-     *
-     * 데이터셋 파일이 존재하지 않으면 Optional.empty()를 반환합니다.
-     *
-     * @param dataId 조회할 데이터의 ID
-     * @return 데이터셋 파일 URL이 존재하면 Optional에 담아 반환, 없으면 Optional.empty()
-     */
-    @Override
-    public Optional<String> findDataFileUrlById(Long dataId) {
-        return findDataFileUrl(dataId, "[findDataFileUrlById] 데이터셋의 파일 url 조회");
     }
 
     /**

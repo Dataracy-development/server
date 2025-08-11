@@ -26,10 +26,6 @@ public class SesConfig {
     @Value("${aws.ses.region:}")
     private String region;
 
-    /**
-     *
-     * @return
-     */
     @Bean
     public AmazonSimpleEmailService amazonSimpleEmailService() {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);

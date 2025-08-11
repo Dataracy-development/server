@@ -127,7 +127,6 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
 
     /**
      * S3 버킷 이름이 비어 있거나 공백인지 검증합니다.
-     *
      * 애플리케이션 초기화 시 S3 버킷 이름이 올바르게 설정되지 않은 경우 예외를 발생시켜 잘못된 환경 구성을 방지합니다.
      *
      * @throws S3UploadException S3 버킷 이름이 비어 있거나 공백일 때 발생합니다.

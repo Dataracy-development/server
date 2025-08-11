@@ -19,7 +19,6 @@ public class FileDeleteConsumer {
      * Kafka 메시지로 전달된 파일 URL을 받아 해당 파일을 삭제합니다.
      *
      * @param fileUrl 삭제할 파일의 URL
-     *
      * 파일 삭제 중 예외가 발생하면 에러로 기록되며, 예외는 재전파되지 않습니다.
      */
     @KafkaListener(

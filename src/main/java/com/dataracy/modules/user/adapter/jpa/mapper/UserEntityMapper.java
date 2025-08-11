@@ -12,12 +12,14 @@ import java.util.Optional;
  * 유저 엔티티와 유저 도메인 모델을 변환하는 매퍼
  */
 public final class UserEntityMapper {
+    /**
+     * 인스턴스 생성을 방지하기 위한 private 생성자입니다.
+     */
     private UserEntityMapper() {
     }
 
     /**
      * UserEntity 객체를 User 도메인 모델로 변환합니다.
-     *
      * 입력된 UserEntity가 null이면 null을 반환하며, 연관된 토픽 ID 목록과 소개글 등 모든 주요 필드를 User 도메인 모델에 매핑합니다.
      *
      * @param userEntity 변환할 UserEntity 객체

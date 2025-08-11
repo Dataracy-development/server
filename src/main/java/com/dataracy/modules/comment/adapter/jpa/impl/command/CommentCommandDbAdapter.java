@@ -39,7 +39,6 @@ public class CommentCommandDbAdapter implements
 
     /**
      * 지정한 프로젝트 ID와 댓글 ID에 해당하는 댓글의 내용을 요청 정보로 수정합니다.
-     *
      * 댓글이 존재하지 않거나 프로젝트 ID와 댓글의 프로젝트 ID가 일치하지 않을 경우 CommentException이 발생합니다.
      *
      * @param projectId 댓글이 속한 프로젝트의 ID
@@ -65,7 +64,6 @@ public class CommentCommandDbAdapter implements
 
     /**
      * 프로젝트 ID와 댓글 ID를 기준으로 해당 댓글을 삭제합니다.
-     *
      * 댓글이 존재하지 않거나, 댓글이 지정된 프로젝트에 속하지 않을 경우 `CommentException`이 발생합니다.
      *
      * @param projectId 댓글이 속한 프로젝트의 ID

@@ -50,7 +50,6 @@ public class User {
 
     /**
      * 사용자의 인증 제공자에 따라 비밀번호 변경 가능 여부를 검증합니다.
-     *
      * GOOGLE 또는 KAKAO 제공자를 사용하는 경우 비밀번호 변경이 금지되어 있으며, 이 경우 예외를 발생시킵니다.
      *
      * @throws UserException GOOGLE 또는 KAKAO 제공자일 때 비밀번호 변경이 금지된 경우 발생합니다.

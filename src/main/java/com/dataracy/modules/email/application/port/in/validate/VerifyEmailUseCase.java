@@ -1,5 +1,6 @@
 package com.dataracy.modules.email.application.port.in.validate;
 
+import com.dataracy.modules.email.application.dto.response.GetResetTokenResponse;
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 
 public interface VerifyEmailUseCase {
@@ -11,5 +12,5 @@ public interface VerifyEmailUseCase {
      * @param verificationType 이메일 인증 유형
      * @return 인증 결과 또는 상태를 나타내는 문자열
      */
-    String verifyCode(String email, String code, EmailVerificationType verificationType);
+    GetResetTokenResponse verifyCode(String email, String code, EmailVerificationType verificationType);
 }

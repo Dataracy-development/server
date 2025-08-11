@@ -26,7 +26,6 @@ public class LoggerFactory {
 
     /**
      * ServiceLogger의 전역 싱글톤 인스턴스를 반환합니다.
-     *
      * 서비스 계층의 로깅에 사용되는 ServiceLogger 인스턴스를 제공합니다.
      *
      * @return ServiceLogger의 싱글톤 인스턴스

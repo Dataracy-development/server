@@ -11,7 +11,7 @@ public class ServiceLogger extends BaseLogger {
      *
      * @param useCase 서비스 작업의 용도 또는 이름
      * @param message 서비스 작업에 대한 설명 또는 메시지
-     * @return 작업 시작 시각을 나타내는 {@link Instant} 객체
+     * @return 작업 시작 시각을 나타내는 Instant 객체
      */
     public Instant logStart(String useCase, String message) {
         Instant start = Instant.now();

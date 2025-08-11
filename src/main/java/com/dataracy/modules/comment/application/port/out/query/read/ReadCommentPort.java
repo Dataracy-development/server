@@ -31,7 +31,7 @@ public interface ReadCommentPort {
      * @param projectId   답글이 속한 프로젝트의 ID
      * @param commentId   답글의 대상이 되는 댓글의 ID
      * @param pageable    페이지네이션 정보를 담은 객체
-     * @return            답글 댓글(Comment) 객체의 페이지
+     * @return            답글 객체의 페이지
      */
     Page<Comment> findReplyComments(Long projectId, Long commentId, Pageable pageable);
 }
