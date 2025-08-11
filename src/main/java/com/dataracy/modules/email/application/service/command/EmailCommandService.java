@@ -20,7 +20,6 @@ public class EmailCommandService implements SendEmailUseCase {
     private final SendEmailPort sendEmailPort;
     private final CacheEmailPort cacheEmailPort;
 
-    // 이메일 인증 방식이 여러개이므로 명시적으로 설정
     /**
      * EmailCommandService의 인스턴스를 생성하고 이메일 전송 및 캐시 포트 의존성을 주입합니다.
      *

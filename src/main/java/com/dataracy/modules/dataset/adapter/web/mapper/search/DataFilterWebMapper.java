@@ -6,6 +6,9 @@ import com.dataracy.modules.dataset.application.dto.request.search.FilteringData
 import com.dataracy.modules.dataset.application.dto.response.search.FilteredDataResponse;
 import org.springframework.stereotype.Component;
 
+/**
+ * 데이터 필터링 웹 DTO와 애플리케이션 DTO를 변환하는 매퍼
+ */
 @Component
 public class DataFilterWebMapper {
     /**
@@ -28,7 +31,7 @@ public class DataFilterWebMapper {
     /**
      * FilteredDataResponse 객체를 웹 계층의 FilteredDataWebResponse 객체로 변환합니다.
      *
-     * @param responseDto 변환할 도메인 계층의 데이터 필터링 결과 DTO
+     * @param responseDto 변환할 애플리케이션 응답 계층의 데이터 필터링 결과 DTO
      * @return 웹 응답에 사용되는 FilteredDataWebResponse 객체
      */
     public FilteredDataWebResponse toWebDto(FilteredDataResponse responseDto) {

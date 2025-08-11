@@ -20,7 +20,6 @@ public enum EmailVerificationType {
 
     /**
      * 주어진 문자열 입력값에 해당하는 EmailVerificationType 열거형 상수를 반환합니다.
-     *
      * 입력값은 열거형 상수의 이름 또는 value 필드와 대소문자 구분 없이 매칭됩니다.
      * 일치하는 상수가 없을 경우, 규칙 위반 로그를 남기고 EmailException을 발생시킵니다.
      *

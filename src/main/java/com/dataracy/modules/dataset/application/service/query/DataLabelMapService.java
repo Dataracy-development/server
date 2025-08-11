@@ -24,10 +24,10 @@ public class DataLabelMapService implements FindDataLabelMapUseCase {
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
 
     /**
-     * 데이터셋 DTO 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 해당하는 레이블 매핑 정보를 조회합니다.
+     * 데이터셋 DTO 컬렉션에서 사용자, 토픽, 데이터 소스, 데이터 타입의 ID를 추출하여 각 ID에 해당하는 라벨 매핑 정보를 조회합니다.
      *
      * @param savedDataSets 프로젝트 개수가 포함된 데이터셋 DTO 컬렉션
-     * @return 사용자명, 토픽 레이블, 데이터 소스 레이블, 데이터 타입 레이블의 매핑 정보를 포함하는 응답 객체
+     * @return 사용자명, 토픽 라벨, 데이터 소스 라벨, 데이터 타입 라벨의 매핑 정보를 포함하는 응답 객체
      */
     @Transactional(readOnly = true)
     public DataLabelMapResponse labelMapping(Collection<DataWithProjectCountDto> savedDataSets) {

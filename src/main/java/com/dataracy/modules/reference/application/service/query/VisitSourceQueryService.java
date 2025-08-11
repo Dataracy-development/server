@@ -48,7 +48,6 @@ public class VisitSourceQueryService implements
 
     /**
      * 주어진 ID에 해당하는 방문 경로 정보를 조회하여 VisitSourceResponse DTO로 반환한다.
-     *
      * 방문 경로가 존재하지 않을 경우 ReferenceException이 발생한다.
      *
      * @param visitSourceId 조회할 방문 경로의 ID
@@ -71,8 +70,7 @@ public class VisitSourceQueryService implements
 
     /**
      * 주어진 방문 출처 ID가 존재하는지 검증합니다.
-     *
-     * 방문 출처가 존재하지 않을 경우 {@code ReferenceException}을 발생시킵니다.
+     * 방문 출처가 존재하지 않을 경우 ReferenceException을 발생시킵니다.
      *
      * @param visitSourceId 존재 여부를 확인할 방문 출처의 ID
      * @throws ReferenceException 방문 출처가 존재하지 않을 때 발생
@@ -91,8 +89,7 @@ public class VisitSourceQueryService implements
 
     /**
      * 주어진 방문 출처 ID에 해당하는 라벨을 반환합니다.
-     *
-     * 방문 출처가 존재하지 않을 경우 {@code ReferenceException}이 발생합니다.
+     * 방문 출처가 존재하지 않을 경우 ReferenceException이 발생합니다.
      *
      * @param visitSourceId 라벨을 조회할 방문 출처의 ID
      * @return 방문 출처의 라벨 문자열
@@ -113,7 +110,6 @@ public class VisitSourceQueryService implements
 
     /**
      * 주어진 방문 출처 ID 목록에 대해 각 ID와 해당 라벨을 매핑한 Map을 반환합니다.
-     *
      * 입력된 ID 목록이 null이거나 비어 있으면 빈 Map을 반환합니다.
      *
      * @param visitSourceIds 방문 출처 ID 목록

@@ -35,7 +35,6 @@ public record DataSearchDocument(
 ) {
     /**
      * 데이터, 메타데이터, 라벨 정보를 결합하여 DataSearchDocument 인스턴스를 생성합니다.
-     *
      * 이 메서드는 데이터의 주요 속성, 행/열 수 및 미리보기 정보, 라벨 정보를 통합하여
      * 검색 및 색인에 적합한 DataSearchDocument 객체를 반환합니다.
      *

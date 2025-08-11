@@ -41,13 +41,12 @@ public class SearchDataQueryDslAdapter implements
 
     /**
      * 필터 조건과 정렬 기준에 따라 데이터셋 목록을 페이지 단위로 조회합니다.
-     *
      * 각 데이터셋에 연관된 프로젝트 개수를 포함하여, 필터링, 정렬, 페이징이 모두 적용된 결과를 반환합니다.
      *
      * @param request 데이터셋 필터링 조건이 담긴 요청 객체
      * @param pageable 페이지 정보 및 크기
      * @param sortType 데이터셋 정렬 기준
-     * @return 데이터셋과 연관 프로젝트 개수를 포함한 DTO의 페이지 객체
+     * @return 데이터셋과 연결된 프로젝트 개수를 포함한 DTO의 페이지 객체
      */
     @Override
     public Page<DataWithProjectCountDto> searchByFilters(FilteringDataRequest request, Pageable pageable, DataSortType sortType) {

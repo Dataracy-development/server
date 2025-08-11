@@ -201,7 +201,7 @@ public class ReadDataQueryDslAdapter implements
     }
 
     /**
-     * 지정된 개수만큼 최신순으로 데이터셋 목록을 조회합니다.
+     * 지정된 개수만큼 최신순으로 데이터셋 목록을 간단하게 조회합니다.
      *
      * @param size 조회할 데이터셋의 최대 개수
      * @return 최신순으로 정렬된 데이터 도메인 객체 리스트

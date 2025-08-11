@@ -11,7 +11,7 @@ public class PersistenceLogger extends BaseLogger {
      *
      * @param entityName   조회 대상 엔티티의 이름
      * @param queryContext 조회 작업의 컨텍스트 또는 설명
-     * @return             조회 시작 시점의 {@link Instant}
+     * @return             조회 시작 시점의 Instant
      */
     public Instant logQueryStart(String entityName, String queryContext) {
         debug("[DB 조회 시작] entity={} context={}", entityName, queryContext);

@@ -4,7 +4,7 @@ public interface CacheRefreshTokenPort {
     /**
      * 지정된 사용자 ID에 대해 리프레시 토큰을 캐시에 저장합니다.
      *
-     * @param userId 리프레시 토큰을 저장할 사용자 ID
+     * @param userId 리프레시 토큰 저장에 사용될 사용자 ID
      * @param refreshToken 저장할 리프레시 토큰
      */
     void saveRefreshToken(String userId, String refreshToken);

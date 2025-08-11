@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 public class FilteredDataDtoMapper {
     /**
      * Data 도메인 객체와 주제, 데이터 소스, 데이터 유형 라벨, 연결된 프로젝트 수를 기반으로 FilteredDataResponse DTO를 생성합니다.
-     *
      * 데이터의 주요 속성, 메타데이터 정보, 각종 라벨, 연결된 프로젝트 수를 포함한 DTO를 반환합니다.
      *
      * @param data 변환할 Data 도메인 객체

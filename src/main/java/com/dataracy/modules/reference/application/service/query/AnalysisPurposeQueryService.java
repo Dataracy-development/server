@@ -48,7 +48,6 @@ public class AnalysisPurposeQueryService implements
 
     /**
      * 주어진 ID에 해당하는 분석 목적의 상세 정보를 조회하여 반환한다.
-     *
      * 분석 목적이 존재하지 않을 경우 ReferenceException이 발생한다.
      *
      * @param analysisPurposeId 조회할 분석 목적의 ID
@@ -71,8 +70,7 @@ public class AnalysisPurposeQueryService implements
 
     /**
      * 주어진 ID로 분석 목적의 존재 여부를 검증합니다.
-     *
-     * 해당 ID의 분석 목적이 존재하지 않으면 {@link ReferenceException}을 발생시킵니다.
+     * 해당 ID의 분석 목적이 존재하지 않으면 ReferenceException을 발생시킵니다.
      *
      * @param analysisPurposeId 존재 여부를 확인할 분석 목적의 ID
      * @throws ReferenceException 분석 목적이 존재하지 않을 때 발생

@@ -32,8 +32,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
      * OAuth2 로그인 성공 후 처리.
      * 쿠키 설정 등 웹 관련은 컨트롤러 또는 핸들러에서 담당한다.
      *
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
+     * @param request HTTP 요청 객체
+     * @param response HTTP 응답 객체
      * @param authentication 인증 객체
      */
     @Override
@@ -60,8 +60,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
      * 신규 소셜 로그인 유저를 처리하여 레지스터 토큰을 쿠키에 저장하고 온보딩 페이지로 리다이렉트합니다.
      *
      * @param oAuthUserInfo 소셜 로그인에서 추출한 유저 정보
-     * @param request 현재 HTTP 요청
-     * @param response 현재 HTTP 응답
+     * @param request HTTP 요청 객체
+     * @param response HTTP 응답 객체
      * @throws IOException 리다이렉트 과정에서 입출력 오류가 발생할 경우
      */
     private void handleNewUser(OAuthUserInfo oAuthUserInfo, HttpServletRequest request, HttpServletResponse response) throws IOException {

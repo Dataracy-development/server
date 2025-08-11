@@ -17,9 +17,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class CurrentUserIdArgumentResolver implements HandlerMethodArgumentResolver {
     /**
+     * ArgumentResolver를 통해 파라미터에 있는 CurrentUserId 애노테이션의 유효성을 확인한다.
      *
-     * @param parameter
-     * @return
+     * @param parameter 메서드 파라미터
+     * @return 파라미터에 존재 여부
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -28,11 +29,12 @@ public class CurrentUserIdArgumentResolver implements HandlerMethodArgumentResol
     }
 
     /**
+     * Arguemnt Resolver에서 현재 인증된 객체의 유저 아이디를 반환한다.
      *
-     * @param parameter
-     * @param mavContainer
-     * @param webRequest
-     * @param binderFactory
+     * @param parameter 메서드 파라미터
+     * @param mavContainer 모델 앤 뷰 컨테이너
+     * @param webRequest 웹 요청 객체
+     * @param binderFactory 웹 바인더
      * @return
      */
     @Override

@@ -30,7 +30,8 @@ public class CustomMultipartFile implements MultipartFile {
      *
      * @return 파일의 이름
      */
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return name;
     }
 
@@ -39,7 +40,8 @@ public class CustomMultipartFile implements MultipartFile {
      *
      * @return 업로드 시 사용된 원본 파일명
      */
-    @Override public String getOriginalFilename() {
+    @Override
+    public String getOriginalFilename() {
         return originalFilename;
     }
 
@@ -48,7 +50,8 @@ public class CustomMultipartFile implements MultipartFile {
      *
      * @return 파일의 MIME 타입 문자열
      */
-    @Override public String getContentType() {
+    @Override
+    public String getContentType() {
         return contentType;
     }
 
@@ -57,7 +60,8 @@ public class CustomMultipartFile implements MultipartFile {
      *
      * @return 파일 내용이 없으면 true, 그렇지 않으면 false입니다.
      */
-    @Override public boolean isEmpty() {
+    @Override
+    public boolean isEmpty() {
         return content.length == 0;
     }
 
@@ -66,7 +70,8 @@ public class CustomMultipartFile implements MultipartFile {
      *
      * @return 파일 데이터의 총 바이트 수
      */
-    @Override public long getSize() {
+    @Override
+    public long getSize() {
         return content.length;
     }
 
@@ -75,7 +80,8 @@ public class CustomMultipartFile implements MultipartFile {
      *
      * @return 파일 데이터의 복제본 바이트 배열
      */
-    @Override public byte[] getBytes() {
+    @Override
+    public byte[] getBytes() {
         return content.clone();
     }
 
@@ -84,7 +90,8 @@ public class CustomMultipartFile implements MultipartFile {
      *
      * @return 파일 내용을 읽기 위한 입력 스트림
      */
-    @Override public InputStream getInputStream() {
+    @Override
+    public InputStream getInputStream() {
         return new ByteArrayInputStream(content);
     }
 

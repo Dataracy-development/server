@@ -24,9 +24,9 @@ public class SearchRealTimeDataSetsEsAdapter implements SearchRealTimeDataSetsPo
 
     /**
      * 주어진 키워드로 Elasticsearch에서 삭제되지 않은 데이터셋을 실시간으로 검색하여 최소 정보 목록을 반환합니다.
-     *
      * 키워드는 "title"(가중치 2)와 "description" 필드에 대해 자동 퍼지 멀티매치 쿼리로 검색되며,
-     * "isDeleted"가 false인 데이터만 포함됩니다. 결과는 "createdAt" 기준 내림차순으로 정렬되고, 요청한 개수만큼 제한됩니다.
+     * "isDeleted"가 false인 데이터만 포함됩니다.
+     * 결과는 "createdAt" 기준 내림차순으로 정렬되고, 요청한 개수만큼 제한됩니다.
      *
      * @param keyword 검색에 사용할 키워드
      * @param size 반환할 최대 데이터셋 개수

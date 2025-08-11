@@ -21,8 +21,7 @@ public interface PasswordConfirmable {
 
     /**
      * 비밀번호와 비밀번호 확인 값이 일치하는지 검증합니다.
-     *
-     * 비밀번호와 비밀번호 확인 값이 다를 경우 {@code UserException}을 {@code UserErrorStatus.NOT_SAME_PASSWORD} 상태로 발생시킵니다.
+     * 비밀번호와 비밀번호 확인 값이 다를 경우 UserException을 UserErrorStatus.NOT_SAME_PASSWORD 상태로 발생시킵니다.
      *
      * @throws UserException 비밀번호와 비밀번호 확인 값이 일치하지 않을 때 발생합니다.
      */

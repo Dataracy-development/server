@@ -5,7 +5,7 @@ import com.dataracy.modules.user.application.dto.request.PasswordConfirmable;
 import java.util.List;
 
 /**
- * 자체 회원가입을 위한 도메인 요청 DTO
+ * 자체 회원가입을 위한 애플리케이션 요청 DTO
  *
  * @param email 이메일
  * @param password 비밀번호

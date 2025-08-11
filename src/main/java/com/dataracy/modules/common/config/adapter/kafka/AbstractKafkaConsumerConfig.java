@@ -14,7 +14,6 @@ public abstract class AbstractKafkaConsumerConfig<V> {
 
     /**
      * Kafka 소비자에 대한 기본 구성 속성 맵을 반환합니다.
-     *
      * 반환되는 맵에는 부트스트랩 서버, 그룹 ID, 오프셋 리셋 정책, 자동 커밋 비활성화, 최대 폴 레코드 수, 키 및 값 디시리얼라이저 클래스가 포함됩니다.
      *
      * @return Kafka 소비자 구성을 위한 속성 맵
@@ -33,7 +32,6 @@ public abstract class AbstractKafkaConsumerConfig<V> {
 
     /**
      * Kafka ConsumerFactory 인스턴스를 생성하여 반환합니다.
-     *
      * baseConsumerProps()에서 정의된 Kafka 소비자 설정을 사용하여 DefaultKafkaConsumerFactory를 생성합니다.
      *
      * @return Kafka 메시지 소비를 위한 ConsumerFactory 인스턴스
@@ -58,7 +56,6 @@ public abstract class AbstractKafkaConsumerConfig<V> {
 
     /**
      * Kafka 컨슈머 그룹 ID를 반환합니다.
-     *
      * 이 메서드는 구체적인 컨슈머 그룹 ID를 지정하기 위해 하위 클래스에서 구현되어야 합니다.
      *
      * @return 사용할 Kafka 컨슈머 그룹 ID

@@ -17,7 +17,6 @@ public class IndexDataAdapter implements IndexDataPort {
 
     /**
      * 주어진 DataSearchDocument를 Elasticsearch의 "data_index" 인덱스에 저장합니다.
-     *
      * 인덱싱 중 IOException이 발생하면 예외를 외부로 전달하지 않고 로깅만 수행합니다.
      *
      * @param doc Elasticsearch에 저장할 데이터셋 문서

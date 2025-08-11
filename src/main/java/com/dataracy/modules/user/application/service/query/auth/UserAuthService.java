@@ -54,7 +54,7 @@ public class UserAuthService implements
     }
 
     /**
-     * OAuth 제공자 정보를 기반으로 신규 사용자 등록용 JWT 토큰과 만료 시간을 반환합니다.
+     * OAuth 제공자 정보를 기반으로 신규 사용자 등록용 JWT 레지스터 토큰과 만료 시간을 반환합니다.
      *
      * @param oAuthUserInfo OAuth 인증을 통해 획득한 사용자 정보
      * @return 등록 토큰과 만료 시간이 포함된 RegisterTokenResponse
@@ -74,9 +74,8 @@ public class UserAuthService implements
     }
 
     /**
-     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고, 해당 토큰을 캐시에 저장한 후 토큰과 만료 정보를 반환합니다.
-     *
-     * 사용자가 존재하지 않을 경우 {@code UserException}이 발생합니다.
+     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고, 해당 토큰을 쿠키에 저장한 후 토큰과 만료 정보를 반환합니다.
+     * 사용자가 존재하지 않을 경우 UserException이 발생합니다.
      *
      * @param oAuthUserInfo OAuth 제공자에서 받은 사용자 정보
      * @return 발급된 리프레시 토큰과 만료 시간을 포함하는 응답 객체
@@ -101,7 +100,6 @@ public class UserAuthService implements
 
     /**
      * 이메일과 비밀번호로 사용자를 인증하고, 인증에 성공하면 해당 사용자의 정보를 반환합니다.
-     *
      * 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 경우 `UserException`이 발생합니다.
      *
      * @param email 인증에 사용할 이메일 주소
