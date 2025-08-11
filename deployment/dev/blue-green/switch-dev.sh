@@ -69,40 +69,36 @@ server {
     proxy_pass http://backend;
   }
 
-  # Swagger UI 요청 프록시
-  location /swagger-ui/ {
-    proxy_pass http://backend/swagger-ui/;
+  # ✅ Swagger UI 정적 자원 - 캐시 무효화 + 경로 유지
+  location ^~ /swagger-ui/ {
+    proxy_pass http://backend;  # /swagger-ui/* 그대로 전달
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+    add_header Pragma "no-cache";
+    expires 0;
   }
 
-  location /v3/api-docs {
-    proxy_pass http://backend/v3/api-docs;
+  # ✅ OpenAPI JSON/YAML 및 swagger-config - 하위 경로 포함 + 캐시 무효화
+  # (/v3/api-docs, /v3/api-docs/swagger-config, /v3/api-docs.yaml 등)
+  location ^~ /v3/api-docs {
+    proxy_pass http://backend;  # /v3/api-docs* 그대로 전달
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+    add_header Pragma "no-cache";
+    expires 0;
   }
 
-  location /swagger-config {
-    proxy_pass http://backend/swagger-config;
-  }
-
-  # 기타 정적 자원 (필요 시)
+  # (webjars를 직접 쓸 때만 유지; 아니면 제거 가능)
   location /webjars/ {
-    proxy_pass http://backend/webjars/;
+    proxy_pass http://backend;
   }
 
   # 헬스 체크
   location /actuator/health {
-    proxy_pass http://backend/actuator/health;
+    proxy_pass http://backend;
   }
 
   # 나머지 fallback
   location / {
     proxy_pass http://backend;
-    proxy_set_header Host \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto \$scheme;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade \$http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_set_header Cookie \$http_cookie;
   }
 }
 EOF
