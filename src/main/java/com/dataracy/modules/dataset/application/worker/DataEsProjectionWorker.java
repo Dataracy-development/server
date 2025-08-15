@@ -6,6 +6,7 @@ import com.dataracy.modules.dataset.adapter.jpa.entity.DataEsProjectionTaskEntit
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataEsProjectionDlqRepository;
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataEsProjectionTaskRepository;
 import com.dataracy.modules.dataset.application.port.out.command.delete.SoftDeleteDataPort;
+import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDataDownloadPort;
 import com.dataracy.modules.dataset.domain.enums.DataEsProjectionStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +24,7 @@ public class DataEsProjectionWorker {
 
     // ES 어댑터들 (Qualifier로 ES 구현 주입)
     private final SoftDeleteDataPort softDeleteDataEsPort;
-//    private final UpdateDataDownloadPort updateDataDownloadEsPort;
+    private final UpdateDataDownloadPort updateDataDownloadEsPort;
 
     private static final int BATCH = 100;
     private static final int MAX_RETRY = 8;
@@ -31,13 +32,13 @@ public class DataEsProjectionWorker {
     public DataEsProjectionWorker(
             DataEsProjectionTaskRepository queueRepo,
             DataEsProjectionDlqRepository dlqRepo,
-            @Qualifier("softDeleteDataEsAdapter") SoftDeleteDataPort softDeleteDataEsPort
-//            @Qualifier("updateDataDownloadEsAdapter") UpdateDataDownloadPort updateDataDownloadEsPort
+            @Qualifier("softDeleteDataEsAdapter") SoftDeleteDataPort softDeleteDataEsPort,
+            @Qualifier("updateDataDownloadEsAdapter") UpdateDataDownloadPort updateDataDownloadEsPort
     ) {
         this.queueRepo = queueRepo;
         this.dlqRepo = dlqRepo;
         this.softDeleteDataEsPort = softDeleteDataEsPort;
-//        this.updateDataDownloadEsPort = updateDataDownloadEsPort;
+        this.updateDataDownloadEsPort = updateDataDownloadEsPort;
     }
 
     private long backoffSeconds(int retryCount) {
@@ -65,15 +66,10 @@ public class DataEsProjectionWorker {
                     }
                 }
 
-                // 다운로드 수 증감
-//                if (t.getDeltaDownload() != 0) {
-//                    if (t.getDeltaDownload() > 0) {
-//                        updateDataDownloadEsPort.increaseDownloadCount(t.getDataId());
-//                    }
-//                    else {
-//                        updateDataDownloadEsPort.decreaseDownloadCount(t.getDataId());
-//                    }
-//                }
+                // 다운로드 수 증가
+                if (t.getDeltaDownload() > 0) {
+                    updateDataDownloadEsPort.increaseDownloadCount(t.getDataId());
+                }
 
                 // 성공 → 큐 삭제
                 queueRepo.delete(t);

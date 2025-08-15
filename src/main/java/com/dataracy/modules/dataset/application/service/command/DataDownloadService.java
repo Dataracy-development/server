@@ -3,22 +3,37 @@ package com.dataracy.modules.dataset.application.service.command;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.application.dto.response.download.GetDataPreSignedUrlResponse;
 import com.dataracy.modules.dataset.application.port.in.command.content.DownloadDataFileUseCase;
+import com.dataracy.modules.dataset.application.port.out.command.projection.EnqueueDataProjectionPort;
+import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDataDownloadPort;
 import com.dataracy.modules.dataset.application.port.out.query.extractor.FindDownloadDataFileUrlPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import com.dataracy.modules.filestorage.application.port.in.DownloadFileUseCase;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
 @Service
-@RequiredArgsConstructor
 public class DataDownloadService implements DownloadDataFileUseCase {
     private final FindDownloadDataFileUrlPort findDownloadDataFileUrlPort;
+    private final UpdateDataDownloadPort updateDataDownloadDbPort;
+    private final EnqueueDataProjectionPort enqueueDataProjectionPort;
 
     private final DownloadFileUseCase downloadFileUseCase;
+
+    public DataDownloadService(
+            FindDownloadDataFileUrlPort findDownloadDataFileUrlPort,
+            @Qualifier("updateDataDownloadDbAdapter") UpdateDataDownloadPort updateDataDownloadDbPort,
+            EnqueueDataProjectionPort enqueueDataProjectionPort,
+            DownloadFileUseCase downloadFileUseCase
+    ) {
+        this.findDownloadDataFileUrlPort = findDownloadDataFileUrlPort;
+        this.updateDataDownloadDbPort = updateDataDownloadDbPort;
+        this.enqueueDataProjectionPort = enqueueDataProjectionPort;
+        this.downloadFileUseCase = downloadFileUseCase;
+    }
 
     /**
      * 데이터셋 파일의 S3 URL을 조회하여, 지정한 만료 시간(초) 동안 유효한 preSigned 다운로드 URL을 생성하여 반환합니다.
@@ -46,6 +61,12 @@ public class DataDownloadService implements DownloadDataFileUseCase {
             LoggerFactory.service().logException("DownloadDataFileUseCase", "Pre-signed URL 생성 실패 dataId=" + dataId, e);
             throw new DataException(DataErrorStatus.DOWNLOAD_URL_GENERATION_FAILED);
         }
+
+        // DB만 확정
+        updateDataDownloadDbPort.increaseDownloadCount(dataId);
+        // 큐 적재
+        enqueueDataProjectionPort.enqueueDownloadDelta(dataId, +1);
+
         LoggerFactory.service().logSuccess("DownloadDataFileUseCase", "데이터셋 파일 다운로드 서비스 종료 dataId=" + dataId, startTime);
         return getDataPresignedUrlResponse;
     }
