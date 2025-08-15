@@ -4,6 +4,7 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.application.port.in.command.content.DeleteDataUseCase;
 import com.dataracy.modules.dataset.application.port.in.command.content.RestoreDataUseCase;
 import com.dataracy.modules.dataset.application.port.out.command.delete.SoftDeleteDataPort;
+import com.dataracy.modules.dataset.application.port.out.command.projection.EnqueueDataProjectionPort;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,20 +17,14 @@ public class DataSoftDeleteUseCase implements
         RestoreDataUseCase
 {
     private final SoftDeleteDataPort softDeleteDataDbPort;
-    private final SoftDeleteDataPort softDeleteDataEsPort;
+    private final EnqueueDataProjectionPort enqueueDataProjectionPort;
 
-    /**
-     * 데이터셋의 소프트 삭제 및 복구를 위해 데이터베이스와 Elasticsearch 포트 구현체를 주입받아 초기화합니다.
-     *
-     * @param softDeleteDataDbDbPort 데이터베이스에서 소프트 삭제 작업을 수행하는 포트 구현체
-     * @param softDeleteDataEsPort Elasticsearch에서 소프트 삭제 작업을 수행하는 포트 구현체
-     */
     public DataSoftDeleteUseCase(
-            @Qualifier("softDeleteDataDbAdapter") SoftDeleteDataPort softDeleteDataDbDbPort,
-            @Qualifier("softDeleteDataEsAdapter") SoftDeleteDataPort softDeleteDataEsPort
+            @Qualifier("softDeleteDataDbAdapter") SoftDeleteDataPort softDeleteDataDbPort,
+            EnqueueDataProjectionPort enqueueDataProjectionPort
     ) {
-        this.softDeleteDataDbPort = softDeleteDataDbDbPort;
-        this.softDeleteDataEsPort = softDeleteDataEsPort;
+        this.softDeleteDataDbPort = softDeleteDataDbPort;
+        this.enqueueDataProjectionPort = enqueueDataProjectionPort;
     }
 
     /**
@@ -41,8 +36,12 @@ public class DataSoftDeleteUseCase implements
     @Transactional
     public void deleteData(Long dataId) {
         Instant startTime = LoggerFactory.service().logStart("DeleteDataUseCase", "데이터셋 Soft Delete 삭제 서비스 시작 dataId=" + dataId);
+
+        // DB만 확정
         softDeleteDataDbPort.deleteData(dataId);
-        softDeleteDataEsPort.deleteData(dataId);
+        // ES 작업 큐
+        enqueueDataProjectionPort.enqueueSetDeleted(dataId, true);
+
         LoggerFactory.service().logSuccess("DeleteDataUseCase", "데이터셋 Soft Delete 삭제 서비스 종료 dataId=" + dataId, startTime);
     }
 
@@ -55,8 +54,10 @@ public class DataSoftDeleteUseCase implements
     @Transactional
     public void restoreData(Long dataId) {
         Instant startTime = LoggerFactory.service().logStart("RestoreDataUseCase", "데이터셋 복원 서비스 시작 dataId=" + dataId);
+
         softDeleteDataDbPort.restoreData(dataId);
-        softDeleteDataEsPort.restoreData(dataId);
+        enqueueDataProjectionPort.enqueueSetDeleted(dataId, false);
+
         LoggerFactory.service().logSuccess("RestoreDataUseCase", "데이터셋 복원 서비스 종료 dataId=" + dataId, startTime);
     }
 }
