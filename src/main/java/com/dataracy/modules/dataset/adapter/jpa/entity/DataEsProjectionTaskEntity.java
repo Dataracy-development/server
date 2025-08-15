@@ -1,7 +1,7 @@
 package com.dataracy.modules.dataset.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
-import com.dataracy.modules.dataset.domain.enums.DataEsProjectionStatus;
+import com.dataracy.modules.dataset.domain.enums.DataEsProjectionType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -33,7 +33,7 @@ public class DataEsProjectionTaskEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable=false)
     @Builder.Default
-    private DataEsProjectionStatus status = DataEsProjectionStatus.PENDING;
+    private DataEsProjectionType status = DataEsProjectionType.PENDING;
 
     @Column(nullable=false)
     @Builder.Default

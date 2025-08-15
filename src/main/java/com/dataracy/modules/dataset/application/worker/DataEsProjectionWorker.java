@@ -7,7 +7,7 @@ import com.dataracy.modules.dataset.adapter.jpa.repository.DataEsProjectionDlqRe
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataEsProjectionTaskRepository;
 import com.dataracy.modules.dataset.application.port.out.command.delete.SoftDeleteDataPort;
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDataDownloadPort;
-import com.dataracy.modules.dataset.domain.enums.DataEsProjectionStatus;
+import com.dataracy.modules.dataset.domain.enums.DataEsProjectionType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -50,7 +50,7 @@ public class DataEsProjectionWorker {
     public void run() {
         List<DataEsProjectionTaskEntity> tasks = queueRepo.findBatchForWork(
                 LocalDateTime.now(),
-                List.of(DataEsProjectionStatus.PENDING, DataEsProjectionStatus.RETRYING),
+                List.of(DataEsProjectionType.PENDING, DataEsProjectionType.RETRYING),
                 PageRequest.of(0, BATCH)
         );
 
@@ -84,7 +84,7 @@ public class DataEsProjectionWorker {
                             .build());
                     queueRepo.delete(t);
                 } else {
-                    t.setStatus(DataEsProjectionStatus.RETRYING);
+                    t.setStatus(DataEsProjectionType.RETRYING);
                     t.setRetryCount(next);
                     t.setLastError(truncate(ex.getMessage(), 2000));
                     t.setNextRunAt(LocalDateTime.now().plusSeconds(backoffSeconds(next)));
