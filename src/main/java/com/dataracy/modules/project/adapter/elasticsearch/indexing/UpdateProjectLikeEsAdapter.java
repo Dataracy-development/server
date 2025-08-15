@@ -37,7 +37,12 @@ public class UpdateProjectLikeEsAdapter implements UpdateProjectLikePort {
                                                     }
                                                     """)
                                     )
-                            ),
+                            )
+                            .upsert(ProjectSearchDocument.builder()
+                                    .id(projectId)
+                                    .likeCount(1L)
+                                    .isDeleted(false)
+                                    .build()),
                     ProjectSearchDocument.class
             );
             LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(projectId), "프로젝트 likeCount 증분 업데이트 완료 - projectId=" + projectId);
@@ -70,7 +75,12 @@ public class UpdateProjectLikeEsAdapter implements UpdateProjectLikePort {
                                             }
                                             """)
                                     )
-                            ),
+                            )
+                            .upsert(ProjectSearchDocument.builder()
+                                    .id(projectId)
+                                    .likeCount(0L)
+                                    .isDeleted(false)
+                                    .build()),
                     ProjectSearchDocument.class
             );
             LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(projectId), "프로젝트 likeCount 감분 업데이트 완료 - projectId=" + projectId);
