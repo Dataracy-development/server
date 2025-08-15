@@ -44,7 +44,7 @@ public class DataDownloadService implements DownloadDataFileUseCase {
      * @throws DataException 데이터셋이 존재하지 않거나 preSigned URL 생성에 실패한 경우 발생
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public GetDataPreSignedUrlResponse downloadDataFile(Long dataId, int expirationSeconds) {
         Instant startTime = LoggerFactory.service().logStart("DownloadDataFileUseCase", "데이터셋 파일 다운로드 서비스 시작 dataId=" + dataId);
         String s3Url = findDownloadDataFileUrlPort.findDownloadedDataFileUrl(dataId)
