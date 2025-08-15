@@ -1,7 +1,7 @@
 package com.dataracy.modules.dataset.adapter.jpa.repository;
 
 import com.dataracy.modules.dataset.adapter.jpa.entity.DataEsProjectionTaskEntity;
-import com.dataracy.modules.dataset.domain.enums.DataEsProjectionStatus;
+import com.dataracy.modules.dataset.domain.enums.DataEsProjectionType;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.QueryHint;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +22,7 @@ public interface DataEsProjectionTaskRepository extends JpaRepository<DataEsProj
     """)
     List<DataEsProjectionTaskEntity> findBatchForWork(
             @Param("now") LocalDateTime now,
-            @Param("statuses") List<DataEsProjectionStatus> statuses,
+            @Param("statuses") List<DataEsProjectionType> statuses,
             Pageable pageable
     );
 }

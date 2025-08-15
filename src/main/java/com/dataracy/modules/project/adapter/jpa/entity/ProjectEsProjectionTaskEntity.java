@@ -53,6 +53,8 @@ public class ProjectEsProjectionTaskEntity extends BaseTimeEntity {
 
     @PrePersist
     public void prePersist() {
-        if (nextRunAt == null) nextRunAt = LocalDateTime.now();
+        if (nextRunAt == null) {
+            nextRunAt = LocalDateTime.now();
+        }
     }
 }

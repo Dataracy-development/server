@@ -1,6 +1,6 @@
 package com.dataracy.modules.dataset.domain.enums;
 
-public enum DataEsProjectionStatus {
+public enum DataEsProjectionType {
     PENDING, RETRYING
 }
 

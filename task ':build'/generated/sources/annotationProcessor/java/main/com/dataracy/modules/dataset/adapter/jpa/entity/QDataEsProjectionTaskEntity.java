@@ -38,7 +38,7 @@ public class QDataEsProjectionTaskEntity extends EntityPathBase<DataEsProjection
 
     public final BooleanPath setDeleted = createBoolean("setDeleted");
 
-    public final EnumPath<com.dataracy.modules.dataset.domain.enums.DataEsProjectionStatus> status = createEnum("status", com.dataracy.modules.dataset.domain.enums.DataEsProjectionStatus.class);
+    public final EnumPath<com.dataracy.modules.dataset.domain.enums.DataEsProjectionType> status = createEnum("status", com.dataracy.modules.dataset.domain.enums.DataEsProjectionType.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
