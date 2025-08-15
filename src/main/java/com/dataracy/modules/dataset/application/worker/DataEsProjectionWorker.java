@@ -90,7 +90,7 @@ public class DataEsProjectionWorker {
                     t.setNextRunAt(LocalDateTime.now().plusSeconds(backoffSeconds(next)));
                     // Dirty Checking → 커밋 시 UPDATE
                 }
-                LoggerFactory.elastic().logError("dataset_index", "ES 반영 실패 dataId=" + t.getDataId(), ex);
+                LoggerFactory.elastic().logError("data_index", "ES 반영 실패 dataId=" + t.getDataId(), ex);
             }
         }
     }
