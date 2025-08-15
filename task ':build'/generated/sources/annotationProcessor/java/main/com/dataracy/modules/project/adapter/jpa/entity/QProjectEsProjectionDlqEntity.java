@@ -10,14 +10,14 @@ import com.querydsl.core.types.Path;
 
 
 /**
- * QEsProjectionDlqEntity is a Querydsl query type for EsProjectionDlqEntity
+ * QProjectEsProjectionDlqEntity is a Querydsl query type for ProjectEsProjectionDlqEntity
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QEsProjectionDlqEntity extends EntityPathBase<EsProjectionDlqEntity> {
+public class QProjectEsProjectionDlqEntity extends EntityPathBase<ProjectEsProjectionDlqEntity> {
 
-    private static final long serialVersionUID = 1048192548L;
+    private static final long serialVersionUID = -1122146111L;
 
-    public static final QEsProjectionDlqEntity esProjectionDlqEntity = new QEsProjectionDlqEntity("esProjectionDlqEntity");
+    public static final QProjectEsProjectionDlqEntity projectEsProjectionDlqEntity = new QProjectEsProjectionDlqEntity("projectEsProjectionDlqEntity");
 
     public final com.dataracy.modules.common.base.QBaseTimeEntity _super = new com.dataracy.modules.common.base.QBaseTimeEntity(this);
 
@@ -37,16 +37,16 @@ public class QEsProjectionDlqEntity extends EntityPathBase<EsProjectionDlqEntity
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public QEsProjectionDlqEntity(String variable) {
-        super(EsProjectionDlqEntity.class, forVariable(variable));
+    public QProjectEsProjectionDlqEntity(String variable) {
+        super(ProjectEsProjectionDlqEntity.class, forVariable(variable));
     }
 
-    public QEsProjectionDlqEntity(Path<? extends EsProjectionDlqEntity> path) {
+    public QProjectEsProjectionDlqEntity(Path<? extends ProjectEsProjectionDlqEntity> path) {
         super(path.getType(), path.getMetadata());
     }
 
-    public QEsProjectionDlqEntity(PathMetadata metadata) {
-        super(EsProjectionDlqEntity.class, metadata);
+    public QProjectEsProjectionDlqEntity(PathMetadata metadata) {
+        super(ProjectEsProjectionDlqEntity.class, metadata);
     }
 
 }

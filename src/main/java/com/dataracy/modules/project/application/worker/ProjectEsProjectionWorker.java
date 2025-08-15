@@ -1,14 +1,14 @@
 package com.dataracy.modules.project.application.worker;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.project.adapter.jpa.entity.EsProjectionDlqEntity;
-import com.dataracy.modules.project.adapter.jpa.entity.EsProjectionTaskEntity;
-import com.dataracy.modules.project.adapter.jpa.repository.EsProjectionDlqRepository;
-import com.dataracy.modules.project.adapter.jpa.repository.EsProjectionTaskRepository;
+import com.dataracy.modules.project.adapter.jpa.entity.ProjectEsProjectionTaskEntity;
+import com.dataracy.modules.project.adapter.jpa.entity.ProjectEsProjectionDlqEntity;
+import com.dataracy.modules.project.adapter.jpa.repository.ProjectEsProjectionDlqRepository;
+import com.dataracy.modules.project.adapter.jpa.repository.ProjectEsProjectionTaskRepository;
 import com.dataracy.modules.project.application.port.out.command.delete.SoftDeleteProjectPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectCommentPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectLikePort;
-import com.dataracy.modules.project.domain.enums.EsProjectionStatus;
+import com.dataracy.modules.project.domain.enums.ProjectEsProjectionType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,9 +19,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
-public class EsProjectionWorker {
-    private final EsProjectionTaskRepository queueRepo;
-    private final EsProjectionDlqRepository dlqRepo;
+public class ProjectEsProjectionWorker {
+    private final ProjectEsProjectionTaskRepository queueRepo;
+    private final ProjectEsProjectionDlqRepository dlqRepo;
 
     // 이미 가진 ES 어댑터 (painless 스크립트로 증감)
     private final SoftDeleteProjectPort softDeleteProjectEsPort;
@@ -31,15 +31,15 @@ public class EsProjectionWorker {
     private static final int BATCH = 100;
     private static final int MAX_RETRY = 8;
 
-    public EsProjectionWorker(
-            EsProjectionTaskRepository esProjectionTaskRepository,
-            EsProjectionDlqRepository esProjectionDlqRepository,
+    public ProjectEsProjectionWorker(
+            ProjectEsProjectionTaskRepository projectEsProjectionTaskRepository,
+            ProjectEsProjectionDlqRepository projectEsProjectionDlqRepository,
             @Qualifier("softDeleteProjectEsAdapter") SoftDeleteProjectPort softDeleteProjectEsPort,
             @Qualifier("updateProjectCommentEsAdapter") UpdateProjectCommentPort updateProjectCommentEsPort,
             @Qualifier("updateProjectLikeEsAdapter") UpdateProjectLikePort updateProjectLikeEsPort
     ) {
-        this.queueRepo = esProjectionTaskRepository;
-        this.dlqRepo = esProjectionDlqRepository;
+        this.queueRepo = projectEsProjectionTaskRepository;
+        this.dlqRepo = projectEsProjectionDlqRepository;
         this.softDeleteProjectEsPort = softDeleteProjectEsPort;
         this.updateProjectCommentEsPort = updateProjectCommentEsPort;
         this.updateProjectLikeEsPort = updateProjectLikeEsPort;
@@ -53,12 +53,12 @@ public class EsProjectionWorker {
     @Transactional
     @Scheduled(fixedDelayString = "PT1S")
     public void run() {
-        List<EsProjectionTaskEntity> tasks =
+        List<ProjectEsProjectionTaskEntity> tasks =
                 queueRepo.findBatchForWork(LocalDateTime.now(),
-                        List.of(EsProjectionStatus.PENDING, EsProjectionStatus.RETRYING),
+                        List.of(ProjectEsProjectionType.PENDING, ProjectEsProjectionType.RETRYING),
                         PageRequest.of(0, BATCH));
 
-        for (EsProjectionTaskEntity t : tasks) {
+        for (ProjectEsProjectionTaskEntity t : tasks) {
             try {
                 // 소프트 삭제/복원 먼저
                 if (t.getSetDeleted() != null) {
@@ -91,7 +91,7 @@ public class EsProjectionWorker {
                 // 실패 → 재시도 or DLQ
                 int nextRetry = t.getRetryCount() + 1;
                 if (nextRetry >= MAX_RETRY) {
-                    dlqRepo.save(EsProjectionDlqEntity.builder()
+                    dlqRepo.save(ProjectEsProjectionDlqEntity.builder()
                             .projectId(t.getProjectId())
                             .deltaComment(t.getDeltaComment())
                             .deltaLike(t.getDeltaLike())
@@ -99,7 +99,7 @@ public class EsProjectionWorker {
                             .build());
                     queueRepo.delete(t);
                 } else {
-                    t.setStatus(EsProjectionStatus.RETRYING);
+                    t.setStatus(ProjectEsProjectionType.RETRYING);
                     t.setRetryCount(nextRetry);
                     t.setLastError(truncate(ex.getMessage(), 2000));
                     t.setNextRunAt(LocalDateTime.now().plusSeconds(backoffSeconds(nextRetry)));
