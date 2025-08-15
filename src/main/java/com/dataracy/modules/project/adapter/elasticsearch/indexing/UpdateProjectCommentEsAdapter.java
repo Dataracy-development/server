@@ -39,7 +39,12 @@ public class UpdateProjectCommentEsAdapter implements UpdateProjectCommentPort {
                                                     }
                                                     """)
                                     )
-                            ),
+                            )
+                            .upsert(ProjectSearchDocument.builder()
+                                    .id(projectId)
+                                    .commentCount(1L)
+                                    .isDeleted(false)
+                                    .build()),
                     ProjectSearchDocument.class
             );
             LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(projectId), "프로젝트 commentCount 증분 업데이트 완료 - projectId=" + projectId);
@@ -72,7 +77,12 @@ public class UpdateProjectCommentEsAdapter implements UpdateProjectCommentPort {
                                             }
                                             """)
                                     )
-                            ),
+                            )
+                            .upsert(ProjectSearchDocument.builder()
+                                    .id(projectId)
+                                    .commentCount(0L)
+                                    .isDeleted(false)
+                                    .build()),
                     ProjectSearchDocument.class
             );
             LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(projectId), "프로젝트 commentCount 감분 업데이트 완료 - projectId=" + projectId);

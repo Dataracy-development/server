@@ -27,7 +27,7 @@ public class RefreshTokenRedisAdapter implements CacheRefreshTokenPort {
      * @return 레디스 키
      */
     private String getRefreshTokenKey(String userId) {
-        return "refreshToken:user" + userId;
+        return "refreshToken:user:" + userId;
     }
 
     /**
