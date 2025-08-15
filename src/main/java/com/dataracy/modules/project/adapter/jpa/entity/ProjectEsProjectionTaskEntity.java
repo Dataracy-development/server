@@ -1,7 +1,7 @@
 package com.dataracy.modules.project.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
-import com.dataracy.modules.project.domain.enums.EsProjectionStatus;
+import com.dataracy.modules.project.domain.enums.ProjectEsProjectionType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name = "es_projection_queue")
-public class EsProjectionTaskEntity extends BaseTimeEntity {
+public class ProjectEsProjectionTaskEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,7 +38,7 @@ public class EsProjectionTaskEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private EsProjectionStatus status = EsProjectionStatus.PENDING;
+    private ProjectEsProjectionType status = ProjectEsProjectionType.PENDING;
 
     @Column(nullable = false)
     @Builder.Default

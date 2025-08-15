@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Table(name = "es_projection_dlq")
-public class EsProjectionDlqEntity extends BaseTimeEntity {
+public class ProjectEsProjectionDlqEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
