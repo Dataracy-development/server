@@ -2,13 +2,13 @@ package com.dataracy.modules.project.adapter.jpa.impl.command;
 
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectEsProjectionTaskEntity;
 import com.dataracy.modules.project.adapter.jpa.repository.ProjectEsProjectionTaskRepository;
-import com.dataracy.modules.project.application.port.out.command.projection.EnqueueProjectionPort;
+import com.dataracy.modules.project.application.port.out.command.projection.EnqueueProjectProjectionPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class EnqueueProjectProjectionDbAdapter implements EnqueueProjectionPort {
+public class EnqueueProjectEsProjectProjectionDbAdapter implements EnqueueProjectProjectionPort {
     private final ProjectEsProjectionTaskRepository repo;
 
     @Override
