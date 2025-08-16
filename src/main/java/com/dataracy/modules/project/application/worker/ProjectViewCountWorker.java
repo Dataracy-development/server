@@ -1,4 +1,4 @@
-package com.dataracy.modules.project.adapter.scheduler;
+package com.dataracy.modules.project.application.worker;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.application.port.out.cache.CacheProjectViewCountPort;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 
 @Component
-public class ProjectViewCountScheduler {
+public class ProjectViewCountWorker {
     private final CacheProjectViewCountPort cacheProjectViewCountPort;
 
     private final UpdateProjectViewPort updateProjectViewDbPort;
@@ -24,7 +24,7 @@ public class ProjectViewCountScheduler {
      * @param updateProjectViewDbPort    프로젝트 조회수를 메인 데이터베이스에 반영하는 포트
      * @param updateProjectViewEsPort    프로젝트 조회수를 Elasticsearch에 반영하는 포트
      */
-    public ProjectViewCountScheduler(
+    public ProjectViewCountWorker(
             CacheProjectViewCountPort cacheProjectViewCountPort,
             @Qualifier("updateProjectViewDbAdapter") UpdateProjectViewPort updateProjectViewDbPort,
             @Qualifier("updateProjectViewEsAdapter") UpdateProjectViewPort updateProjectViewEsPort

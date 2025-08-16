@@ -6,6 +6,7 @@ import com.dataracy.modules.project.application.port.in.command.count.DecreaseCo
 import com.dataracy.modules.project.application.port.in.command.count.DecreaseLikeCountUseCase;
 import com.dataracy.modules.project.application.port.in.command.count.IncreaseCommentCountUseCase;
 import com.dataracy.modules.project.application.port.in.command.count.IncreaseLikeCountUseCase;
+import com.dataracy.modules.project.application.port.out.command.projection.EnqueueProjectProjectionPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectCommentPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectLikePort;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,28 +23,23 @@ public class ProjectCountService implements
         DecreaseLikeCountUseCase
 {
     private final UpdateProjectCommentPort updateProjectCommentDbPort;
-    private final UpdateProjectCommentPort updateProjectCommentEsPort;
     private final UpdateProjectLikePort updateProjectLikeDbPort;
-    private final UpdateProjectLikePort updateProjectLikeEsPort;
+    private final EnqueueProjectProjectionPort enqueueProjectProjectionPort;
 
     /**
      * 프로젝트의 댓글 및 좋아요 수를 동기화하기 위한 서비스 인스턴스를 생성합니다.
      *
      * @param updateProjectCommentDbPort 프로젝트 댓글 수를 데이터베이스에 반영하는 포트
-     * @param updateProjectCommentEsPort 프로젝트 댓글 수를 Elasticsearch에 반영하는 포트
      * @param updateProjectLikeDbPort 프로젝트 좋아요 수를 데이터베이스에 반영하는 포트
-     * @param updateProjectLikeEsPort 프로젝트 좋아요 수를 Elasticsearch에 반영하는 포트
      */
     public ProjectCountService(
             @Qualifier("updateProjectCommentDbAdapter") UpdateProjectCommentPort updateProjectCommentDbPort,
-            @Qualifier("updateProjectCommentEsAdapter") UpdateProjectCommentPort updateProjectCommentEsPort,
             @Qualifier("updateProjectLikeDbAdapter") UpdateProjectLikePort updateProjectLikeDbPort,
-            @Qualifier("updateProjectLikeEsAdapter") UpdateProjectLikePort updateProjectLikeEsPort
+            EnqueueProjectProjectionPort enqueueProjectProjectionPort
     ) {
         this.updateProjectCommentDbPort = updateProjectCommentDbPort;
-        this.updateProjectCommentEsPort = updateProjectCommentEsPort;
         this.updateProjectLikeDbPort = updateProjectLikeDbPort;
-        this.updateProjectLikeEsPort = updateProjectLikeEsPort;
+        this.enqueueProjectProjectionPort = enqueueProjectProjectionPort;
     }
 
     /**
@@ -63,8 +59,13 @@ public class ProjectCountService implements
     @Transactional
     public void increaseCommentCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("IncreaseCommentCountUseCase", "프로젝트 댓글 수 증가 서비스 시작 projectId=" + projectId);
+
+        // DB만 확정 (JPA/Jpql 구현체에서 +1)
         updateProjectCommentDbPort.increaseCommentCount(projectId);
-        updateProjectCommentEsPort.increaseCommentCount(projectId);
+
+        // 같은 트랜잭션에서 큐 적재 → 워커가 ES에 반영/재시도
+        enqueueProjectProjectionPort.enqueueCommentDelta(projectId, +1);
+
         LoggerFactory.service().logSuccess("IncreaseCommentCountUseCase", "프로젝트 댓글 수 증가 서비스 종료 projectId=" + projectId, startTime);
 
     }
@@ -84,8 +85,10 @@ public class ProjectCountService implements
     @Transactional
     public void decreaseCommentCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("DecreaseCommentCountUseCase", "프로젝트 댓글 수 감소 서비스 시작 projectId=" + projectId);
+
         updateProjectCommentDbPort.decreaseCommentCount(projectId);
-        updateProjectCommentEsPort.decreaseCommentCount(projectId);
+        enqueueProjectProjectionPort.enqueueCommentDelta(projectId, -1);
+
         LoggerFactory.service().logSuccess("DecreaseCommentCountUseCase", "프로젝트 댓글 수 감소 서비스 종료 projectId=" + projectId, startTime);
     }
 
@@ -104,8 +107,10 @@ public class ProjectCountService implements
     @Transactional
     public void increaseLikeCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("IncreaseLikeCountUseCase", "프로젝트 좋아요 수 증가 서비스 시작 projectId=" + projectId);
-        updateProjectLikeDbPort.increaseLikeCount(projectId);
-        updateProjectLikeEsPort.increaseLikeCount(projectId);
+
+        updateProjectLikeDbPort.increaseLikeCount(projectId);     // DB만 확정
+        enqueueProjectProjectionPort.enqueueLikeDelta(projectId, +1);  // 큐 적재
+
         LoggerFactory.service().logSuccess("IncreaseLikeCountUseCase", "프로젝트 좋아요 수 증가 서비스 종료 projectId=" + projectId, startTime);
     }
 
@@ -124,8 +129,10 @@ public class ProjectCountService implements
     @Transactional
     public void decreaseLikeCount(Long projectId) {
         Instant startTime = LoggerFactory.service().logStart("DecreaseLikeCountUseCase", "프로젝트 좋아요 수 감소 서비스 시작 projectId=" + projectId);
+
         updateProjectLikeDbPort.decreaseLikeCount(projectId);
-        updateProjectLikeEsPort.decreaseLikeCount(projectId);
+        enqueueProjectProjectionPort.enqueueLikeDelta(projectId, -1);
+
         LoggerFactory.service().logSuccess("DecreaseLikeCountUseCase", "프로젝트 좋아요 수 감소 서비스 종료 projectId=" + projectId, startTime);
     }
 }

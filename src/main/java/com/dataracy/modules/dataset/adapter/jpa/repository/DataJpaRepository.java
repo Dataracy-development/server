@@ -2,6 +2,7 @@ package com.dataracy.modules.dataset.adapter.jpa.repository;
 
 import com.dataracy.modules.dataset.adapter.jpa.entity.DataEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,4 +28,8 @@ public interface DataJpaRepository extends JpaRepository<DataEntity, Long> {
      */
     @Query("SELECT d.dataFileUrl FROM DataEntity d WHERE d.id = :dataId") // @Where 무시됨
     Optional<String> findDataFileUrlById(@Param("dataId") Long dataId);
+
+    @Modifying
+    @Query("UPDATE DataEntity d SET d.downloadCount = d.downloadCount + 1 WHERE d.id = :dataId")
+    void increaseDownload(@Param("dataId") Long dataId);
 }
