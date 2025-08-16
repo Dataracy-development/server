@@ -17,7 +17,7 @@ public abstract class AbstractKafkaConsumerConfig<V> {
     @Value("${spring.kafka.consumer.auto-offset-reset:earliest}")
     private String autoOffsetReset;
 
-    @Value("${spring.kafka.consumer.max-poll-records:100}")
+    @Value("${spring.kafka.consumer.properties.max-poll-records:100}")
     private Integer maxPollRecords;
 
     /**
