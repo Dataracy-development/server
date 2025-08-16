@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @Table(
         name = "project_es_projection_queue",
         indexes = {
-                @Index(name = "idx_proj_esq_status_nextRunAt_id", columnList = "status,next_run_at,id"),
-                @Index(name = "idx_proj_esq_projectId", columnList = "project_id")
+                @Index(name = "idx_proj_status_next_run_at", columnList = "status,nextRunAt"),
+                @Index(name = "idx_proj_project_id", columnList = "projectId")
         }
 )
 public class ProjectEsProjectionTaskEntity extends BaseTimeEntity {
