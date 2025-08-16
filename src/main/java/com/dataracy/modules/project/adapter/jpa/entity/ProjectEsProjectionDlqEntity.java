@@ -27,5 +27,5 @@ public class ProjectEsProjectionDlqEntity extends BaseTimeEntity {
 
     @Lob
     @Column(columnDefinition = "TEXT")
-    private String error;
+    private String lastError;
 }

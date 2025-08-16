@@ -28,9 +28,9 @@ public class QProjectEsProjectionDlqEntity extends EntityPathBase<ProjectEsProje
 
     public final NumberPath<Integer> deltaLike = createNumber("deltaLike", Integer.class);
 
-    public final StringPath error = createString("error");
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final StringPath lastError = createString("lastError");
 
     public final NumberPath<Long> projectId = createNumber("projectId", Long.class);
 

@@ -28,9 +28,11 @@ public class QDataEsProjectionDlqEntity extends EntityPathBase<DataEsProjectionD
 
     public final NumberPath<Integer> deltaDownload = createNumber("deltaDownload", Integer.class);
 
-    public final StringPath error = createString("error");
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final StringPath lastError = createString("lastError");
+
+    public final BooleanPath setDeleted = createBoolean("setDeleted");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
