@@ -2,6 +2,7 @@ package com.dataracy.modules.project.adapter.elasticsearch.indexing;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.JsonData;
+import com.dataracy.modules.common.exception.EsUpdateException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectViewPort;
@@ -46,6 +47,7 @@ public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
             LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(projectId), "프로젝트 viewCount 증분 업데이트 완료 - projectId=" + projectId);
         } catch (IOException e) {
             LoggerFactory.elastic().logError(INDEX, "프로젝트 viewCount 증분 업데이트 실패 - projectId=" + projectId, e);
+            throw new EsUpdateException("ES update failed: projectId=" + projectId, e);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.dataracy.modules.project.adapter.elasticsearch.indexing;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import com.dataracy.modules.common.exception.EsUpdateException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectDeletedUpdate;
 import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
@@ -34,6 +35,7 @@ public class SoftDeleteProjectEsAdapter implements SoftDeleteProjectPort {
             LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(projectId), "프로젝트 " + operation + "완료: projectId=" + projectId);
         } catch (IOException e) {
             LoggerFactory.elastic().logError(INDEX, "프로젝트 " + operation + "실패: projectId=" + projectId, e);
+            throw new EsUpdateException("ES update failed: projectId=" + projectId, e);
         }
     }
 
