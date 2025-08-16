@@ -33,7 +33,13 @@ public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("ctx._source.viewCount += params.count")
+                                            .source("""
+                                                if (ctx._source.viewCount == null) {
+                                                    ctx._source.viewCount = params.count;
+                                                } else {
+                                                    ctx._source.viewCount += params.count;
+                                                }
+                                            """)
                                             .params("count", JsonData.of(increment))
                                     )
                             )
