@@ -95,7 +95,7 @@ public class ProjectEsProjectionWorker {
                             .projectId(t.getProjectId())
                             .deltaComment(t.getDeltaComment())
                             .deltaLike(t.getDeltaLike())
-                            .error(truncate(ex.getMessage(), 2000))
+                            .lastError(truncate(ex.getMessage(), 2000))
                             .build());
                     queueRepo.delete(t);
                 } else {

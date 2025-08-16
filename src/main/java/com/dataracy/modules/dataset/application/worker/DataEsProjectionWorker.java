@@ -80,7 +80,7 @@ public class DataEsProjectionWorker {
                     dlqRepo.save(DataEsProjectionDlqEntity.builder()
                             .dataId(t.getDataId())
                             .deltaDownload(t.getDeltaDownload())
-                            .error(truncate(ex.getMessage(), 2000))
+                            .lastError(truncate(ex.getMessage(), 2000))
                             .build());
                     queueRepo.delete(t);
                 } else {
