@@ -1,6 +1,7 @@
 package com.dataracy.modules.dataset.adapter.elasticsearch.indexing;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import com.dataracy.modules.common.exception.EsUpdateException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.adapter.elasticsearch.document.DataDeletedUpdate;
 import com.dataracy.modules.dataset.application.dto.document.DataSearchDocument;
@@ -34,6 +35,7 @@ public class SoftDeleteDataEsAdapter implements SoftDeleteDataPort {
             LoggerFactory.elastic().logUpdate(INDEX, String.valueOf(dataId), "데이터셋 " + operation + " 완료: dataId=" + dataId);
         } catch (IOException e) {
             LoggerFactory.elastic().logError(INDEX, "데이터셋 " + operation + " 실패: dataId=" + dataId, e);
+            throw new EsUpdateException("ES update failed: dataId=" + dataId, e);
         }
     }
 
