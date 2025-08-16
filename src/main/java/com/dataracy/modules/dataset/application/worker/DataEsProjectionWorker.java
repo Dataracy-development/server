@@ -42,7 +42,10 @@ public class DataEsProjectionWorker {
     }
 
     private long backoffSeconds(int retryCount) {
-        return Math.min(120, 1L << Math.min(retryCount, 6)); // 1,2,4,8,16,32,64,120 cap
+        // 1,2,4,8,16,32,64,120(캡)
+        if (retryCount >= 8) return 120;
+        long shift = Math.max(0, retryCount - 1);
+        return 1L << Math.min(shift, 6);
     }
 
     @Transactional
