@@ -1,6 +1,7 @@
 package com.dataracy.modules.common.config.adapter.kafka;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.record.CompressionType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.ProducerFactory;
@@ -21,8 +22,19 @@ public abstract class AbstractKafkaProducerConfig<V> {
     protected Map<String, Object> baseProducerProps() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+
+        // ---- 안정성/주문 보장 ----
         props.put(ProducerConfig.ACKS_CONFIG, "all");
-        props.put(ProducerConfig.RETRIES_CONFIG, 3);
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1); // 순서 중요시 1
+
+        // ---- 재시도/타임아웃/성능 ----
+        props.put(ProducerConfig.RETRIES_CONFIG, 10);
+        props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 30_000);
+        props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, 120_000);
+        props.put(ProducerConfig.LINGER_MS_CONFIG, 5);
+        props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, CompressionType.LZ4.name().toLowerCase());
+
         return props;
     }
 

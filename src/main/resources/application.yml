@@ -64,8 +64,17 @@ spring:
       partitioner.class: org.apache.kafka.clients.producer.internals.DefaultPartitioner
 
     producer:
+      acks: all
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        enable.idempotence: true                # 멱등 프로듀서: 중복 방지 + 순서 보장(파티션 단위)
+        max.in.flight.requests.per.connection: 1 # 엄격 순서 보장 필요시 1 (성능↑ 원하면 2~5, 단 주문 보장 점검)
+        retries: 10
+        delivery.timeout.ms: 120000
+        request.timeout.ms: 30000
+        linger.ms: 5
+        compression.type: lz4
 
       behavior-log:
         topic: behavior-logs
@@ -93,7 +102,7 @@ spring:
 
       properties:
         fetch.max.bytes: 5242880         # 5MB
-        max.poll.records: 500            # 한 번에 가져올 레코드 수
+        max-poll-records: 500            # 한 번에 가져올 레코드 수
 
       behavior-log:
         topic: behavior-logs
