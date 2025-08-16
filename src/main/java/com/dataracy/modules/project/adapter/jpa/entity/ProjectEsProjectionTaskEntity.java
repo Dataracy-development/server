@@ -13,7 +13,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "project_es_projection_queue")
+@Table(
+        name = "project_es_projection_queue",
+        indexes = {
+                @Index(name = "idx_proj_esq_status_nextRunAt_id", columnList = "status,next_run_at,id"),
+                @Index(name = "idx_proj_esq_projectId", columnList = "project_id")
+        }
+)
 public class ProjectEsProjectionTaskEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
