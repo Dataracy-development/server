@@ -3,7 +3,6 @@ package com.dataracy.modules.dataset.adapter.kafka.config;
 import com.dataracy.modules.dataset.domain.model.event.DataUploadEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,11 +12,10 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
+import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.messaging.converter.MessageConversionException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +31,7 @@ public class KafkaDataUploadConsumerConfig {
     private String groupId;
 
     // 폴링 튜닝도 yml로 바꿀 수 있게 해둠 (원하면 제거 가능)
-    @Value("${spring.kafka.consumer.max-poll-records:200}")
+    @Value("${spring.kafka.consumer.properties.max-poll-records:200}")
     private int maxPollRecords;
 
     @Value("${spring.kafka.listener.data-upload.concurrency:1}")
