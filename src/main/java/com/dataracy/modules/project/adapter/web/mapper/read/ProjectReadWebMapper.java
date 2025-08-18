@@ -1,11 +1,13 @@
 package com.dataracy.modules.project.adapter.web.mapper.read;
 
+import com.dataracy.modules.project.adapter.web.mapper.support.ParentProjectWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.support.ProjectConnectedDataWebMapper;
 import com.dataracy.modules.project.adapter.web.response.read.ConnectedProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.ContinuedProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
 import com.dataracy.modules.project.adapter.web.response.support.ChildProjectWebResponse;
+import com.dataracy.modules.project.adapter.web.response.support.ParentProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.support.ProjectConnectedDataWebResponse;
 import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectReadWebMapper {
     private final ProjectConnectedDataWebMapper projectConnectedDataWebMapper;
+    private final ParentProjectWebMapper parentProjectWebMapper;
 
     /**
      * 애플리케이션 계층의 프로젝트 상세 응답 DTO를 웹 계층의 프로젝트 상세 응답 DTO로 변환합니다.
@@ -34,6 +37,8 @@ public class ProjectReadWebMapper {
         List<ProjectConnectedDataWebResponse> connectWebDataSets = responseDto.connectedDataSets().stream()
                 .map(projectConnectedDataWebMapper::toWebDto)
                 .toList();
+
+        ParentProjectWebResponse parentProject = parentProjectWebMapper.toWebDto(responseDto.parentProject());
 
         return new ProjectDetailWebResponse(
                 responseDto.id(),
@@ -56,7 +61,8 @@ public class ProjectReadWebMapper {
                 responseDto.viewCount(),
                 responseDto.isLiked(),
                 responseDto.hasChild(),
-                connectWebDataSets
+                connectWebDataSets,
+                parentProject
         );
     }
 

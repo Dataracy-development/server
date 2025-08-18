@@ -1,5 +1,6 @@
 package com.dataracy.modules.project.adapter.web.response.read;
 
+import com.dataracy.modules.project.adapter.web.response.support.ParentProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.support.ProjectConnectedDataWebResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -69,5 +70,8 @@ public record ProjectDetailWebResponse(
         boolean hasChild,
 
         @Schema(description = "연결된 데이터셋 목록")
-        List<ProjectConnectedDataWebResponse> connectedDataSets
+        List<ProjectConnectedDataWebResponse> connectedDataSets,
+
+        @Schema(description = "부모 프로젝트")
+        ParentProjectWebResponse parentProject
 ) {}

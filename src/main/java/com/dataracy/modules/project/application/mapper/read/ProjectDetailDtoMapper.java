@@ -1,6 +1,7 @@
 package com.dataracy.modules.project.application.mapper.read;
 
 import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
+import com.dataracy.modules.project.application.dto.response.support.ParentProjectResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
 import com.dataracy.modules.project.domain.model.Project;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,8 @@ public class ProjectDetailDtoMapper {
             String dataSourceLabel,
             boolean isLiked,
             boolean hasChild,
-            List<ProjectConnectedDataResponse> connectedDataSets
+            List<ProjectConnectedDataResponse> connectedDataSets,
+            ParentProjectResponse parentProjectResponse
     ) {
         return new ProjectDetailResponse(
                 project.getId(),
@@ -64,7 +66,8 @@ public class ProjectDetailDtoMapper {
                 project.getViewCount(),
                 isLiked,
                 hasChild,
-                connectedDataSets
+                connectedDataSets,
+                parentProjectResponse
         );
     }
 }
