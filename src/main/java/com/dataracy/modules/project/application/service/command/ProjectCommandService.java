@@ -8,6 +8,7 @@ import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
 import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
 import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
 import com.dataracy.modules.project.application.dto.request.command.UploadProjectRequest;
+import com.dataracy.modules.project.application.dto.response.command.UploadProjectResponse;
 import com.dataracy.modules.project.application.mapper.command.CreateProjectDtoMapper;
 import com.dataracy.modules.project.application.port.in.command.content.ModifyProjectUseCase;
 import com.dataracy.modules.project.application.port.in.command.content.UploadProjectUseCase;
@@ -77,7 +78,7 @@ public class ProjectCommandService implements
      */
     @Override
     @Transactional
-    public void uploadProject(Long userId, MultipartFile thumbnailFile, UploadProjectRequest requestDto) {
+    public UploadProjectResponse uploadProject(Long userId, MultipartFile thumbnailFile, UploadProjectRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("UploadProjectUseCase", "프로젝트 업로드 서비스 시작 title=" + requestDto.title());
 
         // 요청 DTO의 유효성을 검사한다.
@@ -119,6 +120,7 @@ public class ProjectCommandService implements
         ));
 
         LoggerFactory.service().logSuccess("UploadProjectUseCase", "프로젝트 업로드 서비스 종료 title=" + requestDto.title(), startTime);
+        return new UploadProjectResponse(savedProject.getId());
     }
 
     /**

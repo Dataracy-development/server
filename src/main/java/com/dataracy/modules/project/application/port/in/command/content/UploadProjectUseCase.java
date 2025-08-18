@@ -1,6 +1,7 @@
 package com.dataracy.modules.project.application.port.in.command.content;
 
 import com.dataracy.modules.project.application.dto.request.command.UploadProjectRequest;
+import com.dataracy.modules.project.application.dto.response.command.UploadProjectResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UploadProjectUseCase {
@@ -11,5 +12,5 @@ public interface UploadProjectUseCase {
      * @param thumbnailFile 업로드할 프로젝트 썸네일 파일
      * @param requestDto 프로젝트의 상세 정보가 포함된 요청 DTO
      */
-    void uploadProject(Long userId, MultipartFile thumbnailFile, UploadProjectRequest requestDto);
+    UploadProjectResponse uploadProject(Long userId, MultipartFile thumbnailFile, UploadProjectRequest requestDto);
 }

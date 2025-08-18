@@ -4,6 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.project.adapter.web.request.command.ModifyProjectWebRequest;
 import com.dataracy.modules.project.adapter.web.request.command.UploadProjectWebRequest;
+import com.dataracy.modules.project.adapter.web.response.command.UploadProjectWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -41,7 +42,7 @@ public interface ProjectCommandApi {
             @ApiResponse(responseCode = "201", description = "프로젝트 업로드에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<SuccessResponse<Void>> uploadProject(
+    ResponseEntity<SuccessResponse<UploadProjectWebResponse>> uploadProject(
             @Parameter(hidden = true)
             @CurrentUserId
             Long userId,

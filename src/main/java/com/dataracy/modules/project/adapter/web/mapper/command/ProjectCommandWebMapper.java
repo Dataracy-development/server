@@ -2,8 +2,10 @@ package com.dataracy.modules.project.adapter.web.mapper.command;
 
 import com.dataracy.modules.project.adapter.web.request.command.ModifyProjectWebRequest;
 import com.dataracy.modules.project.adapter.web.request.command.UploadProjectWebRequest;
+import com.dataracy.modules.project.adapter.web.response.command.UploadProjectWebResponse;
 import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
 import com.dataracy.modules.project.application.dto.request.command.UploadProjectRequest;
+import com.dataracy.modules.project.application.dto.response.command.UploadProjectResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,6 +27,12 @@ public class ProjectCommandWebMapper {
                 webRequest.parentProjectId(),
                 webRequest.content(),
                 webRequest.dataIds()
+        );
+    }
+
+    public UploadProjectWebResponse toWebDto(UploadProjectResponse responseDto) {
+        return new UploadProjectWebResponse(
+                responseDto.id()
         );
     }
 

@@ -6,8 +6,10 @@ import com.dataracy.modules.common.support.annotation.AuthorizationProjectEdit;
 import com.dataracy.modules.project.adapter.web.mapper.command.ProjectCommandWebMapper;
 import com.dataracy.modules.project.adapter.web.request.command.ModifyProjectWebRequest;
 import com.dataracy.modules.project.adapter.web.request.command.UploadProjectWebRequest;
+import com.dataracy.modules.project.adapter.web.response.command.UploadProjectWebResponse;
 import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
 import com.dataracy.modules.project.application.dto.request.command.UploadProjectRequest;
+import com.dataracy.modules.project.application.dto.response.command.UploadProjectResponse;
 import com.dataracy.modules.project.application.port.in.command.content.DeleteProjectUseCase;
 import com.dataracy.modules.project.application.port.in.command.content.ModifyProjectUseCase;
 import com.dataracy.modules.project.application.port.in.command.content.RestoreProjectUseCase;
@@ -40,22 +42,23 @@ public class ProjectCommandController implements ProjectCommandApi {
      * @return 프로젝트 생성 성공 시 201 Created와 성공 상태를 포함한 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<Void>> uploadProject(
+    public ResponseEntity<SuccessResponse<UploadProjectWebResponse>> uploadProject(
             Long userId,
             MultipartFile thumbnailFile,
             UploadProjectWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[UploadProject] 프로젝트 업로드 API 요청 시작");
-
+        UploadProjectWebResponse webResponse;
         try {
             UploadProjectRequest requestDto = projectCommandWebMapper.toApplicationDto(webRequest);
-            uploadProjectUseCase.uploadProject(userId, thumbnailFile, requestDto);
+            UploadProjectResponse responseDto = uploadProjectUseCase.uploadProject(userId, thumbnailFile, requestDto);
+            webResponse = projectCommandWebMapper.toWebDto(responseDto);
         } finally {
             LoggerFactory.api().logResponse("[UploadProject] 프로젝트 업로드 API 응답 완료", startTime);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(SuccessResponse.of(ProjectSuccessStatus.CREATED_PROJECT));
+                .body(SuccessResponse.of(ProjectSuccessStatus.CREATED_PROJECT, webResponse));
     }
 
     /**
