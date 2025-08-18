@@ -11,6 +11,8 @@ public record DataUser(
         RoleType role,
         String email,
         String nickname,
+        String profileImageUrl,
+        String introductionText,
         Long occupationId,
         Long authorLevelId
 ) {
@@ -33,6 +35,8 @@ public record DataUser(
                 info.role(),
                 info.email(),
                 info.nickname(),
+                info.profileImageUrl(),
+                info.introductionText(),
                 info.occupationId(),
                 info.authorLevelId()
         );

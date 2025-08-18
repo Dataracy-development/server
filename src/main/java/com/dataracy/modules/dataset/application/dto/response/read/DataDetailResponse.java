@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
  * @param id 데이터 ID
  * @param title 데이터 제목
  * @param username 데이터 업로더 유저 닉네임
+ * @param userProfileImageUrl 데이터 업로더 유저 닉네임
+ * @param userIntroductionText 데이터 업로더 유저 닉네임
  * @param authorLabel 데이터 업로드 작성자 유형 라벨
  * @param occupationLabel 데이터 업로더 직업 라벨
  * @param topicLabel 데이터 토픽 라벨
@@ -29,6 +31,8 @@ public record DataDetailResponse(
         Long id,
         String title,
         String username,
+        String userProfileImageUrl,
+        String userIntroductionText,
         String authorLabel,
         String occupationLabel,
         String topicLabel,

@@ -103,7 +103,7 @@ public class DataReadService implements
                     LoggerFactory.service().logWarning("GetDataDetailUseCase", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
-        UserInfo userInfo = getUserInfoUseCase.getUserInfo(data.getUserId());
+        UserInfo userInfo = getUserInfoUseCase.extractUserInfo(data.getUserId());
         DataUser dataUser = DataUser.fromUserInfo(userInfo);
 
         String authorLabel = dataUser.authorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(dataUser.authorLevelId());
@@ -112,6 +112,8 @@ public class DataReadService implements
         DataDetailResponse dataDetailResponse = dataReadDtoMapper.toResponseDto(
                 data,
                 dataUser.nickname(),
+                dataUser.introductionText(),
+                dataUser.profileImageUrl(),
                 authorLabel,
                 occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(data.getTopicId()),

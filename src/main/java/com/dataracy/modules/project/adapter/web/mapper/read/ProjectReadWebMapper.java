@@ -40,6 +40,7 @@ public class ProjectReadWebMapper {
                 responseDto.title(),
                 responseDto.username(),
                 responseDto.userIntroductionText(),
+                responseDto.userProfileImageUrl(),
                 responseDto.authorLevelLabel(),
                 responseDto.occupationLabel(),
                 responseDto.topicLabel(),
