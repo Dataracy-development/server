@@ -18,7 +18,17 @@ public final class ProjectEntityMapper {
      * @return 최소 정보만 포함된 Project 도메인 객체, 입력이 null이면 null을 반환합니다.
      */
     public static Project toMinimal(ProjectEntity entity) {
-        return toDomain(entity,false, false, 0);
+        return toDomain(entity, false, false, false, 0);
+    }
+
+    /**
+     * ProjectEntity를 Project 도메인 객체로 변환하며, 부모 프로젝트 정보를 포함합니다.
+     *
+     * @param entity 변환할 ProjectEntity 객체
+     * @return 부모 프로젝트 아이디가 포함된 Project 도메인 객체, 입력이 null이면 null 반환
+     */
+    public static Project toWithParent(ProjectEntity entity) {
+        return toDomain(entity, true, false, false, 0);
     }
 
     /**
@@ -31,7 +41,7 @@ public final class ProjectEntityMapper {
      * @return 자식 프로젝트 정보가 포함된 Project 도메인 객체, 입력이 null이면 null 반환
      */
     public static Project toWithChildren(ProjectEntity entity, int childrenCount) {
-        return toDomain(entity,true, false, childrenCount);
+        return toDomain(entity, false, true, false, childrenCount);
     }
 
     /**
@@ -42,13 +52,14 @@ public final class ProjectEntityMapper {
      * @return 데이터 ID 목록이 포함된 Project 도메인 객체, 입력이 null이면 null 반환
      */
     public static Project toWithData(ProjectEntity entity) {
-        return toDomain(entity,false, true, 0);
+        return toDomain(entity, false, false, true, 0);
     }
 
     /**
      * ProjectEntity를 Project 도메인 객체로 변환합니다.
      *
      * @param entity 변환할 ProjectEntity 객체
+     * @param includeParent 부모 프로젝트 포함할지 여부
      * @param includeChildren 자식 프로젝트를 최대 childrenCount개까지 최소 정보로 포함할지 여부
      * @param includeData 프로젝트 데이터 ID 목록을 포함할지 여부
      * @param childrenCount 포함할 자식 프로젝트의 최대 개수
@@ -60,8 +71,14 @@ public final class ProjectEntityMapper {
      * 부모 프로젝트 정보는 포함되지 않습니다.
      * </p>
      */
-    private static Project toDomain(ProjectEntity entity, boolean includeChildren, boolean includeData, int childrenCount) {
+    private static Project toDomain(ProjectEntity entity, boolean includeParent, boolean includeChildren, boolean includeData, int childrenCount) {
         if (entity == null) return null;
+
+        Long parentProjectId = includeParent
+                ? Optional.ofNullable(entity.getParentProject())
+                .map(ProjectEntity::getId)
+                .orElse(null)
+                : null;
 
         List<Long> dataIds = includeData
                 ? Optional.ofNullable(entity.getProjectDataEntities())
@@ -89,7 +106,7 @@ public final class ProjectEntityMapper {
                 entity.getDataSourceId(),
                 entity.getAuthorLevelId(),
                 entity.getIsContinue(),
-                null,
+                parentProjectId,
                 entity.getContent(),
                 entity.getThumbnailUrl(),
                 dataIds,

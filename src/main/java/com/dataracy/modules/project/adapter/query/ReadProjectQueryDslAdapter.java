@@ -73,6 +73,7 @@ public class ReadProjectQueryDslAdapter implements
         Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 시작. projectId=" + projectId);
         ProjectEntity entity = queryFactory
                 .selectFrom(project)
+                .leftJoin(project.parentProject)
                 .where(
                         ProjectFilterPredicate.projectIdEq(projectId),
                         ProjectFilterPredicate.notDeleted()
@@ -95,7 +96,7 @@ public class ReadProjectQueryDslAdapter implements
                 .fetch();
 
         Optional<ProjectWithDataIdsResponse> projectWithDataIdsResponse = Optional.of(new ProjectWithDataIdsResponse(
-                ProjectEntityMapper.toMinimal(entity),
+                ProjectEntityMapper.toWithParent(entity),
                 dataIds
         ));
         LoggerFactory.query().logQueryEnd("ProjectEntity", "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 완료. projectId=" + projectId, startTime);

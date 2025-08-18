@@ -1,5 +1,6 @@
 package com.dataracy.modules.project.application.dto.response.read;
 
+import com.dataracy.modules.project.application.dto.response.support.ParentProjectResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
 
 import java.time.LocalDateTime;
@@ -51,5 +52,6 @@ public record ProjectDetailResponse(
         Long viewCount,
         boolean isLiked,
         boolean hasChild,
-        List<ProjectConnectedDataResponse> connectedDataSets
+        List<ProjectConnectedDataResponse> connectedDataSets,
+        ParentProjectResponse parentProject
 ) {}
