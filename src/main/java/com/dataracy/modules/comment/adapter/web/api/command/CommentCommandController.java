@@ -3,8 +3,10 @@ package com.dataracy.modules.comment.adapter.web.api.command;
 import com.dataracy.modules.comment.adapter.web.mapper.command.CommandCommentWebMapper;
 import com.dataracy.modules.comment.adapter.web.request.command.ModifyCommentWebRequest;
 import com.dataracy.modules.comment.adapter.web.request.command.UploadCommentWebRequest;
+import com.dataracy.modules.comment.adapter.web.response.command.UploadCommentWebResponse;
 import com.dataracy.modules.comment.application.dto.request.command.ModifyCommentRequest;
 import com.dataracy.modules.comment.application.dto.request.command.UploadCommentRequest;
+import com.dataracy.modules.comment.application.dto.response.command.UploadCommentResponse;
 import com.dataracy.modules.comment.application.port.in.command.content.DeleteCommentUseCase;
 import com.dataracy.modules.comment.application.port.in.command.content.ModifyCommentUseCase;
 import com.dataracy.modules.comment.application.port.in.command.content.UploadCommentUseCase;
@@ -12,7 +14,6 @@ import com.dataracy.modules.comment.domain.status.CommentSuccessStatus;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.annotation.AuthorizationCommentEdit;
-import com.dataracy.modules.common.util.ExtractHeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,18 +39,20 @@ public class CommentCommandController implements CommentCommandApi {
      * @return 댓글 등록 성공 시 201 Created 상태와 성공 응답을 반환합니다.
      */
     @Override
-    public ResponseEntity<SuccessResponse<Void>> uploadComment(Long projectId, Long userId, UploadCommentWebRequest webRequest) {
+    public ResponseEntity<SuccessResponse<UploadCommentWebResponse>> uploadComment(Long projectId, Long userId, UploadCommentWebRequest webRequest) {
         Instant startTime = LoggerFactory.api().logRequest("[UploadComment] 댓글 작성 API 요청 시작");
+        UploadCommentWebResponse webResponse;
 
         try {
             UploadCommentRequest requestDto = commandCommentWebMapper.toApplicationDto(webRequest);
-            uploadCommentUseCase.uploadComment(projectId, userId, requestDto);
+            UploadCommentResponse responseDto = uploadCommentUseCase.uploadComment(projectId, userId, requestDto);
+            webResponse = commandCommentWebMapper.toWebDto(responseDto);
         } finally {
             LoggerFactory.api().logResponse("[UploadComment] 댓글 작성 API 응답 완료", startTime);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(SuccessResponse.of(CommentSuccessStatus.CREATED_COMMENT));
+                .body(SuccessResponse.of(CommentSuccessStatus.CREATED_COMMENT, webResponse));
     }
 
     /**

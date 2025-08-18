@@ -2,8 +2,10 @@ package com.dataracy.modules.comment.adapter.web.mapper.command;
 
 import com.dataracy.modules.comment.adapter.web.request.command.ModifyCommentWebRequest;
 import com.dataracy.modules.comment.adapter.web.request.command.UploadCommentWebRequest;
+import com.dataracy.modules.comment.adapter.web.response.command.UploadCommentWebResponse;
 import com.dataracy.modules.comment.application.dto.request.command.ModifyCommentRequest;
 import com.dataracy.modules.comment.application.dto.request.command.UploadCommentRequest;
+import com.dataracy.modules.comment.application.dto.response.command.UploadCommentResponse;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +23,18 @@ public class CommandCommentWebMapper {
         return new UploadCommentRequest(
                 webRequest.content(),
                 webRequest.parentCommentId()
+        );
+    }
+
+    /**
+     * 댓글 업로드 웹 응답 DTO를 반환한다.
+     *
+     * @param responseDto 댓글 업로드 애플리케이션 응답 DTO
+     * @return 업로드 한 댓글 아이디
+     */
+    public UploadCommentWebResponse toWebDto(UploadCommentResponse responseDto) {
+        return new UploadCommentWebResponse(
+                responseDto.id()
         );
     }
 

@@ -2,6 +2,7 @@ package com.dataracy.modules.comment.adapter.web.api.command;
 
 import com.dataracy.modules.comment.adapter.web.request.command.ModifyCommentWebRequest;
 import com.dataracy.modules.comment.adapter.web.request.command.UploadCommentWebRequest;
+import com.dataracy.modules.comment.adapter.web.response.command.UploadCommentWebResponse;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +42,7 @@ public interface CommentCommandApi {
             @ApiResponse(responseCode = "201", description = "피드백 댓글 작성에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/{projectId}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<SuccessResponse<Void>> uploadComment(
+    ResponseEntity<SuccessResponse<UploadCommentWebResponse>> uploadComment(
             @PathVariable @Min(1)
             Long projectId,
 

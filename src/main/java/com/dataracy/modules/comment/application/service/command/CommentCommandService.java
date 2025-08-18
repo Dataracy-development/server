@@ -2,6 +2,7 @@ package com.dataracy.modules.comment.application.service.command;
 
 import com.dataracy.modules.comment.application.dto.request.command.ModifyCommentRequest;
 import com.dataracy.modules.comment.application.dto.request.command.UploadCommentRequest;
+import com.dataracy.modules.comment.application.dto.response.command.UploadCommentResponse;
 import com.dataracy.modules.comment.application.port.in.command.content.DeleteCommentUseCase;
 import com.dataracy.modules.comment.application.port.in.command.content.ModifyCommentUseCase;
 import com.dataracy.modules.comment.application.port.in.command.content.UploadCommentUseCase;
@@ -47,7 +48,7 @@ public class CommentCommandService implements
      */
     @Override
     @Transactional
-    public void uploadComment(Long projectId, Long userId, UploadCommentRequest requestDto) {
+    public UploadCommentResponse uploadComment(Long projectId, Long userId, UploadCommentRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("UploadCommentUseCase", "댓글 작성 서비스 시작 projectId=" + projectId);
 
         Long parentId = requestDto.parentCommentId();
@@ -76,7 +77,9 @@ public class CommentCommandService implements
 
         Comment savedComment = uploadCommentPort.uploadComment(comment);
         sendCommentEventPort.sendCommentUploadedEvent(savedComment.getProjectId());
+
         LoggerFactory.service().logSuccess("UploadCommentUseCase", "댓글 작성 서비스 종료 projectId=" + projectId, startTime);
+        return new UploadCommentResponse(savedComment.getId());
     }
 
     /**
