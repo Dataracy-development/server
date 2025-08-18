@@ -135,12 +135,16 @@ public class ProjectReadService implements
             isLiked = validateTargetLikeUseCase.hasUserLikedTarget(userId, projectId, TargetType.PROJECT);
         }
 
-        Project parentProject = findProjectPort.findProjectById(project.getParentProjectId())
+        Project parentProject = project.getParentProjectId() == null
+                ? null
+                : findProjectPort.findProjectById(project.getParentProjectId())
                 .orElseThrow(() -> {
                     LoggerFactory.service().logWarning("GetProjectDetailUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + project.getParentProjectId());
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
-        ParentProjectResponse parentProjectResponse = parentProjectDtoMapper.toResponseDto(
+        ParentProjectResponse parentProjectResponse = parentProject == null
+                ? null
+                : parentProjectDtoMapper.toResponseDto(
                 parentProject,
                 findUsernameUseCase.findUsernameById(parentProject.getUserId())
         );
