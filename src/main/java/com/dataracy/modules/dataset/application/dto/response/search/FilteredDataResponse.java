@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
+ * 데이터셋 필터링 애플리케이션 응답 DTO
  * 검색 조건에 해당하는 데이터셋의 메타 정보를 포함합니다.
  *
  * @param id 데이터 ID

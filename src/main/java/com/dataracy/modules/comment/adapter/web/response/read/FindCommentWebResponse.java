@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "댓글 웹 응답 DTO")
+@Schema(description = "댓글 상세 정보 웹 응답 DTO")
 public record FindCommentWebResponse(
         @Schema(description = "댓글 아이디", example = "1")
         Long id,

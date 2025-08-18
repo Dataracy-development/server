@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * 유사 데이터 검색 결과 응답 DTO.
+ * 유사 데이터 검색 결과 애플리케이션 응답 DTO
  * 검색된 데이터셋의 핵심 메타데이터를 담습니다.
  *
  * @param id 데이터 ID

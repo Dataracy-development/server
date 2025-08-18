@@ -3,8 +3,7 @@ package com.dataracy.modules.dataset.application.dto.response.support;
 import java.util.Map;
 
 /**
- * 데이터셋 관련 조회 시 응답 DTO
- * 유저명, 토픽, 데이터 출처, 데이터 유형을 추출하여 저장하는 보조 응답
+ * 유저명, 토픽, 데이터 출처, 데이터 유형을 추출하여 저장하는 보조 응답 DTO
  *
  * @param usernameMap         사용자 ID를 키로 하는 사용자명 맵
  * @param topicLabelMap       토픽 ID를 키로 하는 라벨 맵

@@ -6,21 +6,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- *요청
- * @param id
- * @param title
- * @param content
- * @param username
- * @param projectThumbnailUrl
- * @param topicLabel
- * @param analysisPurposeLabel
- * @param dataSourceLabel
- * @param authorLevelLabel
- * @param commentCount
- * @param likeCount
- * @param viewCount
- * @param createdAt
- * @param childProjects
+ * 프로젝트 필터링 애플리케이션 응답 DTO
+ *
+ * @param id 프로젝트 ID
+ * @param title 프로젝트 제목
+ * @param content 프로젝트 내용
+ * @param username 유저명
+ * @param projectThumbnailUrl 프로젝트 썸네일
+ * @param topicLabel 토픽 라벨
+ * @param analysisPurposeLabel 분석 목적 라벨
+ * @param dataSourceLabel 데이터 출처 라벨
+ * @param authorLevelLabel 작성자 유형 라벨
+ * @param commentCount 댓글수
+ * @param likeCount 좋아요수
+ * @param viewCount 조회수
+ * @param createdAt 작성 시기
+ * @param childProjects 자식 프로젝트 목록
  */
 public record FilteredProjectResponse(
         Long id,

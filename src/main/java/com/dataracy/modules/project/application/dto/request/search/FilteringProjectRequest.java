@@ -1,7 +1,7 @@
 package com.dataracy.modules.project.application.dto.request.search;
 
 /**
- * 프로젝트 검색을 위한 필터 요청 DTO
+ * 프로젝트 검색을 위한 필터 애플리케이션 요청 DTO
  *
  * @param keyword 키워드 검색어(선택)
  * @param sortType 정렬 기준(예: 최신순 등, 선택)

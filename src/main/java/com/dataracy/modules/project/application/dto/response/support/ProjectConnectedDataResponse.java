@@ -20,7 +20,7 @@ public record ProjectConnectedDataResponse(
         Long countConnectedProjects
 ) {
     /**
-     * ConnectedDataResponse 객체를 ProjectConnectedDataResponse로 변환합니다.
+     * 타 어그리거트인 ConnectedDataResponse 객체를 ProjectConnectedDataResponse로 변환합니다.
      *
      * @param data 변환할 ConnectedDataResponse 객체
      * @return 변환된 ProjectConnectedDataResponse 인스턴스
