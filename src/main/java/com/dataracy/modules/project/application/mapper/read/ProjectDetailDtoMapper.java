@@ -17,7 +17,8 @@ public class ProjectDetailDtoMapper {
      *
      * @param project 변환할 프로젝트 도메인 객체
      * @param username 작성자 이름
-     * @param userIntroductionText 작성자 소개 텍스트
+     * @param userIntroductionText 작성자 소개글
+     * @param userProfileImageUrl 유저 프로필 이미지 URL
      * @param authorLevelLabel 작성자 등급 라벨
      * @param occupationLabel 직업 라벨
      * @param topicLabel 주제 라벨
@@ -32,6 +33,7 @@ public class ProjectDetailDtoMapper {
             Project project,
             String username,
             String userIntroductionText,
+            String userProfileImageUrl,
             String authorLevelLabel,
             String occupationLabel,
             String topicLabel,
@@ -46,6 +48,7 @@ public class ProjectDetailDtoMapper {
                 project.getTitle(),
                 username,
                 userIntroductionText,
+                userProfileImageUrl,
                 authorLevelLabel,
                 occupationLabel,
                 topicLabel,

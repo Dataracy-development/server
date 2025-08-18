@@ -16,6 +16,12 @@ public record DataDetailWebResponse(
         @Schema(description = "유저명", example = "박준형")
         String username,
 
+        @Schema(description = "유저 프로필 이미지 URL", example = "https://www.s3.~~~")
+        String userProfileImageUrl,
+
+        @Schema(description = "유저 소개글", example = "안녕하세요. 주니입니다.")
+        String userIntroductionText,
+
         @Schema(description = "작성자 유형 라벨", example = "실무자")
         String authorLabel,
 

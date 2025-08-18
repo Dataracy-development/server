@@ -116,6 +116,8 @@ public class DataReadDtoMapper {
     public DataDetailResponse toResponseDto(
             Data data,
             String nickname,
+            String userProfileImageUrl,
+            String userIntroductionText,
             String authorLabel,
             String occupationLabel,
             String topicLabel,
@@ -126,6 +128,8 @@ public class DataReadDtoMapper {
                 data.getId(),
                 data.getTitle(),
                 nickname,
+                userProfileImageUrl,
+                userIntroductionText,
                 authorLabel,
                 occupationLabel,
                 topicLabel,

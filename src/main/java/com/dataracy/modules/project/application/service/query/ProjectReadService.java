@@ -120,7 +120,7 @@ public class ProjectReadService implements
         boolean hasChild = checkProjectExistsByParentPort.checkParentProjectExistsById(projectId);
 
         // 작성자 정보
-        UserInfo userInfo = getUserInfoUseCase.getUserInfo(project.getUserId());
+        UserInfo userInfo = getUserInfoUseCase.extractUserInfo(project.getUserId());
         ProjectUser projectUser = ProjectUser.fromUserInfo(userInfo);
 
         // 선택조건 null 일 경우에 대한 처리
@@ -140,6 +140,7 @@ public class ProjectReadService implements
                 project,
                 projectUser.nickname(),
                 projectUser.introductionText(),
+                projectUser.profileImageUrl(),
                 authorLevelLabel,
                 occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),

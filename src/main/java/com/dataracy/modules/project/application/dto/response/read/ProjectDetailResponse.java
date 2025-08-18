@@ -12,6 +12,7 @@ import java.util.List;
  * @param title 프로젝트 제목
  * @param username 유저명
  * @param userIntroductionText 유저 자기소개
+ * @param userProfileImageUrl 유저 프로필 이미지 URL
  * @param authorLevelLabel 작성자 유형 라벨
  * @param occupationLabel 직업 라벨
  * @param topicLabel 토픽 라벨
@@ -34,6 +35,7 @@ public record ProjectDetailResponse(
         String title,
         String username,
         String userIntroductionText,
+        String userProfileImageUrl,
         String authorLevelLabel,
         String occupationLabel,
         String topicLabel,
