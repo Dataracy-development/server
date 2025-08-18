@@ -1,6 +1,7 @@
 package com.dataracy.modules.dataset.application.port.in.command.content;
 
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
+import com.dataracy.modules.dataset.application.dto.response.command.UploadDataResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UploadDataUseCase {
@@ -13,5 +14,5 @@ public interface UploadDataUseCase {
      * @param requestDto 업로드 요청에 대한 추가 정보가 담긴 DTO
      * @return 업로드된 데이터의 고유 식별자
      */
-    Long uploadData(Long userId, MultipartFile dataFile, MultipartFile thumbnailFile, UploadDataRequest requestDto);
+    UploadDataResponse uploadData(Long userId, MultipartFile dataFile, MultipartFile thumbnailFile, UploadDataRequest requestDto);
 }
