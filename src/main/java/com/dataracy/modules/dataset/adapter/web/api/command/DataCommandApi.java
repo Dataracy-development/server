@@ -4,6 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.dataset.adapter.web.request.command.ModifyDataWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.command.UploadDataWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.command.UploadDataWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.download.GetDataPreSignedUrlWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,7 +44,7 @@ public interface DataCommandApi {
             @ApiResponse(responseCode = "201", description = "데이터셋 업로드에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<SuccessResponse<Void>> uploadData(
+    ResponseEntity<SuccessResponse<UploadDataWebResponse>> uploadData(
             @Parameter(hidden = true)
             @CurrentUserId
             Long userId,

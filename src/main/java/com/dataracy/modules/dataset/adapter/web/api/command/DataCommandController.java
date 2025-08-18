@@ -7,9 +7,11 @@ import com.dataracy.modules.dataset.adapter.web.mapper.command.DataCommandWebMap
 import com.dataracy.modules.dataset.adapter.web.mapper.download.DataDownloadWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.command.ModifyDataWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.command.UploadDataWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.command.UploadDataWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.download.GetDataPreSignedUrlWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
+import com.dataracy.modules.dataset.application.dto.response.command.UploadDataResponse;
 import com.dataracy.modules.dataset.application.dto.response.download.GetDataPreSignedUrlResponse;
 import com.dataracy.modules.dataset.application.port.in.command.content.*;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
@@ -45,23 +47,24 @@ public class DataCommandController implements DataCommandApi {
      * @return 데이터셋 생성 성공 상태가 포함된 HTTP 201(Created) 응답
      */
     @Override
-    public ResponseEntity<SuccessResponse<Void>> uploadData(
+    public ResponseEntity<SuccessResponse<UploadDataWebResponse>> uploadData(
             Long userId,
             MultipartFile dataFile,
             MultipartFile thumbnailFile,
             UploadDataWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[UploadData] 데이터셋 업로드 API 요청 시작");
-
+        UploadDataWebResponse webResponse;
         try {
             UploadDataRequest requestDto = dataCommandWebMapper.toApplicationDto(webRequest);
-            uploadDataUseCase.uploadData(userId, dataFile, thumbnailFile, requestDto);
+            UploadDataResponse responseDto = uploadDataUseCase.uploadData(userId, dataFile, thumbnailFile, requestDto);
+            webResponse = dataCommandWebMapper.toWebDto(responseDto);
         } finally {
             LoggerFactory.api().logResponse("[UploadData] 데이터셋 업로드 API 응답 완료", startTime);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(SuccessResponse.of(DataSuccessStatus.CREATED_DATASET));
+                .body(SuccessResponse.of(DataSuccessStatus.CREATED_DATASET, webResponse));
     }
 
     /**

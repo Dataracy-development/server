@@ -4,6 +4,7 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
+import com.dataracy.modules.dataset.application.dto.response.command.UploadDataResponse;
 import com.dataracy.modules.dataset.application.mapper.command.CreateDataDtoMapper;
 import com.dataracy.modules.dataset.application.port.in.command.content.ModifyDataUseCase;
 import com.dataracy.modules.dataset.application.port.in.command.content.UploadDataUseCase;
@@ -65,7 +66,7 @@ public class DataCommandService implements
      */
     @Override
     @Transactional
-    public Long uploadData(Long userId, MultipartFile dataFile, MultipartFile thumbnailFile, UploadDataRequest requestDto) {
+    public UploadDataResponse uploadData(Long userId, MultipartFile dataFile, MultipartFile thumbnailFile, UploadDataRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("UploadDataUseCase", "데이터셋 업로드 서비스 시작 title=" + requestDto.title());
 
         // 유효성 검사
@@ -99,7 +100,7 @@ public class DataCommandService implements
         }
 
         LoggerFactory.service().logSuccess("UploadDataUseCase", "데이터셋 업로드 서비스 종료 title=" + requestDto.title(), startTime);
-        return saveData.getId();
+        return new UploadDataResponse(saveData.getId());
     }
 
     /**
