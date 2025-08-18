@@ -30,6 +30,12 @@ public class ProjectCommandWebMapper {
         );
     }
 
+    /**
+     * 애플리케이션 계층의 프로젝트 업로드 응답 DTO를 웹 계층의 프로젝트 업로드 응답 DTO로 변환합니다.
+     *
+     * @param responseDto 프로젝트 업로드 애플리케이션 응답 DTO
+     * @return 업로드한 프로젝트 아이디
+     */
     public UploadProjectWebResponse toWebDto(UploadProjectResponse responseDto) {
         return new UploadProjectWebResponse(
                 responseDto.id()

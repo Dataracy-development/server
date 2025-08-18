@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
-@Schema(description = "피드백 댓글 업로드 요청 DTO")
+@Schema(description = "피드백 댓글 업로드 웹 요청 DTO")
 public record UploadCommentWebRequest(
         @Schema(description = "피드백 내용", example = "피드백 내용")
         @NotBlank(message = "피드백 내용을 입력해주세요")

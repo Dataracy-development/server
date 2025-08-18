@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 프로젝트 상세 조회 응답 DTO
+ * 프로젝트 상세 조회 애플리케이션 응답 DTO
  *
  * @param id 프로젝트 ID
  * @param title 프로젝트 제목
@@ -21,7 +21,7 @@ import java.util.List;
  * @param parentProjectId 부모 프로젝트 아이디
  * @param content 내용
  * @param projectThumbnailUrl 프로젝트 썸네일
- * @param createdAt 작성일
+ * @param createdAt 작성 시기
  * @param commentCount 댓글수
  * @param likeCount 좋아요수
  * @param viewCount 조회수
