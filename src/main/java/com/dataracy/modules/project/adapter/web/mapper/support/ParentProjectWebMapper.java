@@ -13,6 +13,10 @@ public class ParentProjectWebMapper {
      * @return 변환된 ParentProjectWebResponse 객체
      */
     public ParentProjectWebResponse toWebDto(ParentProjectResponse responseDto) {
+        if (responseDto == null) {
+            return null;
+        }
+
         return new ParentProjectWebResponse(
                 responseDto.id(),
                 responseDto.title(),
