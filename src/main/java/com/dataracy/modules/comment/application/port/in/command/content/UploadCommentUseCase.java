@@ -1,6 +1,7 @@
 package com.dataracy.modules.comment.application.port.in.command.content;
 
 import com.dataracy.modules.comment.application.dto.request.command.UploadCommentRequest;
+import com.dataracy.modules.comment.application.dto.response.command.UploadCommentResponse;
 
 public interface UploadCommentUseCase {
     /**
@@ -10,5 +11,5 @@ public interface UploadCommentUseCase {
      * @param userId 댓글을 작성하는 사용자의 식별자
      * @param requestDto 업로드할 댓글의 내용 및 정보를 담은 요청 객체
      */
-    void uploadComment(Long projectId, Long userId, UploadCommentRequest requestDto);
+    UploadCommentResponse uploadComment(Long projectId, Long userId, UploadCommentRequest requestDto);
 }
