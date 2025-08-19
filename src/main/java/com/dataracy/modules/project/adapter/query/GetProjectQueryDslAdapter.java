@@ -8,8 +8,8 @@ import com.dataracy.modules.project.adapter.query.predicates.ProjectFilterPredic
 import com.dataracy.modules.project.adapter.query.sort.ProjectPopularOrderBuilder;
 import com.dataracy.modules.project.adapter.query.sort.ProjectSortBuilder;
 import com.dataracy.modules.project.application.dto.request.search.FilteringProjectRequest;
-import com.dataracy.modules.project.application.port.out.query.search.SearchFilteredProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
+import com.dataracy.modules.project.application.port.out.query.search.SearchFilteredProjectsPort;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.model.Project;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -21,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,39 +73,56 @@ public class GetProjectQueryDslAdapter implements
      * @return 필터 및 정렬 조건에 맞는 프로젝트 목록과 전체 개수를 포함한 페이지 객체
      */
     @Override
-    public Page<Project> searchByFilters(FilteringProjectRequest request, Pageable pageable, ProjectSortType sortType) {
-        Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[searchByFilters] 프로젝트 필터링 조회 시작. keyword=" + request.keyword());
+    public Page<Project> searchByFilters(FilteringProjectRequest request,
+                                         Pageable pageable,
+                                         ProjectSortType sortType) {
+        Instant start = LoggerFactory.query().logQueryStart("ProjectEntity",
+                        "[searchByFilters] 프로젝트 필터링 조회 시작. keyword=" + request.keyword());
 
-        List<ProjectEntity> entities = queryFactory
-                .selectFrom(project)
+        // 루트 ID만 페이징 (컬렉션 조인/페치 금지)
+        List<Long> pageIds = queryFactory
+                .select(project.id)
+                .from(project)
+                .where(buildFilterPredicates(request))
                 .orderBy(ProjectSortBuilder.fromSortOption(sortType))
-                .leftJoin(project.childProjects).fetchJoin()
-                .distinct()
-                .where(
-                        buildFilterPredicates(request)
-                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        List<Project> contents = entities.stream()
-                .map(projectEntity ->
-                        ProjectEntityMapper.toWithChildren(projectEntity, 2)
-                )
+        if (pageIds.isEmpty()) {
+            LoggerFactory.query().logQueryEnd("ProjectEntity", "[searchByFilters] 결과 0", start);
+            return new PageImpl<>(List.of(), pageable, 0);
+        }
+
+        // 부모 + 1단계 자식만 한 번에 로딩 (여기서는 페이징 없음 → fetch join 가능 : 안전)
+        List<ProjectEntity> parentsWithChildren = queryFactory
+                .selectFrom(project)
+                .distinct()                                      // 루트 중복 방지
+                .leftJoin(project.childProjects).fetchJoin()     // ✅ 1:N 페치조인 (2단계에서는 OK)
+                .where(project.id.in(pageIds))
+                .fetch();
+
+        // ID 페이징에서의 정렬 순서 복원 (IN 결과는 순서 비보장)
+        var order = new HashMap<Long, Integer>(pageIds.size());
+        for (int i = 0; i < pageIds.size(); i++) {
+            order.put(pageIds.get(i), i);
+        }
+        parentsWithChildren.sort(Comparator.comparingInt(e -> order.get(e.getId())));
+
+        // 도메인 변환 (자식만 포함)
+        List<Project> contents = parentsWithChildren.stream()
+                .map(e -> ProjectEntityMapper.toWithChildren(e, 2))
                 .toList();
 
+        // total (루트만 카운트, 컬렉션 조인 불필요)
         long total = Optional.ofNullable(
-                queryFactory
-                        .select(project.count())
+                queryFactory.select(project.id.count())
                         .from(project)
-                        .distinct()
-                        .where(
-                                buildFilterPredicates(request)
-                        )
+                        .where(buildFilterPredicates(request))
                         .fetchOne()
         ).orElse(0L);
 
-        LoggerFactory.query().logQueryEnd("ProjectEntity", "[searchByFilters] 프로젝트 필터링 조회 완료. keyword=" + request.keyword(), startTime);
+        LoggerFactory.query().logQueryEnd("ProjectEntity", "[searchByFilters] 완료", start);
         return new PageImpl<>(contents, pageable, total);
     }
 
