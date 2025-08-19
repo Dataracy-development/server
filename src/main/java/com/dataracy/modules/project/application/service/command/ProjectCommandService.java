@@ -35,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -154,9 +153,7 @@ public class ProjectCommandService implements
 
         // 기존 연결과 새로운 연결 비교 후 필요한 것만 추가/삭제
         Set<Long> existingDataIds = extractProjectOwnerPort.findDataIdsByProjectId(projectId);
-        Set<Long> newDataIds = requestDto.dataIds() == null
-                ? Collections.emptySet()
-                : new HashSet<>(requestDto.dataIds());
+        Set<Long> newDataIds = new HashSet<>(requestDto.dataIds());
 
         // 삭제할 연결
         Set<Long> toDelete = existingDataIds.stream()
