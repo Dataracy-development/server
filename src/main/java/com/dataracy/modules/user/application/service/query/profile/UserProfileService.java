@@ -1,6 +1,11 @@
 package com.dataracy.modules.user.application.service.query.profile;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.reference.application.port.in.visitsource.GetVisitSourceLabelFromIdUseCase;
+import com.dataracy.modules.user.application.dto.response.read.GetUserInfoResponse;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUserAuthorLevelIdsUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
@@ -29,6 +34,10 @@ public class UserProfileService implements
 {
     private final UserQueryPort userQueryPort;
     private final UserMultiQueryPort userMultiQueryPort;
+    private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
+    private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+    private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
+    private final GetVisitSourceLabelFromIdUseCase getVisitSourceLabelFromIdUseCase;
 
     /**
      * 주어진 사용자 ID로 해당 사용자의 닉네임을 반환합니다.
@@ -105,15 +114,43 @@ public class UserProfileService implements
     }
 
     /**
-     * 주어진 사용자 ID로 해당 사용자의 상세 정보를 조회하여 UserInfo 객체로 반환합니다.
+     * 주어진 사용자 ID로 사용자를 조회하여 UserInfo로 변환해 반환합니다.
      *
-     * @param userId 상세 정보를 조회할 사용자의 ID
-     * @return 조회된 사용자의 상세 정보(UserInfo)
-     * @throws UserException 사용자가 존재하지 않을 경우 UserErrorStatus.NOT_FOUND_USER가 발생합니다.
+     * 조회 대상 사용자가 존재하지 않으면 UserException(UserErrorStatus.NOT_FOUND_USER)을 던집니다.
+     *
+     * @param userId 조회할 사용자 ID
+     * @return 해당 사용자의 상세 정보(UserInfo)
+     * @throws UserException 사용자가 존재하지 않을 경우(UserErrorStatus.NOT_FOUND_USER)
      */
     @Override
     @Transactional(readOnly = true)
-    public UserInfo getUserInfo(Long userId) {
+    public UserInfo extractUserInfo(Long userId) {
+        Instant startTime = LoggerFactory.service().logStart("GetUserInfoUseCase", "주어진 사용자 ID에 대한 유저 정보 추출 서비스 시작 userId=" + userId);
+
+        User user = userQueryPort.findUserById(userId)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("GetUserInfoUseCase", "[유저 정보 추출] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
+                });
+
+        UserInfo userInfo = user.toUserInfo();
+        LoggerFactory.service().logSuccess("GetUserInfoUseCase", "주어진 사용자 ID에 대한 유저 정보 추출 서비스 성공 userId=" + userId, startTime);
+        return userInfo;
+    }
+
+    /**
+         * 주어진 사용자 ID에 대한 상세 사용자 정보를 조회하여 GetUserInfoResponse로 반환합니다.
+         *
+         * <p>사용자 존재 시 사용자 역할, 이메일, 닉네임, 프로필 이미지, 소개 텍스트와
+         * 선택적 레이블(저자 레벨, 직업, 관심 주제 목록, 유입 경로)을 포함한 DTO를 생성해 반환합니다.</p>
+         *
+         * @param userId 조회할 사용자의 ID
+         * @return 조회된 사용자의 정보를 담은 {@link GetUserInfoResponse}
+         * @throws UserException 사용자가 존재하지 않을 경우 {@code UserErrorStatus.NOT_FOUND_USER}로 발생합니다.
+         */
+    @Override
+    @Transactional(readOnly = true)
+    public GetUserInfoResponse getUserInfo(Long userId) {
         Instant startTime = LoggerFactory.service().logStart("GetUserInfoUseCase", "주어진 사용자 ID에 대한 유저 정보 조회 서비스 시작 userId=" + userId);
 
         User user = userQueryPort.findUserById(userId)
@@ -121,9 +158,29 @@ public class UserProfileService implements
                     LoggerFactory.service().logWarning("GetUserInfoUseCase", "[유저 정보 조회] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
-        UserInfo userInfo = user.toUserInfo();
+
+        String authorLevelLabel = user.getAuthorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(user.getAuthorLevelId());
+        String occupationLabel = user.getOccupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(user.getOccupationId());
+        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(user.getTopicIds());
+        List<String> topicLabels = user.getTopicIds().stream()
+                .map(topicLabelMap::get)
+                .toList();
+        String visitSourceLabel = user.getVisitSourceId() == null ? null : getVisitSourceLabelFromIdUseCase.getLabelById(user.getVisitSourceId());
+
+        GetUserInfoResponse getUserInfoResponse = new GetUserInfoResponse(
+                user.getId(),
+                user.getRole(),
+                user.getEmail(),
+                user.getNickname(),
+                authorLevelLabel,
+                occupationLabel,
+                topicLabels,
+                visitSourceLabel,
+                user.getProfileImageUrl(),
+                user.getIntroductionText()
+        );
 
         LoggerFactory.service().logSuccess("GetUserInfoUseCase", "주어진 사용자 ID에 대한 유저 정보 조회 서비스 성공 userId=" + userId, startTime);
-        return userInfo;
+        return getUserInfoResponse;
     }
 }

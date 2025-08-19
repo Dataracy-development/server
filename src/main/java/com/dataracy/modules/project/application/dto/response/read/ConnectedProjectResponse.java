@@ -3,15 +3,16 @@ package com.dataracy.modules.project.application.dto.response.read;
 import java.time.LocalDateTime;
 
 /**
- *요청
- * @param id
- * @param title
- * @param username
- * @param topicLabel
- * @param commentCount
- * @param likeCount
- * @param viewCount
- * @param createdAt
+ * 데이터셋과 연결된 프로젝트 애플리케이션 응답 DTO.
+ *
+ * @param id 프로젝트 ID
+ * @param title 프로젝트 제목
+ * @param username 작성자 닉네임
+ * @param topicLabel 주제 라벨
+ * @param commentCount 댓글 수
+ * @param likeCount 좋아요 수
+ * @param viewCount 조회 수
+ * @param createdAt 작성 시기
  */
 public record ConnectedProjectResponse(
         Long id,

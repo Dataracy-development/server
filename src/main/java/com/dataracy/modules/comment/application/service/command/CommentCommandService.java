@@ -2,6 +2,7 @@ package com.dataracy.modules.comment.application.service.command;
 
 import com.dataracy.modules.comment.application.dto.request.command.ModifyCommentRequest;
 import com.dataracy.modules.comment.application.dto.request.command.UploadCommentRequest;
+import com.dataracy.modules.comment.application.dto.response.command.UploadCommentResponse;
 import com.dataracy.modules.comment.application.port.in.command.content.DeleteCommentUseCase;
 import com.dataracy.modules.comment.application.port.in.command.content.ModifyCommentUseCase;
 import com.dataracy.modules.comment.application.port.in.command.content.UploadCommentUseCase;
@@ -35,19 +36,22 @@ public class CommentCommandService implements
     private final SendCommentEventPort sendCommentEventPort;
 
     /**
-     * 프로젝트에 댓글을 등록합니다.
-     * 요청 DTO에 부모 댓글 ID가 있을 경우, 해당 부모 댓글의 존재 여부와 대댓글 제한(1단계까지만 허용)을 검증합니다.
-     * 부모 댓글이 유효하지 않거나, 대댓글 제한을 위반하면 예외가 발생합니다.
-     * 댓글 등록 후, 댓글 수 싱크를 위해 프로젝트 ID를 기반으로 댓글 등록 이벤트를 발행합니다.
-     *
-     * @param projectId 댓글이 속한 프로젝트의 ID
-     * @param userId 댓글 작성자의 ID
-     * @param requestDto 댓글 등록 요청 정보
-     * @throws CommentException 부모 댓글이 존재하지 않거나 대댓글 제한을 위반한 경우 발생합니다.
-     */
+         * 프로젝트에 댓글을 등록하고 생성된 댓글 ID를 반환합니다.
+         *
+         * 요청 DTO에 부모 댓글 ID가 포함되면 해당 부모 댓글의 존재 여부를 확인하고,
+         * 대댓글은 한 단계까지만 허용하는 제약을 검증합니다. 부모가 존재하지 않거나
+         * 대댓글 제한을 위반하면 CommentException이 발생합니다. 댓글이 정상 등록되면
+         * 프로젝트 ID 기반의 댓글 등록 이벤트를 발행합니다.
+         *
+         * @param projectId 댓글이 속한 프로젝트의 ID
+         * @param userId 댓글 작성자의 ID
+         * @param requestDto 댓글 등록 요청 정보
+         * @return 생성된 댓글의 ID를 담은 UploadCommentResponse
+         * @throws CommentException 부모 댓글이 존재하지 않거나 대댓글 제한을 위반한 경우 발생합니다.
+         */
     @Override
     @Transactional
-    public void uploadComment(Long projectId, Long userId, UploadCommentRequest requestDto) {
+    public UploadCommentResponse uploadComment(Long projectId, Long userId, UploadCommentRequest requestDto) {
         Instant startTime = LoggerFactory.service().logStart("UploadCommentUseCase", "댓글 작성 서비스 시작 projectId=" + projectId);
 
         Long parentId = requestDto.parentCommentId();
@@ -76,7 +80,9 @@ public class CommentCommandService implements
 
         Comment savedComment = uploadCommentPort.uploadComment(comment);
         sendCommentEventPort.sendCommentUploadedEvent(savedComment.getProjectId());
+
         LoggerFactory.service().logSuccess("UploadCommentUseCase", "댓글 작성 서비스 종료 projectId=" + projectId, startTime);
+        return new UploadCommentResponse(savedComment.getId());
     }
 
     /**

@@ -7,9 +7,11 @@ import com.dataracy.modules.dataset.adapter.web.mapper.command.DataCommandWebMap
 import com.dataracy.modules.dataset.adapter.web.mapper.download.DataDownloadWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.command.ModifyDataWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.command.UploadDataWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.command.UploadDataWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.download.GetDataPreSignedUrlWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
+import com.dataracy.modules.dataset.application.dto.response.command.UploadDataResponse;
 import com.dataracy.modules.dataset.application.dto.response.download.GetDataPreSignedUrlResponse;
 import com.dataracy.modules.dataset.application.port.in.command.content.*;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
@@ -36,32 +38,36 @@ public class DataCommandController implements DataCommandApi {
     private static final int PRESIGNED_URL_EXPIRY_SECONDS = 300;
 
     /**
-     * 데이터 파일과 썸네일 파일을 업로드하여 새로운 데이터셋을 생성합니다.
+     * 데이터 파일과 썸네일을 업로드하여 새로운 데이터셋을 생성하고 생성 결과를 반환합니다.
      *
-     * @param userId 업로드를 요청한 사용자의 ID
-     * @param dataFile 업로드할 데이터 파일
-     * @param thumbnailFile 데이터셋의 썸네일 파일
-     * @param webRequest 데이터셋 생성에 필요한 추가 정보
-     * @return 데이터셋 생성 성공 상태가 포함된 HTTP 201(Created) 응답
+     * <p>데이터 업로드를 수행하고 결과를 웹 응답 DTO인 {@code UploadDataWebResponse}로 매핑하여
+     * {@code SuccessResponse.of(DataSuccessStatus.CREATED_DATASET, payload)} 형태로 HTTP 201(Created) 응답을 반환합니다.</p>
+     *
+     * @param userId 업로드를 요청한 사용자 ID
+     * @param dataFile 업로드할 데이터 파일(MultipartFile)
+     * @param thumbnailFile 데이터셋에 사용될 썸네일 파일(MultipartFile)
+     * @param webRequest 데이터셋 생성에 필요한 추가 메타데이터
+     * @return HTTP 201(Created) 응답으로 래핑된 {@code SuccessResponse<UploadDataWebResponse>}
      */
     @Override
-    public ResponseEntity<SuccessResponse<Void>> uploadData(
+    public ResponseEntity<SuccessResponse<UploadDataWebResponse>> uploadData(
             Long userId,
             MultipartFile dataFile,
             MultipartFile thumbnailFile,
             UploadDataWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[UploadData] 데이터셋 업로드 API 요청 시작");
-
+        UploadDataWebResponse webResponse;
         try {
             UploadDataRequest requestDto = dataCommandWebMapper.toApplicationDto(webRequest);
-            uploadDataUseCase.uploadData(userId, dataFile, thumbnailFile, requestDto);
+            UploadDataResponse responseDto = uploadDataUseCase.uploadData(userId, dataFile, thumbnailFile, requestDto);
+            webResponse = dataCommandWebMapper.toWebDto(responseDto);
         } finally {
             LoggerFactory.api().logResponse("[UploadData] 데이터셋 업로드 API 응답 완료", startTime);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(SuccessResponse.of(DataSuccessStatus.CREATED_DATASET));
+                .body(SuccessResponse.of(DataSuccessStatus.CREATED_DATASET, webResponse));
     }
 
     /**

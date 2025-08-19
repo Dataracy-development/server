@@ -20,6 +20,8 @@ public class DataReadWebMapper {
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.username(),
+                responseDto.userProfileImageUrl(),
+                responseDto.userIntroductionText(),
                 responseDto.authorLabel(),
                 responseDto.occupationLabel(),
                 responseDto.topicLabel(),

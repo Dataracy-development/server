@@ -4,6 +4,7 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.dataset.adapter.web.request.command.ModifyDataWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.command.UploadDataWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.command.UploadDataWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.download.GetDataPreSignedUrlWebResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,12 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/v1/datasets")
 public interface DataCommandApi {
     /**
-     * 새로운 데이터셋 파일과 선택적 썸네일, 메타데이터를 업로드하여 데이터셋을 생성한다.
+     * 새 데이터셋 파일(및 선택적 썸네일)과 메타데이터를 업로드하여 데이터셋 레코드를 생성하고 업로드 결과를 반환합니다.
      *
-     * @param dataFile 업로드할 데이터셋 파일
-     * @param thumbnailFile 데이터셋 썸네일 이미지 파일 (선택 사항)
-     * @param webRequest 데이터셋의 메타데이터 및 추가 정보를 포함하는 요청 객체
-     * @return 데이터셋 업로드 성공 시 성공 응답
+     * <p>업로드된 파일과 webRequest의 정보를 바탕으로 DB에 데이터셋 정보를 저장하고, 생성된 데이터셋의 식별 정보 등을
+     * 포함한 UploadDataWebResponse를 SuccessResponse로 감싸서 반환합니다. 요청은 multipart/form-data 형식을 사용합니다.
+     *
+     * @return 생성된 데이터셋 정보를 담은 SuccessResponse<UploadDataWebResponse> (성공 시 HTTP 201)
      */
     @Operation(
             summary = "데이터셋을 업로드한다.",
@@ -43,7 +44,7 @@ public interface DataCommandApi {
             @ApiResponse(responseCode = "201", description = "데이터셋 업로드에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<SuccessResponse<Void>> uploadData(
+    ResponseEntity<SuccessResponse<UploadDataWebResponse>> uploadData(
             @Parameter(hidden = true)
             @CurrentUserId
             Long userId,

@@ -8,6 +8,7 @@ import com.dataracy.modules.project.application.dto.response.read.ConnectedProje
 import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
 import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
+import com.dataracy.modules.project.application.dto.response.support.ParentProjectResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectLabelMapResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectWithDataIdsResponse;
@@ -15,6 +16,7 @@ import com.dataracy.modules.project.application.mapper.read.ConnectedProjectDtoM
 import com.dataracy.modules.project.application.mapper.read.ContinuedProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.read.PopularProjectDtoMapper;
 import com.dataracy.modules.project.application.mapper.read.ProjectDetailDtoMapper;
+import com.dataracy.modules.project.application.mapper.support.ParentProjectDtoMapper;
 import com.dataracy.modules.project.application.port.in.query.extractor.FindProjectLabelMapUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.FindConnectedProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
@@ -61,6 +63,7 @@ public class ProjectReadService implements
     private final ConnectedProjectDtoMapper connectedProjectDtoMapper;
     private final PopularProjectDtoMapper popularProjectDtoMapper;
     private final ProjectDetailDtoMapper projectDetailDtoMapper;
+    private final ParentProjectDtoMapper parentProjectDtoMapper;
 
     private final CacheProjectViewCountPort cacheProjectViewCountPort;
 
@@ -88,16 +91,19 @@ public class ProjectReadService implements
     private static final String VIEW_TARGET_TYPE = "PROJECT";
 
     /**
-     * 지정한 프로젝트의 상세 정보를 조회하여 반환합니다.
-     *
-     * 프로젝트의 기본 정보, 작성자 정보(닉네임, 소개, 레벨, 직업), 주제, 분석 목적, 데이터 소스, 메타데이터(제목, 내용, 파일 URL, 생성일, 댓글/좋아요/조회수), 사용자의 좋아요 여부, 자식 프로젝트 존재 여부, 연결된 데이터셋 목록을 포함한 상세 정보를 제공합니다. 조회자 식별자를 기반으로 프로젝트의 조회수를 1회 증가시킵니다.
-     *
-     * @param projectId 상세 정보를 조회할 프로젝트의 ID
-     * @param userId 프로젝트를 조회하는 사용자의 ID (좋아요 여부 확인에 사용, null 가능)
-     * @param viewerId 프로젝트를 조회하는 사용자의 식별자(조회수 중복 방지에 사용)
-     * @return 프로젝트의 상세 정보를 담은 ProjectDetailResponse 객체
-     * @throws ProjectException 프로젝트가 존재하지 않을 경우 발생
-     */
+         * 지정한 프로젝트의 전체 상세 정보를 조회하여 반환합니다.
+         *
+         * 반환되는 상세 정보에는 프로젝트의 기본 메타데이터(제목·내용·파일 URL·생성일·댓글/좋아요/조회수),
+         * 작성자 정보(닉네임·소개·프로필 이미지 URL·작성자 레벨·직업), 주제·분석 목적·데이터 소스,
+         * 사용자의 좋아요 여부(조회자 userId가 주어졌을 때), 자식 프로젝트 존재 여부, 연결된 데이터셋 목록,
+         * 그리고 부모 프로젝트 정보(존재하는 경우)가 포함됩니다. viewerId를 기반으로 조회수는 중복 방지 로직을 거쳐 1회 증가합니다.
+         *
+         * @param projectId 상세 정보를 조회할 프로젝트의 ID
+         * @param userId 조회자 사용자 ID (좋아요 여부 확인에 사용, null 가능)
+         * @param viewerId 조회수 중복 방지를 위한 조회자 식별자
+         * @return 프로젝트의 상세 정보를 담은 {@code ProjectDetailResponse}
+         * @throws ProjectException 프로젝트 또는 참조된 부모 프로젝트가 존재하지 않을 경우 발생
+         */
     @Override
     @Transactional(readOnly = true)
     public ProjectDetailResponse getProjectDetail(Long projectId, Long userId, String viewerId) {
@@ -120,7 +126,7 @@ public class ProjectReadService implements
         boolean hasChild = checkProjectExistsByParentPort.checkParentProjectExistsById(projectId);
 
         // 작성자 정보
-        UserInfo userInfo = getUserInfoUseCase.getUserInfo(project.getUserId());
+        UserInfo userInfo = getUserInfoUseCase.extractUserInfo(project.getUserId());
         ProjectUser projectUser = ProjectUser.fromUserInfo(userInfo);
 
         // 선택조건 null 일 경우에 대한 처리
@@ -132,6 +138,20 @@ public class ProjectReadService implements
             isLiked = validateTargetLikeUseCase.hasUserLikedTarget(userId, projectId, TargetType.PROJECT);
         }
 
+        Project parentProject = project.getParentProjectId() == null
+                ? null
+                : findProjectPort.findProjectById(project.getParentProjectId())
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("GetProjectDetailUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + project.getParentProjectId());
+                    return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
+                });
+        ParentProjectResponse parentProjectResponse = parentProject == null
+                ? null
+                : parentProjectDtoMapper.toResponseDto(
+                parentProject,
+                findUsernameUseCase.findUsernameById(parentProject.getUserId())
+        );
+
         // 프로젝트 조회수 증가
         // 조회수 기록 (중복 방지 TTL)
         cacheProjectViewCountPort.increaseViewCount(projectId, viewerId, VIEW_TARGET_TYPE);
@@ -140,6 +160,7 @@ public class ProjectReadService implements
                 project,
                 projectUser.nickname(),
                 projectUser.introductionText(),
+                projectUser.profileImageUrl(),
                 authorLevelLabel,
                 occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),
@@ -147,7 +168,8 @@ public class ProjectReadService implements
                 getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId()),
                 isLiked,
                 hasChild,
-                connectedDataSets
+                connectedDataSets,
+                parentProjectResponse
         );
 
         LoggerFactory.service().logSuccess("GetProjectDetailUseCase", "프로젝트 세부정보 조회 서비스 종료 projectId=" + projectId, startTime);

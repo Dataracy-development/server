@@ -2,8 +2,10 @@ package com.dataracy.modules.project.adapter.web.mapper.command;
 
 import com.dataracy.modules.project.adapter.web.request.command.ModifyProjectWebRequest;
 import com.dataracy.modules.project.adapter.web.request.command.UploadProjectWebRequest;
+import com.dataracy.modules.project.adapter.web.response.command.UploadProjectWebResponse;
 import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
 import com.dataracy.modules.project.application.dto.request.command.UploadProjectRequest;
+import com.dataracy.modules.project.application.dto.response.command.UploadProjectResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,6 +27,18 @@ public class ProjectCommandWebMapper {
                 webRequest.parentProjectId(),
                 webRequest.content(),
                 webRequest.dataIds()
+        );
+    }
+
+    /**
+         * 애플리케이션 계층의 프로젝트 업로드 응답을 웹 계층 응답 DTO로 변환합니다.
+         *
+         * @param responseDto 애플리케이션 계층의 UploadProjectResponse — 생성된 프로젝트의 식별자(id)를 포함합니다.
+         * @return 웹 계층의 UploadProjectWebResponse 객체(생성된 프로젝트의 id 포함)
+         */
+    public UploadProjectWebResponse toWebDto(UploadProjectResponse responseDto) {
+        return new UploadProjectWebResponse(
+                responseDto.id()
         );
     }
 

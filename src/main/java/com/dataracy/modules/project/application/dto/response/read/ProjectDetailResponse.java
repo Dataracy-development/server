@@ -1,17 +1,19 @@
 package com.dataracy.modules.project.application.dto.response.read;
 
+import com.dataracy.modules.project.application.dto.response.support.ParentProjectResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 프로젝트 상세 조회 응답 DTO
+ * 프로젝트 상세 조회 애플리케이션 응답 DTO
  *
  * @param id 프로젝트 ID
  * @param title 프로젝트 제목
  * @param username 유저명
  * @param userIntroductionText 유저 자기소개
+ * @param userProfileImageUrl 유저 프로필 이미지 URL
  * @param authorLevelLabel 작성자 유형 라벨
  * @param occupationLabel 직업 라벨
  * @param topicLabel 토픽 라벨
@@ -21,7 +23,7 @@ import java.util.List;
  * @param parentProjectId 부모 프로젝트 아이디
  * @param content 내용
  * @param projectThumbnailUrl 프로젝트 썸네일
- * @param createdAt 작성일
+ * @param createdAt 작성 시기
  * @param commentCount 댓글수
  * @param likeCount 좋아요수
  * @param viewCount 조회수
@@ -34,6 +36,7 @@ public record ProjectDetailResponse(
         String title,
         String username,
         String userIntroductionText,
+        String userProfileImageUrl,
         String authorLevelLabel,
         String occupationLabel,
         String topicLabel,
@@ -49,5 +52,6 @@ public record ProjectDetailResponse(
         Long viewCount,
         boolean isLiked,
         boolean hasChild,
-        List<ProjectConnectedDataResponse> connectedDataSets
+        List<ProjectConnectedDataResponse> connectedDataSets,
+        ParentProjectResponse parentProject
 ) {}
