@@ -3,6 +3,8 @@ package com.dataracy.modules.dataset.adapter.query.predicates;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.util.StringUtils;
 
+import java.util.Collection;
+
 import static com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity.dataEntity;
 
 public class DataFilterPredicate {
@@ -62,5 +64,15 @@ public class DataFilterPredicate {
      */
     public static BooleanExpression dataTypeIdEq(Long dataTypeId) {
         return dataTypeId == null ? null : dataEntity.dataTypeId.eq(dataTypeId);
+    }
+
+    /**
+     * 해당 데이터 아이디 목록에 해당하는 데이터 정보를 조회한다.
+     *
+     * @param dataIds 데이터 목록
+     * @return 해당 데이터 아이디 목록에 해당하는 데이터 정보를 조회한다.
+     */
+    public static BooleanExpression dataIdIn(Collection<Long> dataIds) {
+        return (dataIds == null || dataIds.isEmpty()) ? null : dataEntity.id.in(dataIds);
     }
 }
