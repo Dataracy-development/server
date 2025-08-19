@@ -6,8 +6,10 @@ import com.dataracy.modules.common.support.annotation.AuthorizationProjectEdit;
 import com.dataracy.modules.project.adapter.web.mapper.command.ProjectCommandWebMapper;
 import com.dataracy.modules.project.adapter.web.request.command.ModifyProjectWebRequest;
 import com.dataracy.modules.project.adapter.web.request.command.UploadProjectWebRequest;
+import com.dataracy.modules.project.adapter.web.response.command.UploadProjectWebResponse;
 import com.dataracy.modules.project.application.dto.request.command.ModifyProjectRequest;
 import com.dataracy.modules.project.application.dto.request.command.UploadProjectRequest;
+import com.dataracy.modules.project.application.dto.response.command.UploadProjectResponse;
 import com.dataracy.modules.project.application.port.in.command.content.DeleteProjectUseCase;
 import com.dataracy.modules.project.application.port.in.command.content.ModifyProjectUseCase;
 import com.dataracy.modules.project.application.port.in.command.content.RestoreProjectUseCase;
@@ -32,30 +34,33 @@ public class ProjectCommandController implements ProjectCommandApi {
     private final RestoreProjectUseCase restoreProjectUseCase;
 
     /**
-     * 사용자의 ID와 프로젝트 썸네일 이미지, 프로젝트 정보를 받아 새로운 프로젝트를 생성한다.
-     *
-     * @param userId 프로젝트를 업로드하는 사용자의 ID
-     * @param thumbnailFile 프로젝트 썸네일 이미지 파일
-     * @param webRequest 업로드할 프로젝트 정보가 담긴 요청 객체
-     * @return 프로젝트 생성 성공 시 201 Created와 성공 상태를 포함한 응답
-     */
+         * 새 프로젝트를 생성한다.
+         *
+         * <p>사용자 ID, 썸네일 이미지 및 업로드 정보를 받아 프로젝트를 생성하고 생성된 프로젝트 정보(웹 DTO)를 반환한다.</p>
+         *
+         * @param userId 업로드를 요청한 사용자의 식별자
+         * @param thumbnailFile 프로젝트의 썸네일 이미지 파일
+         * @param webRequest 업로드할 프로젝트의 입력 데이터
+         * @return HTTP 201 Created와 함께 생성된 프로젝트 정보를 담은 SuccessResponse&lt;UploadProjectWebResponse&gt;
+         */
     @Override
-    public ResponseEntity<SuccessResponse<Void>> uploadProject(
+    public ResponseEntity<SuccessResponse<UploadProjectWebResponse>> uploadProject(
             Long userId,
             MultipartFile thumbnailFile,
             UploadProjectWebRequest webRequest
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[UploadProject] 프로젝트 업로드 API 요청 시작");
-
+        UploadProjectWebResponse webResponse;
         try {
             UploadProjectRequest requestDto = projectCommandWebMapper.toApplicationDto(webRequest);
-            uploadProjectUseCase.uploadProject(userId, thumbnailFile, requestDto);
+            UploadProjectResponse responseDto = uploadProjectUseCase.uploadProject(userId, thumbnailFile, requestDto);
+            webResponse = projectCommandWebMapper.toWebDto(responseDto);
         } finally {
             LoggerFactory.api().logResponse("[UploadProject] 프로젝트 업로드 API 응답 완료", startTime);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(SuccessResponse.of(ProjectSuccessStatus.CREATED_PROJECT));
+                .body(SuccessResponse.of(ProjectSuccessStatus.CREATED_PROJECT, webResponse));
     }
 
     /**

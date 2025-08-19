@@ -2,6 +2,7 @@ package com.dataracy.modules.comment.adapter.web.api.command;
 
 import com.dataracy.modules.comment.adapter.web.request.command.ModifyCommentWebRequest;
 import com.dataracy.modules.comment.adapter.web.request.command.UploadCommentWebRequest;
+import com.dataracy.modules.comment.adapter.web.response.command.UploadCommentWebResponse;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,9 +25,13 @@ public interface CommentCommandApi {
     /**
      * 지정한 프로젝트에 피드백 댓글을 생성합니다.
      *
+     * <p>요청한 인증된 사용자(현재 로그인한 사용자)를 작성자로 하여 댓글을 추가합니다.
+     * 요청 본문에는 댓글 내용(content)과 선택적 부모 댓글 ID(parentCommentId)를 포함할 수 있으며,
+     * parentCommentId가 있으면 해당 댓글에 대한 답글로 처리됩니다.</p>
+     *
      * @param projectId 댓글을 추가할 프로젝트의 ID (1 이상)
-     * @param webRequest 댓글 내용과 (선택적으로) 부모 댓글 ID를 포함한 요청 본문
-     * @return 댓글 작성 성공 시 201 상태 코드와 함께 반환되는 성공 응답
+     * @param webRequest 댓글 내용 및 선택적 부모 댓글 ID를 포함한 요청 본문
+     * @return 댓글 작성에 성공하면 201 Created와 함께 UploadCommentWebResponse를 포함한 성공 응답을 반환합니다.
      */
     @Operation(
             summary = "프로젝트에 피드백 댓글을 작성한다.",
@@ -41,7 +46,7 @@ public interface CommentCommandApi {
             @ApiResponse(responseCode = "201", description = "피드백 댓글 작성에 성공했습니다.", useReturnTypeSchema = true)
     })
     @PostMapping(value = "/{projectId}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<SuccessResponse<Void>> uploadComment(
+    ResponseEntity<SuccessResponse<UploadCommentWebResponse>> uploadComment(
             @PathVariable @Min(1)
             Long projectId,
 

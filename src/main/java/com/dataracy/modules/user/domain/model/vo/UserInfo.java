@@ -16,5 +16,6 @@ public record UserInfo(
         Long occupationId,
         List<Long> topicIds,
         Long visitSourceId,
+        String profileImageUrl,
         String introductionText
 ) {}

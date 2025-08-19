@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * 연결된 데이터 조회 응답 DTO.
+ * 연결된 데이터 조회 애플리케이션 응답 DTO
  * 데이터셋과 연결된 프로젝트 수, 다운로드 수 등 요약 정보를 담습니다.
  *
  * @param id 데이터 ID

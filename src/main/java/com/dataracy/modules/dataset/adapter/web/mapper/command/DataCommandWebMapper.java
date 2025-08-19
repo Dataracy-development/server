@@ -2,8 +2,10 @@ package com.dataracy.modules.dataset.adapter.web.mapper.command;
 
 import com.dataracy.modules.dataset.adapter.web.request.command.ModifyDataWebRequest;
 import com.dataracy.modules.dataset.adapter.web.request.command.UploadDataWebRequest;
+import com.dataracy.modules.dataset.adapter.web.response.command.UploadDataWebResponse;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
+import com.dataracy.modules.dataset.application.dto.response.command.UploadDataResponse;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,6 +30,18 @@ public class DataCommandWebMapper {
                 webRequest.endDate(),
                 webRequest.description(),
                 webRequest.analysisGuide()
+        );
+    }
+
+    /**
+     * 애플리케이션 계층의 UploadDataResponse를 웹 계층의 UploadDataWebResponse로 변환합니다.
+     *
+     * @param responseDto 변환할 애플리케이션 응답 DTO (생성된 데이터셋의 식별자(id)를 포함)
+     * @return 생성된 데이터셋의 id를 담은 UploadDataWebResponse
+     */
+    public UploadDataWebResponse toWebDto(UploadDataResponse responseDto) {
+        return new UploadDataWebResponse(
+                responseDto.id()
         );
     }
 

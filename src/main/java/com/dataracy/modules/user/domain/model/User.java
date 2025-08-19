@@ -70,7 +70,7 @@ public class User {
     /**
      * 현재 User 도메인 객체의 주요 정보를 UserInfo 값 객체로 변환합니다.
      *
-     * @return 사용자 식별자, 역할, 이메일, 닉네임, 저자 레벨, 직업, 관심 주제, 유입 경로, 자기소개를 포함한 UserInfo 객체
+     * @return 사용자 식별자, 역할, 이메일, 닉네임, 저자 레벨, 직업, 관심 주제, 유입 경로, 프로필 이미지 URL, 자기소개를 포함한 UserInfo 객체
      */
     public UserInfo toUserInfo() {
         return new UserInfo(
@@ -82,6 +82,7 @@ public class User {
                 this.occupationId,
                 this.topicIds,
                 this.visitSourceId,
+                this.profileImageUrl,
                 this.introductionText
         );
     }

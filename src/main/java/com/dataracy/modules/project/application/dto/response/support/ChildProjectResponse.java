@@ -1,13 +1,14 @@
 package com.dataracy.modules.project.application.dto.response.support;
 
 /**
- *요청
- * @param id
- * @param title
- * @param content
- * @param username
- * @param commentCount
- * @param likeCount
+ * 자식 프로젝트 보조 응답 DTO.
+ *
+ * @param id 프로젝트 ID
+ * @param title 프로젝트 제목
+ * @param content 프로젝트 내용 요약
+ * @param username 작성자 닉네임
+ * @param commentCount 댓글 수
+ * @param likeCount 좋아요 수
  */
 public record ChildProjectResponse(
         Long id,

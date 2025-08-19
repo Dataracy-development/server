@@ -1,7 +1,7 @@
 package com.dataracy.modules.project.application.dto.response.search;
 
 /**
- * 실시간 프로젝트 검색 결과 응답 DTO
+ * 실시간 프로젝트 검색 결과 애플리케이션 응답 DTO
  *
  * @param id 프로젝트 ID
  * @param title 프로젝트 제목

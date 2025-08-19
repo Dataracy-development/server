@@ -105,6 +105,9 @@ server {
   listen 80;
   server_name dataracy.store;
 
+  client_max_body_size 50m;
+  client_body_timeout 120s;
+
   # 공통 헤더
   proxy_set_header Host $host;
   proxy_set_header X-Real-IP $remote_addr;
@@ -118,6 +121,9 @@ server {
   # API
   location /api {
     proxy_pass http://backend;
+    proxy_request_buffering off;
+    proxy_send_timeout 300s;
+    proxy_read_timeout 300s;
   }
 
   # Swagger/UI/Docs: 캐시 무효화
