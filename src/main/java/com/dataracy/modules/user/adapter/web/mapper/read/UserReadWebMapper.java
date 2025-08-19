@@ -10,10 +10,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserReadWebMapper {
     /**
-     * 유저 정보 조회 웹 응답 DTO를 애플리케이션 응답 DTO 변경
+     * 애플리케이션 계층의 GetUserInfoResponse를 웹 응답용 GetUserInfoWebResponse로 변환한다.
      *
-     * @param responseDto 유저 정보 조회 애플리케이션 응답 DTO
-     * @return 유저 정보 조회 웹 응답 DTO
+     * 각 필드(id, role, email, nickname, authorLevelLabel, occupationLabel, topicLabels,
+     * visitSourceLabel, profileImageUrl, introductionText)를 대응하여 새 웹 DTO 인스턴스를 생성해 반환한다.
+     *
+     * @param responseDto 변환할 애플리케이션 계층의 사용자 정보 응답 DTO
+     * @return 생성된 웹 계층의 사용자 정보 응답 DTO
      */
     public GetUserInfoWebResponse toWebDto(GetUserInfoResponse responseDto) {
         return new GetUserInfoWebResponse(

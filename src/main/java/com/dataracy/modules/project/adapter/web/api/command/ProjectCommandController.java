@@ -34,13 +34,15 @@ public class ProjectCommandController implements ProjectCommandApi {
     private final RestoreProjectUseCase restoreProjectUseCase;
 
     /**
-     * 사용자의 ID와 프로젝트 썸네일 이미지, 프로젝트 정보를 받아 새로운 프로젝트를 생성한다.
-     *
-     * @param userId 프로젝트를 업로드하는 사용자의 ID
-     * @param thumbnailFile 프로젝트 썸네일 이미지 파일
-     * @param webRequest 업로드할 프로젝트 정보가 담긴 요청 객체
-     * @return 프로젝트 생성 성공 시 201 Created와 성공 상태를 포함한 응답
-     */
+         * 새 프로젝트를 생성한다.
+         *
+         * <p>사용자 ID, 썸네일 이미지 및 업로드 정보를 받아 프로젝트를 생성하고 생성된 프로젝트 정보(웹 DTO)를 반환한다.</p>
+         *
+         * @param userId 업로드를 요청한 사용자의 식별자
+         * @param thumbnailFile 프로젝트의 썸네일 이미지 파일
+         * @param webRequest 업로드할 프로젝트의 입력 데이터
+         * @return HTTP 201 Created와 함께 생성된 프로젝트 정보를 담은 SuccessResponse&lt;UploadProjectWebResponse&gt;
+         */
     @Override
     public ResponseEntity<SuccessResponse<UploadProjectWebResponse>> uploadProject(
             Long userId,

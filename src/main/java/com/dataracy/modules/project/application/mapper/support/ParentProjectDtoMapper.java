@@ -10,11 +10,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParentProjectDtoMapper {
     /**
-     * Project 도메인 객체와 추가 정보를 결합하여 ParentProjectResponse DTO로 변환합니다.
+     * Project 도메인과 사용자명을 결합해 ParentProjectResponse DTO로 변환합니다.
+     *
+     * <p>Project의 id, title, content, commentCount, likeCount, viewCount, createdAt 필드와
+     * 전달된 username을 사용해 ParentProjectResponse 인스턴스를 생성하여 반환합니다.
+     * 입력값에 대한 검증이나 널(null) 체크는 수행하지 않습니다.</p>
      *
      * @param project 변환할 Project 도메인 객체
      * @param username 프로젝트와 연관된 사용자 이름
-     * @return 프로젝트 정보와 사용자 정보를 포함하는 ParentProjectResponse DTO
+     * @return 프로젝트 정보와 사용자명을 포함한 ParentProjectResponse DTO
      */
     public ParentProjectResponse toResponseDto(
             Project project,

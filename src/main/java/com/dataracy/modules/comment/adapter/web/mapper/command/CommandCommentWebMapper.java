@@ -27,10 +27,10 @@ public class CommandCommentWebMapper {
     }
 
     /**
-     * 댓글 업로드 웹 응답 DTO를 반환한다.
+     * 애플리케이션 계층의 댓글 업로드 응답을 웹 계층 DTO로 변환한다.
      *
-     * @param responseDto 댓글 업로드 애플리케이션 응답 DTO
-     * @return 업로드 한 댓글 아이디
+     * @param responseDto 업로드된 댓글의 식별자(id)를 포함한 애플리케이션 응답 DTO
+     * @return 웹 계층에서 사용될 UploadCommentWebResponse (생성된 댓글의 id를 포함)
      */
     public UploadCommentWebResponse toWebDto(UploadCommentResponse responseDto) {
         return new UploadCommentWebResponse(

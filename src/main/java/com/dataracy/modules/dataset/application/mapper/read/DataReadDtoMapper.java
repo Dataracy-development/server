@@ -103,11 +103,14 @@ public class DataReadDtoMapper {
     }
 
     /**
-     * Data 도메인 객체와 작성자 및 데이터셋 관련 라벨 정보를 활용하여 상세 데이터 조회용 DataDetailResponse DTO로 변환합니다.
+     * Data 도메인과 작성자·라벨 정보를 결합해 상세 조회용 DataDetailResponse DTO를 생성합니다.
      *
-     * @param nickname 데이터셋 작성자의 닉네임
-     * @param authorLabel 데이터셋 작성자 라벨
-     * @param occupationLabel 데이터셋 작성자 직업 라벨
+     * @param data 원본 Data 도메인 객체
+     * @param nickname 작성자 닉네임
+     * @param userProfileImageUrl 작성자 프로필 이미지 URL (없으면 null 가능)
+     * @param userIntroductionText 작성자 소개 문구 (없으면 null 가능)
+     * @param authorLabel 작성자 관련 라벨
+     * @param occupationLabel 작성자 직업 라벨
      * @param topicLabel 데이터셋 주제 라벨
      * @param dataSourceLabel 데이터 출처 라벨
      * @param dataTypeLabel 데이터 유형 라벨
