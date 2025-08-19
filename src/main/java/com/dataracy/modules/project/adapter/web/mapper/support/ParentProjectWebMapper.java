@@ -7,10 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParentProjectWebMapper {
     /**
-     * ParentProjectResponse 객체를 ParentProjectWebResponse 객체로 변환합니다.
+     * ParentProjectResponse를 ParentProjectWebResponse로 변환합니다.
+     *
+     * 입력이 null이면 null을 반환합니다.
      *
      * @param responseDto 변환할 ParentProjectResponse 객체
-     * @return 변환된 ParentProjectWebResponse 객체
+     * @return 변환된 ParentProjectWebResponse 객체, 입력이 null이면 null
      */
     public ParentProjectWebResponse toWebDto(ParentProjectResponse responseDto) {
         if (responseDto == null) {
