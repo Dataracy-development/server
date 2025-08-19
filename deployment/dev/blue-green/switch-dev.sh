@@ -122,6 +122,8 @@ server {
   location /api {
     proxy_pass http://backend;
     proxy_request_buffering off;
+    proxy_send_timeout 300s;
+    proxy_read_timeout 300s;
   }
 
   # Swagger/UI/Docs: 캐시 무효화
