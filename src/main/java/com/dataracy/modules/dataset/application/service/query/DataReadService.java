@@ -112,8 +112,8 @@ public class DataReadService implements
         DataDetailResponse dataDetailResponse = dataReadDtoMapper.toResponseDto(
                 data,
                 dataUser.nickname(),
-                dataUser.introductionText(),
                 dataUser.profileImageUrl(),
+                dataUser.introductionText(),
                 authorLabel,
                 occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(data.getTopicId()),
