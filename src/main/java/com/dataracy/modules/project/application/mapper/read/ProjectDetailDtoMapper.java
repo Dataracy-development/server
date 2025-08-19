@@ -14,21 +14,16 @@ import java.util.List;
 @Component
 public class ProjectDetailDtoMapper {
     /**
-     * 프로젝트 도메인 객체와 관련 추가 정보를 결합하여 ProjectDetailResponse DTO로 변환합니다.
+     * Project 도메인과 추가 메타데이터를 병합하여 ProjectDetailResponse DTO를 생성합니다.
      *
-     * @param project 변환할 프로젝트 도메인 객체
-     * @param username 작성자 이름
-     * @param userIntroductionText 작성자 소개글
-     * @param userProfileImageUrl 유저 프로필 이미지 URL
-     * @param authorLevelLabel 작성자 등급 라벨
-     * @param occupationLabel 직업 라벨
-     * @param topicLabel 주제 라벨
-     * @param analysisPurposeLabel 분석 목적 라벨
-     * @param dataSourceLabel 데이터 소스 라벨
-     * @param isLiked 사용자가 해당 프로젝트에 좋아요를 눌렀는지 여부
-     * @param hasChild 하위 프로젝트 존재 여부
-     * @param connectedDataSets 프로젝트와 연결된 데이터셋 목록
-     * @return 프로젝트 상세 정보를 담은 ProjectDetailResponse DTO
+     * 주 도메인 정보는 전달된 Project의 게터에서 읽어오고, 작성자 정보·라벨·연결된 데이터 및 부모 프로젝트 정보는
+     * 해당 파라미터로 채워집니다.
+     *
+     * @param isLiked 사용자가 해당 프로젝트에 대해 좋아요를 눌렀는지 여부
+     * @param hasChild 하위(자식) 프로젝트가 존재하는지 여부
+     * @param connectedDataSets 프로젝트와 연결된 데이터셋 응답 객체 목록
+     * @param parentProjectResponse 부모 프로젝트 정보(없으면 null 가능)
+     * @return 프로젝트 상세 정보를 담은 ProjectDetailResponse 인스턴스
      */
     public ProjectDetailResponse toResponseDto(
             Project project,

@@ -31,12 +31,15 @@ public class CommentCommandController implements CommentCommandApi {
     private final DeleteCommentUseCase deleteCommentUseCase;
 
     /**
-     * 프로젝트에 새로운 댓글을 등록하는 REST API 엔드포인트입니다.
+     * 프로젝트에 새 댓글을 등록하고 생성된 댓글 정보를 반환합니다.
      *
-     * @param projectId 댓글이 등록될 프로젝트의 ID
-     * @param userId 댓글을 작성하는 사용자의 ID
-     * @param webRequest 댓글 등록 요청 데이터
-     * @return 댓글 등록 성공 시 201 Created 상태와 성공 응답을 반환합니다.
+     * 요청 바디로 전달된 댓글 데이터를 사용해 지정된 프로젝트에 댓글을 생성하고,
+     * 생성된 댓글의 정보를 담은 SuccessResponse를 HTTP 201 Created 상태로 반환합니다.
+     *
+     * @param projectId 댓글을 등록할 프로젝트의 식별자
+     * @param userId 댓글을 작성하는 사용자의 식별자
+     * @param webRequest 댓글 생성 요청 데이터
+     * @return 생성된 댓글 정보를 페이로드로 포함한 SuccessResponse를 담은 ResponseEntity(HTTP 201)
      */
     @Override
     public ResponseEntity<SuccessResponse<UploadCommentWebResponse>> uploadComment(Long projectId, Long userId, UploadCommentWebRequest webRequest) {
