@@ -55,14 +55,15 @@ public class DataCommandService implements
     private final ValidateDataTypeUseCase validateDataTypeUseCase;
 
     /**
-     * 데이터셋 파일과 썸네일 파일의 유효성을 검증하고 업로드한 후, 데이터셋 정보를 저장하며 업로드 이벤트를 발행합니다.
-     * 데이터셋 메타데이터와 파일의 유효성을 확인하고, 관련 ID(주제, 데이터소스, 데이터유형)의 존재 여부를 검증합니다. 파일 업로드가 성공적으로 완료되면 데이터셋 정보에 파일 URL을 반영하고, 데이터셋 파일이 존재할 경우 업로드 이벤트를 발행합니다. 파일 업로드 또는 유효성 검사 중 오류가 발생하면 트랜잭션이 롤백됩니다.
+     * 데이터셋 메타데이터와 첨부 파일(데이터 파일, 썸네일)의 유효성을 검증하고 저장한 뒤 업로드 이벤트를 발행합니다.
      *
-     * @param userId 데이터셋을 업로드하는 사용자의 ID
-     * @param dataFile 업로드할 데이터셋 파일
-     * @param thumbnailFile 업로드할 썸네일 파일
-     * @param requestDto 데이터셋 메타데이터 요청 정보
-     * @return 저장된 데이터셋의 ID
+     * <p>요청한 메타데이터를 저장하고(트랜잭션 내), 파일을 스토리지에 업로드하여 저장된 데이터셋의 파일 URL을 갱신합니다. 데이터 파일이 존재하면 업로드 완료 이벤트를 발행합니다.</p>
+     *
+     * @param userId 업로드를 요청한 사용자 ID
+     * @param dataFile 업로드할 데이터셋 파일(없을 수 있음)
+     * @param thumbnailFile 업로드할 썸네일 이미지 파일(없을 수 있음)
+     * @param requestDto 데이터셋 생성에 필요한 메타데이터 요청 객체
+     * @return 업로드된 데이터셋의 식별자(ID)를 포함한 {@link UploadDataResponse}
      */
     @Override
     @Transactional

@@ -63,11 +63,15 @@ public class ReadProjectQueryDslAdapter implements
     }
 
     /**
-     * 주어진 프로젝트 ID로 삭제되지 않은 프로젝트와 연결된 데이터셋 ID 목록을 함께 조회합니다.
-     *
-     * @param projectId 조회할 프로젝트의 ID
-     * @return 프로젝트 정보와 연결된 데이터셋 ID 목록을 포함하는 Optional, 해당 프로젝트가 없으면 Optional.empty() 반환
-     */
+         * 지정한 프로젝트 ID에 해당하는 삭제되지 않은 프로젝트와 해당 프로젝트에 연결된 데이터셋 ID 목록을 조회합니다.
+         *
+         * 상세:
+         * - 프로젝트가 존재하지 않으면 Optional.empty()를 반환합니다.
+         * - 존재하면 프로젝트(부모 프로젝트 정보 포함)와 그에 연결된 데이터셋 ID 목록을 ProjectWithDataIdsResponse로 감싸 반환합니다.
+         *
+         * @param projectId 조회할 프로젝트의 ID
+         * @return 프로젝트(부모 포함)과 연결된 데이터셋 ID 목록을 포함한 Optional. 프로젝트가 없으면 Optional.empty()
+         */
     @Override
     public Optional<ProjectWithDataIdsResponse> findProjectWithDataById(Long projectId) {
         Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 시작. projectId=" + projectId);

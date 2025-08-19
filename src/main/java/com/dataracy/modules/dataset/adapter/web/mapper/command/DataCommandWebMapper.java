@@ -34,10 +34,10 @@ public class DataCommandWebMapper {
     }
 
     /**
-     * 애플리케이션 계층에서 사용하는 데이터 업로드 응답 DTO를 웹 계층에서 사용하는 DTO로 매핑합니다.
+     * 애플리케이션 계층의 UploadDataResponse를 웹 계층의 UploadDataWebResponse로 변환합니다.
      *
-     * @param responseDto 데이터 업로드 애플리케이션 응답 DTO
-     * @return 업로드한 데이터셋의 아이디
+     * @param responseDto 변환할 애플리케이션 응답 DTO (생성된 데이터셋의 식별자(id)를 포함)
+     * @return 생성된 데이터셋의 id를 담은 UploadDataWebResponse
      */
     public UploadDataWebResponse toWebDto(UploadDataResponse responseDto) {
         return new UploadDataWebResponse(

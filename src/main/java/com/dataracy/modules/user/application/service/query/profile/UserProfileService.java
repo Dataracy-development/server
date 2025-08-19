@@ -114,11 +114,13 @@ public class UserProfileService implements
     }
 
     /**
-     * 주어진 사용자 ID로 해당 사용자의 상세 정보를 추출하여 UserInfo 객체로 반환합니다.
+     * 주어진 사용자 ID로 사용자를 조회하여 UserInfo로 변환해 반환합니다.
      *
-     * @param userId 상세 정보를 조회할 사용자의 ID
-     * @return 추출한 사용자의 상세 정보(UserInfo)
-     * @throws UserException 사용자가 존재하지 않을 경우 UserErrorStatus.NOT_FOUND_USER가 발생합니다.
+     * 조회 대상 사용자가 존재하지 않으면 UserException(UserErrorStatus.NOT_FOUND_USER)을 던집니다.
+     *
+     * @param userId 조회할 사용자 ID
+     * @return 해당 사용자의 상세 정보(UserInfo)
+     * @throws UserException 사용자가 존재하지 않을 경우(UserErrorStatus.NOT_FOUND_USER)
      */
     @Override
     @Transactional(readOnly = true)
@@ -137,12 +139,15 @@ public class UserProfileService implements
     }
 
     /**
-     * 주어진 사용자 ID로 해당 사용자의 상세 정보를 조회하여 GetUserInfoResponse 객체로 반환합니다.
-     *
-     * @param userId 상세 정보를 조회할 사용자의 ID
-     * @return 조회된 사용자의 상세 정보(UserInfo)
-     * @throws UserException 사용자가 존재하지 않을 경우 UserErrorStatus.NOT_FOUND_USER가 발생합니다.
-     */
+         * 주어진 사용자 ID에 대한 상세 사용자 정보를 조회하여 GetUserInfoResponse로 반환합니다.
+         *
+         * <p>사용자 존재 시 사용자 역할, 이메일, 닉네임, 프로필 이미지, 소개 텍스트와
+         * 선택적 레이블(저자 레벨, 직업, 관심 주제 목록, 유입 경로)을 포함한 DTO를 생성해 반환합니다.</p>
+         *
+         * @param userId 조회할 사용자의 ID
+         * @return 조회된 사용자의 정보를 담은 {@link GetUserInfoResponse}
+         * @throws UserException 사용자가 존재하지 않을 경우 {@code UserErrorStatus.NOT_FOUND_USER}로 발생합니다.
+         */
     @Override
     @Transactional(readOnly = true)
     public GetUserInfoResponse getUserInfo(Long userId) {
