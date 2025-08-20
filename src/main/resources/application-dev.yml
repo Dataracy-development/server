@@ -48,8 +48,21 @@ elasticsearch:
 
 logging:
   level:
-    root: info
-    org.springframework.web: debug
+    root: INFO
+
+    # Hibernate (SQL만 INFO, 파라미터는 끔)
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql: WARN
+    org.hibernate.engine.jdbc.spi.SqlExceptionHelper: WARN
+    org.hibernate.engine.transaction.internal.TransactionImpl: INFO
+
+    # Spring / Kafka / 내부 모듈
+    org.springframework: INFO
+    org.apache.kafka: WARN
+    org.springframework.kafka: INFO  # partition assignment 정도만 확인
+    com.dataracy.modules.behaviorlog: DEBUG
+    com.dataracy.modules.behaviorlog.support.aop.DataAccessLatencyAspect: INFO
+    com.dataracy.modules.common.logging: INFO
 
 management:
   metrics:
