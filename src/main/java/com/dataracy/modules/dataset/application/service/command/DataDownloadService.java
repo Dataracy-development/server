@@ -3,7 +3,7 @@ package com.dataracy.modules.dataset.application.service.command;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.application.dto.response.download.GetDataPreSignedUrlResponse;
 import com.dataracy.modules.dataset.application.port.in.command.content.DownloadDataFileUseCase;
-import com.dataracy.modules.dataset.application.port.out.command.projection.EnqueueDataProjectionPort;
+import com.dataracy.modules.dataset.application.port.out.command.projection.ManageDataProjectionTaskPort;
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDataDownloadPort;
 import com.dataracy.modules.dataset.application.port.out.query.extractor.FindDownloadDataFileUrlPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
@@ -19,19 +19,19 @@ import java.time.Instant;
 public class DataDownloadService implements DownloadDataFileUseCase {
     private final FindDownloadDataFileUrlPort findDownloadDataFileUrlPort;
     private final UpdateDataDownloadPort updateDataDownloadDbPort;
-    private final EnqueueDataProjectionPort enqueueDataProjectionPort;
+    private final ManageDataProjectionTaskPort manageDataProjectionTaskPort;
 
     private final DownloadFileUseCase downloadFileUseCase;
 
     public DataDownloadService(
             FindDownloadDataFileUrlPort findDownloadDataFileUrlPort,
             @Qualifier("updateDataDownloadDbAdapter") UpdateDataDownloadPort updateDataDownloadDbPort,
-            EnqueueDataProjectionPort enqueueDataProjectionPort,
+            ManageDataProjectionTaskPort manageDataProjectionTaskPort,
             DownloadFileUseCase downloadFileUseCase
     ) {
         this.findDownloadDataFileUrlPort = findDownloadDataFileUrlPort;
         this.updateDataDownloadDbPort = updateDataDownloadDbPort;
-        this.enqueueDataProjectionPort = enqueueDataProjectionPort;
+        this.manageDataProjectionTaskPort = manageDataProjectionTaskPort;
         this.downloadFileUseCase = downloadFileUseCase;
     }
 
@@ -65,7 +65,7 @@ public class DataDownloadService implements DownloadDataFileUseCase {
         // DB만 확정
         updateDataDownloadDbPort.increaseDownloadCount(dataId);
         // 큐 적재
-        enqueueDataProjectionPort.enqueueDownloadDelta(dataId, +1);
+        manageDataProjectionTaskPort.enqueueDownloadDelta(dataId, +1);
 
         LoggerFactory.service().logSuccess("DownloadDataFileUseCase", "데이터셋 파일 다운로드 서비스 종료 dataId=" + dataId, startTime);
         return getDataPresignedUrlResponse;

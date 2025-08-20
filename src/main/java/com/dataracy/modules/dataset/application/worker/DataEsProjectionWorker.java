@@ -1,12 +1,12 @@
 package com.dataracy.modules.dataset.application.worker;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.dataset.adapter.jpa.entity.DataEsProjectionDlqEntity;
 import com.dataracy.modules.dataset.adapter.jpa.entity.DataEsProjectionTaskEntity;
-import com.dataracy.modules.dataset.adapter.jpa.repository.DataEsProjectionDlqRepository;
-import com.dataracy.modules.dataset.adapter.jpa.repository.DataEsProjectionTaskRepository;
 import com.dataracy.modules.dataset.application.port.out.command.delete.SoftDeleteDataPort;
+import com.dataracy.modules.dataset.application.port.out.command.projection.ManageDataProjectionDlqPort;
+import com.dataracy.modules.dataset.application.port.out.command.projection.ManageDataProjectionTaskPort;
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDataDownloadPort;
+import com.dataracy.modules.dataset.application.port.out.query.projection.LoadDataProjectionTaskPort;
 import com.dataracy.modules.dataset.domain.enums.DataEsProjectionType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -19,8 +19,9 @@ import java.util.List;
 
 @Component
 public class DataEsProjectionWorker {
-    private final DataEsProjectionTaskRepository queueRepo;
-    private final DataEsProjectionDlqRepository dlqRepo;
+    private final ManageDataProjectionTaskPort manageDataProjectionTaskPort;
+    private final LoadDataProjectionTaskPort loadDataProjectionTaskPort;
+    private final ManageDataProjectionDlqPort manageDataProjectionDlqPort;
 
     // ES 어댑터들 (Qualifier로 ES 구현 주입)
     private final SoftDeleteDataPort softDeleteDataEsPort;
@@ -30,13 +31,15 @@ public class DataEsProjectionWorker {
     private static final int MAX_RETRY = 8;
 
     public DataEsProjectionWorker(
-            DataEsProjectionTaskRepository queueRepo,
-            DataEsProjectionDlqRepository dlqRepo,
+            ManageDataProjectionTaskPort manageDataProjectionTaskPort,
+            LoadDataProjectionTaskPort loadDataProjectionTaskPort,
+            ManageDataProjectionDlqPort manageDataProjectionDlqPort,
             @Qualifier("softDeleteDataEsAdapter") SoftDeleteDataPort softDeleteDataEsPort,
             @Qualifier("updateDataDownloadEsAdapter") UpdateDataDownloadPort updateDataDownloadEsPort
     ) {
-        this.queueRepo = queueRepo;
-        this.dlqRepo = dlqRepo;
+        this.manageDataProjectionTaskPort = manageDataProjectionTaskPort;
+        this.loadDataProjectionTaskPort = loadDataProjectionTaskPort;
+        this.manageDataProjectionDlqPort = manageDataProjectionDlqPort;
         this.softDeleteDataEsPort = softDeleteDataEsPort;
         this.updateDataDownloadEsPort = updateDataDownloadEsPort;
     }
@@ -51,7 +54,7 @@ public class DataEsProjectionWorker {
     @Transactional
     @Scheduled(fixedDelayString = "PT1S")
     public void run() {
-        List<DataEsProjectionTaskEntity> tasks = queueRepo.findBatchForWork(
+        List<DataEsProjectionTaskEntity> tasks = loadDataProjectionTaskPort.findBatchForWork(
                 LocalDateTime.now(),
                 List.of(DataEsProjectionType.PENDING, DataEsProjectionType.RETRYING),
                 PageRequest.of(0, BATCH)
@@ -75,18 +78,18 @@ public class DataEsProjectionWorker {
                 }
 
                 // 성공 → 큐 삭제
-                queueRepo.delete(t);
+                manageDataProjectionTaskPort.delete(t);
 
             } catch (Exception ex) {
                 int next = t.getRetryCount() + 1;
                 if (next >= MAX_RETRY) {
-                    dlqRepo.save(DataEsProjectionDlqEntity.builder()
-                            .dataId(t.getDataId())
-                            .deltaDownload(t.getDeltaDownload())
-                            .setDeleted(t.getSetDeleted())
-                            .lastError(truncate(ex.getMessage(), 2000))
-                            .build());
-                    queueRepo.delete(t);
+                    manageDataProjectionDlqPort.save(
+                            t.getDataId(),
+                            t.getDeltaDownload(),
+                            t.getSetDeleted(),
+                            truncate(ex.getMessage(), 2000)
+                    );
+                    manageDataProjectionTaskPort.delete(t);
                 } else {
                     t.setStatus(DataEsProjectionType.RETRYING);
                     t.setRetryCount(next);
