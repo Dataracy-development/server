@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,6 @@ public class ProjectEsProjectionWorker {
     private final ManageProjectProjectionDlqPort manageProjectProjectionDlqPort;
     private final LoadProjectProjectionTaskPort loadProjectProjectionTaskPort;
 
-    // 이미 가진 ES 어댑터 (painless 스크립트로 증감)
     private final SoftDeleteProjectPort softDeleteProjectEsPort;
     private final UpdateProjectCommentPort updateProjectCommentEsPort;
     private final UpdateProjectLikePort updateProjectLikeEsPort;
@@ -53,14 +53,17 @@ public class ProjectEsProjectionWorker {
     }
 
     private long backoffSeconds(int retryCount) {
-        // 1,2,4,8,16,32,64,120(캡)
         if (retryCount >= 8) return 120;
         long shift = Math.max(0, retryCount - 1);
         return 1L << Math.min(shift, 6);
     }
 
+    /**
+     * 5초마다 Projection Task를 가져와 개별 Task 단위로 처리
+     * 각 Task는 REQUIRES_NEW 트랜잭션으로 실행 → 실패해도 나머지 성공 건은 커밋 유지
+     */
     @Transactional
-    @Scheduled(fixedDelayString = "PT1S")
+    @Scheduled(fixedDelayString = "PT3S")
     public void run() {
         List<ProjectEsProjectionTaskEntity> tasks =
                 loadProjectProjectionTaskPort.findBatchForWork(LocalDateTime.now(),
@@ -68,64 +71,69 @@ public class ProjectEsProjectionWorker {
                         PageRequest.of(0, BATCH));
 
         for (ProjectEsProjectionTaskEntity t : tasks) {
-            try {
-                // 소프트 삭제/복원 먼저
-                if (t.getSetDeleted() != null) {
-                    if (t.getSetDeleted()) {
-                        softDeleteProjectEsPort.deleteProject(t.getProjectId());   // isDeleted=true 설정
-                    } else {
-                        softDeleteProjectEsPort.restoreProject(t.getProjectId());  // isDeleted=false 설정(※ upsert 권장)
-                    }
-                }
+            processTask(t);
+        }
+    }
 
-                // 댓글 델타 적용 (있으면)
-                if (t.getDeltaComment() > 0) {
-                    updateProjectCommentEsPort.increaseCommentCount(t.getProjectId());
-                } else if (t.getDeltaComment() < 0) {
-                    updateProjectCommentEsPort.decreaseCommentCount(t.getProjectId());
-                }
-
-                // 좋아요 델타 적용 (있으면)
-                if (t.getDeltaLike() > 0) {
-                    // 네가 이미 가진 ES 어댑터 사용
-                    updateProjectLikeEsPort.increaseLikeCount(t.getProjectId());
-                } else if (t.getDeltaLike() < 0) {
-                    updateProjectLikeEsPort.decreaseLikeCount(t.getProjectId());
-                }
-
-                // 조회 델타 적용 (있으면)
-                if (t.getDeltaView() > 0) {
-                    // 네가 이미 가진 ES 어댑터 사용
-                    updateProjectViewEsPort.increaseViewCount(t.getProjectId(), t.getDeltaView());
-                }
-
-                // 성공 → 큐 삭제
-                manageProjectProjectionTaskPort.delete(t);
-
-            } catch (Exception ex) {
-                // 실패 → 재시도 or DLQ
-                int nextRetry = t.getRetryCount() + 1;
-                if (nextRetry >= MAX_RETRY) {
-                    manageProjectProjectionDlqPort.save(
-                            t.getProjectId(),
-                            t.getDeltaComment(),
-                            t.getDeltaLike(),
-                            t.getDeltaView(),
-                            t.getSetDeleted(),
-                            truncate(ex.getMessage(), 2000)
-                    );
-                    manageProjectProjectionTaskPort.delete(t);
+    /**
+     * Task 단위 처리 메서드
+     * propagation = REQUIRES_NEW → 기존 트랜잭션과 분리하여 실행
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void processTask(ProjectEsProjectionTaskEntity t) {
+        try {
+            // 소프트 삭제/복원
+            if (t.getSetDeleted() != null) {
+                if (t.getSetDeleted()) {
+                    softDeleteProjectEsPort.deleteProject(t.getProjectId());
                 } else {
-                    t.setStatus(ProjectEsProjectionType.RETRYING);
-                    t.setRetryCount(nextRetry);
-                    t.setLastError(truncate(ex.getMessage(), 2000));
-                    t.setNextRunAt(LocalDateTime.now().plusSeconds(backoffSeconds(nextRetry)));
-                    // JPA dirty checking으로 update
+                    softDeleteProjectEsPort.restoreProject(t.getProjectId());
                 }
-
-                LoggerFactory.elastic().logError("project_index",
-                        "ES 반영 실패 - projectId=" + t.getProjectId(), ex);
             }
+
+            // 댓글 델타
+            if (t.getDeltaComment() > 0) {
+                updateProjectCommentEsPort.increaseCommentCount(t.getProjectId());
+            } else if (t.getDeltaComment() < 0) {
+                updateProjectCommentEsPort.decreaseCommentCount(t.getProjectId());
+            }
+
+            // 좋아요 델타
+            if (t.getDeltaLike() > 0) {
+                updateProjectLikeEsPort.increaseLikeCount(t.getProjectId());
+            } else if (t.getDeltaLike() < 0) {
+                updateProjectLikeEsPort.decreaseLikeCount(t.getProjectId());
+            }
+
+            // 조회 델타
+            if (t.getDeltaView() > 0) {
+                updateProjectViewEsPort.increaseViewCount(t.getProjectId(), t.getDeltaView());
+            }
+
+            // 성공 → 큐 삭제
+            manageProjectProjectionTaskPort.delete(t);
+
+        } catch (Exception ex) {
+            int nextRetry = t.getRetryCount() + 1;
+            if (nextRetry >= MAX_RETRY) {
+                manageProjectProjectionDlqPort.save(
+                        t.getProjectId(),
+                        t.getDeltaComment(),
+                        t.getDeltaLike(),
+                        t.getDeltaView(),
+                        t.getSetDeleted(),
+                        truncate(ex.getMessage(), 2000)
+                );
+                manageProjectProjectionTaskPort.delete(t);
+            } else {
+                t.setStatus(ProjectEsProjectionType.RETRYING);
+                t.setRetryCount(nextRetry);
+                t.setLastError(truncate(ex.getMessage(), 2000));
+                t.setNextRunAt(LocalDateTime.now().plusSeconds(backoffSeconds(nextRetry)));
+            }
+
+            LoggerFactory.elastic().logError("project_index",
+                    "ES 반영 실패 - projectId=" + t.getProjectId(), ex);
         }
     }
 
