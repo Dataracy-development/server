@@ -30,6 +30,7 @@ public class Data {
 
     private int downloadCount;
 
+    private Long sizeBytes;
     private DataMetadata metadata;
     private LocalDateTime createdAt;
 
@@ -53,6 +54,7 @@ public class Data {
             String dataFileUrl,
             String dataThumbnailUrl,
             int downloadCount,
+            Long sizeBytes,
             DataMetadata metadata,
             LocalDateTime createdAt
     ) {
@@ -70,6 +72,7 @@ public class Data {
                 .dataFileUrl(dataFileUrl)
                 .dataThumbnailUrl(dataThumbnailUrl)
                 .downloadCount(downloadCount)
+                .sizeBytes(sizeBytes)
                 .metadata(metadata)
                 .createdAt(createdAt)
                 .build();

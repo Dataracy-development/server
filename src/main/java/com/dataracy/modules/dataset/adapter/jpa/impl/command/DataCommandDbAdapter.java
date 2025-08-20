@@ -47,13 +47,13 @@ public class DataCommandDbAdapter implements
      * @param dataFileUrl 새로 설정할 데이터 파일의 URL
      */
     @Override
-    public void updateDataFile(Long dataId, String dataFileUrl) {
+    public void updateDataFile(Long dataId, String dataFileUrl, Long dataFileSize) {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> {
                     LoggerFactory.db().logWarning("DataEntity", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
-        dataEntity.updateDataFile(dataFileUrl);
+        dataEntity.updateDataFile(dataFileUrl, dataFileSize);
         dataJpaRepository.save(dataEntity);
         LoggerFactory.db().logUpdate("DataEntity", String.valueOf(dataId), "데이터셋 파일 업데이트가 완료되었습니다.");
     }

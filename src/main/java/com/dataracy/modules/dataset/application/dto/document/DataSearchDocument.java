@@ -27,6 +27,7 @@ public record DataSearchDocument(
         String dataFileUrl,
         String dataThumbnailUrl,
         int downloadCount,
+        Long sizeBytes,
         Integer rowCount,
         Integer columnCount,
         String previewJson,
@@ -66,6 +67,7 @@ public record DataSearchDocument(
                 .dataFileUrl(data.getDataFileUrl())
                 .dataThumbnailUrl(data.getDataThumbnailUrl())
                 .downloadCount(data.getDownloadCount())
+                .sizeBytes(data.getSizeBytes())
                 .rowCount(dataMetadata.getRowCount())
                 .columnCount(dataMetadata.getColumnCount())
                 .previewJson(dataMetadata.getPreviewJson())

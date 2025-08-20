@@ -46,6 +46,7 @@ public class DataFilterWebMapper {
                 responseDto.description(),
                 responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
+                responseDto.sizeBytes(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),
                 responseDto.createdAt(),

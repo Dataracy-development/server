@@ -34,6 +34,7 @@ public record PopularDataResponse(
         String description,
         String dataThumbnailUrl,
         Integer downloadCount,
+        Long sizeBytes,
         Integer rowCount,
         Integer columnCount,
         LocalDateTime createdAt,

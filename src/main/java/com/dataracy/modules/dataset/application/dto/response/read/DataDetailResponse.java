@@ -44,6 +44,7 @@ public record DataDetailResponse(
         String analysisGuide,
         String dataThumbnailUrl,
         Integer downloadCount,
+        Long sizeBytes,
         Integer rowCount,
         Integer columnCount,
         String previewJson,

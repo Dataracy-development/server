@@ -7,5 +7,5 @@ public interface UpdateDataFilePort {
      * @param dataId 데이터 엔티티의 고유 식별자
      * @param dataFileUrl 새로 설정할 데이터 파일의 URL
      */
-    void updateDataFile(Long dataId, String dataFileUrl);
+    void updateDataFile(Long dataId, String dataFileUrl, Long dataFileSize);
 }
