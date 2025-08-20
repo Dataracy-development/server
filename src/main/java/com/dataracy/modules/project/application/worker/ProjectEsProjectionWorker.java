@@ -107,6 +107,8 @@ public class ProjectEsProjectionWorker {
                             .projectId(t.getProjectId())
                             .deltaComment(t.getDeltaComment())
                             .deltaLike(t.getDeltaLike())
+                            .deltaView(t.getDeltaView())
+                            .setDeleted(t.getSetDeleted())
                             .lastError(truncate(ex.getMessage(), 2000))
                             .build());
                     queueRepo.delete(t);

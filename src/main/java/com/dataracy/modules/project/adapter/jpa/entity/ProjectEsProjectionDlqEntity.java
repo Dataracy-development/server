@@ -25,6 +25,12 @@ public class ProjectEsProjectionDlqEntity extends BaseTimeEntity {
     @Column(nullable=false)
     private Integer deltaLike;
 
+    @Column(nullable=false)
+    private Long deltaView;
+
+    @Column(nullable=false)
+    private Boolean setDeleted;
+
     @Lob
     @Column(columnDefinition = "TEXT")
     private String lastError;
