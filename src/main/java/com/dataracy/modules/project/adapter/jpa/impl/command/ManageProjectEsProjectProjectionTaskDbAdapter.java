@@ -2,13 +2,13 @@ package com.dataracy.modules.project.adapter.jpa.impl.command;
 
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectEsProjectionTaskEntity;
 import com.dataracy.modules.project.adapter.jpa.repository.ProjectEsProjectionTaskRepository;
-import com.dataracy.modules.project.application.port.out.command.projection.EnqueueProjectProjectionPort;
+import com.dataracy.modules.project.application.port.out.command.projection.ManageProjectProjectionTaskPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class EnqueueProjectEsProjectProjectionDbAdapter implements EnqueueProjectProjectionPort {
+public class ManageProjectEsProjectProjectionTaskDbAdapter implements ManageProjectProjectionTaskPort {
     private final ProjectEsProjectionTaskRepository repo;
 
     @Override
@@ -41,5 +41,10 @@ public class EnqueueProjectEsProjectProjectionDbAdapter implements EnqueueProjec
                 .projectId(projectId)
                 .setDeleted(deleted)
                 .build());
+    }
+
+    @Override
+    public void delete(ProjectEsProjectionTaskEntity projectEsProjectionTaskEntity) {
+        repo.delete(projectEsProjectionTaskEntity);
     }
 }

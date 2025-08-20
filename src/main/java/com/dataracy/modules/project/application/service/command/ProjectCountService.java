@@ -6,7 +6,7 @@ import com.dataracy.modules.project.application.port.in.command.count.DecreaseCo
 import com.dataracy.modules.project.application.port.in.command.count.DecreaseLikeCountUseCase;
 import com.dataracy.modules.project.application.port.in.command.count.IncreaseCommentCountUseCase;
 import com.dataracy.modules.project.application.port.in.command.count.IncreaseLikeCountUseCase;
-import com.dataracy.modules.project.application.port.out.command.projection.EnqueueProjectProjectionPort;
+import com.dataracy.modules.project.application.port.out.command.projection.ManageProjectProjectionTaskPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectCommentPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectLikePort;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,7 +24,7 @@ public class ProjectCountService implements
 {
     private final UpdateProjectCommentPort updateProjectCommentDbPort;
     private final UpdateProjectLikePort updateProjectLikeDbPort;
-    private final EnqueueProjectProjectionPort enqueueProjectProjectionPort;
+    private final ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
 
     /**
      * 프로젝트의 댓글 및 좋아요 수를 동기화하기 위한 서비스 인스턴스를 생성합니다.
@@ -35,11 +35,11 @@ public class ProjectCountService implements
     public ProjectCountService(
             @Qualifier("updateProjectCommentDbAdapter") UpdateProjectCommentPort updateProjectCommentDbPort,
             @Qualifier("updateProjectLikeDbAdapter") UpdateProjectLikePort updateProjectLikeDbPort,
-            EnqueueProjectProjectionPort enqueueProjectProjectionPort
+            ManageProjectProjectionTaskPort manageProjectProjectionTaskPort
     ) {
         this.updateProjectCommentDbPort = updateProjectCommentDbPort;
         this.updateProjectLikeDbPort = updateProjectLikeDbPort;
-        this.enqueueProjectProjectionPort = enqueueProjectProjectionPort;
+        this.manageProjectProjectionTaskPort = manageProjectProjectionTaskPort;
     }
 
     /**
@@ -64,7 +64,7 @@ public class ProjectCountService implements
         updateProjectCommentDbPort.increaseCommentCount(projectId);
 
         // 같은 트랜잭션에서 큐 적재 → 워커가 ES에 반영/재시도
-        enqueueProjectProjectionPort.enqueueCommentDelta(projectId, +1);
+        manageProjectProjectionTaskPort.enqueueCommentDelta(projectId, +1);
 
         LoggerFactory.service().logSuccess("IncreaseCommentCountUseCase", "프로젝트 댓글 수 증가 서비스 종료 projectId=" + projectId, startTime);
 
@@ -87,7 +87,7 @@ public class ProjectCountService implements
         Instant startTime = LoggerFactory.service().logStart("DecreaseCommentCountUseCase", "프로젝트 댓글 수 감소 서비스 시작 projectId=" + projectId);
 
         updateProjectCommentDbPort.decreaseCommentCount(projectId);
-        enqueueProjectProjectionPort.enqueueCommentDelta(projectId, -1);
+        manageProjectProjectionTaskPort.enqueueCommentDelta(projectId, -1);
 
         LoggerFactory.service().logSuccess("DecreaseCommentCountUseCase", "프로젝트 댓글 수 감소 서비스 종료 projectId=" + projectId, startTime);
     }
@@ -109,7 +109,7 @@ public class ProjectCountService implements
         Instant startTime = LoggerFactory.service().logStart("IncreaseLikeCountUseCase", "프로젝트 좋아요 수 증가 서비스 시작 projectId=" + projectId);
 
         updateProjectLikeDbPort.increaseLikeCount(projectId);     // DB만 확정
-        enqueueProjectProjectionPort.enqueueLikeDelta(projectId, +1);  // 큐 적재
+        manageProjectProjectionTaskPort.enqueueLikeDelta(projectId, +1);  // 큐 적재
 
         LoggerFactory.service().logSuccess("IncreaseLikeCountUseCase", "프로젝트 좋아요 수 증가 서비스 종료 projectId=" + projectId, startTime);
     }
@@ -131,7 +131,7 @@ public class ProjectCountService implements
         Instant startTime = LoggerFactory.service().logStart("DecreaseLikeCountUseCase", "프로젝트 좋아요 수 감소 서비스 시작 projectId=" + projectId);
 
         updateProjectLikeDbPort.decreaseLikeCount(projectId);
-        enqueueProjectProjectionPort.enqueueLikeDelta(projectId, -1);
+        manageProjectProjectionTaskPort.enqueueLikeDelta(projectId, -1);
 
         LoggerFactory.service().logSuccess("DecreaseLikeCountUseCase", "프로젝트 좋아요 수 감소 서비스 종료 projectId=" + projectId, startTime);
     }

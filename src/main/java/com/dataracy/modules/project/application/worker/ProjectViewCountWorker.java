@@ -2,7 +2,7 @@ package com.dataracy.modules.project.application.worker;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.application.port.out.cache.CacheProjectViewCountPort;
-import com.dataracy.modules.project.application.port.out.command.projection.EnqueueProjectProjectionPort;
+import com.dataracy.modules.project.application.port.out.command.projection.ManageProjectProjectionTaskPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectViewPort;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,7 +16,7 @@ public class ProjectViewCountWorker {
     private final CacheProjectViewCountPort cacheProjectViewCountPort;
 
     private final UpdateProjectViewPort updateProjectViewDbPort;
-    private final EnqueueProjectProjectionPort enqueueProjectProjectionPort;
+    private final ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
 
     /**
      * ProjectViewCountScheduler의 인스턴스를 생성하고, 프로젝트 조회수 캐시 포트와 DB, Elasticsearch 업데이트 포트를 주입합니다.
@@ -27,11 +27,11 @@ public class ProjectViewCountWorker {
     public ProjectViewCountWorker(
             CacheProjectViewCountPort cacheProjectViewCountPort,
             @Qualifier("updateProjectViewDbAdapter") UpdateProjectViewPort updateProjectViewDbPort,
-            EnqueueProjectProjectionPort enqueueProjectProjectionPort
+            ManageProjectProjectionTaskPort manageProjectProjectionTaskPort
     ) {
         this.cacheProjectViewCountPort = cacheProjectViewCountPort;
         this.updateProjectViewDbPort = updateProjectViewDbPort;
-        this.enqueueProjectProjectionPort = enqueueProjectProjectionPort;
+        this.manageProjectProjectionTaskPort = manageProjectProjectionTaskPort;
     }
 
     /**
@@ -52,7 +52,7 @@ public class ProjectViewCountWorker {
                 Long count = cacheProjectViewCountPort.getViewCount(projectId, "PROJECT");
                 if (count > 0) {
                     updateProjectViewDbPort.increaseViewCount(projectId, count);
-                    enqueueProjectProjectionPort.enqueueViewDelta(projectId, count);
+                    manageProjectProjectionTaskPort.enqueueViewDelta(projectId, count);
                     cacheProjectViewCountPort.clearViewCount(projectId, "PROJECT");
                 }
             } catch (Exception e) {

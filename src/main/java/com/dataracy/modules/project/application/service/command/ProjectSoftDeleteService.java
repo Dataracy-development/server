@@ -4,7 +4,7 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.application.port.in.command.content.DeleteProjectUseCase;
 import com.dataracy.modules.project.application.port.in.command.content.RestoreProjectUseCase;
 import com.dataracy.modules.project.application.port.out.command.delete.SoftDeleteProjectPort;
-import com.dataracy.modules.project.application.port.out.command.projection.EnqueueProjectProjectionPort;
+import com.dataracy.modules.project.application.port.out.command.projection.ManageProjectProjectionTaskPort;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ public class ProjectSoftDeleteService implements
         RestoreProjectUseCase
 {
     private final SoftDeleteProjectPort softDeleteProjectDbPort;
-    private final EnqueueProjectProjectionPort enqueueProjectProjectionPort;
+    private final ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
 
     /**
      * ProjectSoftDeleteService의 생성자입니다.
@@ -26,10 +26,10 @@ public class ProjectSoftDeleteService implements
      */
     public ProjectSoftDeleteService(
             @Qualifier("softDeleteProjectDbAdapter") SoftDeleteProjectPort softDeleteProjectDbPort,
-            EnqueueProjectProjectionPort enqueueProjectProjectionPort
+            ManageProjectProjectionTaskPort manageProjectProjectionTaskPort
     ) {
         this.softDeleteProjectDbPort = softDeleteProjectDbPort;
-        this.enqueueProjectProjectionPort = enqueueProjectProjectionPort;
+        this.manageProjectProjectionTaskPort = manageProjectProjectionTaskPort;
     }
 
     /**
@@ -46,7 +46,7 @@ public class ProjectSoftDeleteService implements
         softDeleteProjectDbPort.deleteProject(projectId);
 
         // ES 작업을 큐에 적재 → 워커가 비동기로 isDeleted=true 설정
-        enqueueProjectProjectionPort.enqueueSetDeleted(projectId, true);
+        manageProjectProjectionTaskPort.enqueueSetDeleted(projectId, true);
 
         LoggerFactory.service().logSuccess("DeleteProjectUseCase", "프로젝트 소프트 delete 삭제 서비스 종료 projectId=" + projectId, startTime);
     }
@@ -67,7 +67,7 @@ public class ProjectSoftDeleteService implements
         softDeleteProjectDbPort.restoreProject(projectId);
 
         // ES 작업 큐 → isDeleted=false
-        enqueueProjectProjectionPort.enqueueSetDeleted(projectId, false);
+        manageProjectProjectionTaskPort.enqueueSetDeleted(projectId, false);
 
         LoggerFactory.service().logSuccess("RestoreProjectUseCase", "프로젝트 소프트 delete 복원 서비스 종료 projectId=" + projectId, startTime);
     }
