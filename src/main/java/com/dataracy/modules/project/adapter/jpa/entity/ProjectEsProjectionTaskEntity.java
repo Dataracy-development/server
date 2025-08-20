@@ -38,6 +38,10 @@ public class ProjectEsProjectionTaskEntity extends BaseTimeEntity {
     @Builder.Default
     private Integer deltaLike = 0;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Long deltaView = 0L;
+
     @Column(name = "set_deleted")
     private Boolean setDeleted;
 
