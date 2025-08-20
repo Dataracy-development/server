@@ -29,6 +29,7 @@ public class DataSearchWebMapper {
                 responseDto.description(),
                 responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
+                responseDto.sizeBytes(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),
                 responseDto.createdAt()

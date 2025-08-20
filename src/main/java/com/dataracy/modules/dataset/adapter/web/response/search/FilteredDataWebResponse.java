@@ -37,6 +37,9 @@ public record FilteredDataWebResponse(
         @Schema(description = "데이터셋 다운로드 횟수", example = "3")
         Integer downloadCount,
 
+        @Schema(description = "데이터셋 파일 크기", example = "1048576")
+        Long sizeBytes,
+
         @Schema(description = "데이터셋 행 수", example = "55")
         Integer rowCount,
 

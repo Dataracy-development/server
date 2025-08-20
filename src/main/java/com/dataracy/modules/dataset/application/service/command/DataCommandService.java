@@ -205,7 +205,7 @@ public class DataCommandService implements
             try {
                 String key = S3KeyGeneratorUtil.generateKey("data", dataId, dataFile.getOriginalFilename());
                 String dataFileUrl = fileCommandUseCase.uploadFile(key, dataFile);
-                updateDataFilePort.updateDataFile(dataId, dataFileUrl);
+                updateDataFilePort.updateDataFile(dataId, dataFileUrl, dataFile.getSize());
             } catch (Exception e) {
                 LoggerFactory.service().logException(useCase, "데이터셋 파일 업로드 실패. fileName=" + dataFile.getOriginalFilename(), e);
                 throw new RuntimeException("데이터셋 파일 업로드 실패", e);

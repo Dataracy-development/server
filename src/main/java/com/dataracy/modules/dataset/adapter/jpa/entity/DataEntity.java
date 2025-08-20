@@ -61,6 +61,9 @@ public class DataEntity extends BaseTimeEntity {
     @Column
     private int downloadCount;
 
+    @Column
+    private Long sizeBytes;
+
     // 메타데이터 FK (1:1)
     @OneToOne(mappedBy = "data", cascade = CascadeType.PERSIST)
     private DataMetadataEntity metadata;
@@ -115,7 +118,7 @@ public class DataEntity extends BaseTimeEntity {
      * @param dataFileUrl 새로 설정할 데이터셋 파일의 URL. null이거나 공백일 경우 예외가 발생합니다.
      * @throws DataException dataFileUrl이 null이거나 공백 문자열인 경우 발생합니다.
      */
-    public void updateDataFile (String dataFileUrl) {
+    public void updateDataFile (String dataFileUrl, Long dataFileSize) {
         if (dataFileUrl == null || dataFileUrl.isBlank()) {
             LoggerFactory.domain().logWarning("잘못된 데이터셋 파일 url 형식입니다.");
             throw new DataException(DataErrorStatus.INVALID_FILE_URL);
@@ -124,6 +127,7 @@ public class DataEntity extends BaseTimeEntity {
             return;
         }
         this.dataFileUrl = dataFileUrl;
+        this.sizeBytes = dataFileSize;
     }
 
     /**
@@ -184,6 +188,7 @@ public class DataEntity extends BaseTimeEntity {
             String dataFileUrl,
             String dataThumbnailUrl,
             int downloadCount,
+            Long sizeBytes,
             DataMetadataEntity metadata
     ) {
         return DataEntity.builder()
@@ -199,6 +204,7 @@ public class DataEntity extends BaseTimeEntity {
                 .dataFileUrl(dataFileUrl)
                 .dataThumbnailUrl(dataThumbnailUrl)
                 .downloadCount(downloadCount)
+                .sizeBytes(sizeBytes)
                 .metadata(metadata)
                 .build();
     }

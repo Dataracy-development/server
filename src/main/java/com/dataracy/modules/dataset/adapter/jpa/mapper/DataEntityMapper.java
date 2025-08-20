@@ -39,6 +39,7 @@ public final class DataEntityMapper {
                 dataEntity.getDataFileUrl(),
                 dataEntity.getDataThumbnailUrl(),
                 dataEntity.getDownloadCount(),
+                dataEntity.getSizeBytes(),
                 DataMetadataEntityMapper.toDomain(dataEntity.getMetadata()),
                 dataEntity.getCreatedAt()
                 );
@@ -69,6 +70,7 @@ public final class DataEntityMapper {
                 data.getDataFileUrl(),
                 data.getDataThumbnailUrl(),
                 data.getDownloadCount(),
+                data.getSizeBytes(),
                 DataMetadataEntityMapper.toEntity(data.getMetadata())
         );
     }

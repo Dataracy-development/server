@@ -38,6 +38,7 @@ public class FilteredDataDtoMapper {
                 data.getDescription(),
                 data.getDataThumbnailUrl(),
                 data.getDownloadCount(),
+                data.getSizeBytes(),
                 data.getMetadata().getRowCount(),
                 data.getMetadata().getColumnCount(),
                 data.getCreatedAt(),
