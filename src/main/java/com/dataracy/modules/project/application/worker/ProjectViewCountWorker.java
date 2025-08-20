@@ -1,7 +1,7 @@
 package com.dataracy.modules.project.application.worker;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.project.application.port.out.cache.CacheProjectViewCountPort;
+import com.dataracy.modules.project.application.port.out.view.ManageProjectViewCountPort;
 import com.dataracy.modules.project.application.port.out.command.projection.ManageProjectProjectionTaskPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectViewPort;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Component
 public class ProjectViewCountWorker {
-    private final CacheProjectViewCountPort cacheProjectViewCountPort;
+    private final ManageProjectViewCountPort manageProjectViewCountPort;
 
     private final UpdateProjectViewPort updateProjectViewDbPort;
     private final ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
@@ -21,15 +21,15 @@ public class ProjectViewCountWorker {
     /**
      * ProjectViewCountScheduler의 인스턴스를 생성하고, 프로젝트 조회수 캐시 포트와 DB, Elasticsearch 업데이트 포트를 주입합니다.
      *
-     * @param cacheProjectViewCountPort 프로젝트 조회수 캐시(Redis)와 상호작용하는 포트
+     * @param manageProjectViewCountPort 프로젝트 조회수 캐시(Redis)와 상호작용하는 포트
      * @param updateProjectViewDbPort    프로젝트 조회수를 메인 데이터베이스에 반영하는 포트
      */
     public ProjectViewCountWorker(
-            CacheProjectViewCountPort cacheProjectViewCountPort,
+            ManageProjectViewCountPort manageProjectViewCountPort,
             @Qualifier("updateProjectViewDbAdapter") UpdateProjectViewPort updateProjectViewDbPort,
             ManageProjectProjectionTaskPort manageProjectProjectionTaskPort
     ) {
-        this.cacheProjectViewCountPort = cacheProjectViewCountPort;
+        this.manageProjectViewCountPort = manageProjectViewCountPort;
         this.updateProjectViewDbPort = updateProjectViewDbPort;
         this.manageProjectProjectionTaskPort = manageProjectProjectionTaskPort;
     }
@@ -45,15 +45,15 @@ public class ProjectViewCountWorker {
     public void flushProjectViews() {
         LoggerFactory.scheduler().logStart("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 시작");
 
-        Set<String> keys = cacheProjectViewCountPort.getAllViewCountKeys("PROJECT");
+        Set<String> keys = manageProjectViewCountPort.getAllViewCountKeys("PROJECT");
         for (String key : keys) {
             try {
                 Long projectId = extractProjectId(key);
-                Long count = cacheProjectViewCountPort.getViewCount(projectId, "PROJECT");
+                Long count = manageProjectViewCountPort.getViewCount(projectId, "PROJECT");
                 if (count > 0) {
                     updateProjectViewDbPort.increaseViewCount(projectId, count);
                     manageProjectProjectionTaskPort.enqueueViewDelta(projectId, count);
-                    cacheProjectViewCountPort.clearViewCount(projectId, "PROJECT");
+                    manageProjectViewCountPort.clearViewCount(projectId, "PROJECT");
                 }
             } catch (Exception e) {
                 LoggerFactory.scheduler().logError("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 실패", e);

@@ -1,7 +1,7 @@
 package com.dataracy.modules.user.application.service.command.signup;
 
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
-import com.dataracy.modules.auth.application.port.in.cache.CacheRefreshTokenUseCase;
+import com.dataracy.modules.auth.application.port.in.token.ManageRefreshTokenUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
@@ -21,7 +21,6 @@ import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +49,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     private final ValidateVisitSourceUseCase validateVisitSourceUseCase;
     private final ValidateTopicUseCase validateTopicUseCase;
 
-    private final CacheRefreshTokenUseCase cacheRefreshTokenUseCase;
+    private final ManageRefreshTokenUseCase manageRefreshTokenUseCase;
 
     /**
      * 자체 회원가입 요청을 처리하여 신규 사용자를 등록하고 리프레시 토큰을 발급한다.
@@ -100,7 +99,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
 
         // 리프레시 토큰 발급 및 저장
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(savedUser.getId(), RoleType.ROLE_USER);
-        cacheRefreshTokenUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
+        manageRefreshTokenUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(
                 refreshToken,
                 jwtValidateUseCase.getRefreshTokenExpirationTime()
@@ -159,7 +158,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
 
         // 리프레시 토큰 발급 및 저장
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(savedUser.getId(), RoleType.ROLE_USER);
-        cacheRefreshTokenUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
+        manageRefreshTokenUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(
                 refreshToken,
                 jwtValidateUseCase.getRefreshTokenExpirationTime()

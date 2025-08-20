@@ -1,6 +1,6 @@
-package com.dataracy.modules.auth.application.port.out.cache;
+package com.dataracy.modules.auth.application.port.out.token;
 
-public interface CacheRefreshTokenPort {
+public interface ManageRefreshTokenPort {
     /**
      * 지정된 사용자 ID에 대해 리프레시 토큰을 캐시에 저장합니다.
      *

@@ -1,7 +1,7 @@
 package com.dataracy.modules.auth.application.service.event;
 
-import com.dataracy.modules.auth.application.port.in.cache.CacheResetTokenUseCase;
-import com.dataracy.modules.auth.application.port.out.cache.CacheResetTokenPort;
+import com.dataracy.modules.auth.application.port.in.token.ManageResetTokenUseCase;
+import com.dataracy.modules.auth.application.port.out.token.ManageResetTokenPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
@@ -12,8 +12,8 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class CacheResetTokenService implements CacheResetTokenUseCase {
-    private final CacheResetTokenPort cacheResetTokenPort;
+public class ManageResetTokenService implements ManageResetTokenUseCase {
+    private final ManageResetTokenPort manageResetTokenPort;
 
     /**
      * 비밀번호 재설정 토큰을 캐시에 저장합니다.
@@ -23,7 +23,7 @@ public class CacheResetTokenService implements CacheResetTokenUseCase {
     @Override
     public void saveResetToken(String token) {
         Instant startTime = LoggerFactory.service().logStart("CacheResetTokenUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 시작");
-        cacheResetTokenPort.saveResetToken(token);
+        manageResetTokenPort.saveResetToken(token);
         LoggerFactory.service().logSuccess("CacheResetTokenUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 성공", startTime);
     }
 
@@ -38,7 +38,7 @@ public class CacheResetTokenService implements CacheResetTokenUseCase {
      */
     @Override
     public boolean isValidResetToken(String token) {
-        boolean isValid = cacheResetTokenPort.isValidResetToken(token);
+        boolean isValid = manageResetTokenPort.isValidResetToken(token);
         if (!isValid) {
             LoggerFactory.service().logWarning("CacheResetTokenUseCase", "비밀번호 재설정 토큰이 만료되었습니다.");
             throw new AuthException(AuthErrorStatus.EXPIRED_RESET_PASSWORD_TOKEN);
