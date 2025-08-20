@@ -28,6 +28,14 @@ public class EnqueueProjectEsProjectProjectionDbAdapter implements EnqueueProjec
     }
 
     @Override
+    public void enqueueViewDelta(Long projectId, Long deltaView) {
+        repo.save(ProjectEsProjectionTaskEntity.builder()
+                .projectId(projectId)
+                .deltaView(deltaView)
+                .build());
+    }
+
+    @Override
     public void enqueueSetDeleted(Long projectId, boolean deleted) {
         repo.save(ProjectEsProjectionTaskEntity.builder()
                 .projectId(projectId)

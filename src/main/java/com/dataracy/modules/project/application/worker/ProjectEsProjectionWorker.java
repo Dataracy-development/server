@@ -8,6 +8,7 @@ import com.dataracy.modules.project.adapter.jpa.repository.ProjectEsProjectionTa
 import com.dataracy.modules.project.application.port.out.command.delete.SoftDeleteProjectPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectCommentPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectLikePort;
+import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectViewPort;
 import com.dataracy.modules.project.domain.enums.ProjectEsProjectionType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,7 @@ public class ProjectEsProjectionWorker {
     private final SoftDeleteProjectPort softDeleteProjectEsPort;
     private final UpdateProjectCommentPort updateProjectCommentEsPort;
     private final UpdateProjectLikePort updateProjectLikeEsPort;
+    private final UpdateProjectViewPort updateProjectViewEsPort;
 
     private static final int BATCH = 100;
     private static final int MAX_RETRY = 8;
@@ -36,13 +38,15 @@ public class ProjectEsProjectionWorker {
             ProjectEsProjectionDlqRepository projectEsProjectionDlqRepository,
             @Qualifier("softDeleteProjectEsAdapter") SoftDeleteProjectPort softDeleteProjectEsPort,
             @Qualifier("updateProjectCommentEsAdapter") UpdateProjectCommentPort updateProjectCommentEsPort,
-            @Qualifier("updateProjectLikeEsAdapter") UpdateProjectLikePort updateProjectLikeEsPort
+            @Qualifier("updateProjectLikeEsAdapter") UpdateProjectLikePort updateProjectLikeEsPort,
+            @Qualifier("updateProjectViewEsAdapter") UpdateProjectViewPort updateProjectViewEsPort
     ) {
         this.queueRepo = projectEsProjectionTaskRepository;
         this.dlqRepo = projectEsProjectionDlqRepository;
         this.softDeleteProjectEsPort = softDeleteProjectEsPort;
         this.updateProjectCommentEsPort = updateProjectCommentEsPort;
         this.updateProjectLikeEsPort = updateProjectLikeEsPort;
+        this.updateProjectViewEsPort = updateProjectViewEsPort;
     }
 
     private long backoffSeconds(int retryCount) {
@@ -84,6 +88,12 @@ public class ProjectEsProjectionWorker {
                     updateProjectLikeEsPort.increaseLikeCount(t.getProjectId());
                 } else if (t.getDeltaLike() < 0) {
                     updateProjectLikeEsPort.decreaseLikeCount(t.getProjectId());
+                }
+
+                // 조회 델타 적용 (있으면)
+                if (t.getDeltaView() > 0) {
+                    // 네가 이미 가진 ES 어댑터 사용
+                    updateProjectViewEsPort.increaseViewCount(t.getProjectId(), t.getDeltaView());
                 }
 
                 // 성공 → 큐 삭제
