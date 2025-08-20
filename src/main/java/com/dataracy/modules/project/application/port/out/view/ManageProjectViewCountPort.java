@@ -1,8 +1,8 @@
-package com.dataracy.modules.project.application.port.out.cache;
+package com.dataracy.modules.project.application.port.out.view;
 
 import java.util.Set;
 
-public interface CacheProjectViewCountPort {
+public interface ManageProjectViewCountPort {
     /**
      * 특정 프로젝트와 대상 유형에 대해 주어진 뷰어의 조회수를 1 증가시킵니다.
      *

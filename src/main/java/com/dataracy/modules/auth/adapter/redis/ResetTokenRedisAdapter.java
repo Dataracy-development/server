@@ -3,7 +3,7 @@ package com.dataracy.modules.auth.adapter.redis;
 import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonErrorStatus;
-import com.dataracy.modules.auth.application.port.out.cache.CacheResetTokenPort;
+import com.dataracy.modules.auth.application.port.out.token.ManageResetTokenPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.RedisConnectionFailureException;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
-public class ResetTokenRedisAdapter implements CacheResetTokenPort {
+public class ResetTokenRedisAdapter implements ManageResetTokenPort {
     private final StringRedisTemplate redisTemplate;
 
     private static final Duration TTL = Duration.ofMinutes(10);

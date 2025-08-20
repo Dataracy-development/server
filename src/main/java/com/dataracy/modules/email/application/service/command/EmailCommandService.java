@@ -2,7 +2,7 @@ package com.dataracy.modules.email.application.service.command;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.email.application.port.in.command.SendEmailUseCase;
-import com.dataracy.modules.email.application.port.out.cache.CacheEmailPort;
+import com.dataracy.modules.email.application.port.out.code.ManageEmailCodePort;
 import com.dataracy.modules.email.application.port.out.command.SendEmailPort;
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 import com.dataracy.modules.email.domain.exception.EmailException;
@@ -18,20 +18,20 @@ import java.time.Instant;
 @Service
 public class EmailCommandService implements SendEmailUseCase {
     private final SendEmailPort sendEmailPort;
-    private final CacheEmailPort cacheEmailPort;
+    private final ManageEmailCodePort manageEmailCodePort;
 
     /**
      * EmailCommandService의 인스턴스를 생성하고 이메일 전송 및 캐시 포트 의존성을 주입합니다.
      *
      * @param sendEmailPort 이메일 전송을 담당하는 포트 구현체
-     * @param cacheEmailPort 이메일 인증 코드 캐싱을 담당하는 포트 구현체
+     * @param manageEmailCodePort 이메일 인증 코드 캐싱을 담당하는 포트 구현체
      */
     public EmailCommandService(
             @Qualifier("sendEmailSendGridAdapter") SendEmailPort sendEmailPort,
-            CacheEmailPort cacheEmailPort
+            ManageEmailCodePort manageEmailCodePort
     ) {
         this.sendEmailPort = sendEmailPort;
-        this.cacheEmailPort = cacheEmailPort;
+        this.manageEmailCodePort = manageEmailCodePort;
     }
 
     /**
@@ -59,7 +59,7 @@ public class EmailCommandService implements SendEmailUseCase {
         }
 
         // 레디스에 이메일 인증 코드 저장
-        cacheEmailPort.saveCode(email, code, type);
+        manageEmailCodePort.saveCode(email, code, type);
         LoggerFactory.service().logSuccess("SendEmailUseCase", "이메일 인증 코드 전송 서비스 종료 email=" + email, startTime);
     }
 

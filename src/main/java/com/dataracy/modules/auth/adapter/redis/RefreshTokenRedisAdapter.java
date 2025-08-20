@@ -1,7 +1,7 @@
 package com.dataracy.modules.auth.adapter.redis;
 
 import com.dataracy.modules.auth.adapter.jwt.JwtProperties;
-import com.dataracy.modules.auth.application.port.out.cache.CacheRefreshTokenPort;
+import com.dataracy.modules.auth.application.port.out.token.ManageRefreshTokenPort;
 import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonErrorStatus;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
-public class RefreshTokenRedisAdapter implements CacheRefreshTokenPort {
+public class RefreshTokenRedisAdapter implements ManageRefreshTokenPort {
     private final StringRedisTemplate redisTemplate;
     private final JwtProperties jwtProperties;
 

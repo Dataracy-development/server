@@ -1,8 +1,8 @@
-package com.dataracy.modules.email.application.port.out.cache;
+package com.dataracy.modules.email.application.port.out.code;
 
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 
-public interface CacheEmailPort {
+public interface ManageEmailCodePort {
     /**
      * 이메일과 인증 유형에 해당하는 인증 코드를 저장합니다.
      *

@@ -22,7 +22,7 @@ import com.dataracy.modules.project.application.port.in.query.read.FindConnected
 import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.GetPopularProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.GetProjectDetailUseCase;
-import com.dataracy.modules.project.application.port.out.cache.CacheProjectViewCountPort;
+import com.dataracy.modules.project.application.port.out.view.ManageProjectViewCountPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindConnectedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
@@ -65,7 +65,7 @@ public class ProjectReadService implements
     private final ProjectDetailDtoMapper projectDetailDtoMapper;
     private final ParentProjectDtoMapper parentProjectDtoMapper;
 
-    private final CacheProjectViewCountPort cacheProjectViewCountPort;
+    private final ManageProjectViewCountPort manageProjectViewCountPort;
 
     private final CheckProjectExistsByParentPort checkProjectExistsByParentPort;
 
@@ -154,7 +154,7 @@ public class ProjectReadService implements
 
         // 프로젝트 조회수 증가
         // 조회수 기록 (중복 방지 TTL)
-        cacheProjectViewCountPort.increaseViewCount(projectId, viewerId, VIEW_TARGET_TYPE);
+        manageProjectViewCountPort.increaseViewCount(projectId, viewerId, VIEW_TARGET_TYPE);
 
         ProjectDetailResponse projectDetailResponse = projectDetailDtoMapper.toResponseDto(
                 project,

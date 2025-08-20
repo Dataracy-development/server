@@ -1,7 +1,7 @@
 package com.dataracy.modules.auth.application.service.event;
 
-import com.dataracy.modules.auth.application.port.in.cache.CacheRefreshTokenUseCase;
-import com.dataracy.modules.auth.application.port.out.cache.CacheRefreshTokenPort;
+import com.dataracy.modules.auth.application.port.in.token.ManageRefreshTokenUseCase;
+import com.dataracy.modules.auth.application.port.out.token.ManageRefreshTokenPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
@@ -12,8 +12,8 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class CacheRefreshTokenService implements CacheRefreshTokenUseCase {
-    private final CacheRefreshTokenPort cacheRefreshTokenPort;
+public class ManageRefreshTokenService implements ManageRefreshTokenUseCase {
+    private final ManageRefreshTokenPort manageRefreshTokenPort;
 
     /**
      * 지정한 사용자 ID에 대한 리프레시 토큰을 Redis에 저장합니다.
@@ -24,7 +24,7 @@ public class CacheRefreshTokenService implements CacheRefreshTokenUseCase {
     @Override
     public void saveRefreshToken(String userId, String refreshToken) {
         Instant startTime = LoggerFactory.service().logStart("CacheRefreshTokenUseCase", "리프레시 토큰 레디스 저장 서비스 시작 userId=" + userId);
-        cacheRefreshTokenPort.saveRefreshToken(userId, refreshToken);
+        manageRefreshTokenPort.saveRefreshToken(userId, refreshToken);
         LoggerFactory.service().logSuccess("CacheRefreshTokenUseCase", "리프레시 토큰 레디스 저장 서비스 성공 userId=" + userId, startTime);
     }
 
@@ -38,7 +38,7 @@ public class CacheRefreshTokenService implements CacheRefreshTokenUseCase {
     @Override
     public String getRefreshToken(String userId) {
         Instant startTime = LoggerFactory.service().logStart("CacheRefreshTokenUseCase", "레디스에서 리프레시 토큰 추출 서비스 시작 userId=" + userId);
-        String refreshToken = cacheRefreshTokenPort.getRefreshToken(userId);
+        String refreshToken = manageRefreshTokenPort.getRefreshToken(userId);
         if (refreshToken == null) {
             throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
         }
@@ -54,7 +54,7 @@ public class CacheRefreshTokenService implements CacheRefreshTokenUseCase {
     @Override
     public void deleteRefreshToken(String userId) {
         Instant startTime = LoggerFactory.service().logStart("CacheRefreshTokenUseCase", "레디스에서 리프레시 토큰 삭제 서비스 시작 userId=" + userId);
-        cacheRefreshTokenPort.deleteRefreshToken(userId);
+        manageRefreshTokenPort.deleteRefreshToken(userId);
         LoggerFactory.service().logSuccess("CacheRefreshTokenUseCase", "레디스에서 리프레시 토큰 삭제 서비스 성공 userId=" + userId, startTime);
     }
 }

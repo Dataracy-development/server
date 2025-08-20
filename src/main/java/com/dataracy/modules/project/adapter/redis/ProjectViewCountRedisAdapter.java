@@ -3,7 +3,7 @@ package com.dataracy.modules.project.adapter.redis;
 import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonErrorStatus;
-import com.dataracy.modules.project.application.port.out.cache.CacheProjectViewCountPort;
+import com.dataracy.modules.project.application.port.out.view.ManageProjectViewCountPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.RedisConnectionFailureException;
@@ -19,7 +19,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-public class ProjectViewCountRedisAdapter implements CacheProjectViewCountPort {
+public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort {
     private final StringRedisTemplate redisTemplate;
     private static final Duration TTL = Duration.ofMinutes(5);
 

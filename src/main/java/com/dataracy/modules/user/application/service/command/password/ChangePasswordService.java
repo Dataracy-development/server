@@ -1,7 +1,7 @@
 package com.dataracy.modules.user.application.service.command.password;
 
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
-import com.dataracy.modules.auth.application.port.in.cache.CacheResetTokenUseCase;
+import com.dataracy.modules.auth.application.port.in.token.ManageResetTokenUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.password.ResetPasswordWithTokenRequest;
@@ -26,7 +26,7 @@ public class ChangePasswordService implements ChangePasswordUseCase {
     private final UserQueryPort userQueryPort;
     private final UserCommandPort userCommandPort;
 
-    private final CacheResetTokenUseCase cacheResetTokenUseCase;
+    private final ManageResetTokenUseCase manageResetTokenUseCase;
     private final JwtValidateUseCase jwtValidateUseCase;
 
     private static final String USE_CASE = "ChangePasswordUseCase";
@@ -77,7 +77,7 @@ public class ChangePasswordService implements ChangePasswordUseCase {
         Instant startTime = LoggerFactory.service().logStart(USE_CASE, "비밀번호 재설정 서비스 시작");
 
         // 토큰 유효성 검사
-        cacheResetTokenUseCase.isValidResetToken(requestDto.resetPasswordToken());
+        manageResetTokenUseCase.isValidResetToken(requestDto.resetPasswordToken());
         // 비밀번호 - 비밀번호 확인 검증
         requestDto.validatePasswordMatch();
 
