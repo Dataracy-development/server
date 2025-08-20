@@ -142,6 +142,7 @@ logging:
     root: INFO
     org.apache.kafka: WARN
     com.dataracy.modules.behaviorlog: DEBUG
+    com.dataracy.modules.common.aspect.DataAccessLatencyAspect: INFO
 
 springdoc:
   api-docs:

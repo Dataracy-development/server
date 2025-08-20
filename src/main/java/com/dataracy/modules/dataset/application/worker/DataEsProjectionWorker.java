@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -51,8 +52,12 @@ public class DataEsProjectionWorker {
         return 1L << Math.min(shift, 6);
     }
 
+    /**
+     * 5초마다 Projection Task를 가져와 개별 Task 단위로 처리
+     * 각 Task는 REQUIRES_NEW 트랜잭션으로 실행 → 실패해도 나머지 성공 건은 커밋 유지
+     */
     @Transactional
-    @Scheduled(fixedDelayString = "PT1S")
+    @Scheduled(fixedDelayString = "PT3S")
     public void run() {
         List<DataEsProjectionTaskEntity> tasks = loadDataProjectionTaskPort.findBatchForWork(
                 LocalDateTime.now(),
@@ -60,45 +65,53 @@ public class DataEsProjectionWorker {
                 PageRequest.of(0, BATCH)
         );
 
-        for (var t : tasks) {
-            try {
-                // 소프트 삭제/복원 우선
-                if (t.getSetDeleted() != null) {
-                    if (t.getSetDeleted()) {
-                        softDeleteDataEsPort.deleteData(t.getDataId());
-                    }
-                    else {
-                        softDeleteDataEsPort.restoreData(t.getDataId());
-                    }
-                }
+        for (DataEsProjectionTaskEntity t : tasks) {
+            processTask(t); // Task 단위 독립 트랜잭션 실행
+        }
+    }
 
-                // 다운로드 수 증가
-                if (t.getDeltaDownload() > 0) {
-                    updateDataDownloadEsPort.increaseDownloadCount(t.getDataId());
-                }
-
-                // 성공 → 큐 삭제
-                manageDataProjectionTaskPort.delete(t);
-
-            } catch (Exception ex) {
-                int next = t.getRetryCount() + 1;
-                if (next >= MAX_RETRY) {
-                    manageDataProjectionDlqPort.save(
-                            t.getDataId(),
-                            t.getDeltaDownload(),
-                            t.getSetDeleted(),
-                            truncate(ex.getMessage(), 2000)
-                    );
-                    manageDataProjectionTaskPort.delete(t);
+    /**
+     * Task 단위 처리 메서드
+     * propagation = REQUIRES_NEW → 기존 트랜잭션과 분리하여 실행
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void processTask(DataEsProjectionTaskEntity t) {
+        try {
+            // 소프트 삭제/복원
+            if (t.getSetDeleted() != null) {
+                if (t.getSetDeleted()) {
+                    softDeleteDataEsPort.deleteData(t.getDataId());
                 } else {
-                    t.setStatus(DataEsProjectionType.RETRYING);
-                    t.setRetryCount(next);
-                    t.setLastError(truncate(ex.getMessage(), 2000));
-                    t.setNextRunAt(LocalDateTime.now().plusSeconds(backoffSeconds(next)));
-                    // Dirty Checking → 커밋 시 UPDATE
+                    softDeleteDataEsPort.restoreData(t.getDataId());
                 }
-                LoggerFactory.elastic().logError("data_index", "ES 반영 실패 dataId=" + t.getDataId(), ex);
             }
+
+            // 다운로드 수 증가
+            if (t.getDeltaDownload() > 0) {
+                updateDataDownloadEsPort.increaseDownloadCount(t.getDataId());
+            }
+
+            // 성공 → 큐 삭제
+            manageDataProjectionTaskPort.delete(t);
+
+        } catch (Exception ex) {
+            int next = t.getRetryCount() + 1;
+            if (next >= MAX_RETRY) {
+                manageDataProjectionDlqPort.save(
+                        t.getDataId(),
+                        t.getDeltaDownload(),
+                        t.getSetDeleted(),
+                        truncate(ex.getMessage(), 2000)
+                );
+                manageDataProjectionTaskPort.delete(t);
+            } else {
+                t.setStatus(DataEsProjectionType.RETRYING);
+                t.setRetryCount(next);
+                t.setLastError(truncate(ex.getMessage(), 2000));
+                t.setNextRunAt(LocalDateTime.now().plusSeconds(backoffSeconds(next)));
+                // Dirty Checking → 커밋 시 UPDATE
+            }
+            LoggerFactory.elastic().logError("data_index", "ES 반영 실패 dataId=" + t.getDataId(), ex);
         }
     }
 
