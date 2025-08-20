@@ -4,7 +4,7 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.application.port.in.command.content.DeleteDataUseCase;
 import com.dataracy.modules.dataset.application.port.in.command.content.RestoreDataUseCase;
 import com.dataracy.modules.dataset.application.port.out.command.delete.SoftDeleteDataPort;
-import com.dataracy.modules.dataset.application.port.out.command.projection.EnqueueDataProjectionPort;
+import com.dataracy.modules.dataset.application.port.out.command.projection.ManageDataProjectionTaskPort;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,14 +17,14 @@ public class DataSoftDeleteUseCase implements
         RestoreDataUseCase
 {
     private final SoftDeleteDataPort softDeleteDataDbPort;
-    private final EnqueueDataProjectionPort enqueueDataProjectionPort;
+    private final ManageDataProjectionTaskPort manageDataProjectionTaskPort;
 
     public DataSoftDeleteUseCase(
             @Qualifier("softDeleteDataDbAdapter") SoftDeleteDataPort softDeleteDataDbPort,
-            EnqueueDataProjectionPort enqueueDataProjectionPort
+            ManageDataProjectionTaskPort manageDataProjectionTaskPort
     ) {
         this.softDeleteDataDbPort = softDeleteDataDbPort;
-        this.enqueueDataProjectionPort = enqueueDataProjectionPort;
+        this.manageDataProjectionTaskPort = manageDataProjectionTaskPort;
     }
 
     /**
@@ -40,7 +40,7 @@ public class DataSoftDeleteUseCase implements
         // DB만 확정
         softDeleteDataDbPort.deleteData(dataId);
         // ES 작업 큐
-        enqueueDataProjectionPort.enqueueSetDeleted(dataId, true);
+        manageDataProjectionTaskPort.enqueueSetDeleted(dataId, true);
 
         LoggerFactory.service().logSuccess("DeleteDataUseCase", "데이터셋 Soft Delete 삭제 서비스 종료 dataId=" + dataId, startTime);
     }
@@ -56,7 +56,7 @@ public class DataSoftDeleteUseCase implements
         Instant startTime = LoggerFactory.service().logStart("RestoreDataUseCase", "데이터셋 복원 서비스 시작 dataId=" + dataId);
 
         softDeleteDataDbPort.restoreData(dataId);
-        enqueueDataProjectionPort.enqueueSetDeleted(dataId, false);
+        manageDataProjectionTaskPort.enqueueSetDeleted(dataId, false);
 
         LoggerFactory.service().logSuccess("RestoreDataUseCase", "데이터셋 복원 서비스 종료 dataId=" + dataId, startTime);
     }
