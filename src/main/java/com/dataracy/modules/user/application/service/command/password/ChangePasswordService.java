@@ -81,9 +81,8 @@ public class ChangePasswordService implements ChangePasswordUseCase {
         boolean valid = manageResetTokenUseCase.isValidResetToken(requestDto.resetPasswordToken());
         if (!valid) {
             LoggerFactory.service().logWarning("ChangePasswordService", "[비밀번호 재설정] 유효하지 않은 리셋 토큰입니다.");
-            throw new UserException(UserErrorStatus.EXPIRED_RESET_PASSWORD_TOKEN);
+            throw new UserException(UserErrorStatus.INVALID_OR_EXPIRED_RESET_PASSWORD_TOKEN);
         }
-
 
         // 비밀번호 - 비밀번호 확인 검증
         requestDto.validatePasswordMatch();
