@@ -45,6 +45,6 @@ public class ManageProjectEsProjectionTaskDbAdapter implements ManageProjectProj
 
     @Override
     public void delete(Long projectEsProjectionTaskId) {
-        repo.deleteById(projectEsProjectionTaskId);
+        repo.deleteImmediate(projectEsProjectionTaskId);
     }
 }

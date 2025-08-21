@@ -15,10 +15,8 @@ spring:
   task:
     scheduling:
       pool:
-        size: 2
-  aop:
-    proxy-target-class: true
-    expose-proxy: true
+        size: 1
+
   jwt:
     secret: ${JWT_SECRET}
     redirect-onboarding: ${JWT_REDIRECT_ONBOARDING}

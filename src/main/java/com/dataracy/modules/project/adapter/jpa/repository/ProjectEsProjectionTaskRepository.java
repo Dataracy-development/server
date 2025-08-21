@@ -5,10 +5,7 @@ import com.dataracy.modules.project.domain.enums.ProjectEsProjectionType;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.QueryHint;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
@@ -31,4 +28,8 @@ public interface ProjectEsProjectionTaskRepository extends JpaRepository<Project
             @Param("statuses") List<ProjectEsProjectionType> statuses,
             Pageable pageable
     );
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from ProjectEsProjectionTaskEntity t where t.id = :id")
+    void deleteImmediate(@Param("id") Long id);
 }
