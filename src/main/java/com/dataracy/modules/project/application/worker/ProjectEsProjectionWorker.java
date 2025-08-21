@@ -10,6 +10,7 @@ import com.dataracy.modules.project.application.port.out.command.update.UpdatePr
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectViewPort;
 import com.dataracy.modules.project.application.port.out.query.projection.LoadProjectProjectionTaskPort;
 import com.dataracy.modules.project.domain.enums.ProjectEsProjectionType;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -71,7 +72,7 @@ public class ProjectEsProjectionWorker {
                         PageRequest.of(0, BATCH));
 
         for (ProjectEsProjectionTaskEntity t : tasks) {
-            processTask(t);
+            ((ProjectEsProjectionWorker) AopContext.currentProxy()).processTask(t);
         }
     }
 
