@@ -152,11 +152,15 @@ public class ReadProjectQueryDslAdapter implements
     }
 
     /**
-     * 주어진 데이터 ID와 연관된 프로젝트들을 최신 생성일 순으로 페이징하여 조회합니다.
+     * 지정된 데이터 ID와 연결된 프로젝트들을 페이징하여 조회합니다.
      *
-     * @param dataId 연관된 데이터의 ID
-     * @param pageable 페이징 및 정렬 정보
-     * @return 데이터셋과 연결된 프로젝트들의 페이징 결과. 프로젝트는 최신 생성일 순으로 정렬됩니다.
+     * <p>프로젝트는 연결된 ProjectData 엔티티를 기준으로 프로젝트 생성일(createdAt) 내림차순으로 정렬되어 반환됩니다.
+     * 조회는 soft-delete(삭제 플래그가 설정되지 않은) 된 연결만 대상으로 하며, 결과 콘텐츠는 최소 정보(minimal) 형태로 매핑됩니다.
+     * 총건수는 해당 데이터와 연결된 서로 다른 프로젝트 수(distinct)를 기준으로 계산됩니다.</p>
+     *
+     * @param dataId 조회할 데이터(데이터셋)의 ID
+     * @param pageable 페이지 번호·크기 및 정렬 정보를 포함한 페이징 파라미터
+     * @return 페이징된 프로젝트 목록을 담은 Page 객체(정렬: 프로젝트 생성일 내림차순, 총건수는 distinct 기준)
      */
     @Override
     public Page<Project> findConnectedProjectsAssociatedWithDataset(Long dataId, Pageable pageable) {
@@ -209,12 +213,12 @@ public class ReadProjectQueryDslAdapter implements
     }
 
     /**
-     * 지정된 개수만큼 인기 순으로 정렬된 프로젝트 목록을 반환합니다.
+     * 지정된 개수만큼 인기 순으로 정렬된 프로젝트의 최소 정보 목록을 반환합니다.
      *
-     * 논리적으로 삭제되지 않은 프로젝트만 포함되며, 각 프로젝트는 최소 정보만을 담고 있습니다.
+     * 논리적으로 삭제되지 않은 프로젝트만 포함되며, 내부적으로 인기 순 정렬을 적용하고 결과를 도메인 모델의 최소 표현(Project)으로 매핑합니다.
      *
-     * @param size 반환할 프로젝트의 최대 개수
-     * @return 인기 순으로 정렬된 프로젝트 도메인 객체 리스트
+     * @param size 반환할 최대 프로젝트 개수
+     * @return 인기 순으로 정렬된 Project 도메인 객체의 리스트
      */
     @Override
     public List<Project> getPopularProjects(int size) {
