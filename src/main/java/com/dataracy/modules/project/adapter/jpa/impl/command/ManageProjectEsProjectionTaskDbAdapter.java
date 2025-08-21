@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ManageProjectEsProjectProjectionTaskDbAdapter implements ManageProjectProjectionTaskPort {
+public class ManageProjectEsProjectionTaskDbAdapter implements ManageProjectProjectionTaskPort {
     private final ProjectEsProjectionTaskRepository repo;
 
     @Override
