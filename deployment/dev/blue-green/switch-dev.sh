@@ -1,8 +1,5 @@
 #!/bin/bash
-# switch-dev.sh — Blue/Green 무중단 배포 (내 구현 의도 반영: upstream 교체 후 NGINX 컨테이너 ‘재시작’로 확실 반영)
-# - 변경점: 원자적 파일 교체(tmp→mv), 동시 실행 잠금, 로그 보강, 실패 시 직관적 종료
-# - 주의: NGINX는 reload가 아니라 ‘재시작’한다(캐시/잔존 상태 정리 목적). 필요 시 아래 ALWAYS_RELOAD=false 변수만 true로 바꾸면 reload 경로 지원.
-
+# switch-dev.sh — Blue/Green 무중단 배포 (upstream 교체 후 NGINX 재시작 기본)
 set -Eeuo pipefail
 
 #######################################
@@ -16,26 +13,30 @@ exec 9>/tmp/dataracy.deploy.lock
 if ! flock -n 9; then
   fail "다른 배포가 진행 중이다. 잠금 해제 후 다시 시도한다."
 fi
-
 trap 'fail "스크립트 오류로 중단됨(라인:$LINENO)"' ERR
 
 #######################################
 # 경로/변수
 #######################################
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-BLUE_GREEN_DIR="$SCRIPT_DIR"                # deployment/dev/blue-green 기준
+BLUE_GREEN_DIR="$SCRIPT_DIR"
 DOCKER_DIR="$SCRIPT_DIR/../docker"
 NGINX_DIR="$SCRIPT_DIR/../nginx"
 
 DEPLOY_STATE_DIR="/home/ubuntu/color-config"
 CURRENT_COLOR_FILE="$DEPLOY_STATE_DIR/current_color_dev"
 
-# 운영 의도: 기본은 NGINX 재시작(캐시/상태 완전 초기화). reload 원하면 true로 변경.
+# 운영 의도: 기본은 NGINX 재시작(캐시/상태 완전 초기화). reload 원하면 true.
 ALWAYS_RELOAD=false
 
 # NGINX compose 파일/서비스명
 NGINX_COMPOSE="$DOCKER_DIR/docker-compose-nginx-dev.yml"
 NGINX_SVC_NAME="nginx-proxy-dev"
+
+# ★ Kibana 업스트림(환경변수로 오버라이드 가능)
+# - NGINX가 같은 docker 네트워크면: kibana-dev:5601
+# - 호스트에서 직접 프록시면: 127.0.0.1:5601
+KIBANA_UPSTREAM="${KIBANA_UPSTREAM:-kibana-dev:5601}"
 
 #######################################
 # 현재/다음 색상
@@ -45,7 +46,7 @@ if [ ! -f "$CURRENT_COLOR_FILE" ]; then
   echo "blue" > "$CURRENT_COLOR_FILE"
 fi
 
-CURRENT="$(cat "$CURRENT_COLOR_FILE" | tr -d '[:space:]')"
+CURRENT="$(tr -d '[:space:]' < "$CURRENT_COLOR_FILE")"
 if [[ "$CURRENT" != "blue" && "$CURRENT" != "green" ]]; then
   fail "current_color_dev 값이 유효하지 않다: $CURRENT"
 fi
@@ -59,7 +60,7 @@ log "[DEPLOY] Blue/Green 무중단 배포 시작 — 현재:$CURRENT → 다음:
 log "========================================"
 
 #######################################
-# 1) 비활성 색상 컨테이너 기동(항상 최신 pull)
+# 1) 비활성 색상 컨테이너 기동
 #######################################
 if [ ! -f "$NEXT_COMPOSE" ]; then
   fail "Compose 파일을 찾을 수 없다: $NEXT_COMPOSE"
@@ -69,7 +70,7 @@ log "[INFO] 비활성 컨테이너 기동: $BACKEND_NAME (compose: $(basename "$
 docker compose -f "$NEXT_COMPOSE" up -d --pull always
 
 #######################################
-# 2) 컨테이너 HealthCheck 대기
+# 2) HealthCheck 대기
 #######################################
 log "[INFO] Health Check 대기: $BACKEND_NAME ..."
 STATUS="starting"
@@ -93,12 +94,18 @@ fi
 UPSTREAM_DEST="$NGINX_DIR/upstream-blue-green-dev.conf"
 UPSTREAM_TMP="$NGINX_DIR/upstream-blue-green-dev.conf.tmp"
 
-log "[INFO] NGINX upstream 갱신(원자적 교체): $BACKEND_NAME:8080 → $UPSTREAM_DEST"
+log "[INFO] NGINX upstream 갱신(원자적 교체): $BACKEND_NAME:8080, Kibana:$KIBANA_UPSTREAM → $UPSTREAM_DEST"
 cat > "$UPSTREAM_TMP" <<'EOF'
 # 이 파일은 switch-dev.sh에 의해 자동 생성된다.
-# upstream 대상은 아래 server 라인만 변경된다.
+# backend와 kibana upstream 대상은 아래 server 라인만 변경된다.
+
 upstream backend {
   server REPLACE_BACKEND_NAME:8080;
+}
+
+# ★ Kibana 업스트림(경로 프록시용)
+upstream kibana_dev {
+  server REPLACE_KIBANA_UPSTREAM;
 }
 
 server {
@@ -156,6 +163,22 @@ server {
     etag off;
   }
 
+  # ★ Kibana (경로 /kibana)
+  location /kibana/ {
+    proxy_pass http://kibana_dev/;     # 뒤 슬래시 필수
+    proxy_read_timeout 600s;
+    proxy_send_timeout 600s;
+
+    # WebSocket
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    # 프록시 뒤 basePath 사용 시 권장 헤더
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Prefix /kibana;
+  }
+
   # 헬스
   location /actuator/health {
     proxy_pass http://backend/actuator/health;
@@ -176,12 +199,13 @@ server {
 }
 EOF
 
-# 실제 backend 이름으로 치환
+# 실제 backend/kibana 대상 치환
 sed -i "s|REPLACE_BACKEND_NAME|$BACKEND_NAME|g" "$UPSTREAM_TMP"
+sed -i "s|REPLACE_KIBANA_UPSTREAM|$KIBANA_UPSTREAM|g" "$UPSTREAM_TMP"
 mv -f "$UPSTREAM_TMP" "$UPSTREAM_DEST"
 
 #######################################
-# 4) NGINX 설정 반영 — 기본: 재시작(확실 반영), 선택: reload
+# 4) NGINX 설정 반영 — 재시작(기본) 또는 reload
 #######################################
 if [ "$ALWAYS_RELOAD" = true ]; then
   log "[INFO] NGINX 무중단 재적용(nginx -t && reload) 시도"
@@ -194,13 +218,12 @@ else
   log "[INFO] NGINX 컨테이너 완전 재시작(캐시/잔존 상태 정리 목적)"
   docker compose -f "$NGINX_COMPOSE" down -v
   docker compose -f "$NGINX_COMPOSE" up -d --build
-  # 간단 대기(필요 시 healthcheck 추가 고려)
   sleep 2
   log "[SUCCESS] NGINX 재시작 및 설정 반영 완료"
 fi
 
 #######################################
-# 5) 이전 컨테이너 종료/삭제 (서비스 전환 완료 후)
+# 5) 이전 컨테이너 종료/삭제
 #######################################
 PREV_NAME="backend-${CURRENT}"
 log "[INFO] 이전 컨테이너 정리: $PREV_NAME"

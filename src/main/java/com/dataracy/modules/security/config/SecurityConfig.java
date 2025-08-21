@@ -57,6 +57,7 @@ public class SecurityConfig {
                                 "/health", "/actuator/**",
                                 "/static/**", "/webhook").permitAll()
                         .requestMatchers("/api/v1/base", "/api/v1/onboarding").permitAll()
+                        .requestMatchers("/kibana", "/kibana/**").permitAll()
                         .requestMatchers("/login/**", "/login/oauth2/**", "/oauth2/**").permitAll()
                         .requestMatchers("/", "/api/v1/nickname/check", "/api/v1/signup/**").permitAll()
                         .requestMatchers("/api/v1/password/reset").permitAll()
