@@ -8,7 +8,6 @@ import com.dataracy.modules.dataset.application.port.out.command.projection.Mana
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDataDownloadPort;
 import com.dataracy.modules.dataset.application.port.out.query.projection.LoadDataProjectionTaskPort;
 import com.dataracy.modules.dataset.domain.enums.DataEsProjectionType;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -67,7 +66,7 @@ public class DataEsProjectionWorker {
         );
 
         for (DataEsProjectionTaskEntity t : tasks) {
-            ((DataEsProjectionWorker) AopContext.currentProxy()).processTask(t);
+            processTask(t); // Task 단위 독립 트랜잭션 실행
         }
     }
 
@@ -88,8 +87,7 @@ public class DataEsProjectionWorker {
             }
 
             // 다운로드 수 증가
-            Integer delta = t.getDeltaDownload();
-            if (delta != null && delta > 0) {
+            if (t.getDeltaDownload() > 0) {
                 updateDataDownloadEsPort.increaseDownloadCount(t.getDataId());
             }
 

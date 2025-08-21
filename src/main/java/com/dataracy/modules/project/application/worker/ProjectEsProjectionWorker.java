@@ -10,7 +10,6 @@ import com.dataracy.modules.project.application.port.out.command.update.UpdatePr
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectViewPort;
 import com.dataracy.modules.project.application.port.out.query.projection.LoadProjectProjectionTaskPort;
 import com.dataracy.modules.project.domain.enums.ProjectEsProjectionType;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -72,7 +71,7 @@ public class ProjectEsProjectionWorker {
                         PageRequest.of(0, BATCH));
 
         for (ProjectEsProjectionTaskEntity t : tasks) {
-            ((ProjectEsProjectionWorker) AopContext.currentProxy()).processTask(t);
+            processTask(t);
         }
     }
 
@@ -93,25 +92,22 @@ public class ProjectEsProjectionWorker {
             }
 
             // 댓글 델타
-            Integer deltaComment = t.getDeltaComment();
-            if (deltaComment != null && deltaComment > 0) {
+            if (t.getDeltaComment() > 0) {
                 updateProjectCommentEsPort.increaseCommentCount(t.getProjectId());
-            } else if (deltaComment != null && deltaComment < 0) {
+            } else if (t.getDeltaComment() < 0) {
                 updateProjectCommentEsPort.decreaseCommentCount(t.getProjectId());
             }
 
             // 좋아요 델타
-            Integer deltaLike = t.getDeltaLike();
-            if (deltaLike != null && deltaLike > 0) {
+            if (t.getDeltaLike() > 0) {
                 updateProjectLikeEsPort.increaseLikeCount(t.getProjectId());
-            } else if (deltaLike != null && deltaLike < 0) {
+            } else if (t.getDeltaLike() < 0) {
                 updateProjectLikeEsPort.decreaseLikeCount(t.getProjectId());
             }
 
             // 조회 델타
-            Long deltaView = t.getDeltaView();
-            if (deltaView != null && deltaView > 0L) {
-                updateProjectViewEsPort.increaseViewCount(t.getProjectId(), deltaView);
+            if (t.getDeltaView() > 0) {
+                updateProjectViewEsPort.increaseViewCount(t.getProjectId(), t.getDeltaView());
             }
 
             // 성공 → 큐 삭제

@@ -40,7 +40,7 @@ public class ProjectViewCountWorker {
      * 각 프로젝트의 조회수를 Redis에서 가져와 0보다 크면 데이터베이스와 Elasticsearch에 반영한 후, 해당 Redis 조회수를 초기화합니다.
      * 개별 프로젝트 처리 중 예외가 발생해도 전체 동기화 작업은 계속 진행됩니다.
      */
-    @Scheduled(fixedDelay = 60 * 1000)
+    @Scheduled(fixedDelay = 20 * 1000)
     @Transactional
     public void flushProjectViews() {
         LoggerFactory.scheduler().logStart("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 시작");
