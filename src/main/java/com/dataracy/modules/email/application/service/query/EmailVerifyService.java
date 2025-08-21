@@ -57,7 +57,7 @@ public class EmailVerifyService implements VerifyEmailUseCase {
         manageEmailCodePort.deleteCode(email, verificationType);
 
         String resetPasswordToken = null;
-        if (verificationType.equals(EmailVerificationType.PASSWORD_SEARCH)) {
+        if (verificationType == EmailVerificationType.PASSWORD_SEARCH) {
             resetPasswordToken = jwtGenerateUseCase.generateResetPasswordToken(email);
             manageResetTokenUseCase.saveResetToken(resetPasswordToken);
         }
