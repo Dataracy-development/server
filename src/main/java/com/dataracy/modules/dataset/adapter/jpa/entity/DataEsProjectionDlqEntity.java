@@ -20,11 +20,13 @@ public class DataEsProjectionDlqEntity extends BaseTimeEntity {
     private Long dataId;
 
     @Column(nullable=false)
-    private Integer deltaDownload;
+    @Builder.Default
+    private Integer deltaDownload = 0;
 
     // 소프트 삭제/복원: true=삭제, false=복원
     @Column(nullable = false)
-    private Boolean setDeleted;
+    @Builder.Default
+    private Boolean setDeleted = false;
 
     @Lob
     @Column(columnDefinition = "TEXT")
