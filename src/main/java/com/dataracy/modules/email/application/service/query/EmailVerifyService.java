@@ -23,17 +23,16 @@ public class EmailVerifyService implements VerifyEmailUseCase {
     private final JwtGenerateUseCase jwtGenerateUseCase;
 
     /**
-     * 이메일 인증코드를 검증하고, 비밀번호 찾기 용도일 경우 리셋 토큰을 반환합니다.
+     * 이메일 인증코드를 검증하고, 비밀번호 찾기 목적이면 리셋 비밀번호 토큰을 발급하여 응답합니다.
      *
-     * 이메일과 인증코드, 인증 목적을 받아 저장된 인증코드와 일치 여부를 확인합니다.
-     * 인증코드가 만료되었거나 일치하지 않으면 `EmailException`을 발생시킵니다.
-     * 인증이 성공하면 인증코드를 삭제하며, 인증 목적이 비밀번호 찾기일 경우 리셋 비밀번호 토큰을 생성하여 반환합니다.
+     * 저장된 인증코드와 입력된 인증코드를 비교해 일치하면 인증코드를 삭제합니다.
+     * verificationType이 PASSWORD_SEARCH이면 리셋 토큰을 생성하여 저장한 뒤 응답 객체에 포함합니다.
      *
      * @param email 인증을 진행할 이메일 주소
      * @param code 사용자가 입력한 인증 코드
-     * @param verificationType 이메일 인증 목적 (예: 회원가입, 비밀번호 찾기 등)
-     * @return 비밀번호 찾기 인증일 경우 리셋 비밀번호 토큰, 그 외에는 null
-     * @throws EmailException 인증코드가 만료되었거나 일치하지 않을 때 발생
+     * @param verificationType 이메일 인증의 목적 (예: 회원가입, 비밀번호 찾기)
+     * @return 비밀번호 찾기 인증인 경우 발급된 리셋 비밀번호 토큰을 담은 GetResetTokenResponse(없으면 null 토큰)
+     * @throws EmailException 인증코드가 만료되었거나 일치하지 않을 경우 발생
      */
     @Override
     public GetResetTokenResponse verifyCode(String email, String code, EmailVerificationType verificationType) {

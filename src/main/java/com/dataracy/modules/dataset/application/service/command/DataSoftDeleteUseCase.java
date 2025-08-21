@@ -19,6 +19,12 @@ public class DataSoftDeleteUseCase implements
     private final SoftDeleteDataPort softDeleteDataDbPort;
     private final ManageDataProjectionTaskPort manageDataProjectionTaskPort;
 
+    /**
+     * Soft delete 및 복원 유스케이스용 서비스 인스턴스를 생성합니다.
+     *
+     * 이 생성자는 데이터베이스 소프트 삭제/복원 포트와 데이터 프로젝션 업데이트 작업을 관리하는 포트를 주입받아
+     * 해당 유스케이스가 DB 변경과 외부 프로젝션(예: Elasticsearch) 동기화를 수행할 수 있도록 초기화합니다.
+     */
     public DataSoftDeleteUseCase(
             @Qualifier("softDeleteDataDbAdapter") SoftDeleteDataPort softDeleteDataDbPort,
             ManageDataProjectionTaskPort manageDataProjectionTaskPort
@@ -28,9 +34,12 @@ public class DataSoftDeleteUseCase implements
     }
 
     /**
-     * 지정한 데이터셋을 소프트 삭제 처리하여 데이터베이스와 Elasticsearch 모두에서 삭제 상태로 반영합니다.
+     * 데이터셋을 소프트 삭제 처리하고 DB와 외부 프로젝션(예: Elasticsearch)에 삭제 상태 반영을 요청합니다.
      *
-     * @param dataId 삭제 처리할 데이터셋의 고유 식별자
+     * <p>DB에서 소프트 삭제를 수행한 뒤 프로젝션 업데이트 작업을 큐에 등록합니다. 메서드는 트랜잭션으로 실행되어
+     * 예외 발생 시 데이터베이스 변경은 롤백됩니다.</p>
+     *
+     * @param dataId 삭제할 데이터셋의 고유 식별자
      */
     @Override
     @Transactional
@@ -46,10 +55,12 @@ public class DataSoftDeleteUseCase implements
     }
 
     /**
-     * 지정한 데이터셋을 복구 상태로 전환하고, 해당 변경 사항을 Elasticsearch 인덱스에도 반영합니다.
-     *
-     * @param dataId 복구할 데이터셋의 고유 식별자
-     */
+         * 지정한 데이터셋을 소프트 삭제 상태에서 복구하고, 복구 결과를 외부 프로젝션(예: Elasticsearch)에 반영하도록 업데이트 작업을 큐에 추가합니다.
+         *
+         * 메서드는 데이터베이스 복구와 프로젝션 업데이트 작업의 등록을 수행하며, 트랜잭션 내에서 실행되어 예외 발생 시 롤백됩니다.
+         *
+         * @param dataId 복구할 데이터셋의 고유 식별자
+         */
     @Override
     @Transactional
     public void restoreData(Long dataId) {

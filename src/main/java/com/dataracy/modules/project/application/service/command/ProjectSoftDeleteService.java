@@ -33,10 +33,12 @@ public class ProjectSoftDeleteService implements
     }
 
     /**
-     * 프로젝트를 소프트 삭제 처리하여 데이터베이스와 Elasticsearch 인덱스 모두에서 삭제 상태로 동기화합니다.
-     *
-     * @param projectId 삭제 처리할 프로젝트의 ID
-     */
+         * 지정한 프로젝트를 소프트 삭제(데이터베이스에서 is_deleted=true)하고, 프로젝션(예: Elasticsearch)에서의 삭제 상태 반영 작업을 비동기로 등록합니다.
+         *
+         * <p>데이터베이스 변경은 트랜잭션 안에서 수행되며, 프로젝션 반영 작업은 큐에 등록되어 별도 워커가 비동기로 처리합니다.</p>
+         *
+         * @param projectId 소프트 삭제할 프로젝트의 식별자
+         */
     @Override
     @Transactional
     public void deleteProject(Long projectId) {
@@ -52,9 +54,10 @@ public class ProjectSoftDeleteService implements
     }
 
     /**
-     * 프로젝트를 소프트 삭제 상태에서 복원합니다.
+     * 지정한 프로젝트를 소프트 삭제 상태에서 복원합니다.
      *
-     * 데이터베이스와 Elasticsearch 인덱스에서 지정한 프로젝트를 복원하여 정상 상태로 되돌립니다.
+     * 트랜잭션 내에서 데이터베이스의 is_deleted 플래그를 false로 되돌리고,
+     * 복원 상태를 반영하도록 프로젝션(예: Elasticsearch)에 대한 비동기 작업을 큐에 등록합니다.
      *
      * @param projectId 복원할 프로젝트의 ID
      */

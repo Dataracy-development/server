@@ -192,13 +192,14 @@ public class DataCommandService implements
     }
 
     /**
-     * 데이터셋 파일을 스토리지에 업로드하고 해당 데이터셋의 파일 URL을 갱신합니다.
-     * 파일 업로드 중 예외가 발생하면 트랜잭션 롤백을 위해 런타임 예외를 발생시킵니다.
-     *
-     * @param dataFile 업로드할 데이터셋 파일
-     * @param dataId 파일을 연결할 데이터셋의 식별자
-     * @param useCase 호출한 서비스 또는 유스케이스 식별자
-     */
+         * 데이터 파일을 스토리지에 업로드하고 업로드된 URL과 파일 크기로 데이터 레코드를 갱신합니다.
+         *
+         * 업로드 중 오류가 발생하면 로그를 남기고 RuntimeException을 던져 트랜잭션을 롤백합니다.
+         *
+         * @param dataFile 업로드할 데이터 파일(MultipartFile, 비어있거나 null이면 아무 작업도 수행하지 않음)
+         * @param dataId 파일을 연결할 데이터셋의 식별자
+         * @param useCase 호출한 서비스/유스케이스를 식별하는 문자열(로그용)
+         */
     private void dataFileUpload(MultipartFile dataFile, Long dataId, String useCase) {
         // 데이터셋 파일 업로드 시도
         if (dataFile != null && !dataFile.isEmpty()) {

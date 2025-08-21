@@ -31,6 +31,13 @@ public class DataEsProjectionWorker {
     private static final int BATCH = 100;
     private static final int MAX_RETRY = 8;
 
+    /**
+     * DataEsProjectionWorker 인스턴스를 생성합니다.
+     *
+     * 생성자에 주입된 포트들은 Elasticsearch 기반 데이터 프로젝션 작업의 로드·처리·DLQ 관리,
+     * soft-delete 및 다운로드 카운트 업데이트에 사용됩니다. 특히
+     * `softDeleteDataEsPort`와 `updateDataDownloadEsPort`는 각각 ES 구현으로 주입됩니다.
+     */
     public DataEsProjectionWorker(
             ManageDataProjectionTaskPort manageDataProjectionTaskPort,
             LoadDataProjectionTaskPort loadDataProjectionTaskPort,
@@ -45,6 +52,16 @@ public class DataEsProjectionWorker {
         this.updateDataDownloadEsPort = updateDataDownloadEsPort;
     }
 
+    /**
+     * 재시도 횟수에 따라 지수형(backoff) 대기 시간을 초 단위로 계산한다.
+     *
+     * <p>동작:
+     * - retryCount가 8 이상이면 최대값인 120초를 반환한다.
+     * - 그 외에는 1, 2, 4, 8, 16, 32, 64의 시퀀스 중 하나를 반환한다.
+     *
+     * @param retryCount 0 이상의 재시도 카운트(현재까지 시도한 횟수)
+     * @return 대기 시간(초)
+     */
     private long backoffSeconds(int retryCount) {
         // 1,2,4,8,16,32,64,120(캡)
         if (retryCount >= 8) return 120;
@@ -53,8 +70,14 @@ public class DataEsProjectionWorker {
     }
 
     /**
-     * 3초마다 Projection Task를 가져와 개별 Task 단위로 처리
-     * 각 Task는 REQUIRES_NEW 트랜잭션으로 실행 → 실패해도 나머지 성공 건은 커밋 유지
+     * 3초마다 대기중(PENDING) 또는 재시도(RETRYING) 상태의 Projection 작업을 배치로 조회하여 각 작업을 별도 트랜잭션으로 처리합니다.
+     *
+     * <p>세부:
+     * - 스케줄: @Scheduled(fixedDelayString = "PT3S")로 3초 간격 실행
+     * - 조회: 최대 BATCH 개수의 작업을 현재 시점 기준으로 가져옵니다.
+     * - 트랜잭션: 메서드는 전체에 대한 트랜잭션 경계를 가지지만 각 작업은
+     *   processTask(...)에서 Propagation.REQUIRES_NEW로 별도의 트랜잭션에서 실행되어
+     *   한 작업의 실패가 다른 작업의 커밋에 영향을 주지 않습니다.
      */
     @Transactional
     @Scheduled(fixedDelayString = "PT3S")
@@ -71,8 +94,24 @@ public class DataEsProjectionWorker {
     }
 
     /**
-     * Task 단위 처리 메서드
-     * propagation = REQUIRES_NEW → 기존 트랜잭션과 분리하여 실행
+     * 단일 데이터 반영 작업(큐 항목)을 독립된 새 트랜잭션으로 처리한다.
+     *
+     * <p>작업 엔터티에 따라 다음 중 하나 이상의 동작을 수행한다:
+     * <ul>
+     *   <li>setDeleted 필드가 지정되면 해당 데이터에 대해 소프트 삭제 또는 복원을 수행</li>
+     *   <li>deltaDownload가 양수이면 다운로드 카운트를 증가</li>
+     *   <li>처리 성공 시 해당 작업 큐 항목을 삭제</li>
+     * </ul>
+     *
+     * <p>처리 중 예외가 발생하면 내부에서 재시도 로직을 적용한다:
+     * <ul>
+     *   <li>재시도 횟수가 MAX_RETRY 이상이면 DLQ에 실패 정보를 저장하고 큐 항목을 삭제</li>
+     *   <li>아직 재시도 가능하면 작업 상태를 RETRYING으로 업데이트하고 retryCount, lastError, nextRunAt을 설정(커밋 시 영속성 컨텍스트의 더티 체크로 반영)</li>
+     * </ul>
+     *
+     * <p>이 메서드는 예외를 밖으로 던지지 않고 내부에서 처리하므로 호출자는 예외 처리를 신경 쓸 필요가 없다.
+     *
+     * @param t 작업 대상 엔터티(데이터 ID, deltaDownload, setDeleted, retry 관련 필드 포함)
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processTask(DataEsProjectionTaskEntity t) {
