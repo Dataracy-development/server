@@ -49,6 +49,8 @@ public class QDataEntity extends EntityPathBase<DataEntity> {
 
     public final QDataMetadataEntity metadata;
 
+    public final NumberPath<Long> sizeBytes = createNumber("sizeBytes", Long.class);
+
     public final DatePath<java.time.LocalDate> startDate = createDate("startDate", java.time.LocalDate.class);
 
     public final StringPath title = createString("title");

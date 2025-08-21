@@ -3,6 +3,8 @@ package com.dataracy.modules.dataset.adapter.query.predicates;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.util.StringUtils;
 
+import java.util.Collection;
+
 import static com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity.dataEntity;
 
 public class DataFilterPredicate {
@@ -62,5 +64,18 @@ public class DataFilterPredicate {
      */
     public static BooleanExpression dataTypeIdEq(Long dataTypeId) {
         return dataTypeId == null ? null : dataEntity.dataTypeId.eq(dataTypeId);
+    }
+
+    /**
+     * 지정한 데이터 ID 목록에 해당하는 레코드들을 필터링하는 QueryDSL Predicate를 생성한다.
+     *
+     * 지정한 ID 컬렉션을 이용해 `dataEntity.id.in(...)` 형태의 BooleanExpression을 반환한다.
+     * 입력이 null이거나 비어 있으면 필터가 적용되지 않도록 null을 반환한다.
+     *
+     * @param dataIds 필터에 사용할 데이터 ID 목록 (null 또는 비어있으면 필터 미적용)
+     * @return ID 목록에 해당하는 Predicate 또는 입력이 null/빈 경우 null
+     */
+    public static BooleanExpression dataIdIn(Collection<Long> dataIds) {
+        return (dataIds == null || dataIds.isEmpty()) ? null : dataEntity.id.in(dataIds);
     }
 }

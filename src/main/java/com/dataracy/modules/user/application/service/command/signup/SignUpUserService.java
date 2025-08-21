@@ -1,7 +1,7 @@
 package com.dataracy.modules.user.application.service.command.signup;
 
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
-import com.dataracy.modules.auth.application.port.in.cache.CacheRefreshTokenUseCase;
+import com.dataracy.modules.auth.application.port.in.token.ManageRefreshTokenUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
@@ -21,7 +21,6 @@ import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,19 +49,18 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     private final ValidateVisitSourceUseCase validateVisitSourceUseCase;
     private final ValidateTopicUseCase validateTopicUseCase;
 
-    private final CacheRefreshTokenUseCase cacheRefreshTokenUseCase;
+    private final ManageRefreshTokenUseCase manageRefreshTokenUseCase;
 
     /**
-     * 자체 회원가입 요청을 처리하여 신규 사용자를 등록하고 리프레시 토큰을 발급한다.
-     *
-     * 이메일, 닉네임, 비밀번호 등 필수 정보를 검증하고,
-     * 작성자 유형, 직업, 방문 경로, 토픽 등 선택 정보를 유효성 검사한 후 사용자 계정을 생성한다.
-     * 중복 가입을 방지하기 위해 이메일 기준 분산 락을 적용한다.
-     * 회원가입이 완료되면 리프레시 토큰을 생성하여 쿠키에 저장하고, 토큰과 만료 시간을 포함한 응답을 반환한다.
-     *
-     * @param requestDto 자체 회원가입 요청 정보
-     * @return 리프레시 토큰과 만료 시간이 포함된 응답 객체
-     */
+         * 자체 회원가입을 처리하고 새 사용자를 생성한 뒤 리프레시 토큰을 발급해 반환한다.
+         *
+         * 요청 DTO의 필수 정보(이메일, 닉네임, 비밀번호 일치 등)를 검증하고,
+         * 작성자 유형, 직업, 방문 경로, 토픽 등의 참조 데이터 유효성 및 중복 이메일/닉네임 검사를 수행한 후 사용자 엔터티를 생성·저장한다.
+         * 저장된 사용자 ID로 리프레시 토큰을 생성하여 영구 저장소에 저장하고, 토큰과 만료 시간을 포함한 응답을 반환한다.
+         *
+         * @param requestDto 자체 회원가입 요청 정보 (이메일, 닉네임, 비밀번호 등)
+         * @return 발급된 리프레시 토큰과 해당 토큰의 만료 시간을 포함한 RefreshTokenResponse
+         */
     @Override
     @DistributedLock(
             key = "'lock:signup:email:' + #requestDto.email()",
@@ -100,7 +98,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
 
         // 리프레시 토큰 발급 및 저장
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(savedUser.getId(), RoleType.ROLE_USER);
-        cacheRefreshTokenUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
+        manageRefreshTokenUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(
                 refreshToken,
                 jwtValidateUseCase.getRefreshTokenExpirationTime()
@@ -111,16 +109,17 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     }
 
     /**
-     * 소셜 회원가입 요청을 처리하고 리프레시 토큰을 발급합니다.
-     *
-     * 소셜 회원가입 토큰의 유효성을 검증한 후, 온보딩 정보를 기반으로 신규 사용자를 등록하고
-     * 리프레시 토큰을 생성하여 쿠키에 저장합니다.
-     * 닉네임 중복 방지를 위해 분산 락이 적용됩니다.
-     *
-     * @param registerToken 소셜 회원가입을 위한 JWT 토큰
-     * @param requestDto 온보딩 요청 정보
-     * @return 발급된 리프레시 토큰과 만료 시간 정보
-     */
+         * 소셜(Onboarding) 회원가입을 처리하고 리프레시 토큰을 발급하여 반환합니다.
+         *
+         * 주어진 등록(Register) 토큰의 유효성을 확인하고, 토큰에서 추출한 소셜 공급자 정보와
+         * 온보딩 요청 정보를 바탕으로 신규 사용자 계정을 생성·저장합니다. 생성된 사용자에 대해
+         * 리프레시 토큰을 생성·영구 저장한 뒤 토큰 값과 만료 시간을 담은 응답을 반환합니다.
+         * 닉네임 중복 방지를 위해 메서드 호출 시 닉네임 기반의 분산 락이 적용됩니다.
+         *
+         * @param registerToken 소셜 회원가입을 위한 등록용 JWT 토큰(유효성 검사 및 정보 추출에 사용)
+         * @param requestDto 온보딩 요청 정보(닉네임, 레벨/직업/방문경로/관심주제 식별자 등)
+         * @return 발급된 리프레시 토큰과 만료 시간을 담은 RefreshTokenResponse
+         */
     @Override
     @DistributedLock(
             key = "'lock:signup:nickname:' + #requestDto.nickname()",
@@ -159,7 +158,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
 
         // 리프레시 토큰 발급 및 저장
         String refreshToken = jwtGenerateUseCase.generateRefreshToken(savedUser.getId(), RoleType.ROLE_USER);
-        cacheRefreshTokenUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
+        manageRefreshTokenUseCase.saveRefreshToken(savedUser.getId().toString(), refreshToken);
         RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(
                 refreshToken,
                 jwtValidateUseCase.getRefreshTokenExpirationTime()

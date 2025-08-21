@@ -15,7 +15,7 @@ spring:
   task:
     scheduling:
       pool:
-        size: 2
+        size: 1
 
   jwt:
     secret: ${JWT_SECRET}
@@ -139,9 +139,8 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg [requestId=%X{requestId}] [userId=%X{userId}] [path=%X{path}]%n"
   level:
-    root: INFO
+    root: DEBUG
     org.apache.kafka: WARN
-    com.dataracy.modules.behaviorlog: DEBUG
 
 springdoc:
   api-docs:

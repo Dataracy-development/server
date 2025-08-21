@@ -39,6 +39,9 @@ public enum UserErrorStatus implements BaseErrorCode {
 
     // 로그인 실패
     BAD_REQUEST_LOGIN(HttpStatus.BAD_REQUEST, "USER-020", "이메일 또는 비밀번호를 확인해주세요"),
+
+    // 비밀번호 재설정
+    INVALID_OR_EXPIRED_RESET_PASSWORD_TOKEN(HttpStatus.FORBIDDEN, "USER-021", "비밀번호 재설정 토큰이 유효하지 않거나 만료되었습니다."),
     ;
     private final HttpStatus httpStatus;
     private final String code;

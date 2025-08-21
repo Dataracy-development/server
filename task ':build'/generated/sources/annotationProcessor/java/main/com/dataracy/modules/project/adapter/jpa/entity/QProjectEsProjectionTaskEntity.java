@@ -28,6 +28,8 @@ public class QProjectEsProjectionTaskEntity extends EntityPathBase<ProjectEsProj
 
     public final NumberPath<Integer> deltaLike = createNumber("deltaLike", Integer.class);
 
+    public final NumberPath<Long> deltaView = createNumber("deltaView", Long.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath lastError = createString("lastError");
