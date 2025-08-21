@@ -87,7 +87,8 @@ public class DataEsProjectionWorker {
             }
 
             // 다운로드 수 증가
-            if (t.getDeltaDownload() > 0) {
+            Integer delta = t.getDeltaDownload();
+            if (delta != null && delta > 0) {
                 updateDataDownloadEsPort.increaseDownloadCount(t.getDataId());
             }
 
