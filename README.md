@@ -221,7 +221,70 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-# 🗄️ 06. MySQL + JPA + QueryDSL
+# 🔍 06. ES 프로젝션 설계 의도 & 효과 분석
+
+## 🧩 왜 이런 구조를 도입했는가?
+기존에는 서비스 계층에서 DB와 ES를 동시에 갱신하는 **동기 이중 쓰기**를 사용했다. 하지만 이 방식은  
+- **부분 실패**(DB 성공, ES 실패) 시 불일치 발생  
+- **분산 트랜잭션 부재**로 롤백 불가  
+- **네트워크 지연**으로 인한 API 응답 저하  
+
+라는 문제를 만들었다.  
+
+따라서 **DB를 단일 진실 공급원(SSOT)** 으로 두고, **ES는 파생 뷰(Projection)** 로 관리하는 구조를 채택했다.
+기능 호출 시 동기적으로 DB는 업데이트 되고, ES를 업데이트 할 수 있도록 엔티티 기반 큐와 워커를 기반으로 ES를 관리하는 구조이다.
+
+---
+
+## ⚙️ 무엇을 구현했는가?
+1. **Projection Task Queue**  
+   - `ProjectEsProjectionTaskEntity`: 댓글·좋아요·조회수·삭제 상태 변경 요청을 큐에 저장, DB 트랜잭션과 함께 커밋  
+   - `ProjectEsProjectionDlqEntity`: 재시도 초과 시 실패 작업을 격리  
+
+2. **Adapter & Repository**  
+   - `ManageProjectEsProjectionTaskDbAdapter`: 큐에 작업 등록  
+   - `LoadProjectEsProjectionTaskDbAdapter`: `PESSIMISTIC_WRITE + SKIP LOCKED` 조회로 중복 처리 방지  
+   - `ManageProjectEsProjectionDlqDbAdapter`: DLQ 이관  
+   - `ProjectEsProjectionTaskRepository`: 배치 조회·즉시 삭제 지원  
+
+3. **Worker**  
+   - `ProjectEsProjectionWorker`:  
+     - `@Scheduled`로 주기적 폴링  
+     - 각 Task를 `REQUIRES_NEW` 트랜잭션으로 실행 → 실패가 다른 Task에 영향 없음  
+     - **지수 백오프**로 재시도, 한도 초과 시 DLQ로 이동  
+     - 성공 시 Task 삭제 → ES와 DB의 최종적 일관성 유지  
+
+4. **Service**  
+   - `ProjectCountService`:  
+     - 댓글/좋아요 수를 DB에 먼저 반영  
+     - 같은 트랜잭션에서 Projection Task 큐잉  
+     - `@DistributedLock`으로 프로젝트 단위 동시성 제어  
+
+---
+
+## 🚀 어떤 효과가 있었는가?
+- **정합성 강화**  
+  DB와 큐에 동시에 기록 → ES 실패 시에도 큐에 남아 재처리 가능 → 최종적으로 DB와 ES가 일치  
+
+- **안정성 확보**  
+  배치 처리, 재시도/백오프, DLQ 격리로 장애 확산 방지  
+
+- **운영 편의성**  
+  DLQ를 통한 원인 분석 및 재처리 가능 
+  추후 큐 사이즈·DLQ 건수·지연 시간 모니터링으로 상태 가시성 확보  
+
+- **성능 개선**  
+  API 요청 시 ES 반영을 기다리지 않음 → 응답 속도 단축  
+  ES 반영을 비동기로 처리 → 트래픽 급증에도 확장성 확보  
+
+
+
+<br/>
+<br/>
+
+---
+
+# 🗄️ 07. MySQL + JPA + QueryDSL
 
 ## 📌 개념
 - **MySQL (AWS RDS)**: 안정적인 트랜잭션 처리와 스케일링이 가능한 관계형 데이터베이스
@@ -273,7 +336,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-# ⚡ 07. Redis 캐싱
+# ⚡ 08. Redis 캐싱
 
 ## 📌 적용 목적
 - **Redis**: 인메모리 기반의 고성능 데이터 저장소로, 주로 캐싱, 세션 저장, 카운터, 랭킹 처리 등에 활용
@@ -320,7 +383,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-# ⚡ 08. Redis 기반 인증·세션 관리
+# ⚡ 09. Redis 기반 인증·세션 관리
 
 ## 📌 적용 목적
 - 인증·인가 과정에서 **고속 검증**과 **실시간 토큰 상태 관리**를 위해 Redis 활용
@@ -356,7 +419,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-# 🔒 09. Redisson 기반 분산락
+# 🔒 10. Redisson 기반 분산락
 
 ## 📌 적용 목적
 - 다중 서버·멀티 스레드 환경에서 **동시성 충돌(Race Condition)** 방지
@@ -399,7 +462,58 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-# 📡 10. Kafka 기반 이벤트 처리 (Kafka 중심 요약)
+# 👀 11. 조회수(View Count) 처리 전략
+
+## 🧩 문제 상황
+조회수가 발생할 때마다 곧바로 **DB 업데이트**를 수행하면,  
+- 트래픽이 많은 경우 **DB 부하 급증**  
+- 단순 증가 연산이지만 매번 트랜잭션이 발생 → 성능 저하  
+- 순간적으로 많은 요청이 몰리면 락 경합과 지연 발생  
+
+이라는 문제가 생긴다.  
+
+즉, 조회수는 **정합성보다는 성능과 집계 효율**이 중요한 데이터이므로, **즉시 DB 반영**보다 **임시 저장 + 배치 동기화** 전략이 적합하다.
+
+---
+
+## ⚙️ 구현 방식
+1. **Redis 캐싱 & Deduplication**  
+   - `viewDedup:{targetType}:{projectId}:{viewerId}` 키를 사용해 **5분 TTL** 동안 동일 사용자의 중복 조회를 방지.  
+   - 최초 조회일 때만 `viewCount:{targetType}:{projectId}` 카운트를 +1 증가.  
+   - Redis의 빠른 쓰기 성능을 활용하여 고빈도 요청을 흡수.  
+
+2. **스케줄러 기반 워커** (`ProjectViewCountWorker`)  
+   - `@Scheduled(fixedDelay=20s)` 주기로 Redis의 viewCount 키를 스캔.  
+   - 각 키의 카운트를 **원자적 pop(getDel)** 하여 가져오고,  
+     - 값이 있으면 DB `viewCount`를 증가시키고,  
+     - 동시에 **Projection Task** 큐에 등록 → ES에도 반영됨.  
+   - 개별 처리 중 오류가 발생해도 로깅 후 다음 키를 계속 처리 → 장애가 전체 동작에 영향 주지 않음.  
+
+3. **DB & ES 동기화**  
+   - DB에는 최종 집계된 viewCount 반영.  
+   - ES에는 Projection Worker를 통해 비동기 업데이트 → 검색·추천에서 최신 데이터 활용 가능.  
+
+---
+
+## 🚀 효과
+- **DB 부하 감소**  
+  잦은 조회 이벤트를 Redis에서 집계 → 주기적으로 DB에 반영 → 트랜잭션 횟수 감소.  
+
+- **중복 방지**  
+  TTL 기반 deduplication → 동일 사용자의 짧은 시간 내 반복 조회는 카운트에 반영되지 않음 → 데이터 왜곡 방지.  
+
+- **최종적 일관성**  
+  Redis → DB → ES 순서로 동기화 → 약간의 지연은 있지만, DB/ES의 상태는 최종적으로 일치.  
+
+- **운영 효율성**  
+  워커 기반 배치 처리 → 모니터링·알림·재처리 체계와 쉽게 통합 가능.  
+
+<br/>
+<br/>
+
+---
+
+# 📡 12. Kafka 기반 이벤트 처리 (Kafka 중심 요약)
 
 ## 📌 목적
 - **비동기 분리**로 API 부하 완화
@@ -480,7 +594,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-# 🔍 11. 검색 & 분석 (Elasticsearch 중심)
+# 🔍 13. 검색 & 분석 (Elasticsearch 중심)
 
 ## 🎯 적용 목적
 - 프로젝트에 대한 **전문 검색**, **유사 프로젝트 추천**, **실시간 검색어 대응**을 위해 Elasticsearch를 사용합니다.
@@ -539,7 +653,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-# 📝 12. 공통 로깅 (LoggerFactory 기반)
+# 📝 14. 공통 로깅 (LoggerFactory 기반)
 
 ## 적용 목적
 - 계층 및 모듈별 **일관된 로깅 표준** 제공
@@ -567,7 +681,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-## 🔐 13. 보안 & 인증 (OAuth2 + 자체 로그인 + JWT)
+## 🔐 15. 보안 & 인증 (OAuth2 + 자체 로그인 + JWT)
 
 ### ⚙️ 구성
 - **소셜 로그인**: Google, Kakao (OAuth2)
@@ -602,7 +716,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 ---
 
 
-# 🛡️ 14. AOP 기반 변경 권한 검증 (ex. DataAuthPolicy)
+# 🛡️ 16. AOP 기반 변경 권한 검증 (ex. DataAuthPolicy)
 
 ## 🎯 목적
 데이터 **편집·삭제·복원** 시 현재 인증 사용자가 해당 데이터의 **생성자**인지 검증하여  
@@ -642,7 +756,7 @@ public void restore(Long dataId) { ... }
 ---
 
 
-# 🗂 15. 스토리지 & 메일 (S3 + SendGrid)
+# 🗂 17. 스토리지 & 메일 (S3 + SendGrid)
 
 ### 📁 파일 저장
 - 이미지/첨부 → `S3` 업로드
@@ -665,7 +779,7 @@ public void restore(Long dataId) { ... }
 
 ---
 
-# 📊 16. Dataracy – 사용자 행동 로그 기반 관측 시스템
+# 📊 18. Dataracy – 사용자 행동 로그 기반 관측 시스템
 > Real-Time Behavioral Logging & Monitoring with Kafka, Elasticsearch, Redis, Prometheus, Grafana
 
 ## 🧩 프로젝트 개요
@@ -728,7 +842,7 @@ User
 ---
 
 
-## 🧪 17. 테스트 & 품질 (k6)
+## 🧪 19. 테스트 & 품질 (k6)
 
 ### 🎯 목표
 - 로그인, 검색, 조회, 좋아요, 댓글 등 **핵심 API**의 지연·에러율을 수치 관리
@@ -752,7 +866,7 @@ User
 
 ---
 
-## 📊 18. 모니터링 & 알림 (Micrometer + Prometheus + Grafana)
+## 📊 20. 모니터링 & 알림 (Micrometer + Prometheus + Grafana)
 
 ### 📡 수집
 - `Micrometer`로 요청 지연, 에러율, 스레드풀, GC, 큐 길이 등 표준 메트릭 노출
