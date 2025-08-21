@@ -28,7 +28,7 @@ public class ManageDataEsProjectionTaskDbAdapter implements ManageDataProjection
     }
 
     @Override
-    public void delete(DataEsProjectionTaskEntity dataEsProjectionTask) {
-        repo.delete(dataEsProjectionTask);
+    public void delete(Long dataEsProjectionTaskId) {
+        repo.deleteById(dataEsProjectionTaskId);
     }
 }

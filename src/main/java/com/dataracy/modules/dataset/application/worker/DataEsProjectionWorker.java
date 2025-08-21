@@ -92,7 +92,7 @@ public class DataEsProjectionWorker {
             }
 
             // 성공 → 큐 삭제
-            manageDataProjectionTaskPort.delete(t);
+            manageDataProjectionTaskPort.delete(t.getId());
 
         } catch (Exception ex) {
             int next = t.getRetryCount() + 1;
@@ -103,7 +103,7 @@ public class DataEsProjectionWorker {
                         t.getSetDeleted(),
                         truncate(ex.getMessage(), 2000)
                 );
-                manageDataProjectionTaskPort.delete(t);
+                manageDataProjectionTaskPort.delete(t.getId());
             } else {
                 t.setStatus(DataEsProjectionType.RETRYING);
                 t.setRetryCount(next);

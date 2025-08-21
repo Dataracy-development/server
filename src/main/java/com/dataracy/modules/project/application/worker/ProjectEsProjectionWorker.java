@@ -111,7 +111,7 @@ public class ProjectEsProjectionWorker {
             }
 
             // 성공 → 큐 삭제
-            manageProjectProjectionTaskPort.delete(t);
+            manageProjectProjectionTaskPort.delete(t.getId());
 
         } catch (Exception ex) {
             int nextRetry = t.getRetryCount() + 1;
@@ -124,7 +124,7 @@ public class ProjectEsProjectionWorker {
                         t.getSetDeleted(),
                         truncate(ex.getMessage(), 2000)
                 );
-                manageProjectProjectionTaskPort.delete(t);
+                manageProjectProjectionTaskPort.delete(t.getId());
             } else {
                 t.setStatus(ProjectEsProjectionType.RETRYING);
                 t.setRetryCount(nextRetry);
