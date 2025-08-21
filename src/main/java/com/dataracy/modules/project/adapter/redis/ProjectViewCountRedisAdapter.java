@@ -140,15 +140,25 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
         String key = String.format("viewCount:%s:%s", targetType, projectId);
 
         try {
-            Instant startTime = LoggerFactory.redis().logQueryStart("viewCount:" + targetType + ":" + projectId, "해당 프로젝트의 조회수 조회 시작. projectId=" + projectId);
+            Instant startTime = LoggerFactory.redis().logQueryStart("viewCount:" + targetType + ":" + projectId, "조회수 pop 작업 시작. projectId=" + projectId);
 
             Long viewCount = redisTemplate.execute(connection -> {
-                byte[] raw = connection.stringCommands().getDel(key.getBytes());
+                var keySerializer = redisTemplate.getStringSerializer();
+                var valSerializer = redisTemplate.getStringSerializer();
+                byte[] rawKey = keySerializer.serialize(key);
+                byte[] raw = connection.stringCommands().getDel(rawKey);
                 if (raw == null) return 0L;
-                return Long.parseLong(new String(raw));
-            }, true);
+                String str = valSerializer.deserialize(raw);
+                try {
+                    return Long.parseLong(str);
+                } catch (NumberFormatException nfe) {
+                    // 손상된 값 방어: 로그 남기고 0으로 처리
+                    LoggerFactory.redis().logError(key, "정수 파싱 실패. value=" + str, nfe);
+                    return 0L;
+                }
+            }, false);
 
-            LoggerFactory.redis().logQueryEnd("viewCount:" + targetType + ":" + projectId, "해당 프로젝트의 조회수 조회 종료. projectId=" + projectId, startTime);
+            LoggerFactory.redis().logQueryEnd("viewCount:" + targetType + ":" + projectId, "조회수 pop 작업 종료. projectId=" + projectId, startTime);
             return viewCount;
         } catch (RedisConnectionFailureException e) {
             LoggerFactory.redis().logError(key, "레디스 서버 연결에 실패했습니다.", e);
