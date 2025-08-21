@@ -18,7 +18,7 @@ public interface DataEsProjectionTaskRepository extends JpaRepository<DataEsProj
           from DataEsProjectionTaskEntity t
          where t.status in :statuses
            and t.nextRunAt <= :now
-         order by t.id
+         order by t.nextRunAt ASC, t.id ASC
     """)
     List<DataEsProjectionTaskEntity> findBatchForWork(
             @Param("now") LocalDateTime now,

@@ -92,22 +92,25 @@ public class ProjectEsProjectionWorker {
             }
 
             // 댓글 델타
-            if (t.getDeltaComment() > 0) {
+            Integer deltaComment = t.getDeltaComment();
+            if (deltaComment != null && deltaComment > 0) {
                 updateProjectCommentEsPort.increaseCommentCount(t.getProjectId());
-            } else if (t.getDeltaComment() < 0) {
+            } else if (deltaComment != null && deltaComment < 0) {
                 updateProjectCommentEsPort.decreaseCommentCount(t.getProjectId());
             }
 
             // 좋아요 델타
-            if (t.getDeltaLike() > 0) {
+            Integer deltaLike = t.getDeltaLike();
+            if (deltaLike != null && deltaLike > 0) {
                 updateProjectLikeEsPort.increaseLikeCount(t.getProjectId());
-            } else if (t.getDeltaLike() < 0) {
+            } else if (deltaLike != null && deltaLike < 0) {
                 updateProjectLikeEsPort.decreaseLikeCount(t.getProjectId());
             }
 
             // 조회 델타
-            if (t.getDeltaView() > 0) {
-                updateProjectViewEsPort.increaseViewCount(t.getProjectId(), t.getDeltaView());
+            Long deltaView = t.getDeltaView();
+            if (deltaView != null && deltaView > 0L) {
+                updateProjectViewEsPort.increaseViewCount(t.getProjectId(), deltaView);
             }
 
             // 성공 → 큐 삭제
