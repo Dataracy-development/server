@@ -53,7 +53,7 @@ public class DataEsProjectionWorker {
     }
 
     /**
-     * 5초마다 Projection Task를 가져와 개별 Task 단위로 처리
+     * 3초마다 Projection Task를 가져와 개별 Task 단위로 처리
      * 각 Task는 REQUIRES_NEW 트랜잭션으로 실행 → 실패해도 나머지 성공 건은 커밋 유지
      */
     @Transactional
