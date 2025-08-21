@@ -12,7 +12,6 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableAspectJAutoProxy(exposeProxy = true)
 public class WebMvcConfig implements WebMvcConfigurer {
     private final MultipartJackson2HttpMessageConverter multipartJackson2HttpMessageConverter;
     private final CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
