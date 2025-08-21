@@ -27,14 +27,15 @@ public class DataEsProjectionTaskEntity extends BaseTimeEntity {
     @Column(nullable=false)
     private Long dataId;
 
-    // 소프트 삭제/복원: null=해당 없음, true=삭제, false=복원
-    @Column(name = "set_deleted")
-    private Boolean setDeleted;
-
     // 다운로드 수 증감: 증가(+1), 감소(-1), 미사용(0)
     @Column(nullable=false)
     @Builder.Default
     private Integer deltaDownload = 0;
+
+    // 소프트 삭제/복원: null=해당 없음, true=삭제, false=복원
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean setDeleted = false;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable=false)

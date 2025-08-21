@@ -1,6 +1,6 @@
-package com.dataracy.modules.auth.application.port.out.cache;
+package com.dataracy.modules.auth.application.port.out.token;
 
-public interface CacheResetTokenPort {
+public interface ManageResetTokenPort {
     /**
      * 주어진 비밀번호 재설정용 토큰을 캐시에 저장합니다.
      *

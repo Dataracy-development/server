@@ -1,7 +1,7 @@
 package com.dataracy.modules.user.application.service.command.password;
 
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
-import com.dataracy.modules.auth.application.port.in.cache.CacheResetTokenUseCase;
+import com.dataracy.modules.auth.application.port.in.token.ManageResetTokenUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.password.ResetPasswordWithTokenRequest;
@@ -26,7 +26,7 @@ public class ChangePasswordService implements ChangePasswordUseCase {
     private final UserQueryPort userQueryPort;
     private final UserCommandPort userCommandPort;
 
-    private final CacheResetTokenUseCase cacheResetTokenUseCase;
+    private final ManageResetTokenUseCase manageResetTokenUseCase;
     private final JwtValidateUseCase jwtValidateUseCase;
 
     private static final String USE_CASE = "ChangePasswordUseCase";
@@ -62,14 +62,14 @@ public class ChangePasswordService implements ChangePasswordUseCase {
     }
 
     /**
-     * 비밀번호 재설정 토큰을 사용하여 사용자의 비밀번호를 재설정합니다.
+     * 비밀번호 재설정 토큰을 사용해 사용자의 비밀번호를 재설정합니다.
      *
-     * 비밀번호 재설정 토큰의 유효성을 검증하고, 토큰에서 이메일을 추출하여 해당 사용자를 조회합니다.
-     * 사용자가 존재하지 않거나 비밀번호 변경이 불가능한 경우 예외가 발생합니다.
-     * 새 비밀번호와 비밀번호 확인 값이 일치하는지 검증한 후, 비밀번호를 암호화하여 저장합니다.
+     * 요청에 포함된 리셋 토큰의 유효성을 확인하고 토큰에서 추출한 이메일로 사용자를 조회합니다.
+     * 새 비밀번호와 확인 값이 일치하는지 검증한 뒤 비밀번호를 인코딩하여 저장합니다.
      *
-     * @param requestDto 비밀번호 재설정 요청 정보가 담긴 객체
-     * @throws UserException 사용자를 찾을 수 없거나 비밀번호 변경이 불가능한 경우 발생
+     * @param requestDto 리셋 토큰, 새 비밀번호 및 비밀번호 확인 값을 포함한 요청 객체
+     * @throws UserException 리셋 토큰이 유효하지 않거나(또는 만료되었거나), 사용자를 찾을 수 없거나,
+     *                       또는 해당 사용자가 비밀번호 변경이 불가능한 경우 발생
      */
     @Override
     @Transactional
@@ -77,7 +77,13 @@ public class ChangePasswordService implements ChangePasswordUseCase {
         Instant startTime = LoggerFactory.service().logStart(USE_CASE, "비밀번호 재설정 서비스 시작");
 
         // 토큰 유효성 검사
-        cacheResetTokenUseCase.isValidResetToken(requestDto.resetPasswordToken());
+        manageResetTokenUseCase.isValidResetToken(requestDto.resetPasswordToken());
+        boolean valid = manageResetTokenUseCase.isValidResetToken(requestDto.resetPasswordToken());
+        if (!valid) {
+            LoggerFactory.service().logWarning("ChangePasswordService", "[비밀번호 재설정] 유효하지 않은 리셋 토큰입니다.");
+            throw new UserException(UserErrorStatus.INVALID_OR_EXPIRED_RESET_PASSWORD_TOKEN);
+        }
+
         // 비밀번호 - 비밀번호 확인 검증
         requestDto.validatePasswordMatch();
 

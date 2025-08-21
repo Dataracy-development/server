@@ -20,10 +20,20 @@ public class ProjectEsProjectionDlqEntity extends BaseTimeEntity {
     private Long projectId;
 
     @Column(nullable=false)
-    private Integer deltaComment;
+    @Builder.Default
+    private Integer deltaComment = 0;
 
     @Column(nullable=false)
-    private Integer deltaLike;
+    @Builder.Default
+    private Integer deltaLike = 0;
+
+    @Column(nullable=false)
+    @Builder.Default
+    private Long deltaView = 0L;
+
+    @Column(nullable=false)
+    @Builder.Default
+    private Boolean setDeleted = false;
 
     @Lob
     @Column(columnDefinition = "TEXT")

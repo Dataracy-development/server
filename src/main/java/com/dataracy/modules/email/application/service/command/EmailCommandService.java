@@ -2,7 +2,7 @@ package com.dataracy.modules.email.application.service.command;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.email.application.port.in.command.SendEmailUseCase;
-import com.dataracy.modules.email.application.port.out.cache.CacheEmailPort;
+import com.dataracy.modules.email.application.port.out.code.ManageEmailCodePort;
 import com.dataracy.modules.email.application.port.out.command.SendEmailPort;
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 import com.dataracy.modules.email.domain.exception.EmailException;
@@ -18,27 +18,29 @@ import java.time.Instant;
 @Service
 public class EmailCommandService implements SendEmailUseCase {
     private final SendEmailPort sendEmailPort;
-    private final CacheEmailPort cacheEmailPort;
+    private final ManageEmailCodePort manageEmailCodePort;
 
     /**
-     * EmailCommandService의 인스턴스를 생성하고 이메일 전송 및 캐시 포트 의존성을 주입합니다.
+     * EmailCommandService를 생성하고 필요한 포트 의존성(sendEmailPort, manageEmailCodePort)을 주입합니다.
      *
-     * @param sendEmailPort 이메일 전송을 담당하는 포트 구현체
-     * @param cacheEmailPort 이메일 인증 코드 캐싱을 담당하는 포트 구현체
+     * 생성된 인스턴스는 주입된 포트를 사용해 이메일 전송 및 이메일 인증 코드 관리를 수행합니다.
      */
     public EmailCommandService(
             @Qualifier("sendEmailSendGridAdapter") SendEmailPort sendEmailPort,
-            CacheEmailPort cacheEmailPort
+            ManageEmailCodePort manageEmailCodePort
     ) {
         this.sendEmailPort = sendEmailPort;
-        this.cacheEmailPort = cacheEmailPort;
+        this.manageEmailCodePort = manageEmailCodePort;
     }
 
     /**
-     * 지정된 이메일 주소로 인증 코드를 생성하여 전송하고, 해당 코드를 캐시에 저장합니다.
+     * 지정된 이메일로 6자리 인증 코드를 생성해 전송하고, 전송 성공 시 해당 코드를 저장합니다.
+     *
+     * <p>이 메서드는 인증 코드를 생성한 뒤 전송을 시도하고, 전송에 실패하면 EmailException을 던집니다.
+     * 전송이 성공하면 이메일과 목적(type)에 맞춰 생성한 코드를 영속/캐시 계층에 저장합니다.</p>
      *
      * @param email 인증 코드를 받을 이메일 주소
-     * @param type 인증 코드 전송 목적을 나타내는 타입
+     * @param type  인증 코드 전송 목적을 나타내는 값(예: 회원가입, 비밀번호 재설정 등)
      * @throws EmailException 이메일 전송에 실패한 경우 발생
      */
     @Override
@@ -59,7 +61,7 @@ public class EmailCommandService implements SendEmailUseCase {
         }
 
         // 레디스에 이메일 인증 코드 저장
-        cacheEmailPort.saveCode(email, code, type);
+        manageEmailCodePort.saveCode(email, code, type);
         LoggerFactory.service().logSuccess("SendEmailUseCase", "이메일 인증 코드 전송 서비스 종료 email=" + email, startTime);
     }
 

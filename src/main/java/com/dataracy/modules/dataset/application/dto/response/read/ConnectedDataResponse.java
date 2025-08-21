@@ -29,6 +29,7 @@ public record ConnectedDataResponse(
         LocalDate endDate,
         String dataThumbnailUrl,
         Integer downloadCount,
+        Long sizeBytes,
         Integer rowCount,
         Integer columnCount,
         LocalDateTime createdAt,

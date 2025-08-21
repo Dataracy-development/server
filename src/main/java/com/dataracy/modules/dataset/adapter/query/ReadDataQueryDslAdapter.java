@@ -15,10 +15,13 @@ import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
 import com.dataracy.modules.reference.adapter.jpa.entity.QTopicEntity;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -112,51 +115,75 @@ public class ReadDataQueryDslAdapter implements
     }
 
     /**
-     * 지정된 프로젝트에 연결된 데이터셋을 최신순으로 조회하여, 각 데이터셋이 연결된 프로젝트의 개수와 함께 페이지 형태로 반환합니다.
+     * 지정된 프로젝트에 연결된 데이터셋을 조회하여, 각 데이터셋별로 연결된 프로젝트 수를 함께 페이지 형태로 반환합니다.
      *
-     * @param projectId 데이터셋을 조회할 대상 프로젝트의 ID
-     * @param pageable 결과의 페이지네이션 정보
-     * @return 각 데이터셋과 해당 데이터셋이 연결된 프로젝트 개수를 포함하는 페이지 객체
+     * <p>결과는 최신순으로 정렬되며 데이터의 메타정보는 fetchJoin으로 함께 로드됩니다. 각 항목에는 도메인 Data와
+     * 해당 데이터에 연결된 프로젝트의 개수가 포함됩니다. 전체 집계(total)는 EXISTS 기반 필터로 계산됩니다.</p>
+     *
+     * @param projectId 조회 대상 프로젝트의 ID (이 프로젝트와 연결된 데이터셋만 반환)
+     * @param pageable  페이지네이션 및 정렬 정보
+     * @return 각 데이터와 해당 데이터에 연결된 프로젝트 개수를 포함한 Page&lt;DataWithProjectCountDto&gt;
      */
     @Override
     public Page<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
-        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity", "[getConnectedDataSetsAssociatedWithProject] 지정된 프로젝트에 연결된 데이터셋 목록 조회 시작. projectId=" + projectId);
+        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity",  "[getConnectedDataSetsAssociatedWithProject] 지정된 프로젝트에 연결된 데이터셋 목록 조회 시작. projectId=" + projectId);
 
+        // alias path (튜플에서 꺼낼 때 사용)
         NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
+
+        // 서브쿼리는 SubQueryExpression
+        SubQueryExpression<Long> projectCountSub =
+                JPAExpressions.select(projectData.project.id.countDistinct())
+                        .from(projectData)
+                        .where(projectData.dataId.eq(data.id));
+
+        // 목록 + 집계 (해당 projectId로 필터는 EXISTS로)
         List<Tuple> tuples = queryFactory
                 .select(
                         data,
-                        projectData.id.count().as(projectCountPath)
+                        ExpressionUtils.as(projectCountSub, projectCountPath)
                 )
                 .from(data)
-                .innerJoin(projectData).on(projectData.dataId.eq(data.id)
-                        .and(projectData.project.id.eq(projectId)))
-                .leftJoin(data.metadata).fetchJoin()
-                .groupBy(data.id)
+                .leftJoin(data.metadata).fetchJoin() // 1:1이면 fetchJoin OK
+                .where(
+                        JPAExpressions.selectOne()
+                                .from(projectData)
+                                .where(projectData.project.id.eq(projectId)
+                                        .and(projectData.dataId.eq(data.id)))
+                                .exists()
+                )
                 .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
         List<DataWithProjectCountDto> contents = tuples.stream()
-                .map(tuple -> new DataWithProjectCountDto(
-                        DataEntityMapper.toDomain(tuple.get(data)),
-                        tuple.get(projectCountPath)
+                .map(t -> new DataWithProjectCountDto(
+                        DataEntityMapper.toDomain(t.get(data)),
+                        t.get(projectCountPath)
                 ))
                 .toList();
 
+        // total은 EXISTS로만 계산 (JOIN/그룹 불필요)
         long total = Optional.ofNullable(
                 queryFactory
-                        .select(data.id.countDistinct())
+                        .select(data.id.count())
                         .from(data)
-                        .innerJoin(projectData).on(projectData.dataId.eq(data.id)
-                                .and(projectData.project.id.eq(projectId)))
+                        .where(
+                                JPAExpressions.selectOne()
+                                        .from(projectData)
+                                        .where(projectData.project.id.eq(projectId)
+                                                .and(projectData.dataId.eq(data.id)))
+                                        .exists()
+                        )
                         .fetchOne()
         ).orElse(0L);
 
-        LoggerFactory.query().logQueryEnd("DataEntity", "[getConnectedDataSetsAssociatedWithProject] 지정된 프로젝트에 연결된 데이터셋 목록 조회 시작. projectId=" + projectId, startTime);
+        LoggerFactory.query().logQueryEnd("DataEntity",
+                "[getConnectedDataSetsAssociatedWithProject] 지정된 프로젝트에 연결된 데이터셋 목록 조회 완료. projectId=" + projectId, startTime);
         return new PageImpl<>(contents, pageable, total);
     }
+
 
     /**
      * 주어진 데이터 ID 목록에 해당하는 데이터셋과 각 데이터셋에 연결된 프로젝트 수를 조회합니다.
@@ -166,37 +193,39 @@ public class ReadDataQueryDslAdapter implements
      */
     @Override
     public List<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProjectByIds(List<Long> dataIds) {
-        if (dataIds == null || dataIds.isEmpty()) {
-            return List.of();
-        }
+        if (dataIds == null || dataIds.isEmpty()) return List.of();
 
         Instant startTime = LoggerFactory.query()
-                .logQueryStart("DataEntity", "[getConnectedDataSetsAssociatedWithProjectByIds] 데이터 아이디 목록에 따른 데이터셋 정보 조회 시작 dataIds=" + dataIds);
+                .logQueryStart("DataEntity", "[getConnectedDataSetsAssociatedWithProjectByIds] dataIds=" + dataIds);
 
         NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
+        SubQueryExpression<Long> projectCountSub =
+                JPAExpressions.select(projectData.project.id.countDistinct())
+                        .from(projectData)
+                        .where(projectData.dataId.eq(data.id)); // ← 이 data가 전체 몇 프로젝트에 연결됐는지
 
-        // 한 방 조회: 데이터 + 연결된 프로젝트 수
         List<Tuple> tuples = queryFactory
                 .select(
                         data,
-                        projectData.id.count().as(projectCountPath)
+                        ExpressionUtils.as(projectCountSub, projectCountPath)
                 )
                 .from(data)
-                .leftJoin(projectData).on(projectData.dataId.eq(data.id))
-                .leftJoin(data.metadata).fetchJoin()
-                .where(data.id.in(dataIds))
-                .groupBy(data.id)
+                .join(data.metadata).fetchJoin() // 1:1
+                .where(
+                        DataFilterPredicate.dataIdIn(dataIds)
+                )
                 .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
                 .fetch();
 
         List<DataWithProjectCountDto> contents = tuples.stream()
-                .map(tuple -> new DataWithProjectCountDto(
-                        DataEntityMapper.toDomain(tuple.get(data)),
-                        tuple.get(projectCountPath)
+                .map(t -> new DataWithProjectCountDto(
+                        DataEntityMapper.toDomain(t.get(data)),
+                        t.get(projectCountPath)
                 ))
                 .toList();
 
-        LoggerFactory.query().logQueryEnd("DataEntity", "[getConnectedDataSetsAssociatedWithProjectByIds] 데이터 아이디 목록에 따른 데이터셋 정보 조회 완료 dataIds=" + dataIds, startTime);
+        LoggerFactory.query().logQueryEnd("DataEntity",
+                "[getConnectedDataSetsAssociatedWithProjectByIds] 완료 dataIds=" + dataIds, startTime);
         return contents;
     }
 
@@ -224,38 +253,55 @@ public class ReadDataQueryDslAdapter implements
     }
 
     /**
-     * 인기도 점수를 기준으로 상위 데이터셋과 각 데이터셋에 연결된 프로젝트 수를 조회합니다.
+     * 인기도 점수에 따라 상위 데이터셋을 조회하고 각 데이터셋에 연결된 프로젝트 수를 함께 반환합니다.
      *
-     * @param size 반환할 데이터셋의 최대 개수
-     * @return 각 데이터셋과 해당 데이터셋에 연결된 프로젝트 수를 포함하는 DTO 리스트
+     * <p>각 결과는 도메인 Data와 그 데이터에 연결된 고유 프로젝트 수를 포함합니다. 결과는 계산된 인기 점수(데이터 메타·연결 프로젝트 수 기반) 내림차순으로 정렬되어 반환됩니다. 메타데이터는 함께 로드됩니다.</p>
+     *
+     * @param size 반환할 최대 데이터셋 개수
+     * @return 도메인 Data와 연결된 프로젝트 수를 포함하는 DTO 목록 (인기도 내림차순, 최대 size)
      */
     @Override
     public List<DataWithProjectCountDto> getPopularDataSets(int size) {
-        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity", "[searchPopularDataSets] 인기있는 데이터셋 목록 조회 시작. size=" + size);
+        Instant startTime = LoggerFactory.query().logQueryStart(
+                "DataEntity", "[searchPopularDataSets] 인기있는 데이터셋 목록 조회 시작. size=" + size);
 
-        NumberExpression<Long> projectCountExpr = projectData.id.count();
+        // 튜플에서 꺼낼 alias path
+        NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
+
+        // 전체 프로젝트 수 = 서브쿼리(count distinct) → NumberExpression으로 래핑
+        var projectCountSub = com.querydsl.jpa.JPAExpressions
+                .select(projectData.project.id.countDistinct())
+                .from(projectData)
+                .where(projectData.dataId.eq(data.id)); // 이 data가 전체 몇 프로젝트에 연결됐는지
+
+        // QueryDSL의 score 빌더가 NumberExpression을 요구하므로 numberTemplate로 감싼다
+        NumberExpression<Long> projectCountExpr =
+                Expressions.numberTemplate(Long.class, "({0})", projectCountSub);
+
+        // 인기 점수
         NumberExpression<Double> score = DataPopularOrderBuilder.popularScore(data, projectCountExpr);
 
+        // 메인 쿼리: 조인/그룹바이 없이 깔끔하게 (메타데이터는 1:1이므로 fetch join OK)
         List<Tuple> tuples = queryFactory
                 .select(
                         data,
-                        projectCountExpr
+                        ExpressionUtils.as(projectCountExpr, projectCountPath)
                 )
                 .from(data)
-                .leftJoin(projectData).on(projectData.dataId.eq(data.id))
-                .leftJoin(data.metadata).fetchJoin()
-                .groupBy(data.id)
+                .join(data.metadata).fetchJoin()   // 1:1/필수면 join으로 명확히
                 .orderBy(score.desc())
                 .limit(size)
                 .fetch();
 
-        List<DataWithProjectCountDto> dataWithProjectCountDtos = tuples.stream()
-                .map(tuple -> new DataWithProjectCountDto(
-                        DataEntityMapper.toDomain(tuple.get(data)),
-                        tuple.get(projectCountExpr)
+        List<DataWithProjectCountDto> result = tuples.stream()
+                .map(t -> new DataWithProjectCountDto(
+                        DataEntityMapper.toDomain(t.get(data)),
+                        t.get(projectCountPath)
                 ))
                 .toList();
-        LoggerFactory.query().logQueryEnd("DataEntity", "[searchPopularDataSets] 인기있는 데이터셋 목록 조회 시작. size=" + size, startTime);
-        return dataWithProjectCountDtos;
+
+        LoggerFactory.query().logQueryEnd("DataEntity",
+                "[searchPopularDataSets] 인기있는 데이터셋 목록 조회 완료. size=" + size, startTime);
+        return result;
     }
 }

@@ -1,6 +1,6 @@
-package com.dataracy.modules.auth.application.port.in.cache;
+package com.dataracy.modules.auth.application.port.in.token;
 
-public interface CacheResetTokenUseCase {
+public interface ManageResetTokenUseCase {
     /**
      * 주어진 리셋 토큰을 캐시에 저장합니다.
      *

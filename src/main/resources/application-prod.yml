@@ -34,7 +34,21 @@ spring:
 
 logging:
   level:
-    root: warn
+    root: INFO
+
+    # Hibernate 완전 최소화
+    org.hibernate: WARN
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql: WARN
+    org.hibernate.engine.jdbc.spi.SqlExceptionHelper: ERROR
+
+    # Spring / Kafka / 내부 모듈
+    org.springframework: WARN
+    org.apache.kafka: ERROR
+    org.springframework.kafka: WARN
+    com.dataracy.modules.behaviorlog: INFO   # 운영 로그는 반드시 남김
+    com.dataracy.modules.behaviorlog.support.aop.DataAccessLatencyAspect: INFO
+    com.dataracy.modules.common.logging: INFO
 
 management:
   metrics:

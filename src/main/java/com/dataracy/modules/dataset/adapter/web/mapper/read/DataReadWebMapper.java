@@ -10,10 +10,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataReadWebMapper {
     /**
-     * 데이터셋의 상세 정보를 담은 애플리케이션 계층 DTO를 웹 계층의 상세 응답 객체로 변환합니다.
+     * 애플리케이션 계층의 DataDetailResponse를 웹 계층의 DataDetailWebResponse로 변환합니다.
      *
-     * @param responseDto 데이터셋의 상세 정보가 포함된 DTO
-     * @return 데이터셋 상세 정보를 포함하는 웹 응답 객체
+     * <p>원본 DTO의 각 필드(id, title, username, userProfileImageUrl, userIntroductionText,
+     * authorLabel, occupationLabel, topicLabel, dataSourceLabel, dataTypeLabel, startDate, endDate,
+     * description, analysisGuide, dataThumbnailUrl, downloadCount, sizeBytes, rowCount, columnCount,
+     * previewJson, createdAt)를 그대로 전달하여 웹 응답 객체를 생성합니다.</p>
+     *
+     * @param responseDto 변환할 애플리케이션 계층의 데이터셋 상세 응답 DTO
+     * @return 변환된 웹 계층의 데이터셋 상세 응답 객체
      */
     public DataDetailWebResponse toWebDto(DataDetailResponse responseDto) {
         return new DataDetailWebResponse(
@@ -33,6 +38,7 @@ public class DataReadWebMapper {
                 responseDto.analysisGuide(),
                 responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
+                responseDto.sizeBytes(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),
                 responseDto.previewJson(),
@@ -72,6 +78,7 @@ public class DataReadWebMapper {
                 responseDto.endDate(),
                 responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
+                responseDto.sizeBytes(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),
                 responseDto.createdAt(),
@@ -96,11 +103,13 @@ public class DataReadWebMapper {
 
     /**
      * 인기 데이터 검색 애플리케이션 응답 DTO를 웹 응답 DTO로 변환합니다.
-     * 데이터셋의 식별자, 제목, 사용자명, 주제, 데이터 소스 및 타입 라벨, 날짜 범위, 설명, 썸네일 URL,
-     * 다운로드 수, 행/열 개수, 생성일, 연결된 프로젝트 수를 포함한 정보를 매핑하여 반환합니다.
+     *
+     * <p>응답의 id, title, username, topicLabel, dataSourceLabel, dataTypeLabel, startDate, endDate,
+     * description, dataThumbnailUrl, downloadCount, sizeBytes, rowCount, columnCount, createdAt,
+     * countConnectedProjects 등을 매핑하여 PopularDataWebResponse 인스턴스를 생성하여 반환합니다.</p>
      *
      * @param responseDto 인기 데이터 검색 애플리케이션 응답 DTO
-     * @return 인기 데이터 검색 웹 응답 DTO
+     * @return 매핑된 인기 데이터 웹 응답 DTO
      */
     public PopularDataWebResponse toWebDto(PopularDataResponse responseDto) {
         return new PopularDataWebResponse(
@@ -115,6 +124,7 @@ public class DataReadWebMapper {
                 responseDto.description(),
                 responseDto.dataThumbnailUrl(),
                 responseDto.downloadCount(),
+                responseDto.sizeBytes(),
                 responseDto.rowCount(),
                 responseDto.columnCount(),
                 responseDto.createdAt(),
