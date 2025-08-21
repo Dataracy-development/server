@@ -40,12 +40,15 @@ public class DataCommandDbAdapter implements
     }
 
     /**
-     * 지정한 데이터 ID의 데이터 파일 URL을 새로운 값으로 업데이트합니다.
-     * 데이터가 존재하지 않을 경우 {@link DataException}이 발생합니다.
-     *
-     * @param dataId 데이터 엔티티의 ID
-     * @param dataFileUrl 새로 설정할 데이터 파일의 URL
-     */
+         * 지정한 데이터의 파일 URL과 파일 크기(Byte)를 업데이트합니다.
+         *
+         * 데이터 엔티티가 존재하지 않으면 DataException(DataErrorStatus.NOT_FOUND_DATA)을 던집니다.
+         *
+         * @param dataId 데이터 엔티티의 식별자
+         * @param dataFileUrl 새로 설정할 데이터 파일의 URL
+         * @param dataFileSize 새 데이터 파일의 크기(바이트) — null일 수 있으며, null이면 크기 업데이트를 생략하거나 기존 값을 유지합니다.
+         * @throws com.dataracy.modules.dataset.exception.DataException 데이터가 존재하지 않을 경우 발생
+         */
     @Override
     public void updateDataFile(Long dataId, String dataFileUrl, Long dataFileSize) {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)

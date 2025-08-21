@@ -95,7 +95,9 @@ public class SearchSimilarDataSetsEsAdapter implements SearchSimilarDataSetsPort
     /**
      * DataSearchDocument를 SimilarDataResponse로 변환합니다.
      *
-     * DataSearchDocument의 각 필드를 SimilarDataResponse의 대응 필드에 매핑하여 새로운 응답 객체를 생성합니다.
+     * DataSearchDocument의 값을 대응하는 SimilarDataResponse 생성자 인자에 그대로 매핑하여 새 응답 객체를 반환합니다.
+     * 반환 객체에는 id, title, topicLabel, dataSourceLabel, dataTypeLabel, 기간(start/end), description,
+     * dataThumbnailUrl, downloadCount, sizeBytes, rowCount, columnCount, createdAt가 포함됩니다.
      *
      * @param doc 변환할 DataSearchDocument 인스턴스
      * @return 매핑된 SimilarDataResponse 인스턴스

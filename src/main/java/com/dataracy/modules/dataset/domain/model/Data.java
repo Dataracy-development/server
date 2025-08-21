@@ -35,9 +35,11 @@ public class Data {
     private LocalDateTime createdAt;
 
     /**
-     * 모든 필드 값을 지정하여 새로운 Data 인스턴스를 생성합니다.
-     * 각 파라미터에 전달된 값으로 Data 객체의 모든 속성을 초기화합니다.
+     * 모든 필드 값을 사용해 Data 객체를 생성하여 반환합니다.
      *
+     * 주어진 인자들로 Data의 모든 속성을 초기화한 새 인스턴스를 빌더로 구성해 반환합니다.
+     *
+     * @param sizeBytes 데이터 파일의 크기(바이트 단위). 값이 없을 수 있으므로 null 허용.
      * @return 지정된 값들로 초기화된 Data 객체
      */
     public static Data of(

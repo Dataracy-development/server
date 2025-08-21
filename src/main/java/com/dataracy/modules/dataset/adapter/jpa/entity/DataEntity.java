@@ -113,10 +113,15 @@ public class DataEntity extends BaseTimeEntity {
     }
 
     /**
-     * 데이터셋 파일의 URL을 검증하고 변경합니다.
+     * 데이터셋 파일의 URL과 파일 크기(sizeBytes)를 검증하여 업데이트합니다.
      *
-     * @param dataFileUrl 새로 설정할 데이터셋 파일의 URL. null이거나 공백일 경우 예외가 발생합니다.
-     * @throws DataException dataFileUrl이 null이거나 공백 문자열인 경우 발생합니다.
+     * 새 URL이 null이거나 공백이면 DataException(DataErrorStatus.INVALID_FILE_URL)을 던집니다.
+     * 전달된 URL이 현재와 동일하면 아무 작업도 하지 않습니다. 유효한 새 URL일 경우
+     * dataFileUrl을 갱신하고 sizeBytes를 dataFileSize로 설정합니다.
+     *
+     * @param dataFileUrl  새로 설정할 데이터셋 파일의 URL (null 또는 공백이면 예외)
+     * @param dataFileSize 새로 설정할 파일의 크기(바이트). URL이 동일하여 변경이 일어나지 않더라도 전달값이 무시될 수 있음
+     * @throws DataException dataFileUrl이 null이거나 공백 문자열인 경우 발생
      */
     public void updateDataFile (String dataFileUrl, Long dataFileSize) {
         if (dataFileUrl == null || dataFileUrl.isBlank()) {
@@ -157,23 +162,17 @@ public class DataEntity extends BaseTimeEntity {
     }
 
     /**
-     * 주어진 값들로 DataEntity 객체를 생성합니다.
-     * 데이터셋의 주요 정보와 메타데이터를 포함하여 새로운 DataEntity 인스턴스를 반환합니다.
+     * 주어진 값들로 새로운 DataEntity 인스턴스를 생성하여 반환합니다.
      *
-     * @param title 데이터셋 제목
-     * @param topicId 주제 ID
-     * @param userId 사용자 ID
-     * @param dataSourceId 데이터 소스 ID
-     * @param dataTypeId 데이터 유형 ID
-     * @param startDate 데이터셋 시작일 (null 가능)
-     * @param endDate 데이터셋 종료일 (null 가능)
-     * @param description 데이터셋 설명
-     * @param analysisGuide 분석 가이드
-     * @param dataFileUrl 데이터 파일 URL (null 가능)
-     * @param dataThumbnailUrl 썸네일 이미지 URL (null 가능)
-     * @param downloadCount 다운로드 횟수
-     * @param metadata 데이터 메타데이터 엔티티
-     * @return 생성된 DataEntity 인스턴스
+     * <p>데이터셋의 식별·분류 정보, 설명 및 연관 메타데이터를 초기화한 엔티티를 빌더로 생성합니다.</p>
+     *
+     * @param startDate 데이터셋 시작일 (null 허용)
+     * @param endDate 데이터셋 종료일 (null 허용)
+     * @param dataFileUrl 데이터 파일의 URL (null 허용)
+     * @param dataThumbnailUrl 썸네일 이미지의 URL (null 허용)
+     * @param sizeBytes 데이터 파일의 크기(바이트 단위). 파일 크기를 모를 경우 null 허용
+     * @param metadata 연관된 DataMetadataEntity
+     * @return 초기화된 DataEntity 인스턴스
      */
     public static DataEntity of(
             String title,

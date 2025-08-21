@@ -74,11 +74,13 @@ public class UserAuthService implements
     }
 
     /**
-     * OAuth 제공자 ID로 기존 사용자를 조회하여 리프레시 토큰을 발급하고, 해당 토큰을 쿠키에 저장한 후 토큰과 만료 정보를 반환합니다.
-     * 사용자가 존재하지 않을 경우 UserException이 발생합니다.
+     * OAuth 제공자 ID로 기존 사용자를 조회해 리프레시 토큰을 생성·저장하고 토큰과 만료 시간을 반환합니다.
      *
-     * @param oAuthUserInfo OAuth 제공자에서 받은 사용자 정보
-     * @return 발급된 리프레시 토큰과 만료 시간을 포함하는 응답 객체
+     * 조회된 사용자가 없으면 UserException(UserErrorStatus.NOT_FOUND_USER)을 던집니다.
+     *
+     * @param oAuthUserInfo OAuth 제공자에서 받은 사용자 식별 정보(프로바이더, providerId 등)
+     * @return 발급된 리프레시 토큰과 해당 토큰의 만료 시간을 담은 {@code RefreshTokenResponse}
+     * @throws UserException 조회된 사용자가 없을 경우 {@code UserErrorStatus.NOT_FOUND_USER}
      */
     @Override
     @Transactional
