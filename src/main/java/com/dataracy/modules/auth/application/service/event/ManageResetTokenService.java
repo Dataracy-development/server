@@ -22,9 +22,9 @@ public class ManageResetTokenService implements ManageResetTokenUseCase {
      */
     @Override
     public void saveResetToken(String token) {
-        Instant startTime = LoggerFactory.service().logStart("CacheResetTokenUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart("ManageResetTokenUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 시작");
         manageResetTokenPort.saveResetToken(token);
-        LoggerFactory.service().logSuccess("CacheResetTokenUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess("ManageResetTokenUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 성공", startTime);
     }
 
     /**
@@ -40,7 +40,7 @@ public class ManageResetTokenService implements ManageResetTokenUseCase {
     public boolean isValidResetToken(String token) {
         boolean isValid = manageResetTokenPort.isValidResetToken(token);
         if (!isValid) {
-            LoggerFactory.service().logWarning("CacheResetTokenUseCase", "비밀번호 재설정 토큰이 만료되었습니다.");
+            LoggerFactory.service().logWarning("ManageResetTokenUseCase", "비밀번호 재설정 토큰이 만료되었습니다.");
             throw new AuthException(AuthErrorStatus.EXPIRED_RESET_PASSWORD_TOKEN);
         }
         return isValid;

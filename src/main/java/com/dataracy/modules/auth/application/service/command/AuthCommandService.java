@@ -91,6 +91,10 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
 
             // 레디스의 리프레시 토큰과 입력받은 리프레시 토큰을 비교한다.
             String savedRefreshToken = manageRefreshTokenPort.getRefreshToken(userId.toString());
+            if (savedRefreshToken == null) {
+                LoggerFactory.service().logWarning("ReIssueTokenUseCase", "[토큰 재발급] 저장된 리프레시 토큰이 없습니다. 만료되었을 수 있습니다.");
+                throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
+            }
             if (!savedRefreshToken.equals(refreshToken)) {
                 LoggerFactory.service().logWarning("ReIssueTokenUseCase", "[토큰 재발급] 입력된 리프레시 토큰이 레디스의 리프레시 토큰과 일치하지 않습니다.");
                 throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
