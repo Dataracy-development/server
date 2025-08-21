@@ -14,17 +14,18 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class ManageResetTokenService implements ManageResetTokenUseCase {
     private final ManageResetTokenPort manageResetTokenPort;
+    private static final String USE_CASE = "ManageResetTokenUseCase";
 
     /**
-     * 비밀번호 재설정 토큰을 캐시에 저장합니다.
+     * 비밀번호 재설정 토큰을 토큰 저장소(예: Redis)에 저장합니다.
      *
      * @param token 저장할 비밀번호 재설정 토큰
      */
     @Override
     public void saveResetToken(String token) {
-        Instant startTime = LoggerFactory.service().logStart("ManageResetTokenUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(USE_CASE, "비밀번호 재설정 토큰 레디스 저장 서비스 시작");
         manageResetTokenPort.saveResetToken(token);
-        LoggerFactory.service().logSuccess("ManageResetTokenUseCase", "비밀번호 재설정 토큰 레디스 저장 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess(USE_CASE, "비밀번호 재설정 토큰 레디스 저장 서비스 성공", startTime);
     }
 
     /**
@@ -38,11 +39,13 @@ public class ManageResetTokenService implements ManageResetTokenUseCase {
      */
     @Override
     public boolean isValidResetToken(String token) {
-        boolean isValid = manageResetTokenPort.isValidResetToken(token);
-        if (!isValid) {
-            LoggerFactory.service().logWarning("ManageResetTokenUseCase", "비밀번호 재설정 토큰이 만료되었습니다.");
+        Instant startTime = LoggerFactory.service().logStart(USE_CASE, "비밀번호 재설정 토큰 유효성 검사 시작");
+        boolean valid = manageResetTokenPort.isValidResetToken(token);
+        if (!valid) {
+            LoggerFactory.service().logWarning(USE_CASE, "비밀번호 재설정 토큰이 만료 또는 유효하지 않습니다.");
             throw new AuthException(AuthErrorStatus.EXPIRED_RESET_PASSWORD_TOKEN);
         }
-        return isValid;
-    }
+        LoggerFactory.service().logSuccess(USE_CASE, "비밀번호 재설정 토큰 유효성 검사 성공", startTime);
+        return true;
+   }
 }

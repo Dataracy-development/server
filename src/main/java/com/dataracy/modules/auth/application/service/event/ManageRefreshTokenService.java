@@ -14,6 +14,7 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class ManageRefreshTokenService implements ManageRefreshTokenUseCase {
     private final ManageRefreshTokenPort manageRefreshTokenPort;
+    private static final String USE_CASE = "ManageRefreshTokenUseCase";
 
     /**
      * 지정한 사용자 ID에 대한 리프레시 토큰을 Redis에 저장합니다.
@@ -23,9 +24,9 @@ public class ManageRefreshTokenService implements ManageRefreshTokenUseCase {
      */
     @Override
     public void saveRefreshToken(String userId, String refreshToken) {
-        Instant startTime = LoggerFactory.service().logStart("ManageRefreshTokenUseCase", "리프레시 토큰 레디스 저장 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(USE_CASE, "리프레시 토큰 레디스 저장 서비스 시작 userId=" + userId);
         manageRefreshTokenPort.saveRefreshToken(userId, refreshToken);
-        LoggerFactory.service().logSuccess("ManageRefreshTokenUseCase", "리프레시 토큰 레디스 저장 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(USE_CASE, "리프레시 토큰 레디스 저장 서비스 성공 userId=" + userId, startTime);
     }
 
     /**
@@ -37,12 +38,12 @@ public class ManageRefreshTokenService implements ManageRefreshTokenUseCase {
      */
     @Override
     public String getRefreshToken(String userId) {
-        Instant startTime = LoggerFactory.service().logStart("ManageRefreshTokenUseCase", "레디스에서 리프레시 토큰 추출 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(USE_CASE, "레디스에서 리프레시 토큰 추출 서비스 시작 userId=" + userId);
         String refreshToken = manageRefreshTokenPort.getRefreshToken(userId);
         if (refreshToken == null) {
             throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
         }
-        LoggerFactory.service().logSuccess("ManageRefreshTokenUseCase", "레디스에서 리프레시 토큰 추출 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(USE_CASE, "레디스에서 리프레시 토큰 추출 서비스 성공 userId=" + userId, startTime);
         return refreshToken;
     }
 
@@ -53,8 +54,8 @@ public class ManageRefreshTokenService implements ManageRefreshTokenUseCase {
      */
     @Override
     public void deleteRefreshToken(String userId) {
-        Instant startTime = LoggerFactory.service().logStart("ManageRefreshTokenUseCase", "레디스에서 리프레시 토큰 삭제 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(USE_CASE, "레디스에서 리프레시 토큰 삭제 서비스 시작 userId=" + userId);
         manageRefreshTokenPort.deleteRefreshToken(userId);
-        LoggerFactory.service().logSuccess("ManageRefreshTokenUseCase", "레디스에서 리프레시 토큰 삭제 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(USE_CASE, "레디스에서 리프레시 토큰 삭제 서비스 성공 userId=" + userId, startTime);
     }
 }
