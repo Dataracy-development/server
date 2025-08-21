@@ -40,7 +40,7 @@ public class ProjectViewCountWorker {
      * 각 프로젝트의 조회수를 Redis에서 가져와 0보다 크면 데이터베이스와 Elasticsearch에 반영한 후, 해당 Redis 조회수를 초기화합니다.
      * 개별 프로젝트 처리 중 예외가 발생해도 전체 동기화 작업은 계속 진행됩니다.
      */
-    @Scheduled(fixedDelay = 60 * 1000) // 1분
+    @Scheduled(fixedDelay = 60 * 1000)
     @Transactional
     public void flushProjectViews() {
         LoggerFactory.scheduler().logStart("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 시작");
@@ -49,11 +49,10 @@ public class ProjectViewCountWorker {
         for (String key : keys) {
             try {
                 Long projectId = extractProjectId(key);
-                Long count = manageProjectViewCountPort.getViewCount(projectId, "PROJECT");
-                if (count > 0) {
+                Long count = manageProjectViewCountPort.popViewCount(projectId, "PROJECT"); // 원자적 pop
+                if (count != null && count > 0) {
                     updateProjectViewDbPort.increaseViewCount(projectId, count);
                     manageProjectProjectionTaskPort.enqueueViewDelta(projectId, count);
-                    manageProjectViewCountPort.clearViewCount(projectId, "PROJECT");
                 }
             } catch (Exception e) {
                 LoggerFactory.scheduler().logError("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 실패", e);
@@ -61,6 +60,7 @@ public class ProjectViewCountWorker {
         }
         LoggerFactory.scheduler().logComplete("Redis에 저장된 프로젝트별 조회수를 저장소에 동기화 성공");
     }
+
 
     /**
      * "viewCount:PROJECT:<projectId>" 형식의 Redis 키에서 프로젝트 ID를 추출합니다.
