@@ -84,6 +84,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         || path.equals("/api/v1/base") || path.equals("/api/v1/onboarding")
                         || path.startsWith("/login") || path.startsWith("/oauth2")
                         || path.equals("/") || path.startsWith("/error")
+                        || path.startsWith("/kibana")
                         || path.startsWith("/api/v1/references")
                         || path.startsWith("/api/v1/email")
                         || path.startsWith("/api/v1/signup")
