@@ -115,11 +115,14 @@ public class ReadDataQueryDslAdapter implements
     }
 
     /**
-     * 지정된 프로젝트에 연결된 데이터셋을 최신순으로 조회하여, 각 데이터셋이 연결된 프로젝트의 개수와 함께 페이지 형태로 반환합니다.
+     * 지정된 프로젝트에 연결된 데이터셋을 조회하여, 각 데이터셋별로 연결된 프로젝트 수를 함께 페이지 형태로 반환합니다.
      *
-     * @param projectId 데이터셋을 조회할 대상 프로젝트의 ID
-     * @param pageable 결과의 페이지네이션 정보
-     * @return 각 데이터셋과 해당 데이터셋이 연결된 프로젝트 개수를 포함하는 페이지 객체
+     * <p>결과는 최신순으로 정렬되며 데이터의 메타정보는 fetchJoin으로 함께 로드됩니다. 각 항목에는 도메인 Data와
+     * 해당 데이터에 연결된 프로젝트의 개수가 포함됩니다. 전체 집계(total)는 EXISTS 기반 필터로 계산됩니다.</p>
+     *
+     * @param projectId 조회 대상 프로젝트의 ID (이 프로젝트와 연결된 데이터셋만 반환)
+     * @param pageable  페이지네이션 및 정렬 정보
+     * @return 각 데이터와 해당 데이터에 연결된 프로젝트 개수를 포함한 Page&lt;DataWithProjectCountDto&gt;
      */
     @Override
     public Page<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
@@ -250,10 +253,12 @@ public class ReadDataQueryDslAdapter implements
     }
 
     /**
-     * 인기도 점수를 기준으로 상위 데이터셋과 각 데이터셋에 연결된 프로젝트 수를 조회합니다.
+     * 인기도 점수에 따라 상위 데이터셋을 조회하고 각 데이터셋에 연결된 프로젝트 수를 함께 반환합니다.
      *
-     * @param size 반환할 데이터셋의 최대 개수
-     * @return 각 데이터셋과 해당 데이터셋에 연결된 프로젝트 수를 포함하는 DTO 리스트
+     * <p>각 결과는 도메인 Data와 그 데이터에 연결된 고유 프로젝트 수를 포함합니다. 결과는 계산된 인기 점수(데이터 메타·연결 프로젝트 수 기반) 내림차순으로 정렬되어 반환됩니다. 메타데이터는 함께 로드됩니다.</p>
+     *
+     * @param size 반환할 최대 데이터셋 개수
+     * @return 도메인 Data와 연결된 프로젝트 수를 포함하는 DTO 목록 (인기도 내림차순, 최대 size)
      */
     @Override
     public List<DataWithProjectCountDto> getPopularDataSets(int size) {

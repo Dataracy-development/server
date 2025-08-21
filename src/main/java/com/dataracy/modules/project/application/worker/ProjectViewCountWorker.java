@@ -19,10 +19,12 @@ public class ProjectViewCountWorker {
     private final ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
 
     /**
-     * ProjectViewCountScheduler의 인스턴스를 생성하고, 프로젝트 조회수 캐시 포트와 DB, Elasticsearch 업데이트 포트를 주입합니다.
+     * ProjectViewCountWorker를 생성하고 동작에 필요한 포트를 주입합니다.
      *
-     * @param manageProjectViewCountPort 프로젝트 조회수 캐시(Redis)와 상호작용하는 포트
-     * @param updateProjectViewDbPort    프로젝트 조회수를 메인 데이터베이스에 반영하는 포트
+     * <p>주입되는 포트:
+     * - ManageProjectViewCountPort: Redis에 저장된 프로젝트 조회수 키/카운트를 관리.
+     * - UpdateProjectViewPort (DB 어댑터로 주입): Redis에서 꺼낸 증가분을 메인 데이터베이스에 반영.
+     * - ManageProjectProjectionTaskPort: 뷰 카운트 델타에 대한 프로젝션(예: 색인/비동기 작업) 작업을 큐에 등록.</p>
      */
     public ProjectViewCountWorker(
             ManageProjectViewCountPort manageProjectViewCountPort,
@@ -35,10 +37,14 @@ public class ProjectViewCountWorker {
     }
 
     /**
-     * Redis에 저장된 프로젝트별 조회수를 1분마다 데이터베이스와 Elasticsearch에 동기화합니다.
+     * Redis에 저장된 프로젝트별 조회수를 데이터베이스로 동기화하고 프로젝션 델타를 큐에 등록합니다.
      *
-     * 각 프로젝트의 조회수를 Redis에서 가져와 0보다 크면 데이터베이스와 Elasticsearch에 반영한 후, 해당 Redis 조회수를 초기화합니다.
-     * 개별 프로젝트 처리 중 예외가 발생해도 전체 동기화 작업은 계속 진행됩니다.
+     * Redis에 저장된 모든 "PROJECT" 조회수 키를 조회하여 각 키에 대해 원자적으로 카운트를 팝(pop)합니다.
+     * 팝한 값이 null이거나 0보다 작거나 같으면 무시하고, 양수인 경우에는 데이터베이스의 조회수를 증가시키고
+     * 프로젝션(검색 색인 등) 업데이트를 위한 델타를 대기열에 등록합니다.
+     *
+     * 개별 프로젝트 처리 중 발생한 예외는 잡아서 로깅하며 다음 키 처리를 계속합니다.
+     * 메서드는 스케줄러로 주기적으로 실행되며 트랜잭션 범위에서 동작합니다 (현재 fixedDelay = 20 * 1000).
      */
     @Scheduled(fixedDelay = 20 * 1000)
     @Transactional

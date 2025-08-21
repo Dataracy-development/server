@@ -64,17 +64,18 @@ public class DataReadDtoMapper {
     }
 
     /**
-     * 데이터셋 도메인 객체와 관련 라벨 및 연결 프로젝트 수를 받아 인기 데이터셋 응답 DTO로 변환합니다.
+     * Data 도메인 객체와 사용자·라벨 정보를 결합해 인기 데이터셋 조회용 PopularDataResponse를 생성합니다.
      *
-     * 데이터셋, 사용자 이름, 주제/데이터 소스/데이터 타입 라벨, 연결된 프로젝트 수를 조합하여
-     * 인기 데이터셋 정보를 담은 PopularDataResponse 객체를 생성합니다.
+     * 전달된 Data 객체의 식별자·제목·기간·설명·썸네일·다운로드수·크기(bytes)·메타데이터(행/열 수)·생성일과
+     * 추가로 제공된 username, topicLabel, dataSourceLabel, dataTypeLabel, 연결된 프로젝트 수를 포함한 DTO를 반환합니다.
      *
-     * @param username 데이터셋과 연관된 사용자 이름
-     * @param topicLabel 데이터셋의 주제 라벨
-     * @param dataSourceLabel 데이터셋의 데이터 소스 라벨
-     * @param dataTypeLabel 데이터셋의 데이터 타입 라벨
-     * @param countConnectedProjects 해당 데이터셋과 연결된 프로젝트 수
-     * @return 인기 데이터셋 정보를 담은 PopularDataResponse DTO
+     * @param data 변환할 Data 도메인 객체
+     * @param username 데이터와 연관된 사용자 이름
+     * @param topicLabel 데이터의 주제 라벨
+     * @param dataSourceLabel 데이터의 출처(데이터 소스) 라벨
+     * @param dataTypeLabel 데이터의 타입 라벨
+     * @param countConnectedProjects 해당 데이터와 연결된 프로젝트 수
+     * @return 인기 데이터셋 정보를 담은 PopularDataResponse
      */
     public PopularDataResponse toResponseDto(
             Data data,
@@ -105,18 +106,13 @@ public class DataReadDtoMapper {
     }
 
     /**
-     * Data 도메인과 작성자·라벨 정보를 결합해 상세 조회용 DataDetailResponse DTO를 생성합니다.
+     * Data 도메인과 작성자·라벨 정보를 결합해 상세 조회용 DataDetailResponse를 생성합니다.
      *
-     * @param data 원본 Data 도메인 객체
-     * @param nickname 작성자 닉네임
-     * @param userProfileImageUrl 작성자 프로필 이미지 URL (없으면 null 가능)
-     * @param userIntroductionText 작성자 소개 문구 (없으면 null 가능)
-     * @param authorLabel 작성자 관련 라벨
-     * @param occupationLabel 작성자 직업 라벨
-     * @param topicLabel 데이터셋 주제 라벨
-     * @param dataSourceLabel 데이터 출처 라벨
-     * @param dataTypeLabel 데이터 유형 라벨
-     * @return 데이터의 상세 정보를 담은 DataDetailResponse DTO
+     * 해당 DTO는 데이터의 메타(행/열/프리뷰), 생성일 및 작성자 관련 표시 정보를 포함합니다.
+     *
+     * @param userProfileImageUrl 작성자 프로필 이미지 URL (없을 경우 null 허용)
+     * @param userIntroductionText 작성자 소개 문구 (없을 경우 null 허용)
+     * @return 데이터 상세 정보를 담은 {@link DataDetailResponse} 인스턴스
      */
     public DataDetailResponse toResponseDto(
             Data data,

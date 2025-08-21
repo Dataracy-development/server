@@ -54,12 +54,16 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
     }
 
     /**
-     * 지정된 프로젝트와 대상 유형에 대한 현재 조회수를 반환합니다.
-     *
-     * @param projectId 조회수를 조회할 프로젝트의 ID
-     * @param targetType 조회 대상의 유형
-     * @return 해당 프로젝트와 대상 유형의 조회수. 값이 없으면 0을 반환합니다.
-     */
+         * 지정된 프로젝트와 대상 유형의 조회수를 Redis에서 가져옵니다.
+         *
+         * <p>키 `viewCount:{targetType}:{projectId}`의 값을 읽어 Long으로 반환합니다. 키가 존재하지 않으면 0L을 반환합니다.</p>
+         *
+         * @param projectId 조회수를 조회할 프로젝트의 ID
+         * @param targetType 조회 대상의 유형
+         * @return 해당 프로젝트와 대상 유형의 조회수(키가 없으면 0L)
+         * @throws CommonException REDIS_CONNECTION_FAILURE - Redis 연결 실패 시
+         * @throws CommonException DATA_ACCESS_EXCEPTION - Redis 데이터 접근 중 오류 발생 시
+         */
     @Override
     public Long getViewCount(Long projectId, String targetType) {
         try {
@@ -115,11 +119,13 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
     }
 
     /**
-     * 지정된 대상 ID와 타입에 해당하는 조회수 카운트 Redis 키를 삭제합니다.
+     * 지정된 대상 유형과 ID에 대응하는 조회수 Redis 키(viewCount:{targetType}:{targetId})를 삭제합니다.
      *
-     * @param targetId 조회수 카운트를 삭제할 대상의 ID
-     * @param targetType 조회수 카운트를 삭제할 대상의 타입
-     * @throws CommonException Redis 연결 실패 또는 데이터 접근 예외 발생 시 예외가 발생합니다.
+     * 삭제 작업 중 Redis 연결 실패 또는 데이터 접근 오류가 발생하면 CommonException으로 래핑되어 전파됩니다.
+     *
+     * @param targetId   조회수 키를 삭제할 대상 ID
+     * @param targetType 조회수 키에 사용된 대상 타입
+     * @throws CommonException Redis 연결 실패 또는 데이터 접근 예외 발생 시 발생
      */
     @Override
     public void clearViewCount(Long targetId, String targetType) {
@@ -135,6 +141,18 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
         }
     }
 
+    /**
+     * 지정한 대상의 조회수를 Redis에서 원자적으로 꺼내어 삭제(pop)합니다.
+     *
+     * 대상 키(viewCount:{targetType}:{projectId})에 저장된 값을 가져와 키를 삭제한 뒤 해당 값을 Long으로 반환합니다.
+     * 값이 존재하지 않거나 숫자 파싱에 실패하면 0L을 반환합니다.
+     *
+     * @param projectId  조회수를 팝할 대상의 ID
+     * @param targetType 키에 사용되는 대상 타입(예: "project")
+     * @return 팝된 조회수(Long). 키가 없거나 값이 손상된 경우 0L을 반환합니다.
+     * @throws CommonException REDIS_CONNECTION_FAILURE - Redis 연결 실패 시
+     * @throws CommonException DATA_ACCESS_EXCEPTION - Redis 접근 중 기타 데이터 오류 발생 시
+     */
     @Override
     public Long popViewCount(Long projectId, String targetType) {
         String key = String.format("viewCount:%s:%s", targetType, projectId);
