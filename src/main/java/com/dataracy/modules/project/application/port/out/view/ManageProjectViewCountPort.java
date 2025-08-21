@@ -36,4 +36,13 @@ public interface ManageProjectViewCountPort {
      * @param targetType 조회수를 초기화할 대상의 유형
      */
     void clearViewCount(Long targetId, String targetType);
+
+    /**
+     * 지정된 프로젝트와 대상 유형에 대한 현재 조회수를 반환하고 초기화한다.
+     *
+     * @param projectId 조회수를 확인할 프로젝트의 ID
+     * @param targetType 조회수를 확인할 대상 유형
+     * @return 해당 프로젝트와 대상 유형의 현재 조회수
+     */
+    Long popViewCount(Long projectId, String targetType);
 }

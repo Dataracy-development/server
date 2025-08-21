@@ -148,4 +148,23 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
+
+    @Override
+    public Long popViewCount(Long projectId, String targetType) {
+        String key = String.format("viewCount:%s:%s", targetType, projectId);
+
+        try {
+            return redisTemplate.execute(connection -> {
+                byte[] raw = connection.stringCommands().getDel(key.getBytes());
+                if (raw == null) return 0L;
+                return Long.parseLong(new String(raw));
+            }, true);
+        } catch (RedisConnectionFailureException e) {
+            LoggerFactory.redis().logError(key, "레디스 서버 연결에 실패했습니다.", e);
+            throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+        } catch (DataAccessException e) {
+            LoggerFactory.redis().logError(key, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+        }
+    }
 }
