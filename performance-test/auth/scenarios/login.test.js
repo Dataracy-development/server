@@ -2,6 +2,10 @@ import http from 'k6/http';
 import {check, sleep} from 'k6';
 import {SharedArray} from 'k6/data';
 
+/**
+ * 로그인 시나리오
+ */
+
 // ====================
 // 공통 설정
 // ====================
@@ -180,4 +184,4 @@ export function spike() { scenarioExec(); }
 export function capacity() { scenarioExec(); }
 
 // ============ 실행 예시 ============
-// k6 run -e SCENARIO=smoke -e BASE_URL=http://localhost:8080 -e AUTH_MODE=prod -e EMAIL=wnsgudAws@gmail.com -e PASSWORD=juuuunny123@ performance-test/auth/scenarios/login.test.js
+// k6 run -e SCENARIO=smoke -e BASE_URL=http://localhost:8080 -e AUTH_MODE=dev -e EMAIL=test@gmail.com -e PASSWORD=test123@ performance-test/auth/scenarios/login.test.js
