@@ -1,0 +1,130 @@
+package com.dataracy.modules.filestorage.adapter.s3;
+
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.*;
+import com.dataracy.modules.filestorage.domain.exception.S3UploadException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URL;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AwsS3FileStorageAdapterTest {
+
+    @Mock AmazonS3 amazonS3;
+    @Mock MultipartFile file;
+
+    @InjectMocks AwsS3FileStorageAdapter adapter;
+
+    @Captor ArgumentCaptor<PutObjectRequest> putCaptor;
+
+    @BeforeEach
+    void init() {
+        ReflectionTestUtils.setField(adapter, "bucket", "my-bucket");
+    }
+
+    @Test
+    @DisplayName("upload_should_putObject_and_return_url")
+    void upload_should_putObject_and_return_url() throws Exception {
+        // given
+        given(file.getSize()).willReturn(3L);
+        given(file.getContentType()).willReturn("image/jpeg");
+        given(file.getInputStream()).willReturn(new ByteArrayInputStream(new byte[]{1, 2, 3}));
+        given(amazonS3.getUrl("my-bucket", "k")).willReturn(new URL("https://bucket/k"));
+
+        // when
+        String url = adapter.upload("k", file);
+
+        // then
+        assertThat(url).isEqualTo("https://bucket/k");
+        then(amazonS3).should().putObject(putCaptor.capture());
+        PutObjectRequest req = putCaptor.getValue();
+        assertThat(req.getBucketName()).isEqualTo("my-bucket");
+        assertThat(req.getKey()).isEqualTo("k");
+        ObjectMetadata md = req.getMetadata();
+        assertThat(md.getContentLength()).isEqualTo(3L);
+        assertThat(md.getContentType()).isEqualTo("image/jpeg");
+    }
+
+    @Test
+    @DisplayName("download_should_fetch_and_return_stream")
+    void download_should_fetch_and_return_stream() throws Exception {
+        // given
+        String url = "https://bucket/k";
+        given(amazonS3.getUrl("my-bucket", "")).willReturn(new URL("https://bucket/"));
+
+        S3Object s3Object = mock(S3Object.class);
+        given(amazonS3.getObject("my-bucket", "k")).willReturn(s3Object);
+
+        // 여기서 AWS 제공 타입으로 감싸주기
+        S3ObjectInputStream s3is =
+                new S3ObjectInputStream(new ByteArrayInputStream("abc".getBytes()), null);
+
+        given(s3Object.getObjectContent()).willReturn(s3is);
+
+        // when
+        InputStream is = adapter.download(url);
+
+        // then
+        assertThat(is.readAllBytes()).isEqualTo("abc".getBytes());
+        then(amazonS3).should().getObject("my-bucket", "k");
+    }
+
+    @Test
+    @DisplayName("delete_should_call_deleteObject")
+    void delete_should_call_deleteObject() throws Exception {
+        // given
+        String url = "https://bucket/k";
+        given(amazonS3.getUrl("my-bucket", "")).willReturn(new URL("https://bucket/"));
+
+        // when
+        adapter.delete(url);
+
+        // then
+        then(amazonS3).should().deleteObject("my-bucket", "k");
+    }
+
+    @Test
+    @DisplayName("@PostConstruct_validateProperties_should_throw_when_bucket_blank")
+    void validateProperties_should_throw_when_bucket_blank() {
+        // given
+        ReflectionTestUtils.setField(adapter, "bucket", "   ");
+
+        // when
+        S3UploadException ex = catchThrowableOfType(adapter::validateProperties, S3UploadException.class);
+
+        // then
+        assertThat(ex).isNotNull();
+    }
+
+    @Test
+    @DisplayName("getPreSignedUrl_should_generate_via_S3")
+    void getPreSignedUrl_should_generate_via_S3() throws Exception {
+        // given
+        String fileUrl = "https://bucket/k";
+        given(amazonS3.getUrl("my-bucket", "")).willReturn(new URL("https://bucket/"));
+        given(amazonS3.generatePresignedUrl(any(GeneratePresignedUrlRequest.class)))
+                .willReturn(new URL("https://signed"));
+
+        // when
+        String pre = adapter.getPreSignedUrl(fileUrl, 120);
+
+        // then
+        assertThat(pre).isEqualTo("https://signed");
+        then(amazonS3).should().generatePresignedUrl(any(GeneratePresignedUrlRequest.class));
+    }
+}
