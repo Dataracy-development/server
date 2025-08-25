@@ -1,0 +1,55 @@
+package com.dataracy.modules.user.adapter.jpa.impl.query;
+
+import com.dataracy.modules.user.adapter.jpa.entity.UserEntity;
+import com.dataracy.modules.user.adapter.jpa.repository.UserJpaRepository;
+import com.dataracy.modules.user.domain.enums.ProviderType;
+import com.dataracy.modules.user.domain.enums.RoleType;
+import com.dataracy.modules.user.domain.model.User;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class UserQueryDbAdapterTest {
+
+    @Mock UserJpaRepository userJpaRepository;
+    @InjectMocks UserQueryDbAdapter adapter;
+
+    private UserEntity entity() {
+        return UserEntity.of(
+                ProviderType.LOCAL, "pid", RoleType.ROLE_USER,
+                "u@test.com", "pw", "nick", 1L,
+                null, null, "img.png", "intro", true, false
+        );
+    }
+
+    @Test
+    @DisplayName("findUserById: 존재할 때 Optional 반환")
+    void findUserById_success() {
+        given(userJpaRepository.findById(1L)).willReturn(Optional.of(entity()));
+
+        Optional<User> result = adapter.findUserById(1L);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getNickname()).isEqualTo("nick");
+    }
+
+    @Test
+    @DisplayName("findUserByEmail: 존재하지 않으면 empty")
+    void findUserByEmail_empty() {
+        given(userJpaRepository.findByEmail("x@test.com")).willReturn(Optional.empty());
+
+        Optional<User> result = adapter.findUserByEmail("x@test.com");
+
+        assertThat(result).isEmpty();
+    }
+}
+
