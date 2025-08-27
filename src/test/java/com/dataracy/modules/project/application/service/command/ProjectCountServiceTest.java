@@ -17,65 +17,67 @@ import static org.mockito.Mockito.never;
 @ExtendWith(MockitoExtension.class)
 class ProjectCountServiceTest {
 
-    @Mock UpdateProjectCommentPort updateProjectCommentDbPort;
-    @Mock UpdateProjectLikePort updateProjectLikeDbPort;
-    @Mock ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
+    @Mock
+    private UpdateProjectCommentPort updateProjectCommentDbPort;
 
-    @InjectMocks ProjectCountService service;
+    @Mock
+    private UpdateProjectLikePort updateProjectLikeDbPort;
+
+    @Mock
+    private ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
+
+    @InjectMocks
+    private ProjectCountService service;
 
     @Test
-    @DisplayName("increaseCommentCount_should_update_db_and_enqueue_projection_delta")
-    void increaseCommentCount_should_update_db_and_enqueue_projection_delta() {
+    @DisplayName("댓글 수 증가 성공")
+    void increaseCommentCountSuccess() {
         // given
         Long projectId = 10L;
 
-        // when
+        // when & then
         assertThatNoException().isThrownBy(() -> service.increaseCommentCount(projectId));
 
-        // then
         then(updateProjectCommentDbPort).should().increaseCommentCount(projectId);
         then(manageProjectProjectionTaskPort).should().enqueueCommentDelta(projectId, 1);
         then(updateProjectLikeDbPort).should(never()).increaseLikeCount(projectId);
     }
 
     @Test
-    @DisplayName("decreaseCommentCount_should_update_db_and_enqueue_projection_delta_minus1")
-    void decreaseCommentCount_should_update_db_and_enqueue_projection_delta_minus1() {
+    @DisplayName("댓글 수 감소 성공")
+    void decreaseCommentCountSuccess() {
         // given
         Long projectId = 11L;
 
-        // when
+        // when & then
         assertThatNoException().isThrownBy(() -> service.decreaseCommentCount(projectId));
 
-        // then
         then(updateProjectCommentDbPort).should().decreaseCommentCount(projectId);
         then(manageProjectProjectionTaskPort).should().enqueueCommentDelta(projectId, -1);
     }
 
     @Test
-    @DisplayName("increaseLikeCount_should_update_db_and_enqueue_projection_delta")
-    void increaseLikeCount_should_update_db_and_enqueue_projection_delta() {
+    @DisplayName("좋아요 수 증가 성공")
+    void increaseLikeCountSuccess() {
         // given
         Long projectId = 12L;
 
-        // when
+        // when & then
         assertThatNoException().isThrownBy(() -> service.increaseLikeCount(projectId));
 
-        // then
         then(updateProjectLikeDbPort).should().increaseLikeCount(projectId);
         then(manageProjectProjectionTaskPort).should().enqueueLikeDelta(projectId, 1);
     }
 
     @Test
-    @DisplayName("decreaseLikeCount_should_update_db_and_enqueue_projection_delta_minus1")
-    void decreaseLikeCount_should_update_db_and_enqueue_projection_delta_minus1() {
+    @DisplayName("좋아요 수 감소 성공")
+    void decreaseLikeCountSuccess() {
         // given
         Long projectId = 13L;
 
-        // when
+        // when & then
         assertThatNoException().isThrownBy(() -> service.decreaseLikeCount(projectId));
 
-        // then
         then(updateProjectLikeDbPort).should().decreaseLikeCount(projectId);
         then(manageProjectProjectionTaskPort).should().enqueueLikeDelta(projectId, -1);
     }

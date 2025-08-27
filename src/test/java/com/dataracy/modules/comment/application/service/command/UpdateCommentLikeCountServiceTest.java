@@ -3,102 +3,120 @@ package com.dataracy.modules.comment.application.service.command;
 import com.dataracy.modules.comment.application.port.out.command.update.UpdateCommentLikePort;
 import com.dataracy.modules.comment.domain.exception.CommentException;
 import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class UpdateCommentLikeCountServiceTest {
 
+    @Mock
     private UpdateCommentLikePort updateCommentLikePort;
+
+    @InjectMocks
     private UpdateCommentLikeCountService service;
 
-    @BeforeEach
-    void setup() {
-        updateCommentLikePort = mock(UpdateCommentLikePort.class);
-        service = new UpdateCommentLikeCountService(updateCommentLikePort);
+    @Nested
+    @DisplayName("좋아요 증가")
+    class IncreaseLike {
+
+        @Test
+        @DisplayName("좋아요 증가 성공")
+        void increaseLikeCountSuccess() {
+            // given
+            willDoNothing().given(updateCommentLikePort).increaseLikeCount(1L);
+
+            // when
+            service.increaseLikeCount(1L);
+
+            // then
+            then(updateCommentLikePort).should().increaseLikeCount(1L);
+        }
+
+        @Test
+        @DisplayName("좋아요 증가 시 대상 댓글이 없으면 실패 → NOT_FOUND_COMMENT")
+        void increaseLikeCountShouldThrowWhenNotFound() {
+            // given
+            willThrow(new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
+                    .given(updateCommentLikePort).increaseLikeCount(999L);
+
+            // when & then
+            CommentException ex = catchThrowableOfType(
+                    () -> service.increaseLikeCount(999L),
+                    CommentException.class
+            );
+            assertThat(ex.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
+        }
+
+        @Test
+        @DisplayName("좋아요 증가 시 프로젝트와 댓글 불일치 → MISMATCH_PROJECT_COMMENT")
+        void increaseLikeCountShouldThrowWhenProjectMismatch() {
+            // given
+            willThrow(new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
+                    .given(updateCommentLikePort).increaseLikeCount(100L);
+
+            // when & then
+            CommentException ex = catchThrowableOfType(
+                    () -> service.increaseLikeCount(100L),
+                    CommentException.class
+            );
+            assertThat(ex.getErrorCode()).isEqualTo(CommentErrorStatus.MISMATCH_PROJECT_COMMENT);
+        }
     }
 
-    @Test
-    @DisplayName("좋아요 증가 성공")
-    void increaseLikeCount() {
-        willDoNothing().given(updateCommentLikePort).increaseLikeCount(1L);
+    @Nested
+    @DisplayName("좋아요 감소")
+    class DecreaseLike {
 
-        service.increaseLikeCount(1L);
+        @Test
+        @DisplayName("좋아요 감소 성공")
+        void decreaseLikeCountSuccess() {
+            // given
+            willDoNothing().given(updateCommentLikePort).decreaseLikeCount(1L);
 
-        then(updateCommentLikePort).should().increaseLikeCount(1L);
-    }
+            // when
+            service.decreaseLikeCount(1L);
 
-    @Test
-    @DisplayName("좋아요 증가 시 대상 댓글이 없으면 실패 → NOT_FOUND_COMMENT")
-    void increaseLikeCountFailNotFound() {
-        willThrow(new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
-                .given(updateCommentLikePort).increaseLikeCount(999L);
+            // then
+            then(updateCommentLikePort).should().decreaseLikeCount(1L);
+        }
 
-        CommentException ex = catchThrowableOfType(
-                () -> service.increaseLikeCount(999L),
-                CommentException.class
-        );
+        @Test
+        @DisplayName("좋아요 감소 시 대상 댓글이 없으면 실패 → NOT_FOUND_COMMENT")
+        void decreaseLikeCountShouldThrowWhenNotFound() {
+            // given
+            willThrow(new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
+                    .given(updateCommentLikePort).decreaseLikeCount(999L);
 
-        assertThat(ex.getErrorCode())
-                .isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
-    }
+            // when & then
+            CommentException ex = catchThrowableOfType(
+                    () -> service.decreaseLikeCount(999L),
+                    CommentException.class
+            );
+            assertThat(ex.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
+        }
 
-    @Test
-    @DisplayName("좋아요 증가 시 프로젝트와 댓글 불일치 → MISMATCH_PROJECT_COMMENT")
-    void increaseLikeCountFailMismatchProject() {
-        willThrow(new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
-                .given(updateCommentLikePort).increaseLikeCount(100L);
+        @Test
+        @DisplayName("좋아요 감소 시 프로젝트와 댓글 불일치 → MISMATCH_PROJECT_COMMENT")
+        void decreaseLikeCountShouldThrowWhenProjectMismatch() {
+            // given
+            willThrow(new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
+                    .given(updateCommentLikePort).decreaseLikeCount(100L);
 
-        CommentException ex = catchThrowableOfType(
-                () -> service.increaseLikeCount(100L),
-                CommentException.class
-        );
-
-        assertThat(ex.getErrorCode())
-                .isEqualTo(CommentErrorStatus.MISMATCH_PROJECT_COMMENT);
-    }
-
-    @Test
-    @DisplayName("좋아요 감소 성공")
-    void decreaseLikeCount() {
-        willDoNothing().given(updateCommentLikePort).decreaseLikeCount(1L);
-
-        service.decreaseLikeCount(1L);
-
-        then(updateCommentLikePort).should().decreaseLikeCount(1L);
-    }
-
-    @Test
-    @DisplayName("좋아요 감소 시 대상 댓글이 없으면 실패 → NOT_FOUND_COMMENT")
-    void decreaseLikeCountFailNotFound() {
-        willThrow(new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
-                .given(updateCommentLikePort).decreaseLikeCount(999L);
-
-        CommentException ex = catchThrowableOfType(
-                () -> service.decreaseLikeCount(999L),
-                CommentException.class
-        );
-
-        assertThat(ex.getErrorCode())
-                .isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
-    }
-
-    @Test
-    @DisplayName("좋아요 감소 시 프로젝트와 댓글 불일치 → MISMATCH_PROJECT_COMMENT")
-    void decreaseLikeCountFailMismatchProject() {
-        willThrow(new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
-                .given(updateCommentLikePort).decreaseLikeCount(100L);
-
-        CommentException ex = catchThrowableOfType(
-                () -> service.decreaseLikeCount(100L),
-                CommentException.class
-        );
-
-        assertThat(ex.getErrorCode())
-                .isEqualTo(CommentErrorStatus.MISMATCH_PROJECT_COMMENT);
+            // when & then
+            CommentException ex = catchThrowableOfType(
+                    () -> service.decreaseLikeCount(100L),
+                    CommentException.class
+            );
+            assertThat(ex.getErrorCode()).isEqualTo(CommentErrorStatus.MISMATCH_PROJECT_COMMENT);
+        }
     }
 }

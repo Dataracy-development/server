@@ -4,13 +4,13 @@ import com.dataracy.modules.like.domain.enums.TargetType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class LikeTest {
 
     @Test
-    @DisplayName("of_should_build_like_with_all_fields")
-    void of_should_build_like_with_all_fields() {
+    @DisplayName("좋아요 모델")
+    void ofShouldBuildLikeWithAllFields() {
         // given
         Long id = 10L;
         Long targetId = 33L;

@@ -15,7 +15,7 @@ class OccupationDtoMapperTest {
 
     @Test
     @DisplayName("toResponseDto(single): 성공 - 도메인에서 DTO로 매핑")
-    void toResponseDto_single_success() {
+    void toResponseDtoSingleSuccess() {
         // given
         Occupation domain = new Occupation(1L, "v", "l");
 
@@ -30,7 +30,7 @@ class OccupationDtoMapperTest {
 
     @Test
     @DisplayName("toResponseDto(list): 성공 - 리스트 변환")
-    void toResponseDto_list_success() {
+    void toResponseDtoListSuccess() {
         // given
         List<Occupation> domains = List.of(new Occupation(1L,"v1","l1"), new Occupation(2L,"v2","l2"));
 

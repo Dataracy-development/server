@@ -24,19 +24,22 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class EmailCommandServiceTest {
 
-    @Mock private SendEmailPort sendEmailPort;
-    @Mock private ManageEmailCodePort manageEmailCodePort;
+    @Mock
+    private SendEmailPort sendEmailPort;
+
+    @Mock
+    private ManageEmailCodePort manageEmailCodePort;
 
     @InjectMocks
     private EmailCommandService service;
 
     @Nested
-    @DisplayName("sendEmailVerificationCode")
+    @DisplayName("이메일 인증 코드 전송")
     class SendEmailVerificationCode {
 
-        @ParameterizedTest(name = "목적 {0} 일 때 성공 플로우")
+        @ParameterizedTest(name = "[{index}] {0} 목적 → 성공 플로우")
         @EnumSource(EmailVerificationType.class)
-        @DisplayName("성공: 6자리 코드를 생성해 메일 발송 후 저장한다(순서 검증 포함)")
+        @DisplayName("성공: 6자리 코드를 생성하고 메일 발송 후 저장한다 (순서 검증 포함)")
         void success(EmailVerificationType type) {
             // given
             String email = "user@example.com";
@@ -49,13 +52,13 @@ class EmailCommandServiceTest {
             service.sendEmailVerificationCode(email, type);
 
             // then
-            // 메일 전송 호출에 대한 캡쳐
+            // 메일 발송 호출 캡처
             then(sendEmailPort).should().send(eq(email), subjectCap.capture(), bodyCap.capture());
-            // 코드 저장 호출에 대한 캡쳐
+            // 코드 저장 호출 캡처
             then(manageEmailCodePort).should().saveCode(eq(email), savedCodeCap.capture(), typeCap.capture());
 
             String savedCode = savedCodeCap.getValue();
-            assertThat(savedCode).matches("^\\d{6}$");       // 6자리 숫자 코드
+            assertThat(savedCode).matches("^\\d{6}$");  // 6자리 숫자
             assertThat(bodyCap.getValue()).contains(savedCode);
             assertThat(subjectCap.getValue()).isNotBlank();
             assertThat(typeCap.getValue()).isEqualTo(type);
@@ -67,7 +70,7 @@ class EmailCommandServiceTest {
         }
 
         @Test
-        @DisplayName("실패: 메일 발송 실패 시 EmailException을 던지고 저장 호출되지 않는다")
+        @DisplayName("실패: 메일 발송 실패 시 EmailException 발생, 저장 호출은 안 된다")
         void failsWhenSendFails() {
             // given
             String email = "user2@example.com";

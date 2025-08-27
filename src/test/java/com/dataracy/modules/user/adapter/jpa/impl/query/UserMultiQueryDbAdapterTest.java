@@ -20,8 +20,11 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserMultiQueryDbAdapterTest {
 
-    @Mock UserJpaRepository userJpaRepository;
-    @InjectMocks UserMultiQueryDbAdapter adapter;
+    @Mock
+    private UserJpaRepository userJpaRepository;
+
+    @InjectMocks
+    private UserMultiQueryDbAdapter adapter;
 
     private UserEntity entity() {
         return UserEntity.of(
@@ -32,35 +35,37 @@ class UserMultiQueryDbAdapterTest {
     }
 
     @Test
-    @DisplayName("findUsernamesByIds: 정상 조회")
-    void findUsernamesByIds() {
+    @DisplayName("사용자 이름 조회 성공")
+    void findUsernamesByIdsSuccess() {
         given(userJpaRepository.findAllById(anyList())).willReturn(List.of(entity()));
 
         Map<Long, String> map = adapter.findUsernamesByIds(List.of(1L));
 
         assertThat(map).isNotEmpty();
+        then(userJpaRepository).should().findAllById(anyList());
     }
 
     @Test
-    @DisplayName("findUserThumbnailsByIds: null 이미지 → 빈 문자열")
-    void findUserThumbnailsByIds() {
+    @DisplayName("썸네일 조회 - null일 경우 빈 문자열 반환")
+    void findUserThumbnailsByIdsNullImage() {
         UserEntity e = entity();
         given(userJpaRepository.findAllById(anyList())).willReturn(List.of(e));
 
         Map<Long, String> map = adapter.findUserThumbnailsByIds(List.of(1L));
 
         assertThat(map.values()).contains("");
+        then(userJpaRepository).should().findAllById(anyList());
     }
 
     @Test
-    @DisplayName("findUserAuthorLevelIds: null → 기본값 1")
-    void findUserAuthorLevelIds() {
+    @DisplayName("작성자 레벨 조회 - null이면 기본값 1 반환")
+    void findUserAuthorLevelIdsNullDefault() {
         UserEntity e = entity();
         given(userJpaRepository.findAllById(anyList())).willReturn(List.of(e));
 
         Map<Long, String> map = adapter.findUserAuthorLevelIds(List.of(1L));
 
         assertThat(map.values()).contains("1");
+        then(userJpaRepository).should().findAllById(anyList());
     }
 }
-

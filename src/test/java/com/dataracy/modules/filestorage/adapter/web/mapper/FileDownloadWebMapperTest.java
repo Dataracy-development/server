@@ -5,13 +5,13 @@ import com.dataracy.modules.filestorage.application.dto.response.GetPreSignedUrl
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class FileDownloadWebMapperTest {
 
     @Test
-    @DisplayName("toWebDto_should_map_fields")
-    void toWebDto_should_map_fields() {
+    @DisplayName("일시적으로 파일 다운로드 가능한 경로 반환")
+    void toWebDtoShouldMapFields() {
         // given
         FileDownloadWebMapper mapper = new FileDownloadWebMapper();
         GetPreSignedUrlResponse dto = new GetPreSignedUrlResponse("http://signed");

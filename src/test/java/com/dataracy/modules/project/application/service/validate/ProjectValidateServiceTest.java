@@ -17,13 +17,15 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class ProjectValidateServiceTest {
 
-    @Mock CheckProjectExistsByIdPort checkProjectExistsByIdPort;
+    @Mock
+    private CheckProjectExistsByIdPort checkProjectExistsByIdPort;
 
-    @InjectMocks ProjectValidateService service;
+    @InjectMocks
+    private ProjectValidateService service;
 
     @Test
-    @DisplayName("validateProject_should_pass_when_project_exists")
-    void validateProject_should_pass_when_project_exists() {
+    @DisplayName("프로젝트 검증 성공 - 존재하는 경우")
+    void validateProjectSuccess() {
         // given
         Long projectId = 1L;
         given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(true);
@@ -34,14 +36,17 @@ class ProjectValidateServiceTest {
     }
 
     @Test
-    @DisplayName("validateProject_should_throw_when_not_found")
-    void validateProject_should_throw_when_not_found() {
+    @DisplayName("프로젝트 검증 실패 - 존재하지 않는 경우 예외 발생")
+    void validateProjectFailWhenNotFound() {
         // given
         Long projectId = 2L;
         given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(false);
 
         // when
-        ProjectException ex = catchThrowableOfType(() -> service.validateProject(projectId), ProjectException.class);
+        ProjectException ex = catchThrowableOfType(
+                () -> service.validateProject(projectId),
+                ProjectException.class
+        );
 
         // then
         then(checkProjectExistsByIdPort).should().checkProjectExistsById(projectId);

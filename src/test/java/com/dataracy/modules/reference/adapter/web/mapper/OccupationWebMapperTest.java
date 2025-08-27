@@ -14,7 +14,7 @@ class OccupationWebMapperTest {
 
     @Test
     @DisplayName("toWebDto(single): 성공 - 필드 매핑")
-    void toWebDto_single_success() {
+    void toWebDtoSingleSuccess() {
         // given
         OccupationResponse src = new OccupationResponse(1L, "v", "l");
 
@@ -29,7 +29,7 @@ class OccupationWebMapperTest {
 
     @Test
     @DisplayName("toWebDto(all): 성공 - 리스트 매핑, null/빈 처리")
-    void toWebDto_all_success_and_nullsafe() {
+    void toWebDtoAllSuccessAndNullsafe() {
         // given
         AllOccupationsResponse src = new AllOccupationsResponse(java.util.List.of(new OccupationResponse(1L,"v1","l1"), new OccupationResponse(2L,"v2","l2")));
 

@@ -22,143 +22,163 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-
 @ExtendWith(MockitoExtension.class)
 class AuthorLevelQueryServiceTest {
 
-    @Mock AuthorLevelPort authorlevelPort;
-    @Mock AuthorLevelDtoMapper authorlevelDtoMapper;
+    @Mock
+    private AuthorLevelPort authorLevelPort;
 
-    @InjectMocks AuthorLevelQueryService service;
+    @Mock
+    private AuthorLevelDtoMapper authorLevelDtoMapper;
+
+    @InjectMocks
+    private AuthorLevelQueryService service;
 
     @Test
-    @DisplayName("findAllAuthorLevels: 성공 - 전체 목록 반환")
-    void findAllAuthorLevels_success() {
+    @DisplayName("작성자 레벨 전체 조회 성공")
+    void findAllAuthorLevelsSuccess() {
         // given
-        List<AuthorLevel> domainList = List.of(new AuthorLevel(1L, "v1", "l1"), new AuthorLevel(2L, "v2", "l2"));
-        AllAuthorLevelsResponse mapped = new AllAuthorLevelsResponse(List.of(new AuthorLevelResponse(1L, "v1", "l1"), new AuthorLevelResponse(2L, "v2", "l2")));
-        given(authorlevelPort.findAllAuthorLevels()).willReturn(domainList);
-        given(authorlevelDtoMapper.toResponseDto(domainList)).willReturn(mapped);
+        List<AuthorLevel> domainList = List.of(
+                new AuthorLevel(1L, "v1", "l1"),
+                new AuthorLevel(2L, "v2", "l2")
+        );
+        AllAuthorLevelsResponse mapped = new AllAuthorLevelsResponse(
+                List.of(
+                        new AuthorLevelResponse(1L, "v1", "l1"),
+                        new AuthorLevelResponse(2L, "v2", "l2")
+                )
+        );
+        given(authorLevelPort.findAllAuthorLevels()).willReturn(domainList);
+        given(authorLevelDtoMapper.toResponseDto(domainList)).willReturn(mapped);
 
         // when
         AllAuthorLevelsResponse result = service.findAllAuthorLevels();
 
         // then
         assertThat(result).isSameAs(mapped);
-        then(authorlevelPort).should().findAllAuthorLevels();
-        then(authorlevelDtoMapper).should().toResponseDto(domainList);
+        then(authorLevelPort).should().findAllAuthorLevels();
+        then(authorLevelDtoMapper).should().toResponseDto(domainList);
     }
 
     @Test
-    @DisplayName("findAuthorLevel: 성공 - 단건 반환")
-    void findAuthorLevel_success() {
+    @DisplayName("작성자 레벨 단건 조회 성공")
+    void findAuthorLevelSuccess() {
         // given
         Long id = 10L;
         AuthorLevel domain = new AuthorLevel(id, "v", "l");
         AuthorLevelResponse mapped = new AuthorLevelResponse(id, "v", "l");
-        given(authorlevelPort.findAuthorLevelById(id)).willReturn(Optional.of(domain));
-        given(authorlevelDtoMapper.toResponseDto(domain)).willReturn(mapped);
+        given(authorLevelPort.findAuthorLevelById(id)).willReturn(Optional.of(domain));
+        given(authorLevelDtoMapper.toResponseDto(domain)).willReturn(mapped);
 
         // when
         AuthorLevelResponse result = service.findAuthorLevel(id);
 
         // then
         assertThat(result).isSameAs(mapped);
-        then(authorlevelPort).should().findAuthorLevelById(id);
-        then(authorlevelDtoMapper).should().toResponseDto(domain);
+        then(authorLevelPort).should().findAuthorLevelById(id);
+        then(authorLevelDtoMapper).should().toResponseDto(domain);
     }
 
     @Test
-    @DisplayName("findAuthorLevel: 실패 - 존재하지 않으면 ReferenceException")
-    void findAuthorLevel_notFound_throws() {
+    @DisplayName("작성자 레벨 단건 조회 실패 - 없을 때 예외 발생")
+    void findAuthorLevelFailWhenNotFound() {
         // given
         Long id = 999L;
-        given(authorlevelPort.findAuthorLevelById(id)).willReturn(Optional.empty());
+        given(authorLevelPort.findAuthorLevelById(id)).willReturn(Optional.empty());
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.findAuthorLevel(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.findAuthorLevel(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
-        then(authorlevelPort).should().findAuthorLevelById(id);
-        then(authorlevelDtoMapper).shouldHaveNoInteractions();
+        then(authorLevelPort).should().findAuthorLevelById(id);
+        then(authorLevelDtoMapper).shouldHaveNoInteractions();
     }
 
     @Test
-    @DisplayName("getLabelById: 성공 - 라벨 반환")
-    void getLabelById_success() {
+    @DisplayName("작성자 레벨 라벨 조회 성공")
+    void getLabelByIdSuccess() {
         // given
         Long id = 1L;
-        given(authorlevelPort.getLabelById(id)).willReturn(Optional.of("label"));
+        given(authorLevelPort.getLabelById(id)).willReturn(Optional.of("label"));
 
         // when
         String label = service.getLabelById(id);
 
         // then
         assertThat(label).isEqualTo("label");
-        then(authorlevelPort).should().getLabelById(id);
+        then(authorLevelPort).should().getLabelById(id);
     }
 
     @Test
-    @DisplayName("getLabelById: 실패 - 없으면 ReferenceException")
-    void getLabelById_notFound_throws() {
+    @DisplayName("작성자 레벨 라벨 조회 실패 - 없을 때 예외 발생")
+    void getLabelByIdFailWhenNotFound() {
         // given
         Long id = 404L;
-        given(authorlevelPort.getLabelById(id)).willReturn(Optional.empty());
+        given(authorLevelPort.getLabelById(id)).willReturn(Optional.empty());
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.getLabelById(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.getLabelById(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
-        then(authorlevelPort).should().getLabelById(id);
+        then(authorLevelPort).should().getLabelById(id);
     }
 
     @Test
-    @DisplayName("validateAuthorLevel: 성공 - 존재하면 예외 없음")
-    void validateAuthorLevel_success() {
+    @DisplayName("작성자 레벨 검증 성공 - 존재할 때")
+    void validateAuthorLevelSuccess() {
         // given
         Long id = 1L;
-        given(authorlevelPort.existsAuthorLevelById(id)).willReturn(true);
+        given(authorLevelPort.existsAuthorLevelById(id)).willReturn(true);
 
         // when
         service.validateAuthorLevel(id);
 
         // then
-        then(authorlevelPort).should().existsAuthorLevelById(id);
+        then(authorLevelPort).should().existsAuthorLevelById(id);
     }
 
     @Test
-    @DisplayName("validateAuthorLevel: 실패 - 존재하지 않으면 ReferenceException")
-    void validateAuthorLevel_notFound_throws() {
+    @DisplayName("작성자 레벨 검증 실패 - 없을 때 예외 발생")
+    void validateAuthorLevelFailWhenNotFound() {
         // given
         Long id = 2L;
-        given(authorlevelPort.existsAuthorLevelById(id)).willReturn(false);
+        given(authorLevelPort.existsAuthorLevelById(id)).willReturn(false);
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.validateAuthorLevel(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.validateAuthorLevel(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
-        then(authorlevelPort).should().existsAuthorLevelById(id);
+        then(authorLevelPort).should().existsAuthorLevelById(id);
     }
 
     @Test
-    @DisplayName("getLabelsByIds: 성공 - 비어있으면 빈 맵, 값 있으면 위임 및 반환")
-    void getLabelsByIds_success_and_emptyHandling() {
+    @DisplayName("작성자 레벨 라벨 다건 조회 성공 및 빈 값 처리")
+    void getLabelsByIdsSuccessAndEmptyHandling() {
         // given - empty/null
         assertThat(service.getLabelsByIds(null)).isEmpty();
         assertThat(service.getLabelsByIds(List.of())).isEmpty();
 
         // given - values
         List<Long> ids = List.of(1L, 2L);
-        given(authorlevelPort.getLabelsByIds(ids)).willReturn(Map.of(1L, "L1", 2L, "L2"));
+        given(authorLevelPort.getLabelsByIds(ids)).willReturn(Map.of(1L, "L1", 2L, "L2"));
 
         // when
         Map<Long, String> result = service.getLabelsByIds(ids);
 
         // then
         assertThat(result).containsEntry(1L, "L1").containsEntry(2L, "L2");
-        then(authorlevelPort).should().getLabelsByIds(ids);
+        then(authorLevelPort).should().getLabelsByIds(ids);
     }
 }

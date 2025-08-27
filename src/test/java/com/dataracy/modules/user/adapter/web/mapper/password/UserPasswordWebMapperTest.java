@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserPasswordWebMapperTest {
 
-    UserPasswordWebMapper mapper = new UserPasswordWebMapper();
+    private UserPasswordWebMapper mapper = new UserPasswordWebMapper();
 
     @Test
     @DisplayName("toApplicationDto(Change): 웹 → 앱 매핑")

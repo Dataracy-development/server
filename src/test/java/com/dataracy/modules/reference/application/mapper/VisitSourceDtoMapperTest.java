@@ -15,7 +15,7 @@ class VisitSourceDtoMapperTest {
 
     @Test
     @DisplayName("toResponseDto(single): 성공 - 도메인에서 DTO로 매핑")
-    void toResponseDto_single_success() {
+    void toResponseDtoSingleSuccess() {
         // given
         VisitSource domain = new VisitSource(1L, "v", "l");
 
@@ -30,7 +30,7 @@ class VisitSourceDtoMapperTest {
 
     @Test
     @DisplayName("toResponseDto(list): 성공 - 리스트 변환")
-    void toResponseDto_list_success() {
+    void toResponseDtoListSuccess() {
         // given
         List<VisitSource> domains = List.of(new VisitSource(1L,"v1","l1"), new VisitSource(2L,"v2","l2"));
 

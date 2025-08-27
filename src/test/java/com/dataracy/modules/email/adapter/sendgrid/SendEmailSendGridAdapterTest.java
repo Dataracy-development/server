@@ -17,8 +17,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SendEmailSendGridAdapterTest {
@@ -36,7 +36,7 @@ class SendEmailSendGridAdapterTest {
     }
 
     @Nested
-    @DisplayName("send")
+    @DisplayName("이메일 보내기")
     class Send {
 
         @Test
@@ -47,20 +47,21 @@ class SendEmailSendGridAdapterTest {
             ok.setStatusCode(202);
             given(client.api(any(Request.class))).willReturn(ok);
 
-            // when
-            adapter.send("to@example.com", "title", "body");
+            // when & then
+            assertThatCode(() ->
+                    adapter.send("to@example.com", "title", "body")
+            ).doesNotThrowAnyException();
 
-            // then
+            // 요청이 올바르게 생성됐는지 검증
             then(client).should().api(argThat(req ->
                     req != null
                             && req.getMethod() == Method.POST
                             && "mail/send".equals(req.getEndpoint())
             ));
-            assertThatCode(() -> {}).doesNotThrowAnyException();
         }
 
         @Test
-        @DisplayName("실패: 202가 아닌 상태코드면 RuntimeException")
+        @DisplayName("실패: 202가 아닌 상태코드면 RuntimeException 발생")
         void failNon202() throws Exception {
             // given
             Response fail = new Response();
@@ -74,11 +75,13 @@ class SendEmailSendGridAdapterTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
+            assertThat(ex)
+                    .isNotNull()
+                    .hasMessageContaining("500");
         }
 
         @Test
-        @DisplayName("실패: IOException → RuntimeException wrap")
+        @DisplayName("실패: IOException 발생 시 RuntimeException으로 래핑된다")
         void ioException() throws Exception {
             // given
             willAnswer(inv -> { throw new IOException("io"); })
@@ -91,17 +94,19 @@ class SendEmailSendGridAdapterTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
-            assertThat(ex.getCause()).isInstanceOf(IOException.class);
+            assertThat(ex)
+                    .isNotNull()
+                    .hasCauseInstanceOf(IOException.class)
+                    .hasMessageContaining("io");
         }
     }
 
     @Nested
-    @DisplayName("@PostConstruct validateProperties")
+    @DisplayName("validateProperties 메서드")
     class ValidateProperties {
 
         @Test
-        @DisplayName("sender가 비어있으면 IllegalStateException")
+        @DisplayName("실패: sender가 비어있으면 IllegalStateException 발생")
         void blankSender() {
             // given
             ReflectionTestUtils.setField(adapter, "sender", "");
@@ -113,7 +118,9 @@ class SendEmailSendGridAdapterTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
+            assertThat(ex)
+                    .isNotNull()
+                    .hasMessageContaining("sender");
         }
     }
 }

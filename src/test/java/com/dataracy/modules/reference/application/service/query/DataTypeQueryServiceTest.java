@@ -25,139 +25,160 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class DataTypeQueryServiceTest {
 
-    @Mock DataTypePort datatypePort;
-    @Mock DataTypeDtoMapper datatypeDtoMapper;
+    @Mock
+    private DataTypePort dataTypePort;
 
-    @InjectMocks DataTypeQueryService service;
+    @Mock
+    private DataTypeDtoMapper dataTypeDtoMapper;
+
+    @InjectMocks
+    private DataTypeQueryService service;
 
     @Test
-    @DisplayName("findAllDataTypes: 성공 - 전체 목록 반환")
-    void findAllDataTypes_success() {
+    @DisplayName("데이터 타입 전체 조회 성공")
+    void findAllDataTypesSuccess() {
         // given
-        List<DataType> domainList = List.of(new DataType(1L, "v1", "l1"), new DataType(2L, "v2", "l2"));
-        AllDataTypesResponse mapped = new AllDataTypesResponse(List.of(new DataTypeResponse(1L, "v1", "l1"), new DataTypeResponse(2L, "v2", "l2")));
-        given(datatypePort.findAllDataTypes()).willReturn(domainList);
-        given(datatypeDtoMapper.toResponseDto(domainList)).willReturn(mapped);
+        List<DataType> domainList = List.of(
+                new DataType(1L, "v1", "l1"),
+                new DataType(2L, "v2", "l2")
+        );
+        AllDataTypesResponse mapped = new AllDataTypesResponse(
+                List.of(
+                        new DataTypeResponse(1L, "v1", "l1"),
+                        new DataTypeResponse(2L, "v2", "l2")
+                )
+        );
+        given(dataTypePort.findAllDataTypes()).willReturn(domainList);
+        given(dataTypeDtoMapper.toResponseDto(domainList)).willReturn(mapped);
 
         // when
         AllDataTypesResponse result = service.findAllDataTypes();
 
         // then
         assertThat(result).isSameAs(mapped);
-        then(datatypePort).should().findAllDataTypes();
-        then(datatypeDtoMapper).should().toResponseDto(domainList);
+        then(dataTypePort).should().findAllDataTypes();
+        then(dataTypeDtoMapper).should().toResponseDto(domainList);
     }
 
     @Test
-    @DisplayName("findDataType: 성공 - 단건 반환")
-    void findDataType_success() {
+    @DisplayName("데이터 타입 단건 조회 성공")
+    void findDataTypeSuccess() {
         // given
         Long id = 10L;
         DataType domain = new DataType(id, "v", "l");
         DataTypeResponse mapped = new DataTypeResponse(id, "v", "l");
-        given(datatypePort.findDataTypeById(id)).willReturn(Optional.of(domain));
-        given(datatypeDtoMapper.toResponseDto(domain)).willReturn(mapped);
+        given(dataTypePort.findDataTypeById(id)).willReturn(Optional.of(domain));
+        given(dataTypeDtoMapper.toResponseDto(domain)).willReturn(mapped);
 
         // when
         DataTypeResponse result = service.findDataType(id);
 
         // then
         assertThat(result).isSameAs(mapped);
-        then(datatypePort).should().findDataTypeById(id);
-        then(datatypeDtoMapper).should().toResponseDto(domain);
+        then(dataTypePort).should().findDataTypeById(id);
+        then(dataTypeDtoMapper).should().toResponseDto(domain);
     }
 
     @Test
-    @DisplayName("findDataType: 실패 - 존재하지 않으면 ReferenceException")
-    void findDataType_notFound_throws() {
+    @DisplayName("데이터 타입 단건 조회 실패 - 없을 때 예외 발생")
+    void findDataTypeFailWhenNotFound() {
         // given
         Long id = 999L;
-        given(datatypePort.findDataTypeById(id)).willReturn(Optional.empty());
+        given(dataTypePort.findDataTypeById(id)).willReturn(Optional.empty());
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.findDataType(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.findDataType(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
-        then(datatypePort).should().findDataTypeById(id);
-        then(datatypeDtoMapper).shouldHaveNoInteractions();
+        then(dataTypePort).should().findDataTypeById(id);
+        then(dataTypeDtoMapper).shouldHaveNoInteractions();
     }
 
     @Test
-    @DisplayName("getLabelById: 성공 - 라벨 반환")
-    void getLabelById_success() {
+    @DisplayName("데이터 타입 라벨 조회 성공")
+    void getLabelByIdSuccess() {
         // given
         Long id = 1L;
-        given(datatypePort.getLabelById(id)).willReturn(Optional.of("label"));
+        given(dataTypePort.getLabelById(id)).willReturn(Optional.of("label"));
 
         // when
         String label = service.getLabelById(id);
 
         // then
         assertThat(label).isEqualTo("label");
-        then(datatypePort).should().getLabelById(id);
+        then(dataTypePort).should().getLabelById(id);
     }
 
     @Test
-    @DisplayName("getLabelById: 실패 - 없으면 ReferenceException")
-    void getLabelById_notFound_throws() {
+    @DisplayName("데이터 타입 라벨 조회 실패 - 없을 때 예외 발생")
+    void getLabelByIdFailWhenNotFound() {
         // given
         Long id = 404L;
-        given(datatypePort.getLabelById(id)).willReturn(Optional.empty());
+        given(dataTypePort.getLabelById(id)).willReturn(Optional.empty());
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.getLabelById(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.getLabelById(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
-        then(datatypePort).should().getLabelById(id);
+        then(dataTypePort).should().getLabelById(id);
     }
 
     @Test
-    @DisplayName("validateDataType: 성공 - 존재하면 예외 없음")
-    void validateDataType_success() {
+    @DisplayName("데이터 타입 검증 성공 - 존재할 때")
+    void validateDataTypeSuccess() {
         // given
         Long id = 1L;
-        given(datatypePort.existsDataTypeById(id)).willReturn(true);
+        given(dataTypePort.existsDataTypeById(id)).willReturn(true);
 
         // when
         service.validateDataType(id);
 
         // then
-        then(datatypePort).should().existsDataTypeById(id);
+        then(dataTypePort).should().existsDataTypeById(id);
     }
 
     @Test
-    @DisplayName("validateDataType: 실패 - 존재하지 않으면 ReferenceException")
-    void validateDataType_notFound_throws() {
+    @DisplayName("데이터 타입 검증 실패 - 없을 때 예외 발생")
+    void validateDataTypeFailWhenNotFound() {
         // given
         Long id = 2L;
-        given(datatypePort.existsDataTypeById(id)).willReturn(false);
+        given(dataTypePort.existsDataTypeById(id)).willReturn(false);
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.validateDataType(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.validateDataType(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
-        then(datatypePort).should().existsDataTypeById(id);
+        then(dataTypePort).should().existsDataTypeById(id);
     }
 
     @Test
-    @DisplayName("getLabelsByIds: 성공 - 비어있으면 빈 맵, 값 있으면 위임 및 반환")
-    void getLabelsByIds_success_and_emptyHandling() {
+    @DisplayName("데이터 타입 라벨 다건 조회 성공 및 빈 값 처리")
+    void getLabelsByIdsSuccessAndEmptyHandling() {
         // given - empty/null
         assertThat(service.getLabelsByIds(null)).isEmpty();
         assertThat(service.getLabelsByIds(List.of())).isEmpty();
 
         // given - values
         List<Long> ids = List.of(1L, 2L);
-        given(datatypePort.getLabelsByIds(ids)).willReturn(Map.of(1L, "L1", 2L, "L2"));
+        given(dataTypePort.getLabelsByIds(ids)).willReturn(Map.of(1L, "L1", 2L, "L2"));
 
         // when
         Map<Long, String> result = service.getLabelsByIds(ids);
 
         // then
         assertThat(result).containsEntry(1L, "L1").containsEntry(2L, "L2");
-        then(datatypePort).should().getLabelsByIds(ids);
+        then(dataTypePort).should().getLabelsByIds(ids);
     }
 }

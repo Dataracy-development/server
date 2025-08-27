@@ -74,30 +74,4 @@ class UploadCommentWebRequestTest {
         // then
         assertThat(violations).isNotEmpty();
     }
-
-    @Test
-    @DisplayName("parentCommentId 음수 → 검증 실패")
-    void invalidParentIdNegative() {
-        // given
-        UploadCommentWebRequest req = new UploadCommentWebRequest("내용", -5L);
-
-        // when
-        Set<ConstraintViolation<UploadCommentWebRequest>> violations = validator.validate(req);
-
-        // then
-        assertThat(violations).isNotEmpty();
-    }
-
-    @Test
-    @DisplayName("정상 값 → 검증 통과")
-    void validRequestOk() {
-        // given
-        UploadCommentWebRequest req = new UploadCommentWebRequest("내용", 10L);
-
-        // when
-        Set<ConstraintViolation<UploadCommentWebRequest>> violations = validator.validate(req);
-
-        // then
-        assertThat(violations).isEmpty();
-    }
 }

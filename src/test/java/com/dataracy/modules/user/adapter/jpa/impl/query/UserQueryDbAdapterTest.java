@@ -20,8 +20,11 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserQueryDbAdapterTest {
 
-    @Mock UserJpaRepository userJpaRepository;
-    @InjectMocks UserQueryDbAdapter adapter;
+    @Mock
+    private UserJpaRepository userJpaRepository;
+
+    @InjectMocks
+    private UserQueryDbAdapter adapter;
 
     private UserEntity entity() {
         return UserEntity.of(
@@ -32,24 +35,25 @@ class UserQueryDbAdapterTest {
     }
 
     @Test
-    @DisplayName("findUserById: 존재할 때 Optional 반환")
-    void findUserById_success() {
+    @DisplayName("ID로 사용자 조회 성공")
+    void findUserByIdSuccess() {
         given(userJpaRepository.findById(1L)).willReturn(Optional.of(entity()));
 
         Optional<User> result = adapter.findUserById(1L);
 
         assertThat(result).isPresent();
         assertThat(result.get().getNickname()).isEqualTo("nick");
+        then(userJpaRepository).should().findById(1L);
     }
 
     @Test
-    @DisplayName("findUserByEmail: 존재하지 않으면 empty")
-    void findUserByEmail_empty() {
+    @DisplayName("이메일로 사용자 조회 실패 - 존재하지 않음")
+    void findUserByEmailEmpty() {
         given(userJpaRepository.findByEmail("x@test.com")).willReturn(Optional.empty());
 
         Optional<User> result = adapter.findUserByEmail("x@test.com");
 
         assertThat(result).isEmpty();
+        then(userJpaRepository).should().findByEmail("x@test.com");
     }
 }
-

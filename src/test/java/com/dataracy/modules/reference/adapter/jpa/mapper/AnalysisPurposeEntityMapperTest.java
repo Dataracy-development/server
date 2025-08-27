@@ -11,7 +11,7 @@ class AnalysisPurposeEntityMapperTest {
 
     @Test
     @DisplayName("toDomain: 성공 - 엔티티에서 도메인으로 변환")
-    void toDomain_success() {
+    void toDomainSuccess() {
         // given
         AnalysisPurposeEntity entity = AnalysisPurposeEntity.builder().id(1L).value("v").label("l").build();
 
@@ -26,7 +26,7 @@ class AnalysisPurposeEntityMapperTest {
 
     @Test
     @DisplayName("toEntity: 성공 - 도메인에서 엔티티로 변환 (id 제외)")
-    void toEntity_success() {
+    void toEntitySuccess() {
         // given
         AnalysisPurpose domain = new AnalysisPurpose(1L, "v", "l");
 
@@ -41,7 +41,7 @@ class AnalysisPurposeEntityMapperTest {
 
     @Test
     @DisplayName("null 입력 처리 - null 반환")
-    void nullInputs_returnNull() {
+    void nullInputsReturnNull() {
         assertThat(AnalysisPurposeEntityMapper.toDomain(null)).isNull();
         assertThat(AnalysisPurposeEntityMapper.toEntity(null)).isNull();
     }

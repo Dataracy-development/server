@@ -22,20 +22,32 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-
 @ExtendWith(MockitoExtension.class)
 class OccupationQueryServiceTest {
-    @Mock OccupationPort occupationPort;
-    @Mock OccupationDtoMapper occupationDtoMapper;
 
-    @InjectMocks OccupationQueryService service;
+    @Mock
+    private OccupationPort occupationPort;
+
+    @Mock
+    private OccupationDtoMapper occupationDtoMapper;
+
+    @InjectMocks
+    private OccupationQueryService service;
 
     @Test
-    @DisplayName("findAllOccupations: 성공 - 전체 목록 반환")
-    void findAllOccupations_success() {
+    @DisplayName("전체 직업 조회 성공")
+    void findAllOccupationsSuccess() {
         // given
-        List<Occupation> domainList = List.of(new Occupation(1L, "v1", "l1"), new Occupation(2L, "v2", "l2"));
-        AllOccupationsResponse mapped = new AllOccupationsResponse(List.of(new OccupationResponse(1L, "v1", "l1"), new OccupationResponse(2L, "v2", "l2")));
+        List<Occupation> domainList = List.of(
+                new Occupation(1L, "v1", "l1"),
+                new Occupation(2L, "v2", "l2")
+        );
+        AllOccupationsResponse mapped = new AllOccupationsResponse(
+                List.of(
+                        new OccupationResponse(1L, "v1", "l1"),
+                        new OccupationResponse(2L, "v2", "l2")
+                )
+        );
         given(occupationPort.findAllOccupations()).willReturn(domainList);
         given(occupationDtoMapper.toResponseDto(domainList)).willReturn(mapped);
 
@@ -49,8 +61,8 @@ class OccupationQueryServiceTest {
     }
 
     @Test
-    @DisplayName("findOccupation: 성공 - 단건 반환")
-    void findOccupation_success() {
+    @DisplayName("직업 단건 조회 성공")
+    void findOccupationSuccess() {
         // given
         Long id = 10L;
         Occupation domain = new Occupation(id, "v", "l");
@@ -68,14 +80,17 @@ class OccupationQueryServiceTest {
     }
 
     @Test
-    @DisplayName("findOccupation: 실패 - 존재하지 않으면 ReferenceException")
-    void findOccupation_notFound_throws() {
+    @DisplayName("직업 단건 조회 실패 - 없을 때 예외 발생")
+    void findOccupationFailWhenNotFound() {
         // given
         Long id = 999L;
         given(occupationPort.findOccupationById(id)).willReturn(Optional.empty());
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.findOccupation(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.findOccupation(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
@@ -84,8 +99,8 @@ class OccupationQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getLabelById: 성공 - 라벨 반환")
-    void getLabelById_success() {
+    @DisplayName("직업 라벨 조회 성공")
+    void getLabelByIdSuccess() {
         // given
         Long id = 1L;
         given(occupationPort.getLabelById(id)).willReturn(Optional.of("label"));
@@ -99,14 +114,17 @@ class OccupationQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getLabelById: 실패 - 없으면 ReferenceException")
-    void getLabelById_notFound_throws() {
+    @DisplayName("직업 라벨 조회 실패 - 없을 때 예외 발생")
+    void getLabelByIdFailWhenNotFound() {
         // given
         Long id = 404L;
         given(occupationPort.getLabelById(id)).willReturn(Optional.empty());
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.getLabelById(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.getLabelById(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
@@ -114,8 +132,8 @@ class OccupationQueryServiceTest {
     }
 
     @Test
-    @DisplayName("validateOccupation: 성공 - 존재하면 예외 없음")
-    void validateOccupation_success() {
+    @DisplayName("직업 검증 성공 - 존재할 때")
+    void validateOccupationSuccess() {
         // given
         Long id = 1L;
         given(occupationPort.existsOccupationById(id)).willReturn(true);
@@ -128,14 +146,17 @@ class OccupationQueryServiceTest {
     }
 
     @Test
-    @DisplayName("validateOccupation: 실패 - 존재하지 않으면 ReferenceException")
-    void validateOccupation_notFound_throws() {
+    @DisplayName("직업 검증 실패 - 없을 때 예외 발생")
+    void validateOccupationFailWhenNotFound() {
         // given
         Long id = 2L;
         given(occupationPort.existsOccupationById(id)).willReturn(false);
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.validateOccupation(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.validateOccupation(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
@@ -143,8 +164,8 @@ class OccupationQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getLabelsByIds: 성공 - 비어있으면 빈 맵, 값 있으면 위임 및 반환")
-    void getLabelsByIds_success_and_emptyHandling() {
+    @DisplayName("직업 라벨 다건 조회 성공 및 빈 값 처리")
+    void getLabelsByIdsSuccessAndEmptyHandling() {
         // given - empty/null
         assertThat(service.getLabelsByIds(null)).isEmpty();
         assertThat(service.getLabelsByIds(List.of())).isEmpty();

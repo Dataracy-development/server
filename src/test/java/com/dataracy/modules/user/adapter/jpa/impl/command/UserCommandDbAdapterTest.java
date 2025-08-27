@@ -22,8 +22,11 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserCommandDbAdapterTest {
 
-    @Mock UserJpaRepository userJpaRepository;
-    @InjectMocks UserCommandDbAdapter adapter;
+    @Mock
+    private UserJpaRepository userJpaRepository;
+
+    @InjectMocks
+    private UserCommandDbAdapter adapter;
 
     private UserEntity entity() {
         return UserEntity.of(
@@ -42,41 +45,44 @@ class UserCommandDbAdapterTest {
     }
 
     @Test
-    @DisplayName("saveUser: 정상 저장")
-    void saveUser_success() {
+    @DisplayName("사용자 저장 성공")
+    void saveUserSuccess() {
         given(userJpaRepository.save(any(UserEntity.class))).willReturn(entity());
 
         User result = adapter.saveUser(domain());
 
         assertThat(result.getEmail()).isEqualTo("u@test.com");
+        then(userJpaRepository).should().save(any(UserEntity.class));
     }
 
     @Test
-    @DisplayName("changePassword: 정상 동작")
-    void changePassword_success() {
+    @DisplayName("비밀번호 변경 성공")
+    void changePasswordSuccess() {
         UserEntity e = entity();
         given(userJpaRepository.findById(1L)).willReturn(Optional.of(e));
 
         adapter.changePassword(1L, "new");
 
         assertThat(e.getPassword()).isEqualTo("new");
+        then(userJpaRepository).should().findById(1L);
     }
 
     @Test
-    @DisplayName("changePassword: 없는 사용자 → 예외")
-    void changePassword_notFound() {
+    @DisplayName("비밀번호 변경 실패 - 사용자 없음")
+    void changePasswordNotFound() {
         given(userJpaRepository.findById(1L)).willReturn(Optional.empty());
 
         UserException ex = catchThrowableOfType(() -> adapter.changePassword(1L, "x"), UserException.class);
 
         assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.NOT_FOUND_USER);
+        then(userJpaRepository).should().findById(1L);
     }
 
     @Test
-    @DisplayName("withdrawalUser: 정상 호출")
-    void withdrawalUser() {
+    @DisplayName("회원 탈퇴 성공")
+    void withdrawalUserSuccess() {
         adapter.withdrawalUser(1L);
+
         then(userJpaRepository).should().withdrawalUser(1L);
     }
 }
-

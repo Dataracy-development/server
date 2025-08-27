@@ -65,13 +65,16 @@ class AuthDevControllerTest {
         SelfLoginRequest appReq =
                 new SelfLoginRequest("test@email.com", "password123@");
         RefreshTokenResponse refreshResp =
-                new RefreshTokenResponse("refresh-token-abc", 1209600000L);
+                new RefreshTokenResponse("issued-refresh-token", 1209600000L);
         RefreshTokenWebResponse webResp =
-                new RefreshTokenWebResponse("refresh-token-abc", 1209600000L);
+                new RefreshTokenWebResponse("issued-refresh-token", 1209600000L);
 
-        given(authDevWebMapper.toApplicationDto(any(SelfLoginWebRequest.class))).willReturn(appReq);
-        given(selfLoginUseCase.login(appReq)).willReturn(refreshResp);
-        given(authDevWebMapper.toWebDto(refreshResp)).willReturn(webResp);
+        given(authDevWebMapper.toApplicationDto(any(SelfLoginWebRequest.class)))
+                .willReturn(appReq);
+        given(selfLoginUseCase.login(appReq))
+                .willReturn(refreshResp);
+        given(authDevWebMapper.toWebDto(refreshResp))
+                .willReturn(webResp);
 
         // when & then
         mockMvc.perform(post("/api/v1/auth/dev/login")
@@ -80,7 +83,7 @@ class AuthDevControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(AuthSuccessStatus.OK_SELF_LOGIN.getCode()))
                 .andExpect(jsonPath("$.message").value(AuthSuccessStatus.OK_SELF_LOGIN.getMessage()))
-                .andExpect(jsonPath("$.data.refreshToken").value("refresh-token-abc"));
+                .andExpect(jsonPath("$.data.refreshToken").value("issued-refresh-token"));
     }
 
     @Test
@@ -96,9 +99,12 @@ class AuthDevControllerTest {
         ReIssueTokenWebResponse webResp =
                 new ReIssueTokenWebResponse("new-access", "new-refresh", 3600000L, 1209600000L);
 
-        given(authDevWebMapper.toApplicationDto(any(RefreshTokenWebRequest.class))).willReturn(appReq);
-        given(reIssueTokenUseCase.reIssueToken("old-refresh")).willReturn(reissueResp);
-        given(authDevWebMapper.toWebDto(reissueResp)).willReturn(webResp);
+        given(authDevWebMapper.toApplicationDto(any(RefreshTokenWebRequest.class)))
+                .willReturn(appReq);
+        given(reIssueTokenUseCase.reIssueToken("old-refresh"))
+                .willReturn(reissueResp);
+        given(authDevWebMapper.toWebDto(reissueResp))
+                .willReturn(webResp);
 
         // when & then
         mockMvc.perform(post("/api/v1/auth/dev/token/re-issue")

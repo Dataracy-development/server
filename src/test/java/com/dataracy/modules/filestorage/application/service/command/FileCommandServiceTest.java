@@ -3,6 +3,7 @@ package com.dataracy.modules.filestorage.application.service.command;
 import com.dataracy.modules.filestorage.adapter.thumbnail.ThumbnailGenerator;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -20,82 +21,112 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class FileCommandServiceTest {
 
-    @Mock FileStoragePort fileStoragePort;
-    @Mock ThumbnailGenerator thumbnailGenerator;
-    @Mock MultipartFile file;
-    @Mock MultipartFile newFile;
+    @Mock
+    private FileStoragePort fileStoragePort;
 
-    @InjectMocks FileCommandService service;
+    @Mock
+    private ThumbnailGenerator thumbnailGenerator;
 
-    @Captor ArgumentCaptor<MultipartFile> multipartCaptor;
+    @Mock
+    private MultipartFile file;
 
-    @Test
-    @DisplayName("uploadFile_should_delegate_to_port_and_return_url")
-    void uploadFile_should_delegate_to_port_and_return_url() {
-        // given
-        given(fileStoragePort.upload("data/1", file))
-                .willReturn("https://bucket/data/1/uuid.jpg");
+    @Mock
+    private MultipartFile newFile;
 
-        // when
-        String url = service.uploadFile("data/1", file);
+    @InjectMocks
+    private FileCommandService service;
 
-        // then
-        assertThat(url).isEqualTo("https://bucket/data/1/uuid.jpg");
-        then(fileStoragePort).should().upload("data/1", file);
+    @Captor
+    private ArgumentCaptor<MultipartFile> multipartCaptor;
+
+    @Nested
+    @DisplayName("파일 업로드")
+    class UploadFile {
+
+        @Test
+        @DisplayName("성공: FileStoragePort.upload 호출 후 URL 반환")
+        void shouldDelegateAndReturnUrl() {
+            // given
+            given(fileStoragePort.upload("data/1", file))
+                    .willReturn("https://bucket/data/1/uuid.jpg");
+
+            // when
+            String url = service.uploadFile("data/1", file);
+
+            // then
+            assertThat(url).isEqualTo("https://bucket/data/1/uuid.jpg");
+            then(fileStoragePort).should().upload("data/1", file);
+        }
     }
 
-    @Test
-    @DisplayName("deleteFile_should_delegate_to_port")
-    void deleteFile_should_delegate_to_port() {
-        // given
-        String url = "https://bucket/k";
+    @Nested
+    @DisplayName("파일 삭제")
+    class DeleteFile {
 
-        // when
-        service.deleteFile(url);
+        @Test
+        @DisplayName("성공: FileStoragePort.delete 호출")
+        void shouldDelegateDelete() {
+            // given
+            String url = "https://bucket/k";
 
-        // then
-        then(fileStoragePort).should().delete(url);
+            // when
+            service.deleteFile(url);
+
+            // then
+            then(fileStoragePort).should().delete(url);
+        }
     }
 
-    @Test
-    @DisplayName("replaceFile_should_upload_new_and_delete_old")
-    void replaceFile_should_upload_new_and_delete_old() {
-        // given
-        String directory = "project/99";
-        String oldUrl = "https://bucket/old";
-        given(fileStoragePort.upload(directory, newFile))
-                .willReturn("https://bucket/new");
+    @Nested
+    @DisplayName("새 파일 업로드")
+    class ReplaceFile {
 
-        // when
-        String newUrl = service.replaceFile(directory, newFile, oldUrl);
+        @Test
+        @DisplayName("성공: 새 파일 업로드 후 기존 파일 삭제")
+        void shouldUploadNewAndDeleteOld() {
+            // given
+            String directory = "project/99";
+            String oldUrl = "https://bucket/old";
+            given(fileStoragePort.upload(directory, newFile))
+                    .willReturn("https://bucket/new");
 
-        // then
-        assertThat(newUrl).isEqualTo("https://bucket/new");
-        then(fileStoragePort).should().upload(directory, newFile);
-        then(fileStoragePort).should().delete(oldUrl);
+            // when
+            String newUrl = service.replaceFile(directory, newFile, oldUrl);
+
+            // then
+            assertThat(newUrl).isEqualTo("https://bucket/new");
+            then(fileStoragePort).should().upload(directory, newFile);
+            then(fileStoragePort).should().delete(oldUrl);
+        }
     }
 
-    @Test
-    @DisplayName("createThumbnail_should_generate_and_upload_thumbnail")
-    void createThumbnail_should_generate_and_upload_thumbnail() {
-        // given
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.writeBytes(new byte[]{1, 2, 3});
-        given(thumbnailGenerator.createThumbnail(file, 200, 100)).willReturn(baos);
-        given(file.getContentType()).willReturn("image/jpeg");
-        given(fileStoragePort.upload(eq("thumb-dir"), any(MultipartFile.class)))
-                .willReturn("https://bucket/thumb.jpg");
+    @Nested
+    @DisplayName("썸네일 이미지 업로드")
+    class CreateThumbnail {
 
-        // when
-        String url = service.createThumbnail(file, "thumb-dir", "thumb.jpg", 200, 100);
+        @Test
+        @DisplayName("성공: 썸네일 생성 후 FileStoragePort.upload 호출")
+        void shouldGenerateAndUploadThumbnail() {
+            // given
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.writeBytes(new byte[]{1, 2, 3});
 
-        // then
-        assertThat(url).isEqualTo("https://bucket/thumb.jpg");
-        then(thumbnailGenerator).should().createThumbnail(file, 200, 100);
-        then(fileStoragePort).should().upload(eq("thumb-dir"), multipartCaptor.capture());
+            given(thumbnailGenerator.createThumbnail(file, 200, 100)).willReturn(baos);
+            given(file.getContentType()).willReturn("image/jpeg");
+            given(fileStoragePort.upload(eq("thumb-dir"), any(MultipartFile.class)))
+                    .willReturn("https://bucket/thumb.jpg");
 
-        MultipartFile captured = multipartCaptor.getValue();
-        assertThat(captured.getOriginalFilename()).isEqualTo("thumb.jpg");
-        assertThat(captured.getContentType()).isEqualTo("image/jpeg");
+            // when
+            String url = service.createThumbnail(file, "thumb-dir", "thumb.jpg", 200, 100);
+
+            // then
+            assertThat(url).isEqualTo("https://bucket/thumb.jpg");
+            then(thumbnailGenerator).should().createThumbnail(file, 200, 100);
+            then(fileStoragePort).should().upload(eq("thumb-dir"), multipartCaptor.capture());
+
+            MultipartFile captured = multipartCaptor.getValue();
+            assertThat(captured.getOriginalFilename()).isEqualTo("thumb.jpg");
+            assertThat(captured.getContentType()).isEqualTo("image/jpeg");
+        }
     }
 }

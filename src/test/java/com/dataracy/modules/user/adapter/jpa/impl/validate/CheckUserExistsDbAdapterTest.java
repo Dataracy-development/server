@@ -10,30 +10,36 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class CheckUserExistsDbAdapterTest {
 
-    @Mock UserJpaRepository userJpaRepository;
-    @InjectMocks CheckUserExistsDbAdapter adapter;
+    @Mock
+    private UserJpaRepository userJpaRepository;
+
+    @InjectMocks
+    private CheckUserExistsDbAdapter adapter;
 
     @Test
-    @DisplayName("existsByNickname: true 반환")
-    void existsByNickname_true() {
+    @DisplayName("닉네임 존재 여부 true")
+    void existsByNicknameTrue() {
         given(userJpaRepository.existsByNickname("nick")).willReturn(true);
 
         boolean result = adapter.existsByNickname("nick");
 
         assertThat(result).isTrue();
+        then(userJpaRepository).should().existsByNickname("nick");
     }
 
     @Test
-    @DisplayName("existsByEmail: false 반환")
-    void existsByEmail_false() {
+    @DisplayName("이메일 존재 여부 false")
+    void existsByEmailFalse() {
         given(userJpaRepository.existsByEmail("x@test.com")).willReturn(false);
 
         boolean result = adapter.existsByEmail("x@test.com");
 
         assertThat(result).isFalse();
+        then(userJpaRepository).should().existsByEmail("x@test.com");
     }
 }

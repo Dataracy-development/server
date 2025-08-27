@@ -23,8 +23,8 @@ class UserEntityMapperTest {
     }
 
     @Test
-    @DisplayName("toEntity: Domain → Entity 변환 성공")
-    void toEntity_success() {
+    @DisplayName("도메인 → 엔티티 변환 성공")
+    void toEntitySuccess() {
         UserEntity entity = UserEntityMapper.toEntity(domain());
 
         assertThat(entity.getEmail()).isEqualTo("u@test.com");
@@ -32,8 +32,8 @@ class UserEntityMapperTest {
     }
 
     @Test
-    @DisplayName("toDomain: Entity → Domain 변환 성공")
-    void toDomain_success() {
+    @DisplayName("엔티티 → 도메인 변환 성공")
+    void toDomainSuccess() {
         UserEntity entity = UserEntityMapper.toEntity(domain());
 
         User user = UserEntityMapper.toDomain(entity);
@@ -43,10 +43,9 @@ class UserEntityMapperTest {
     }
 
     @Test
-    @DisplayName("null 입력 → null 반환")
-    void nullInput_returnsNull() {
+    @DisplayName("null 입력 시 null 반환")
+    void nullInputReturnsNull() {
         assertThat(UserEntityMapper.toDomain(null)).isNull();
         assertThat(UserEntityMapper.toEntity(null)).isNull();
     }
 }
-

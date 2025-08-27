@@ -1,6 +1,8 @@
 package com.dataracy.modules.dataset.adapter.jpa.impl.validate;
 
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataJpaRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ValidateDataDbAdapterTest {
@@ -19,27 +21,34 @@ class ValidateDataDbAdapterTest {
     @InjectMocks
     private ValidateDataDbAdapter adapter;
 
-    @Test
-    void existsDataByIdShouldReturnTrueWhenExists() {
-        // given
-        when(repo.existsById(1L)).thenReturn(true);
+    @Nested
+    @DisplayName("데이터셋 존재 검증")
+    class ExistsDataSet {
 
-        // when
-        boolean result = adapter.existsDataById(1L);
+        @Test
+        @DisplayName("데이터가 존재하면 true 반환")
+        void existsDataByIdShouldReturnTrueWhenExists() {
+            // given
+            given(repo.existsById(1L)).willReturn(true);
 
-        // then
-        assertThat(result).isTrue();
-    }
+            // when
+            boolean result = adapter.existsDataById(1L);
 
-    @Test
-    void existsDataByIdShouldReturnFalseWhenNotExists() {
-        // given
-        when(repo.existsById(2L)).thenReturn(false);
+            // then
+            assertThat(result).isTrue();
+        }
 
-        // when
-        boolean result = adapter.existsDataById(2L);
+        @Test
+        @DisplayName("데이터가 존재하지 않으면 false 반환")
+        void existsDataByIdShouldReturnFalseWhenNotExists() {
+            // given
+            given(repo.existsById(2L)).willReturn(false);
 
-        // then
-        assertThat(result).isFalse();
+            // when
+            boolean result = adapter.existsDataById(2L);
+
+            // then
+            assertThat(result).isFalse();
+        }
     }
 }

@@ -12,8 +12,10 @@ class CommentTest {
     @Test
     @DisplayName("of() 정적 팩토리 메서드로 Comment 생성")
     void createComment() {
+        // given
         LocalDateTime now = LocalDateTime.now();
 
+        // when
         Comment comment = Comment.of(
                 1L,
                 100L,
@@ -24,6 +26,7 @@ class CommentTest {
                 now
         );
 
+        // then
         assertThat(comment.getId()).isEqualTo(1L);
         assertThat(comment.getProjectId()).isEqualTo(100L);
         assertThat(comment.getUserId()).isEqualTo(200L);

@@ -11,8 +11,8 @@ import static org.assertj.core.api.Assertions.*;
 class LikeEntityMapperTest {
 
     @Test
-    @DisplayName("toEntity_should_return_null_when_domain_is_null")
-    void toEntity_should_return_null_when_domain_is_null() {
+    @DisplayName("도메인이 null이면 null 반환")
+    void toEntityNull() {
         // when
         LikeEntity result = LikeEntityMapper.toEntity(null);
 
@@ -21,8 +21,8 @@ class LikeEntityMapperTest {
     }
 
     @Test
-    @DisplayName("toEntity_should_map_fields_correctly")
-    void toEntity_should_map_fields_correctly() {
+    @DisplayName("도메인을 엔티티로 매핑")
+    void toEntityMapping() {
         // given
         Like like = Like.of(null, 7L, TargetType.COMMENT, 123L);
 
@@ -36,8 +36,8 @@ class LikeEntityMapperTest {
     }
 
     @Test
-    @DisplayName("toDomain_should_return_null_when_entity_is_null")
-    void toDomain_should_return_null_when_entity_is_null() {
+    @DisplayName("엔티티가 null이면 null 반환")
+    void toDomainNull() {
         // when
         Like result = LikeEntityMapper.toDomain(null);
 
@@ -46,8 +46,8 @@ class LikeEntityMapperTest {
     }
 
     @Test
-    @DisplayName("toDomain_should_map_fields_correctly")
-    void toDomain_should_map_fields_correctly() {
+    @DisplayName("엔티티를 도메인으로 매핑")
+    void toDomainMapping() {
         // given
         LikeEntity entity = LikeEntity.of(11L, TargetType.PROJECT, 42L);
 

@@ -32,32 +32,48 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class ProjectSearchServiceTest {
 
-    @Mock SearchSimilarProjectsPort searchSimilarProjectsPort;
-    @Mock SearchFilteredProjectsPort searchFilteredProjectsPort;
-    @Mock SearchRealTimeProjectsPort searchRealTimeProjectsPort;
-    @Mock FindProjectPort findProjectPort;
-    @Mock FilteredProjectDtoMapper filteredProjectDtoMapper;
-    @Mock FindProjectLabelMapUseCase findProjectLabelMapUseCase;
-    @Mock FindUsernameUseCase findUsernameUseCase;
+    @Mock
+    private SearchSimilarProjectsPort searchSimilarProjectsPort;
 
-    @InjectMocks ProjectSearchService service;
+    @Mock
+    private SearchFilteredProjectsPort searchFilteredProjectsPort;
+
+    @Mock
+    private SearchRealTimeProjectsPort searchRealTimeProjectsPort;
+
+    @Mock
+    private FindProjectPort findProjectPort;
+
+    @Mock
+    private FilteredProjectDtoMapper filteredProjectDtoMapper;
+
+    @Mock
+    private FindProjectLabelMapUseCase findProjectLabelMapUseCase;
+
+    @Mock
+    private FindUsernameUseCase findUsernameUseCase;
+
+    @InjectMocks
+    private ProjectSearchService service;
 
     @Test
-    @DisplayName("searchSimilarProjects - 기준 프로젝트 존재시 정상 반환")
-    void searchSimilarProjects_success() {
+    @DisplayName("유사 프로젝트 검색 성공 - 기준 프로젝트 존재")
+    void searchSimilarProjectsSuccess() {
         // given
         Long projectId = 1L;
         Project baseProject = Project.builder()
                 .id(projectId).title("Base Project").content("기준 프로젝트")
                 .topicId(10L).analysisPurposeId(20L).dataSourceId(30L).authorLevelId(40L)
                 .build();
+
         given(findProjectPort.findProjectById(projectId)).willReturn(Optional.of(baseProject));
         given(searchSimilarProjectsPort.searchSimilarProjects(baseProject, 3)).willReturn(
                 List.of(new SimilarProjectResponse(
@@ -76,8 +92,8 @@ class ProjectSearchServiceTest {
     }
 
     @Test
-    @DisplayName("searchSimilarProjects - 기준 프로젝트 없으면 예외 발생")
-    void searchSimilarProjects_notFound_shouldThrow() {
+    @DisplayName("유사 프로젝트 검색 실패 - 기준 프로젝트 없음")
+    void searchSimilarProjectsFailWhenNotFound() {
         // given
         given(findProjectPort.findProjectById(99L)).willReturn(Optional.empty());
 
@@ -89,8 +105,8 @@ class ProjectSearchServiceTest {
     }
 
     @Test
-    @DisplayName("searchByFilters - 라벨 매핑 및 자식 유저명 매핑 포함")
-    void searchByFilters_success() {
+    @DisplayName("프로젝트 필터 검색 성공 - 라벨 및 자식 유저명 매핑 포함")
+    void searchByFiltersSuccess() {
         // given
         FilteringProjectRequest req = new FilteringProjectRequest("데이터", "LATEST", 10L, 20L, 30L, 40L);
         PageRequest pageable = PageRequest.of(0, 10);
@@ -105,6 +121,7 @@ class ProjectSearchServiceTest {
         Page<Project> projectPage = new PageImpl<>(List.of(parent));
         given(searchFilteredProjectsPort.searchByFilters(eq(req), eq(pageable), eq(ProjectSortType.LATEST)))
                 .willReturn(projectPage);
+
         given(findProjectLabelMapUseCase.labelMapping(projectPage.getContent())).willReturn(
                 new ProjectLabelMapResponse(
                         Map.of(100L, "parentUser"),
@@ -114,6 +131,7 @@ class ProjectSearchServiceTest {
                         Map.of(40L, "AuthorLabel")
                 )
         );
+
         given(findUsernameUseCase.findUsernamesByIds(List.of(200L)))
                 .willReturn(Map.of(200L, "childUser"));
 
@@ -138,8 +156,8 @@ class ProjectSearchServiceTest {
     }
 
     @Test
-    @DisplayName("searchByKeyword - 키워드가 유효할 때 결과 반환")
-    void searchByKeyword_success() {
+    @DisplayName("실시간 프로젝트 검색 성공 - 키워드 유효")
+    void searchByKeywordSuccess() {
         // given
         String keyword = "AI";
         given(searchRealTimeProjectsPort.searchByKeyword(keyword, 5)).willReturn(
@@ -156,8 +174,8 @@ class ProjectSearchServiceTest {
     }
 
     @Test
-    @DisplayName("searchByKeyword - 키워드가 공백/Null이면 빈 리스트 반환")
-    void searchByKeyword_blankOrNull_shouldReturnEmpty() {
+    @DisplayName("실시간 프로젝트 검색 실패 - 키워드 공백 또는 null")
+    void searchByKeywordFailWhenBlankOrNull() {
         // when
         List<RealTimeProjectResponse> resBlank = service.searchByKeyword("   ", 5);
         List<RealTimeProjectResponse> resNull = service.searchByKeyword(null, 5);

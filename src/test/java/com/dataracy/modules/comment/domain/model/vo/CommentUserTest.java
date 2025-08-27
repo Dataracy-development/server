@@ -29,10 +29,13 @@ class CommentUserTest {
     @Test
     @DisplayName("UserInfo로부터 CommentUser 변환")
     void fromUserInfo() {
+        // given
         UserInfo info = dummyUserInfo();
 
+        // when
         CommentUser user = CommentUser.fromUserInfo(info);
 
+        // then
         assertThat(user.userId()).isEqualTo(1L);
         assertThat(user.role()).isEqualTo(RoleType.ROLE_USER);
         assertThat(user.nickname()).isEqualTo("nickname");

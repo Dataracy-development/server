@@ -4,17 +4,15 @@ import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-@ExtendWith(MockitoExtension.class)
 class RoleTypeTest {
 
     @Test
     @DisplayName("of: 대소문자 무시하고 이름/값 매칭")
-    void of_shouldReturnEnum_whenValidCaseInsensitive() {
+    void ofShouldReturnEnumWhenValidCaseInsensitive() {
         // given
         String v1 = "ROLE_USER";
         String v2 = "role_admin";
@@ -33,7 +31,7 @@ class RoleTypeTest {
 
     @Test
     @DisplayName("of: 유효하지 않은 값이면 UserException(INVALID_ROLE_TYPE)")
-    void of_shouldThrow_whenInvalid() {
+    void ofShouldThrowWhenInvalid() {
         // given
         String invalid = "MANAGER";
 
