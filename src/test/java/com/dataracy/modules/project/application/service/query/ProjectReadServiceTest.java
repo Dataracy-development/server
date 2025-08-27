@@ -3,12 +3,22 @@ package com.dataracy.modules.project.application.service.query;
 import com.dataracy.modules.dataset.application.port.in.query.read.FindConnectedDataSetsUseCase;
 import com.dataracy.modules.like.application.port.in.validate.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
-import com.dataracy.modules.project.application.dto.response.read.*;
-import com.dataracy.modules.project.application.dto.response.support.*;
-import com.dataracy.modules.project.application.mapper.read.*;
+import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
+import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
+import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
+import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
+import com.dataracy.modules.project.application.dto.response.support.ProjectLabelMapResponse;
+import com.dataracy.modules.project.application.dto.response.support.ProjectWithDataIdsResponse;
+import com.dataracy.modules.project.application.mapper.read.ConnectedProjectDtoMapper;
+import com.dataracy.modules.project.application.mapper.read.ContinuedProjectDtoMapper;
+import com.dataracy.modules.project.application.mapper.read.PopularProjectDtoMapper;
+import com.dataracy.modules.project.application.mapper.read.ProjectDetailDtoMapper;
 import com.dataracy.modules.project.application.mapper.support.ParentProjectDtoMapper;
 import com.dataracy.modules.project.application.port.in.query.extractor.FindProjectLabelMapUseCase;
-import com.dataracy.modules.project.application.port.out.query.read.*;
+import com.dataracy.modules.project.application.port.out.query.read.FindConnectedProjectsPort;
+import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
+import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
+import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByParentPort;
 import com.dataracy.modules.project.application.port.out.view.ManageProjectViewCountPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
@@ -45,39 +55,78 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProjectReadServiceTest {
 
-    @Mock ContinuedProjectDtoMapper continuedProjectDtoMapper;
-    @Mock ConnectedProjectDtoMapper connectedProjectDtoMapper;
-    @Mock PopularProjectDtoMapper popularProjectDtoMapper;
-    @Mock ProjectDetailDtoMapper projectDetailDtoMapper;
-    @Mock ParentProjectDtoMapper parentProjectDtoMapper;
+    @Mock
+    private ContinuedProjectDtoMapper continuedProjectDtoMapper;
 
-    @Mock ManageProjectViewCountPort manageProjectViewCountPort;
-    @Mock CheckProjectExistsByParentPort checkProjectExistsByParentPort;
+    @Mock
+    private ConnectedProjectDtoMapper connectedProjectDtoMapper;
 
-    @Mock FindProjectPort findProjectPort;
-    @Mock FindContinuedProjectsPort findContinuedProjectsPort;
-    @Mock FindConnectedProjectsPort findConnectedProjectsPort;
-    @Mock GetPopularProjectsPort getPopularProjectsPort;
+    @Mock
+    private PopularProjectDtoMapper popularProjectDtoMapper;
 
-    @Mock GetUserInfoUseCase getUserInfoUseCase;
-    @Mock FindUsernameUseCase findUsernameUseCase;
-    @Mock FindUserThumbnailUseCase findUserThumbnailUseCase;
+    @Mock
+    private ProjectDetailDtoMapper projectDetailDtoMapper;
 
-    @Mock GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
-    @Mock GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
-    @Mock GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
-    @Mock GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
-    @Mock GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
-    @Mock FindProjectLabelMapUseCase findProjectLabelMapUseCase;
+    @Mock
+    private ParentProjectDtoMapper parentProjectDtoMapper;
 
-    @Mock FindConnectedDataSetsUseCase findConnectedDataSetsUseCase;
-    @Mock ValidateTargetLikeUseCase validateTargetLikeUseCase;
+    @Mock
+    private ManageProjectViewCountPort manageProjectViewCountPort;
 
-    @InjectMocks ProjectReadService service;
+    @Mock
+    private CheckProjectExistsByParentPort checkProjectExistsByParentPort;
+
+    @Mock
+    private FindProjectPort findProjectPort;
+
+    @Mock
+    private FindContinuedProjectsPort findContinuedProjectsPort;
+
+    @Mock
+    private FindConnectedProjectsPort findConnectedProjectsPort;
+
+    @Mock
+    private GetPopularProjectsPort getPopularProjectsPort;
+
+    @Mock
+    private GetUserInfoUseCase getUserInfoUseCase;
+
+    @Mock
+    private FindUsernameUseCase findUsernameUseCase;
+
+    @Mock
+    private FindUserThumbnailUseCase findUserThumbnailUseCase;
+
+    @Mock
+    private GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
+
+    @Mock
+    private GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
+
+    @Mock
+    private GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
+
+    @Mock
+    private GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+
+    @Mock
+    private GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
+
+    @Mock
+    private FindProjectLabelMapUseCase findProjectLabelMapUseCase;
+
+    @Mock
+    private FindConnectedDataSetsUseCase findConnectedDataSetsUseCase;
+
+    @Mock
+    private ValidateTargetLikeUseCase validateTargetLikeUseCase;
+
+    @InjectMocks
+    private ProjectReadService service;
 
     @Test
-    @DisplayName("getProjectDetail - 성공 케이스")
-    void getProjectDetail_success() {
+    @DisplayName("프로젝트 상세 조회 성공")
+    void getProjectDetailSuccess() {
         // given
         Long projectId = 1L;
         Project project = Project.builder()
@@ -130,8 +179,8 @@ class ProjectReadServiceTest {
     }
 
     @Test
-    @DisplayName("getProjectDetail - 프로젝트 없으면 예외 발생")
-    void getProjectDetail_notFound_shouldThrow() {
+    @DisplayName("프로젝트 상세 조회 실패 - 존재하지 않음")
+    void getProjectDetailFailWhenNotFound() {
         // given
         given(findProjectPort.findProjectWithDataById(999L)).willReturn(Optional.empty());
 
@@ -143,8 +192,8 @@ class ProjectReadServiceTest {
     }
 
     @Test
-    @DisplayName("findContinuedProjects - 정상 동작")
-    void findContinuedProjects_success() {
+    @DisplayName("이어가기 프로젝트 조회 성공")
+    void findContinuedProjectsSuccess() {
         // given
         Long projectId = 1L;
         Project child = Project.builder().id(2L).userId(200L).topicId(10L).authorLevelId(40L).build();
@@ -171,8 +220,8 @@ class ProjectReadServiceTest {
     }
 
     @Test
-    @DisplayName("findConnectedProjects - 정상 동작")
-    void findConnectedProjects_success() {
+    @DisplayName("연결된 프로젝트 조회 성공")
+    void findConnectedProjectsSuccess() {
         // given
         Long dataId = 5L;
         Project connected = Project.builder().id(10L).userId(300L).topicId(99L).build();
@@ -194,8 +243,8 @@ class ProjectReadServiceTest {
     }
 
     @Test
-    @DisplayName("getPopularProjects - 정상 동작")
-    void getPopularProjects_success() {
+    @DisplayName("인기 프로젝트 조회 성공")
+    void getPopularProjectsSuccess() {
         // given
         Project p = Project.builder().id(1L).userId(100L).topicId(10L).analysisPurposeId(20L).dataSourceId(30L).authorLevelId(40L).build();
         given(getPopularProjectsPort.getPopularProjects(3)).willReturn(List.of(p));

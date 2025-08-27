@@ -2,6 +2,7 @@ package com.dataracy.modules.dataset.adapter.jpa.impl.command;
 
 import com.dataracy.modules.dataset.adapter.jpa.entity.DataEsProjectionDlqEntity;
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataEsProjectionDlqRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,6 +27,7 @@ class ManageDataEsProjectionDlqDbAdapterTest {
     private ArgumentCaptor<DataEsProjectionDlqEntity> captor;
 
     @Test
+    @DisplayName("save 호출 시 DataEsProjectionDlqEntity 저장됨")
     void saveShouldPersistEntity() {
         // given
         Long dataId = 1L;

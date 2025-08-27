@@ -12,7 +12,7 @@ class ProjectTest {
 
     @Test
     @DisplayName("updateThumbnailUrl - 썸네일 변경 반영")
-    void updateThumbnailUrl_success() {
+    void updateThumbnailUrlSuccess() {
         // given
         Project project = Project.builder().id(1L).title("t").thumbnailUrl("old.png").build();
 
@@ -25,7 +25,7 @@ class ProjectTest {
 
     @Test
     @DisplayName("of() - 모든 값 반영 확인")
-    void of_success() {
+    void ofSuccess() {
         // given
         LocalDateTime now = LocalDateTime.now();
 

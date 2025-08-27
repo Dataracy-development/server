@@ -1,61 +1,87 @@
 package com.dataracy.modules.reference.adapter.web.api.authorlevel;
 
-import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
 import com.dataracy.modules.reference.adapter.web.mapper.AuthorLevelWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllAuthorLevelsWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.singleview.AuthorLevelWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllAuthorLevelsResponse;
 import com.dataracy.modules.reference.application.port.in.authorlevel.FindAllAuthorLevelsUseCase;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import java.util.List;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(controllers = AuthorLevelController.class)
 class AuthorLevelControllerTest {
 
-    @Mock FindAllAuthorLevelsUseCase findAllAuthorLevelsUseCase;
-    @Mock AuthorLevelWebMapper webMapper;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @InjectMocks AuthorLevelController controller;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private FindAllAuthorLevelsUseCase findAllAuthorLevelsUseCase;
+
+    @MockBean
+    private AuthorLevelWebMapper webMapper;
+
+    // 공통 모킹
+    @MockBean
+    private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+    @MockBean
+    private JwtValidateUseCase jwtValidateUseCase;
 
     @Test
-    @DisplayName("findAllAuthorLevels API: 성공 - 200 OK와 바디 반환")
-    void findAllAuthorLevels_success() {
+    @DisplayName("findAllAuthorLevels API: 성공 - 200 OK와 응답 JSON 검증")
+    void findAllAuthorLevelsSuccess() throws Exception {
         // given
-        AllAuthorLevelsResponse svc = new AllAuthorLevelsResponse(java.util.List.of());
-        AllAuthorLevelsWebResponse web = new AllAuthorLevelsWebResponse(java.util.List.of());
+        AllAuthorLevelsResponse svc = new AllAuthorLevelsResponse(List.of());
+        AllAuthorLevelsWebResponse web = new AllAuthorLevelsWebResponse(
+                List.of(new AuthorLevelWebResponse(1L, "VAL_A", "라벨A"))
+        );
+
         given(findAllAuthorLevelsUseCase.findAllAuthorLevels()).willReturn(svc);
         given(webMapper.toWebDto(svc)).willReturn(web);
 
-        // when
-        ResponseEntity<SuccessResponse<AllAuthorLevelsWebResponse>> res = controller.findAllAuthorLevels();
+        // when & then
+        mockMvc.perform(get("/api/v1/references/author-levels")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.authorLevels[0].id").value(1))
+                .andExpect(jsonPath("$.data.authorLevels[0].value").value("VAL_A"))
+                .andExpect(jsonPath("$.data.authorLevels[0].label").value("라벨A"));
 
-        // then
-        assertThat(res.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(res.getBody()).isNotNull();
         then(findAllAuthorLevelsUseCase).should().findAllAuthorLevels();
         then(webMapper).should().toWebDto(svc);
     }
 
     @Test
-    @DisplayName("findAllAuthorLevels API: 실패 - 내부 예외 전파")
-    void findAllAuthorLevels_failure_propagates() {
+    @DisplayName("findAllAuthorLevels API: 실패 - 내부 예외 발생 시 500 반환")
+    void findAllAuthorLevelsFailure() throws Exception {
         // given
         given(findAllAuthorLevelsUseCase.findAllAuthorLevels()).willThrow(new RuntimeException("boom"));
 
-        // when
-        RuntimeException ex = catchThrowableOfType(() -> controller.findAllAuthorLevels(), RuntimeException.class);
+        // when & then
+        mockMvc.perform(get("/api/v1/references/author-levels")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
 
-        // then
-        assertThat(ex).isNotNull();
         then(webMapper).shouldHaveNoInteractions();
     }
 }

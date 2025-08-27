@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserValidationWebMapperTest {
 
-    UserValidationWebMapper mapper = new UserValidationWebMapper();
+    private UserValidationWebMapper mapper = new UserValidationWebMapper();
 
     @Test
     @DisplayName("toApplicationDto: 닉네임 매핑")

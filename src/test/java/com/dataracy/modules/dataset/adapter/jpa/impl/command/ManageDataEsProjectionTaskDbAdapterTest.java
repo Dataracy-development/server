@@ -2,6 +2,7 @@ package com.dataracy.modules.dataset.adapter.jpa.impl.command;
 
 import com.dataracy.modules.dataset.adapter.jpa.entity.DataEsProjectionTaskEntity;
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataEsProjectionTaskRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,6 +27,7 @@ class ManageDataEsProjectionTaskDbAdapterTest {
     private ArgumentCaptor<DataEsProjectionTaskEntity> captor;
 
     @Test
+    @DisplayName("enqueueSetDeleted 호출 시 삭제 플래그가 저장된다")
     void enqueueSetDeletedShouldSaveEntity() {
         // given
         Long dataId = 1L;
@@ -43,6 +45,7 @@ class ManageDataEsProjectionTaskDbAdapterTest {
     }
 
     @Test
+    @DisplayName("enqueueDownloadDelta 호출 시 다운로드 델타가 저장된다")
     void enqueueDownloadDeltaShouldSaveEntity() {
         // given
         Long dataId = 1L;
@@ -60,6 +63,7 @@ class ManageDataEsProjectionTaskDbAdapterTest {
     }
 
     @Test
+    @DisplayName("delete 호출 시 해당 ID의 Task 가 삭제된다")
     void deleteShouldDeleteById() {
         // given
         Long taskId = 10L;

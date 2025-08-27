@@ -19,6 +19,8 @@ import com.dataracy.modules.reference.application.port.in.datasource.ValidateDat
 import com.dataracy.modules.reference.application.port.in.datatype.ValidateDataTypeUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,100 +41,167 @@ class DataCommandServiceTest {
     @InjectMocks
     private DataCommandService service;
 
-    @Mock private CreateDataDtoMapper createDataDtoMapper;
-    @Mock private CreateDataPort createDataPort;
-    @Mock private UpdateDataPort updateDataPort;
-    @Mock private UpdateDataFilePort updateDataFilePort;
-    @Mock private UpdateThumbnailFilePort updateThumbnailFilePort;
-    @Mock private DataUploadEventPort dataUploadEventPort;
-    @Mock private CheckDataExistsByIdPort checkDataExistsByIdPort;
-    @Mock private FindDataPort findDataPort;
-    @Mock private FileCommandUseCase fileCommandUseCase;
-    @Mock private ValidateTopicUseCase validateTopicUseCase;
-    @Mock private ValidateDataSourceUseCase validateDataSourceUseCase;
-    @Mock private ValidateDataTypeUseCase validateDataTypeUseCase;
-    @Mock private MultipartFile dataFile;
-    @Mock private MultipartFile thumbnailFile;
+    @Mock
+    private CreateDataDtoMapper createDataDtoMapper;
 
-    @Mock private UploadDataRequest uploadDataRequest;
-    @Mock private ModifyDataRequest modifyDataRequest;
+    @Mock
+    private CreateDataPort createDataPort;
+
+    @Mock
+    private UpdateDataPort updateDataPort;
+
+    @Mock
+    private UpdateDataFilePort updateDataFilePort;
+
+    @Mock
+    private UpdateThumbnailFilePort updateThumbnailFilePort;
+
+    @Mock
+    private DataUploadEventPort dataUploadEventPort;
+
+    @Mock
+    private CheckDataExistsByIdPort checkDataExistsByIdPort;
+
+    @Mock
+    private FindDataPort findDataPort;
+
+    @Mock
+    private FileCommandUseCase fileCommandUseCase;
+
+    @Mock
+    private ValidateTopicUseCase validateTopicUseCase;
+
+    @Mock
+    private ValidateDataSourceUseCase validateDataSourceUseCase;
+
+    @Mock
+    private ValidateDataTypeUseCase validateDataTypeUseCase;
+
+    @Mock
+    private MultipartFile dataFile;
+
+    @Mock
+    private MultipartFile thumbnailFile;
+
+    @Mock
+    private UploadDataRequest uploadDataRequest;
+
+    @Mock
+    private ModifyDataRequest modifyDataRequest;
 
     @BeforeEach
     void setup() {
-        uploadDataRequest = new UploadDataRequest("title", 1L, 2L, 3L,
-                LocalDate.of(2023,1,1), LocalDate.of(2023,12,31),
-                "desc", "guide");
+        uploadDataRequest = new UploadDataRequest(
+                "title",
+                1L,
+                2L,
+                3L,
+                LocalDate.of(2023,1,1),
+                LocalDate.of(2023,12,31),
+                "desc",
+                "guide"
+        );
 
-        modifyDataRequest = new ModifyDataRequest("title", 1L, 2L, 3L,
-                LocalDate.of(2023,1,1), LocalDate.of(2023,12,31),
-                "desc", "guide");
+        modifyDataRequest = new ModifyDataRequest(
+                "title",
+                1L,
+                2L,
+                3L,
+                LocalDate.of(2023,1,1),
+                LocalDate.of(2023,12,31),
+                "desc",
+                "guide"
+        );
     }
 
-    @Test
-    void uploadDataShouldSaveAndReturnId() {
-        // given
-        Data mockData = mock(Data.class);
-        MultipartFile dataFile = mock(MultipartFile.class);
-        MultipartFile thumbnailFile = mock(MultipartFile.class);
+    @Nested
+    @DisplayName("데이터셋 업로드")
+    class UploadData {
 
-        given(createDataDtoMapper.toDomain(any(), any())).willReturn(mockData);
-        given(createDataPort.saveData(any())).willReturn(mockData);
-        given(mockData.getId()).willReturn(1L);
-        given(findDataPort.findDataById(any())).willReturn(Optional.of(mockData));
+        @Test
+        @DisplayName("데이터 업로드 성공 → 저장 후 ID 반환")
+        void uploadDataShouldSaveAndReturnId() {
+            // given
+            Data mockData = mock(Data.class);
+            MultipartFile dataFile = mock(MultipartFile.class);
+            MultipartFile thumbnailFile = mock(MultipartFile.class);
 
-        // 파일 관련 stubbing
-        given(dataFile.isEmpty()).willReturn(true);       // 데이터 파일 없음
-        given(thumbnailFile.isEmpty()).willReturn(true);  // 썸네일 파일 없음
+            given(createDataDtoMapper.toDomain(any(), any()))
+                    .willReturn(mockData);
+            given(createDataPort.saveData(any()))
+                    .willReturn(mockData);
+            given(mockData.getId())
+                    .willReturn(1L);
+            given(findDataPort.findDataById(any()))
+                    .willReturn(Optional.of(mockData));
 
-        // when
-        UploadDataResponse res = service.uploadData(99L, dataFile, thumbnailFile, uploadDataRequest);
+            given(dataFile.isEmpty()).willReturn(true);
+            given(thumbnailFile.isEmpty()).willReturn(true);
 
-        // then
-        assertThat(res.id()).isEqualTo(1L);
-        then(createDataPort).should().saveData(mockData);
+            // when
+            UploadDataResponse res = service.uploadData(
+                    99L,
+                    dataFile,
+                    thumbnailFile,
+                    uploadDataRequest
+            );
+
+            // then
+            assertThat(res.id()).isEqualTo(1L);
+            then(createDataPort).should().saveData(mockData);
+        }
     }
 
-    @Test
-    void modifyDataShouldUpdateMetadataAndFiles() {
-        // given
-        Long dataId = 1L;
-        MultipartFile dataFile = mock(MultipartFile.class);
-        MultipartFile thumbnailFile = mock(MultipartFile.class);
+    @Nested
+    @DisplayName("데이터셋 수정")
+    class ModifyData {
 
-        Data mockData = mock(Data.class);
+        @Test
+        @DisplayName("데이터 수정 성공 → 메타데이터/파일 수정 및 이벤트 발행")
+        void modifyDataShouldUpdateMetadataAndFiles() {
+            // given
+            Long dataId = 1L;
+            MultipartFile dataFile = mock(MultipartFile.class);
+            MultipartFile thumbnailFile = mock(MultipartFile.class);
+            Data mockData = mock(Data.class);
 
-        // 존재하는 데이터셋
-        given(checkDataExistsByIdPort.existsDataById(dataId)).willReturn(true);
+            given(checkDataExistsByIdPort.existsDataById(dataId))
+                    .willReturn(true);
 
-        // 파일 stubbing
-        given(dataFile.isEmpty()).willReturn(false); // 새 데이터 파일 있음
-        given(dataFile.getOriginalFilename()).willReturn("data.csv");
-        given(thumbnailFile.isEmpty()).willReturn(true); // 새 썸네일 없음
+            given(dataFile.isEmpty()).willReturn(false);
+            given(dataFile.getOriginalFilename()).willReturn("data.csv");
+            given(thumbnailFile.isEmpty()).willReturn(true);
 
-        // DB 조회
-        given(findDataPort.findDataById(dataId)).willReturn(Optional.of(mockData));
-        given(mockData.getId()).willReturn(dataId);
-        given(mockData.getDataFileUrl()).willReturn("s3://bucket/data.csv");
+            given(findDataPort.findDataById(dataId))
+                    .willReturn(Optional.of(mockData));
+            given(mockData.getId())
+                    .willReturn(dataId);
+            given(mockData.getDataFileUrl())
+                    .willReturn("s3://bucket/data.csv");
 
-        // when
-        service.modifyData(dataId, dataFile, thumbnailFile, modifyDataRequest);
+            // when
+            service.modifyData(dataId, dataFile, thumbnailFile, modifyDataRequest);
 
-        // then
-        then(updateDataPort).should().modifyData(dataId, modifyDataRequest);
-        then(findDataPort).should().findDataById(dataId);
-        then(dataUploadEventPort).should()
-                .sendUploadEvent(dataId, "s3://bucket/data.csv", "data.csv");
-    }
+            // then
+            then(updateDataPort).should().modifyData(dataId, modifyDataRequest);
+            then(findDataPort).should().findDataById(dataId);
+            then(dataUploadEventPort).should()
+                    .sendUploadEvent(dataId, "s3://bucket/data.csv", "data.csv");
+        }
 
+        @Test
+        @DisplayName("데이터 수정 실패 → 존재하지 않는 데이터 예외")
+        void modifyDataShouldThrowWhenNotExists() {
+            // given
+            given(checkDataExistsByIdPort.existsDataById(1L))
+                    .willReturn(false);
 
-
-    @Test
-    void modifyDataShouldThrowWhenNotExists() {
-        given(checkDataExistsByIdPort.existsDataById(1L)).willReturn(false);
-
-        DataException ex = catchThrowableOfType(() ->
-                service.modifyData(1L, dataFile, thumbnailFile, modifyDataRequest), DataException.class);
-
-        assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+            // when & then
+            DataException ex = catchThrowableOfType(
+                    () -> service.modifyData(1L, dataFile, thumbnailFile, modifyDataRequest),
+                    DataException.class
+            );
+            assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+        }
     }
 }

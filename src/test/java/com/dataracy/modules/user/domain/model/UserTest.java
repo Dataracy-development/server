@@ -8,22 +8,20 @@ import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 
-@ExtendWith(MockitoExtension.class)
 class UserTest {
 
     @Test
     @DisplayName("isPasswordMatch: 인코더가 일치(true) 반환 시 true")
-    void isPasswordMatch_shouldReturnTrue_whenEncoderMatches() {
+    void isPasswordMatchShouldReturnTrueWhenEncoderMatches() {
         // given
         String encoded = "$2a$10$abcdefg"; // dummy encoded
         User user = User.builder()
@@ -56,7 +54,7 @@ class UserTest {
 
     @Test
     @DisplayName("isPasswordMatch: 인코더가 불일치(false) 반환 시 false")
-    void isPasswordMatch_shouldReturnFalse_whenEncoderNotMatches() {
+    void isPasswordMatchShouldReturnFalseWhenEncoderNotMatches() {
         // given
         String encoded = "$2a$10$abcdefg";
         User user = User.builder()
@@ -90,6 +88,7 @@ class UserTest {
     @Nested
     @DisplayName("validatePasswordChangable")
     class ValidatePasswordChangableTest {
+
         @Test
         @DisplayName("LOCAL 사용자는 예외 없이 통과")
         void validatePasswordChangable_shouldPass_whenLocal() {
@@ -118,7 +117,7 @@ class UserTest {
 
         @Test
         @DisplayName("KAKAO 사용자는 비밀번호 변경 금지 예외 발생")
-        void validatePasswordChangable_shouldThrow_forKakao() {
+        void validatePasswordChangableShouldThrowForKakao() {
             // given
             User user = User.builder()
                     .id(1L)
@@ -148,7 +147,7 @@ class UserTest {
 
         @Test
         @DisplayName("GOOGLE 사용자는 비밀번호 변경 금지 예외 발생")
-        void validatePasswordChangable_shouldThrow_forGoogle() {
+        void validatePasswordChangableShouldThrowForGoogle() {
             // given
             User user = User.builder()
                     .id(1L)
@@ -179,7 +178,7 @@ class UserTest {
 
     @Test
     @DisplayName("toUserInfo: 읽기용 VO 매핑 필드 검증")
-    void toUserInfo_shouldMapSelectedFields() {
+    void toUserInfoShouldMapSelectedFields() {
         // given
         User user = User.builder()
                 .id(10L)

@@ -1,7 +1,6 @@
 package com.dataracy.modules.like.adapter.jpa.impl;
 
 import com.dataracy.modules.like.adapter.jpa.entity.LikeEntity;
-import com.dataracy.modules.like.adapter.jpa.mapper.LikeEntityMapper;
 import com.dataracy.modules.like.adapter.jpa.repository.LikeJpaRepository;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.like.domain.exception.LikeException;
@@ -17,24 +16,29 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LikeCommandAdapterTest {
 
-    @Mock LikeJpaRepository likeJpaRepository;
+    @Mock
+    LikeJpaRepository likeJpaRepository;
 
-    @InjectMocks LikeCommandAdapter adapter;
+    @InjectMocks
+    LikeCommandAdapter adapter;
 
-    @Captor ArgumentCaptor<LikeEntity> entityCaptor;
+    @Captor
+    ArgumentCaptor<LikeEntity> entityCaptor;
 
     @Test
-    @DisplayName("save_should_convert_domain_and_persist")
-    void save_should_convert_domain_and_persist() {
+    @DisplayName("저장 성공")
+    void saveLike() {
         // given
         Like like = Like.of(null, 88L, TargetType.PROJECT, 100L);
-        given(likeJpaRepository.save(any(LikeEntity.class))).willAnswer(inv -> inv.getArgument(0));
+        LikeEntity entity = LikeEntity.of(88L, TargetType.PROJECT, 100L);
+        given(likeJpaRepository.save(any(LikeEntity.class))).willReturn(entity);
 
         // when
         adapter.save(like);
@@ -48,8 +52,8 @@ class LikeCommandAdapterTest {
     }
 
     @Test
-    @DisplayName("cancelLike_should_delete_when_entity_exists")
-    void cancelLike_should_delete_when_entity_exists() {
+    @DisplayName("좋아요 취소 성공")
+    void cancelLikeWhenExists() {
         // given
         Long userId = 7L;
         Long targetId = 3L;
@@ -66,8 +70,8 @@ class LikeCommandAdapterTest {
     }
 
     @Test
-    @DisplayName("cancelLike_should_throw_when_entity_not_found")
-    void cancelLike_should_throw_when_entity_not_found() {
+    @DisplayName("좋아요 취소 실패 - 엔티티 없음")
+    void cancelLikeWhenNotFound() {
         // given
         Long userId = 7L;
         Long targetId = 3L;
@@ -76,7 +80,10 @@ class LikeCommandAdapterTest {
                 .willReturn(Optional.empty());
 
         // when
-        LikeException ex = catchThrowableOfType(() -> adapter.cancelLike(userId, targetId, targetType), LikeException.class);
+        LikeException ex = catchThrowableOfType(
+                () -> adapter.cancelLike(userId, targetId, targetType),
+                LikeException.class
+        );
 
         // then
         assertThat(ex).isNotNull();

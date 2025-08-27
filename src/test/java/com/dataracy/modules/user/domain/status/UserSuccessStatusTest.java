@@ -5,14 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
 class UserSuccessStatusTest {
 
     @Test
     @DisplayName("CREATED_USER: 코드/메시지 검증")
-    void createdUser_fields() {
+    void createdUserFields() {
         // given
         UserSuccessStatus status = UserSuccessStatus.CREATED_USER;
 
@@ -26,15 +25,8 @@ class UserSuccessStatusTest {
     }
 
     @Test
-    @DisplayName("OK 계열: 공통 코드 200 검증")
-    void okGroup_codeFields() {
-        // given
-        // (상태 고정값)
-
-        // when
-        // (액션 없음)
-
-        // then
+    @DisplayName("성공 검증")
+    void okGroupCodeFields() {
         assertThat(UserSuccessStatus.OK_GET_USER_INFO.getCode()).isEqualTo("200");
         assertThat(UserSuccessStatus.OK_NOT_DUPLICATED_NICKNAME.getCode()).isEqualTo("200");
         assertThat(UserSuccessStatus.OK_CHANGE_PASSWORD.getCode()).isEqualTo("200");

@@ -24,10 +24,14 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class ConfirmPasswordServiceTest {
 
-    @Mock PasswordEncoder passwordEncoder;
-    @Mock UserQueryPort userQueryPort;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
-    @InjectMocks ConfirmPasswordService service;
+    @Mock
+    private UserQueryPort userQueryPort;
+
+    @InjectMocks
+    private ConfirmPasswordService service;
 
     private User localUser() {
         return User.builder()

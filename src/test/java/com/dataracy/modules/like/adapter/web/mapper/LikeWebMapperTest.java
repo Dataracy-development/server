@@ -5,13 +5,13 @@ import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class LikeWebMapperTest {
 
     @Test
-    @DisplayName("toApplicationDto_should_map_fields")
-    void toApplicationDto_should_map_fields() {
+    @DisplayName("타겟 좋아요 앱 DTO -> 웹 DTO")
+    void toApplicationDtoShouldMapFields() {
         // given
         LikeWebMapper mapper = new LikeWebMapper();
         TargetLikeWebRequest web = new TargetLikeWebRequest(5L, "PROJECT", false);

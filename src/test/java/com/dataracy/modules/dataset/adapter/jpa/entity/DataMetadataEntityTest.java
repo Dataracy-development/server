@@ -1,6 +1,7 @@
 package com.dataracy.modules.dataset.adapter.jpa.entity;
 
 import com.dataracy.modules.dataset.domain.model.DataMetadata;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DataMetadataEntityTest {
 
     @Test
+    @DisplayName("updateFrom() 호출 시 DataMetadata 값으로 필드가 갱신된다")
     void updateFromShouldUpdateFields() {
         // given
         DataMetadataEntity entity = DataMetadataEntity.builder()
@@ -28,6 +30,7 @@ class DataMetadataEntityTest {
     }
 
     @Test
+    @DisplayName("updateData() 호출 시 양방향 연관관계가 동기화된다")
     void updateDataShouldSyncBothSides() {
         // given
         DataEntity data = DataEntity.builder().build();

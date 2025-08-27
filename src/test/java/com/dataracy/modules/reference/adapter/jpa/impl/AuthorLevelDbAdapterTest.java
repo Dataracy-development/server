@@ -20,17 +20,19 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class AuthorLevelDbAdapterTest {
 
-    @Mock AuthorLevelJpaRepository authorlevelJpaRepository;
+    @Mock
+    private AuthorLevelJpaRepository authorLevelJpaRepository;
 
-    @InjectMocks AuthorLevelDbAdapter adapter;
+    @InjectMocks
+    private AuthorLevelDbAdapter adapter;
 
     @Test
-    @DisplayName("findAllAuthorLevels: 성공 - 엔티티를 도메인으로 변환하여 반환")
-    void findAllAuthorLevels_success() {
+    @DisplayName("작성자 레벨 전체 조회 성공")
+    void findAllAuthorLevelsSuccess() {
         // given
         AuthorLevelEntity e1 = AuthorLevelEntity.builder().id(1L).value("v1").label("l1").build();
         AuthorLevelEntity e2 = AuthorLevelEntity.builder().id(2L).value("v2").label("l2").build();
-        given(authorlevelJpaRepository.findAll()).willReturn(List.of(e1, e2));
+        given(authorLevelJpaRepository.findAll()).willReturn(List.of(e1, e2));
 
         // when
         List<AuthorLevel> result = adapter.findAllAuthorLevels();
@@ -40,17 +42,17 @@ class AuthorLevelDbAdapterTest {
         assertThat(result.get(0).id()).isEqualTo(1L);
         assertThat(result.get(0).value()).isEqualTo("v1");
         assertThat(result.get(0).label()).isEqualTo("l1");
-        then(authorlevelJpaRepository).should().findAll();
+        then(authorLevelJpaRepository).should().findAll();
     }
 
     @Test
-    @DisplayName("findAuthorLevelById: 성공/실패 - 존재 시 변환, 없으면 빈 Optional")
-    void findAuthorLevelById_success_and_empty() {
+    @DisplayName("작성자 레벨 단건 조회 성공 및 실패")
+    void findAuthorLevelByIdSuccessAndEmpty() {
         // given
         Long id = 5L;
         AuthorLevelEntity entity = AuthorLevelEntity.builder().id(id).value("v").label("l").build();
-        given(authorlevelJpaRepository.findById(id)).willReturn(Optional.of(entity));
-        given(authorlevelJpaRepository.findById(999L)).willReturn(Optional.empty());
+        given(authorLevelJpaRepository.findById(id)).willReturn(Optional.of(entity));
+        given(authorLevelJpaRepository.findById(999L)).willReturn(Optional.empty());
 
         // when
         Optional<AuthorLevel> found = adapter.findAuthorLevelById(id);
@@ -60,51 +62,51 @@ class AuthorLevelDbAdapterTest {
         assertThat(found).isPresent();
         assertThat(found.get().id()).isEqualTo(id);
         assertThat(missing).isEmpty();
-        then(authorlevelJpaRepository).should(times(1)).findById(id);
-        then(authorlevelJpaRepository).should(times(1)).findById(999L);
+        then(authorLevelJpaRepository).should(times(1)).findById(id);
+        then(authorLevelJpaRepository).should(times(1)).findById(999L);
     }
 
     @Test
-    @DisplayName("existsAuthorLevelById: 성공 - JPA existsById 위임")
-    void existsAuthorLevelById_success() {
+    @DisplayName("작성자 레벨 존재 여부 확인 성공")
+    void existsAuthorLevelByIdSuccess() {
         // given
-        given(authorlevelJpaRepository.existsById(1L)).willReturn(true);
-        given(authorlevelJpaRepository.existsById(2L)).willReturn(false);
+        given(authorLevelJpaRepository.existsById(1L)).willReturn(true);
+        given(authorLevelJpaRepository.existsById(2L)).willReturn(false);
 
-        // when/then
+        // when & then
         assertThat(adapter.existsAuthorLevelById(1L)).isTrue();
         assertThat(adapter.existsAuthorLevelById(2L)).isFalse();
-        then(authorlevelJpaRepository).should().existsById(1L);
-        then(authorlevelJpaRepository).should().existsById(2L);
+        then(authorLevelJpaRepository).should().existsById(1L);
+        then(authorLevelJpaRepository).should().existsById(2L);
     }
 
     @Test
-    @DisplayName("getLabelById: 성공/실패 - Optional 위임")
-    void getLabelById_success_and_empty() {
+    @DisplayName("작성자 레벨 라벨 단건 조회 성공 및 실패")
+    void getLabelByIdSuccessAndEmpty() {
         // given
-        given(authorlevelJpaRepository.findLabelById(1L)).willReturn(Optional.of("L1"));
-        given(authorlevelJpaRepository.findLabelById(9L)).willReturn(Optional.empty());
+        given(authorLevelJpaRepository.findLabelById(1L)).willReturn(Optional.of("L1"));
+        given(authorLevelJpaRepository.findLabelById(9L)).willReturn(Optional.empty());
 
-        // when/then
+        // when & then
         assertThat(adapter.getLabelById(1L)).contains("L1");
         assertThat(adapter.getLabelById(9L)).isEmpty();
-        then(authorlevelJpaRepository).should().findLabelById(1L);
-        then(authorlevelJpaRepository).should().findLabelById(9L);
+        then(authorLevelJpaRepository).should().findLabelById(1L);
+        then(authorLevelJpaRepository).should().findLabelById(9L);
     }
 
     @Test
-    @DisplayName("getLabelsByIds: 성공 - findAllById 결과를 id->label 맵으로 반환")
-    void getLabelsByIds_success() {
+    @DisplayName("작성자 레벨 라벨 다건 조회 성공")
+    void getLabelsByIdsSuccess() {
         // given
         AuthorLevelEntity e1 = AuthorLevelEntity.builder().id(1L).value("v1").label("L1").build();
         AuthorLevelEntity e2 = AuthorLevelEntity.builder().id(2L).value("v2").label("L2").build();
-        given(authorlevelJpaRepository.findAllById(List.of(1L,2L))).willReturn(List.of(e1,e2));
+        given(authorLevelJpaRepository.findAllById(List.of(1L, 2L))).willReturn(List.of(e1, e2));
 
         // when
-        Map<Long,String> result = adapter.getLabelsByIds(List.of(1L,2L));
+        Map<Long, String> result = adapter.getLabelsByIds(List.of(1L, 2L));
 
         // then
-        assertThat(result).containsEntry(1L,"L1").containsEntry(2L,"L2");
-        then(authorlevelJpaRepository).should().findAllById(List.of(1L,2L));
+        assertThat(result).containsEntry(1L, "L1").containsEntry(2L, "L2");
+        then(authorLevelJpaRepository).should().findAllById(List.of(1L, 2L));
     }
 }

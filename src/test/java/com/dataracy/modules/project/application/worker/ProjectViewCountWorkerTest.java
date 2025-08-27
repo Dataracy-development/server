@@ -6,8 +6,6 @@ import com.dataracy.modules.project.application.port.out.view.ManageProjectViewC
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -23,26 +20,31 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class ProjectViewCountWorkerTest {
 
-    @Mock ManageProjectViewCountPort manageProjectViewCountPort;
-    @Mock UpdateProjectViewPort updateProjectViewDbPort;
-    @Mock ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
+    @Mock
+    private ManageProjectViewCountPort manageProjectViewCountPort;
 
-    @InjectMocks ProjectViewCountWorker worker;
+    @Mock
+    private UpdateProjectViewPort updateProjectViewDbPort;
 
-    @Captor ArgumentCaptor<Long> longCaptor;
+    @Mock
+    private ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
+
+    @InjectMocks
+    private ProjectViewCountWorker worker;
 
     @Test
-    @DisplayName("flushProjectViews_should_update_and_enqueue_when_positive_counts")
-    void flushProjectViews_should_update_and_enqueue_when_positive_counts() {
+    @DisplayName("프로젝트 조회수 집계 성공 - 양수 카운트만 반영")
+    void flushProjectViewsSuccessWithPositiveCounts() {
         // given
         Set<String> keys = new LinkedHashSet<>();
         keys.add("viewCount:PROJECT:10");
         keys.add("viewCount:PROJECT:11");
+
         given(manageProjectViewCountPort.getAllViewCountKeys("PROJECT")).willReturn(keys);
         given(manageProjectViewCountPort.popViewCount(10L, "PROJECT")).willReturn(5L);
         given(manageProjectViewCountPort.popViewCount(11L, "PROJECT")).willReturn(2L);
 
-        // when
+        // when & then
         assertThatNoException().isThrownBy(() -> worker.flushProjectViews());
 
         // then
@@ -53,13 +55,14 @@ class ProjectViewCountWorkerTest {
     }
 
     @Test
-    @DisplayName("flushProjectViews_should_ignore_zero_or_null_counts_and_continue_on_bad_key")
-    void flushProjectViews_should_ignore_zero_or_null_counts_and_continue_on_bad_key() {
+    @DisplayName("프로젝트 조회수 집계 예외 케이스 - 잘못된 키/0/null 값 무시")
+    void flushProjectViewsIgnoreZeroOrNullAndBadKey() {
         // given
         Set<String> keys = new LinkedHashSet<>();
         keys.add("viewCount:PROJECT:20");
         keys.add("bad-key-format");
         keys.add("viewCount:PROJECT:21");
+
         given(manageProjectViewCountPort.getAllViewCountKeys("PROJECT")).willReturn(keys);
         given(manageProjectViewCountPort.popViewCount(20L, "PROJECT")).willReturn(0L);
         given(manageProjectViewCountPort.popViewCount(21L, "PROJECT")).willReturn(null);
@@ -67,9 +70,8 @@ class ProjectViewCountWorkerTest {
         // when & then
         assertThatNoException().isThrownBy(() -> worker.flushProjectViews());
 
-        // then: 0, null 값은 무시되어야 한다
+        // then (0, null 값 및 잘못된 키는 무시됨)
         then(updateProjectViewDbPort).shouldHaveNoInteractions();
         then(manageProjectProjectionTaskPort).shouldHaveNoInteractions();
     }
-
 }

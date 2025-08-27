@@ -31,17 +31,28 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class UserAuthServiceTest {
 
-    @Mock PasswordEncoder passwordEncoder;
-    @Mock UserQueryPort userQueryPort;
-    @Mock JwtValidateUseCase jwtValidateUseCase;
-    @Mock JwtGenerateUseCase jwtGenerateUseCase;
-    @Mock ManageRefreshTokenUseCase manageRefreshTokenUseCase;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
-    @InjectMocks UserAuthService service;
+    @Mock
+    private UserQueryPort userQueryPort;
+
+    @Mock
+    private JwtValidateUseCase jwtValidateUseCase;
+
+    @Mock
+    private JwtGenerateUseCase jwtGenerateUseCase;
+
+    @Mock
+    private ManageRefreshTokenUseCase manageRefreshTokenUseCase;
+
+    @InjectMocks
+    private UserAuthService service;
 
     private OAuthUserInfo kakaoUserInfo() {
         return new OAuthUserInfo("user@test.com", "주니", "KAKAO","kakao-123");
     }
+
     private User localUser() {
         return User.builder()
                 .id(1L)
@@ -56,9 +67,10 @@ class UserAuthServiceTest {
     }
 
     // -------------------- isNewUser --------------------
+
     @Test
     @DisplayName("isNewUser: 존재하지 않으면 true 반환")
-    void isNewUser_true() {
+    void isNewUserReturnsTrueWhenNotExists() {
         // given
         given(userQueryPort.findUserByProviderId("kakao-123")).willReturn(Optional.empty());
 
@@ -71,7 +83,7 @@ class UserAuthServiceTest {
 
     @Test
     @DisplayName("isNewUser: 이미 존재하면 false 반환")
-    void isNewUser_false() {
+    void isNewUserReturnsFalseWhenExists() {
         // given
         given(userQueryPort.findUserByProviderId("kakao-123")).willReturn(Optional.of(localUser()));
 
@@ -83,14 +95,14 @@ class UserAuthServiceTest {
     }
 
     // -------------------- handleNewUser --------------------
+
     @Test
     @DisplayName("handleNewUser: 토큰 생성 및 RegisterTokenResponse 반환")
-    void handleNewUser_success() {
+    void handleNewUserGeneratesRegisterToken() {
         // given
         given(jwtGenerateUseCase.generateRegisterToken("KAKAO","kakao-123","user@test.com"))
                 .willReturn("register-token");
-        given(jwtValidateUseCase.getRegisterTokenExpirationTime())
-                .willReturn(1000L);
+        given(jwtValidateUseCase.getRegisterTokenExpirationTime()).willReturn(1000L);
 
         // when
         RegisterTokenResponse res = service.handleNewUser(kakaoUserInfo());
@@ -101,32 +113,29 @@ class UserAuthServiceTest {
     }
 
     // -------------------- handleExistingUser --------------------
+
     @Test
-    @DisplayName("handleExistingUser: 유저 존재 → refresh 토큰 발급/저장")
-    void handleExistingUser_success() {
+    @DisplayName("handleExistingUser: 유저 존재 시 refresh 토큰 발급/저장")
+    void handleExistingUserGeneratesAndSavesRefreshToken() {
         // given
         User exist = localUser();
         given(userQueryPort.findUserByProviderId("kakao-123")).willReturn(Optional.of(exist));
-        given(jwtGenerateUseCase.generateRefreshToken(1L, RoleType.ROLE_USER))
-                .willReturn("refresh-token");
-        given(jwtValidateUseCase.getRefreshTokenExpirationTime())
-                .willReturn(1000L);
+        given(jwtGenerateUseCase.generateRefreshToken(1L, RoleType.ROLE_USER)).willReturn("refresh-token");
+        given(jwtValidateUseCase.getRefreshTokenExpirationTime()).willReturn(1000L);
 
         // when
         RefreshTokenResponse res = service.handleExistingUser(kakaoUserInfo());
 
         // then
         assertThat(res.refreshToken()).isEqualTo("refresh-token");
-        then(manageRefreshTokenUseCase).should()
-                .saveRefreshToken("1","refresh-token");
+        then(manageRefreshTokenUseCase).should().saveRefreshToken("1","refresh-token");
     }
 
     @Test
     @DisplayName("handleExistingUser: 유저 없음 → NOT_FOUND_USER 예외")
-    void handleExistingUser_notFound() {
+    void handleExistingUserThrowsNotFoundWhenUserMissing() {
         // given
-        given(userQueryPort.findUserByProviderId("kakao-123"))
-                .willReturn(Optional.empty());
+        given(userQueryPort.findUserByProviderId("kakao-123")).willReturn(Optional.empty());
 
         // when
         UserException ex = catchThrowableOfType(
@@ -135,14 +144,16 @@ class UserAuthServiceTest {
         );
 
         // then
+        assertThat(ex).isNotNull();
         assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.NOT_FOUND_USER);
         then(manageRefreshTokenUseCase).shouldHaveNoInteractions();
     }
 
     // -------------------- checkLoginPossibleAndGetUserInfo --------------------
+
     @Test
     @DisplayName("checkLoginPossibleAndGetUserInfo: 이메일 존재 + 비밀번호 일치 → UserInfo 반환")
-    void checkLoginPossible_success() {
+    void checkLoginPossibleReturnsUserInfoWhenValid() {
         // given
         User user = localUser();
         given(userQueryPort.findUserByEmail("user@test.com")).willReturn(Optional.of(user));
@@ -157,7 +168,7 @@ class UserAuthServiceTest {
 
     @Test
     @DisplayName("checkLoginPossibleAndGetUserInfo: 유저 없음 → BAD_REQUEST_LOGIN 예외")
-    void checkLoginPossible_userNotFound() {
+    void checkLoginPossibleThrowsWhenUserNotFound() {
         // given
         given(userQueryPort.findUserByEmail("x@test.com")).willReturn(Optional.empty());
 
@@ -168,12 +179,13 @@ class UserAuthServiceTest {
         );
 
         // then
+        assertThat(ex).isNotNull();
         assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.BAD_REQUEST_LOGIN);
     }
 
     @Test
     @DisplayName("checkLoginPossibleAndGetUserInfo: 비밀번호 불일치 → BAD_REQUEST_LOGIN 예외")
-    void checkLoginPossible_passwordMismatch() {
+    void checkLoginPossibleThrowsWhenPasswordMismatch() {
         // given
         User user = localUser();
         given(userQueryPort.findUserByEmail("user@test.com")).willReturn(Optional.of(user));
@@ -186,6 +198,7 @@ class UserAuthServiceTest {
         );
 
         // then
+        assertThat(ex).isNotNull();
         assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.BAD_REQUEST_LOGIN);
     }
 }

@@ -11,8 +11,10 @@ class CommentExceptionTest {
     @Test
     @DisplayName("CommentException은 BaseErrorCode를 포함한다")
     void exceptionHasErrorCode() {
+        // when
         CommentException ex = new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT);
 
+        // then
         assertThat(ex.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
         assertThat(ex.getErrorCode().getCode()).isEqualTo("COMMENT-002");
     }

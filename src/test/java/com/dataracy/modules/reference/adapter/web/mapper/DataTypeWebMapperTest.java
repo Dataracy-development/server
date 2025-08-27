@@ -14,7 +14,7 @@ class DataTypeWebMapperTest {
 
     @Test
     @DisplayName("toWebDto(single): 성공 - 필드 매핑")
-    void toWebDto_single_success() {
+    void toWebDtoSingleSuccess() {
         // given
         DataTypeResponse src = new DataTypeResponse(1L, "v", "l");
 
@@ -29,7 +29,7 @@ class DataTypeWebMapperTest {
 
     @Test
     @DisplayName("toWebDto(all): 성공 - 리스트 매핑, null/빈 처리")
-    void toWebDto_all_success_and_nullsafe() {
+    void toWebDtoAllSuccessAndNullsafe() {
         // given
         AllDataTypesResponse src = new AllDataTypesResponse(java.util.List.of(new DataTypeResponse(1L,"v1","l1"), new DataTypeResponse(2L,"v2","l2")));
 

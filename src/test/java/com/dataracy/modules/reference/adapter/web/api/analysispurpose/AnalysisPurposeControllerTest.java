@@ -1,61 +1,90 @@
 package com.dataracy.modules.reference.adapter.web.api.analysispurpose;
 
-import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
 import com.dataracy.modules.reference.adapter.web.mapper.AnalysisPurposeWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllAnalysisPurposesWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.singleview.AnalysisPurposeWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllAnalysisPurposesResponse;
 import com.dataracy.modules.reference.application.port.in.analysispurpose.FindAllAnalysisPurposesUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import java.util.List;
+
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(controllers = AnalysisPurposeController.class)
 class AnalysisPurposeControllerTest {
 
-    @Mock FindAllAnalysisPurposesUseCase findAllAnalysisPurposesUseCase;
-    @Mock AnalysisPurposeWebMapper webMapper;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @InjectMocks AnalysisPurposeController controller;
+    @MockBean
+    private FindAllAnalysisPurposesUseCase findAllAnalysisPurposesUseCase;
+
+    @MockBean
+    private AnalysisPurposeWebMapper webMapper;
+
+    // 공통 모킹
+    @MockBean
+    private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+    @MockBean
+    private JwtValidateUseCase jwtValidateUseCase;
 
     @Test
-    @DisplayName("findAllAnalysisPurposes API: 성공 - 200 OK와 바디 반환")
-    void findAllAnalysisPurposes_success() {
-        // given
-        AllAnalysisPurposesResponse svc = new AllAnalysisPurposesResponse(java.util.List.of());
-        AllAnalysisPurposesWebResponse web = new AllAnalysisPurposesWebResponse(java.util.List.of());
+    @DisplayName("GET /api/v1/references/analysis-purposes - 200 OK & 응답 본문 검증")
+    void findAllAnalysisPurposesSuccess() throws Exception {
+        // given (서비스 DTO와 웹 DTO를 실제 타입으로 구성)
+        AllAnalysisPurposesResponse svc =
+                new AllAnalysisPurposesResponse(List.of()); // 내용은 매퍼에서 웹 DTO로 변환되므로 비어도 무방
+        AllAnalysisPurposesWebResponse web =
+                new AllAnalysisPurposesWebResponse(
+                        List.of(
+                                new AnalysisPurposeWebResponse(1L, "VALUE_A", "라벨A"),
+                                new AnalysisPurposeWebResponse(2L, "VALUE_B", "라벨B")
+                        )
+                );
+
         given(findAllAnalysisPurposesUseCase.findAllAnalysisPurposes()).willReturn(svc);
         given(webMapper.toWebDto(svc)).willReturn(web);
 
-        // when
-        ResponseEntity<SuccessResponse<AllAnalysisPurposesWebResponse>> res = controller.findAllAnalysisPurposes();
-
-        // then
-        assertThat(res.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(res.getBody()).isNotNull();
-        then(findAllAnalysisPurposesUseCase).should().findAllAnalysisPurposes();
-        then(webMapper).should().toWebDto(svc);
+        // when & then
+        mockMvc.perform(get("/api/v1/references/analysis-purposes")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                // 공통 SuccessResponse 포맷을 가정: $.code, $.data 존재 확인
+                .andExpect(jsonPath("$.code").exists())
+                .andExpect(jsonPath("$.data").exists())
+                // 리스트와 각 항목 필드 검증 (주신 레코드 구조 유지)
+                .andExpect(jsonPath("$.data.analysisPurposes[0].id").value(1))
+                .andExpect(jsonPath("$.data.analysisPurposes[0].value").value("VALUE_A"))
+                .andExpect(jsonPath("$.data.analysisPurposes[0].label").value("라벨A"))
+                .andExpect(jsonPath("$.data.analysisPurposes[1].id").value(2))
+                .andExpect(jsonPath("$.data.analysisPurposes[1].value").value("VALUE_B"))
+                .andExpect(jsonPath("$.data.analysisPurposes[1].label").value("라벨B"));
     }
 
     @Test
-    @DisplayName("findAllAnalysisPurposes API: 실패 - 내부 예외 전파")
-    void findAllAnalysisPurposes_failure_propagates() {
+    @DisplayName("GET /api/v1/references/analysis-purposes - 내부 예외 발생 시 500")
+    void findAllAnalysisPurposesFailureReturns500() throws Exception {
         // given
-        given(findAllAnalysisPurposesUseCase.findAllAnalysisPurposes()).willThrow(new RuntimeException("boom"));
+        given(findAllAnalysisPurposesUseCase.findAllAnalysisPurposes())
+                .willThrow(new RuntimeException("boom"));
 
-        // when
-        RuntimeException ex = catchThrowableOfType(() -> controller.findAllAnalysisPurposes(), RuntimeException.class);
-
-        // then
-        assertThat(ex).isNotNull();
-        then(webMapper).shouldHaveNoInteractions();
+        // when & then
+        mockMvc.perform(get("/api/v1/references/analysis-purposes")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
     }
 }

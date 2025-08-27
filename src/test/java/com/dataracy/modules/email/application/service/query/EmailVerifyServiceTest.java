@@ -23,23 +23,29 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class EmailVerifyServiceTest {
 
-    @Mock private ManageEmailCodePort manageEmailCodePort;
-    @Mock private JwtGenerateUseCase jwtGenerateUseCase;
-    @Mock private ManageResetTokenUseCase manageResetTokenUseCase;
+    @Mock
+    private ManageEmailCodePort manageEmailCodePort;
+
+    @Mock
+    private JwtGenerateUseCase jwtGenerateUseCase;
+
+    @Mock
+    private ManageResetTokenUseCase manageResetTokenUseCase;
 
     @InjectMocks
     private EmailVerifyService service;
 
     @Nested
-    @DisplayName("verifyCode")
+    @DisplayName("이메일 인증코드 검증")
     class VerifyCode {
 
         @Test
-        @DisplayName("성공: PASSWORD_SEARCH → 코드 일치 시 삭제 + 토큰 발급/저장")
+        @DisplayName("성공: PASSWORD_SEARCH → 코드 일치 시 삭제 후 토큰 발급·저장")
         void successPasswordSearch() {
             // given
             String email = "a@ex.com";
             String inputCode = "123456";
+
             given(manageEmailCodePort.verifyCode(email, inputCode, EmailVerificationType.PASSWORD_SEARCH))
                     .willReturn(inputCode);
             given(jwtGenerateUseCase.generateResetPasswordToken(email))
@@ -56,11 +62,12 @@ class EmailVerifyServiceTest {
         }
 
         @Test
-        @DisplayName("성공: SIGN_UP → 코드 일치 시 삭제만, 토큰은 null")
+        @DisplayName("성공: SIGN_UP → 코드 일치 시 삭제만 수행, 토큰은 null")
         void successSignUp() {
             // given
             String email = "b@ex.com";
             String inputCode = "654321";
+
             given(manageEmailCodePort.verifyCode(email, inputCode, EmailVerificationType.SIGN_UP))
                     .willReturn(inputCode);
 
@@ -76,11 +83,12 @@ class EmailVerifyServiceTest {
         }
 
         @Test
-        @DisplayName("실패: 만료(null) → EmailException(EXPIRED_EMAIL_CODE: EMAIL-003)")
+        @DisplayName("실패: 코드 만료(null 반환) → EmailException(EXPIRED_EMAIL_CODE: EMAIL-003)")
         void expired() {
             // given
             String email = "c@ex.com";
             String inputCode = "000000";
+
             given(manageEmailCodePort.verifyCode(email, inputCode, EmailVerificationType.SIGN_UP))
                     .willReturn(null);
 
@@ -97,13 +105,14 @@ class EmailVerifyServiceTest {
         }
 
         @Test
-        @DisplayName("실패: 불일치 → EmailException(FAIL_VERIFY_EMAIL_CODE: EMAIL-002)")
+        @DisplayName("실패: 코드 불일치 → EmailException(FAIL_VERIFY_EMAIL_CODE: EMAIL-002)")
         void mismatch() {
             // given
             String email = "d@ex.com";
             String inputCode = "111111";
+
             given(manageEmailCodePort.verifyCode(email, inputCode, EmailVerificationType.PASSWORD_RESET))
-                    .willReturn("222222");
+                    .willReturn("222222"); // 불일치
 
             // when
             EmailException ex = catchThrowableOfType(

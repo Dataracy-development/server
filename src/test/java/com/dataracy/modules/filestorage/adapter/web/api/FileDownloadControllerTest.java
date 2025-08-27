@@ -14,20 +14,25 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class FileDownloadControllerTest {
 
-    @Mock DownloadFileUseCase downloadFileUseCase;
-    @Mock FileDownloadWebMapper fileDownloadWebMapper;
+    @Mock
+    private DownloadFileUseCase downloadFileUseCase;
 
-    @InjectMocks FileDownloadController controller;
+    @Mock
+    private FileDownloadWebMapper fileDownloadWebMapper;
+
+    @InjectMocks
+    private FileDownloadController controller;
 
     @Test
-    @DisplayName("getPreSignedUrl_should_map_and_wrap_success_response")
-    void getPreSignedUrl_should_map_and_wrap_success_response() {
+    @DisplayName("파일 다운로드 URL 반환")
+    void getPreSignedUrlShouldMapAndWrapSuccessResponse() {
         // given
         String s3Url = "https://bucket/k";
         int expiration = 300;

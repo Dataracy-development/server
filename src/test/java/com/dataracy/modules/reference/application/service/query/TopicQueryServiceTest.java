@@ -25,17 +25,29 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class TopicQueryServiceTest {
 
-    @Mock TopicPort topicPort;
-    @Mock TopicDtoMapper topicDtoMapper;
+    @Mock
+    private TopicPort topicPort;
 
-    @InjectMocks TopicQueryService service;
+    @Mock
+    private TopicDtoMapper topicDtoMapper;
+
+    @InjectMocks
+    private TopicQueryService service;
 
     @Test
-    @DisplayName("findAllTopics: 성공 - 전체 목록 반환")
-    void findAllTopics_success() {
+    @DisplayName("전체 토픽 조회 성공")
+    void findAllTopicsSuccess() {
         // given
-        List<Topic> domainList = List.of(new Topic(1L, "v1", "l1"), new Topic(2L, "v2", "l2"));
-        AllTopicsResponse mapped = new AllTopicsResponse(List.of(new TopicResponse(1L, "v1", "l1"), new TopicResponse(2L, "v2", "l2")));
+        List<Topic> domainList = List.of(
+                new Topic(1L, "v1", "l1"),
+                new Topic(2L, "v2", "l2")
+        );
+        AllTopicsResponse mapped = new AllTopicsResponse(
+                List.of(
+                        new TopicResponse(1L, "v1", "l1"),
+                        new TopicResponse(2L, "v2", "l2")
+                )
+        );
         given(topicPort.findAllTopics()).willReturn(domainList);
         given(topicDtoMapper.toResponseDto(domainList)).willReturn(mapped);
 
@@ -49,8 +61,8 @@ class TopicQueryServiceTest {
     }
 
     @Test
-    @DisplayName("findTopic: 성공 - 단건 반환")
-    void findTopic_success() {
+    @DisplayName("토픽 단건 조회 성공")
+    void findTopicSuccess() {
         // given
         Long id = 10L;
         Topic domain = new Topic(id, "v", "l");
@@ -68,14 +80,17 @@ class TopicQueryServiceTest {
     }
 
     @Test
-    @DisplayName("findTopic: 실패 - 존재하지 않으면 ReferenceException")
-    void findTopic_notFound_throws() {
+    @DisplayName("토픽 단건 조회 실패 - 없을 때 예외 발생")
+    void findTopicFailWhenNotFound() {
         // given
         Long id = 999L;
         given(topicPort.findTopicById(id)).willReturn(Optional.empty());
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.findTopic(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.findTopic(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
@@ -84,8 +99,8 @@ class TopicQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getLabelById: 성공 - 라벨 반환")
-    void getLabelById_success() {
+    @DisplayName("토픽 라벨 조회 성공")
+    void getLabelByIdSuccess() {
         // given
         Long id = 1L;
         given(topicPort.getLabelById(id)).willReturn(Optional.of("label"));
@@ -99,14 +114,17 @@ class TopicQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getLabelById: 실패 - 없으면 ReferenceException")
-    void getLabelById_notFound_throws() {
+    @DisplayName("토픽 라벨 조회 실패 - 없을 때 예외 발생")
+    void getLabelByIdFailWhenNotFound() {
         // given
         Long id = 404L;
         given(topicPort.getLabelById(id)).willReturn(Optional.empty());
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.getLabelById(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.getLabelById(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
@@ -114,8 +132,8 @@ class TopicQueryServiceTest {
     }
 
     @Test
-    @DisplayName("validateTopic: 성공 - 존재하면 예외 없음")
-    void validateTopic_success() {
+    @DisplayName("토픽 검증 성공 - 존재할 때")
+    void validateTopicSuccess() {
         // given
         Long id = 1L;
         given(topicPort.existsTopicById(id)).willReturn(true);
@@ -128,14 +146,17 @@ class TopicQueryServiceTest {
     }
 
     @Test
-    @DisplayName("validateTopic: 실패 - 존재하지 않으면 ReferenceException")
-    void validateTopic_notFound_throws() {
+    @DisplayName("토픽 검증 실패 - 없을 때 예외 발생")
+    void validateTopicFailWhenNotFound() {
         // given
         Long id = 2L;
         given(topicPort.existsTopicById(id)).willReturn(false);
 
         // when
-        ReferenceException ex = catchThrowableOfType(() -> service.validateTopic(id), ReferenceException.class);
+        ReferenceException ex = catchThrowableOfType(
+                () -> service.validateTopic(id),
+                ReferenceException.class
+        );
 
         // then
         assertThat(ex).isNotNull();
@@ -143,8 +164,8 @@ class TopicQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getLabelsByIds: 성공 - 비어있으면 빈 맵, 값 있으면 위임 및 반환")
-    void getLabelsByIds_success_and_emptyHandling() {
+    @DisplayName("토픽 라벨 다건 조회 성공 및 빈 값 처리")
+    void getLabelsByIdsSuccessAndEmptyHandling() {
         // given - empty/null
         assertThat(service.getLabelsByIds(null)).isEmpty();
         assertThat(service.getLabelsByIds(List.of())).isEmpty();

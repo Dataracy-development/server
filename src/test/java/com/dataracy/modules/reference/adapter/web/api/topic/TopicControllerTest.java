@@ -1,61 +1,87 @@
 package com.dataracy.modules.reference.adapter.web.api.topic;
 
-import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
 import com.dataracy.modules.reference.adapter.web.mapper.TopicWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllTopicsWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.singleview.TopicWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllTopicsResponse;
 import com.dataracy.modules.reference.application.port.in.topic.FindAllTopicsUseCase;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import java.util.List;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(controllers = TopicController.class)
 class TopicControllerTest {
 
-    @Mock FindAllTopicsUseCase findAllTopicsUseCase;
-    @Mock TopicWebMapper webMapper;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @InjectMocks TopicController controller;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private FindAllTopicsUseCase findAllTopicsUseCase;
+
+    @MockBean
+    private TopicWebMapper webMapper;
+
+    // 공통 모킹 (보안/로그 관련)
+    @MockBean
+    private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+    @MockBean
+    private JwtValidateUseCase jwtValidateUseCase;
 
     @Test
-    @DisplayName("findAllTopics API: 성공 - 200 OK와 바디 반환")
-    void findAllTopics_success() {
+    @DisplayName("findAllTopics API: 성공 - 200 OK와 JSON 응답 검증")
+    void findAllTopicsSuccess() throws Exception {
         // given
-        AllTopicsResponse svc = new AllTopicsResponse(java.util.List.of());
-        AllTopicsWebResponse web = new AllTopicsWebResponse(java.util.List.of());
+        AllTopicsResponse svc = new AllTopicsResponse(List.of());
+        AllTopicsWebResponse web = new AllTopicsWebResponse(
+                List.of(new TopicWebResponse(1L, "TOPIC_A", "토픽 A"))
+        );
+
         given(findAllTopicsUseCase.findAllTopics()).willReturn(svc);
         given(webMapper.toWebDto(svc)).willReturn(web);
 
-        // when
-        ResponseEntity<SuccessResponse<AllTopicsWebResponse>> res = controller.findAllTopics();
+        // when & then
+        mockMvc.perform(get("/api/v1/references/topics")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.topics[0].id").value(1))
+                .andExpect(jsonPath("$.data.topics[0].value").value("TOPIC_A"))
+                .andExpect(jsonPath("$.data.topics[0].label").value("토픽 A"));
 
-        // then
-        assertThat(res.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(res.getBody()).isNotNull();
         then(findAllTopicsUseCase).should().findAllTopics();
         then(webMapper).should().toWebDto(svc);
     }
 
     @Test
-    @DisplayName("findAllTopics API: 실패 - 내부 예외 전파")
-    void findAllTopics_failure_propagates() {
+    @DisplayName("findAllTopics API: 실패 - 내부 예외 발생 시 500 반환")
+    void findAllTopicsFailure() throws Exception {
         // given
         given(findAllTopicsUseCase.findAllTopics()).willThrow(new RuntimeException("boom"));
 
-        // when
-        RuntimeException ex = catchThrowableOfType(() -> controller.findAllTopics(), RuntimeException.class);
+        // when & then
+        mockMvc.perform(get("/api/v1/references/topics")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
 
-        // then
-        assertThat(ex).isNotNull();
         then(webMapper).shouldHaveNoInteractions();
     }
 }

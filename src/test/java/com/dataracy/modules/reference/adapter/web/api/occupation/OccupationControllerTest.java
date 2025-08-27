@@ -1,61 +1,87 @@
 package com.dataracy.modules.reference.adapter.web.api.occupation;
 
-import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
 import com.dataracy.modules.reference.adapter.web.mapper.OccupationWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllOccupationsWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.singleview.OccupationWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllOccupationsResponse;
 import com.dataracy.modules.reference.application.port.in.occupation.FindAllOccupationsUseCase;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import java.util.List;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(controllers = OccupationController.class)
 class OccupationControllerTest {
 
-    @Mock FindAllOccupationsUseCase findAllOccupationsUseCase;
-    @Mock OccupationWebMapper webMapper;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @InjectMocks OccupationController controller;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private FindAllOccupationsUseCase findAllOccupationsUseCase;
+
+    @MockBean
+    private OccupationWebMapper webMapper;
+
+    // 공통 모킹
+    @MockBean
+    private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+    @MockBean
+    private JwtValidateUseCase jwtValidateUseCase;
 
     @Test
-    @DisplayName("findAllOccupations API: 성공 - 200 OK와 바디 반환")
-    void findAllOccupations_success() {
+    @DisplayName("findAllOccupations API: 성공 - 200 OK와 JSON 응답 검증")
+    void findAllOccupationsSuccess() throws Exception {
         // given
-        AllOccupationsResponse svc = new AllOccupationsResponse(java.util.List.of());
-        AllOccupationsWebResponse web = new AllOccupationsWebResponse(java.util.List.of());
+        AllOccupationsResponse svc = new AllOccupationsResponse(List.of());
+        AllOccupationsWebResponse web = new AllOccupationsWebResponse(
+                List.of(new OccupationWebResponse(1L, "DEV", "개발자"))
+        );
+
         given(findAllOccupationsUseCase.findAllOccupations()).willReturn(svc);
         given(webMapper.toWebDto(svc)).willReturn(web);
 
-        // when
-        ResponseEntity<SuccessResponse<AllOccupationsWebResponse>> res = controller.findAllOccupations();
+        // when & then
+        mockMvc.perform(get("/api/v1/references/occupations")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.occupations[0].id").value(1))
+                .andExpect(jsonPath("$.data.occupations[0].value").value("DEV"))
+                .andExpect(jsonPath("$.data.occupations[0].label").value("개발자"));
 
-        // then
-        assertThat(res.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(res.getBody()).isNotNull();
         then(findAllOccupationsUseCase).should().findAllOccupations();
         then(webMapper).should().toWebDto(svc);
     }
 
     @Test
-    @DisplayName("findAllOccupations API: 실패 - 내부 예외 전파")
-    void findAllOccupations_failure_propagates() {
+    @DisplayName("findAllOccupations API: 실패 - 내부 예외 발생 시 500 반환")
+    void findAllOccupationsFailure() throws Exception {
         // given
         given(findAllOccupationsUseCase.findAllOccupations()).willThrow(new RuntimeException("boom"));
 
-        // when
-        RuntimeException ex = catchThrowableOfType(() -> controller.findAllOccupations(), RuntimeException.class);
+        // when & then
+        mockMvc.perform(get("/api/v1/references/occupations")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
 
-        // then
-        assertThat(ex).isNotNull();
         then(webMapper).shouldHaveNoInteractions();
     }
 }

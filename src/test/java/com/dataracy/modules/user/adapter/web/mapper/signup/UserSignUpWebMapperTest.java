@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserSignUpWebMapperTest {
 
-    UserSignUpWebMapper mapper = new UserSignUpWebMapper();
+    private UserSignUpWebMapper mapper = new UserSignUpWebMapper();
 
     @Test
     @DisplayName("toApplicationDto(SelfSignUp): 웹 → 앱 매핑")

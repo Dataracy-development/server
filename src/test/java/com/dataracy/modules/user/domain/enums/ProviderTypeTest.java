@@ -4,17 +4,15 @@ import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-@ExtendWith(MockitoExtension.class)
 class ProviderTypeTest {
 
     @Test
     @DisplayName("of: 대소문자 무시한 매칭(LOCAL/KAKAO/GOOGLE)")
-    void of_shouldReturnEnum_whenValid() {
+    void ofShouldReturnEnumWhenValid() {
         // given
         String s1 = "local";
         String s2 = "KAKAO";
@@ -33,7 +31,7 @@ class ProviderTypeTest {
 
     @Test
     @DisplayName("of: 유효하지 않은 값이면 UserException(INVALID_PROVIDER_TYPE)")
-    void of_shouldThrow_whenInvalid() {
+    void ofShouldThrowWhenInvalid() {
         // given
         String invalid = "FACEBOOK";
 

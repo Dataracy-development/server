@@ -4,6 +4,8 @@ import com.dataracy.modules.dataset.adapter.jpa.entity.DataEntity;
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataJpaRepository;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,7 +16,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ExtractDataFileUrlDbAdapterFindTest {
@@ -25,83 +27,100 @@ class ExtractDataFileUrlDbAdapterFindTest {
     @InjectMocks
     private ExtractDataFileUrlDbAdapterFind adapter;
 
-    @Test
-    void findUserIdByDataIdShouldThrowWhenNotFound() {
-        // given
-        when(repo.findById(99L)).thenReturn(Optional.empty());
+    @Nested
+    @DisplayName("업로더 아이디 추출")
+    class ExtractUploaderId {
 
-        // when
-        DataException ex = catchThrowableOfType(
-                () -> adapter.findUserIdByDataId(99L),
-                DataException.class
-        );
+        @Test
+        @DisplayName("findUserIdByDataId - 데이터가 없으면 NOT_FOUND_DATA 예외 발생")
+        void findUserIdByDataIdShouldThrowWhenNotFound() {
+            // given
+            given(repo.findById(99L)).willReturn(Optional.empty());
 
-        // then
-        assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+            // when & then
+            DataException ex = catchThrowableOfType(
+                    () -> adapter.findUserIdByDataId(99L),
+                    DataException.class
+            );
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+        }
+
+        @Test
+        @DisplayName("findUserIdByDataId - 데이터가 존재하면 userId 반환")
+        void findUserIdByDataIdShouldReturnUserId() {
+            // given
+            DataEntity entity = DataEntity.builder().userId(10L).build();
+            given(repo.findById(1L)).willReturn(Optional.of(entity));
+
+            // when
+            Long userId = adapter.findUserIdByDataId(1L);
+
+            // then
+            assertThat(userId).isEqualTo(10L);
+        }
+
+        @Test
+        @DisplayName("findUserIdIncludingDeleted - 데이터가 없으면 NOT_FOUND_DATA 예외 발생")
+        void findUserIdIncludingDeletedShouldThrowWhenNotFound() {
+            // given
+            given(repo.findIncludingDeletedData(99L)).willReturn(Optional.empty());
+
+            // when & then
+            DataException ex = catchThrowableOfType(
+                    () -> adapter.findUserIdIncludingDeleted(99L),
+                    DataException.class
+            );
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+        }
+
+        @Test
+        @DisplayName("findUserIdIncludingDeleted - 삭제된 데이터도 포함해서 userId 반환")
+        void findUserIdIncludingDeletedShouldReturnUserId() {
+            // given
+            DataEntity entity = DataEntity.builder().userId(20L).build();
+            given(repo.findIncludingDeletedData(1L))
+                    .willReturn(Optional.of(entity));
+
+            // when
+            Long userId = adapter.findUserIdIncludingDeleted(1L);
+
+            // then
+            assertThat(userId).isEqualTo(20L);
+        }
     }
 
-    @Test
-    void findUserIdByDataIdShouldReturnUserId() {
-        // given
-        DataEntity entity = DataEntity.builder().userId(10L).build();
-        when(repo.findById(1L)).thenReturn(Optional.of(entity));
+    @Nested
+    @DisplayName("데이터셋 다운로드 URL 추출")
+    class ExtractDownloadUrl {
 
-        // when
-        Long userId = adapter.findUserIdByDataId(1L);
+        @Test
+        @DisplayName("findDownloadedDataFileUrl - 존재하지 않으면 Optional.empty 반환")
+        void findDownloadedDataFileUrlShouldReturnEmptyWhenNotPresent() {
+            // given
+            given(repo.findDataFileUrlById(1L)).willReturn(Optional.empty());
 
-        // then
-        assertThat(userId).isEqualTo(10L);
-    }
+            // when
+            Optional<String> result = adapter.findDownloadedDataFileUrl(1L);
 
-    @Test
-    void findUserIdIncludingDeletedShouldThrowWhenNotFound() {
-        // given
-        when(repo.findIncludingDeletedData(99L)).thenReturn(Optional.empty());
+            // then
+            assertThat(result).isEmpty();
+        }
 
-        // when
-        DataException ex = catchThrowableOfType(
-                () -> adapter.findUserIdIncludingDeleted(99L),
-                DataException.class
-        );
+        @Test
+        @DisplayName("findDownloadedDataFileUrl - 데이터가 존재하면 url 반환")
+        void findDownloadedDataFileUrlShouldReturnUrlWhenPresent() {
+            // given
+            given(repo.findDataFileUrlById(1L)).willReturn(Optional.of("fileUrl"));
 
-        // then
-        assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
-    }
+            // when
+            Optional<String> result = adapter.findDownloadedDataFileUrl(1L);
 
-    @Test
-    void findUserIdIncludingDeletedShouldReturnUserId() {
-        // given
-        DataEntity entity = DataEntity.builder().userId(20L).build();
-        when(repo.findIncludingDeletedData(1L)).thenReturn(Optional.of(entity));
-
-        // when
-        Long userId = adapter.findUserIdIncludingDeleted(1L);
-
-        // then
-        assertThat(userId).isEqualTo(20L);
-    }
-
-    @Test
-    void findDownloadedDataFileUrlShouldReturnEmptyWhenNotPresent() {
-        // given
-        when(repo.findDataFileUrlById(1L)).thenReturn(Optional.empty());
-
-        // when
-        Optional<String> result = adapter.findDownloadedDataFileUrl(1L);
-
-        // then
-        assertThat(result).isEmpty();
-    }
-
-    @Test
-    void findDownloadedDataFileUrlShouldReturnUrlWhenPresent() {
-        // given
-        when(repo.findDataFileUrlById(1L)).thenReturn(Optional.of("fileUrl"));
-
-        // when
-        Optional<String> result = adapter.findDownloadedDataFileUrl(1L);
-
-        // then
-        assertThat(result).contains("fileUrl");
+            // then
+            assertThat(result).contains("fileUrl");
+        }
     }
 }

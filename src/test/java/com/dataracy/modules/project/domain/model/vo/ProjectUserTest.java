@@ -15,7 +15,7 @@ class ProjectUserTest {
 
     @Test
     @DisplayName("fromUserInfo - 정상적으로 ProjectUser 생성")
-    void fromUserInfo_success() {
+    void fromUserInfoSuccess() {
         // given
         UserInfo info = new UserInfo(
                 1L,
@@ -41,7 +41,7 @@ class ProjectUserTest {
 
     @Test
     @DisplayName("fromUserInfo - null 입력 시 예외 발생")
-    void fromUserInfo_shouldThrow_whenNull() {
+    void fromUserInfoShouldThrowWhenNull() {
         // when
         ProjectException ex = catchThrowableOfType(() -> ProjectUser.fromUserInfo(null), ProjectException.class);
 

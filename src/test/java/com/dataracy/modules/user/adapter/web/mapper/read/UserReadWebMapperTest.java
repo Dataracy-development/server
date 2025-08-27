@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserReadWebMapperTest {
 
-    UserReadWebMapper mapper = new UserReadWebMapper();
+    private UserReadWebMapper mapper = new UserReadWebMapper();
 
     @Test
     @DisplayName("toWebDto: 앱 → 웹 매핑")

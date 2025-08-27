@@ -35,7 +35,7 @@ class EmailCodeRedisAdapterTest {
     }
 
     @Nested
-    @DisplayName("saveCode")
+    @DisplayName("이메일 인증 코드 저장")
     class SaveCode {
 
         @Test
@@ -92,7 +92,7 @@ class EmailCodeRedisAdapterTest {
     }
 
     @Nested
-    @DisplayName("verifyCode")
+    @DisplayName("이메일 인증코드 검증")
     class VerifyCode {
 
         @Test
@@ -146,7 +146,7 @@ class EmailCodeRedisAdapterTest {
     }
 
     @Nested
-    @DisplayName("deleteCode")
+    @DisplayName("이메일 인증코드 제거")
     class DeleteCode {
 
         @Test

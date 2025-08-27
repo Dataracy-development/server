@@ -25,14 +25,18 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class AnalysisPurposeQueryServiceTest {
 
-    @Mock AnalysisPurposePort analysisPurposePort;
-    @Mock AnalysisPurposeDtoMapper analysisPurposeDtoMapper;
+    @Mock
+    private AnalysisPurposePort analysisPurposePort;
 
-    @InjectMocks AnalysisPurposeQueryService service;
+    @Mock
+    private AnalysisPurposeDtoMapper analysisPurposeDtoMapper;
+
+    @InjectMocks
+    private AnalysisPurposeQueryService service;
 
     @Test
-    @DisplayName("findAllAnalysisPurposes: 성공 - 전체 목록 반환")
-    void findAllAnalysisPurposes_success() {
+    @DisplayName("분석 목적 전체 조회 성공")
+    void findAllAnalysisPurposesSuccess() {
         // given
         List<AnalysisPurpose> domainList = List.of(
                 new AnalysisPurpose(1L, "v1", "l1"),
@@ -57,8 +61,8 @@ class AnalysisPurposeQueryServiceTest {
     }
 
     @Test
-    @DisplayName("findAnalysisPurpose: 성공 - 단건 반환")
-    void findAnalysisPurpose_success() {
+    @DisplayName("분석 목적 단건 조회 성공")
+    void findAnalysisPurposeSuccess() {
         // given
         Long id = 10L;
         AnalysisPurpose domain = new AnalysisPurpose(id, "v", "l");
@@ -76,8 +80,8 @@ class AnalysisPurposeQueryServiceTest {
     }
 
     @Test
-    @DisplayName("findAnalysisPurpose: 실패 - 존재하지 않으면 ReferenceException")
-    void findAnalysisPurpose_notFound_throws() {
+    @DisplayName("분석 목적 단건 조회 실패 - 없을 때 예외 발생")
+    void findAnalysisPurposeFailWhenNotFound() {
         // given
         Long id = 999L;
         given(analysisPurposePort.findAnalysisPurposeById(id)).willReturn(Optional.empty());
@@ -95,8 +99,8 @@ class AnalysisPurposeQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getLabelById: 성공 - 라벨 반환")
-    void getLabelById_success() {
+    @DisplayName("분석 목적 라벨 조회 성공")
+    void getLabelByIdSuccess() {
         // given
         Long id = 1L;
         given(analysisPurposePort.getLabelById(id)).willReturn(Optional.of("label"));
@@ -110,8 +114,8 @@ class AnalysisPurposeQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getLabelById: 실패 - 없으면 ReferenceException")
-    void getLabelById_notFound_throws() {
+    @DisplayName("분석 목적 라벨 조회 실패 - 없을 때 예외 발생")
+    void getLabelByIdFailWhenNotFound() {
         // given
         Long id = 404L;
         given(analysisPurposePort.getLabelById(id)).willReturn(Optional.empty());
@@ -128,8 +132,8 @@ class AnalysisPurposeQueryServiceTest {
     }
 
     @Test
-    @DisplayName("validateAnalysisPurpose: 성공 - 존재하면 예외 없음")
-    void validateAnalysisPurpose_success() {
+    @DisplayName("분석 목적 검증 성공 - 존재할 때")
+    void validateAnalysisPurposeSuccess() {
         // given
         Long id = 1L;
         given(analysisPurposePort.existsAnalysisPurposeById(id)).willReturn(true);
@@ -142,8 +146,8 @@ class AnalysisPurposeQueryServiceTest {
     }
 
     @Test
-    @DisplayName("validateAnalysisPurpose: 실패 - 존재하지 않으면 ReferenceException")
-    void validateAnalysisPurpose_notFound_throws() {
+    @DisplayName("분석 목적 검증 실패 - 없을 때 예외 발생")
+    void validateAnalysisPurposeFailWhenNotFound() {
         // given
         Long id = 2L;
         given(analysisPurposePort.existsAnalysisPurposeById(id)).willReturn(false);
@@ -160,8 +164,8 @@ class AnalysisPurposeQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getLabelsByIds: 성공 - 비어있으면 빈 맵, 값 있으면 위임 및 반환")
-    void getLabelsByIds_success_and_emptyHandling() {
+    @DisplayName("분석 목적 라벨 다건 조회 성공 및 빈 값 처리")
+    void getLabelsByIdsSuccessAndEmptyHandling() {
         // given - empty/null
         assertThat(service.getLabelsByIds(null)).isEmpty();
         assertThat(service.getLabelsByIds(List.of())).isEmpty();

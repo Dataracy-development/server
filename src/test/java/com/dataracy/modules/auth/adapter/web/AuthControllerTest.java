@@ -61,10 +61,12 @@ class AuthControllerTest {
         SelfLoginRequest appReq =
                 new SelfLoginRequest("test@email.com", "password123@");
         RefreshTokenResponse refreshResponse =
-                new RefreshTokenResponse("refresh-token-abc", 1209600000L);
+                new RefreshTokenResponse("issued-refresh-token", 1209600000L);
 
-        given(authWebMapper.toApplicationDto(any(SelfLoginWebRequest.class))).willReturn(appReq);
-        given(selfLoginUseCase.login(appReq)).willReturn(refreshResponse);
+        given(authWebMapper.toApplicationDto(any(SelfLoginWebRequest.class)))
+                .willReturn(appReq);
+        given(selfLoginUseCase.login(appReq))
+                .willReturn(refreshResponse);
 
         // when & then
         mockMvc.perform(post("/api/v1/auth/login")
@@ -81,14 +83,14 @@ class AuthControllerTest {
     void reIssueTokenSuccess() throws Exception {
         // given
         ReIssueTokenResponse reissueResponse =
-                new ReIssueTokenResponse("new-access", "new-refresh", 60000L, 120000L);
+                new ReIssueTokenResponse("new-access", "new-refresh", 360000L, 1209600000L);
 
-        given(reIssueTokenUseCase.reIssueToken("refresh-token-abc"))
+        given(reIssueTokenUseCase.reIssueToken("issued-refresh-token"))
                 .willReturn(reissueResponse);
 
         // when & then
         mockMvc.perform(post("/api/v1/auth/token/re-issue")
-                        .cookie(new Cookie("refreshToken", "refresh-token-abc")))
+                        .cookie(new Cookie("refreshToken", "issued-refresh-token")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(AuthSuccessStatus.OK_RE_ISSUE_TOKEN.getCode()))
                 .andExpect(jsonPath("$.message").value(AuthSuccessStatus.OK_RE_ISSUE_TOKEN.getMessage()))

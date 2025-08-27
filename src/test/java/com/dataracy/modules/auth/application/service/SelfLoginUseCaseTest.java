@@ -18,7 +18,13 @@ import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
@@ -26,33 +32,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class SelfLoginUseCaseTest {
 
+    @Mock
     private JwtGeneratorPort jwtGeneratorPort;
-    private JwtValidatorPort jwtValidatorPort; // 여기선 사용 안 함
-    private ManageRefreshTokenPort manageRefreshTokenPort;
-    private IsLoginPossibleUseCase isLoginPossibleUseCase;
-    private JwtProperties jwtProperties;
 
+    @Mock
+    private JwtValidatorPort jwtValidatorPort;
+
+    @Mock
+    private ManageRefreshTokenPort manageRefreshTokenPort;
+
+    @Mock
+    private IsLoginPossibleUseCase isLoginPossibleUseCase;
+
+    // 실제 필드를 쓰면서도 주입은 자동으로 받기 위해 Spy 사용
+    @Spy
+    private JwtProperties jwtProperties = new JwtProperties();
+
+    @InjectMocks
     private AuthCommandService service;
 
     @BeforeEach
     void setup() {
-        jwtGeneratorPort = mock(JwtGeneratorPort.class);
-        jwtValidatorPort = mock(JwtValidatorPort.class);
-        manageRefreshTokenPort = mock(ManageRefreshTokenPort.class);
-        isLoginPossibleUseCase = mock(IsLoginPossibleUseCase.class);
-
-        jwtProperties = new JwtProperties();
-        jwtProperties.setRefreshTokenExpirationTime(1209600000L);
-
-        service = new AuthCommandService(
-                jwtProperties,
-                jwtGeneratorPort,
-                jwtValidatorPort,
-                manageRefreshTokenPort,
-                isLoginPossibleUseCase
-        );
+        jwtProperties.setRefreshTokenExpirationTime(1_209_600_000L);
     }
 
     private UserInfo dummyUserInfo(Long id, String email, RoleType role) {
@@ -60,107 +64,108 @@ class SelfLoginUseCaseTest {
                 id,
                 role,
                 email,
-                "nickname",     // nickname
-                1L,             // authorLevelId
-                1L,             // occupationId
+                "nickname",
+                1L,                      // authorLevelId
+                1L,                      // occupationId
                 Collections.emptyList(), // topicIds
-                1L,             // visitSourceId
-                "profile.png",  // profileImageUrl
-                "intro text"    // introductionText
+                1L,                      // visitSourceId
+                "profile.png",
+                "intro text"
         );
     }
 
-    @Test
-    @DisplayName("이메일/비밀번호 맞으면 RefreshTokenResponse 반환")
-    void loginSuccess() {
-        SelfLoginRequest request = new SelfLoginRequest("test@email.com", "pw");
-        UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
+    @Nested
+    @DisplayName("reIssueToken")
+    class Login {
 
-        given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "pw"))
-                .willReturn(userInfo);
-        given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER)).willReturn("refresh-123");
+        @Test
+        @DisplayName("이메일/비밀번호 맞으면 RefreshTokenResponse 반환")
+        void loginSuccess() {
+            // given
+            SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password123@");
+            UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
 
-        RefreshTokenResponse res = service.login(request);
+            given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "password123@"))
+                    .willReturn(userInfo);
+            given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
+                    .willReturn("issued-refresh");
 
-        assertThat(res.refreshToken()).isEqualTo("refresh-123");
-        assertThat(res.refreshTokenExpiration()).isEqualTo(1209600000L);
-        then(manageRefreshTokenPort).should().saveRefreshToken("1", "refresh-123");
-    }
+            // when
+            RefreshTokenResponse res = service.login(request);
 
-    @Test
-    @DisplayName("이메일/비밀번호 불일치 → UserException(BAD_REQUEST_LOGIN)")
-    void loginInvalid() {
-        SelfLoginRequest request = new SelfLoginRequest("bad@email.com", "wrong");
+            // then
+            assertThat(res.refreshToken()).isEqualTo("issued-refresh");
+            assertThat(res.refreshTokenExpiration()).isEqualTo(1_209_600_000L);
+            then(manageRefreshTokenPort).should().saveRefreshToken("1", "issued-refresh");
+        }
 
-        given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("bad@email.com", "wrong"))
-                .willThrow(new UserException(UserErrorStatus.BAD_REQUEST_LOGIN));
+        @Test
+        @DisplayName("이메일/비밀번호 불일치 → UserException(BAD_REQUEST_LOGIN)")
+        void loginInvalid() {
+            // given
+            SelfLoginRequest request = new SelfLoginRequest("bad@email.com", "wrong");
 
-        UserException ex = catchThrowableOfType(
-                () -> service.login(request),
-                UserException.class
-        );
+            given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("bad@email.com", "wrong"))
+                    .willThrow(new UserException(UserErrorStatus.BAD_REQUEST_LOGIN));
 
-        assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.BAD_REQUEST_LOGIN);
-    }
+            // when & then
+            UserException ex = catchThrowableOfType(() -> service.login(request), UserException.class);
+            assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.BAD_REQUEST_LOGIN);
+        }
 
-    @Test
-    @DisplayName("RefreshToken 발급 실패 → FAILED_GENERATE_REFRESH_TOKEN 발생")
-    void loginTokenFail() {
-        SelfLoginRequest request = new SelfLoginRequest("test@email.com", "pw");
-        UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
+        @Test
+        @DisplayName("RefreshToken 발급 실패 → FAILED_GENERATE_REFRESH_TOKEN 발생")
+        void loginTokenFail() {
+            // given
+            SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password123@");
+            UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
 
-        given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "pw"))
-                .willReturn(userInfo);
-        given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
-                .willThrow(new AuthException(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN));
+            given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "password123@"))
+                    .willReturn(userInfo);
+            given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
+                    .willThrow(new AuthException(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN));
 
-        AuthException ex = catchThrowableOfType(
-                () -> service.login(request),
-                AuthException.class
-        );
+            // when & then
+            AuthException ex = catchThrowableOfType(() -> service.login(request), AuthException.class);
+            assertThat(ex.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN);
+        }
 
-        assertThat(ex.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN);
-    }
+        @Test
+        @DisplayName("로그인 (Redis 저장 실패) - Redis 연결 장애 → REDIS_CONNECTION_FAILURE 발생")
+        void loginSaveRedisConnectionError() {
+            // given
+            SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password123@");
+            UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
 
-    @Test
-    @DisplayName("로그인 (Redis 저장 실패) - Redis 연결 장애 → REDIS_CONNECTION_FAILURE 발생")
-    void loginSaveRedisConnectionError() {
-        SelfLoginRequest request = new SelfLoginRequest("test@email.com", "pw");
-        UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
+            given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "password123@"))
+                    .willReturn(userInfo);
+            given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
+                    .willReturn("issued-refresh");
+            willThrow(new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE))
+                    .given(manageRefreshTokenPort).saveRefreshToken("1", "issued-refresh");
 
-        given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "pw"))
-                .willReturn(userInfo);
-        given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER)).willReturn("refresh-123");
-        willThrow(new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE))
-                .given(manageRefreshTokenPort).saveRefreshToken("1", "refresh-123");
+            // when & then
+            CommonException ex = catchThrowableOfType(() -> service.login(request), CommonException.class);
+            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+        }
 
-        // when & then
-        CommonException ex = catchThrowableOfType(
-                () -> service.login(request),
-                CommonException.class
-        );
+        @Test
+        @DisplayName("로그인 (Redis 저장 실패) - 네트워크 장애 → DATA_ACCESS_EXCEPTION 발생")
+        void loginSaveDataAccessError() {
+            // given
+            SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password123@");
+            UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
 
-        assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
-    }
+            given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "password123@"))
+                    .willReturn(userInfo);
+            given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
+                    .willReturn("issued-refresh");
+            willThrow(new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION))
+                    .given(manageRefreshTokenPort).saveRefreshToken("1", "issued-refresh");
 
-    @Test
-    @DisplayName("로그인 (Redis 저장 실패) - 네트워크 장애 → DATA_ACCESS_EXCEPTION 발생")
-    void loginSaveDataAccessError() {
-        SelfLoginRequest request = new SelfLoginRequest("test@email.com", "pw");
-        UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
-
-        given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "pw"))
-                .willReturn(userInfo);
-        given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER)).willReturn("refresh-123");
-        willThrow(new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION))
-                .given(manageRefreshTokenPort).saveRefreshToken("1", "refresh-123");
-
-        // when & then
-        CommonException ex = catchThrowableOfType(
-                () -> service.login(request),
-                CommonException.class
-        );
-
-        assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+            // when & then
+            CommonException ex = catchThrowableOfType(() -> service.login(request), CommonException.class);
+            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+        }
     }
 }

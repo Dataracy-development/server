@@ -9,7 +9,7 @@ class ValidatedProjectInfoTest {
 
     @Test
     @DisplayName("record 생성 및 값 검증")
-    void validatedProjectInfo_success() {
+    void validatedProjectInfoSuccess() {
         // given
         ValidatedProjectInfo info = new ValidatedProjectInfo("t", "ap", "ds", "al");
 

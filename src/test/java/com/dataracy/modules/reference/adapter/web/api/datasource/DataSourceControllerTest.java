@@ -1,61 +1,87 @@
 package com.dataracy.modules.reference.adapter.web.api.datasource;
 
-import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
 import com.dataracy.modules.reference.adapter.web.mapper.DataSourceWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllDataSourcesWebResponse;
+import com.dataracy.modules.reference.adapter.web.response.singleview.DataSourceWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
 import com.dataracy.modules.reference.application.port.in.datasource.FindAllDataSourcesUseCase;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import java.util.List;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(controllers = DataSourceController.class)
 class DataSourceControllerTest {
 
-    @Mock FindAllDataSourcesUseCase findAllDataSourcesUseCase;
-    @Mock DataSourceWebMapper webMapper;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @InjectMocks DataSourceController controller;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private FindAllDataSourcesUseCase findAllDataSourcesUseCase;
+
+    @MockBean
+    private DataSourceWebMapper webMapper;
+
+    // 공통 모킹
+    @MockBean
+    private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+    @MockBean
+    private JwtValidateUseCase jwtValidateUseCase;
 
     @Test
-    @DisplayName("findAllDataSources API: 성공 - 200 OK와 바디 반환")
-    void findAllDataSources_success() {
+    @DisplayName("findAllDataSources API: 성공 - 200 OK와 JSON 응답 검증")
+    void findAllDataSourcesSuccess() throws Exception {
         // given
-        AllDataSourcesResponse svc = new AllDataSourcesResponse(java.util.List.of());
-        AllDataSourcesWebResponse web = new AllDataSourcesWebResponse(java.util.List.of());
+        AllDataSourcesResponse svc = new AllDataSourcesResponse(List.of());
+        AllDataSourcesWebResponse web = new AllDataSourcesWebResponse(
+                List.of(new DataSourceWebResponse(1L, "VAL_X", "데이터 출처X"))
+        );
+
         given(findAllDataSourcesUseCase.findAllDataSources()).willReturn(svc);
         given(webMapper.toWebDto(svc)).willReturn(web);
 
-        // when
-        ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> res = controller.findAllDataSources();
+        // when & then
+        mockMvc.perform(get("/api/v1/references/data-sources")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.dataSources[0].id").value(1))
+                .andExpect(jsonPath("$.data.dataSources[0].value").value("VAL_X"))
+                .andExpect(jsonPath("$.data.dataSources[0].label").value("데이터 출처X"));
 
-        // then
-        assertThat(res.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(res.getBody()).isNotNull();
         then(findAllDataSourcesUseCase).should().findAllDataSources();
         then(webMapper).should().toWebDto(svc);
     }
 
     @Test
-    @DisplayName("findAllDataSources API: 실패 - 내부 예외 전파")
-    void findAllDataSources_failure_propagates() {
+    @DisplayName("findAllDataSources API: 실패 - 내부 예외 발생 시 500 반환")
+    void findAllDataSourcesFailure() throws Exception {
         // given
         given(findAllDataSourcesUseCase.findAllDataSources()).willThrow(new RuntimeException("boom"));
 
-        // when
-        RuntimeException ex = catchThrowableOfType(() -> controller.findAllDataSources(), RuntimeException.class);
+        // when & then
+        mockMvc.perform(get("/api/v1/references/data-sources")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
 
-        // then
-        assertThat(ex).isNotNull();
         then(webMapper).shouldHaveNoInteractions();
     }
 }

@@ -11,7 +11,7 @@ class OccupationEntityMapperTest {
 
     @Test
     @DisplayName("toDomain: 성공 - 엔티티에서 도메인으로 변환")
-    void toDomain_success() {
+    void toDomainSuccess() {
         // given
         OccupationEntity entity = OccupationEntity.builder().id(1L).value("v").label("l").build();
 
@@ -26,7 +26,7 @@ class OccupationEntityMapperTest {
 
     @Test
     @DisplayName("toEntity: 성공 - 도메인에서 엔티티로 변환 (id 제외)")
-    void toEntity_success() {
+    void toEntitySuccess() {
         // given
         Occupation domain = new Occupation(1L, "v", "l");
 
@@ -41,7 +41,7 @@ class OccupationEntityMapperTest {
 
     @Test
     @DisplayName("null 입력 처리 - null 반환")
-    void nullInputs_returnNull() {
+    void nullInputsReturnNull() {
         assertThat(OccupationEntityMapper.toDomain(null)).isNull();
         assertThat(OccupationEntityMapper.toEntity(null)).isNull();
     }

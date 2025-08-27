@@ -15,13 +15,15 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class ProjectExtractServiceTest {
 
-    @Mock ExtractProjectOwnerPort extractProjectOwnerPort;
+    @Mock
+    private ExtractProjectOwnerPort extractProjectOwnerPort;
 
-    @InjectMocks ProjectExtractService service;
+    @InjectMocks
+    private ProjectExtractService service;
 
     @Test
-    @DisplayName("findUserIdByProjectId - 프로젝트 소유자 ID 정상 반환")
-    void findUserIdByProjectId_success() {
+    @DisplayName("프로젝트 소유자 ID 조회 성공")
+    void findUserIdByProjectIdSuccess() {
         // given
         Long projectId = 10L;
         Long expectedUserId = 100L;
@@ -36,8 +38,8 @@ class ProjectExtractServiceTest {
     }
 
     @Test
-    @DisplayName("findUserIdIncludingDeleted - 삭제된 프로젝트 포함 소유자 ID 정상 반환")
-    void findUserIdIncludingDeleted_success() {
+    @DisplayName("삭제된 프로젝트 포함 소유자 ID 조회 성공")
+    void findUserIdIncludingDeletedSuccess() {
         // given
         Long projectId = 20L;
         Long expectedUserId = 200L;

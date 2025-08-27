@@ -3,20 +3,16 @@ package com.dataracy.modules.user.domain.model.vo;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
 class UserInfoTest {
 
     @Test
     @DisplayName("레코드 생성 및 접근자 검증")
-    void record_basic() {
-        // given
+    void recordBasic() {
         UserInfo info = new UserInfo(
                 100L,
                 RoleType.ROLE_USER,
@@ -30,10 +26,6 @@ class UserInfoTest {
                 "intro"
         );
 
-        // when
-        // (레코드 접근)
-
-        // then
         assertThat(info.id()).isEqualTo(100L);
         assertThat(info.role()).isEqualTo(RoleType.ROLE_USER);
         assertThat(info.email()).isEqualTo("u@test.com");

@@ -23,17 +23,27 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class ProjectLabelMapServiceTest {
 
-    @Mock FindUsernameUseCase findUsernameUseCase;
-    @Mock GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
-    @Mock GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
-    @Mock GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
-    @Mock GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+    @Mock
+    private FindUsernameUseCase findUsernameUseCase;
 
-    @InjectMocks ProjectLabelMapService service;
+    @Mock
+    private GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
+
+    @Mock
+    private GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
+
+    @Mock
+    private GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
+
+    @Mock
+    private GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+
+    @InjectMocks
+    private ProjectLabelMapService service;
 
     @Test
-    @DisplayName("labelMapping_should_collect_and_map_labels_for_projects")
-    void labelMapping_should_collect_and_map_labels_for_projects() {
+    @DisplayName("프로젝트 라벨 매핑 성공")
+    void labelMappingSuccess() {
         // given
         List<Project> projects = List.of(
                 Project.builder()
@@ -43,17 +53,18 @@ class ProjectLabelMapServiceTest {
                         .build()
         );
 
-        // username 은 findUsernamesByIds 호출됨
         given(findUsernameUseCase.findUsernamesByIds(List.of(100L)))
                 .willReturn(Map.of(100L, "u"));
 
-        // label 들은 getLabelsByIds 호출됨
         given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of(10L)))
                 .willReturn(Map.of(10L, "t"));
+
         given(getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(List.of(20L)))
                 .willReturn(Map.of(20L, "ap"));
+
         given(getDataSourceLabelFromIdUseCase.getLabelsByIds(List.of(30L)))
                 .willReturn(Map.of(30L, "ds"));
+
         given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(List.of(40L)))
                 .willReturn(Map.of(40L, "al"));
 

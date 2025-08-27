@@ -5,13 +5,14 @@ import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 class ProjectSortTypeTest {
 
     @Test
     @DisplayName("of() - 문자열로 Enum 매핑 성공")
-    void of_shouldReturnEnum_whenValidInput() {
+    void ofShouldReturnEnumWhenValidInput() {
         // given
         String input1 = "LATEST";
         String input2 = "most_viewed"; // 소문자, 언더스코어
@@ -27,7 +28,7 @@ class ProjectSortTypeTest {
 
     @Test
     @DisplayName("of() - 잘못된 입력 시 ProjectException 발생")
-    void of_shouldThrow_whenInvalidInput() {
+    void ofShouldThrowWhenInvalidInput() {
         // given
         String wrongInput = "WRONG_TYPE";
 

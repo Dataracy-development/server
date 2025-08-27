@@ -15,35 +15,37 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class ProjectSoftDeleteServiceTest {
 
-    @Mock SoftDeleteProjectPort softDeleteProjectDbPort;
-    @Mock ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
+    @Mock
+    private SoftDeleteProjectPort softDeleteProjectDbPort;
 
-    @InjectMocks ProjectSoftDeleteService service;
+    @Mock
+    private ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
+
+    @InjectMocks
+    private ProjectSoftDeleteService service;
 
     @Test
-    @DisplayName("deleteProject_should_soft_delete_and_enqueue_setDeleted_true")
-    void deleteProject_should_soft_delete_and_enqueue_setDeleted_true() {
+    @DisplayName("프로젝트 삭제 성공 - 소프트 삭제 및 인덱싱 반영")
+    void deleteProjectSuccess() {
         // given
         Long projectId = 100L;
 
-        // when
+        // when & then
         assertThatNoException().isThrownBy(() -> service.deleteProject(projectId));
 
-        // then
         then(softDeleteProjectDbPort).should().deleteProject(projectId);
         then(manageProjectProjectionTaskPort).should().enqueueSetDeleted(projectId, true);
     }
 
     @Test
-    @DisplayName("restoreProject_should_restore_and_enqueue_setDeleted_false")
-    void restoreProject_should_restore_and_enqueue_setDeleted_false() {
+    @DisplayName("프로젝트 복원 성공 - 복원 및 인덱싱 반영")
+    void restoreProjectSuccess() {
         // given
         Long projectId = 101L;
 
-        // when
+        // when & then
         assertThatNoException().isThrownBy(() -> service.restoreProject(projectId));
 
-        // then
         then(softDeleteProjectDbPort).should().restoreProject(projectId);
         then(manageProjectProjectionTaskPort).should().enqueueSetDeleted(projectId, false);
     }

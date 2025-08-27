@@ -7,6 +7,8 @@ import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRe
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,111 +32,163 @@ class DataCommandDbAdapterTest {
     @InjectMocks
     private DataCommandDbAdapter adapter;
 
-    @Test
-    void saveDataShouldPersistAndReturnDomain() {
-        // given
-        Data data = Data.of(1L, "title", 1L, 1L, 1L, 1L,
-                null, null, "desc", "guide",
-                null, null, 0, null, null, null);
-        DataEntity entity = DataEntityMapper.toEntity(data);
-        given(repo.save(any(DataEntity.class))).willReturn(entity);
+    @Nested
+    @DisplayName("데이터셋 업로드")
+    class UploadData {
 
-        // when
-        Data saved = adapter.saveData(data);
+        @Test
+        @DisplayName("데이터 저장 성공 → Domain 객체 반환")
+        void saveDataShouldPersistAndReturnDomain() {
+            // given
+            Data data = Data.of(
+                    1L,
+                    "title",
+                    1L,
+                    1L,
+                    1L,
+                    1L,
+                    null,
+                    null,
+                    "desc",
+                    "guide",
+                    null,
+                    null,
+                    0,
+                    null,
+                    null,
+                    null
+            );
+            DataEntity entity = DataEntityMapper.toEntity(data);
+            given(repo.save(any(DataEntity.class)))
+                    .willReturn(entity);
 
-        // then
-        assertThat(saved.getTitle()).isEqualTo("title");
+            // when
+            Data saved = adapter.saveData(data);
+
+            // then
+            assertThat(saved.getTitle()).isEqualTo("title");
+        }
     }
 
+    @Nested
+    @DisplayName("데이터셋 파일 업데이트")
+    class UpdateDataFile {
 
-    @Test
-    void updateDataFileShouldThrowWhenNotFound() {
-        // given
-        given(repo.findById(99L)).willReturn(Optional.empty());
+        @Test
+        @DisplayName("updateDataFile 성공 → URL 업데이트 확인")
+        void updateDataFileShouldUpdateWhenFound() {
+            // given
+            DataEntity entity = DataEntity.builder().dataFileUrl("old").build();
+            given(repo.findById(1L))
+                    .willReturn(Optional.of(entity));
 
-        // when
-        DataException ex = catchThrowableOfType(
-                () -> adapter.updateDataFile(99L, "url", 10L),
-                DataException.class
-        );
+            // when
+            adapter.updateDataFile(1L, "newUrl", 100L);
 
-        // then
-        assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+            // then
+            assertThat(entity.getDataFileUrl()).isEqualTo("newUrl");
+        }
+
+        @Test
+        @DisplayName("updateDataFile 실패 → 데이터 없음 시 NOT_FOUND_DATA 예외")
+        void updateDataFileShouldThrowWhenNotFound() {
+            // given
+            given(repo.findById(99L))
+                    .willReturn(Optional.empty());
+
+            // when & then
+            DataException ex = catchThrowableOfType(
+                    () -> adapter.updateDataFile(99L, "url", 10L),
+                    DataException.class
+            );
+            assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+        }
     }
 
-    @Test
-    void updateDataFileShouldUpdateWhenFound() {
-        // given
-        DataEntity entity = DataEntity.builder().dataFileUrl("old").build();
-        given(repo.findById(1L)).willReturn(Optional.of(entity));
+    @Nested
+    @DisplayName("데이터셋 썸네일 파일 업데이트")
+    class UpdateThumbnailFile {
 
-        // when
-        adapter.updateDataFile(1L, "newUrl", 100L);
+        @Test
+        @DisplayName("updateThumbnailFile 성공 → 썸네일 업데이트 확인")
+        void updateThumbnailFileShouldUpdateWhenFound() {
+            // given
+            DataEntity entity = DataEntity.builder().dataThumbnailUrl("old").build();
+            given(repo.findById(1L)).willReturn(Optional.of(entity));
 
-        // then
-        assertThat(entity.getDataFileUrl()).isEqualTo("newUrl");
+            // when
+            adapter.updateThumbnailFile(1L, "newThumb");
+
+            // then
+            assertThat(entity.getDataThumbnailUrl()).isEqualTo("newThumb");
+        }
+
+        @Test
+        @DisplayName("updateThumbnailFile 실패 → 데이터 없음 시 NOT_FOUND_DATA 예외")
+        void updateThumbnailFileShouldThrowWhenNotFound() {
+            // given
+            given(repo.findById(99L)).willReturn(Optional.empty());
+
+            // when & then
+            DataException ex = catchThrowableOfType(
+                    () -> adapter.updateThumbnailFile(99L, "thumb"),
+                    DataException.class
+            );
+            assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+        }
     }
 
-    @Test
-    void updateThumbnailFileShouldThrowWhenNotFound() {
-        // given
-        given(repo.findById(99L)).willReturn(Optional.empty());
+    @Nested
+    @DisplayName("데이터셋 내용 수정")
+    class ModifyData {
 
-        // when
-        DataException ex = catchThrowableOfType(
-                () -> adapter.updateThumbnailFile(99L, "thumb"),
-                DataException.class
-        );
+        @Test
+        @DisplayName("modifyData 성공 → title, description 변경 확인")
+        void modifyDataShouldUpdateWhenFound() {
+            // given
+            DataEntity entity = DataEntity.builder().title("old").description("old").build();
+            given(repo.findById(1L)).willReturn(Optional.of(entity));
+            ModifyDataRequest req = new ModifyDataRequest(
+                    "new",
+                    1L,
+                    1L,
+                    1L,
+                    null,
+                    null,
+                    "desc",
+                    "guide"
+            );
 
-        // then
-        assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
-    }
+            // when
+            adapter.modifyData(1L, req);
 
-    @Test
-    void updateThumbnailFileShouldUpdateWhenFound() {
-        // given
-        DataEntity entity = DataEntity.builder().dataThumbnailUrl("old").build();
-        given(repo.findById(1L)).willReturn(Optional.of(entity));
+            // then
+            assertThat(entity.getTitle()).isEqualTo("new");
+            assertThat(entity.getDescription()).isEqualTo("desc");
+        }
 
-        // when
-        adapter.updateThumbnailFile(1L, "newThumb");
+        @Test
+        @DisplayName("modifyData 실패 → 데이터 없음 시 NOT_FOUND_DATA 예외")
+        void modifyDataShouldThrowWhenNotFound() {
+            // given
+            given(repo.findById(99L)).willReturn(Optional.empty());
+            ModifyDataRequest request = new ModifyDataRequest(
+                    "t",
+                    1L,
+                    1L,
+                    1L,
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    "d",
+                    "g"
+            );
 
-        // then
-        assertThat(entity.getDataThumbnailUrl()).isEqualTo("newThumb");
-    }
-
-    @Test
-    void modifyDataShouldThrowWhenNotFound() {
-        // given
-        given(repo.findById(99L)).willReturn(Optional.empty());
-        ModifyDataRequest request = new ModifyDataRequest(
-                "t", 1L, 1L, 1L, LocalDate.now(), LocalDate.now(), "d", "g"
-        );
-
-        // when
-        DataException ex = catchThrowableOfType(
-                () -> adapter.modifyData(99L, request),
-                DataException.class
-        );
-
-        // then
-        assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
-    }
-
-    @Test
-    void modifyDataShouldUpdateWhenFound() {
-        // given
-        DataEntity entity = DataEntity.builder().title("old").description("old").build();
-        given(repo.findById(1L)).willReturn(Optional.of(entity));
-        ModifyDataRequest req = new ModifyDataRequest(
-                "new", 1L, 1L, 1L, null, null, "desc", "guide"
-        );
-
-        // when
-        adapter.modifyData(1L, req);
-
-        // then
-        assertThat(entity.getTitle()).isEqualTo("new");
-        assertThat(entity.getDescription()).isEqualTo("desc");
+            // when & then
+            DataException ex = catchThrowableOfType(
+                    () -> adapter.modifyData(99L, request),
+                    DataException.class
+            );
+            assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+        }
     }
 }

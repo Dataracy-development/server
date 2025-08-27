@@ -9,7 +9,7 @@ class ProjectErrorStatusTest {
 
     @Test
     @DisplayName("에러 코드 필드 값 검증")
-    void errorStatus_fields() {
+    void errorStatusFields() {
         ProjectErrorStatus status = ProjectErrorStatus.NOT_FOUND_PROJECT;
 
         assertThat(status.getHttpStatus().value()).isEqualTo(404);

@@ -68,7 +68,7 @@ public interface ProjectReadApi {
     })
     @GetMapping("/{projectId}/continue")
     ResponseEntity<SuccessResponse<Page<ContinuedProjectWebResponse>>> findContinueProjects(
-            @PathVariable @Min(1)
+            @PathVariable
             Long projectId,
 
             @PageableDefault(size = 3, page = 0)

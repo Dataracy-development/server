@@ -1,42 +1,57 @@
 package com.dataracy.modules.dataset.adapter.jpa.impl.command;
 
-import com.dataracy.modules.dataset.adapter.jpa.entity.DataEntity;
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataJpaRepository;
+import com.dataracy.modules.dataset.domain.exception.DataException;
+import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.BDDMockito.*;
 
-@DataJpaTest
-@Import(UpdateDataDownloadDbAdapter.class) // Adapter를 Spring Context에 등록
+@ExtendWith(MockitoExtension.class)
 class UpdateDataDownloadDbAdapterTest {
 
-    @Autowired
-    private UpdateDataDownloadDbAdapter adapter;
-
-    @Autowired
+    @Mock
     private DataJpaRepository repo;
 
+    @InjectMocks
+    private UpdateDataDownloadDbAdapter adapter;
+
     @Test
-    @DisplayName("increaseDownloadCount 호출 시 DB에서 downloadCount가 증가한다")
-    void increaseDownloadCountShouldIncreaseDownloadCountInDb() {
+    @DisplayName("increaseDownloadCount 호출 시 repo.increaseDownload가 실행된다")
+    void increaseDownloadCountShouldCallRepoMethod() {
         // given
-        DataEntity entity = DataEntity.builder()
-                .title("test data")
-                .downloadCount(0)
-                .build();
-//        entity.setTitle("test data");
-//        entity.setDownloadCount(0L);
-        repo.saveAndFlush(entity);
+        Long dataId = 1L;
+        willDoNothing().given(repo).increaseDownload(dataId);
 
         // when
-        adapter.increaseDownloadCount(entity.getId());
+        adapter.increaseDownloadCount(dataId);
 
         // then
-        DataEntity updated = repo.findById(entity.getId()).orElseThrow();
-        assertThat(updated.getDownloadCount()).isEqualTo(1L);
+        then(repo).should().increaseDownload(eq(dataId));
+    }
+
+    @Test
+    @DisplayName("increaseDownloadCount 호출 시 대상이 없으면 예외 발생 → NOT_FOUND_DATA")
+    void increaseDownloadCountShouldThrowWhenNotFound() {
+        // given
+        Long dataId = 999L;
+        willThrow(new DataException(DataErrorStatus.NOT_FOUND_DATA))
+                .given(repo).increaseDownload(dataId);
+
+        // when & then
+        DataException ex = catchThrowableOfType(
+                () -> adapter.increaseDownloadCount(dataId),
+                DataException.class
+        );
+
+        // then
+        assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
     }
 }

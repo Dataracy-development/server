@@ -45,30 +45,62 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class ProjectCommandServiceTest {
 
-    @Mock CreateProjectDtoMapper createProjectDtoMapper;
-    @Mock IndexProjectPort indexProjectPort;
-    @Mock CreateProjectPort createProjectPort;
-    @Mock UpdateProjectFilePort updateProjectFilePort;
-    @Mock UpdateProjectPort updateProjectPort;
-    @Mock DeleteProjectDataPort deleteProjectDataPort;
-    @Mock CheckProjectExistsByIdPort checkProjectExistsByIdPort;
-    @Mock FindProjectPort findProjectPort;
-    @Mock ExtractProjectOwnerPort extractProjectOwnerPort;
-    @Mock FindUsernameUseCase findUsernameUseCase;
-    @Mock FileCommandUseCase fileCommandUseCase;
-    @Mock GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
-    @Mock GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
-    @Mock GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
-    @Mock GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
-    @Mock ValidateDataUseCase validateDataUseCase;
+    @Mock
+    private CreateProjectDtoMapper createProjectDtoMapper;
 
-    @InjectMocks ProjectCommandService service;
+    @Mock
+    private IndexProjectPort indexProjectPort;
 
-    @Mock MultipartFile thumbnailFile;
+    @Mock
+    private CreateProjectPort createProjectPort;
+
+    @Mock
+    private UpdateProjectFilePort updateProjectFilePort;
+
+    @Mock
+    private UpdateProjectPort updateProjectPort;
+
+    @Mock
+    private DeleteProjectDataPort deleteProjectDataPort;
+
+    @Mock
+    private CheckProjectExistsByIdPort checkProjectExistsByIdPort;
+
+    @Mock
+    private FindProjectPort findProjectPort;
+
+    @Mock
+    private ExtractProjectOwnerPort extractProjectOwnerPort;
+
+    @Mock
+    private FindUsernameUseCase findUsernameUseCase;
+
+    @Mock
+    private FileCommandUseCase fileCommandUseCase;
+
+    @Mock
+    private GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
+
+    @Mock
+    private GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
+
+    @Mock
+    private GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
+
+    @Mock
+    private GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+
+    @Mock
+    private ValidateDataUseCase validateDataUseCase;
+
+    @InjectMocks
+    private ProjectCommandService service;
+
+    @Mock
+    private MultipartFile thumbnailFile;
 
     @BeforeEach
     void setup() {
-        // default label returns
         given(getTopicLabelFromIdUseCase.getLabelById(anyLong())).willReturn("Topic");
         given(getAnalysisPurposeLabelFromIdUseCase.getLabelById(anyLong())).willReturn("Purpose");
         given(getDataSourceLabelFromIdUseCase.getLabelById(anyLong())).willReturn("Source");
@@ -76,8 +108,8 @@ class ProjectCommandServiceTest {
     }
 
     @Test
-    @DisplayName("uploadProject_success_with_thumbnail_upload_and_indexing")
-    void uploadProject_success_with_thumbnail_upload_and_indexing() {
+    @DisplayName("프로젝트 업로드 성공 - 썸네일 업로드 및 인덱싱")
+    void uploadProjectSuccessWithThumbnailUploadAndIndexing() {
         // given
         Long userId = 77L;
         UploadProjectRequest req = new UploadProjectRequest(
@@ -104,8 +136,8 @@ class ProjectCommandServiceTest {
     }
 
     @Test
-    @DisplayName("uploadProject_should_throw_RuntimeException_when_thumbnail_upload_fails")
-    void uploadProject_should_throw_RuntimeException_when_thumbnail_upload_fails() {
+    @DisplayName("프로젝트 업로드 실패 - 썸네일 업로드 오류 발생")
+    void uploadProjectFailWhenThumbnailUploadFails() {
         // given
         Long userId = 77L;
         UploadProjectRequest req = new UploadProjectRequest(
@@ -132,14 +164,12 @@ class ProjectCommandServiceTest {
         then(updateProjectFilePort).shouldHaveNoInteractions();
     }
 
-
     @Test
-    @DisplayName("modifyProject_success_should_update_relations_and_index")
-    void modifyProject_success_should_update_relations_and_index() {
+    @DisplayName("프로젝트 수정 성공 - 연관 관계 업데이트 및 인덱싱")
+    void modifyProjectSuccessShouldUpdateRelationsAndIndex() {
         // given
         Long projectId = 55L;
         ModifyProjectRequest req = new ModifyProjectRequest("t2", 1L, 2L, 3L, 4L, false, null, "c2", List.of(10L, 30L));
-        Project existing = Project.builder().id(projectId).userId(5L).dataIds(List.of(10L, 20L)).build();
         Project updated = Project.builder().id(projectId).userId(5L).dataIds(List.of(10L, 30L)).build();
 
         given(extractProjectOwnerPort.findDataIdsByProjectId(projectId)).willReturn(Set.of(10L, 20L));
@@ -157,20 +187,14 @@ class ProjectCommandServiceTest {
     }
 
     @Test
-    @DisplayName("modifyProject_should_throw_when_project_not_found")
-    void modifyProject_should_throw_when_project_not_found() {
+    @DisplayName("프로젝트 수정 실패 - 프로젝트 없음")
+    void modifyProjectFailWhenProjectNotFound() {
         // given
         Long projectId = 66L;
         ModifyProjectRequest req = new ModifyProjectRequest("t2", 1L, 2L, 3L, 4L, false, null, "c2", List.of());
 
-        // project 가 없을 때 Optional.empty() 반환
         given(findProjectPort.findProjectById(projectId)).willReturn(Optional.empty());
-
-        // thumbnailFile 은 유효성 검사에서 통과하도록 세팅
-        given(thumbnailFile.isEmpty()).willReturn(true);  // 이미지가 없다고 처리
-        // 또는
-        // given(thumbnailFile.isEmpty()).willReturn(false);
-        // given(thumbnailFile.getOriginalFilename()).willReturn("file.png");
+        given(thumbnailFile.isEmpty()).willReturn(true);
 
         // when
         ProjectException ex = catchThrowableOfType(
@@ -181,5 +205,4 @@ class ProjectCommandServiceTest {
         // then
         assertThat(ex).isNotNull();
     }
-
 }

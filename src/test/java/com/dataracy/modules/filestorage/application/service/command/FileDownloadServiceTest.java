@@ -3,72 +3,83 @@ package com.dataracy.modules.filestorage.application.service.command;
 import com.dataracy.modules.filestorage.application.dto.response.GetPreSignedUrlResponse;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class FileDownloadServiceTest {
 
     @Mock
-    FileStoragePort fileStoragePort;
+    private FileStoragePort fileStoragePort;
 
     @InjectMocks
-    FileDownloadService service;
+    private FileDownloadService service;
 
-    @Test
-    @DisplayName("generatePreSignedUrl_success")
-    void generatePreSignedUrl_success() {
-        // given
-        String s3Url = "https://bucket.s3.ap-northeast-2.amazonaws.com/path/to/file.jpg";
-        int expirationSeconds = 300;
-        given(fileStoragePort.getPreSignedUrl(s3Url, expirationSeconds)).willReturn("https://signed");
+    @Nested
+    @DisplayName("일시적으로 파일 다운로드가 가능한 URL 반환")
+    class GeneratePreSignedUrl {
 
-        // when
-        GetPreSignedUrlResponse response = service.generatePreSignedUrl(s3Url, expirationSeconds);
+        @Test
+        @DisplayName("성공: 유효한 URL과 만료 시간이 주어지면 사전 서명 URL 반환")
+        void success() {
+            // given
+            String s3Url = "https://bucket.s3.ap-northeast-2.amazonaws.com/path/to/file.jpg";
+            int expirationSeconds = 300;
+            given(fileStoragePort.getPreSignedUrl(s3Url, expirationSeconds))
+                    .willReturn("https://signed");
 
-        // then
-        assertThat(response).isNotNull();
-        assertThat(response.preSignedUrl()).isEqualTo("https://signed");
-        then(fileStoragePort).should().getPreSignedUrl(s3Url, expirationSeconds);
-    }
+            // when
+            GetPreSignedUrlResponse response = service.generatePreSignedUrl(s3Url, expirationSeconds);
 
-    @Test
-    @DisplayName("generatePreSignedUrl_fail_when_url_blank")
-    void generatePreSignedUrl_fail_when_url_blank() {
-        // given
-        String s3Url = "   ";
-        int expirationSeconds = 100;
+            // then
+            assertThat(response).isNotNull();
+            assertThat(response.preSignedUrl()).isEqualTo("https://signed");
+            then(fileStoragePort).should().getPreSignedUrl(s3Url, expirationSeconds);
+        }
 
-        // when
-        IllegalArgumentException ex = catchThrowableOfType(
-                () -> service.generatePreSignedUrl(s3Url, expirationSeconds),
-                IllegalArgumentException.class);
+        @Test
+        @DisplayName("실패: URL이 공백이면 IllegalArgumentException 발생")
+        void failWhenUrlBlank() {
+            // given
+            String s3Url = "   ";
+            int expirationSeconds = 100;
 
-        // then
-        assertThat(ex).isNotNull();
-        then(fileStoragePort).shouldHaveNoInteractions();
-    }
+            // when
+            IllegalArgumentException ex = catchThrowableOfType(
+                    () -> service.generatePreSignedUrl(s3Url, expirationSeconds),
+                    IllegalArgumentException.class
+            );
 
-    @Test
-    @DisplayName("generatePreSignedUrl_fail_when_expiration_leq_zero")
-    void generatePreSignedUrl_fail_when_expiration_leq_zero() {
-        // given
-        String s3Url = "https://bucket.s3.ap-northeast-2.amazonaws.com/path/to/file.jpg";
-        int expirationSeconds = 0;
+            // then
+            assertThat(ex).isNotNull();
+            then(fileStoragePort).shouldHaveNoInteractions();
+        }
 
-        // when
-        IllegalArgumentException ex = catchThrowableOfType(
-                () -> service.generatePreSignedUrl(s3Url, expirationSeconds),
-                IllegalArgumentException.class);
+        @Test
+        @DisplayName("실패: 만료 시간이 0 이하이면 IllegalArgumentException 발생")
+        void failWhenExpirationNonPositive() {
+            // given
+            String s3Url = "https://bucket.s3.ap-northeast-2.amazonaws.com/path/to/file.jpg";
+            int expirationSeconds = 0;
 
-        // then
-        assertThat(ex).isNotNull();
-        then(fileStoragePort).shouldHaveNoInteractions();
+            // when
+            IllegalArgumentException ex = catchThrowableOfType(
+                    () -> service.generatePreSignedUrl(s3Url, expirationSeconds),
+                    IllegalArgumentException.class
+            );
+
+            // then
+            assertThat(ex).isNotNull();
+            then(fileStoragePort).shouldHaveNoInteractions();
+        }
     }
 }
