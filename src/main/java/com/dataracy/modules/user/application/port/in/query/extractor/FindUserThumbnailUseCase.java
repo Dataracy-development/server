@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface FindUserThumbnailUseCase {
+
+    String findUserThumbnailById(Long userId);
+
     /**
      * 주어진 사용자 ID 목록에 대해 각 사용자의 썸네일 URL을 조회하여 반환합니다.
      *
