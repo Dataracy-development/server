@@ -14,17 +14,12 @@ import java.util.Map;
 @Component
 public class FilteredProjectDtoMapper {
     /**
-     * Project 도메인 객체와 관련 메타데이터를 FilteredProjectResponse DTO로 변환합니다.
+     * Project 도메인과 관련 라벨들을 조합해 FilteredProjectResponse DTO를 생성합니다.
      *
-     * 프로젝트의 자식 프로젝트 목록을 ChildProjectResponse 리스트로 매핑하며, 자식 프로젝트의 작성자 이름이 제공되지 않은 경우 "익명 유저"로 대체합니다.
+     * 전달된 project의 자식 프로젝트들을 ChildProjectResponse로 매핑하며,
+     * 자식의 작성자 이름은 childUsernames 맵에서 userId로 조회하고 없으면 "익명 유저"로 대체합니다.
      *
-     * @param project 변환할 프로젝트 도메인 객체
-     * @param username 프로젝트 작성자 이름
-     * @param topicLabel 프로젝트 주제 라벨
-     * @param analysisPurposeLabel 분석 목적 라벨
-     * @param dataSourceLabel 데이터 소스 라벨
-     * @param authorLevelLabel 작성자 등급 라벨
-     * @param childUsernames 자식 프로젝트의 userId와 username 매핑 정보
+     * @param childUsernames 자식 프로젝트의 userId를 키로 하여 username을 담은 맵(없을 경우 해당 자식의 authorName은 "익명 유저"로 설정)
      * @return 변환된 FilteredProjectResponse DTO
      */
     public FilteredProjectResponse toResponseDto(
