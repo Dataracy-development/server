@@ -9,9 +9,10 @@ public class ParentProjectWebMapper {
     /**
      * ParentProjectResponse를 ParentProjectWebResponse로 변환합니다.
      *
-     * 입력이 null이면 null을 반환합니다.
+     * <p>입력이 null이면 null을 반환합니다. 다음 필드를 1:1로 복사하여 새 웹 응답 DTO를 생성합니다:
+     * id, title, content, creatorId, creatorName, commentCount, likeCount, viewCount, createdAt.</p>
      *
-     * @param responseDto 변환할 ParentProjectResponse 객체
+     * @param responseDto 변환할 도메인 응답 객체 (nullable)
      * @return 변환된 ParentProjectWebResponse 객체, 입력이 null이면 null
      */
     public ParentProjectWebResponse toWebDto(ParentProjectResponse responseDto) {

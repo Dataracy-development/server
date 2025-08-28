@@ -129,10 +129,12 @@ public class DataReadService implements
     }
 
     /**
-     * 최신 데이터셋을 지정된 개수만큼 조회하여 최소 정보로 구성된 응답 리스트를 반환합니다.
+     * 지정된 개수만큼 최신 데이터셋을 조회하여 최소 정보(작성자 username 포함)로 구성된 응답 리스트를 반환합니다.
+     *
+     * 조회 결과가 없으면 빈 리스트를 반환합니다. 전달된 `size`는 반환되는 최대 항목 수를 제한합니다.
      *
      * @param size 조회할 데이터셋의 최대 개수
-     * @return 최신 데이터셋의 최소 정보 응답 리스트
+     * @return 최신 데이터셋의 최소 정보 응답 리스트(작성자 username이 포함된 DTO 목록)
      */
     @Override
     @Transactional(readOnly = true)

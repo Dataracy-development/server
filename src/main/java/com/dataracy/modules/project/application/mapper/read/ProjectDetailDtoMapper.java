@@ -14,16 +14,21 @@ import java.util.List;
 @Component
 public class ProjectDetailDtoMapper {
     /**
-     * Project 도메인과 추가 메타데이터를 병합하여 ProjectDetailResponse DTO를 생성합니다.
+     * Project 도메인과 전달된 메타데이터를 합쳐 ProjectDetailResponse DTO를 생성합니다.
      *
-     * 주 도메인 정보는 전달된 Project의 게터에서 읽어오고, 작성자 정보·라벨·연결된 데이터 및 부모 프로젝트 정보는
-     * 해당 파라미터로 채워집니다.
+     * Project의 필수 도메인 값(id, title, userId, isContinue, parentProjectId, content, thumbnailUrl,
+     * createdAt, commentCount, likeCount, viewCount 등)은 전달된 `project`의 게터에서 읽어오며,
+     * 작성자 정보(username, userIntroductionText, userProfileImageUrl), 라벨(authorLevelLabel,
+     * occupationLabel, topicLabel, analysisPurposeLabel, dataSourceLabel), 사용자별 상태(isLiked),
+     * 자식 존재 여부(hasChild), 연결된 데이터(connectedDataSets), 부모 프로젝트 정보(parentProjectResponse)
+     * 는 각 파라미터로 채웁니다.
      *
-     * @param isLiked 사용자가 해당 프로젝트에 대해 좋아요를 눌렀는지 여부
-     * @param hasChild 하위(자식) 프로젝트가 존재하는지 여부
+     * @param project 도메인 소스가 되는 Project 객체(도메인 필드들을 이 객체의 게터에서 읽어옵니다)
+     * @param isLiked 호출자(사용자)가 해당 프로젝트를 좋아요했는지 여부
+     * @param hasChild 해당 프로젝트에 하위(자식) 프로젝트가 존재하는지 여부
      * @param connectedDataSets 프로젝트와 연결된 데이터셋 응답 객체 목록
-     * @param parentProjectResponse 부모 프로젝트 정보(없으면 null 가능)
-     * @return 프로젝트 상세 정보를 담은 ProjectDetailResponse 인스턴스
+     * @param parentProjectResponse 부모 프로젝트 정보(없을 경우 null 가능)
+     * @return 합쳐진 정보를 담은 ProjectDetailResponse 인스턴스
      */
     public ProjectDetailResponse toResponseDto(
             Project project,

@@ -10,16 +10,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class FilteredDataDtoMapper {
     /**
-     * Data 도메인 객체와 주제, 데이터 소스, 데이터 유형 라벨, 연결된 프로젝트 수를 기반으로 FilteredDataResponse DTO를 생성합니다.
-     * 데이터의 주요 속성, 메타데이터 정보, 각종 라벨, 연결된 프로젝트 수를 포함한 DTO를 반환합니다.
+     * Data 도메인 객체와 라벨 및 연결 프로젝트 수로 FilteredDataResponse DTO를 생성하여 반환합니다.
      *
-     * @param data 변환할 Data 도메인 객체
+     * <p>Data 객체의 식별자, 제목, 업로더 정보, 라벨(주제·데이터 소스·데이터 유형)과
+     * 시작/종료일, 설명, 썸네일 URL, 다운로드 수, 크기, 행/열 수, 생성일, 연결 프로젝트 수를 매핑합니다.</p>
+     *
+     * <p>주의: 전달된 data 및 data.getMetadata()는 null이 아니어야 합니다.</p>
+     *
+     * @param data 변환 대상 Data 도메인 객체
      * @param username 데이터셋 업로더 닉네임
-     * @param topicLabel 데이터의 주제 라벨
+     * @param topicLabel 주제 라벨
      * @param dataSourceLabel 데이터 소스 라벨
      * @param dataTypeLabel 데이터 유형 라벨
-     * @param countConnectedProjects 데이터와 연결된 프로젝트 수
-     * @return 변환된 FilteredDataResponse DTO
+     * @param countConnectedProjects 데이터에 연결된 프로젝트 수
+     * @return 생성된 FilteredDataResponse DTO
      */
     public FilteredDataResponse toResponseDto(
             Data data,

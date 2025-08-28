@@ -7,9 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjectConnectedDataWebMapper {
     /**
-     * ProjectConnectedDataResponse 객체를 ProjectConnectedDataWebResponse 객체로 변환합니다.
+     * ProjectConnectedDataResponse를 ProjectConnectedDataWebResponse로 변환합니다.
      *
-     * @param responseDto 변환할 ProjectConnectedDataResponse 객체
+     * <p>responseDto의 필드들을 1:1로 매핑하여 새로운 ProjectConnectedDataWebResponse 인스턴스를 생성합니다.
+     * 널 검사나 추가 변환 로직은 수행하지 않습니다.</p>
+     *
+     * @param responseDto 변환할 소스 DTO
      * @return 변환된 ProjectConnectedDataWebResponse 객체
      */
     public ProjectConnectedDataWebResponse toWebDto(ProjectConnectedDataResponse responseDto) {

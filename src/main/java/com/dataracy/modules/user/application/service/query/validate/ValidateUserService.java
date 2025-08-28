@@ -32,12 +32,18 @@ public class ValidateUserService implements DuplicateNicknameUseCase, DuplicateE
     }
 
     /**
-     * 주어진 이메일이 이미 등록되어 있는지 확인한다.
+     * 주어진 이메일의 중복 여부를 검사하고, 이미 등록된 경우 가입 경로에 따라 적절한 UserException을 던진다.
      *
-     * 이메일이 이미 등록된 경우, 해당 이메일의 가입 경로(구글, 카카오, 로컬, 또는 알 수 없는 ProviderType)에 따라 각각 다른 중복 이메일 에러 상태의 UserException을 발생시킨다.
+     * 중복 사용자가 존재하면 해당 사용자의 ProviderType에 따라 다음과 같은 UserErrorStatus로 예외가 발생한다:
+     * - GOOGLE  -> DUPLICATED_GOOGLE_EMAIL
+     * - KAKAO   -> DUPLICATED_KAKAO_EMAIL
+     * - LOCAL   -> DUPLICATED_LOCAL_EMAIL
+     * - null 또는 그 외의 값 -> DUPLICATED_LOCAL_EMAIL
+     *
+     * 중복 사용자가 없으면 정상적으로 반환한다(예외 없음).
      *
      * @param email 중복 여부를 확인할 이메일 주소
-     * @throws UserException 이메일이 이미 등록되어 있을 때, 가입 경로에 따라 적절한 중복 이메일 에러 상태로 예외가 발생함
+     * @throws UserException 이메일이 이미 등록되어 있을 때, 위에 명시된 ProviderType별 중복 이메일 상태로 발생함
      */
     @Override
     @Transactional(readOnly = true)

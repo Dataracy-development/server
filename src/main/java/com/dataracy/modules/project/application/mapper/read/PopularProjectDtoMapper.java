@@ -10,15 +10,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class PopularProjectDtoMapper {
     /**
-     * 프로젝트 도메인 객체와 관련 라벨, 작성자명을 받아 인기 프로젝트 응답 DTO로 생성합니다.
+     * 프로젝트 도메인과 라벨/작성자 정보를 결합하여 PopularProjectResponse DTO를 생성합니다.
      *
-     * @param project 변환할 프로젝트 도메인 객체
-     * @param username 프로젝트 작성자명
+     * <p>Project의 주요 필드(id, title, content, userId, thumbnailUrl, commentCount, likeCount, viewCount)
+     * 와 전달된 라벨(topic, analysisPurpose, dataSource, authorLevel) 및 작성자명(username)을 사용해 DTO를 구성합니다.</p>
+     *
+     * @param project 변환할 프로젝트 도메인 객체(필수: id, title 등 주요 필드가 유효해야 함)
+     * @param username 표시용 작성자명(화면에 표시할 이름)
      * @param topicLabel 프로젝트 주제 라벨
      * @param analysisPurposeLabel 분석 목적 라벨
      * @param dataSourceLabel 데이터 소스 라벨
      * @param authorLevelLabel 작성자 등급 라벨
-     * @return 프로젝트 정보, 라벨, 작성자명이 포함된 PopularProjectResponse DTO
+     * @return 프로젝트 정보와 라벨, 작성자명이 포함된 PopularProjectResponse 인스턴스
      */
     public PopularProjectResponse toResponseDto(
             Project project,
