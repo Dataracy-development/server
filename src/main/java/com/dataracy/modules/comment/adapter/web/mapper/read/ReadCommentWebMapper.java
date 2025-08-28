@@ -33,9 +33,11 @@ public class ReadCommentWebMapper {
     }
 
     /**
-     * 애플리케이션 계층의 답글 응답 DTO를 웹 계층의 답글 응답 객체로 변환합니다.
+     * 애플리케이션 계층의 FindReplyCommentResponse를 웹 계층의 FindReplyCommentWebResponse로 변환합니다.
      *
-     * @param responseDto 변환할 답글 응답 DTO
+     * 매핑되는 필드: id, creatorId, creatorName, authorLevelLabel, userProfileUrl, content, likeCount, createdAt, isLiked.
+     *
+     * @param responseDto 변환할 애플리케이션 계층의 답글 응답 DTO
      * @return 변환된 웹 계층의 답글 응답 객체
      */
     public FindReplyCommentWebResponse toWebDto(FindReplyCommentResponse responseDto) {

@@ -136,9 +136,11 @@ public class ProjectReadWebMapper {
     }
 
     /**
-     * 애플리케이션 계층의 인기 프로젝트 정보를 웹 계층의 응답 객체로 변환합니다.
+     * 애플리케이션 계층의 PopularProjectResponse를 웹 계층의 PopularProjectWebResponse로 변환합니다.
      *
-     * @param responseDto 인기 프로젝트 정보를 담은 애플리케이션 계층 DTO
+     * 변환 시 프로젝트의 식별자, 제목, 내용, 작성자(아이디·이름), 썸네일, 레이블류 및 통계(count) 필드를 복사합니다.
+     *
+     * @param responseDto 변환할 인기 프로젝트의 애플리케이션 계층 DTO
      * @return 변환된 인기 프로젝트 웹 응답 객체
      */
     public PopularProjectWebResponse toWebDto(PopularProjectResponse responseDto) {

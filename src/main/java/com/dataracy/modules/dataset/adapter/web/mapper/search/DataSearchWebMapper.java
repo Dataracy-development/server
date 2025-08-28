@@ -40,10 +40,12 @@ public class DataSearchWebMapper {
     }
 
     /**
-     * RecentMinimalDataResponse를 RecentMinimalDataWebResponse로 변환합니다.
+     * 최근 최소 데이터 애플리케이션 DTO를 웹 응답 DTO로 변환합니다.
      *
-     * @param responseDto 변환 대상 애플리케이션 레이어 DTO
-     * @return id, title, creatorId, creatorName, userProfileImageUrl, dataThumbnailUrl, createdAt를 포함한 웹 응답 DTO
+     * 변환된 웹 DTO는 id, title, creatorId, creatorName, dataThumbnailUrl, createdAt를 포함합니다.
+     *
+     * @param responseDto 변환할 RecentMinimalDataResponse
+     * @return 변환된 RecentMinimalDataWebResponse
      */
     public RecentMinimalDataWebResponse toWebDto(RecentMinimalDataResponse responseDto) {
         return new RecentMinimalDataWebResponse(

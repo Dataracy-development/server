@@ -10,13 +10,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConnectedProjectDtoMapper {
     /**
-     * Project 도메인 객체와 추가 정보를 결합하여 ConnectedProjectResponse DTO로 변환합니다.
+     * Project 도메인과 추가 문자열 정보를 결합해 ConnectedProjectResponse DTO를 생성하여 반환합니다.
      *
-     * @param project 변환할 Project 도메인 객체
+     * <p>Project의 식별자, 제목, 사용자 ID, 댓글/좋아요/조회수, 생성일자와 함께 전달된 username 및 topicLabel을 응답 DTO에 포함합니다.</p>
+     *
+     * @param project 변환 대상 Project 도메인 객체
      * @param username 프로젝트와 연관된 사용자 이름
      * @param userProfileImageUrl 프로젝트와 연관된 사용자 프로필 이미지 URL
      * @param topicLabel 프로젝트와 연관된 토픽 라벨
-     * @return 프로젝트 정보와 사용자, 토픽 정보를 포함하는 ConnectedProjectResponse DTO
+     * @return 프로젝트 정보·사용자·토픽을 포함한 ConnectedProjectResponse 인스턴스
      */
     public ConnectedProjectResponse toResponseDto(
             Project project,

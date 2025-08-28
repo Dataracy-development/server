@@ -53,11 +53,11 @@ public interface ProjectReadApi {
     );
 
     /**
-     * 지정한 프로젝트를 기준으로 이어지는 프로젝트 목록을 페이지 단위로 반환한다.
+     * 지정한 프로젝트를 기준으로 이어지는 프로젝트들의 페이지 형식 리스트를 조회한다.
      *
-     * @param projectId 이어지는 프로젝트를 조회할 기준 프로젝트의 ID (1 이상)
-     * @param pageable 페이지 번호와 크기 정보 (기본값: 페이지 0, 크기 3)
-     * @return 이어지는 프로젝트 목록이 포함된 성공 응답
+     * @param projectId 조회 기준이 되는 프로젝트의 ID
+     * @param pageable  페이지 요청 정보(기본값: page=0, size=3)
+     * @return 이어지는 프로젝트들의 페이지를 담은 성공 응답(ResponseEntity<SuccessResponse<Page<ContinuedProjectWebResponse>>>)
      */
     @Operation(
             summary = "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회한다.",

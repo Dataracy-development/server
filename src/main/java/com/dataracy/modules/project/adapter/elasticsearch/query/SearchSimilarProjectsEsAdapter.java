@@ -99,9 +99,10 @@ public class SearchSimilarProjectsEsAdapter implements SearchSimilarProjectsPort
     }
 
     /**
-     * ProjectSearchDocument 객체를 SimilarProjectResponse로 변환합니다.
+     * ProjectSearchDocument를 SimilarProjectResponse로 변환한다.
      *
-     * 프로젝트의 주요 정보(제목, 내용, 작성자, 썸네일 URL 등)와 통계(댓글 수, 좋아요 수, 조회 수 등)를 포함하는 유사 프로젝트 응답 객체를 생성합니다.
+     * 변환된 응답 객체는 프로젝트의 식별자와 텍스트 정보(제목, 내용), 작성자 정보(userId, username),
+     * 썸네일·분류 레이블(topic, analysis purpose, data source, author level) 및 통계(commentCount, likeCount, viewCount)를 포함한다.
      *
      * @param doc 변환할 프로젝트 검색 문서
      * @return 유사 프로젝트 정보를 담은 SimilarProjectResponse 객체
