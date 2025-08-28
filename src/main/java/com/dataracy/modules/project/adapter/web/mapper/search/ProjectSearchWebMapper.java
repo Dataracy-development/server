@@ -9,10 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjectSearchWebMapper {
     /**
-     * 실시간 프로젝트 검색 결과 DTO를 실시간 프로젝트 웹 응답 객체로 변환합니다.
+     * RealTimeProjectResponse DTO를 RealTimeProjectWebResponse로 변환합니다.
      *
-     * @param responseDto 실시간 프로젝트 검색 결과 데이터
-     * @return 실시간 프로젝트 웹 응답 객체
+     * <p>DTO의 id, title, creatorId, creatorName, projectThumbnailUrl 필드를 대응하는 웹 응답 객체로 매핑합니다.</p>
+     *
+     * @param responseDto 변환할 실시간 프로젝트 검색 결과 DTO
+     * @return 변환된 RealTimeProjectWebResponse 객체
      */
     public RealTimeProjectWebResponse toWebDto(RealTimeProjectResponse responseDto) {
         return new RealTimeProjectWebResponse(
@@ -26,9 +28,9 @@ public class ProjectSearchWebMapper {
     }
 
     /**
-     * SimilarProjectResponse DTO를 SimilarProjectWebResponse 웹 응답 객체로 변환합니다.
+     * SimilarProjectResponse를 SimilarProjectWebResponse로 변환합니다.
      *
-     * 모든 필드를 동일하게 매핑하여 유사 프로젝트 검색 결과를 웹 응답 형식으로 반환합니다.
+     * DTO의 필드들을 대응되는 웹 응답 필드로 매핑하여 유사 프로젝트 검색 결과의 응답 객체를 생성합니다.
      *
      * @param responseDto 변환할 SimilarProjectResponse DTO
      * @return 변환된 SimilarProjectWebResponse 객체
