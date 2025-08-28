@@ -14,6 +14,7 @@ public record ProjectSearchDocument(
         String topicLabel,
         Long userId,
         String username,
+        String userProfileImageUrl,
         Long analysisPurposeId,
         String analysisPurposeLabel,
         Long dataSourceId,
@@ -47,7 +48,8 @@ public record ProjectSearchDocument(
             String analysisPurposeLabel,
             String dataSourceLabel,
             String authorLevelLabel,
-            String username
+            String username,
+            String userProfileImageUrl
     ) {
         return ProjectSearchDocument.builder()
                 .id(project.getId())
@@ -57,6 +59,7 @@ public record ProjectSearchDocument(
                 .topicLabel(topicLabel)
                 .userId(project.getUserId())
                 .username(username)
+                .userProfileImageUrl(userProfileImageUrl)
                 .analysisPurposeId(project.getAnalysisPurposeId())
                 .analysisPurposeLabel(analysisPurposeLabel)
                 .dataSourceId(project.getDataSourceId())

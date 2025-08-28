@@ -7,6 +7,7 @@ import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAna
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ import java.util.List;
 public class ProjectLabelMapService implements FindProjectLabelMapUseCase {
 
     private final FindUsernameUseCase findUsernameUseCase;
+    private final FindUserThumbnailUseCase findUserThumbnailUseCase;
+
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
@@ -39,6 +42,7 @@ public class ProjectLabelMapService implements FindProjectLabelMapUseCase {
 
         return new ProjectLabelMapResponse(
                 findUsernameUseCase.findUsernamesByIds(userIds),
+                findUserThumbnailUseCase.findUserThumbnailsByIds(userIds),
                 getTopicLabelFromIdUseCase.getLabelsByIds(topicIds),
                 getAnalysisPurposeLabelFromIdUseCase.getLabelsByIds(analysisPurposeIds),
                 getDataSourceLabelFromIdUseCase.getLabelsByIds(dataSourceIds),

@@ -88,6 +88,7 @@ public class DataSearchService implements
             return filteredDataDtoMapper.toResponseDto(
                     data,
                     labelResponse.usernameMap().get(data.getUserId()),
+                    labelResponse.userProfileUrlMap().get(data.getUserId()),
                     labelResponse.topicLabelMap().get(data.getTopicId()),
                     labelResponse.dataSourceLabelMap().get(data.getDataSourceId()),
                     labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),

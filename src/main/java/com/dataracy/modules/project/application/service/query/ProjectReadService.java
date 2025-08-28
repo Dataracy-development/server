@@ -197,14 +197,14 @@ public class ProjectReadService implements
         List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
 
         Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
-        Map<Long, String> userThumbnailMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
+        Map<Long, String> userProfileUrlMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
         Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
         Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
 
         Page<ContinuedProjectResponse> findContinuedProjectsResponse = savedProjects.map(project -> continuedProjectDtoMapper.toResponseDto(
                 project,
                 usernameMap.get(project.getUserId()),
-                userThumbnailMap.get(project.getUserId()),
+                userProfileUrlMap.get(project.getUserId()),
                 topicLabelMap.get(project.getTopicId()),
                 authorLevelLabelMap.get(project.getAuthorLevelId())
         ));
@@ -230,11 +230,13 @@ public class ProjectReadService implements
         List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
 
         Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
+        Map<Long, String> userProfileUrlMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
         Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
 
         Page<ConnectedProjectResponse> connectedProjectsResponses = savedProjects.map(project -> connectedProjectDtoMapper.toResponseDto(
                 project,
                 usernameMap.get(project.getUserId()),
+                userProfileUrlMap.get(project.getUserId()),
                 topicLabelMap.get(project.getTopicId())
         ));
 
@@ -283,6 +285,7 @@ public class ProjectReadService implements
                 .map(project -> popularProjectDtoMapper.toResponseDto(
                         project,
                         labelResponse.usernameMap().get(project.getUserId()),
+                        labelResponse.userProfileUrlMap().get(project.getUserId()),
                         labelResponse.topicLabelMap().get(project.getTopicId()),
                         labelResponse.analysisPurposeLabelMap().get(project.getAnalysisPurposeId()),
                         labelResponse.dataSourceLabelMap().get(project.getDataSourceId()),

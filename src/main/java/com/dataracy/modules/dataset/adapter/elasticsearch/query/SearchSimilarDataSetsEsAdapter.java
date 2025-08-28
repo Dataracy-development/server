@@ -108,6 +108,7 @@ public class SearchSimilarDataSetsEsAdapter implements SearchSimilarDataSetsPort
                 doc.title(),
                 doc.userId(),
                 doc.username(),
+                doc.userProfileImageUrl(),
                 doc.topicLabel(),
                 doc.dataSourceLabel(),
                 doc.dataTypeLabel(),

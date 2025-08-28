@@ -28,6 +28,7 @@ import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAna
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,7 @@ public class ProjectCommandService implements
     private final ExtractProjectOwnerPort extractProjectOwnerPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
+    private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final FileCommandUseCase fileCommandUseCase;
 
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
@@ -110,13 +112,15 @@ public class ProjectCommandService implements
 
         // 검색을 위해 elasticSearch에 프로젝트를 등록한다 .
         String username = findUsernameUseCase.findUsernameById(userId);
+        String userProfileImageUrl = findUserThumbnailUseCase.findUserThumbnailById(userId);
         indexProjectPort.index(ProjectSearchDocument.from(
                 savedProject,
                 validatedProjectInfo.topicLabel(),
                 validatedProjectInfo.analysisPurposeLabel(),
                 validatedProjectInfo.dataSourceLabel(),
                 validatedProjectInfo.authorLevelLabel(),
-                username
+                username,
+                userProfileImageUrl
         ));
 
         LoggerFactory.service().logSuccess("UploadProjectUseCase", "프로젝트 업로드 서비스 종료 title=" + requestDto.title(), startTime);
@@ -182,6 +186,7 @@ public class ProjectCommandService implements
                 });
 
         String username = findUsernameUseCase.findUsernameById(updatedProject.getUserId());
+        String userProfileImageUrl = findUserThumbnailUseCase.findUserThumbnailById(updatedProject.getUserId());
         // Elasticsearch 업데이트
         indexProjectPort.index(ProjectSearchDocument.from(
                 updatedProject,
@@ -189,7 +194,8 @@ public class ProjectCommandService implements
                 validatedProjectInfo.analysisPurposeLabel(),
                 validatedProjectInfo.dataSourceLabel(),
                 validatedProjectInfo.authorLevelLabel(),
-                username
+                username,
+                userProfileImageUrl
         ));
         LoggerFactory.service().logSuccess("ModifyProjectUseCase", "프로젝트 수정 서비스 종료 projectId=" + projectId, startTime);
     }

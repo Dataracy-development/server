@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface FindUserAuthorLevelIdsUseCase {
+
     /**
      * 주어진 사용자 ID 목록에 대해 각 사용자의 작성자 레벨 ID를 조회하여 반환합니다.
      *

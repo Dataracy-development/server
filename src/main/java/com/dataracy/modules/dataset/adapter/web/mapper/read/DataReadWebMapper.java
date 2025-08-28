@@ -75,6 +75,7 @@ public class DataReadWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.topicLabel(),
                 responseDto.dataTypeLabel(),
                 responseDto.startDate(),
@@ -101,6 +102,7 @@ public class DataReadWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.dataThumbnailUrl(),
                 responseDto.createdAt()
         );
@@ -122,6 +124,7 @@ public class DataReadWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.topicLabel(),
                 responseDto.dataSourceLabel(),
                 responseDto.dataTypeLabel(),

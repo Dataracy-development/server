@@ -17,6 +17,7 @@ public class DataReadDtoMapper {
      *
      * @param data 변환할 데이터 도메인 객체
      * @param username 데이터셋 업로더 닉네임
+     * @param userProfileImageUrl 데이터셋 업로더 프로필 이미지 URL
      * @param topicLabel 데이터의 주제 레이블
      * @param dataTypeLabel 데이터의 유형 레이블
      * @param countConnectedProjects 데이터와 연결된 프로젝트의 개수
@@ -25,6 +26,7 @@ public class DataReadDtoMapper {
     public ConnectedDataResponse toResponseDto(
             Data data,
             String username,
+            String userProfileImageUrl,
             String topicLabel,
             String dataTypeLabel,
             Long countConnectedProjects
@@ -34,6 +36,7 @@ public class DataReadDtoMapper {
                 data.getTitle(),
                 data.getUserId(),
                 username,
+                userProfileImageUrl,
                 topicLabel,
                 dataTypeLabel,
                 data.getStartDate(),
@@ -55,17 +58,20 @@ public class DataReadDtoMapper {
      *
      * @param data 최소 정보로 변환할 Data 도메인 객체
      * @param username 데이터셋 업로더 닉네임
+     * @param userProfileImageUrl 데이터셋 업로더 프로필 이미지 URL
      * @return ID, 제목, 썸네일 URL, 생성일시만 포함된 RecentMinimalDataResponse DTO
      */
     public RecentMinimalDataResponse toResponseDto(
             Data data,
-            String username
+            String username,
+            String userProfileImageUrl
     ) {
         return new RecentMinimalDataResponse(
                 data.getId(),
                 data.getTitle(),
                 data.getUserId(),
                 username,
+                userProfileImageUrl,
                 data.getDataThumbnailUrl(),
                 data.getCreatedAt()
         );
@@ -79,6 +85,7 @@ public class DataReadDtoMapper {
      *
      * @param data 변환할 Data 도메인 객체
      * @param username 데이터와 연관된 사용자 이름
+     * @param userProfileImageUrl 데이터셋 업로더 프로필 이미지 URL
      * @param topicLabel 데이터의 주제 라벨
      * @param dataSourceLabel 데이터의 출처(데이터 소스) 라벨
      * @param dataTypeLabel 데이터의 타입 라벨
@@ -88,6 +95,7 @@ public class DataReadDtoMapper {
     public PopularDataResponse toResponseDto(
             Data data,
             String username,
+            String userProfileImageUrl,
             String topicLabel,
             String dataSourceLabel,
             String dataTypeLabel,
@@ -98,6 +106,7 @@ public class DataReadDtoMapper {
                 data.getTitle(),
                 data.getUserId(),
                 username,
+                userProfileImageUrl,
                 topicLabel,
                 dataSourceLabel,
                 dataTypeLabel,

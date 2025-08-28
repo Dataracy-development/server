@@ -19,6 +19,7 @@ import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,6 +47,7 @@ public class ProjectSearchService implements
     private final SearchFilteredProjectsPort searchFilteredProjectsPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
+    private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final FindProjectLabelMapUseCase findProjectLabelMapUseCase;
 
     /**
@@ -118,15 +120,19 @@ public class ProjectSearchService implements
 
             // userId → username 일괄 조회
             Map<Long, String> childUsernames = findUsernameUseCase.findUsernamesByIds(childUserIds);
+            // userId → userProfileImageUrl 일괄 조회
+            Map<Long, String> childUserProfileImageUrls = findUserThumbnailUseCase.findUserThumbnailsByIds(childUserIds);
 
             return filteredProjectDtoMapper.toResponseDto(
                     project,
                     labelResponse.usernameMap().get(project.getUserId()),
+                    labelResponse.userProfileUrlMap().get(project.getUserId()),
                     labelResponse.topicLabelMap().get(project.getTopicId()),
                     labelResponse.analysisPurposeLabelMap().get(project.getAnalysisPurposeId()),
                     labelResponse.dataSourceLabelMap().get(project.getDataSourceId()),
                     labelResponse.authorLevelLabelMap().get(project.getAuthorLevelId()),
-                    childUsernames
+                    childUsernames,
+                    childUserProfileImageUrls
             );
         });
 

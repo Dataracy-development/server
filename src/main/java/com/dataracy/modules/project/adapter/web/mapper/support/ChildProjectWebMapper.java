@@ -19,6 +19,7 @@ public class ChildProjectWebMapper {
                 responseDto.content(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.commentCount(),
                 responseDto.likeCount()
         );
