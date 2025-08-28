@@ -20,6 +20,7 @@ public class ProjectSearchWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.projectThumbnailUrl()
         );
     }
@@ -39,6 +40,7 @@ public class ProjectSearchWebMapper {
                 responseDto.content(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.analysisPurposeLabel(),

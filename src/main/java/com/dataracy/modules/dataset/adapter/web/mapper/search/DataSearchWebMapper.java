@@ -23,6 +23,7 @@ public class DataSearchWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.topicLabel(),
                 responseDto.dataSourceLabel(),
                 responseDto.dataTypeLabel(),
@@ -50,6 +51,7 @@ public class DataSearchWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.dataThumbnailUrl(),
                 responseDto.createdAt()
         );

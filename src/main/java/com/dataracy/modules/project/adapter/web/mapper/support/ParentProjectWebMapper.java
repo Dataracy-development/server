@@ -25,6 +25,7 @@ public class ParentProjectWebMapper {
                 responseDto.content(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.commentCount(),
                 responseDto.likeCount(),
                 responseDto.viewCount(),

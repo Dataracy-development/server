@@ -16,6 +16,7 @@ import com.dataracy.modules.reference.application.port.in.datasource.GetDataSour
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
@@ -49,6 +50,7 @@ public class DataReadService implements
     private final GetUserInfoUseCase getUserInfoUseCase;
 
     private final FindUsernameUseCase findUsernameUseCase;
+    private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
@@ -76,6 +78,7 @@ public class DataReadService implements
                     return dataReadDtoMapper.toResponseDto(
                             data,
                             labelResponse.usernameMap().get(data.getUserId()),
+                            labelResponse.userProfileUrlMap().get(data.getUserId()),
                             labelResponse.topicLabelMap().get(data.getTopicId()),
                             labelResponse.dataSourceLabelMap().get(data.getDataSourceId()),
                             labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
@@ -145,10 +148,12 @@ public class DataReadService implements
                 .toList();
 
         Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
+        Map<Long, String> userProfileUrlMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
         List<RecentMinimalDataResponse> recentMinimalDataResponses = recentDataSets.stream()
                 .map(data -> dataReadDtoMapper.toResponseDto(
                             data,
-                            usernameMap.get(data.getUserId())
+                            usernameMap.get(data.getUserId()),
+                            userProfileUrlMap.get(data.getUserId())
                 ))
                 .toList();
 
@@ -189,6 +194,7 @@ public class DataReadService implements
             return dataReadDtoMapper.toResponseDto(
                     data,
                     labelResponse.usernameMap().get(data.getUserId()),
+                    labelResponse.userProfileUrlMap().get(data.getUserId()),
                     labelResponse.topicLabelMap().get(data.getTopicId()),
                     labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
                     wrapper.countConnectedProjects()
@@ -225,6 +231,7 @@ public class DataReadService implements
                     return dataReadDtoMapper.toResponseDto(
                             data,
                             labelResponse.usernameMap().get(data.getUserId()),
+                            labelResponse.userProfileUrlMap().get(data.getUserId()),
                             labelResponse.topicLabelMap().get(data.getTopicId()),
                             labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
                             wrapper.countConnectedProjects()

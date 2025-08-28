@@ -16,6 +16,7 @@ public record DataSearchDocument(
         String topicLabel,
         Long userId,
         String username,
+        String userProfileImageUrl,
         Long dataSourceId,
         String dataSourceLabel,
         Long dataTypeId,
@@ -56,6 +57,7 @@ public record DataSearchDocument(
                 .topicLabel(dataLabels.topicLabel())
                 .userId(data.getUserId())
                 .username(dataLabels.username())
+                .userProfileImageUrl(dataLabels.userProfileImageUrl())
                 .dataSourceId(data.getDataSourceId())
                 .dataSourceLabel(dataLabels.dataSourceLabel())
                 .dataTypeId(data.getDataTypeId())

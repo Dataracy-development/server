@@ -81,7 +81,7 @@ public class ProjectReadWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
-                responseDto.userProfileUrl(),
+                responseDto.userProfileImageUrl(),
                 responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.authorLevelLabel(),
@@ -104,6 +104,7 @@ public class ProjectReadWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.topicLabel(),
                 responseDto.commentCount(),
                 responseDto.likeCount(),
@@ -127,6 +128,7 @@ public class ProjectReadWebMapper {
                 responseDto.content(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.commentCount(),
                 responseDto.likeCount()
         );
@@ -145,6 +147,7 @@ public class ProjectReadWebMapper {
                 responseDto.content(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.analysisPurposeLabel(),

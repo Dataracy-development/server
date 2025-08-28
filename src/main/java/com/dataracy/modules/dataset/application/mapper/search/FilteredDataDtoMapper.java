@@ -15,6 +15,7 @@ public class FilteredDataDtoMapper {
      *
      * @param data 변환할 Data 도메인 객체
      * @param username 데이터셋 업로더 닉네임
+     * @param userProfileImageUrl 데이터셋 업로더 프로필 이미지 URL
      * @param topicLabel 데이터의 주제 라벨
      * @param dataSourceLabel 데이터 소스 라벨
      * @param dataTypeLabel 데이터 유형 라벨
@@ -24,6 +25,7 @@ public class FilteredDataDtoMapper {
     public FilteredDataResponse toResponseDto(
             Data data,
             String username,
+            String userProfileImageUrl,
             String topicLabel,
             String dataSourceLabel,
             String dataTypeLabel,
@@ -34,6 +36,7 @@ public class FilteredDataDtoMapper {
                 data.getTitle(),
                 data.getUserId(),
                 username,
+                userProfileImageUrl,
                 topicLabel,
                 dataSourceLabel,
                 dataTypeLabel,

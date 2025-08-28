@@ -18,6 +18,7 @@ public class ProjectConnectedDataWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.topicLabel(),
                 responseDto.dataTypeLabel(),
                 responseDto.startDate(),

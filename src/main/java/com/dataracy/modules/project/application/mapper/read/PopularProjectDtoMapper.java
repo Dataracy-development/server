@@ -14,6 +14,7 @@ public class PopularProjectDtoMapper {
      *
      * @param project 변환할 프로젝트 도메인 객체
      * @param username 프로젝트 작성자명
+     * @param userProfileImageUrl 프로젝트 작성자 프로필 이미지 URL
      * @param topicLabel 프로젝트 주제 라벨
      * @param analysisPurposeLabel 분석 목적 라벨
      * @param dataSourceLabel 데이터 소스 라벨
@@ -23,6 +24,7 @@ public class PopularProjectDtoMapper {
     public PopularProjectResponse toResponseDto(
             Project project,
             String username,
+            String userProfileImageUrl,
             String topicLabel,
             String analysisPurposeLabel,
             String dataSourceLabel,
@@ -34,6 +36,7 @@ public class PopularProjectDtoMapper {
                 project.getContent(),
                 project.getUserId(),
                 username,
+                userProfileImageUrl,
                 project.getThumbnailUrl(),
                 topicLabel,
                 analysisPurposeLabel,

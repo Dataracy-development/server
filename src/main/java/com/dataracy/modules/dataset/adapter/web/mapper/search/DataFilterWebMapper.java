@@ -40,6 +40,7 @@ public class DataFilterWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.topicLabel(),
                 responseDto.dataSourceLabel(),
                 responseDto.dataTypeLabel(),

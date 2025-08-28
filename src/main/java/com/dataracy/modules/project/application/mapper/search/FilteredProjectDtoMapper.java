@@ -3,6 +3,7 @@ package com.dataracy.modules.project.application.mapper.search;
 import com.dataracy.modules.project.application.dto.response.search.FilteredProjectResponse;
 import com.dataracy.modules.project.application.dto.response.support.ChildProjectResponse;
 import com.dataracy.modules.project.domain.model.Project;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,6 +14,10 @@ import java.util.Map;
  */
 @Component
 public class FilteredProjectDtoMapper {
+
+    @Value("${default.profile.image-url:}")
+    private String defaultUserProfileImageUrl;
+
     /**
      * Project 도메인 객체와 관련 메타데이터를 FilteredProjectResponse DTO로 변환합니다.
      *
@@ -30,11 +35,13 @@ public class FilteredProjectDtoMapper {
     public FilteredProjectResponse toResponseDto(
             Project project,
             String username,
+            String userProfileImageUrl,
             String topicLabel,
             String analysisPurposeLabel,
             String dataSourceLabel,
             String authorLevelLabel,
-            Map<Long, String> childUsernames
+            Map<Long, String> childUsernames,
+            Map<Long, String> childUserProfileImageUrls
     ) {
         List<ChildProjectResponse> childProjects = project.getChildProjects().stream()
                 .map(child -> new ChildProjectResponse(
@@ -43,6 +50,7 @@ public class FilteredProjectDtoMapper {
                         child.getContent(),
                         child.getUserId(),
                         childUsernames.getOrDefault(child.getUserId(), "익명 유저"),
+                        childUserProfileImageUrls.getOrDefault(child.getUserId(), defaultUserProfileImageUrl),
                         child.getCommentCount(),
                         child.getLikeCount()
                 ))
@@ -54,6 +62,7 @@ public class FilteredProjectDtoMapper {
                 project.getContent(),
                 project.getUserId(),
                 username,
+                userProfileImageUrl,
                 project.getThumbnailUrl(),
                 topicLabel,
                 analysisPurposeLabel,
