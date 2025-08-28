@@ -68,13 +68,16 @@ public class DataSearchService implements
     }
 
     /**
-     * 필터, 정렬, 페이징을 적용해 데이터셋을 조회하고 각 항목을 레이블 정보로 보강하여 FilteredDataResponse의 페이지로 반환합니다.
+     * 요청된 필터, 정렬, 페이지네이션을 적용해 데이터셋을 조회하고 라벨(사용자명·주제·데이터소스·데이터유형)과
+     * 연결된 프로젝트 수를 주입한 상태로 결과를 페이지 형태로 반환합니다.
      *
-     * <p>응답 항목은 데이터 자체와 사용자명 및 사용자 프로필 URL, 토픽/데이터소스/데이터타입 레이블, 연결된 프로젝트 수를 포함합니다.</p>
+     * 상세:
+     * - 검색된 데이터들의 라벨 매핑을 조회해 각 데이터 DTO에 사용자명(username), 주제 라벨, 데이터 소스 라벨,
+     *   데이터 타입 라벨과 연결된 프로젝트 수를 포함한 FilteredDataResponse로 변환합니다.
      *
-     * @param request 데이터셋 필터와 정렬(예: 키워드, 정렬 타입 등)을 포함한 요청 객체
-     * @param pageable 페이지네이션(페이지 번호·크기·정렬) 정보
-     * @return 필터링·정렬·보강된 데이터셋의 페이지(Page&lt;FilteredDataResponse&gt;)
+     * @param request  필터 및 정렬 기준을 포함한 검색 요청
+     * @param pageable 페이지 번호 및 크기 등 페이지네이션 정보
+     * @return 필터 및 정렬이 적용된 FilteredDataResponse의 페이지
      */
     @Override
     @Transactional(readOnly = true)

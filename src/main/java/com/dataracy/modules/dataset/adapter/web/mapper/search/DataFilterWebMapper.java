@@ -29,14 +29,14 @@ public class DataFilterWebMapper {
     }
 
     /**
-     * 애플리케이션 계층의 FilteredDataResponse를 웹 계층의 FilteredDataWebResponse로 변환합니다.
-     *
-     * <p>responseDto의 모든 필드(id, title, creatorId, creatorName, userProfileImageUrl, topicLabel 등)를
-     * 대응하는 웹 응답 필드로 그대로 매핑하여 새 FilteredDataWebResponse 인스턴스를 생성합니다.</p>
-     *
-     * @param responseDto 변환할 애플리케이션 계층의 FilteredDataResponse
-     * @return 웹 응답에 사용되는 FilteredDataWebResponse 인스턴스
-     */
+         * 애플리케이션 계층의 FilteredDataResponse를 웹 계층의 FilteredDataWebResponse로 변환합니다.
+         *
+         * <p>필드들을 1:1로 매핑하여 새로운 웹 응답 DTO를 생성합니다(생성자 파라미터 순서와 동일).
+         * 입력 객체가 null인 경우 NPE가 발생할 수 있으므로 호출자는 null이 아님을 보장해야 합니다.</p>
+         *
+         * @param responseDto 변환할 애플리케이션 계층의 필터링 결과 DTO
+         * @return 변환된 웹 계층의 FilteredDataWebResponse
+         */
     public FilteredDataWebResponse toWebDto(FilteredDataResponse responseDto) {
         return new FilteredDataWebResponse(
                 responseDto.id(),

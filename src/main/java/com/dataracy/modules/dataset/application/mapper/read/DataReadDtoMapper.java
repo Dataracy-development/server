@@ -125,13 +125,18 @@ public class DataReadDtoMapper {
     }
 
     /**
-     * Data 도메인과 작성자·라벨 정보를 결합해 상세 조회용 DataDetailResponse를 생성합니다.
+     * Data 도메인과 작성자 및 표시용 라벨 정보를 결합해 상세 조회용 DataDetailResponse를 생성합니다.
      *
-     * 해당 DTO는 데이터의 메타(행/열/프리뷰), 생성일 및 작성자 관련 표시 정보를 포함합니다.
-     *
-     * @param userProfileImageUrl 작성자 프로필 이미지 URL (없을 경우 null 허용)
-     * @param userIntroductionText 작성자 소개 문구 (없을 경우 null 허용)
-     * @return 데이터 상세 정보를 담은 {@link DataDetailResponse} 인스턴스
+     * @param data 도메인 엔티티
+     * @param username 화면에 표시할 작성자명(표시명)
+     * @param userProfileImageUrl 작성자 프로필 이미지 URL, 없으면 {@code null} 가능
+     * @param userIntroductionText 작성자 소개 문구, 없으면 {@code null} 가능
+     * @param authorLabel 작성자 표시용 라벨(예: 기관명 또는 역할)
+     * @param occupationLabel 직업/직무 표시용 라벨
+     * @param topicLabel 주제 표시용 라벨
+     * @param dataSourceLabel 데이터 출처 표시용 라벨
+     * @param dataTypeLabel 데이터 타입 표시용 라벨
+     * @return 데이터의 상세 정보를 담은 {@link DataDetailResponse}
      */
     public DataDetailResponse toResponseDto(
             Data data,
