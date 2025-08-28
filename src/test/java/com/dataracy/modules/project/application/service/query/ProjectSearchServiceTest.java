@@ -14,6 +14,7 @@ import com.dataracy.modules.project.application.port.out.query.search.SearchSimi
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,6 +62,9 @@ class ProjectSearchServiceTest {
     @Mock
     private FindUsernameUseCase findUsernameUseCase;
 
+    @Mock
+    private FindUserThumbnailUseCase findUserThumbnailUseCase;
+
     @InjectMocks
     private ProjectSearchService service;
 
@@ -77,7 +81,7 @@ class ProjectSearchServiceTest {
         given(findProjectPort.findProjectById(projectId)).willReturn(Optional.of(baseProject));
         given(searchSimilarProjectsPort.searchSimilarProjects(baseProject, 3)).willReturn(
                 List.of(new SimilarProjectResponse(
-                        2L, "유사 프로젝트", "내용", 1L, "userA", "thumb.png",
+                        2L, "유사 프로젝트", "내용", 1L, "userA", "https://~~", "thumb.png",
                         "Topic", "Purpose", "Source", "Author",
                         5L, 10L, 15L))
         );
@@ -122,26 +126,30 @@ class ProjectSearchServiceTest {
         given(searchFilteredProjectsPort.searchByFilters(eq(req), eq(pageable), eq(ProjectSortType.LATEST)))
                 .willReturn(projectPage);
 
-        given(findProjectLabelMapUseCase.labelMapping(projectPage.getContent())).willReturn(
-                new ProjectLabelMapResponse(
+        given(findProjectLabelMapUseCase.labelMapping(projectPage.getContent()))
+                .willReturn(new ProjectLabelMapResponse(
                         Map.of(100L, "parentUser"),
+                        Map.of(100L, "https://~~"),
                         Map.of(10L, "TopicLabel"),
                         Map.of(20L, "PurposeLabel"),
                         Map.of(30L, "SourceLabel"),
                         Map.of(40L, "AuthorLabel")
-                )
-        );
+                ));
+
 
         given(findUsernameUseCase.findUsernamesByIds(List.of(200L)))
                 .willReturn(Map.of(200L, "childUser"));
+        given(findUserThumbnailUseCase.findUserThumbnailsByIds(List.of(200L)))
+                .willReturn(Map.of(200L, "https://~~"));
 
         given(filteredProjectDtoMapper.toResponseDto(
                 any(Project.class),
-                eq("parentUser"), eq("TopicLabel"), eq("PurposeLabel"),
+                eq("parentUser"), eq("https://~~"), eq("TopicLabel"), eq("PurposeLabel"),
                 eq("SourceLabel"), eq("AuthorLabel"),
-                eq(Map.of(200L, "childUser"))
+                eq(Map.of(200L, "childUser")),
+                eq(Map.of(200L, "https://~~"))
         )).willReturn(new FilteredProjectResponse(
-                1L, "Parent Project", "부모 내용", 1L, "parentUser",
+                1L, "Parent Project", "부모 내용", 1L, "parentUser", "https://~~",
                 "thumb.png", "TopicLabel", "PurposeLabel", "SourceLabel", "AuthorLabel",
                 5L, 10L, 20L, LocalDateTime.now(), List.of()
         ));
@@ -161,7 +169,7 @@ class ProjectSearchServiceTest {
         // given
         String keyword = "AI";
         given(searchRealTimeProjectsPort.searchByKeyword(keyword, 5)).willReturn(
-                List.of(new RealTimeProjectResponse(1L, "AI Project", 1L, "userA", "thumb.png"))
+                List.of(new RealTimeProjectResponse(1L, "AI Project", 1L, "userA", "https://~~", "thumb.png"))
         );
 
         // when

@@ -16,6 +16,7 @@ public record DataSearchDocument(
         String topicLabel,
         Long userId,
         String username,
+        String userProfileImageUrl,
         Long dataSourceId,
         String dataSourceLabel,
         Long dataTypeId,
@@ -35,13 +36,14 @@ public record DataSearchDocument(
         Boolean isDeleted
 ) {
     /**
-     * 데이터, 메타데이터, 라벨 정보를 결합하여 DataSearchDocument 인스턴스를 생성합니다.
-     * 이 메서드는 데이터의 주요 속성, 행/열 수 및 미리보기 정보, 라벨 정보를 통합하여
-     * 검색 및 색인에 적합한 DataSearchDocument 객체를 반환합니다.
+     * 데이터, 메타데이터, 라벨 정보를 결합해 검색/색인에 적합한 DataSearchDocument를 생성합니다.
      *
-     * @param data 데이터의 기본 정보가 포함된 객체
-     * @param dataMetadata 데이터의 행/열 수 및 미리보기 JSON 정보를 담은 객체
-     * @param dataLabels 데이터와 관련된 라벨 정보를 제공하는 DTO
+     * 데이터의 주요 속성(식별자, 제목, 시간 범위 등), 메타데이터(row/column/previewJson) 및 라벨(topic, 사용자, 소스/타입 라벨 등)을 통합하여
+     * 빌더로 구성된 DataSearchDocument 인스턴스를 반환합니다. 반환된 문서는 isDeleted가 false로 설정됩니다.
+     *
+     * @param data 데이터의 기본 속성을 가진 엔티티
+     * @param dataMetadata 행/열 수 및 미리보기 JSON을 포함하는 메타데이터
+     * @param dataLabels 토픽 라벨, 사용자명, 사용자 프로필 이미지 URL 등 라벨 정보를 제공하는 DTO
      * @return 검색 및 색인에 사용할 DataSearchDocument 인스턴스
      */
     public static DataSearchDocument from(
@@ -56,6 +58,7 @@ public record DataSearchDocument(
                 .topicLabel(dataLabels.topicLabel())
                 .userId(data.getUserId())
                 .username(dataLabels.username())
+                .userProfileImageUrl(dataLabels.userProfileImageUrl())
                 .dataSourceId(data.getDataSourceId())
                 .dataSourceLabel(dataLabels.dataSourceLabel())
                 .dataTypeId(data.getDataTypeId())

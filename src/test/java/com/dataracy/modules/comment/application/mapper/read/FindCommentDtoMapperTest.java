@@ -47,7 +47,7 @@ class FindCommentDtoMapperTest {
             // then
             assertThat(dto.id()).isEqualTo(comment.getId());
             assertThat(dto.creatorName()).isEqualTo("닉네임");
-            assertThat(dto.userProfileUrl()).isEqualTo("profile.png");
+            assertThat(dto.userProfileImageUrl()).isEqualTo("profile.png");
             assertThat(dto.authorLevelLabel()).isEqualTo("실무자");
             assertThat(dto.childCommentCount()).isEqualTo(7L);
             assertThat(dto.isLiked()).isTrue();

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
  * @param content 프로젝트 내용 요약
  * @param creatorId 작성자 아이디
  * @param creatorName 작성자 닉네임
+ * @param userProfileImageUrl 작성자 프로필 이미지 URL
  * @param commentCount 댓글 수
  * @param likeCount 좋아요 수
  * @param viewCount 조회 수
@@ -21,6 +22,7 @@ public record ParentProjectResponse(
         String content,
         Long creatorId,
         String creatorName,
+        String userProfileImageUrl,
         Long commentCount,
         Long likeCount,
         Long viewCount,

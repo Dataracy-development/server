@@ -10,6 +10,7 @@ public record ProjectConnectedDataResponse(
         String title,
         Long creatorId,
         String creatorName,
+        String userProfileImageUrl,
         String topicLabel,
         String dataTypeLabel,
         LocalDate startDate,
@@ -22,10 +23,12 @@ public record ProjectConnectedDataResponse(
         Long countConnectedProjects
 ) {
     /**
-     * 타 어그리거트인 ConnectedDataResponse 객체를 ProjectConnectedDataResponse로 변환합니다.
+     * ConnectedDataResponse를 ProjectConnectedDataResponse로 변환하여 반환합니다.
      *
-     * @param data 변환할 ConnectedDataResponse 객체
-     * @return 변환된 ProjectConnectedDataResponse 인스턴스
+     * <p>전달된 {@code ConnectedDataResponse}의 필드를 1:1로 매핑하여 새로운 {@code ProjectConnectedDataResponse} 인스턴스를 생성합니다.
+     *
+     * @param data 변환할 {@code ConnectedDataResponse} 객체 (필드들은 그대로 매핑됨)
+     * @return 변환된 {@code ProjectConnectedDataResponse} 인스턴스
      */
     public static ProjectConnectedDataResponse from(ConnectedDataResponse data) {
         return new ProjectConnectedDataResponse(
@@ -33,6 +36,7 @@ public record ProjectConnectedDataResponse(
                 data.title(),
                 data.creatorId(),
                 data.creatorName(),
+                data.userProfileImageUrl(),
                 data.topicLabel(),
                 data.dataTypeLabel(),
                 data.startDate(),

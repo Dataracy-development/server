@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
  * @param title 데이터 제목
  * @param creatorId 작성자 아이디
  * @param creatorName 작성자 닉네임
+ * @param userProfileImageUrl 데이터 업로더 유저 닉네임
  * @param topicLabel 주제 라벨
  * @param dataSourceLabel 데이터 소스 라벨
  * @param dataTypeLabel 데이터 유형 라벨
@@ -28,6 +29,7 @@ public record SimilarDataResponse(
         String title,
         Long creatorId,
         String creatorName,
+        String userProfileImageUrl,
         String topicLabel,
         String dataSourceLabel,
         String dataTypeLabel,

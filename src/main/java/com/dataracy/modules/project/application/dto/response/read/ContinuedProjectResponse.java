@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  * @param title 프로젝트 제목
  * @param creatorId 작성자 아이디
  * @param creatorName 작성자 닉네임
- * @param creatorProfileUrl 작성자 프로필 이미지 URL
+ * @param userProfileImageUrl 작성자 프로필 이미지 URL
  * @param projectThumbnailUrl 프로젝트 썸네일 URL
  * @param topicLabel 주제 라벨
  * @param authorLevelLabel 작성자 레벨 라벨
@@ -23,7 +23,7 @@ public record ContinuedProjectResponse(
         String title,
         Long creatorId,
         String creatorName,
-        String userProfileUrl,
+        String userProfileImageUrl,
         String projectThumbnailUrl,
         String topicLabel,
         String authorLevelLabel,

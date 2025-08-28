@@ -30,8 +30,8 @@ class ReadCommentWebMapperTest {
                     1L,
                     1L,
                     "닉네임",
-                    "실무자",
                     "profile.png",
+                    "실무자",
                     "내용",
                     3L,
                     5L,
@@ -45,8 +45,8 @@ class ReadCommentWebMapperTest {
             // then
             assertThat(webRes.id()).isEqualTo(1L);
             assertThat(webRes.creatorName()).isEqualTo("닉네임");
+            assertThat(webRes.userProfileImageUrl()).isEqualTo("profile.png");
             assertThat(webRes.authorLevelLabel()).isEqualTo("실무자");
-            assertThat(webRes.userProfileUrl()).isEqualTo("profile.png");
             assertThat(webRes.content()).isEqualTo("내용");
             assertThat(webRes.likeCount()).isEqualTo(3L);
             assertThat(webRes.childCommentCount()).isEqualTo(5L);
@@ -83,9 +83,9 @@ class ReadCommentWebMapperTest {
             FindReplyCommentResponse responseDto = new FindReplyCommentResponse(
                     2L,
                     1L,
-                    "작성자",
-                    "전문가",
+                    "박준형",
                     "profile2.png",
+                    "전문가",
                     "답글 내용",
                     7L,
                     now,
@@ -97,9 +97,9 @@ class ReadCommentWebMapperTest {
 
             // then
             assertThat(webRes.id()).isEqualTo(2L);
-            assertThat(webRes.creatorName()).isEqualTo("작성자");
+            assertThat(webRes.creatorName()).isEqualTo("박준형");
+            assertThat(webRes.userProfileImageUrl()).isEqualTo("profile2.png");
             assertThat(webRes.authorLevelLabel()).isEqualTo("전문가");
-            assertThat(webRes.userProfileUrl()).isEqualTo("profile2.png");
             assertThat(webRes.content()).isEqualTo("답글 내용");
             assertThat(webRes.likeCount()).isEqualTo(7L);
             assertThat(webRes.createdAt()).isEqualTo(now);

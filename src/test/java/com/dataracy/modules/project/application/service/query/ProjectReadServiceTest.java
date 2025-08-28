@@ -157,14 +157,14 @@ class ProjectReadServiceTest {
         given(getOccupationLabelFromIdUseCase.getLabelById(50L)).willReturn("OccupationLabel");
 
         ProjectDetailResponse expected = new ProjectDetailResponse(
-                1L, "테스트 프로젝트", 1L, "nick", "소개글", "profile.png",
+                1L, "테스트 프로젝트", 1L, "nick", "profile.png", "소개글",
                 "AuthorLabel", "OccupationLabel", "TopicLabel", "PurposeLabel", "SourceLabel",
                 false, null, "내용", "thumb.png", LocalDateTime.now(),
                 5L, 10L, 15L,
                 true, true, List.of(), null
         );
         given(projectDetailDtoMapper.toResponseDto(
-                eq(project), eq("nick"), eq("소개글"), eq("profile.png"),
+                eq(project), eq("nick"), eq("profile.png"), eq("소개글"),
                 eq("AuthorLabel"), eq("OccupationLabel"),
                 eq("TopicLabel"), eq("PurposeLabel"), eq("SourceLabel"),
                 eq(true), eq(true), anyList(), any()
@@ -228,12 +228,13 @@ class ProjectReadServiceTest {
         Page<Project> page = new PageImpl<>(List.of(connected));
         given(findConnectedProjectsPort.findConnectedProjectsAssociatedWithDataset(eq(dataId), any())).willReturn(page);
         given(findUsernameUseCase.findUsernamesByIds(List.of(300L))).willReturn(Map.of(300L, "userB"));
+        given(findUserThumbnailUseCase.findUserThumbnailsByIds(List.of(300L))).willReturn(Map.of(300L, "https://profile"));
         given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of(99L))).willReturn(Map.of(99L, "TopicX"));
 
         ConnectedProjectResponse expected = new ConnectedProjectResponse(
-                10L, "proj", 1L, "userB", "TopicX", 0L, 0L, 0L, LocalDateTime.now()
+                10L, "proj", 1L, "userB", "https://~~", "TopicX", 0L, 0L, 0L, LocalDateTime.now()
         );
-        given(connectedProjectDtoMapper.toResponseDto(any(), eq("userB"), eq("TopicX"))).willReturn(expected);
+        given(connectedProjectDtoMapper.toResponseDto(any(), eq("userB"), eq("https://profile"), eq("TopicX"))).willReturn(expected);
 
         // when
         Page<ConnectedProjectResponse> result = service.findConnectedProjects(dataId, PageRequest.of(0, 10));
@@ -250,6 +251,7 @@ class ProjectReadServiceTest {
         given(getPopularProjectsPort.getPopularProjects(3)).willReturn(List.of(p));
         ProjectLabelMapResponse labelMap = new ProjectLabelMapResponse(
                 Map.of(100L, "userC"),
+                Map.of(100L, "https://profile"),
                 Map.of(10L, "TopicY"),
                 Map.of(20L, "PurposeY"),
                 Map.of(30L, "SourceY"),
@@ -258,11 +260,11 @@ class ProjectReadServiceTest {
         given(findProjectLabelMapUseCase.labelMapping(List.of(p))).willReturn(labelMap);
 
         PopularProjectResponse expected = new PopularProjectResponse(
-                1L, "proj", "content", 1L, "userC", "thumb.png",
+                1L, "proj", "content", 1L, "userC", "https://profile", "https://~~",
                 "TopicY", "PurposeY", "SourceY", "AuthorY",
                 1L, 2L, 3L
         );
-        given(popularProjectDtoMapper.toResponseDto(p, "userC", "TopicY", "PurposeY", "SourceY", "AuthorY")).willReturn(expected);
+        given(popularProjectDtoMapper.toResponseDto(p, "userC", "https://profile", "TopicY", "PurposeY", "SourceY", "AuthorY")).willReturn(expected);
 
         // when
         List<PopularProjectResponse> result = service.getPopularProjects(3);

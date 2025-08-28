@@ -19,6 +19,9 @@ public record SimilarDataWebResponse(
         @Schema(description = "작성자 닉네임", example = "박준형")
         String creatorName,
 
+        @Schema(description = "작성자 프로필 이미지 URL", example = "https://www.s3.~~~")
+        String userProfileImageUrl,
+
         @Schema(description = "토픽 라벨", example = "디자인")
         String topicLabel,
 

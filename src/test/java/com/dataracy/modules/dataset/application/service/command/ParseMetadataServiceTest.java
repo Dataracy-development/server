@@ -9,6 +9,7 @@ import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,9 @@ class ParseMetadataServiceTest {
 
     @Mock
     private FindUsernameUseCase findUsernameUseCase;
+
+    @Mock
+    private FindUserThumbnailUseCase findUserThumbnailUseCase;
 
     @Mock
     private GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
@@ -97,6 +101,8 @@ class ParseMetadataServiceTest {
                 .willReturn("type");
         given(findUsernameUseCase.findUsernameById(any()))
                 .willReturn("user");
+        given(findUserThumbnailUseCase.findUserThumbnailById(any()))
+                .willReturn("profile.png");
 
         // when
         service.parseAndSaveMetadata(req);

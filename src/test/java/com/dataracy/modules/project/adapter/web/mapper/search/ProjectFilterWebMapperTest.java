@@ -54,17 +54,17 @@ class ProjectFilterWebMapperTest {
     void toWebDto() {
         // given
         ChildProjectResponse childProjectResponse = new ChildProjectResponse(
-                100L, "child-title", "child-content", 1L, "child-user", 5L, 6L
+                100L, "child-title", "child-content", 1L, "child-user", "https://~~", 5L, 6L
         );
         FilteredProjectResponse responseDto = new FilteredProjectResponse(
-                10L, "title", "content", 1L, "username", "thumb.png",
+                10L, "title", "content", 1L, "username", "https://~~", "thumb.png",
                 "topicLabel", "analysisPurposeLabel", "dataSourceLabel", "authorLevelLabel",
                 11L, 12L, 13L, LocalDateTime.of(2025, 8, 27, 10, 0),
                 List.of(childProjectResponse)
         );
 
         ChildProjectWebResponse mappedChild = new ChildProjectWebResponse(
-                100L, "child-title", "child-content", 1L, "child-user", 5L, 6L
+                100L, "child-title", "child-content", 1L, "child-user", "https://~~", 5L, 6L
         );
         given(childProjectWebMapper.toWebDto(childProjectResponse)).willReturn(mappedChild);
 

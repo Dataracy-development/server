@@ -22,12 +22,12 @@ import com.dataracy.modules.project.application.port.in.query.read.FindConnected
 import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.GetPopularProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.GetProjectDetailUseCase;
-import com.dataracy.modules.project.application.port.out.view.ManageProjectViewCountPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindConnectedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
 import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByParentPort;
+import com.dataracy.modules.project.application.port.out.view.ManageProjectViewCountPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.model.vo.ProjectUser;
@@ -148,9 +148,10 @@ public class ProjectReadService implements
         ParentProjectResponse parentProjectResponse = parentProject == null
                 ? null
                 : parentProjectDtoMapper.toResponseDto(
-                parentProject,
-                findUsernameUseCase.findUsernameById(parentProject.getUserId())
-        );
+                        parentProject,
+                        findUsernameUseCase.findUsernameById(parentProject.getUserId()),
+                        findUserThumbnailUseCase.findUserThumbnailById(parentProject.getUserId())
+                );
 
         // 프로젝트 조회수 증가
         // 조회수 기록 (중복 방지 TTL)
@@ -159,8 +160,8 @@ public class ProjectReadService implements
         ProjectDetailResponse projectDetailResponse = projectDetailDtoMapper.toResponseDto(
                 project,
                 projectUser.nickname(),
-                projectUser.introductionText(),
                 projectUser.profileImageUrl(),
+                projectUser.introductionText(),
                 authorLevelLabel,
                 occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),
@@ -197,14 +198,14 @@ public class ProjectReadService implements
         List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
 
         Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
-        Map<Long, String> userThumbnailMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
+        Map<Long, String> userProfileUrlMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
         Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
         Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
 
         Page<ContinuedProjectResponse> findContinuedProjectsResponse = savedProjects.map(project -> continuedProjectDtoMapper.toResponseDto(
                 project,
                 usernameMap.get(project.getUserId()),
-                userThumbnailMap.get(project.getUserId()),
+                userProfileUrlMap.get(project.getUserId()),
                 topicLabelMap.get(project.getTopicId()),
                 authorLevelLabelMap.get(project.getAuthorLevelId())
         ));
@@ -213,12 +214,12 @@ public class ProjectReadService implements
         return findContinuedProjectsResponse;
     }
     /**
-     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지 단위로 조회하여, 각 프로젝트의 사용자명과 토픽 라벨 정보를 포함한 응답을 반환합니다.
-     *
-     * @param dataId 연결할 데이터셋의 식별자
-     * @param pageable 페이지네이션 정보
-     * @return 사용자명과 토픽 라벨이 포함된 연결된 프로젝트 응답의 페이지 객체
-     */
+         * 지정된 데이터셋과 연결된 프로젝트들을 페이지 단위로 조회하여, 각 프로젝트에 사용자명, 사용자 프로필 이미지 URL, 토픽 라벨을 포함한 응답 페이지를 반환합니다.
+         *
+         * @param dataId  연결된 프로젝트를 찾을 데이터셋의 식별자
+         * @param pageable  페이지 번호·크기·정렬 정보(페이징 조건)
+         * @return 각 프로젝트에 사용자명, 사용자 프로필 이미지 URL, 토픽 라벨이 포함된 ConnectedProjectResponse의 페이지
+         */
     @Override
     @Transactional(readOnly = true)
     public Page<ConnectedProjectResponse> findConnectedProjects(Long dataId, Pageable pageable) {
@@ -230,11 +231,13 @@ public class ProjectReadService implements
         List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
 
         Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
+        Map<Long, String> userProfileUrlMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
         Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
 
         Page<ConnectedProjectResponse> connectedProjectsResponses = savedProjects.map(project -> connectedProjectDtoMapper.toResponseDto(
                 project,
                 usernameMap.get(project.getUserId()),
+                userProfileUrlMap.get(project.getUserId()),
                 topicLabelMap.get(project.getTopicId())
         ));
 
@@ -283,6 +286,7 @@ public class ProjectReadService implements
                 .map(project -> popularProjectDtoMapper.toResponseDto(
                         project,
                         labelResponse.usernameMap().get(project.getUserId()),
+                        labelResponse.userProfileUrlMap().get(project.getUserId()),
                         labelResponse.topicLabelMap().get(project.getTopicId()),
                         labelResponse.analysisPurposeLabelMap().get(project.getAnalysisPurposeId()),
                         labelResponse.dataSourceLabelMap().get(project.getDataSourceId()),

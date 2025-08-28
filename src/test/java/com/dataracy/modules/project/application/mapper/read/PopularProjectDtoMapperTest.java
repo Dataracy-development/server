@@ -39,6 +39,7 @@ class PopularProjectDtoMapperTest {
         );
 
         String username = "tester";
+        String userProfileImageUrl = "https://~~";
         String topicLabel = "topic-label";
         String analysisPurposeLabel = "purpose-label";
         String dataSourceLabel = "source-label";
@@ -46,7 +47,7 @@ class PopularProjectDtoMapperTest {
 
         // when
         PopularProjectResponse response = mapper.toResponseDto(
-                project, username, topicLabel, analysisPurposeLabel, dataSourceLabel, authorLevelLabel
+                project, username, userProfileImageUrl, topicLabel, analysisPurposeLabel, dataSourceLabel, authorLevelLabel
         );
 
         // then

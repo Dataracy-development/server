@@ -45,8 +45,8 @@ public class ProjectReadWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
-                responseDto.userIntroductionText(),
                 responseDto.userProfileImageUrl(),
+                responseDto.userIntroductionText(),
                 responseDto.authorLevelLabel(),
                 responseDto.occupationLabel(),
                 responseDto.topicLabel(),
@@ -68,9 +68,9 @@ public class ProjectReadWebMapper {
     }
 
     /**
-     * ContinuedProjectResponse 객체를 ContinuedProjectWebResponse 객체로 변환합니다.
+     * 애플리케이션 계층의 ContinuedProjectResponse를 웹 계층의 ContinuedProjectWebResponse로 변환합니다.
      *
-     * 애플리케이션 계층의 프로젝트 연속 정보 DTO를 웹 계층의 응답 DTO로 매핑합니다.
+     * 요청된 프로젝트의 식별자, 제목, 작성자 정보(아이디·이름·프로필 이미지), 썸네일, 라벨과 통계(댓글·좋아요·조회수) 및 생성시각을 web DTO로 복사하여 생성합니다.
      *
      * @param responseDto 변환할 ContinuedProjectResponse 객체
      * @return 변환된 ContinuedProjectWebResponse 객체
@@ -81,7 +81,7 @@ public class ProjectReadWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
-                responseDto.userProfileUrl(),
+                responseDto.userProfileImageUrl(),
                 responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.authorLevelLabel(),
@@ -104,6 +104,7 @@ public class ProjectReadWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.topicLabel(),
                 responseDto.commentCount(),
                 responseDto.likeCount(),
@@ -115,7 +116,8 @@ public class ProjectReadWebMapper {
     /**
      * ChildProjectResponse 객체를 ChildProjectWebResponse 객체로 변환합니다.
      *
-     * 프로젝트 자식의 ID, 제목, 내용, 작성자, 댓글 수, 좋아요 수를 포함하는 웹 레이어 응답 DTO를 생성합니다.
+     * 응답 DTO의 id, 제목, 내용, 작성자 정보(작성자 id·이름·프로필 이미지 URL)와 댓글/좋아요 수를 사용해
+     * 웹 레이어용 ChildProjectWebResponse를 생성합니다.
      *
      * @param responseDto 변환할 프로젝트 자식 응답 DTO
      * @return 변환된 ChildProjectWebResponse 객체
@@ -127,6 +129,7 @@ public class ProjectReadWebMapper {
                 responseDto.content(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.commentCount(),
                 responseDto.likeCount()
         );
@@ -145,6 +148,7 @@ public class ProjectReadWebMapper {
                 responseDto.content(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.analysisPurposeLabel(),

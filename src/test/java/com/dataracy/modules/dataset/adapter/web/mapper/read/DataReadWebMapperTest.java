@@ -59,7 +59,7 @@ class DataReadWebMapperTest {
     void toWebDtoFromConnectedDataResponseSuccess() {
         // given
         ConnectedDataResponse dto = new ConnectedDataResponse(
-                2L, "dataset", 1L, "userA", "topicX", "typeY",
+                2L, "dataset", 1L, "userA", "https://~~", "topicX", "typeY",
                 LocalDate.of(2024, 1, 1), LocalDate.of(2024, 6, 30),
                 "thumb.png", 10, 2048L, 100, 20,
                 LocalDateTime.of(2024, 2, 1, 9, 0),
@@ -82,7 +82,7 @@ class DataReadWebMapperTest {
     void toWebDtoFromRecentMinimalDataResponseSuccess() {
         // given
         RecentMinimalDataResponse dto = new RecentMinimalDataResponse(
-                3L, "recentData", 1L, "userA", "thumb.png", LocalDateTime.of(2024, 3, 1, 12, 0)
+                3L, "recentData", 1L, "userA", "https://~~", "thumb.png", LocalDateTime.of(2024, 3, 1, 12, 0)
         );
 
         // when
@@ -101,7 +101,7 @@ class DataReadWebMapperTest {
     void toWebDtoFromPopularDataResponseSuccess() {
         // given
         PopularDataResponse dto = new PopularDataResponse(
-                4L, "popularData", 1L, "userA", "topicY", "sourceZ", "typeX",
+                4L, "popularData", 1L, "userA", "https://~~", "topicY", "sourceZ", "typeX",
                 LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31),
                 "desc", "thumb.png", 50, 1024L, 200, 30,
                 LocalDateTime.of(2022, 5, 5, 15, 0), 7L

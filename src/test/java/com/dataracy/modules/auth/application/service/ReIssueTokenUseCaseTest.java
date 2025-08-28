@@ -49,12 +49,12 @@ class ReIssueTokenUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        jwtProperties.setAccessTokenExpirationTime(3_600_000L);
-        jwtProperties.setRefreshTokenExpirationTime(1_209_600_000L);
+        jwtProperties.setAccessTokenExpirationTime(3600000L);
+        jwtProperties.setRefreshTokenExpirationTime(1209600000L);
     }
 
     @Nested
-    @DisplayName("reIssueToken")
+    @DisplayName("토큰 재발급")
     class ReIssueToken {
 
         @Test
@@ -81,8 +81,8 @@ class ReIssueTokenUseCaseTest {
             // then
             assertThat(res.accessToken()).isEqualTo("new-access");
             assertThat(res.refreshToken()).isEqualTo("new-refresh");
-            assertThat(res.accessTokenExpiration()).isEqualTo(3_600_000L);
-            assertThat(res.refreshTokenExpiration()).isEqualTo(1_209_600_000L);
+            assertThat(res.accessTokenExpiration()).isEqualTo(3600000L);
+            assertThat(res.refreshTokenExpiration()).isEqualTo(1209600000L);
         }
 
         @Test

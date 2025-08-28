@@ -72,6 +72,7 @@ public class SearchRealTimeDataSetsEsAdapter implements SearchRealTimeDataSetsPo
                                 doc.title(),
                                 doc.userId(),
                                 doc.username(),
+                                doc.userProfileImageUrl(),
                                 doc.dataThumbnailUrl(),
                                 doc.createdAt()
                         );

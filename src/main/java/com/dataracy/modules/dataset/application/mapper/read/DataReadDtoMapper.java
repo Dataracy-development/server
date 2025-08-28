@@ -13,18 +13,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataReadDtoMapper {
     /**
-     * 데이터 도메인 객체와 주제/유형 레이블, 연결된 프로젝트 수를 결합하여 ConnectedDataResponse DTO로 변환합니다.
-     *
-     * @param data 변환할 데이터 도메인 객체
-     * @param username 데이터셋 업로더 닉네임
-     * @param topicLabel 데이터의 주제 레이블
-     * @param dataTypeLabel 데이터의 유형 레이블
-     * @param countConnectedProjects 데이터와 연결된 프로젝트의 개수
-     * @return 데이터 정보와 주제/유형 레이블, 연결된 프로젝트 수를 포함하는 ConnectedDataResponse DTO
-     */
+         * Data 도메인 객체와 보조 정보(업로더 닉네임·프로필 이미지, 레이블, 연결된 프로젝트 수)를 결합하여
+         * ConnectedDataResponse DTO 인스턴스를 생성하여 반환합니다.
+         *
+         * @param data 변환할 Data 도메인 객체
+         * @param username 업로더의 표시 이름(닉네임)
+         * @param userProfileImageUrl 업로더의 프로필 이미지 URL
+         * @param topicLabel 데이터의 주제 레이블
+         * @param dataTypeLabel 데이터의 유형 레이블
+         * @param countConnectedProjects 해당 데이터와 연결된 프로젝트 수
+         * @return 구성된 ConnectedDataResponse DTO
+         */
     public ConnectedDataResponse toResponseDto(
             Data data,
             String username,
+            String userProfileImageUrl,
             String topicLabel,
             String dataTypeLabel,
             Long countConnectedProjects
@@ -34,6 +37,7 @@ public class DataReadDtoMapper {
                 data.getTitle(),
                 data.getUserId(),
                 username,
+                userProfileImageUrl,
                 topicLabel,
                 dataTypeLabel,
                 data.getStartDate(),
@@ -49,23 +53,26 @@ public class DataReadDtoMapper {
     }
 
     /**
-     * Data 도메인 객체를 최근 최소 정보 데이터 응답 DTO로 변환합니다.
+     * Data 도메인 객체를 최근 최소 정보 응답 DTO(RecentMinimalDataResponse)로 변환합니다.
      *
-     * 데이터의 ID, 제목, 썸네일 URL, 생성일시만을 포함하는 RecentMinimalDataResponse 객체를 생성하여 반환합니다.
+     * 반환되는 DTO는 데이터의 ID, 제목, 업로더 ID/닉네임/프로필 이미지 URL, 썸네일 URL, 생성일시만 포함합니다.
      *
-     * @param data 최소 정보로 변환할 Data 도메인 객체
-     * @param username 데이터셋 업로더 닉네임
-     * @return ID, 제목, 썸네일 URL, 생성일시만 포함된 RecentMinimalDataResponse DTO
+     * @param data 변환할 Data 도메인 객체
+     * @param username 업로더의 표시 이름(닉네임)
+     * @param userProfileImageUrl 업로더의 프로필 이미지 URL(없을 경우 null 가능)
+     * @return ID, 제목, 업로더 정보, 썸네일 URL, 생성일시를 담은 RecentMinimalDataResponse
      */
     public RecentMinimalDataResponse toResponseDto(
             Data data,
-            String username
+            String username,
+            String userProfileImageUrl
     ) {
         return new RecentMinimalDataResponse(
                 data.getId(),
                 data.getTitle(),
                 data.getUserId(),
                 username,
+                userProfileImageUrl,
                 data.getDataThumbnailUrl(),
                 data.getCreatedAt()
         );
@@ -79,6 +86,7 @@ public class DataReadDtoMapper {
      *
      * @param data 변환할 Data 도메인 객체
      * @param username 데이터와 연관된 사용자 이름
+     * @param userProfileImageUrl 데이터셋 업로더 프로필 이미지 URL
      * @param topicLabel 데이터의 주제 라벨
      * @param dataSourceLabel 데이터의 출처(데이터 소스) 라벨
      * @param dataTypeLabel 데이터의 타입 라벨
@@ -88,6 +96,7 @@ public class DataReadDtoMapper {
     public PopularDataResponse toResponseDto(
             Data data,
             String username,
+            String userProfileImageUrl,
             String topicLabel,
             String dataSourceLabel,
             String dataTypeLabel,
@@ -98,6 +107,7 @@ public class DataReadDtoMapper {
                 data.getTitle(),
                 data.getUserId(),
                 username,
+                userProfileImageUrl,
                 topicLabel,
                 dataSourceLabel,
                 dataTypeLabel,
