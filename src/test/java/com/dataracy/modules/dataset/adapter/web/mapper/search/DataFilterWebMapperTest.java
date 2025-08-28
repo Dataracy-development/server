@@ -41,7 +41,7 @@ class DataFilterWebMapperTest {
     void toWebDtoSuccess() {
         // given
         FilteredDataResponse dto = new FilteredDataResponse(
-                1L, "title", "topic", "source", "type",
+                1L, "title", 1L, "userA", "topic", "source", "type",
                 LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31),
                 "desc", "thumb.png", 100, 200L, 300, 20,
                 LocalDateTime.of(2023, 5, 5, 10, 0), 5L

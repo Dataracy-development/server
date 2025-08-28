@@ -38,6 +38,8 @@ public class DataFilterWebMapper {
         return new FilteredDataWebResponse(
                 responseDto.id(),
                 responseDto.title(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.topicLabel(),
                 responseDto.dataSourceLabel(),
                 responseDto.dataTypeLabel(),

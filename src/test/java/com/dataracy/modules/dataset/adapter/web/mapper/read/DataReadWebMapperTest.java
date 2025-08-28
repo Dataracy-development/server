@@ -19,7 +19,7 @@ class DataReadWebMapperTest {
     void toWebDtoFromDataDetailResponseSuccess() {
         // given
         DataDetailResponse dto = new DataDetailResponse(
-                1L, "title", "userA", "profile.png", "intro",
+                1L, "title", 1L, "userA", "profile.png", "intro",
                 "author", "occupation", "topic", "source", "type",
                 LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31),
                 "desc", "guide", "thumb.png",
@@ -33,7 +33,8 @@ class DataReadWebMapperTest {
         // then
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.title()).isEqualTo("title");
-        assertThat(result.username()).isEqualTo("userA");
+        assertThat(result.creatorId()).isEqualTo(1L);
+        assertThat(result.creatorName()).isEqualTo("userA");
         assertThat(result.downloadCount()).isEqualTo(100L);
         assertThat(result.previewJson()).contains("col");
     }
@@ -58,7 +59,7 @@ class DataReadWebMapperTest {
     void toWebDtoFromConnectedDataResponseSuccess() {
         // given
         ConnectedDataResponse dto = new ConnectedDataResponse(
-                2L, "dataset", "topicX", "typeY",
+                2L, "dataset", 1L, "userA", "topicX", "typeY",
                 LocalDate.of(2024, 1, 1), LocalDate.of(2024, 6, 30),
                 "thumb.png", 10, 2048L, 100, 20,
                 LocalDateTime.of(2024, 2, 1, 9, 0),
@@ -71,6 +72,8 @@ class DataReadWebMapperTest {
         // then
         assertThat(result.id()).isEqualTo(2L);
         assertThat(result.title()).isEqualTo("dataset");
+        assertThat(result.creatorId()).isEqualTo(1L);
+        assertThat(result.creatorName()).isEqualTo("userA");
         assertThat(result.countConnectedProjects()).isEqualTo(3L);
     }
 
@@ -79,7 +82,7 @@ class DataReadWebMapperTest {
     void toWebDtoFromRecentMinimalDataResponseSuccess() {
         // given
         RecentMinimalDataResponse dto = new RecentMinimalDataResponse(
-                3L, "recentData", "thumb.png", LocalDateTime.of(2024, 3, 1, 12, 0)
+                3L, "recentData", 1L, "userA", "thumb.png", LocalDateTime.of(2024, 3, 1, 12, 0)
         );
 
         // when
@@ -88,6 +91,8 @@ class DataReadWebMapperTest {
         // then
         assertThat(result.id()).isEqualTo(3L);
         assertThat(result.title()).isEqualTo("recentData");
+        assertThat(result.creatorId()).isEqualTo(1L);
+        assertThat(result.creatorName()).isEqualTo("userA");
         assertThat(result.dataThumbnailUrl()).isEqualTo("thumb.png");
     }
 
@@ -96,7 +101,7 @@ class DataReadWebMapperTest {
     void toWebDtoFromPopularDataResponseSuccess() {
         // given
         PopularDataResponse dto = new PopularDataResponse(
-                4L, "popularData", "userB", "topicY", "sourceZ", "typeX",
+                4L, "popularData", 1L, "userA", "topicY", "sourceZ", "typeX",
                 LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31),
                 "desc", "thumb.png", 50, 1024L, 200, 30,
                 LocalDateTime.of(2022, 5, 5, 15, 0), 7L
@@ -108,7 +113,8 @@ class DataReadWebMapperTest {
         // then
         assertThat(result.id()).isEqualTo(4L);
         assertThat(result.title()).isEqualTo("popularData");
-        assertThat(result.username()).isEqualTo("userB");
+        assertThat(result.creatorId()).isEqualTo(1L);
+        assertThat(result.creatorName()).isEqualTo("userA");
         assertThat(result.countConnectedProjects()).isEqualTo(7L);
     }
 }

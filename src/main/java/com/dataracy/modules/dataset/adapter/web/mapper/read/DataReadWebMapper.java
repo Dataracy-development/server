@@ -24,7 +24,8 @@ public class DataReadWebMapper {
         return new DataDetailWebResponse(
                 responseDto.id(),
                 responseDto.title(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.userProfileImageUrl(),
                 responseDto.userIntroductionText(),
                 responseDto.authorLabel(),
@@ -72,6 +73,8 @@ public class DataReadWebMapper {
         return new ConnectedDataWebResponse(
                 responseDto.id(),
                 responseDto.title(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.topicLabel(),
                 responseDto.dataTypeLabel(),
                 responseDto.startDate(),
@@ -96,6 +99,8 @@ public class DataReadWebMapper {
         return new RecentMinimalDataWebResponse(
                 responseDto.id(),
                 responseDto.title(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.dataThumbnailUrl(),
                 responseDto.createdAt()
         );
@@ -115,7 +120,8 @@ public class DataReadWebMapper {
         return new PopularDataWebResponse(
                 responseDto.id(),
                 responseDto.title(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.topicLabel(),
                 responseDto.dataSourceLabel(),
                 responseDto.dataTypeLabel(),

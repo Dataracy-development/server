@@ -24,7 +24,7 @@ class ProjectConnectedDataWebMapperTest {
         LocalDateTime createdAt = LocalDateTime.of(2025, 8, 4, 10, 30);
 
         ProjectConnectedDataResponse responseDto = new ProjectConnectedDataResponse(
-                1L, "dataset-title", "topic-label", "CSV",
+                1L, "dataset-title", 1L, "userA", "topic-label", "CSV",
                 startDate, endDate,
                 "thumb.png", 3, 55, 100,
                 createdAt, 5L

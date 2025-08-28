@@ -18,7 +18,8 @@ public class ProjectSearchWebMapper {
         return new RealTimeProjectWebResponse(
                 responseDto.id(),
                 responseDto.title(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.projectThumbnailUrl()
         );
     }
@@ -36,7 +37,8 @@ public class ProjectSearchWebMapper {
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.content(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.analysisPurposeLabel(),

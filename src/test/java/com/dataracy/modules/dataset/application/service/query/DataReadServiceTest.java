@@ -15,6 +15,7 @@ import com.dataracy.modules.reference.application.port.in.datasource.GetDataSour
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
@@ -65,6 +66,9 @@ class DataReadServiceTest {
 
     @Mock
     private GetUserInfoUseCase getUserInfoUseCase;
+
+    @Mock
+    private FindUsernameUseCase findUsernameUseCase;
 
     @Mock
     private GetTopicLabelFromIdUseCase topicUseCase;
@@ -123,7 +127,7 @@ class DataReadServiceTest {
                             Map.of(5L, "dt")
                     ));
             PopularDataResponse mockRes = new PopularDataResponse(
-                    1L, "t", "u", "topic", "ds", "dt",
+                    1L, "t", 1L, "u", "topic", "ds", "dt",
                     null, null, "d", "thumb", 1, 10L, 1, 1,
                     LocalDateTime.now(), 2L
             );
@@ -161,7 +165,7 @@ class DataReadServiceTest {
             given(dtUseCase.getLabelById(any())).willReturn("dt");
             given(mapper.toResponseDto(any(), any(), any(), any(), any(), any(), any(), any(), any()))
                     .willReturn(new DataDetailResponse(
-                            1L, "t", "nick", "p", "intro", "a", "o", "topic", "ds", "dt",
+                            1L, "t", 1L, "nick", "p", "intro", "a", "o", "topic", "ds", "dt",
                             null, null, "d", "g", "thumb", 1, 10L, 1, 1, "{}", LocalDateTime.now()
                     ));
 
@@ -169,7 +173,7 @@ class DataReadServiceTest {
             DataDetailResponse res = service.getDataDetail(1L);
 
             // then
-            assertThat(res.username()).isEqualTo("nick");
+            assertThat(res.creatorName()).isEqualTo("nick");
         }
 
         @Test
@@ -198,16 +202,21 @@ class DataReadServiceTest {
             // given
             given(getRecentDataSetsPort.getRecentDataSets(2)).willReturn(List.of(sample()));
             RecentMinimalDataResponse r = new RecentMinimalDataResponse(
-                    1L, "t", "thumb", LocalDateTime.now()
+                    1L, "t", 1L, "userA", "thumb", LocalDateTime.now()
             );
-            given(mapper.toResponseDto(any(Data.class))).willReturn(r);
+            given(findUsernameUseCase.findUsernamesByIds(anyList()))
+                    .willReturn(Map.of(1L, "userA"));
+            given(mapper.toResponseDto(any(Data.class), any()))
+                    .willReturn(r);
 
             // when
             List<RecentMinimalDataResponse> list = service.getRecentDataSets(2);
 
             // then
             assertThat(list).hasSize(1);
+            assertThat(list.get(0).creatorName()).isEqualTo("userA");
         }
+
     }
 
     @Nested
@@ -244,11 +253,11 @@ class DataReadServiceTest {
             given(labelMapUseCase.labelMapping(any()))
                     .willReturn(new DataLabelMapResponse(Map.of(), Map.of(), Map.of(), Map.of()));
             ConnectedDataResponse res = new ConnectedDataResponse(
-                    1L, "t", "topic", "dt",
+                    1L, "t", 1L, "userA", "topic", "dt",
                     null, null, "thumb", 1, 10L, 1, 1,
                     LocalDateTime.now(), 1L
             );
-            given(mapper.toResponseDto(any(), any(), any(), any())).willReturn(res);
+            given(mapper.toResponseDto(any(), any(), any(), any(), any())).willReturn(res);
 
             // when
             Page<ConnectedDataResponse> result =

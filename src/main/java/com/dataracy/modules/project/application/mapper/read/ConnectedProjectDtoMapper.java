@@ -25,6 +25,7 @@ public class ConnectedProjectDtoMapper {
         return new ConnectedProjectResponse(
                 project.getId(),
                 project.getTitle(),
+                project.getUserId(),
                 username,
                 topicLabel,
                 project.getCommentCount(),

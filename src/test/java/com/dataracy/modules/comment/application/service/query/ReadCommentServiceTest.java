@@ -107,7 +107,7 @@ class ReadCommentServiceTest {
 
             // then
             assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).username()).isEqualTo("유저1");
+            assertThat(result.getContent().get(0).creatorName()).isEqualTo("유저1");
             assertThat(result.getContent().get(0).content()).isEqualTo("content");
         }
 
@@ -176,7 +176,7 @@ class ReadCommentServiceTest {
             // then
             assertThat(result.getContent()).hasSize(1);
             assertThat(result.getContent().get(0).content()).isEqualTo("답글");
-            assertThat(result.getContent().get(0).username()).isEqualTo("유저1");
+            assertThat(result.getContent().get(0).creatorName()).isEqualTo("유저1");
         }
 
         @Test

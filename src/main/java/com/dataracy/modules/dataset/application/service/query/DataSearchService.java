@@ -87,6 +87,7 @@ public class DataSearchService implements
             Data data = wrapper.data();
             return filteredDataDtoMapper.toResponseDto(
                     data,
+                    labelResponse.usernameMap().get(data.getUserId()),
                     labelResponse.topicLabelMap().get(data.getTopicId()),
                     labelResponse.dataSourceLabelMap().get(data.getDataSourceId()),
                     labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),

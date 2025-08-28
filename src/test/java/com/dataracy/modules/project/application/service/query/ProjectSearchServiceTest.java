@@ -77,7 +77,7 @@ class ProjectSearchServiceTest {
         given(findProjectPort.findProjectById(projectId)).willReturn(Optional.of(baseProject));
         given(searchSimilarProjectsPort.searchSimilarProjects(baseProject, 3)).willReturn(
                 List.of(new SimilarProjectResponse(
-                        2L, "유사 프로젝트", "내용", "userA", "thumb.png",
+                        2L, "유사 프로젝트", "내용", 1L, "userA", "thumb.png",
                         "Topic", "Purpose", "Source", "Author",
                         5L, 10L, 15L))
         );
@@ -141,7 +141,7 @@ class ProjectSearchServiceTest {
                 eq("SourceLabel"), eq("AuthorLabel"),
                 eq(Map.of(200L, "childUser"))
         )).willReturn(new FilteredProjectResponse(
-                1L, "Parent Project", "부모 내용", "parentUser",
+                1L, "Parent Project", "부모 내용", 1L, "parentUser",
                 "thumb.png", "TopicLabel", "PurposeLabel", "SourceLabel", "AuthorLabel",
                 5L, 10L, 20L, LocalDateTime.now(), List.of()
         ));
@@ -161,7 +161,7 @@ class ProjectSearchServiceTest {
         // given
         String keyword = "AI";
         given(searchRealTimeProjectsPort.searchByKeyword(keyword, 5)).willReturn(
-                List.of(new RealTimeProjectResponse(1L, "AI Project", "userA", "thumb.png"))
+                List.of(new RealTimeProjectResponse(1L, "AI Project", 1L, "userA", "thumb.png"))
         );
 
         // when

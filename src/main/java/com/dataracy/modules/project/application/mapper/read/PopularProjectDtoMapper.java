@@ -32,6 +32,7 @@ public class PopularProjectDtoMapper {
                 project.getId(),
                 project.getTitle(),
                 project.getContent(),
+                project.getUserId(),
                 username,
                 project.getThumbnailUrl(),
                 topicLabel,

@@ -16,7 +16,7 @@ class ChildProjectWebMapperTest {
     void toWebDto() {
         // given
         ChildProjectResponse responseDto = new ChildProjectResponse(
-                1L, "child-title", "child-content", "tester", 10L, 20L
+                1L, "child-title", "child-content", 1L, "tester", 10L, 20L
         );
 
         // when
@@ -26,7 +26,7 @@ class ChildProjectWebMapperTest {
         assertThat(webResponse.id()).isEqualTo(1L);
         assertThat(webResponse.title()).isEqualTo("child-title");
         assertThat(webResponse.content()).isEqualTo("child-content");
-        assertThat(webResponse.username()).isEqualTo("tester");
+        assertThat(webResponse.creatorName()).isEqualTo("tester");
         assertThat(webResponse.commentCount()).isEqualTo(10L);
         assertThat(webResponse.likeCount()).isEqualTo(20L);
     }

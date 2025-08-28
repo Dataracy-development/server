@@ -14,6 +14,7 @@ public class FilteredDataDtoMapper {
      * 데이터의 주요 속성, 메타데이터 정보, 각종 라벨, 연결된 프로젝트 수를 포함한 DTO를 반환합니다.
      *
      * @param data 변환할 Data 도메인 객체
+     * @param username 데이터셋 업로더 닉네임
      * @param topicLabel 데이터의 주제 라벨
      * @param dataSourceLabel 데이터 소스 라벨
      * @param dataTypeLabel 데이터 유형 라벨
@@ -22,6 +23,7 @@ public class FilteredDataDtoMapper {
      */
     public FilteredDataResponse toResponseDto(
             Data data,
+            String username,
             String topicLabel,
             String dataSourceLabel,
             String dataTypeLabel,
@@ -30,6 +32,8 @@ public class FilteredDataDtoMapper {
         return new FilteredDataResponse(
                 data.getId(),
                 data.getTitle(),
+                data.getUserId(),
+                username,
                 topicLabel,
                 dataSourceLabel,
                 dataTypeLabel,

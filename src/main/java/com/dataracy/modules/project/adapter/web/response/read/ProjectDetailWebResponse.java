@@ -15,8 +15,11 @@ public record ProjectDetailWebResponse(
         @Schema(description = "프로젝트 제목", example = "디자인에 관하여")
         String title,
 
-        @Schema(description = "작성자명", example = "박준형")
-        String username,
+        @Schema(description = "작성자 아이디", example = "1")
+        Long creatorId,
+
+        @Schema(description = "작성자 닉네임", example = "박준형")
+        String creatorName,
 
         @Schema(description = "작성자 소개글", example = "안녕하세요. 박준형입니다.")
         String userIntroductionText,

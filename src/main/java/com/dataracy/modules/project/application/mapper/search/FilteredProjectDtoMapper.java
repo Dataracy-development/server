@@ -41,6 +41,7 @@ public class FilteredProjectDtoMapper {
                         child.getId(),
                         child.getTitle(),
                         child.getContent(),
+                        child.getUserId(),
                         childUsernames.getOrDefault(child.getUserId(), "익명 유저"),
                         child.getCommentCount(),
                         child.getLikeCount()
@@ -51,6 +52,7 @@ public class FilteredProjectDtoMapper {
                 project.getId(),
                 project.getTitle(),
                 project.getContent(),
+                project.getUserId(),
                 username,
                 project.getThumbnailUrl(),
                 topicLabel,

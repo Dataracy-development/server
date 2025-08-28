@@ -28,6 +28,7 @@ class ReadCommentWebMapperTest {
             LocalDateTime now = LocalDateTime.now();
             FindCommentResponse responseDto = new FindCommentResponse(
                     1L,
+                    1L,
                     "닉네임",
                     "실무자",
                     "profile.png",
@@ -43,7 +44,7 @@ class ReadCommentWebMapperTest {
 
             // then
             assertThat(webRes.id()).isEqualTo(1L);
-            assertThat(webRes.username()).isEqualTo("닉네임");
+            assertThat(webRes.creatorName()).isEqualTo("닉네임");
             assertThat(webRes.authorLevelLabel()).isEqualTo("실무자");
             assertThat(webRes.userProfileUrl()).isEqualTo("profile.png");
             assertThat(webRes.content()).isEqualTo("내용");
@@ -81,6 +82,7 @@ class ReadCommentWebMapperTest {
             LocalDateTime now = LocalDateTime.now();
             FindReplyCommentResponse responseDto = new FindReplyCommentResponse(
                     2L,
+                    1L,
                     "작성자",
                     "전문가",
                     "profile2.png",
@@ -95,7 +97,7 @@ class ReadCommentWebMapperTest {
 
             // then
             assertThat(webRes.id()).isEqualTo(2L);
-            assertThat(webRes.username()).isEqualTo("작성자");
+            assertThat(webRes.creatorName()).isEqualTo("작성자");
             assertThat(webRes.authorLevelLabel()).isEqualTo("전문가");
             assertThat(webRes.userProfileUrl()).isEqualTo("profile2.png");
             assertThat(webRes.content()).isEqualTo("답글 내용");
@@ -110,6 +112,7 @@ class ReadCommentWebMapperTest {
             // given
             FindReplyCommentResponse dto = new FindReplyCommentResponse(
                     5L,
+                    1L,
                     "nick",
                     "라벨",
                     "url",

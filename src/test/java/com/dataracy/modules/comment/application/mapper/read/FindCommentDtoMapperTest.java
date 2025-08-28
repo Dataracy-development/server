@@ -46,7 +46,7 @@ class FindCommentDtoMapperTest {
 
             // then
             assertThat(dto.id()).isEqualTo(comment.getId());
-            assertThat(dto.username()).isEqualTo("닉네임");
+            assertThat(dto.creatorName()).isEqualTo("닉네임");
             assertThat(dto.userProfileUrl()).isEqualTo("profile.png");
             assertThat(dto.authorLevelLabel()).isEqualTo("실무자");
             assertThat(dto.childCommentCount()).isEqualTo(7L);
@@ -104,7 +104,7 @@ class FindCommentDtoMapperTest {
             // then
             assertThat(dto.id()).isEqualTo(reply.getId());
             assertThat(dto.content()).isEqualTo("답글 내용");
-            assertThat(dto.username()).isEqualTo("작성자");
+            assertThat(dto.creatorName()).isEqualTo("작성자");
             assertThat(dto.authorLevelLabel()).isEqualTo("전문가");
             assertThat(dto.isLiked()).isFalse();
         }

@@ -157,7 +157,7 @@ class ProjectReadServiceTest {
         given(getOccupationLabelFromIdUseCase.getLabelById(50L)).willReturn("OccupationLabel");
 
         ProjectDetailResponse expected = new ProjectDetailResponse(
-                1L, "테스트 프로젝트", "nick", "소개글", "profile.png",
+                1L, "테스트 프로젝트", 1L, "nick", "소개글", "profile.png",
                 "AuthorLabel", "OccupationLabel", "TopicLabel", "PurposeLabel", "SourceLabel",
                 false, null, "내용", "thumb.png", LocalDateTime.now(),
                 5L, 10L, 15L,
@@ -205,7 +205,7 @@ class ProjectReadServiceTest {
         given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(List.of(40L))).willReturn(Map.of(40L, "AuthorLabel"));
 
         ContinuedProjectResponse expected = new ContinuedProjectResponse(
-                2L, "child", "userA", "thumb.png", "proj-thumb.png",
+                2L, "child", 1L, "userA", "thumb.png", "proj-thumb.png",
                 "TopicLabel", "AuthorLabel",
                 1L, 2L, 3L, LocalDateTime.now()
         );
@@ -231,7 +231,7 @@ class ProjectReadServiceTest {
         given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of(99L))).willReturn(Map.of(99L, "TopicX"));
 
         ConnectedProjectResponse expected = new ConnectedProjectResponse(
-                10L, "proj", "userB", "TopicX", 0L, 0L, 0L, LocalDateTime.now()
+                10L, "proj", 1L, "userB", "TopicX", 0L, 0L, 0L, LocalDateTime.now()
         );
         given(connectedProjectDtoMapper.toResponseDto(any(), eq("userB"), eq("TopicX"))).willReturn(expected);
 
@@ -258,7 +258,7 @@ class ProjectReadServiceTest {
         given(findProjectLabelMapUseCase.labelMapping(List.of(p))).willReturn(labelMap);
 
         PopularProjectResponse expected = new PopularProjectResponse(
-                1L, "proj", "content", "userC", "thumb.png",
+                1L, "proj", "content", 1L, "userC", "thumb.png",
                 "TopicY", "PurposeY", "SourceY", "AuthorY",
                 1L, 2L, 3L
         );

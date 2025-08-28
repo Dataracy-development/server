@@ -53,7 +53,8 @@ class PopularProjectDtoMapperTest {
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.title()).isEqualTo("proj-title");
         assertThat(response.content()).isEqualTo("proj-content");
-        assertThat(response.username()).isEqualTo("tester");
+        assertThat(response.creatorId()).isEqualTo(99L);
+        assertThat(response.creatorName()).isEqualTo("tester");
         assertThat(response.projectThumbnailUrl()).isEqualTo("thumb.png");
         assertThat(response.topicLabel()).isEqualTo("topic-label");
         assertThat(response.analysisPurposeLabel()).isEqualTo("purpose-label");

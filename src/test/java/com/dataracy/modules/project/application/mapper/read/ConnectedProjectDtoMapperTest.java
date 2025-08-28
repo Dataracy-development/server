@@ -50,7 +50,8 @@ class ConnectedProjectDtoMapperTest {
         // then
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.title()).isEqualTo("proj-title");
-        assertThat(response.username()).isEqualTo("tester");
+        assertThat(response.creatorId()).isEqualTo(99L);
+        assertThat(response.creatorName()).isEqualTo("tester");
         assertThat(response.topicLabel()).isEqualTo("topic-label");
         assertThat(response.commentCount()).isEqualTo(5L);
         assertThat(response.likeCount()).isEqualTo(6L);

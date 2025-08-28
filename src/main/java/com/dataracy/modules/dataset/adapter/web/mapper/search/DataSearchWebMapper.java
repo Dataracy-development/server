@@ -21,6 +21,8 @@ public class DataSearchWebMapper {
         return new SimilarDataWebResponse(
                 responseDto.id(),
                 responseDto.title(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.topicLabel(),
                 responseDto.dataSourceLabel(),
                 responseDto.dataTypeLabel(),
@@ -46,6 +48,8 @@ public class DataSearchWebMapper {
         return new RecentMinimalDataWebResponse(
                 responseDto.id(),
                 responseDto.title(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.dataThumbnailUrl(),
                 responseDto.createdAt()
         );
