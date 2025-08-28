@@ -33,8 +33,8 @@ public class FindCommentDtoMapper {
                 comment.getId(),
                 comment.getUserId(),
                 username,
-                authorLevelLabel,
                 userProfileImageUrl,
+                authorLevelLabel,
                 comment.getContent(),
                 comment.getLikeCount(),
                 childCommentCount,
@@ -48,7 +48,7 @@ public class FindCommentDtoMapper {
      *
      * @param comment 변환할 답글 도메인 객체
      * @param username 답글 작성자의 사용자명
-     * @param userProfileUrl 답글 작성자의 프로필 이미지 URL
+     * @param userProfileImageUrl 답글 작성자의 프로필 이미지 URL
      * @param authorLevelLabel 답글 작성자의 등급 라벨
      * @param isLiked 사용자가 해당 답글에 좋아요를 눌렀는지 여부
      * @return 답글 정보를 담은 FindReplyCommentResponse 객체
@@ -56,7 +56,7 @@ public class FindCommentDtoMapper {
     public FindReplyCommentResponse toResponseDto(
             Comment comment,
             String username,
-            String userProfileUrl,
+            String userProfileImageUrl,
             String authorLevelLabel,
             boolean isLiked
     ) {
@@ -64,8 +64,8 @@ public class FindCommentDtoMapper {
                 comment.getId(),
                 comment.getUserId(),
                 username,
+                userProfileImageUrl,
                 authorLevelLabel,
-                userProfileUrl,
                 comment.getContent(),
                 comment.getLikeCount(),
                 comment.getCreatedAt(),
