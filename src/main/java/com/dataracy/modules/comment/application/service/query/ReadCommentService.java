@@ -75,7 +75,7 @@ public class ReadCommentService implements
             return findCommentDtoMapper.toResponseDto(
                     comment,
                     result.usernameMap().get(comment.getUserId()),
-                    result.userThumbnailMap().get(comment.getUserId()),
+                    result.userProfileUrlMap().get(comment.getUserId()),
                     result.userAuthorLevelLabelMap().get(authorLevelId),
                     wrapper.replyCount(),
                     likedIds.contains(comment.getId())
@@ -120,7 +120,7 @@ public class ReadCommentService implements
             return findCommentDtoMapper.toResponseDto(
                     comment,
                     result.usernameMap().get(comment.getUserId()),
-                    result.userThumbnailMap().get(comment.getUserId()),
+                    result.userProfileUrlMap().get(comment.getUserId()),
                     result.userAuthorLevelLabelMap().get(authorLevelId),
                     likedIds.contains(comment.getId())
             );

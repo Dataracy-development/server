@@ -15,7 +15,7 @@ public class FindCommentDtoMapper {
      *
      * @param comment 변환할 댓글 도메인 객체
      * @param username 댓글 작성자의 사용자명
-     * @param userProfileUrl 댓글 작성자의 프로필 이미지 URL
+     * @param userProfileImageUrl 댓글 작성자의 프로필 이미지 URL
      * @param authorLevelLabel 댓글 작성자의 레벨 라벨
      * @param childCommentCount 해당 댓글의 답글 수
      * @param isLiked 사용자가 해당 댓글을 좋아요 했는지 여부
@@ -24,7 +24,7 @@ public class FindCommentDtoMapper {
     public FindCommentResponse toResponseDto(
             Comment comment,
             String username,
-            String userProfileUrl,
+            String userProfileImageUrl,
             String authorLevelLabel,
             Long childCommentCount,
             boolean isLiked
@@ -34,7 +34,7 @@ public class FindCommentDtoMapper {
                 comment.getUserId(),
                 username,
                 authorLevelLabel,
-                userProfileUrl,
+                userProfileImageUrl,
                 comment.getContent(),
                 comment.getLikeCount(),
                 childCommentCount,

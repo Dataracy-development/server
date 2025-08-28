@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
  * @param id 답글 ID
  * @param creatorId 작성자 아이디
  * @param creatorName 작성자 닉네임
+ * @param userProfileImageUrl 작성자 프로필 이미지 URL
  * @param authorLevelLabel 작성자 등급 라벨
- * @param userProfileUrl 작성자 프로필 이미지 URL
  * @param content 댓글 내용
  * @param likeCount 좋아요 수
  * @param createdAt 생성 시각
@@ -19,8 +19,8 @@ public record FindReplyCommentResponse(
         Long id,
         Long creatorId,
         String creatorName,
+        String userProfileImageUrl,
         String authorLevelLabel,
-        String userProfileUrl,
         String content,
         Long likeCount,
         LocalDateTime createdAt,
