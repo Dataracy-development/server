@@ -63,11 +63,13 @@ public class DataReadWebMapper {
     }
 
     /**
-     * ConnectedDataResponse DTO를 ConnectedDataWebResponse로 변환합니다.
-     * 데이터셋의 기본 정보와 연결된 프로젝트 수를 웹 응답 객체로 매핑합니다.
+     * ConnectedDataResponse를 ConnectedDataWebResponse로 변환합니다.
      *
-     * @param responseDto 데이터셋 및 연결 프로젝트 수 정보를 포함한 DTO
-     * @return 매핑된 데이터셋 연결 정보 웹 응답 객체
+     * 응답 DTO의 기본 데이터셋 정보(작성자 프로필 이미지 포함)와 연결된 프로젝트 수를
+     * 웹 응답 객체로 매핑하여 반환합니다.
+     *
+     * @param responseDto 변환할 도메인 응답 DTO
+     * @return 변환된 ConnectedDataWebResponse
      */
     public ConnectedDataWebResponse toWebDto(ConnectedDataResponse responseDto) {
         return new ConnectedDataWebResponse(
@@ -91,10 +93,13 @@ public class DataReadWebMapper {
     }
 
     /**
-     * 최근 최소 데이터 정보를 웹 응답 DTO로 변환합니다.
+     * RecentMinimalDataResponse를 RecentMinimalDataWebResponse로 변환합니다.
      *
-     * @param responseDto 최근 최소 데이터 정보를 담은 애플리케이션 응답 DTO
-     * @return 데이터셋 ID, 제목, 썸네일 URL, 생성일시를 포함하는 웹 응답 DTO
+     * <p>변환된 웹 응답에는 다음 필드가 포함됩니다: id, title, creatorId, creatorName,
+     * userProfileImageUrl, dataThumbnailUrl, createdAt.</p>
+     *
+     * @param responseDto 변환할 애플리케이션 계층의 최근 최소 데이터 응답 DTO
+     * @return 위에 열거된 필드를 포함한 RecentMinimalDataWebResponse
      */
     public RecentMinimalDataWebResponse toWebDto(RecentMinimalDataResponse responseDto) {
         return new RecentMinimalDataWebResponse(
@@ -109,11 +114,12 @@ public class DataReadWebMapper {
     }
 
     /**
-     * 인기 데이터 검색 애플리케이션 응답 DTO를 웹 응답 DTO로 변환합니다.
+     * 인기 데이터 애플리케이션 응답을 웹 응답 DTO로 변환합니다.
      *
-     * <p>응답의 id, title, username, topicLabel, dataSourceLabel, dataTypeLabel, startDate, endDate,
-     * description, dataThumbnailUrl, downloadCount, sizeBytes, rowCount, columnCount, createdAt,
-     * countConnectedProjects 등을 매핑하여 PopularDataWebResponse 인스턴스를 생성하여 반환합니다.</p>
+     * <p>다음 필드를 PopularDataWebResponse로 매핑하여 새 인스턴스를 반환합니다:
+     * id, title, creatorId, creatorName, userProfileImageUrl, topicLabel, dataSourceLabel,
+     * dataTypeLabel, startDate, endDate, description, dataThumbnailUrl, downloadCount,
+     * sizeBytes, rowCount, columnCount, createdAt, countConnectedProjects.</p>
      *
      * @param responseDto 인기 데이터 검색 애플리케이션 응답 DTO
      * @return 매핑된 인기 데이터 웹 응답 DTO
