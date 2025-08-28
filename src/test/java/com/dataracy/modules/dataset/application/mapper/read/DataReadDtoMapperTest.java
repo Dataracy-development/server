@@ -46,7 +46,7 @@ class DataReadDtoMapperTest {
         Data data = sampleData();
 
         // when
-        ConnectedDataResponse res = mapper.toResponseDto(data, "userA", "https://~~", "topic", "type", 5L);
+        ConnectedDataResponse res = mapper.toResponseDto(data, "userA", "profile.png", "topic", "type", 5L);
 
         // then
         assertThat(res.title()).isEqualTo("title");
@@ -60,7 +60,7 @@ class DataReadDtoMapperTest {
         Data data = sampleData();
 
         // when
-        RecentMinimalDataResponse res = mapper.toResponseDto(data, "userA", "https://~~");
+        RecentMinimalDataResponse res = mapper.toResponseDto(data, "userA", "profile.png");
 
         // then
         assertThat(res.title()).isEqualTo("title");
@@ -73,7 +73,7 @@ class DataReadDtoMapperTest {
         Data data = sampleData();
 
         // when
-        PopularDataResponse res = mapper.toResponseDto(data, "user", "https://~~", "topic", "src", "type", 7L);
+        PopularDataResponse res = mapper.toResponseDto(data, "user", "profile.png", "topic", "src", "type", 7L);
 
         // then
         assertThat(res.creatorName()).isEqualTo("user");
