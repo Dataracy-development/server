@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReadCommentWebMapper {
     /**
-     * 애플리케이션 계층의 댓글 응답 DTO를 웹 계층의 댓글 응답 객체로 변환합니다.
+     * 애플리케이션 계층의 FindCommentResponse를 웹 계층의 FindCommentWebResponse로 변환합니다.
      *
-     * @param responseDto 조회한 댓글 응답 DTO
-     * @return 댓글 ID, 작성자 정보, 프로필 이미지 URL, 내용, 좋아요 수, 대댓글 수, 생성 시각, 좋아요 여부를 포함한 웹 계층 댓글 응답 객체
+     * @param responseDto 변환할 애플리케이션 계층 댓글 응답 DTO
+     * @return 댓글 ID, 작성자 정보, 프로필 이미지 URL, 작성자 레벨 레이블, 내용, 좋아요 수, 대댓글 수, 생성 시각 및 좋아요 여부를 포함한 웹 계층 댓글 응답 객체
      */
     public FindCommentWebResponse toWebDto(FindCommentResponse responseDto) {
         return new FindCommentWebResponse(
