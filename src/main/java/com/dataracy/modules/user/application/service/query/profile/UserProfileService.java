@@ -60,10 +60,12 @@ public class UserProfileService implements
     }
 
     /**
-     * 주어진 여러 사용자 ID에 대해 각 ID에 해당하는 닉네임을 조회하여 Map으로 반환합니다.
+     * 주어진 사용자 ID 목록에 대응하는 닉네임을 ID->닉네임 맵으로 반환합니다.
      *
-     * @param userIds 닉네임을 조회할 사용자 ID 목록
-     * @return 사용자 ID를 키, 닉네임을 값으로 하는 Map. 입력 목록이 null이거나 비어 있으면 빈 Map을 반환합니다.
+     * <p>입력 목록이 null이거나 비어 있으면 빈 Map을 반환합니다.</p>
+     *
+     * @param userIds 닉네임을 조회할 사용자 ID 목록(빈 목록 또는 null이면 빈 Map 반환)
+     * @return 사용자 ID를 키로, 해당 닉네임을 값으로 하는 Map
      */
     @Override
     @Transactional(readOnly = true)
@@ -77,6 +79,13 @@ public class UserProfileService implements
         return usernames;
     }
 
+    /**
+     * 주어진 사용자 ID로 사용자의 프로필 이미지 URL(썸네일)을 조회한다.
+     *
+     * @param userId 조회할 사용자 ID
+     * @return 해당 사용자의 프로필 이미지 URL. 프로필 이미지가 설정되지 않은 경우 null일 수 있다.
+     * @throws UserException 주어진 ID의 사용자가 존재하지 않으면 NOT_FOUND_USER 상태로 던져진다.
+     */
     @Override
     @Transactional(readOnly = true)
     public String findUserThumbnailById(Long userId) {

@@ -214,12 +214,12 @@ public class ProjectReadService implements
         return findContinuedProjectsResponse;
     }
     /**
-     * 지정된 데이터 ID와 연결된 프로젝트 목록을 페이지 단위로 조회하여, 각 프로젝트의 사용자명과 토픽 라벨 정보를 포함한 응답을 반환합니다.
-     *
-     * @param dataId 연결할 데이터셋의 식별자
-     * @param pageable 페이지네이션 정보
-     * @return 사용자명과 토픽 라벨이 포함된 연결된 프로젝트 응답의 페이지 객체
-     */
+         * 지정된 데이터셋과 연결된 프로젝트들을 페이지 단위로 조회하여, 각 프로젝트에 사용자명, 사용자 프로필 이미지 URL, 토픽 라벨을 포함한 응답 페이지를 반환합니다.
+         *
+         * @param dataId  연결된 프로젝트를 찾을 데이터셋의 식별자
+         * @param pageable  페이지 번호·크기·정렬 정보(페이징 조건)
+         * @return 각 프로젝트에 사용자명, 사용자 프로필 이미지 URL, 토픽 라벨이 포함된 ConnectedProjectResponse의 페이지
+         */
     @Override
     @Transactional(readOnly = true)
     public Page<ConnectedProjectResponse> findConnectedProjects(Long dataId, Pageable pageable) {
