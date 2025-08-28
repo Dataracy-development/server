@@ -22,12 +22,12 @@ import com.dataracy.modules.project.application.port.in.query.read.FindConnected
 import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.GetPopularProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.GetProjectDetailUseCase;
-import com.dataracy.modules.project.application.port.out.view.ManageProjectViewCountPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindConnectedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
 import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByParentPort;
+import com.dataracy.modules.project.application.port.out.view.ManageProjectViewCountPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.domain.model.vo.ProjectUser;
@@ -160,8 +160,8 @@ public class ProjectReadService implements
         ProjectDetailResponse projectDetailResponse = projectDetailDtoMapper.toResponseDto(
                 project,
                 projectUser.nickname(),
-                projectUser.introductionText(),
                 projectUser.profileImageUrl(),
+                projectUser.introductionText(),
                 authorLevelLabel,
                 occupationLabel,
                 getTopicLabelFromIdUseCase.getLabelById(project.getTopicId()),
