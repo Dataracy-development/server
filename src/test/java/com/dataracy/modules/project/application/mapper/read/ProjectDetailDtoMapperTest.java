@@ -46,7 +46,7 @@ class ProjectDetailDtoMapperTest {
 
         List<ProjectConnectedDataResponse> connectedDataSets = List.of(
                 new ProjectConnectedDataResponse(
-                        100L, "data-title", 1L, "userA", "topic-label", "CSV",
+                        100L, "data-title", 1L, "userA", "https://~~", "topic-label", "CSV",
                         LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 5),
                         "data-thumb.png", 3, 55, 100,
                         LocalDateTime.of(2025, 8, 4, 10, 30),
@@ -55,7 +55,7 @@ class ProjectDetailDtoMapperTest {
         );
 
         ParentProjectResponse parentProjectResponse = new ParentProjectResponse(
-                55L, "parent-title", "parent-content", 1L, "parent-user",
+                55L, "parent-title", "parent-content", 1L, "parent-user", "https://~~",
                 2L, 3L, 4L, LocalDateTime.of(2025, 8, 20, 12, 0)
         );
 
@@ -63,8 +63,8 @@ class ProjectDetailDtoMapperTest {
         ProjectDetailResponse response = mapper.toResponseDto(
                 project,
                 "tester",              // username
-                "intro text",          // userIntroductionText
                 "profile.png",         // userProfileImageUrl
+                "intro text",          // userIntroductionText
                 "author-level",        // authorLevelLabel
                 "occupation-label",    // occupationLabel
                 "topic-label",         // topicLabel

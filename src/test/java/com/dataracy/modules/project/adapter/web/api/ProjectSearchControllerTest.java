@@ -112,14 +112,14 @@ class ProjectSearchControllerTest {
         int size = 2;
 
         RealTimeProjectResponse dto = new RealTimeProjectResponse(
-                1L, "실시간 프로젝트", 1L, "작성자", "thumb.png"
+                1L, "실시간 프로젝트", 1L, "작성자", "https://~~","thumb.png"
         );
         RealTimeProjectWebResponse webDto = new RealTimeProjectWebResponse(
-                dto.id(), dto.title(), dto.creatorId(), dto.creatorName(), dto.projectThumbnailUrl()
+                dto.id(), dto.title(), dto.creatorId(), dto.creatorName(), dto.userProfileImageUrl(), dto.projectThumbnailUrl()
         );
 
         given(searchRealTimeProjectsUseCase.searchByKeyword(keyword, size)).willReturn(List.of(dto));
-        given(projectSearchWebMapper.toWeb(dto)).willReturn(webDto);
+        given(projectSearchWebMapper.toWebDto(dto)).willReturn(webDto);
 
         // when & then
         mockMvc.perform(get("/api/v1/projects/search/real-time")
@@ -140,19 +140,19 @@ class ProjectSearchControllerTest {
         int size = 2;
 
         SimilarProjectResponse dto = new SimilarProjectResponse(
-                2L, "유사 프로젝트", "내용", 1L, "작성자",
+                2L, "유사 프로젝트", "내용", 1L, "작성자", "https://~~",
                 "thumb.png", "주제", "목적", "출처", "레벨",
                 5L, 10L, 15L
         );
         SimilarProjectWebResponse webDto = new SimilarProjectWebResponse(
-                dto.id(), dto.title(), dto.content(), dto.creatorId(), dto.creatorName(),
+                dto.id(), dto.title(), dto.content(), dto.creatorId(), dto.creatorName(), dto.userProfileImageUrl(),
                 dto.projectThumbnailUrl(), dto.topicLabel(), dto.analysisPurposeLabel(),
                 dto.dataSourceLabel(), dto.authorLevelLabel(),
                 dto.commentCount(), dto.likeCount(), dto.viewCount()
         );
 
         given(searchSimilarProjectsUseCase.searchSimilarProjects(eq(projectId), eq(size))).willReturn(List.of(dto));
-        given(projectSearchWebMapper.toWeb(dto)).willReturn(webDto);
+        given(projectSearchWebMapper.toWebDto(dto)).willReturn(webDto);
 
         // when & then
         mockMvc.perform(get("/api/v1/projects/{projectId}/similar", projectId)
@@ -177,12 +177,12 @@ class ProjectSearchControllerTest {
         );
 
         FilteredProjectResponse dto = new FilteredProjectResponse(
-                3L, "필터링된 프로젝트", "내용", 1L, "작성자",
+                3L, "필터링된 프로젝트", "내용", 1L, "작성자", "https://~~",
                 "thumb.png", "주제", "목적", "출처", "레벨",
                 3L, 4L, 5L, LocalDateTime.now(), new ArrayList<>()
         );
         FilteredProjectWebResponse webDto = new FilteredProjectWebResponse(
-                dto.id(), dto.title(), dto.content(), dto.creatorId(), dto.creatorName(),
+                dto.id(), dto.title(), dto.content(), dto.creatorId(), dto.creatorName(), dto.userProfileImageUrl(),
                 dto.projectThumbnailUrl(), dto.topicLabel(), dto.analysisPurposeLabel(),
                 dto.dataSourceLabel(), dto.authorLevelLabel(),
                 dto.commentCount(), dto.likeCount(), dto.viewCount(), dto.createdAt(), new ArrayList<>()

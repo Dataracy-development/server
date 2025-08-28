@@ -43,18 +43,23 @@ class FilteredProjectDtoMapperTest {
 
         Map<Long, String> childUsernames = Map.of(
                 201L, "child-user-1"
-                // 202L 은 intentionally 누락 → "익명 유저"로 대체되어야 함
+        );
+
+        Map<Long, String> childUserProfileUrls = Map.of(
+                201L, "https://~~"
         );
 
         // when
         FilteredProjectResponse response = mapper.toResponseDto(
                 parent,
                 "parent-user",
+                "https://~~",
                 "topic-label",
                 "analysis-purpose-label",
                 "data-source-label",
                 "author-level-label",
-                childUsernames
+                childUsernames,
+                childUserProfileUrls
         );
 
         // then

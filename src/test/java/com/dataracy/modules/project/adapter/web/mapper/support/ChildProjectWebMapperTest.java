@@ -16,7 +16,7 @@ class ChildProjectWebMapperTest {
     void toWebDto() {
         // given
         ChildProjectResponse responseDto = new ChildProjectResponse(
-                1L, "child-title", "child-content", 1L, "tester", 10L, 20L
+                1L, "child-title", "child-content", 1L, "tester", "https://~~", 10L, 20L
         );
 
         // when

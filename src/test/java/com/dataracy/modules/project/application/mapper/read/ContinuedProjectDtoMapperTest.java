@@ -55,7 +55,7 @@ class ContinuedProjectDtoMapperTest {
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.title()).isEqualTo("proj-title");
         assertThat(response.creatorName()).isEqualTo("tester");
-        assertThat(response.userProfileUrl()).isEqualTo("profile.png");
+        assertThat(response.userProfileImageUrl()).isEqualTo("profile.png");
         assertThat(response.projectThumbnailUrl()).isEqualTo("thumb.png");
         assertThat(response.topicLabel()).isEqualTo("topic-label");
         assertThat(response.authorLevelLabel()).isEqualTo("level-label");

@@ -7,6 +7,7 @@ package com.dataracy.modules.project.application.dto.response.search;
  * @param title 프로젝트 제목
  * @param creatorId 작성자 아이디
  * @param creatorName 작성자 닉네임
+ * @param userProfileImageUrl 작성자 프로필 이미지 URL
  * @param projectThumbnailUrl 프로젝트 썸네일 URL
  */
 public record RealTimeProjectResponse(
@@ -14,5 +15,6 @@ public record RealTimeProjectResponse(
         String title,
         Long creatorId,
         String creatorName,
+        String userProfileImageUrl,
         String projectThumbnailUrl
 ) {}

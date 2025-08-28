@@ -65,17 +65,17 @@ class SelfLoginUseCaseTest {
                 role,
                 email,
                 "nickname",
-                1L,                      // authorLevelId
-                1L,                      // occupationId
-                Collections.emptyList(), // topicIds
-                1L,                      // visitSourceId
-                "profile.png",
+                1L,
+                1L,
+                Collections.emptyList(),
+                1L,
+                "https://profile",
                 "intro text"
         );
     }
 
     @Nested
-    @DisplayName("reIssueToken")
+    @DisplayName("로그인")
     class Login {
 
         @Test
@@ -95,7 +95,7 @@ class SelfLoginUseCaseTest {
 
             // then
             assertThat(res.refreshToken()).isEqualTo("issued-refresh");
-            assertThat(res.refreshTokenExpiration()).isEqualTo(1_209_600_000L);
+            assertThat(res.refreshTokenExpiration()).isEqualTo(1209600000L);
             then(manageRefreshTokenPort).should().saveRefreshToken("1", "issued-refresh");
         }
 

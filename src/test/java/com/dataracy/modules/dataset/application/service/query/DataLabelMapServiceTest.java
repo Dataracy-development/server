@@ -6,6 +6,7 @@ import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,9 @@ class DataLabelMapServiceTest {
 
     @Mock
     private FindUsernameUseCase userCase;
+
+    @Mock
+    private FindUserThumbnailUseCase findUserThumbnailUseCase;
 
     @Mock
     private GetTopicLabelFromIdUseCase topicCase;
@@ -66,6 +70,8 @@ class DataLabelMapServiceTest {
 
         given(userCase.findUsernamesByIds(any()))
                 .willReturn(Map.of(3L, "u"));
+        given(findUserThumbnailUseCase.findUserThumbnailsByIds(any()))
+                .willReturn(Map.of(3L, "http://~~"));
         given(topicCase.getLabelsByIds(any()))
                 .willReturn(Map.of(2L, "topic"));
         given(dsCase.getLabelsByIds(any()))
@@ -78,6 +84,7 @@ class DataLabelMapServiceTest {
 
         // then
         assertThat(res.usernameMap().get(3L)).isEqualTo("u");
+        assertThat(res.userProfileUrlMap().get(3L)).isEqualTo("http://~~");
         assertThat(res.topicLabelMap().get(2L)).isEqualTo("topic");
         assertThat(res.dataSourceLabelMap().get(4L)).isEqualTo("ds");
         assertThat(res.dataTypeLabelMap().get(5L)).isEqualTo("dt");

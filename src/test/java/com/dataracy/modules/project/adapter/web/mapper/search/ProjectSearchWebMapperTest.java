@@ -18,11 +18,11 @@ class ProjectSearchWebMapperTest {
     void toWebRealTimeProject() {
         // given
         RealTimeProjectResponse responseDto = new RealTimeProjectResponse(
-                1L, "real-time title", 1L, "userA", "thumb.png"
+                1L, "real-time title", 1L, "userA", "https://~~", "thumb.png"
         );
 
         // when
-        RealTimeProjectWebResponse webResponse = mapper.toWeb(responseDto);
+        RealTimeProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
         assertThat(webResponse.id()).isEqualTo(1L);
@@ -36,13 +36,13 @@ class ProjectSearchWebMapperTest {
     void toWebSimilarProject() {
         // given
         SimilarProjectResponse responseDto = new SimilarProjectResponse(
-                2L, "similar title", "some content", 1L, "userB", "thumb2.png",
+                2L, "similar title", "some content", 1L, "userB", "https://~~", "thumb2.png",
                 "topicLabel", "analysisPurposeLabel", "dataSourceLabel", "authorLevelLabel",
                 10L, 20L, 30L
         );
 
         // when
-        SimilarProjectWebResponse webResponse = mapper.toWeb(responseDto);
+        SimilarProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
         assertThat(webResponse.id()).isEqualTo(2L);

@@ -7,6 +7,7 @@ import java.util.Map;
  * 각 Map의 키는 해당 엔터티의 ID, 값은 클라이언트에 표시할 문자열입니다.
  *
  * @param usernameMap 사용자 ID → 닉네임
+ * @param userProfileUrlMap   사용자 ID를 키로 하는 사용자 프로필 이미지 URL 맵
  * @param topicLabelMap 토픽 라벨 ID → 라벨명
  * @param analysisPurposeLabelMap 분석 목적 라벨 ID → 라벨명
  * @param dataSourceLabelMap 데이터 출처 라벨 ID → 라벨명
@@ -14,6 +15,7 @@ import java.util.Map;
  */
 public record ProjectLabelMapResponse(
         Map<Long, String> usernameMap,
+        Map<Long, String> userProfileUrlMap,
         Map<Long, String> topicLabelMap,
         Map<Long, String> analysisPurposeLabelMap,
         Map<Long, String> dataSourceLabelMap,

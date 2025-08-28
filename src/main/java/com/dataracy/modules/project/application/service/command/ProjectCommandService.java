@@ -28,6 +28,7 @@ import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAna
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,7 @@ public class ProjectCommandService implements
     private final ExtractProjectOwnerPort extractProjectOwnerPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
+    private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final FileCommandUseCase fileCommandUseCase;
 
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
@@ -69,12 +71,15 @@ public class ProjectCommandService implements
     private final ValidateDataUseCase validateDataUseCase;
 
     /**
-     * 사용자의 프로젝트 업로드 요청을 처리하여 새 프로젝트를 생성하고, 썸네일 이미지를 업로드한 뒤 프로젝트를 검색 시스템에 색인합니다.
+     * 새 프로젝트를 생성하고(검증 포함) 썸네일을 업로드한 뒤 검색 색인까지 처리합니다.
      *
-     * 프로젝트 생성 시 주제, 분석 목적, 데이터 소스, 저자 레벨 등 주요 라벨의 유효성을 검증하고, 데이터셋 및 부모 프로젝트의 존재 여부를 확인합니다. 썸네일 이미지가 제공되면 외부 저장소에 업로드 후 프로젝트 정보에 반영하며, 모든 정보가 저장된 후 검색 시스템에 색인하여 검색이 가능하도록 처리합니다.
+     * 요청된 라벨(topic, analysis purpose, data source, author level)과 데이터 ID를 검증하고,
+     * 부모 프로젝트 존재 여부를 확인한 뒤 프로젝트를 저장합니다. 저장 완료 후 제공된 썸네일을 외부 저장소에 업로드하고
+     * 업로드된 썸네일 URL을 프로젝트에 반영한 다음, 사용자명 및 사용자 썸네일 URL과 함께 검색 시스템에 색인합니다.
      *
+     * @return 생성된 프로젝트 ID를 담은 UploadProjectResponse
      * @throws ProjectException 부모 프로젝트가 존재하지 않을 경우 발생합니다.
-     * @throws RuntimeException 파일 업로드 실패 시 트랜잭션 롤백을 위해 발생합니다.
+     * @throws RuntimeException  썸네일 업로드 등 파일 처리 중 오류가 발생하여 트랜잭션 롤백이 필요할 때 발생합니다.
      */
     @Override
     @Transactional
@@ -110,13 +115,15 @@ public class ProjectCommandService implements
 
         // 검색을 위해 elasticSearch에 프로젝트를 등록한다 .
         String username = findUsernameUseCase.findUsernameById(userId);
+        String userProfileImageUrl = findUserThumbnailUseCase.findUserThumbnailById(userId);
         indexProjectPort.index(ProjectSearchDocument.from(
                 savedProject,
                 validatedProjectInfo.topicLabel(),
                 validatedProjectInfo.analysisPurposeLabel(),
                 validatedProjectInfo.dataSourceLabel(),
                 validatedProjectInfo.authorLevelLabel(),
-                username
+                username,
+                userProfileImageUrl
         ));
 
         LoggerFactory.service().logSuccess("UploadProjectUseCase", "프로젝트 업로드 서비스 종료 title=" + requestDto.title(), startTime);
@@ -124,14 +131,18 @@ public class ProjectCommandService implements
     }
 
     /**
-     * 기존 프로젝트의 정보를 수정하고, 필요 시 새로운 썸네일 이미지를 업로드한 후, 변경된 내용을 검색 인덱스에 반영합니다.
-     *
-     * @param projectId 수정할 프로젝트의 ID
-     * @param thumbnailFile 새로 업로드할 썸네일 이미지 파일 (선택 사항)
-     * @param requestDto 프로젝트 수정 요청 데이터
-     * @throws ProjectException 프로젝트 또는 부모 프로젝트가 존재하지 않을 경우 발생
-     * @throws RuntimeException 파일 업로드 실패 시 트랜잭션 롤백을 위해 발생
-     */
+         * 기존 프로젝트를 수정하고 변경 내용을 검색 인덱스에 반영합니다.
+         *
+         * <p>프로젝트의 메타정보와 연관 데이터 연결을 업데이트하고, 필요 시 새로운 썸네일을 업로드한 뒤
+         * 변경된 프로젝트를 검색 시스템에 재색인합니다. 썸네일 업로드는 DB 저장 이후 외부 파일 스토리지로 수행되며,
+         * 업로드 실패 시 트랜잭션 롤백을 위해 RuntimeException이 발생합니다.</p>
+         *
+         * @param projectId    수정할 프로젝트의 식별자
+         * @param thumbnailFile 새로 업로드할 썸네일 이미지 파일 (null 또는 비어있을 수 있음)
+         * @param requestDto   프로젝트 수정에 필요한 입력 데이터 (메타정보와 연관 데이터 ID 목록 포함)
+         * @throws ProjectException   대상 프로젝트 또는 지정된 부모 프로젝트가 존재하지 않는 경우 발생
+         * @throws RuntimeException   썸네일 파일 업로드 실패 시 트랜잭션 롤백을 위해 발생
+         */
     @Override
     @Transactional
     public void modifyProject(Long projectId, MultipartFile thumbnailFile, ModifyProjectRequest requestDto) {
@@ -182,6 +193,7 @@ public class ProjectCommandService implements
                 });
 
         String username = findUsernameUseCase.findUsernameById(updatedProject.getUserId());
+        String userProfileImageUrl = findUserThumbnailUseCase.findUserThumbnailById(updatedProject.getUserId());
         // Elasticsearch 업데이트
         indexProjectPort.index(ProjectSearchDocument.from(
                 updatedProject,
@@ -189,7 +201,8 @@ public class ProjectCommandService implements
                 validatedProjectInfo.analysisPurposeLabel(),
                 validatedProjectInfo.dataSourceLabel(),
                 validatedProjectInfo.authorLevelLabel(),
-                username
+                username,
+                userProfileImageUrl
         ));
         LoggerFactory.service().logSuccess("ModifyProjectUseCase", "프로젝트 수정 서비스 종료 projectId=" + projectId, startTime);
     }

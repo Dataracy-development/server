@@ -93,11 +93,12 @@ public class SearchSimilarDataSetsEsAdapter implements SearchSimilarDataSetsPort
     }
 
     /**
-     * DataSearchDocument를 SimilarDataResponse로 변환합니다.
+     * DataSearchDocument를 SimilarDataResponse로 변환한다.
      *
-     * DataSearchDocument의 값을 대응하는 SimilarDataResponse 생성자 인자에 그대로 매핑하여 새 응답 객체를 반환합니다.
-     * 반환 객체에는 id, title, topicLabel, dataSourceLabel, dataTypeLabel, 기간(start/end), description,
-     * dataThumbnailUrl, downloadCount, sizeBytes, rowCount, columnCount, createdAt가 포함됩니다.
+     * 전달된 검색 문서의 필드를 대응하는 SimilarDataResponse 생성자 인자로 매핑해 새 응답 객체를 반환한다.
+     * 반환 객체에는 id, title, userId, username, userProfileImageUrl, topicLabel, dataSourceLabel,
+     * dataTypeLabel, startDate, endDate, description, dataThumbnailUrl, downloadCount, sizeBytes,
+     * rowCount, columnCount, createdAt 등이 포함된다.
      *
      * @param doc 변환할 DataSearchDocument 인스턴스
      * @return 매핑된 SimilarDataResponse 인스턴스
@@ -108,6 +109,7 @@ public class SearchSimilarDataSetsEsAdapter implements SearchSimilarDataSetsPort
                 doc.title(),
                 doc.userId(),
                 doc.username(),
+                doc.userProfileImageUrl(),
                 doc.topicLabel(),
                 doc.dataSourceLabel(),
                 doc.dataTypeLabel(),

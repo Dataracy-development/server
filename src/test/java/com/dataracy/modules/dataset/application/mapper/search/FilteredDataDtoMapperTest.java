@@ -39,7 +39,7 @@ class FilteredDataDtoMapperTest {
         );
 
         // when
-        FilteredDataResponse res = mapper.toResponseDto(data, "userA", "topic", "src", "type", 9L);
+        FilteredDataResponse res = mapper.toResponseDto(data, "userA", "profile.png", "topic", "src", "type", 9L);
 
         // then
         assertThat(res.title()).isEqualTo("title");

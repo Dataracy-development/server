@@ -15,6 +15,7 @@ import com.dataracy.modules.reference.application.port.in.datasource.GetDataSour
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.enums.RoleType;
@@ -71,6 +72,9 @@ class DataReadServiceTest {
     private FindUsernameUseCase findUsernameUseCase;
 
     @Mock
+    private FindUserThumbnailUseCase findUserThumbnailUseCase;
+
+    @Mock
     private GetTopicLabelFromIdUseCase topicUseCase;
 
     @Mock
@@ -122,16 +126,17 @@ class DataReadServiceTest {
             given(labelMapUseCase.labelMapping(any()))
                     .willReturn(new DataLabelMapResponse(
                             Map.of(3L, "user"),
+                            Map.of(3L, "https://~~"),
                             Map.of(2L, "topic"),
                             Map.of(4L, "ds"),
                             Map.of(5L, "dt")
                     ));
             PopularDataResponse mockRes = new PopularDataResponse(
-                    1L, "t", 1L, "u", "topic", "ds", "dt",
+                    1L, "t", 1L, "u", "https://~~", "topic", "ds", "dt",
                     null, null, "d", "thumb", 1, 10L, 1, 1,
                     LocalDateTime.now(), 2L
             );
-            given(mapper.toResponseDto(any(), any(), any(), any(), any(), any()))
+            given(mapper.toResponseDto(any(), any(), any(), any(), any(), any(), any()))
                     .willReturn(mockRes);
 
             // when
@@ -202,11 +207,13 @@ class DataReadServiceTest {
             // given
             given(getRecentDataSetsPort.getRecentDataSets(2)).willReturn(List.of(sample()));
             RecentMinimalDataResponse r = new RecentMinimalDataResponse(
-                    1L, "t", 1L, "userA", "thumb", LocalDateTime.now()
+                    1L, "t", 1L, "userA", "https://~~", "thumb", LocalDateTime.now()
             );
             given(findUsernameUseCase.findUsernamesByIds(anyList()))
                     .willReturn(Map.of(1L, "userA"));
-            given(mapper.toResponseDto(any(Data.class), any()))
+            given(findUserThumbnailUseCase.findUserThumbnailsByIds(anyList()))
+                    .willReturn(Map.of(1L, "https://~~"));
+            given(mapper.toResponseDto(any(Data.class), any(), any()))
                     .willReturn(r);
 
             // when
@@ -251,13 +258,13 @@ class DataReadServiceTest {
             given(getConnectedDataSetsPort.getConnectedDataSetsAssociatedWithProject(eq(99L), any()))
                     .willReturn(page);
             given(labelMapUseCase.labelMapping(any()))
-                    .willReturn(new DataLabelMapResponse(Map.of(), Map.of(), Map.of(), Map.of()));
+                    .willReturn(new DataLabelMapResponse(Map.of(), Map.of(), Map.of(), Map.of(), Map.of()));
             ConnectedDataResponse res = new ConnectedDataResponse(
-                    1L, "t", 1L, "userA", "topic", "dt",
+                    1L, "t", 1L, "userA", "https://~~", "topic", "dt",
                     null, null, "thumb", 1, 10L, 1, 1,
                     LocalDateTime.now(), 1L
             );
-            given(mapper.toResponseDto(any(), any(), any(), any(), any())).willReturn(res);
+            given(mapper.toResponseDto(any(), any(), any(), any(), any(), any())).willReturn(res);
 
             // when
             Page<ConnectedDataResponse> result =

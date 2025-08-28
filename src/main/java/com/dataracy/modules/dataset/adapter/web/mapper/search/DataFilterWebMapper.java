@@ -29,10 +29,13 @@ public class DataFilterWebMapper {
     }
 
     /**
-     * FilteredDataResponse 객체를 웹 계층의 FilteredDataWebResponse 객체로 변환합니다.
+     * 애플리케이션 계층의 FilteredDataResponse를 웹 계층의 FilteredDataWebResponse로 변환합니다.
      *
-     * @param responseDto 변환할 애플리케이션 응답 계층의 데이터 필터링 결과 DTO
-     * @return 웹 응답에 사용되는 FilteredDataWebResponse 객체
+     * <p>responseDto의 모든 필드(id, title, creatorId, creatorName, userProfileImageUrl, topicLabel 등)를
+     * 대응하는 웹 응답 필드로 그대로 매핑하여 새 FilteredDataWebResponse 인스턴스를 생성합니다.</p>
+     *
+     * @param responseDto 변환할 애플리케이션 계층의 FilteredDataResponse
+     * @return 웹 응답에 사용되는 FilteredDataWebResponse 인스턴스
      */
     public FilteredDataWebResponse toWebDto(FilteredDataResponse responseDto) {
         return new FilteredDataWebResponse(
@@ -40,6 +43,7 @@ public class DataFilterWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.topicLabel(),
                 responseDto.dataSourceLabel(),
                 responseDto.dataTypeLabel(),

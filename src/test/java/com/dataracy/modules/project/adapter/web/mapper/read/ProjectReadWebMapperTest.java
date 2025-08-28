@@ -47,7 +47,7 @@ class ProjectReadWebMapperTest {
     void toWebDtoProjectDetail() {
         // given
         ProjectConnectedDataResponse connectedDataResponse = new ProjectConnectedDataResponse(
-                1L, "데이터셋", 1L, "userA", "토픽", "CSV",
+                1L, "데이터셋", 1L, "userA", "https://~~", "토픽", "CSV",
                 LocalDate.of(2025, 8, 1),
                 LocalDate.of(2025, 8, 5),
                 "thumb.png", 3, 55, 100,
@@ -56,7 +56,7 @@ class ProjectReadWebMapperTest {
         );
 
         ProjectConnectedDataWebResponse mappedData = new ProjectConnectedDataWebResponse(
-                1L, "데이터셋", 1L, "userA", "토픽", "CSV",
+                1L, "데이터셋", 1L, "userA", "https://~~", "토픽", "CSV",
                 LocalDate.of(2025, 8, 1),
                 LocalDate.of(2025, 8, 5),
                 "thumb.png", 3, 55, 100,
@@ -65,12 +65,12 @@ class ProjectReadWebMapperTest {
         );
 
         ParentProjectResponse parentResponse = new ParentProjectResponse(
-                99L, "부모제목", "내용", 1L, "작성자",
+                99L, "부모제목", "내용", 1L, "작성자", "https://~~",
                 2L, 3L, 4L, LocalDateTime.now()
         );
 
         ParentProjectWebResponse mappedParent = new ParentProjectWebResponse(
-                99L, "부모제목", "내용", 1L, "작성자",
+                99L, "부모제목", "내용", 1L, "작성자", "https://~~",
                 2L, 3L, 4L, LocalDateTime.now()
         );
 
@@ -120,7 +120,7 @@ class ProjectReadWebMapperTest {
     void toWebDtoConnectedProject() {
         // given
         ConnectedProjectResponse responseDto = new ConnectedProjectResponse(
-                22L, "c-title", 1L, "user", "topic", 3L, 4L, 5L, LocalDateTime.now()
+                22L, "c-title", 1L, "user", "https://~~", "topic", 3L, 4L, 5L, LocalDateTime.now()
         );
 
         // when
@@ -137,7 +137,7 @@ class ProjectReadWebMapperTest {
     void toWebDtoChildProject() {
         // given
         ChildProjectResponse responseDto = new ChildProjectResponse(
-                33L, "child", "content", 1L, "user", 1L, 2L
+                33L, "child", "content", 1L, "user", "https://~~", 1L, 2L
         );
 
         // when
@@ -154,7 +154,7 @@ class ProjectReadWebMapperTest {
     void toWebDtoPopularProject() {
         // given
         PopularProjectResponse responseDto = new PopularProjectResponse(
-                44L, "pop-title", "content", 1L, "user", "thumb.png",
+                44L, "pop-title", "content", 1L, "user", "https://~~", "thumb.png",
                 "topic", "analysisPurpose", "dataSource", "authorLevel",
                 9L, 8L, 7L
         );

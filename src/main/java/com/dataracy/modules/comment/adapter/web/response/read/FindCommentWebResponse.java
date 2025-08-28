@@ -15,11 +15,11 @@ public record FindCommentWebResponse(
         @Schema(description = "작성자 닉네임", example = "박준형")
         String creatorName,
 
+        @Schema(description = "작성자 프로필 이미지", example = "https://www.s3.~~~")
+        String userProfileImageUrl,
+
         @Schema(description = "작성자 유형 라벨", example = "실무자")
         String authorLevelLabel,
-
-        @Schema(description = "작성자 프로필 이미지", example = "https://www.s3.~~~")
-        String userProfileUrl,
 
         @Schema(description = "댓글 내용", example = "해당 프로젝트에 대하여 댓글이 ~~~")
         String content,

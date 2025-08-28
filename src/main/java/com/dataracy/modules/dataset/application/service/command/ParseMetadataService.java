@@ -18,6 +18,7 @@ import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class ParseMetadataService implements ParseMetadataUseCase {
     private final IndexDataPort indexDataPort;
 
     private final FindUsernameUseCase findUsernameUseCase;
+    private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
@@ -75,7 +77,8 @@ public class ParseMetadataService implements ParseMetadataUseCase {
             String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(data.getDataSourceId());
             String dataTypeLabel = getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId());
             String username = findUsernameUseCase.findUsernameById(data.getUserId());
-            DataLabels dataLabels = new DataLabels(topicLabel, dataSourceLabel, dataTypeLabel, username);
+            String userProfileImageUrl = findUserThumbnailUseCase.findUserThumbnailById(data.getUserId());
+            DataLabels dataLabels = new DataLabels(topicLabel, dataSourceLabel, dataTypeLabel, username, userProfileImageUrl);
 
             // Elasticsearch 색인
             DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);

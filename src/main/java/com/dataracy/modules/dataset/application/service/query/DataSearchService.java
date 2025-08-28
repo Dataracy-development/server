@@ -68,11 +68,13 @@ public class DataSearchService implements
     }
 
     /**
-     * 필터 조건, 정렬 기준, 페이지네이션 정보를 바탕으로 데이터셋 목록을 조회하여 페이지 형태로 반환합니다.
+     * 필터, 정렬, 페이징을 적용해 데이터셋을 조회하고 각 항목을 레이블 정보로 보강하여 FilteredDataResponse의 페이지로 반환합니다.
      *
-     * @param request 데이터셋 필터 및 정렬 요청 정보
-     * @param pageable 페이지네이션 정보
-     * @return 필터링 및 정렬된 데이터셋 목록의 페이지
+     * <p>응답 항목은 데이터 자체와 사용자명 및 사용자 프로필 URL, 토픽/데이터소스/데이터타입 레이블, 연결된 프로젝트 수를 포함합니다.</p>
+     *
+     * @param request 데이터셋 필터와 정렬(예: 키워드, 정렬 타입 등)을 포함한 요청 객체
+     * @param pageable 페이지네이션(페이지 번호·크기·정렬) 정보
+     * @return 필터링·정렬·보강된 데이터셋의 페이지(Page&lt;FilteredDataResponse&gt;)
      */
     @Override
     @Transactional(readOnly = true)
@@ -88,6 +90,7 @@ public class DataSearchService implements
             return filteredDataDtoMapper.toResponseDto(
                     data,
                     labelResponse.usernameMap().get(data.getUserId()),
+                    labelResponse.userProfileUrlMap().get(data.getUserId()),
                     labelResponse.topicLabelMap().get(data.getTopicId()),
                     labelResponse.dataSourceLabelMap().get(data.getDataSourceId()),
                     labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),

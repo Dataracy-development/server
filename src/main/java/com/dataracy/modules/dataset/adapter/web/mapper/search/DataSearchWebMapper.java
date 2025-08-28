@@ -23,6 +23,7 @@ public class DataSearchWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.topicLabel(),
                 responseDto.dataSourceLabel(),
                 responseDto.dataTypeLabel(),
@@ -39,10 +40,10 @@ public class DataSearchWebMapper {
     }
 
     /**
-     * 최근 최소 데이터 애플리케이션 DTO를 웹 계층의 응답 DTO로 변환합니다.
+     * RecentMinimalDataResponse를 RecentMinimalDataWebResponse로 변환합니다.
      *
-     * @param responseDto 변환할 최근 최소 데이터 애플리케이션 응답 DTO
-     * @return id, 제목, 썸네일 URL, 생성일시 정보를 포함하는 웹 응답 DTO
+     * @param responseDto 변환 대상 애플리케이션 레이어 DTO
+     * @return id, title, creatorId, creatorName, userProfileImageUrl, dataThumbnailUrl, createdAt를 포함한 웹 응답 DTO
      */
     public RecentMinimalDataWebResponse toWebDto(RecentMinimalDataResponse responseDto) {
         return new RecentMinimalDataWebResponse(
@@ -50,6 +51,7 @@ public class DataSearchWebMapper {
                 responseDto.title(),
                 responseDto.creatorId(),
                 responseDto.creatorName(),
+                responseDto.userProfileImageUrl(),
                 responseDto.dataThumbnailUrl(),
                 responseDto.createdAt()
         );

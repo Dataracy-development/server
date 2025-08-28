@@ -43,13 +43,14 @@ public class ReadCommentService implements
     private final FindTargetIdsUseCase findTargetIdsUseCase;
 
     /**
-     * 지정된 프로젝트의 댓글 목록을 페이지 단위로 조회한다.
-     * 각 댓글에 작성자 정보, 답글 수, 사용자의 좋아요 여부를 포함하여 반환합니다.
+     * 지정된 프로젝트의 댓글을 페이지 단위로 조회하여 댓글 DTO로 반환한다.
      *
-     * @param userId 댓글을 조회하는 사용자의 ID
+     * 반환되는 각 댓글에는 작성자 이름·프로필 URL·저자 레벨 라벨, 답글 수, 그리고 조회 사용자의 좋아요 여부가 포함됩니다.
+     *
+     * @param userId 댓글을 조회하는 사용자의 ID (조회한 사용자의 좋아요 여부 판단에 사용)
      * @param projectId 댓글을 조회할 프로젝트의 ID
-     * @param pageable 페이지네이션 정보
-     * @return 댓글, 작성자 정보, 답글 수, 좋아요 여부가 포함된 페이지 결과
+     * @param pageable 페이지 네비게이션 정보
+     * @return 댓글 목록을 담은 페이지(Page&lt;FindCommentResponse&gt;)
      */
     @Override
     @Transactional(readOnly = true)
@@ -75,7 +76,7 @@ public class ReadCommentService implements
             return findCommentDtoMapper.toResponseDto(
                     comment,
                     result.usernameMap().get(comment.getUserId()),
-                    result.userThumbnailMap().get(comment.getUserId()),
+                    result.userProfileUrlMap().get(comment.getUserId()),
                     result.userAuthorLevelLabelMap().get(authorLevelId),
                     wrapper.replyCount(),
                     likedIds.contains(comment.getId())
@@ -87,15 +88,16 @@ public class ReadCommentService implements
     }
 
     /**
-     * 지정된 프로젝트의 원본 댓글에 대한 답글 목록을 페이지로 조회한다.
-     * 각 답글에 작성자 정보(닉네임, 썸네일, 작성자 레벨 라벨)와 사용자의 좋아요 여부를 포함해 반환합니다.
-     *
-     * @param userId    현재 사용자의 ID
-     * @param projectId 프로젝트 ID
-     * @param commentId 부모 댓글 ID
-     * @param pageable  페이지네이션 정보
-     * @return          답글, 작성자 메타데이터, 좋아요 여부가 포함된 페이지 객체
-     */
+         * 지정된 프로젝트의 원본 댓글에 대한 답글 목록을 페이지 단위로 조회한다.
+         *
+         * <p>각 답글에는 작성자 닉네임, 프로필 이미지 URL, 작성자 레벨 라벨과 현재 사용자의 좋아요 여부가 포함된 DTO로 변환되어 반환된다.</p>
+         *
+         * @param userId    현재 사용자의 ID (좋아요 여부 판정에 사용)
+         * @param projectId 프로젝트 ID
+         * @param commentId 부모 댓글 ID
+         * @param pageable  페이지네이션 정보
+         * @return          답글 목록(작성자 메타데이터 및 현재 사용자의 좋아요 여부 포함)을 담은 Page 객체
+         */
     @Override
     @Transactional(readOnly = true)
     public Page<FindReplyCommentResponse> findReplyComments(Long userId, Long projectId, Long commentId, Pageable pageable) {
@@ -120,7 +122,7 @@ public class ReadCommentService implements
             return findCommentDtoMapper.toResponseDto(
                     comment,
                     result.usernameMap().get(comment.getUserId()),
-                    result.userThumbnailMap().get(comment.getUserId()),
+                    result.userProfileUrlMap().get(comment.getUserId()),
                     result.userAuthorLevelLabelMap().get(authorLevelId),
                     likedIds.contains(comment.getId())
             );

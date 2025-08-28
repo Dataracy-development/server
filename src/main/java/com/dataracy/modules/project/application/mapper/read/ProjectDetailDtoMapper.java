@@ -14,22 +14,22 @@ import java.util.List;
 @Component
 public class ProjectDetailDtoMapper {
     /**
-     * Project 도메인과 추가 메타데이터를 병합하여 ProjectDetailResponse DTO를 생성합니다.
+     * Project 도메인과 추가 메타데이터를 병합해 ProjectDetailResponse를 생성합니다.
      *
-     * 주 도메인 정보는 전달된 Project의 게터에서 읽어오고, 작성자 정보·라벨·연결된 데이터 및 부모 프로젝트 정보는
-     * 해당 파라미터로 채워집니다.
+     * Project 객체의 필드(아이디, 제목, 작성자 아이디, 계속 여부, 부모 프로젝트 ID, 내용, 썸네일, 생성일, 댓글/좋아요/조회수 등)
+     * 를 응답 DTO의 기본 값으로 사용하고, 사용자명·프로필·라벨·연결 데이터·좋아요 여부 등은 전달된 파라미터로 채웁니다.
      *
-     * @param isLiked 사용자가 해당 프로젝트에 대해 좋아요를 눌렀는지 여부
-     * @param hasChild 하위(자식) 프로젝트가 존재하는지 여부
+     * @param isLiked 해당 사용자가 이 프로젝트에 좋아요를 눌렀는지 여부
+     * @param hasChild 이 프로젝트가 하위(자식) 프로젝트를 가지고 있는지 여부
      * @param connectedDataSets 프로젝트와 연결된 데이터셋 응답 객체 목록
-     * @param parentProjectResponse 부모 프로젝트 정보(없으면 null 가능)
-     * @return 프로젝트 상세 정보를 담은 ProjectDetailResponse 인스턴스
+     * @param parentProjectResponse 부모 프로젝트 정보; 부모가 없으면 null 허용
+     * @return 구성된 ProjectDetailResponse 인스턴스
      */
     public ProjectDetailResponse toResponseDto(
             Project project,
             String username,
-            String userIntroductionText,
             String userProfileImageUrl,
+            String userIntroductionText,
             String authorLevelLabel,
             String occupationLabel,
             String topicLabel,
@@ -45,8 +45,8 @@ public class ProjectDetailDtoMapper {
                 project.getTitle(),
                 project.getUserId(),
                 username,
-                userIntroductionText,
                 userProfileImageUrl,
+                userIntroductionText,
                 authorLevelLabel,
                 occupationLabel,
                 topicLabel,
