@@ -21,6 +21,7 @@ import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAna
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,6 +77,9 @@ class ProjectCommandServiceTest {
     private FindUsernameUseCase findUsernameUseCase;
 
     @Mock
+    private FindUserThumbnailUseCase findUserThumbnailUseCase;
+
+    @Mock
     private FileCommandUseCase fileCommandUseCase;
 
     @Mock
@@ -121,6 +125,7 @@ class ProjectCommandServiceTest {
         given(createProjectDtoMapper.toDomain(req, userId, null)).willReturn(toSave);
         given(createProjectPort.saveProject(toSave)).willReturn(saved);
         given(findUsernameUseCase.findUsernameById(userId)).willReturn("user");
+        given(findUserThumbnailUseCase.findUserThumbnailById(userId)).willReturn("https://profile");
         given(thumbnailFile.isEmpty()).willReturn(false);
         given(thumbnailFile.getOriginalFilename()).willReturn("file.png");
         given(fileCommandUseCase.uploadFile(anyString(), eq(thumbnailFile))).willReturn("https://file");
@@ -175,6 +180,7 @@ class ProjectCommandServiceTest {
         given(extractProjectOwnerPort.findDataIdsByProjectId(projectId)).willReturn(Set.of(10L, 20L));
         given(findProjectPort.findProjectById(projectId)).willReturn(Optional.of(updated));
         given(findUsernameUseCase.findUsernameById(5L)).willReturn("user");
+        given(findUserThumbnailUseCase.findUserThumbnailById(5L)).willReturn("https://profile");
         given(thumbnailFile.isEmpty()).willReturn(true);
 
         // when

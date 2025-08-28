@@ -21,7 +21,7 @@ class DataSearchWebMapperTest {
     void toWebDtoFromSimilarDataResponseSuccess() {
         // given
         SimilarDataResponse dto = new SimilarDataResponse(
-                1L, "title", 1L, "userA", "topic", "source", "type",
+                1L, "title", 1L, "userA", "https://~~", "topic", "source", "type",
                 LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31),
                 "desc", "thumb.png", 10, 2048L, 100, 20,
                 LocalDateTime.of(2022, 6, 1, 15, 0)
@@ -43,7 +43,7 @@ class DataSearchWebMapperTest {
     void toWebDtoFromRecentMinimalDataResponseSuccess() {
         // given
         RecentMinimalDataResponse dto = new RecentMinimalDataResponse(
-                2L, "recentData", 1L, "userA", "thumb.png", LocalDateTime.of(2023, 7, 1, 12, 0)
+                2L, "recentData", 1L, "userA", "https://~~", "thumb.png", LocalDateTime.of(2023, 7, 1, 12, 0)
         );
 
         // when

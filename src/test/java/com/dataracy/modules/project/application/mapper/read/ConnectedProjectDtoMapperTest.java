@@ -42,10 +42,11 @@ class ConnectedProjectDtoMapperTest {
         );
 
         String username = "tester";
+        String userProfileImageUrl = "https://~~";
         String topicLabel = "topic-label";
 
         // when
-        ConnectedProjectResponse response = mapper.toResponseDto(project, username, topicLabel);
+        ConnectedProjectResponse response = mapper.toResponseDto(project, username, userProfileImageUrl, topicLabel);
 
         // then
         assertThat(response.id()).isEqualTo(1L);

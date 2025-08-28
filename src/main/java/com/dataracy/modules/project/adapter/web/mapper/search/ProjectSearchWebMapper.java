@@ -14,7 +14,7 @@ public class ProjectSearchWebMapper {
      * @param responseDto 실시간 프로젝트 검색 결과 데이터
      * @return 실시간 프로젝트 웹 응답 객체
      */
-    public RealTimeProjectWebResponse toWeb(RealTimeProjectResponse responseDto) {
+    public RealTimeProjectWebResponse toWebDto(RealTimeProjectResponse responseDto) {
         return new RealTimeProjectWebResponse(
                 responseDto.id(),
                 responseDto.title(),
@@ -33,7 +33,7 @@ public class ProjectSearchWebMapper {
      * @param responseDto 변환할 SimilarProjectResponse DTO
      * @return 변환된 SimilarProjectWebResponse 객체
      */
-    public SimilarProjectWebResponse toWeb(SimilarProjectResponse responseDto) {
+    public SimilarProjectWebResponse toWebDto(SimilarProjectResponse responseDto) {
         return new SimilarProjectWebResponse(
                 responseDto.id(),
                 responseDto.title(),

@@ -79,13 +79,13 @@ class DataSearchControllerTest {
         int size = 3;
 
         SimilarDataResponse dto = new SimilarDataResponse(
-                1L, "title", 1L, "userA", "topic", "source", "type",
+                1L, "title", 1L, "userA", "https://~~", "topic", "source", "type",
                 LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 5),
                 "desc", "thumb.png", 10, 1048576L,
                 5, 3, LocalDateTime.of(2025, 8, 4, 10, 30)
         );
         SimilarDataWebResponse webRes = new SimilarDataWebResponse(
-                1L, "title", 1L, "userA", "topic", "source", "type",
+                1L, "title", 1L, "userA", "https://~~", "topic", "source", "type",
                 LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 5),
                 "desc", "thumb.png", 10, 1048576L,
                 5, 3, LocalDateTime.of(2025, 8, 4, 10, 30)
@@ -117,13 +117,13 @@ class DataSearchControllerTest {
                 new FilteringDataRequest(null, null, null, null, null, null);
 
         FilteredDataResponse dto = new FilteredDataResponse(
-                1L, "filtered-title", 1L, "userA", "topic", "source", "type",
+                1L, "filtered-title", 1L, "userA", "https://~~", "topic", "source", "type",
                 LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 5),
                 "desc", "thumb.png", 5, 2048L, 20, 10,
                 LocalDateTime.of(2025, 8, 4, 11, 0), 2L
         );
         FilteredDataWebResponse webRes = new FilteredDataWebResponse(
-                1L, "filtered-title", 1L, "userA", "topic", "source", "type",
+                1L, "filtered-title", 1L, "userA", "https://~~", "topic", "source", "type",
                 LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 5),
                 "desc", "thumb.png", 5, 2048L, 20, 10,
                 LocalDateTime.of(2025, 8, 4, 11, 0), 2L
@@ -156,10 +156,10 @@ class DataSearchControllerTest {
         int size = 2;
 
         RecentMinimalDataResponse dto = new RecentMinimalDataResponse(
-                99L, "실시간데이터", 1L, "userA", "thumb.png", LocalDateTime.of(2025, 8, 25, 10, 0)
+                99L, "실시간데이터", 1L, "userA", "https://~~", "thumb.png", LocalDateTime.of(2025, 8, 25, 10, 0)
         );
         RecentMinimalDataWebResponse webRes = new RecentMinimalDataWebResponse(
-                99L, "실시간데이터", 1L, "userA", "thumb.png", LocalDateTime.of(2025, 8, 25, 10, 0)
+                99L, "실시간데이터", 1L, "userA", "https://~~", "thumb.png", LocalDateTime.of(2025, 8, 25, 10, 0)
         );
 
         given(searchRealTimeDataSetsUseCase.searchRealTimeDataSets(keyword, size))
