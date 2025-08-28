@@ -51,7 +51,7 @@ public class ProjectSearchController implements ProjectSearchApi {
         try {
             List<RealTimeProjectResponse> responseDto = searchRealTimeProjectsUseCase.searchByKeyword(keyword, size);
             webResponse = responseDto.stream()
-                    .map(projectSearchWebMapper::toWeb)
+                    .map(projectSearchWebMapper::toWebDto)
                     .toList();
         } finally {
             LoggerFactory.api().logResponse("[SearchRealTimeProjects] 자동완성을 위한 실시간 프로젝트 목록 조회 API 응답 완료", startTime);
@@ -76,7 +76,7 @@ public class ProjectSearchController implements ProjectSearchApi {
         try {
             List<SimilarProjectResponse> responseDto = searchSimilarProjectsUseCase.searchSimilarProjects(projectId, size);
             webResponse = responseDto.stream()
-                    .map(projectSearchWebMapper::toWeb)
+                    .map(projectSearchWebMapper::toWebDto)
                     .toList();
         } finally {
             LoggerFactory.api().logResponse("[SearchSimilarProjects] 유사 프로젝트 목록 조회 API 응답 완료", startTime);

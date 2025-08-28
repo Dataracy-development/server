@@ -42,9 +42,10 @@ class ParentProjectDtoMapperTest {
         );
 
         String username = "tester";
+        String userProfileImageUrl = "https://~~";
 
         // when
-        ParentProjectResponse response = mapper.toResponseDto(project, username);
+        ParentProjectResponse response = mapper.toResponseDto(project, username, userProfileImageUrl);
 
         // then
         assertThat(response.id()).isEqualTo(1L);

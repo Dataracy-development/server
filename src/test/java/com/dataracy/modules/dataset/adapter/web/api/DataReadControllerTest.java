@@ -68,7 +68,7 @@ class DataReadControllerTest {
     void getPopularDataSetsShouldReturnOk() throws Exception {
         // given
         PopularDataResponse resDto = new PopularDataResponse(
-                1L, "데이터1", 1L, "userA", "경제", "통계청", "CSV",
+                1L, "데이터1", 1L, "userA", "https://~~", "경제", "통계청", "CSV",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 12, 31),
                 "설명입니다", "thumb.png",
@@ -77,7 +77,7 @@ class DataReadControllerTest {
                 5L
         );
         PopularDataWebResponse webRes = new PopularDataWebResponse(
-                1L, "데이터1", 1L, "userA", "경제", "통계청", "CSV",
+                1L, "데이터1", 1L, "userA", "https://~~", "경제", "통계청", "CSV",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 12, 31),
                 "설명입니다", "thumb.png",
@@ -145,8 +145,8 @@ class DataReadControllerTest {
     @DisplayName("최근 데이터셋 조회 성공 시 200 반환")
     void getRecentDataSetsShouldReturnOk() throws Exception {
         // given
-        RecentMinimalDataResponse resDto = new RecentMinimalDataResponse(10L, "데이터10", 1L, "userA", "thumb.png", LocalDateTime.now());
-        RecentMinimalDataWebResponse webRes = new RecentMinimalDataWebResponse(10L, "데이터10", 1L, "userA", "thumb.png", LocalDateTime.now());
+        RecentMinimalDataResponse resDto = new RecentMinimalDataResponse(10L, "데이터10", 1L, "userA", "https://~~", "thumb.png", LocalDateTime.now());
+        RecentMinimalDataWebResponse webRes = new RecentMinimalDataWebResponse(10L, "데이터10", 1L, "userA", "https://~~", "thumb.png", LocalDateTime.now());
 
         given(getRecentMinimalDataSetsUseCase.getRecentDataSets(2)).willReturn(List.of(resDto));
         given(mapper.toWebDto(resDto)).willReturn(webRes);
@@ -186,7 +186,7 @@ class DataReadControllerTest {
     void findConnectedDataSetsShouldReturnOk() throws Exception {
         // given
         ConnectedDataResponse resDto = new ConnectedDataResponse(
-                7L, "연결된데이터", 1L, "userA", "경제", "CSV",
+                7L, "연결된데이터", 1L, "userA", "https://~~", "경제", "CSV",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 12, 31),
                 "thumb7.png", 123, 2048L,
@@ -195,7 +195,7 @@ class DataReadControllerTest {
                 4L
         );
         ConnectedDataWebResponse webRes = new ConnectedDataWebResponse(
-                7L, "연결된데이터", 1L, "userA", "경제", "CSV",
+                7L, "연결된데이터", 1L, "userA", "https://~~", "경제", "CSV",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 12, 31),
                 "thumb7.png", 123, 2048L,

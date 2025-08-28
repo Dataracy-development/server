@@ -6,6 +6,7 @@ import com.dataracy.modules.reference.application.port.in.analysispurpose.GetAna
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,9 @@ class ProjectLabelMapServiceTest {
 
     @Mock
     private FindUsernameUseCase findUsernameUseCase;
+
+    @Mock
+    private FindUserThumbnailUseCase findUserThumbnailUseCase;
 
     @Mock
     private GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
@@ -56,6 +60,9 @@ class ProjectLabelMapServiceTest {
         given(findUsernameUseCase.findUsernamesByIds(List.of(100L)))
                 .willReturn(Map.of(100L, "u"));
 
+        given(findUserThumbnailUseCase.findUserThumbnailsByIds(List.of(100L)))
+                .willReturn(Map.of(100L, "https://profile"));
+
         given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of(10L)))
                 .willReturn(Map.of(10L, "t"));
 
@@ -73,6 +80,7 @@ class ProjectLabelMapServiceTest {
 
         // then
         assertThat(res.usernameMap()).isEqualTo(Map.of(100L, "u"));
+        assertThat(res.userProfileUrlMap()).isEqualTo(Map.of(100L, "https://profile"));
         assertThat(res.topicLabelMap()).isEqualTo(Map.of(10L, "t"));
         assertThat(res.analysisPurposeLabelMap()).isEqualTo(Map.of(20L, "ap"));
         assertThat(res.dataSourceLabelMap()).isEqualTo(Map.of(30L, "ds"));

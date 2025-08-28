@@ -19,7 +19,7 @@ class ParentProjectWebMapperTest {
         // given
         LocalDateTime createdAt = LocalDateTime.of(2025, 8, 27, 12, 0);
         ParentProjectResponse responseDto = new ParentProjectResponse(
-                1L, "parent-title", "parent-content", 1L, "tester",
+                1L, "parent-title", "parent-content", 1L, "tester", "https://~~",
                 5L, 6L, 7L, createdAt
         );
 
