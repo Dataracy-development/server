@@ -43,6 +43,7 @@ public class ProjectDetailDtoMapper {
         return new ProjectDetailResponse(
                 project.getId(),
                 project.getTitle(),
+                project.getUserId(),
                 username,
                 userIntroductionText,
                 userProfileImageUrl,

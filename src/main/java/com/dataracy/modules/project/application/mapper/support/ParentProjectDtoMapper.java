@@ -28,6 +28,7 @@ public class ParentProjectDtoMapper {
                 project.getId(),
                 project.getTitle(),
                 project.getContent(),
+                project.getUserId(),
                 username,
                 project.getCommentCount(),
                 project.getLikeCount(),

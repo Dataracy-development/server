@@ -20,7 +20,8 @@ public class ReadCommentWebMapper {
     public FindCommentWebResponse toWebDto(FindCommentResponse responseDto) {
         return new FindCommentWebResponse(
                 responseDto.id(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.authorLevelLabel(),
                 responseDto.userProfileUrl(),
                 responseDto.content(),
@@ -40,7 +41,8 @@ public class ReadCommentWebMapper {
     public FindReplyCommentWebResponse toWebDto(FindReplyCommentResponse responseDto) {
         return new FindReplyCommentWebResponse(
                 responseDto.id(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.authorLevelLabel(),
                 responseDto.userProfileUrl(),
                 responseDto.content(),

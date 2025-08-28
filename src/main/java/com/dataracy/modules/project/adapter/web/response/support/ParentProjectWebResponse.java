@@ -15,8 +15,11 @@ public record ParentProjectWebResponse(
         @Schema(description = "분석 내용", example = "디자인과 관련된 분석 내용은 ~~")
         String content,
 
-        @Schema(description = "작성자명", example = "박준형")
-        String username,
+        @Schema(description = "작성자 아이디", example = "1")
+        Long creatorId,
+
+        @Schema(description = "작성자 닉네임", example = "박준형")
+        String creatorName,
 
         @Schema(description = "댓글 수", example = "1")
         Long commentCount,

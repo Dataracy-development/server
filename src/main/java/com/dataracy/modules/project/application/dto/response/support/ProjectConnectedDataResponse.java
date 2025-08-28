@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 public record ProjectConnectedDataResponse(
         Long id,
         String title,
+        Long creatorId,
+        String creatorName,
         String topicLabel,
         String dataTypeLabel,
         LocalDate startDate,
@@ -29,6 +31,8 @@ public record ProjectConnectedDataResponse(
         return new ProjectConnectedDataResponse(
                 data.id(),
                 data.title(),
+                data.creatorId(),
+                data.creatorName(),
                 data.topicLabel(),
                 data.dataTypeLabel(),
                 data.startDate(),

@@ -29,7 +29,7 @@ public class CommentKafkaProducerAdapter implements SendCommentEventPort {
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
                         LoggerFactory.kafka().logError(TOPIC_UPLOAD, "댓글 작성 이벤트 발송 처리 실패: projectId=" + projectId, ex);
-                        // 필요시 재시도 로직 또는 예외 처리
+                        throw new RuntimeException(ex);
                     } else {
                         LoggerFactory.kafka().logProduce(TOPIC_UPLOAD, "댓글 작성 이벤트 발송됨: projectId=" + projectId);
                     }
@@ -47,6 +47,7 @@ public class CommentKafkaProducerAdapter implements SendCommentEventPort {
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
                         LoggerFactory.kafka().logError(TOPIC_DELETE, "댓글 삭제 이벤트 발송 처리 실패: projectId=" + projectId, ex);
+                        throw new RuntimeException(ex);
                     } else {
                         LoggerFactory.kafka().logProduce(TOPIC_DELETE, "댓글 삭제 이벤트 발송됨: projectId=" + projectId);
                     }

@@ -32,12 +32,12 @@ public class CommentCommandController implements CommentCommandApi {
 
     /**
      * 프로젝트에 새 댓글을 등록하고 생성된 댓글 정보를 반환합니다.
-     *
+     * <p>
      * 요청 바디로 전달된 댓글 데이터를 사용해 지정된 프로젝트에 댓글을 생성하고,
      * 생성된 댓글의 정보를 담은 SuccessResponse를 HTTP 201 Created 상태로 반환합니다.
      *
-     * @param projectId 댓글을 등록할 프로젝트의 식별자
-     * @param userId 댓글을 작성하는 사용자의 식별자
+     * @param projectId  댓글을 등록할 프로젝트의 식별자
+     * @param userId     댓글을 작성하는 사용자의 식별자
      * @param webRequest 댓글 생성 요청 데이터
      * @return 생성된 댓글 정보를 페이로드로 포함한 SuccessResponse를 담은 ResponseEntity(HTTP 201)
      */
@@ -61,8 +61,8 @@ public class CommentCommandController implements CommentCommandApi {
     /**
      * 프로젝트 내 특정 댓글을 수정하는 REST API 엔드포인트입니다.
      *
-     * @param projectId 댓글이 속한 프로젝트의 ID입니다.
-     * @param commentId 수정할 댓글의 ID입니다.
+     * @param projectId  댓글이 속한 프로젝트의 ID입니다.
+     * @param commentId  수정할 댓글의 ID입니다.
      * @param webRequest 댓글 수정 요청 정보를 담고 있습니다.
      * @return 댓글 수정 성공 상태와 함께 HTTP 200 OK 응답을 반환합니다.
      */
