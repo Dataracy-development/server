@@ -19,7 +19,7 @@ class ParentProjectWebMapperTest {
         // given
         LocalDateTime createdAt = LocalDateTime.of(2025, 8, 27, 12, 0);
         ParentProjectResponse responseDto = new ParentProjectResponse(
-                1L, "parent-title", "parent-content", "tester",
+                1L, "parent-title", "parent-content", 1L, "tester",
                 5L, 6L, 7L, createdAt
         );
 
@@ -30,7 +30,7 @@ class ParentProjectWebMapperTest {
         assertThat(webResponse.id()).isEqualTo(1L);
         assertThat(webResponse.title()).isEqualTo("parent-title");
         assertThat(webResponse.content()).isEqualTo("parent-content");
-        assertThat(webResponse.username()).isEqualTo("tester");
+        assertThat(webResponse.creatorName()).isEqualTo("tester");
         assertThat(webResponse.commentCount()).isEqualTo(5L);
         assertThat(webResponse.likeCount()).isEqualTo(6L);
         assertThat(webResponse.viewCount()).isEqualTo(7L);

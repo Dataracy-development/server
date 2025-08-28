@@ -50,7 +50,7 @@ class ParentProjectDtoMapperTest {
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.title()).isEqualTo("parent-title");
         assertThat(response.content()).isEqualTo("parent-content");
-        assertThat(response.username()).isEqualTo("tester");
+        assertThat(response.creatorName()).isEqualTo("tester");
         assertThat(response.commentCount()).isEqualTo(5L);
         assertThat(response.likeCount()).isEqualTo(6L);
         assertThat(response.viewCount()).isEqualTo(7L);

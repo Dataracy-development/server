@@ -46,7 +46,7 @@ class ProjectDetailDtoMapperTest {
 
         List<ProjectConnectedDataResponse> connectedDataSets = List.of(
                 new ProjectConnectedDataResponse(
-                        100L, "data-title", "topic-label", "CSV",
+                        100L, "data-title", 1L, "userA", "topic-label", "CSV",
                         LocalDate.of(2025, 8, 1), LocalDate.of(2025, 8, 5),
                         "data-thumb.png", 3, 55, 100,
                         LocalDateTime.of(2025, 8, 4, 10, 30),
@@ -55,7 +55,7 @@ class ProjectDetailDtoMapperTest {
         );
 
         ParentProjectResponse parentProjectResponse = new ParentProjectResponse(
-                55L, "parent-title", "parent-content", "parent-user",
+                55L, "parent-title", "parent-content", 1L, "parent-user",
                 2L, 3L, 4L, LocalDateTime.of(2025, 8, 20, 12, 0)
         );
 
@@ -79,7 +79,8 @@ class ProjectDetailDtoMapperTest {
         // then
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.title()).isEqualTo("proj-title");
-        assertThat(response.username()).isEqualTo("tester");
+        assertThat(response.creatorId()).isEqualTo(99L);
+        assertThat(response.creatorName()).isEqualTo("tester");
         assertThat(response.userIntroductionText()).isEqualTo("intro text");
         assertThat(response.userProfileImageUrl()).isEqualTo("profile.png");
         assertThat(response.authorLevelLabel()).isEqualTo("author-level");

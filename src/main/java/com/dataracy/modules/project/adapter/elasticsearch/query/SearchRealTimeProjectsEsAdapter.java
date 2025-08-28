@@ -71,6 +71,7 @@ public class SearchRealTimeProjectsEsAdapter implements SearchRealTimeProjectsPo
                         return new RealTimeProjectResponse(
                                 doc.id(),
                                 doc.title(),
+                                doc.userId(),
                                 doc.username(),
                                 doc.projectThumbnailUrl()
                         );

@@ -63,6 +63,7 @@ class CommentReadControllerTest {
         // given
         FindCommentResponse appRes = new FindCommentResponse(
                 1L,
+                1L,
                 "닉네임",
                 "등급",
                 "url",
@@ -72,6 +73,7 @@ class CommentReadControllerTest {
                 LocalDateTime.now(),
                 false);
         FindCommentWebResponse webRes = new FindCommentWebResponse(
+                1L,
                 1L,
                 "닉네임",
                 "등급",
@@ -105,6 +107,7 @@ class CommentReadControllerTest {
         // given
         FindReplyCommentResponse appRes = new FindReplyCommentResponse(
                 2L,
+                1L,
                 "닉네임",
                 "등급",
                 "url",
@@ -115,6 +118,7 @@ class CommentReadControllerTest {
         );
         FindReplyCommentWebResponse webRes = new FindReplyCommentWebResponse(
                 2L,
+                1L,
                 "닉네임",
                 "등급",
                 "url",

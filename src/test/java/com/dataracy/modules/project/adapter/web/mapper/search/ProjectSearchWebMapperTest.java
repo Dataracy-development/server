@@ -18,7 +18,7 @@ class ProjectSearchWebMapperTest {
     void toWebRealTimeProject() {
         // given
         RealTimeProjectResponse responseDto = new RealTimeProjectResponse(
-                1L, "real-time title", "userA", "thumb.png"
+                1L, "real-time title", 1L, "userA", "thumb.png"
         );
 
         // when
@@ -27,7 +27,7 @@ class ProjectSearchWebMapperTest {
         // then
         assertThat(webResponse.id()).isEqualTo(1L);
         assertThat(webResponse.title()).isEqualTo("real-time title");
-        assertThat(webResponse.username()).isEqualTo("userA");
+        assertThat(webResponse.creatorName()).isEqualTo("userA");
         assertThat(webResponse.projectThumbnailUrl()).isEqualTo("thumb.png");
     }
 
@@ -36,7 +36,7 @@ class ProjectSearchWebMapperTest {
     void toWebSimilarProject() {
         // given
         SimilarProjectResponse responseDto = new SimilarProjectResponse(
-                2L, "similar title", "some content", "userB", "thumb2.png",
+                2L, "similar title", "some content", 1L, "userB", "thumb2.png",
                 "topicLabel", "analysisPurposeLabel", "dataSourceLabel", "authorLevelLabel",
                 10L, 20L, 30L
         );
@@ -48,7 +48,7 @@ class ProjectSearchWebMapperTest {
         assertThat(webResponse.id()).isEqualTo(2L);
         assertThat(webResponse.title()).isEqualTo("similar title");
         assertThat(webResponse.content()).isEqualTo("some content");
-        assertThat(webResponse.username()).isEqualTo("userB");
+        assertThat(webResponse.creatorName()).isEqualTo("userB");
         assertThat(webResponse.projectThumbnailUrl()).isEqualTo("thumb2.png");
         assertThat(webResponse.topicLabel()).isEqualTo("topicLabel");
         assertThat(webResponse.analysisPurposeLabel()).isEqualTo("analysisPurposeLabel");

@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
  *
  * @param id 데이터 ID
  * @param title 데이터 제목
- * @param username 데이터 업로더 유저 닉네임
+ * @param creatorId 작성자 아이디
+ * @param creatorName 작성자 닉네임
  * @param topicLabel 데이터 토픽 라벨
  * @param dataSourceLabel 데이터 출처 라벨
  * @param dataTypeLabel 데이터 유형 라벨
@@ -25,7 +26,8 @@ import java.time.LocalDateTime;
 public record PopularDataResponse(
         Long id,
         String title,
-        String username,
+        Long creatorId,
+        String creatorName,
         String topicLabel,
         String dataSourceLabel,
         String dataTypeLabel,

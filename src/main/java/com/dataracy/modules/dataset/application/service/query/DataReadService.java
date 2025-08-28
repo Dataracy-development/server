@@ -16,6 +16,7 @@ import com.dataracy.modules.reference.application.port.in.datasource.GetDataSour
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +48,7 @@ public class DataReadService implements
 
     private final GetUserInfoUseCase getUserInfoUseCase;
 
+    private final FindUsernameUseCase findUsernameUseCase;
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
@@ -137,8 +140,16 @@ public class DataReadService implements
         Instant startTime = LoggerFactory.service().logStart("GetRecentMinimalDataSetsUseCase", "최신 미니 데이터셋 목록 조회 서비스 시작 size=" + size);
 
         List<Data> recentDataSets = getRecentDataSetsPort.getRecentDataSets(size);
+        List<Long> userIds = recentDataSets.stream()
+                .map(Data::getUserId)
+                .toList();
+
+        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
         List<RecentMinimalDataResponse> recentMinimalDataResponses = recentDataSets.stream()
-                .map(dataReadDtoMapper::toResponseDto)
+                .map(data -> dataReadDtoMapper.toResponseDto(
+                            data,
+                            usernameMap.get(data.getUserId())
+                ))
                 .toList();
 
         LoggerFactory.service().logSuccess("GetRecentMinimalDataSetsUseCase", "최신 미니 데이터셋 목록 조회 서비스 종료 size=" + size, startTime);
@@ -177,6 +188,7 @@ public class DataReadService implements
             Data data = wrapper.data();
             return dataReadDtoMapper.toResponseDto(
                     data,
+                    labelResponse.usernameMap().get(data.getUserId()),
                     labelResponse.topicLabelMap().get(data.getTopicId()),
                     labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
                     wrapper.countConnectedProjects()
@@ -212,6 +224,7 @@ public class DataReadService implements
                     Data data = wrapper.data();
                     return dataReadDtoMapper.toResponseDto(
                             data,
+                            labelResponse.usernameMap().get(data.getUserId()),
                             labelResponse.topicLabelMap().get(data.getTopicId()),
                             labelResponse.dataTypeLabelMap().get(data.getDataTypeId()),
                             wrapper.countConnectedProjects()

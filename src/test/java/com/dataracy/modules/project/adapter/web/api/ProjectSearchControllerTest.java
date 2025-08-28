@@ -112,10 +112,10 @@ class ProjectSearchControllerTest {
         int size = 2;
 
         RealTimeProjectResponse dto = new RealTimeProjectResponse(
-                1L, "실시간 프로젝트", "작성자", "thumb.png"
+                1L, "실시간 프로젝트", 1L, "작성자", "thumb.png"
         );
         RealTimeProjectWebResponse webDto = new RealTimeProjectWebResponse(
-                dto.id(), dto.title(), dto.username(), dto.projectThumbnailUrl()
+                dto.id(), dto.title(), dto.creatorId(), dto.creatorName(), dto.projectThumbnailUrl()
         );
 
         given(searchRealTimeProjectsUseCase.searchByKeyword(keyword, size)).willReturn(List.of(dto));
@@ -140,12 +140,12 @@ class ProjectSearchControllerTest {
         int size = 2;
 
         SimilarProjectResponse dto = new SimilarProjectResponse(
-                2L, "유사 프로젝트", "내용", "작성자",
+                2L, "유사 프로젝트", "내용", 1L, "작성자",
                 "thumb.png", "주제", "목적", "출처", "레벨",
                 5L, 10L, 15L
         );
         SimilarProjectWebResponse webDto = new SimilarProjectWebResponse(
-                dto.id(), dto.title(), dto.content(), dto.username(),
+                dto.id(), dto.title(), dto.content(), dto.creatorId(), dto.creatorName(),
                 dto.projectThumbnailUrl(), dto.topicLabel(), dto.analysisPurposeLabel(),
                 dto.dataSourceLabel(), dto.authorLevelLabel(),
                 dto.commentCount(), dto.likeCount(), dto.viewCount()
@@ -162,7 +162,7 @@ class ProjectSearchControllerTest {
                 .andExpect(jsonPath("$.code").value(ProjectSuccessStatus.FIND_SIMILAR_PROJECTS.getCode()))
                 .andExpect(jsonPath("$.data[0].title").value("유사 프로젝트"))
                 .andExpect(jsonPath("$.data[0].content").value("내용"))
-                .andExpect(jsonPath("$.data[0].username").value("작성자"));
+                .andExpect(jsonPath("$.data[0].creatorName").value("작성자"));
     }
 
     @Test
@@ -177,12 +177,12 @@ class ProjectSearchControllerTest {
         );
 
         FilteredProjectResponse dto = new FilteredProjectResponse(
-                3L, "필터링된 프로젝트", "내용", "작성자",
+                3L, "필터링된 프로젝트", "내용", 1L, "작성자",
                 "thumb.png", "주제", "목적", "출처", "레벨",
                 3L, 4L, 5L, LocalDateTime.now(), new ArrayList<>()
         );
         FilteredProjectWebResponse webDto = new FilteredProjectWebResponse(
-                dto.id(), dto.title(), dto.content(), dto.username(),
+                dto.id(), dto.title(), dto.content(), dto.creatorId(), dto.creatorName(),
                 dto.projectThumbnailUrl(), dto.topicLabel(), dto.analysisPurposeLabel(),
                 dto.dataSourceLabel(), dto.authorLevelLabel(),
                 dto.commentCount(), dto.likeCount(), dto.viewCount(), dto.createdAt(), new ArrayList<>()
@@ -207,6 +207,6 @@ class ProjectSearchControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ProjectSuccessStatus.FIND_FILTERED_PROJECTS.getCode()))
                 .andExpect(jsonPath("$.data.content[0].title").value("필터링된 프로젝트"))
-                .andExpect(jsonPath("$.data.content[0].username").value("작성자"));
+                .andExpect(jsonPath("$.data.content[0].creatorName").value("작성자"));
     }
 }

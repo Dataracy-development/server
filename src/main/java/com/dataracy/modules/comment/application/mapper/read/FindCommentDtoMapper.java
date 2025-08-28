@@ -31,6 +31,7 @@ public class FindCommentDtoMapper {
     ) {
         return new FindCommentResponse(
                 comment.getId(),
+                comment.getUserId(),
                 username,
                 authorLevelLabel,
                 userProfileUrl,
@@ -61,6 +62,7 @@ public class FindCommentDtoMapper {
     ) {
         return new FindReplyCommentResponse(
                 comment.getId(),
+                comment.getUserId(),
                 username,
                 authorLevelLabel,
                 userProfileUrl,

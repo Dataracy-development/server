@@ -94,7 +94,7 @@ class DataSearchServiceTest {
                     .willReturn(Optional.of(sample()));
             given(similarPort.searchSimilarDataSets(any(), eq(3)))
                     .willReturn(List.of(new SimilarDataResponse(
-                            1L, "t", "topic", "ds", "dt",
+                            1L, "t", 1L, "userA", "topic", "ds", "dt",
                             null, null, "d", "thumb", 1, 10L, 1, 1, LocalDateTime.now()
                     )));
 
@@ -139,9 +139,9 @@ class DataSearchServiceTest {
                     .willReturn(page);
             given(labelMapUseCase.labelMapping(any()))
                     .willReturn(new DataLabelMapResponse(Map.of(), Map.of(), Map.of(), Map.of()));
-            given(mapper.toResponseDto(any(), any(), any(), any(), any()))
+            given(mapper.toResponseDto(any(), any(), any(), any(), any(), any()))
                     .willReturn(new FilteredDataResponse(
-                            1L, "t", "topic", "ds", "dt",
+                            1L, "t", 1L, "userA", "topic", "ds", "dt",
                             null, null, "d", "thumb", 1, 10L, 1, 1,
                             LocalDateTime.now(), 2L
                     ));
@@ -165,7 +165,7 @@ class DataSearchServiceTest {
             // given
             given(rtPort.searchRealTimeDataSets("k", 3))
                     .willReturn(List.of(new RecentMinimalDataResponse(
-                            1L, "t", "thumb", LocalDateTime.now()
+                            1L, "t", 1L, "userA", "thumb", LocalDateTime.now()
                     )));
 
             // when

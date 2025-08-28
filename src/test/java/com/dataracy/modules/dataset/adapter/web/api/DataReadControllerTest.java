@@ -68,7 +68,7 @@ class DataReadControllerTest {
     void getPopularDataSetsShouldReturnOk() throws Exception {
         // given
         PopularDataResponse resDto = new PopularDataResponse(
-                1L, "데이터1", "사용자A", "경제", "통계청", "CSV",
+                1L, "데이터1", 1L, "userA", "경제", "통계청", "CSV",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 12, 31),
                 "설명입니다", "thumb.png",
@@ -77,7 +77,7 @@ class DataReadControllerTest {
                 5L
         );
         PopularDataWebResponse webRes = new PopularDataWebResponse(
-                1L, "데이터1", "사용자A", "경제", "통계청", "CSV",
+                1L, "데이터1", 1L, "userA", "경제", "통계청", "CSV",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 12, 31),
                 "설명입니다", "thumb.png",
@@ -97,7 +97,7 @@ class DataReadControllerTest {
                 .andExpect(jsonPath("$.code").value(DataSuccessStatus.FIND_POPULAR_DATASETS.getCode()))
                 .andExpect(jsonPath("$.message").value(DataSuccessStatus.FIND_POPULAR_DATASETS.getMessage()))
                 .andExpect(jsonPath("$.data[0].title").value("데이터1"))
-                .andExpect(jsonPath("$.data[0].username").value("사용자A"));
+                .andExpect(jsonPath("$.data[0].creatorName").value("userA"));
     }
 
     @Test
@@ -105,7 +105,7 @@ class DataReadControllerTest {
     void getDataDetailShouldReturnOk() throws Exception {
         // given
         DataDetailResponse resDto = new DataDetailResponse(
-                2L, "데이터2", "사용자B",
+                2L, "데이터2", 1L, "userA",
                 "profile.png", "자기소개",
                 "작성자", "연구원", "의료", "보건복지부", "XLSX",
                 LocalDate.of(2022, 5, 1),
@@ -116,7 +116,7 @@ class DataReadControllerTest {
                 LocalDateTime.of(2022, 6, 1, 14, 30)
         );
         DataDetailWebResponse webRes = new DataDetailWebResponse(
-                2L, "데이터2", "사용자B",
+                2L, "데이터2", 1L, "userA",
                 "profile.png", "자기소개",
                 "작성자", "연구원", "의료", "보건복지부", "XLSX",
                 LocalDate.of(2022, 5, 1),
@@ -145,8 +145,8 @@ class DataReadControllerTest {
     @DisplayName("최근 데이터셋 조회 성공 시 200 반환")
     void getRecentDataSetsShouldReturnOk() throws Exception {
         // given
-        RecentMinimalDataResponse resDto = new RecentMinimalDataResponse(10L, "데이터10", "thumb.png", LocalDateTime.now());
-        RecentMinimalDataWebResponse webRes = new RecentMinimalDataWebResponse(10L, "데이터10", "thumb.png", LocalDateTime.now());
+        RecentMinimalDataResponse resDto = new RecentMinimalDataResponse(10L, "데이터10", 1L, "userA", "thumb.png", LocalDateTime.now());
+        RecentMinimalDataWebResponse webRes = new RecentMinimalDataWebResponse(10L, "데이터10", 1L, "userA", "thumb.png", LocalDateTime.now());
 
         given(getRecentMinimalDataSetsUseCase.getRecentDataSets(2)).willReturn(List.of(resDto));
         given(mapper.toWebDto(resDto)).willReturn(webRes);
@@ -186,7 +186,7 @@ class DataReadControllerTest {
     void findConnectedDataSetsShouldReturnOk() throws Exception {
         // given
         ConnectedDataResponse resDto = new ConnectedDataResponse(
-                7L, "연결된데이터", "경제", "CSV",
+                7L, "연결된데이터", 1L, "userA", "경제", "CSV",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 12, 31),
                 "thumb7.png", 123, 2048L,
@@ -195,7 +195,7 @@ class DataReadControllerTest {
                 4L
         );
         ConnectedDataWebResponse webRes = new ConnectedDataWebResponse(
-                7L, "연결된데이터", "경제", "CSV",
+                7L, "연결된데이터", 1L, "userA", "경제", "CSV",
                 LocalDate.of(2023, 1, 1),
                 LocalDate.of(2023, 12, 31),
                 "thumb7.png", 123, 2048L,

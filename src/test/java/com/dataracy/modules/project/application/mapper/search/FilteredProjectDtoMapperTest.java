@@ -61,7 +61,7 @@ class FilteredProjectDtoMapperTest {
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.title()).isEqualTo("parent-title");
         assertThat(response.content()).isEqualTo("parent-content");
-        assertThat(response.username()).isEqualTo("parent-user");
+        assertThat(response.creatorName()).isEqualTo("parent-user");
         assertThat(response.projectThumbnailUrl()).isEqualTo("parent-thumb.png");
         assertThat(response.topicLabel()).isEqualTo("topic-label");
         assertThat(response.analysisPurposeLabel()).isEqualTo("analysis-purpose-label");
@@ -78,11 +78,11 @@ class FilteredProjectDtoMapperTest {
         ChildProjectResponse mappedChild1 = response.childProjects().get(0);
         assertThat(mappedChild1.id()).isEqualTo(101L);
         assertThat(mappedChild1.title()).isEqualTo("child-1");
-        assertThat(mappedChild1.username()).isEqualTo("child-user-1");
+        assertThat(mappedChild1.creatorName()).isEqualTo("child-user-1");
 
         ChildProjectResponse mappedChild2 = response.childProjects().get(1);
         assertThat(mappedChild2.id()).isEqualTo(102L);
         assertThat(mappedChild2.title()).isEqualTo("child-2");
-        assertThat(mappedChild2.username()).isEqualTo("익명 유저"); // childUsernames에 없음 → 대체됨
+        assertThat(mappedChild2.creatorName()).isEqualTo("익명 유저"); // childUsernames에 없음 → 대체됨
     }
 }

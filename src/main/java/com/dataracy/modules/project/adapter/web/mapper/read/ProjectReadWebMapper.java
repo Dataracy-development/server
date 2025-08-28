@@ -43,7 +43,8 @@ public class ProjectReadWebMapper {
         return new ProjectDetailWebResponse(
                 responseDto.id(),
                 responseDto.title(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.userIntroductionText(),
                 responseDto.userProfileImageUrl(),
                 responseDto.authorLevelLabel(),
@@ -78,7 +79,8 @@ public class ProjectReadWebMapper {
         return new ContinuedProjectWebResponse(
                 responseDto.id(),
                 responseDto.title(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.userProfileUrl(),
                 responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
@@ -100,7 +102,8 @@ public class ProjectReadWebMapper {
         return new ConnectedProjectWebResponse(
                 responseDto.id(),
                 responseDto.title(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.topicLabel(),
                 responseDto.commentCount(),
                 responseDto.likeCount(),
@@ -122,7 +125,8 @@ public class ProjectReadWebMapper {
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.content(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.commentCount(),
                 responseDto.likeCount()
         );
@@ -139,7 +143,8 @@ public class ProjectReadWebMapper {
                 responseDto.id(),
                 responseDto.title(),
                 responseDto.content(),
-                responseDto.username(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.projectThumbnailUrl(),
                 responseDto.topicLabel(),
                 responseDto.analysisPurposeLabel(),

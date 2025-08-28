@@ -46,7 +46,7 @@ class DataReadDtoMapperTest {
         Data data = sampleData();
 
         // when
-        ConnectedDataResponse res = mapper.toResponseDto(data, "topic", "type", 5L);
+        ConnectedDataResponse res = mapper.toResponseDto(data, "userA", "topic", "type", 5L);
 
         // then
         assertThat(res.title()).isEqualTo("title");
@@ -60,7 +60,7 @@ class DataReadDtoMapperTest {
         Data data = sampleData();
 
         // when
-        RecentMinimalDataResponse res = mapper.toResponseDto(data);
+        RecentMinimalDataResponse res = mapper.toResponseDto(data, "userA");
 
         // then
         assertThat(res.title()).isEqualTo("title");
@@ -76,7 +76,7 @@ class DataReadDtoMapperTest {
         PopularDataResponse res = mapper.toResponseDto(data, "user", "topic", "src", "type", 7L);
 
         // then
-        assertThat(res.username()).isEqualTo("user");
+        assertThat(res.creatorName()).isEqualTo("user");
         assertThat(res.countConnectedProjects()).isEqualTo(7L);
     }
 
@@ -100,7 +100,7 @@ class DataReadDtoMapperTest {
         );
 
         // then
-        assertThat(res.username()).isEqualTo("nick");
+        assertThat(res.creatorName()).isEqualTo("nick");
         assertThat(res.occupationLabel()).isEqualTo("occ");
     }
 }

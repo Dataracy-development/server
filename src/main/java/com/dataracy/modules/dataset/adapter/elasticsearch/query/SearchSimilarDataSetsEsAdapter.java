@@ -106,6 +106,8 @@ public class SearchSimilarDataSetsEsAdapter implements SearchSimilarDataSetsPort
         return new SimilarDataResponse(
                 doc.id(),
                 doc.title(),
+                doc.userId(),
+                doc.username(),
                 doc.topicLabel(),
                 doc.dataSourceLabel(),
                 doc.dataTypeLabel(),

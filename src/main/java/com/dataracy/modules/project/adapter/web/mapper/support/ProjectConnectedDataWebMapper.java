@@ -16,6 +16,8 @@ public class ProjectConnectedDataWebMapper {
         return new ProjectConnectedDataWebResponse(
                 responseDto.id(),
                 responseDto.title(),
+                responseDto.creatorId(),
+                responseDto.creatorName(),
                 responseDto.topicLabel(),
                 responseDto.dataTypeLabel(),
                 responseDto.startDate(),

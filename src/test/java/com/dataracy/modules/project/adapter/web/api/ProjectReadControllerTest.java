@@ -120,17 +120,17 @@ class ProjectReadControllerTest {
         // given
         Long projectId = 10L;
         ProjectDetailResponse dto = new ProjectDetailResponse(
-                projectId, "프로젝트 제목", "작성자", "자기소개", "profile.png",
+                projectId, "프로젝트 제목", 1L, "작성자", "자기소개", "profile.png",
                 "레벨", "직업", "주제", "목적", "출처",
                 true, 5L, "내용", "thumb.png", LocalDateTime.now(),
                 12L, 34L, 56L, true, false,
                 List.of(new ProjectConnectedDataResponse(
-                        1L, "데이터셋1", "주제", "타입",
+                        1L, "데이터셋1", 1L, "userA", "주제", "타입",
                         LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31),
                         "thumb.png", 100, 1000, 20, LocalDateTime.now(), 3L
                 )),
                 new ParentProjectResponse(
-                        5L, "부모 프로젝트", "부모 내용", "작성자A",
+                        5L, "부모 프로젝트", "부모 내용", 1L, "작성자A",
                         1L, 2L, 3L, LocalDateTime.now()
                 )
         );
@@ -140,7 +140,7 @@ class ProjectReadControllerTest {
         ParentProjectWebResponse parentWebResponse = parentProjectWebMapper.toWebDto(dto.parentProject());
 
         ProjectDetailWebResponse webRes = new ProjectDetailWebResponse(
-                dto.id(), dto.title(), dto.username(), dto.userIntroductionText(),
+                dto.id(), dto.title(), dto.creatorId(), dto.creatorName(), dto.userIntroductionText(),
                 dto.userProfileImageUrl(), dto.authorLevelLabel(), dto.occupationLabel(),
                 dto.topicLabel(), dto.analysisPurposeLabel(), dto.dataSourceLabel(),
                 dto.isContinue(), dto.parentProjectId(), dto.content(), dto.projectThumbnailUrl(),
@@ -158,7 +158,7 @@ class ProjectReadControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ProjectSuccessStatus.GET_PROJECT_DETAIL.getCode()))
                 .andExpect(jsonPath("$.data.title").value("프로젝트 제목"))
-                .andExpect(jsonPath("$.data.username").value("작성자"));
+                .andExpect(jsonPath("$.data.creatorName").value("작성자"));
     }
 
     @Test
@@ -167,11 +167,11 @@ class ProjectReadControllerTest {
         // given
         Long projectId = 5L;
         ContinuedProjectResponse dto = new ContinuedProjectResponse(
-                1L, "이어가기 제목", "작성자", "profile.png", "thumb.png",
+                1L, "이어가기 제목", 1L, "작성자", "profile.png", "thumb.png",
                 "주제", "레벨", 3L, 4L, 5L, LocalDateTime.now()
         );
         ContinuedProjectWebResponse webDto = new ContinuedProjectWebResponse(
-                dto.id(), dto.title(), dto.username(), dto.userProfileUrl(),
+                dto.id(), dto.title(), dto.creatorId(), dto.creatorName(), dto.userProfileUrl(),
                 dto.projectThumbnailUrl(), dto.topicLabel(), dto.authorLevelLabel(),
                 dto.commentCount(), dto.likeCount(), dto.viewCount(), dto.createdAt()
         );
@@ -189,7 +189,7 @@ class ProjectReadControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ProjectSuccessStatus.GET_CONTINUE_PROJECTS.getCode()))
                 .andExpect(jsonPath("$.data.content[0].title").value("이어가기 제목"))
-                .andExpect(jsonPath("$.data.content[0].username").value("작성자"));
+                .andExpect(jsonPath("$.data.content[0].creatorName").value("작성자"));
     }
 
     @Test
@@ -198,11 +198,11 @@ class ProjectReadControllerTest {
         // given
         Long dataId = 10L;
         ConnectedProjectResponse dto = new ConnectedProjectResponse(
-                2L, "연결 프로젝트 제목", "다른 작성자", "주제2",
+                2L, "연결 프로젝트 제목", 1L, "다른 작성자", "주제2",
                 10L, 20L, 30L, LocalDateTime.now()
         );
         ConnectedProjectWebResponse webDto = new ConnectedProjectWebResponse(
-                dto.id(), dto.title(), dto.username(), dto.topicLabel(),
+                dto.id(), dto.title(), dto.creatorId(), dto.creatorName(), dto.topicLabel(),
                 dto.commentCount(), dto.likeCount(), dto.viewCount(), dto.createdAt()
         );
 
@@ -220,7 +220,7 @@ class ProjectReadControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ProjectSuccessStatus.GET_CONNECTED_PROJECTS_ASSOCIATED_DATA.getCode()))
                 .andExpect(jsonPath("$.data.content[0].title").value("연결 프로젝트 제목"))
-                .andExpect(jsonPath("$.data.content[0].username").value("다른 작성자"))
+                .andExpect(jsonPath("$.data.content[0].creatorName").value("다른 작성자"))
                 .andExpect(jsonPath("$.data.content[0].topicLabel").value("주제2"))
                 .andExpect(jsonPath("$.data.content[0].commentCount").value(10))
                 .andExpect(jsonPath("$.data.content[0].likeCount").value(20))
@@ -233,11 +233,11 @@ class ProjectReadControllerTest {
         // given
         int size = 2;
         PopularProjectResponse dto = new PopularProjectResponse(
-                55L, "인기 프로젝트", "내용", "작성자", "popular.png",
+                55L, "인기 프로젝트", "내용", 1L, "작성자", "popular.png",
                 "주제", "목적", "출처", "레벨", 9L, 8L, 7L
         );
         PopularProjectWebResponse webRes = new PopularProjectWebResponse(
-                dto.id(), dto.title(), dto.content(), dto.username(),
+                dto.id(), dto.title(), dto.content(), dto.creatorId(), dto.creatorName(),
                 dto.projectThumbnailUrl(), dto.topicLabel(), dto.analysisPurposeLabel(),
                 dto.dataSourceLabel(), dto.authorLevelLabel(),
                 dto.commentCount(), dto.likeCount(), dto.viewCount()

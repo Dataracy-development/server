@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
  * 댓글 조회 애플리케이션 응답 DTO
  *
  * @param id 댓글 아이디
- * @param username 작성자 닉네임
+ * @param creatorId 작성자 아이디
+ * @param creatorName 작성자 닉네임
  * @param authorLevelLabel 작성자 등급 라벨
  * @param userProfileUrl 작성자 프로필 이미지 URL
  * @param content 댓글 내용
@@ -17,7 +18,8 @@ import java.time.LocalDateTime;
  */
 public record FindCommentResponse(
         Long id,
-        String username,
+        Long creatorId,
+        String creatorName,
         String authorLevelLabel,
         String userProfileUrl,
         String content,

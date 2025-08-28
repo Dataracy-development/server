@@ -11,8 +11,9 @@ import java.util.List;
  *
  * @param id 프로젝트 ID
  * @param title 프로젝트 제목
- * @param username 유저명
- * @param userIntroductionText 유저 자기소개
+ * @param creatorId 작성자 아이디
+ * @param creatorName 작성자 닉네임
+ * @param userIntroductionText  유저 자기소개
  * @param userProfileImageUrl 유저 프로필 이미지 URL
  * @param authorLevelLabel 작성자 유형 라벨
  * @param occupationLabel 직업 라벨
@@ -34,7 +35,8 @@ import java.util.List;
 public record ProjectDetailResponse(
         Long id,
         String title,
-        String username,
+        Long creatorId,
+        String creatorName,
         String userIntroductionText,
         String userProfileImageUrl,
         String authorLevelLabel,

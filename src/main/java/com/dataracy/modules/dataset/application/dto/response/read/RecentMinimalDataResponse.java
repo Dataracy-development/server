@@ -7,12 +7,16 @@ import java.time.LocalDateTime;
  *
  * @param id 데이터 ID
  * @param title 데이터 제목
+ * @param creatorId 작성자 아이디
+ * @param creatorName 작성자 닉네임
  * @param dataThumbnailUrl 데이터 썸네일 URL
  * @param createdAt 생성 일시
  */
 public record RecentMinimalDataResponse(
         Long id,
         String title,
+        Long creatorId,
+        String creatorName,
         String dataThumbnailUrl,
         LocalDateTime createdAt
 ) {}
