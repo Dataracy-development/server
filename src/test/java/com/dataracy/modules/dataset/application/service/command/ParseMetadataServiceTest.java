@@ -102,7 +102,7 @@ class ParseMetadataServiceTest {
         given(findUsernameUseCase.findUsernameById(any()))
                 .willReturn("user");
         given(findUserThumbnailUseCase.findUserThumbnailById(any()))
-                .willReturn("https://~~");
+                .willReturn("profile.png");
 
         // when
         service.parseAndSaveMetadata(req);
