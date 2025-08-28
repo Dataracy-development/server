@@ -148,9 +148,10 @@ public class ProjectReadService implements
         ParentProjectResponse parentProjectResponse = parentProject == null
                 ? null
                 : parentProjectDtoMapper.toResponseDto(
-                parentProject,
-                findUsernameUseCase.findUsernameById(parentProject.getUserId())
-        );
+                        parentProject,
+                        findUsernameUseCase.findUsernameById(parentProject.getUserId()),
+                        findUserThumbnailUseCase.findUserThumbnailById(parentProject.getUserId())
+                );
 
         // 프로젝트 조회수 증가
         // 조회수 기록 (중복 방지 TTL)

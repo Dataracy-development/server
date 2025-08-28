@@ -77,6 +77,19 @@ public class UserProfileService implements
         return usernames;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public String findUserThumbnailById(Long userId) {
+        Instant startTime = LoggerFactory.service().logStart("FindUserThumbnailUseCase", "아이디를 통한 유저 프로필 이미지 URL을 찾는 서비스 시작 userId=" + userId);
+        User user = userQueryPort.findUserById(userId)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("FindUserThumbnailUseCase", "[유저 프로필 이미지 조회] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
+                });
+        LoggerFactory.service().logSuccess("FindUserThumbnailUseCase", "아이디를 통한 유저 프로필 이미지 URL을 찾는 서비스 성공 userId=" + userId, startTime);
+        return user.getProfileImageUrl();
+    }
+
     /**
      * 여러 사용자 ID에 대해 각 사용자의 프로필 썸네일 URL을 조회하여 맵으로 반환합니다.
      *

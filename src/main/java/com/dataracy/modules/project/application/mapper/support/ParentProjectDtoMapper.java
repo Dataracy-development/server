@@ -22,7 +22,8 @@ public class ParentProjectDtoMapper {
      */
     public ParentProjectResponse toResponseDto(
             Project project,
-            String username
+            String username,
+            String userProfileImageUrl
     ) {
         return new ParentProjectResponse(
                 project.getId(),
@@ -30,6 +31,7 @@ public class ParentProjectDtoMapper {
                 project.getContent(),
                 project.getUserId(),
                 username,
+                userProfileImageUrl,
                 project.getCommentCount(),
                 project.getLikeCount(),
                 project.getViewCount(),
