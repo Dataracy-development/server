@@ -9,8 +9,11 @@ public record FindReplyCommentWebResponse(
         @Schema(description = "답글 아이디", example = "1")
         Long id,
 
-        @Schema(description = "작성자명", example = "박준형")
-        String username,
+        @Schema(description = "작성자 아이디", example = "1")
+        Long creatorId,
+
+        @Schema(description = "작성자 닉네임", example = "박준형")
+        String creatorName,
 
         @Schema(description = "작성자 유형 라벨", example = "실무자")
         String authorLevelLabel,

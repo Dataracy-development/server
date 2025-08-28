@@ -13,6 +13,12 @@ public record FilteredDataWebResponse(
         @Schema(description = "데이터셋 제목", example = "최신 3년 이내 개발자 현황")
         String title,
 
+        @Schema(description = "작성자 아이디", example = "1")
+        Long creatorId,
+
+        @Schema(description = "작성자 닉네임", example = "박준형")
+        String creatorName,
+
         @Schema(description = "토픽 라벨", example = "디자인")
         String topicLabel,
 

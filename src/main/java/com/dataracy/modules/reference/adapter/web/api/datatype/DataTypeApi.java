@@ -26,6 +26,6 @@ public interface DataTypeApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전체 데이터 유형 리스트 조회", useReturnTypeSchema = true),
     })
-    @GetMapping("/datatypes")
+    @GetMapping("/data-types")
     ResponseEntity<SuccessResponse<AllDataTypesWebResponse>> findAllDataTypes();
 }

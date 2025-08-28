@@ -205,16 +205,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return 400 Bad Request와 에러 메시지를 포함한 표준 에러 응답
      */
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e,
-                                                                  HttpHeaders headers,
-                                                                  HttpStatusCode status,
-                                                                  WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException e, HttpHeaders headers,
+            HttpStatusCode status, WebRequest request) {
         String combinedErrors = extractFieldErrors(e.getBindingResult().getFieldErrors());
         LoggerFactory.common().logError("ValidationException", "필드의 유효성 검증에 실패했습니다: " + combinedErrors, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, e.getMessage()));
+                .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, combinedErrors));
     }
+
 
     /**
      * 요청 경로에 매핑된 핸들러가 없을 때 404 Not Found 응답을 반환합니다.

@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
  *
  * @param id 데이터 ID
  * @param title 데이터 제목
+ * @param creatorId 작성자 아이디
+ * @param creatorName 작성자 닉네임
  * @param topicLabel 주제 라벨
  * @param dataTypeLabel 데이터 유형 라벨
  * @param startDate 수집 시작일
@@ -23,6 +25,8 @@ import java.time.LocalDateTime;
 public record ConnectedDataResponse(
         Long id,
         String title,
+        Long creatorId,
+        String creatorName,
         String topicLabel,
         String dataTypeLabel,
         LocalDate startDate,

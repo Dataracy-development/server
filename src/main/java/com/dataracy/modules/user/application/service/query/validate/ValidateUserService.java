@@ -46,6 +46,11 @@ public class ValidateUserService implements DuplicateNicknameUseCase, DuplicateE
         userDuplicateValidator.duplicateEmail(email)
                 .ifPresent(user -> {
                     ProviderType providerType = user.getProvider();
+                    if (providerType == null) {
+                        LoggerFactory.service().logWarning("DuplicateEmailUseCase",
+                                "[중복 이메일 검증] 이메일 " + email + "은 ProviderType이 null입니다.");
+                        throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
+                    }
                     switch (providerType) {
                         case GOOGLE -> {
                             LoggerFactory.service().logWarning("DuplicateEmailUseCase", "[중복 이메일 검증] 이메일 " + email + "은 구글 소셜 로그인으로 가입된 계정입니다.");

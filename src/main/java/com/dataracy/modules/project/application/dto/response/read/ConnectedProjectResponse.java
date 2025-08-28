@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
  *
  * @param id 프로젝트 ID
  * @param title 프로젝트 제목
- * @param username 작성자 닉네임
+ * @param creatorId 작성자 아이디
+ * @param creatorName 작성자 닉네임
  * @param topicLabel 주제 라벨
  * @param commentCount 댓글 수
  * @param likeCount 좋아요 수
@@ -17,7 +18,8 @@ import java.time.LocalDateTime;
 public record ConnectedProjectResponse(
         Long id,
         String title,
-        String username,
+        Long creatorId,
+        String creatorName,
         String topicLabel,
         Long commentCount,
         Long likeCount,
