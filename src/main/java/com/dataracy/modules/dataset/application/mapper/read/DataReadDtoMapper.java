@@ -1,9 +1,6 @@
 package com.dataracy.modules.dataset.application.mapper.read;
 
-import com.dataracy.modules.dataset.application.dto.response.read.ConnectedDataResponse;
-import com.dataracy.modules.dataset.application.dto.response.read.DataDetailResponse;
-import com.dataracy.modules.dataset.application.dto.response.read.PopularDataResponse;
-import com.dataracy.modules.dataset.application.dto.response.read.RecentMinimalDataResponse;
+import com.dataracy.modules.dataset.application.dto.response.read.*;
 import com.dataracy.modules.dataset.domain.model.Data;
 import org.springframework.stereotype.Component;
 
@@ -172,6 +169,29 @@ public class DataReadDtoMapper {
                 data.getMetadata().getColumnCount(),
                 data.getMetadata().getPreviewJson(),
                 data.getCreatedAt()
+        );
+    }
+
+    public UserDataResponse toResponseDto(
+            Data data,
+            String topicLabel,
+            String dataTypeLabel,
+            Long countConnectedProjects
+    ) {
+        return new UserDataResponse(
+                data.getId(),
+                data.getTitle(),
+                topicLabel,
+                dataTypeLabel,
+                data.getStartDate(),
+                data.getEndDate(),
+                data.getDataThumbnailUrl(),
+                data.getDownloadCount(),
+                data.getSizeBytes(),
+                data.getMetadata().getRowCount(),
+                data.getMetadata().getColumnCount(),
+                data.getCreatedAt(),
+                countConnectedProjects
         );
     }
 }

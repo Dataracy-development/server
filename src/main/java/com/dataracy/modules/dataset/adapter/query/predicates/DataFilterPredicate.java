@@ -13,6 +13,10 @@ public class DataFilterPredicate {
      */
     private DataFilterPredicate() {}
 
+    public static BooleanExpression notDeleted() {
+        return dataEntity.isDeleted.isFalse();
+    }
+
     /**
      * 주어진 데이터 ID와 일치하는 데이터 엔터티를 필터링하는 QueryDSL 조건식을 반환합니다.
      *
@@ -77,5 +81,9 @@ public class DataFilterPredicate {
      */
     public static BooleanExpression dataIdIn(Collection<Long> dataIds) {
         return (dataIds == null || dataIds.isEmpty()) ? null : dataEntity.id.in(dataIds);
+    }
+
+    public static BooleanExpression userIdEq(Long userId) {
+        return userId == null ? null : dataEntity.userId.eq(userId);
     }
 }
