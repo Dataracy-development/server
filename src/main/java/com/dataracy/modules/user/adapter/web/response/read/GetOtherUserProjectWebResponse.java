@@ -1,11 +1,11 @@
-package com.dataracy.modules.user.adapter.web.response.support;
+package com.dataracy.modules.user.adapter.web.response.read;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 
 @Schema(description = "타 회원이 업로드한 프로젝트 웹 응답 DTO")
-public record OtherUserProjectWebResponse(
+public record GetOtherUserProjectWebResponse(
         @Schema(description = "프로젝트 아이디", example = "1")
         Long id,
 

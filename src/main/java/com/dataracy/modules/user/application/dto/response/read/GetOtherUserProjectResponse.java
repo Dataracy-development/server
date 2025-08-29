@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.dto.response.support;
+package com.dataracy.modules.user.application.dto.response.read;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * @param viewCount 조회 수
  * @param createdAt 작성 시기
  */
-public record OtherUserProjectResponse(
+public record GetOtherUserProjectResponse(
         Long id,
         String title,
         String content,

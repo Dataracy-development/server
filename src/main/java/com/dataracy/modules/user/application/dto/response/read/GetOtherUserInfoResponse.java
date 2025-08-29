@@ -1,7 +1,5 @@
 package com.dataracy.modules.user.application.dto.response.read;
 
-import com.dataracy.modules.user.application.dto.response.support.OtherUserDataResponse;
-import com.dataracy.modules.user.application.dto.response.support.OtherUserProjectResponse;
 import org.springframework.data.domain.Page;
 
 /**
@@ -23,6 +21,6 @@ public record GetOtherUserInfoResponse(
         String occupationLabel,
         String profileImageUrl,
         String introductionText,
-        Page<OtherUserProjectResponse> projects,
-        Page<OtherUserDataResponse> datasets
+        Page<GetOtherUserProjectResponse> projects,
+        Page<GetOtherUserDataResponse> datasets
 ) {}
