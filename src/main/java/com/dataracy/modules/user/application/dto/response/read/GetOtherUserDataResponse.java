@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.dto.response.support;
+package com.dataracy.modules.user.application.dto.response.read;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  * @param createdAt 생성 일시
  * @param countConnectedProjects 연결된 프로젝트 수
  */
-public record OtherUserDataResponse(
+public record GetOtherUserDataResponse(
         Long id,
         String title,
         String topicLabel,

@@ -1,6 +1,5 @@
 package com.dataracy.modules.user.application.port.in.query.extractor;
 
-import com.dataracy.modules.user.application.dto.response.read.GetOtherUserInfoResponse;
 import com.dataracy.modules.user.application.dto.response.read.GetUserInfoResponse;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 
@@ -23,6 +22,4 @@ public interface GetUserInfoUseCase {
      * @return 조회된 사용자의 정보가 담긴 GetUserInfoResponse 객체
      */
     GetUserInfoResponse getUserInfo(Long userId);
-
-    GetOtherUserInfoResponse getOtherUserInfo(Long userId);
 }

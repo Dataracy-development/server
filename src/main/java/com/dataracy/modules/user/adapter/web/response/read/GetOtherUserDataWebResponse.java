@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.adapter.web.response.support;
+package com.dataracy.modules.user.adapter.web.response.read;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Schema(description = "타 회원이 업로드한 데이터셋 웹 응답 DTO")
-public record OtherUserDataWebResponse(
+public record GetOtherUserDataWebResponse(
         @Schema(description = "데이터셋 아이디", example = "1")
         Long id,
 
