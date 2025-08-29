@@ -55,4 +55,17 @@ public interface UserReadApi {
             @PathVariable
             Long userId
     );
+
+//    @Operation(
+//            summary = "회원의 작성한 프로젝트 목록을 조회한다.",
+//            description = "회원의 작성한 프로젝트 목록을 조회한다."
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "회원의 작성한 프로젝트 목록 조회에 성공했습니다.", useReturnTypeSchema = true)
+//    })
+//    @GetMapping("/{userId}/projects")
+//    ResponseEntity<SuccessResponse<FindUserProjectWebResponse>> getOtherUserInfo(
+//            @PathVariable
+//            Long userId
+//    );
 }
