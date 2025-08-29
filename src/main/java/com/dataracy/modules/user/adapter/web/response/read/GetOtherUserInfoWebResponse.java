@@ -1,6 +1,9 @@
 package com.dataracy.modules.user.adapter.web.response.read;
 
+import com.dataracy.modules.dataset.application.dto.response.read.UserDataResponse;
+import com.dataracy.modules.project.application.dto.response.read.UserProjectResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.data.domain.Page;
 
 @Schema(description = "타인 프로필 개인정보 조회 웹 응답 DTO")
 public record GetOtherUserInfoWebResponse(
@@ -20,5 +23,11 @@ public record GetOtherUserInfoWebResponse(
         String profileImageUrl,
 
         @Schema(description = "유저 소개글", example = "안녕하세요. 저는 주니입니다.")
-        String introductionText
+        String introductionText,
+
+        @Schema(description = "유저가 업로드한 프로젝트 목록")
+        Page<UserProjectResponse> projects,
+
+        @Schema(description = "유저가 업로드한 데이터셋 목록")
+        Page<UserDataResponse> datasets
 ) {}
