@@ -63,6 +63,7 @@ public class ReadDataQueryDslAdapter implements
         DataEntity entity = queryFactory
                 .selectFrom(data)
                 .where(
+                        DataFilterPredicate.notDeleted(),
                         DataFilterPredicate.dataIdEq(dataId)
                 )
                 .fetchOne();
@@ -84,6 +85,7 @@ public class ReadDataQueryDslAdapter implements
                 .selectFrom(data)
                 .leftJoin(data.metadata).fetchJoin()
                 .where(
+                        DataFilterPredicate.notDeleted(),
                         DataFilterPredicate.dataIdEq(dataId)
                 )
                 .fetchOne();
@@ -108,7 +110,10 @@ public class ReadDataQueryDslAdapter implements
                         data.count()
                 ))
                 .from(data)
-                .join(topic).on(data.topicId.eq(topic.id))
+                .join(topic).on(
+                        data.topicId.eq(topic.id),
+                        data.isDeleted.isFalse()
+                )
                 .groupBy(topic.id, topic.label)
                 .fetch();
 
