@@ -1,6 +1,8 @@
 package com.dataracy.modules.user.adapter.web.mapper.read;
 
+import com.dataracy.modules.user.adapter.web.response.read.GetOtherUserInfoWebResponse;
 import com.dataracy.modules.user.adapter.web.response.read.GetUserInfoWebResponse;
+import com.dataracy.modules.user.application.dto.response.read.GetOtherUserInfoResponse;
 import com.dataracy.modules.user.application.dto.response.read.GetUserInfoResponse;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,17 @@ public class UserReadWebMapper {
                 responseDto.occupationLabel(),
                 responseDto.topicLabels(),
                 responseDto.visitSourceLabel(),
+                responseDto.profileImageUrl(),
+                responseDto.introductionText()
+        );
+    }
+
+    public GetOtherUserInfoWebResponse toWebDto(GetOtherUserInfoResponse responseDto) {
+        return new GetOtherUserInfoWebResponse(
+                responseDto.id(),
+                responseDto.nickname(),
+                responseDto.authorLevelLabel(),
+                responseDto.occupationLabel(),
                 responseDto.profileImageUrl(),
                 responseDto.introductionText()
         );
