@@ -59,7 +59,7 @@ class UserProjectReadServiceTest {
 
     @Test
     @DisplayName("로그인한 회원이 작성한 프로젝트 목록 조회 성공 → UserProjectResponse 반환")
-    void findUserProjects_success() {
+    void findUserProjectsSuccess() {
         // given
         Project project = sampleProject();
         Page<Project> page = new PageImpl<>(List.of(project), PageRequest.of(0, 5), 1);
