@@ -1,6 +1,10 @@
 package com.dataracy.modules.user.application.service.query.profile;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.dataset.application.dto.response.read.UserDataResponse;
+import com.dataracy.modules.dataset.application.port.in.query.read.FindUserDataSetsUseCase;
+import com.dataracy.modules.project.application.dto.response.read.UserProjectResponse;
+import com.dataracy.modules.project.application.port.in.query.read.FindUserProjectsUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
@@ -18,6 +22,7 @@ import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,10 +40,14 @@ public class UserProfileService implements
 {
     private final UserQueryPort userQueryPort;
     private final UserMultiQueryPort userMultiQueryPort;
+
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
     private final GetVisitSourceLabelFromIdUseCase getVisitSourceLabelFromIdUseCase;
+
+    private final FindUserProjectsUseCase findUserProjectsUseCase;
+    private final FindUserDataSetsUseCase findUserDataSetsUseCase;
 
     /**
      * 주어진 사용자 ID로 해당 사용자의 닉네임을 반환합니다.
@@ -220,13 +229,18 @@ public class UserProfileService implements
         String authorLevelLabel = user.getAuthorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(user.getAuthorLevelId());
         String occupationLabel = user.getOccupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(user.getOccupationId());
 
+        Page<UserProjectResponse> projects = findUserProjectsUseCase.findUserProjects(userId, null);
+        Page<UserDataResponse> datasets = findUserDataSetsUseCase.findUserDataSets(userId, null);
+
         GetOtherUserInfoResponse getOtherUserInfoResponse = new GetOtherUserInfoResponse(
                 user.getId(),
                 user.getNickname(),
                 authorLevelLabel,
                 occupationLabel,
                 user.getProfileImageUrl(),
-                user.getIntroductionText()
+                user.getIntroductionText(),
+                projects,
+                datasets
         );
 
         LoggerFactory.service().logSuccess("GetOtherUserInfoUseCase", "주어진 사용자 ID에 대한 타인 정보 조회 서비스 성공 userId=" + userId, startTime);
