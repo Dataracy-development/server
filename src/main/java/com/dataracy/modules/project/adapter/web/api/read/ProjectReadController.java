@@ -4,18 +4,9 @@ import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.ExtractHeaderUtil;
 import com.dataracy.modules.project.adapter.web.mapper.read.ProjectReadWebMapper;
-import com.dataracy.modules.project.adapter.web.response.read.ConnectedProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ContinuedProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
-import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
-import com.dataracy.modules.project.application.port.in.query.read.FindConnectedProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.GetPopularProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.GetProjectDetailUseCase;
+import com.dataracy.modules.project.adapter.web.response.read.*;
+import com.dataracy.modules.project.application.dto.response.read.*;
+import com.dataracy.modules.project.application.port.in.query.read.*;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,6 +31,7 @@ public class ProjectReadController implements ProjectReadApi {
     private final FindContinuedProjectsUseCase findContinuedProjectsUseCase;
     private final FindConnectedProjectsUseCase findConnectedProjectsUseCase;
     private final GetPopularProjectsUseCase getPopularProjectsUseCase;
+    private final FindUserProjectsUseCase findUserProjectsUseCase;
 
     /**
      * 지정된 프로젝트의 상세 정보를 조회하여 성공 응답으로 반환합니다.
@@ -138,5 +130,21 @@ public class ProjectReadController implements ProjectReadApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.FIND_POPULAR_PROJECTS, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Page<UserProjectWebResponse>>> findUserProjects(Long userId, Pageable pageable) {
+        Instant startTime = LoggerFactory.api().logRequest("[FindUserProjects] 로그인한 회원이 업로드한 프로젝트 리스트를 조회 API 요청 시작");
+        Page<UserProjectWebResponse> webResponse;
+
+        try {
+            Page<UserProjectResponse> responseDto = findUserProjectsUseCase.findUserProjects(userId, pageable);
+            webResponse = responseDto.map(projectReadWebMapper::toWebDto);
+        } finally {
+            LoggerFactory.api().logResponse("[FindUserProjects] 로그인한 회원이 업로드한 프로젝트 리스트를 조회 API 응답 완료", startTime);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.GET_USER_PROJECTS, webResponse));
     }
 }

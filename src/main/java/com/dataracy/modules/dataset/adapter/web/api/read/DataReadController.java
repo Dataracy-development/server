@@ -27,6 +27,7 @@ public class DataReadController implements DataReadApi {
     private final GetRecentMinimalDataSetsUseCase getRecentMinimalDataSetsUseCase;
     private final GetDataGroupCountUseCase getDataGroupCountUseCase;
     private final FindConnectedDataSetsUseCase findConnectedDataSetsUseCase;
+    private final FindUserDataSetsUseCase findUserDataSetsUseCase;
 
     /**
      * 지정한 개수만큼 인기 데이터셋 목록을 조회하여 반환합니다.
@@ -143,5 +144,21 @@ public class DataReadController implements DataReadApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(DataSuccessStatus.GET_CONNECTED_DATASETS_ASSOCIATED_PROJECT, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Page<UserDataWebResponse>>> findUserDataSets(Long userId, Pageable pageable) {
+        Instant startTime = LoggerFactory.api().logRequest("[FindUserDataSets] 로그인한 회원이 업로드한 데이터셋 리스트를 조회 API 요청 시작");
+        Page<UserDataWebResponse> webResponse;
+
+        try {
+            Page<UserDataResponse> responseDto = findUserDataSetsUseCase.findUserDataSets(userId, pageable);
+            webResponse = responseDto.map(dataReadWebMapper::toWebDto);
+        } finally {
+            LoggerFactory.api().logResponse("[FindUserDataSets] 로그인한 회원이 업로드한 데이터셋 리스트를 조회 API 응답 완료", startTime);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(DataSuccessStatus.GET_USER_DATASETS, webResponse));
     }
 }

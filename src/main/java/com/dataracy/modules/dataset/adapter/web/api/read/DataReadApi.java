@@ -1,8 +1,10 @@
 package com.dataracy.modules.dataset.adapter.web.api.read;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.dataset.adapter.web.response.read.*;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -115,6 +117,23 @@ public interface DataReadApi {
             Long projectId,
 
             @PageableDefault(size = 3, page = 0)
+            Pageable pageable
+    );
+
+    @Operation(
+            summary = "로그인한 회원이 업로드한 데이터셋 리스트를 조회한다.",
+            description = "로그인한 회원이 업로드한 데이터셋 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인한 회원이 업로드한 데이터셋 리스트를 조회에 성공했습니다.", useReturnTypeSchema = true)
+    })
+    @GetMapping
+    ResponseEntity<SuccessResponse<Page<UserDataWebResponse>>> findUserDataSets(
+            @Parameter(hidden = true)
+            @CurrentUserId
+            Long userId,
+
+            @PageableDefault(size = 5, page = 0)
             Pageable pageable
     );
 }

@@ -1,10 +1,8 @@
 package com.dataracy.modules.project.adapter.web.api.read;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ConnectedProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ContinuedProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
+import com.dataracy.modules.common.support.annotation.CurrentUserId;
+import com.dataracy.modules.project.adapter.web.response.read.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -116,5 +114,22 @@ public interface ProjectReadApi {
             @RequestParam(name = "size")
             @Min(1)
             int size
+    );
+
+    @Operation(
+            summary = "로그인한 회원이 업로드한 프로젝트 리스트를 조회한다.",
+            description = "로그인한 회원이 업로드한 프로젝트 리스트를 조회한다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인한 회원이 업로드한 프로젝트 리스트를 조회에 성공했습니다.", useReturnTypeSchema = true)
+    })
+    @GetMapping
+    ResponseEntity<SuccessResponse<Page<UserProjectWebResponse>>> findUserProjects(
+            @Parameter(hidden = true)
+            @CurrentUserId
+            Long userId,
+
+            @PageableDefault(size = 5, page = 0)
+            Pageable pageable
     );
 }

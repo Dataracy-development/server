@@ -146,4 +146,22 @@ public class DataReadWebMapper {
                 responseDto.countConnectedProjects()
         );
     }
+
+    public UserDataWebResponse toWebDto(UserDataResponse responseDto) {
+        return new UserDataWebResponse(
+                responseDto.id(),
+                responseDto.title(),
+                responseDto.topicLabel(),
+                responseDto.dataTypeLabel(),
+                responseDto.startDate(),
+                responseDto.endDate(),
+                responseDto.dataThumbnailUrl(),
+                responseDto.downloadCount(),
+                responseDto.sizeBytes(),
+                responseDto.rowCount(),
+                responseDto.columnCount(),
+                responseDto.createdAt(),
+                responseDto.countConnectedProjects()
+        );
+    }
 }

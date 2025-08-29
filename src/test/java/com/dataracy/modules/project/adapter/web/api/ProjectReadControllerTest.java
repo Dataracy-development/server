@@ -20,10 +20,7 @@ import com.dataracy.modules.project.application.dto.response.read.PopularProject
 import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
 import com.dataracy.modules.project.application.dto.response.support.ParentProjectResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
-import com.dataracy.modules.project.application.port.in.query.read.FindConnectedProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.GetPopularProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.GetProjectDetailUseCase;
+import com.dataracy.modules.project.application.port.in.query.read.*;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,6 +77,9 @@ class ProjectReadControllerTest {
     @MockBean
     private GetPopularProjectsUseCase getPopularProjectsUseCase;
 
+    @MockBean
+    private FindUserProjectsUseCase findUserProjectsUseCase;
+
     // 공통 모킹
     @MockBean
     private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
@@ -101,7 +101,8 @@ class ProjectReadControllerTest {
                         getProjectDetailUseCase,
                         findContinuedProjectsUseCase,
                         findConnectedProjectsUseCase,
-                        getPopularProjectsUseCase
+                        getPopularProjectsUseCase,
+                        findUserProjectsUseCase
                 ))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
