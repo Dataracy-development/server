@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "User - Read", description = "사용자 관련 API - 조회")
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1")
 public interface UserReadApi {
     /**
      * 유저의 회원 정보를 조회한다.
@@ -36,7 +36,7 @@ public interface UserReadApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원 정보 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
-    @GetMapping
+    @GetMapping("/user")
     ResponseEntity<SuccessResponse<GetUserInfoWebResponse>> getUserInfo(
             @Parameter(hidden = true)
             @CurrentUserId
@@ -50,7 +50,7 @@ public interface UserReadApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "타인의 회원 정보 조회에 성공했습니다.", useReturnTypeSchema = true)
     })
-    @GetMapping("/{userId}")
+    @GetMapping("/users/{userId}")
     ResponseEntity<SuccessResponse<GetOtherUserInfoWebResponse>> getOtherUserInfo(
             @PathVariable
             Long userId

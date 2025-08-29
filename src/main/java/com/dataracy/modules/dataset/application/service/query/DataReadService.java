@@ -37,8 +37,7 @@ public class DataReadService implements
         GetDataDetailUseCase,
         GetRecentMinimalDataSetsUseCase,
         GetDataGroupCountUseCase,
-        FindConnectedDataSetsUseCase,
-        FindUserDataSetsUseCase
+        FindConnectedDataSetsUseCase
 {
     private final DataReadDtoMapper dataReadDtoMapper;
 
@@ -47,7 +46,6 @@ public class DataReadService implements
     private final FindDataWithMetadataPort findDataWithMetadataPort;
     private final GetDataGroupCountPort getDataGroupCountPort;
     private final FindConnectedDataSetsPort findConnectedDataSetsPort;
-    private final FindUserDataSetsPort findUserDataSetsPort;
 
     private final GetUserInfoUseCase getUserInfoUseCase;
 
@@ -249,35 +247,5 @@ public class DataReadService implements
 
         LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "아이디 목록을 통한 데이터셋 목록 조회 서비스 종료 dataIds=" + dataIds, startTime);
         return connectedDataResponses;
-    }
-
-    @Override
-    public Page<UserDataResponse> findUserDataSets(Long userId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("FindUserDataSetsUseCase", "해당 회원이 업로드한 데이터셋 목록 조회 서비스 시작 userId=" + userId);
-
-        Page<DataWithProjectCountDto> savedDataSets = findUserDataSetsPort.findUserDataSets(userId, pageable);
-
-        List<Long> topicIds = savedDataSets.stream()
-                .map(dto -> dto.data().getTopicId())
-                .toList();
-        List<Long> dataTypeIds = savedDataSets.stream()
-                .map(dto -> dto.data().getDataTypeId())
-                .toList();
-
-        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
-        Map<Long, String> dataTypeLabelMap = getDataTypeLabelFromIdUseCase.getLabelsByIds(dataTypeIds);
-
-        Page<UserDataResponse> userDataResponses = savedDataSets.map(wrapper -> {
-            Data data = wrapper.data();
-            return dataReadDtoMapper.toResponseDto(
-                    data,
-                    topicLabelMap.get(data.getTopicId()),
-                    dataTypeLabelMap.get(data.getDataTypeId()),
-                    wrapper.countConnectedProjects()
-            );
-        });
-
-        LoggerFactory.service().logSuccess("FindUserDataSetsUseCase", "해당 회원이 업로드한 데이터셋 목록 조회 서비스 종료 userId=" + userId, startTime);
-        return userDataResponses;
     }
 }

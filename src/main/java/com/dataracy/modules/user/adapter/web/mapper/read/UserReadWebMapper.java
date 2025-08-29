@@ -1,16 +1,21 @@
 package com.dataracy.modules.user.adapter.web.mapper.read;
 
+import com.dataracy.modules.user.adapter.web.mapper.support.OtherUserInfoWebMapper;
 import com.dataracy.modules.user.adapter.web.response.read.GetOtherUserInfoWebResponse;
 import com.dataracy.modules.user.adapter.web.response.read.GetUserInfoWebResponse;
 import com.dataracy.modules.user.application.dto.response.read.GetOtherUserInfoResponse;
 import com.dataracy.modules.user.application.dto.response.read.GetUserInfoResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * 유저 조회 웹 DTO와 애플리케이션 DTO를 변환하는 매퍼
  */
 @Component
+@RequiredArgsConstructor
 public class UserReadWebMapper {
+    private final OtherUserInfoWebMapper otherUserInfoWebMapper;
+
     /**
      * 애플리케이션 계층의 GetUserInfoResponse를 웹 응답용 GetUserInfoWebResponse로 변환한다.
      *
@@ -43,8 +48,10 @@ public class UserReadWebMapper {
                 responseDto.occupationLabel(),
                 responseDto.profileImageUrl(),
                 responseDto.introductionText(),
-                responseDto.projects(),
+                responseDto.projects()
+                        .map(otherUserInfoWebMapper::toWebDto),
                 responseDto.datasets()
+                        .map(otherUserInfoWebMapper::toWebDto)
         );
     }
 }
