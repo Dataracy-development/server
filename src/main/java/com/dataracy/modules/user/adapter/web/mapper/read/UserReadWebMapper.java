@@ -42,7 +42,9 @@ public class UserReadWebMapper {
                 responseDto.authorLevelLabel(),
                 responseDto.occupationLabel(),
                 responseDto.profileImageUrl(),
-                responseDto.introductionText()
+                responseDto.introductionText(),
+                responseDto.projects(),
+                responseDto.datasets()
         );
     }
 }
