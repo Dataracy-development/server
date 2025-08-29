@@ -297,19 +297,14 @@ public class ProjectReadService implements
 
         Page<Project> savedProjects = findUserProjectsPort.findUserProjects(userId, pageable);
 
-        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
         List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
         List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
 
-        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
-        Map<Long, String> userProfileUrlMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
         Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
         Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
 
         Page<UserProjectResponse> findUserProjectsResponse = savedProjects.map(project -> userProjectDtoMapper.toResponseDto(
                 project,
-                usernameMap.get(project.getUserId()),
-                userProfileUrlMap.get(project.getUserId()),
                 topicLabelMap.get(project.getTopicId()),
                 authorLevelLabelMap.get(project.getAuthorLevelId())
         ));

@@ -8,9 +8,6 @@ import java.time.LocalDateTime;
  * @param id 프로젝트 ID
  * @param title 프로젝트 제목
  * @param content 프로젝트 내용
- * @param creatorId 작성자 아이디
- * @param creatorName 작성자 닉네임
- * @param userProfileImageUrl 작성자 프로필 이미지 URL
  * @param projectThumbnailUrl 프로젝트 썸네일 URL
  * @param topicLabel 주제 라벨
  * @param authorLevelLabel 작성자 레벨 라벨
@@ -23,9 +20,6 @@ public record UserProjectResponse(
         Long id,
         String title,
         String content,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
         String projectThumbnailUrl,
         String topicLabel,
         String authorLevelLabel,
