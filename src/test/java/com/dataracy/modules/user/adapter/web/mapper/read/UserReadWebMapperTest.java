@@ -1,6 +1,7 @@
 
 package com.dataracy.modules.user.adapter.web.mapper.read;
 
+import com.dataracy.modules.user.adapter.web.mapper.support.OtherUserInfoWebMapper;
 import com.dataracy.modules.user.adapter.web.response.read.GetUserInfoWebResponse;
 import com.dataracy.modules.user.application.dto.response.read.GetUserInfoResponse;
 import com.dataracy.modules.user.domain.enums.RoleType;
@@ -13,7 +14,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserReadWebMapperTest {
 
-    private UserReadWebMapper mapper = new UserReadWebMapper();
+    private UserReadWebMapper mapper = new UserReadWebMapper(
+            new OtherUserInfoWebMapper()
+    );
 
     @Test
     @DisplayName("toWebDto: 앱 → 웹 매핑")

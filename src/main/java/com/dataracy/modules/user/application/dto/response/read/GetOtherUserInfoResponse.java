@@ -1,8 +1,10 @@
 package com.dataracy.modules.user.application.dto.response.read;
 
-import com.dataracy.modules.dataset.application.dto.response.read.UserDataResponse;
-import com.dataracy.modules.project.application.dto.response.read.UserProjectResponse;
-import org.springframework.data.domain.Page; /**
+import com.dataracy.modules.user.application.dto.response.support.OtherUserDataResponse;
+import com.dataracy.modules.user.application.dto.response.support.OtherUserProjectResponse;
+import org.springframework.data.domain.Page;
+
+/**
  * 타인 사용자 개인정보 조회 애플리케이션 응답 DTO
  *
  * @param id 유저 아이디
@@ -21,6 +23,6 @@ public record GetOtherUserInfoResponse(
         String occupationLabel,
         String profileImageUrl,
         String introductionText,
-        Page<UserProjectResponse> projects,
-        Page<UserDataResponse> datasets
+        Page<OtherUserProjectResponse> projects,
+        Page<OtherUserDataResponse> datasets
 ) {}

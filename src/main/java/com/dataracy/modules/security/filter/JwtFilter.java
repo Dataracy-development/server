@@ -75,27 +75,41 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return
-                path.startsWith("/swagger") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.equals("/swagger-ui.html")
-                        || path.startsWith("/swagger-resources") || path.equals("/swagger-config")
-                        || path.startsWith("/webjars") || path.startsWith("/.well-known") || path.equals("/favicon.ico")
-                        || path.startsWith("/health") || path.startsWith("/actuator")
-                        || path.startsWith("/static") || path.equals("/webhook")
-                        || path.equals("/api/v1/base") || path.equals("/api/v1/onboarding")
-                        || path.startsWith("/login") || path.startsWith("/oauth2")
-                        || path.equals("/") || path.startsWith("/error")
-                        || path.startsWith("/api/v1/references")
-                        || path.startsWith("/api/v1/email")
-                        || path.startsWith("/api/v1/signup")
-                        || path.startsWith("/api/v1/auth")
-                        || path.equals("/api/v1/password/reset")
-                        || path.equals("/api/v1/nickname/check")
-                        || (path.startsWith("/api/v1/projects") && request.getMethod().equals("GET"))
-                        || (path.startsWith("/api/v1/datasets") && request.getMethod().equals("GET"))
-                        || path.startsWith("/api/v1/files")
+        String method = request.getMethod();
 
-                ;
+        // Swagger, static, auth 등 공개 API만 예외 처리
+        if (path.startsWith("/swagger") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-resources") || path.startsWith("/webjars") || path.startsWith("/.well-known")
+                || path.equals("/swagger-ui.html") || path.equals("/favicon.ico")
+                || path.startsWith("/health") || path.startsWith("/actuator")
+                || path.startsWith("/static") || path.equals("/webhook")
+                || path.equals("/api/v1/base") || path.equals("/api/v1/onboarding")
+                || path.startsWith("/login") || path.startsWith("/oauth2")
+                || path.equals("/") || path.startsWith("/error")
+                || path.startsWith("/api/v1/references")
+                || path.startsWith("/api/v1/email")
+                || path.startsWith("/api/v1/signup")
+                || path.startsWith("/api/v1/auth")
+                || path.startsWith("/api/v1/users")
+                || path.equals("/api/v1/password/reset")
+                || path.equals("/api/v1/nickname/check")
+                || path.startsWith("/api/v1/files")) {
+            return true;
+        }
+
+        // 프로젝트/데이터셋 GET 중 공개 API만 예외 처리 (popular, detail 등)
+        if (method.equals("GET")) {
+            if (path.startsWith("/api/v1/projects/") && !path.startsWith("/api/v1/projects/me")) {
+                return true; // 프로젝트 공개 조회
+            }
+            if (path.startsWith("/api/v1/datasets/") && !path.startsWith("/api/v1/datasets/me")) {
+                return true; // 데이터셋 공개 조회
+            }
+        }
+
+        return false; // 나머지는 JWT 필터 적용
     }
+
 
     /**
      * 해당 유저를 인증 객체를 SecurityContextHolder에 추가한다.

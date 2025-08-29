@@ -1,7 +1,7 @@
 package com.dataracy.modules.user.adapter.web.response.read;
 
-import com.dataracy.modules.dataset.application.dto.response.read.UserDataResponse;
-import com.dataracy.modules.project.application.dto.response.read.UserProjectResponse;
+import com.dataracy.modules.user.adapter.web.response.support.OtherUserDataWebResponse;
+import com.dataracy.modules.user.adapter.web.response.support.OtherUserProjectWebResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.domain.Page;
 
@@ -26,8 +26,8 @@ public record GetOtherUserInfoWebResponse(
         String introductionText,
 
         @Schema(description = "유저가 업로드한 프로젝트 목록")
-        Page<UserProjectResponse> projects,
+        Page<OtherUserProjectWebResponse> projects,
 
         @Schema(description = "유저가 업로드한 데이터셋 목록")
-        Page<UserDataResponse> datasets
+        Page<OtherUserDataWebResponse> datasets
 ) {}

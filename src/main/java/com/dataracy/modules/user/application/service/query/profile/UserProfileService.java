@@ -1,9 +1,7 @@
 package com.dataracy.modules.user.application.service.query.profile;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.dataset.application.dto.response.read.UserDataResponse;
 import com.dataracy.modules.dataset.application.port.in.query.read.FindUserDataSetsUseCase;
-import com.dataracy.modules.project.application.dto.response.read.UserProjectResponse;
 import com.dataracy.modules.project.application.port.in.query.read.FindUserProjectsUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
@@ -11,6 +9,9 @@ import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFro
 import com.dataracy.modules.reference.application.port.in.visitsource.GetVisitSourceLabelFromIdUseCase;
 import com.dataracy.modules.user.application.dto.response.read.GetOtherUserInfoResponse;
 import com.dataracy.modules.user.application.dto.response.read.GetUserInfoResponse;
+import com.dataracy.modules.user.application.dto.response.support.OtherUserDataResponse;
+import com.dataracy.modules.user.application.dto.response.support.OtherUserProjectResponse;
+import com.dataracy.modules.user.application.mapper.external.OtherUserInfoMapper;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUserAuthorLevelIdsUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
@@ -38,6 +39,8 @@ public class UserProfileService implements
         FindUserAuthorLevelIdsUseCase,
         GetUserInfoUseCase
 {
+    private final OtherUserInfoMapper otherUserInfoMapper;
+
     private final UserQueryPort userQueryPort;
     private final UserMultiQueryPort userMultiQueryPort;
 
@@ -217,6 +220,7 @@ public class UserProfileService implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetOtherUserInfoResponse getOtherUserInfo(Long userId) {
         Instant startTime = LoggerFactory.service().logStart("GetOtherUserInfoUseCase", "주어진 사용자 ID에 대한 타인 유저 정보 조회 서비스 시작 userId=" + userId);
 
@@ -229,8 +233,10 @@ public class UserProfileService implements
         String authorLevelLabel = user.getAuthorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(user.getAuthorLevelId());
         String occupationLabel = user.getOccupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(user.getOccupationId());
 
-        Page<UserProjectResponse> projects = findUserProjectsUseCase.findUserProjects(userId, null);
-        Page<UserDataResponse> datasets = findUserDataSetsUseCase.findUserDataSets(userId, null);
+        Page<OtherUserProjectResponse> projects = findUserProjectsUseCase.findUserProjects(userId, null)
+                .map(otherUserInfoMapper::toOtherUserProject);
+        Page<OtherUserDataResponse> datasets = findUserDataSetsUseCase.findUserDataSets(userId, null)
+                .map(otherUserInfoMapper::toOtherUserData);
 
         GetOtherUserInfoResponse getOtherUserInfoResponse = new GetOtherUserInfoResponse(
                 user.getId(),
