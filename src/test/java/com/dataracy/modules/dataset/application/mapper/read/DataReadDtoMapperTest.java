@@ -1,9 +1,6 @@
 package com.dataracy.modules.dataset.application.mapper.read;
 
-import com.dataracy.modules.dataset.application.dto.response.read.ConnectedDataResponse;
-import com.dataracy.modules.dataset.application.dto.response.read.DataDetailResponse;
-import com.dataracy.modules.dataset.application.dto.response.read.PopularDataResponse;
-import com.dataracy.modules.dataset.application.dto.response.read.RecentMinimalDataResponse;
+import com.dataracy.modules.dataset.application.dto.response.read.*;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.DataMetadata;
 import org.junit.jupiter.api.DisplayName;
@@ -102,5 +99,26 @@ class DataReadDtoMapperTest {
         // then
         assertThat(res.creatorName()).isEqualTo("nick");
         assertThat(res.occupationLabel()).isEqualTo("occ");
+    }
+
+    @Test
+    @DisplayName("toUserDataResponse - Data → UserDataResponse 매핑 성공")
+    void toUserDataResponseResponseShouldMapCorrectly() {
+        // given
+        Data data = sampleData();
+
+        // when
+        UserDataResponse res = mapper.toResponseDto(
+                data,
+                "topic",
+                "type",
+                3L
+        );
+
+        // then
+        assertThat(res.title()).isEqualTo("title");
+        assertThat(res.topicLabel()).isEqualTo("topic");
+        assertThat(res.dataTypeLabel()).isEqualTo("type");
+        assertThat(res.countConnectedProjects()).isEqualTo(3L);
     }
 }
