@@ -46,7 +46,7 @@ public class DataReadService implements
     private final GetRecentDataSetsPort getRecentDataSetsPort;
     private final FindDataWithMetadataPort findDataWithMetadataPort;
     private final GetDataGroupCountPort getDataGroupCountPort;
-    private final GetConnectedDataSetsPort getConnectedDataSetsPort;
+    private final FindConnectedDataSetsPort findConnectedDataSetsPort;
     private final FindUserDataSetsPort findUserDataSetsPort;
 
     private final GetUserInfoUseCase getUserInfoUseCase;
@@ -193,7 +193,7 @@ public class DataReadService implements
     public Page<ConnectedDataResponse> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
         Instant startTime = LoggerFactory.service().logStart("FindConnectedDataSetsUseCase", "프로젝트와 연결된 데이터셋 목록 조회 서비스 시작 projectId=" + projectId);
 
-        Page<DataWithProjectCountDto> savedDataSets = getConnectedDataSetsPort.getConnectedDataSetsAssociatedWithProject(projectId, pageable);
+        Page<DataWithProjectCountDto> savedDataSets = findConnectedDataSetsPort.findConnectedDataSetsAssociatedWithProject(projectId, pageable);
         DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets.getContent());
         Page<ConnectedDataResponse> connectedDataResponses = savedDataSets.map(wrapper -> {
             Data data = wrapper.data();
@@ -230,7 +230,7 @@ public class DataReadService implements
             return List.of();
         }
         List<Long> distinctIds = dataIds.stream().distinct().toList();
-        List<DataWithProjectCountDto> savedDataSets = getConnectedDataSetsPort.getConnectedDataSetsAssociatedWithProjectByIds(distinctIds);
+        List<DataWithProjectCountDto> savedDataSets = findConnectedDataSetsPort.findConnectedDataSetsAssociatedWithProjectByIds(distinctIds);
 
         DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets);
         List<ConnectedDataResponse> connectedDataResponses = savedDataSets.stream()

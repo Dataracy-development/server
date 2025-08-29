@@ -39,7 +39,7 @@ import java.util.Optional;
 public class ReadDataQueryDslAdapter implements
         FindDataPort,
         FindDataWithMetadataPort,
-        GetConnectedDataSetsPort,
+        FindConnectedDataSetsPort,
         GetDataGroupCountPort,
         GetRecentDataSetsPort,
         GetPopularDataSetsPort,
@@ -127,7 +127,7 @@ public class ReadDataQueryDslAdapter implements
      * @return 각 데이터와 해당 데이터에 연결된 프로젝트 개수를 포함한 Page&lt;DataWithProjectCountDto&gt;
      */
     @Override
-    public Page<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
+    public Page<DataWithProjectCountDto> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
         Instant startTime = LoggerFactory.query().logQueryStart("DataEntity",  "[getConnectedDataSetsAssociatedWithProject] 지정된 프로젝트에 연결된 데이터셋 목록 조회 시작. projectId=" + projectId);
 
         // alias path (튜플에서 꺼낼 때 사용)
@@ -194,7 +194,7 @@ public class ReadDataQueryDslAdapter implements
      * @return 데이터셋과 연결된 프로젝트 수 정보를 담은 DataWithProjectCountDto 리스트. 입력 목록이 비어 있거나 null이면 빈 리스트를 반환합니다.
      */
     @Override
-    public List<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProjectByIds(List<Long> dataIds) {
+    public List<DataWithProjectCountDto> findConnectedDataSetsAssociatedWithProjectByIds(List<Long> dataIds) {
         if (dataIds == null || dataIds.isEmpty()) return List.of();
 
         Instant startTime = LoggerFactory.query()
