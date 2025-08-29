@@ -52,37 +52,37 @@ class UserPasswordControllerTest {
     @MockBean
     private ConfirmPasswordUseCase confirmPasswordUseCase;
 
-    // 공통 모킹
     @MockBean
     private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
     @MockBean
     private JwtValidateUseCase jwtValidateUseCase;
+
     @MockBean
     private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
 
+    private static final Long FIXED_USER_ID = 1L; // 모든 테스트에서 동일하게 사용
+
     @BeforeEach
     void setupResolver() throws Exception {
-        // 모든 @CurrentUserId → userId=1L
         given(currentUserIdArgumentResolver.supportsParameter(any()))
                 .willReturn(true);
         given(currentUserIdArgumentResolver.resolveArgument(any(), any(), any(), any()))
-                .willReturn(1L);
-
-        // Jwt도 항상 userId=1L 반환
+                .willReturn(FIXED_USER_ID);
         given(jwtValidateUseCase.getUserIdFromToken(any()))
-                .willReturn(1L);
+                .willReturn(FIXED_USER_ID);
     }
 
     @Test
     @DisplayName("changePassword: 성공 → 200 OK + 상태코드 검증")
     void changePasswordSuccess() throws Exception {
-        Long userId = 10L;
+        // given
         ChangePasswordWebRequest webReq = new ChangePasswordWebRequest("pw12345@", "pw12345@");
         ChangePasswordRequest reqDto = new ChangePasswordRequest("pw12345@", "pw12345@");
 
         given(mapper.toApplicationDto(any(ChangePasswordWebRequest.class))).willReturn(reqDto);
-        willDoNothing().given(changePasswordUseCase).changePassword(eq(userId), any(ChangePasswordRequest.class));
+        willDoNothing().given(changePasswordUseCase).changePassword(eq(FIXED_USER_ID), any(ChangePasswordRequest.class));
 
+        // when & then
         mockMvc.perform(put("/api/v1/user/password/change")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(webReq)))
@@ -90,18 +90,22 @@ class UserPasswordControllerTest {
                 .andExpect(jsonPath("$.code").value(UserSuccessStatus.OK_CHANGE_PASSWORD.getCode()));
 
         then(mapper).should().toApplicationDto(any(ChangePasswordWebRequest.class));
-        then(changePasswordUseCase).should().changePassword(eq(userId), any(ChangePasswordRequest.class));
+        then(changePasswordUseCase).should().changePassword(eq(FIXED_USER_ID), any(ChangePasswordRequest.class));
     }
 
     @Test
     @DisplayName("resetPasswordWithToken: 성공 → 200 OK + 상태코드 검증")
     void resetPasswordWithTokenSuccess() throws Exception {
-        ResetPasswordWithTokenWebRequest webReq = new ResetPasswordWithTokenWebRequest("token", "pw12345@", "pw12345@");
-        ResetPasswordWithTokenRequest reqDto = new ResetPasswordWithTokenRequest("token", "pw12345@", "pw12345@");
+        // given
+        ResetPasswordWithTokenWebRequest webReq =
+                new ResetPasswordWithTokenWebRequest("token", "pw12345@", "pw12345@");
+        ResetPasswordWithTokenRequest reqDto =
+                new ResetPasswordWithTokenRequest("token", "pw12345@", "pw12345@");
 
         given(mapper.toApplicationDto(any(ResetPasswordWithTokenWebRequest.class))).willReturn(reqDto);
         willDoNothing().given(changePasswordUseCase).resetPassword(any(ResetPasswordWithTokenRequest.class));
 
+        // when & then
         mockMvc.perform(put("/api/v1/password/reset")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(webReq)))
@@ -115,13 +119,14 @@ class UserPasswordControllerTest {
     @Test
     @DisplayName("confirmPassword: 성공 → 200 OK + 상태코드 검증")
     void confirmPasswordSuccess() throws Exception {
-        Long userId = 77L;
+        // given
         ConfirmPasswordWebRequest webReq = new ConfirmPasswordWebRequest("pw12345@");
         ConfirmPasswordRequest reqDto = new ConfirmPasswordRequest("pw12345@");
 
         given(mapper.toApplicationDto(any(ConfirmPasswordWebRequest.class))).willReturn(reqDto);
-        willDoNothing().given(confirmPasswordUseCase).confirmPassword(eq(userId), any(ConfirmPasswordRequest.class));
+        willDoNothing().given(confirmPasswordUseCase).confirmPassword(eq(FIXED_USER_ID), any(ConfirmPasswordRequest.class));
 
+        // when & then
         mockMvc.perform(post("/api/v1/user/password/confirm")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(webReq)))
@@ -129,26 +134,27 @@ class UserPasswordControllerTest {
                 .andExpect(jsonPath("$.code").value(UserSuccessStatus.OK_CONFIRM_PASSWORD.getCode()));
 
         then(mapper).should().toApplicationDto(any(ConfirmPasswordWebRequest.class));
-        then(confirmPasswordUseCase).should().confirmPassword(eq(userId), any(ConfirmPasswordRequest.class));
+        then(confirmPasswordUseCase).should().confirmPassword(eq(FIXED_USER_ID), any(ConfirmPasswordRequest.class));
     }
 
     @Test
     @DisplayName("changePassword: 실패 → 내부 예외 발생 시 500 반환")
     void changePasswordFailure() throws Exception {
-        Long userId = 10L;
+        // given
         ChangePasswordWebRequest webReq = new ChangePasswordWebRequest("pw12345@", "pw12345@");
         ChangePasswordRequest reqDto = new ChangePasswordRequest("pw12345@", "pw12345@");
 
         given(mapper.toApplicationDto(any(ChangePasswordWebRequest.class))).willReturn(reqDto);
         willThrow(new RuntimeException("bad"))
-                .given(changePasswordUseCase).changePassword(eq(userId), any(ChangePasswordRequest.class));
+                .given(changePasswordUseCase).changePassword(eq(FIXED_USER_ID), any(ChangePasswordRequest.class));
 
+        // when & then
         mockMvc.perform(put("/api/v1/user/password/change")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(webReq)))
                 .andExpect(status().is5xxServerError());
 
         then(mapper).should().toApplicationDto(any(ChangePasswordWebRequest.class));
-        then(changePasswordUseCase).should().changePassword(eq(userId), any(ChangePasswordRequest.class));
+        then(changePasswordUseCase).should().changePassword(eq(FIXED_USER_ID), any(ChangePasswordRequest.class));
     }
 }

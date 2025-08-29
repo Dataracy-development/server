@@ -15,7 +15,7 @@ class UserProjectDtoMapperTest {
 
     @Test
     @DisplayName("Project → UserProjectResponse 변환 성공")
-    void toResponseDto_success() {
+    void toResponseDtoSuccess() {
         // given
         Project project = Project.builder()
                 .id(1L)
