@@ -117,4 +117,25 @@ class DataReadWebMapperTest {
         assertThat(result.creatorName()).isEqualTo("userA");
         assertThat(result.countConnectedProjects()).isEqualTo(7L);
     }
+
+    @Test
+    @DisplayName("UserDataResponse → UserDataWebResponse 매핑 성공")
+    void toWebDtoFromUserDataResponseSuccess() {
+        // given
+        UserDataResponse dto = new UserDataResponse(
+                4L, "userData", "topicY", "typeX",
+                LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31),
+                "thumb.png", 50, 1024L, 200, 30,
+                LocalDateTime.of(2022, 5, 5, 15, 0), 7L
+        );
+
+        // when
+        UserDataWebResponse result = mapper.toWebDto(dto);
+
+        // then
+        assertThat(result.id()).isEqualTo(4L);
+        assertThat(result.title()).isEqualTo("userData");
+        assertThat(result.topicLabel()).isEqualTo("topicY");
+        assertThat(result.countConnectedProjects()).isEqualTo(7L);
+    }
 }
