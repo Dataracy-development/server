@@ -89,4 +89,8 @@ public class ProjectFilterPredicate {
     public static BooleanExpression parentProjectIdEq(Long projectId) {
         return projectId == null ? null : projectEntity.parentProject.id.eq(projectId);
     }
+
+    public static BooleanExpression userIdEq(Long userId) {
+        return userId == null ? null : projectEntity.userId.eq(userId);
+    }
 }

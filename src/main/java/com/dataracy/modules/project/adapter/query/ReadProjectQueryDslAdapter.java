@@ -11,10 +11,7 @@ import com.dataracy.modules.project.adapter.query.sort.ProjectPopularOrderBuilde
 import com.dataracy.modules.project.adapter.query.sort.ProjectSortBuilder;
 import com.dataracy.modules.project.application.dto.request.search.FilteringProjectRequest;
 import com.dataracy.modules.project.application.dto.response.support.ProjectWithDataIdsResponse;
-import com.dataracy.modules.project.application.port.out.query.read.FindConnectedProjectsPort;
-import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
-import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
-import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
+import com.dataracy.modules.project.application.port.out.query.read.*;
 import com.dataracy.modules.project.application.port.out.query.search.SearchFilteredProjectsPort;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.model.Project;
@@ -23,6 +20,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -38,7 +36,8 @@ public class ReadProjectQueryDslAdapter implements
         FindContinuedProjectsPort,
         FindConnectedProjectsPort,
         GetPopularProjectsPort,
-        SearchFilteredProjectsPort
+        SearchFilteredProjectsPort,
+        FindUserProjectsPort
 {
     private final JPAQueryFactory queryFactory;
 
@@ -274,7 +273,7 @@ public class ReadProjectQueryDslAdapter implements
         List<ProjectEntity> parentsWithChildren = queryFactory
                 .selectFrom(project)
                 .distinct()                                      // 루트 중복 방지
-                .leftJoin(project.childProjects).fetchJoin()     // ✅ 1:N 페치조인 (2단계에서는 OK)
+                .leftJoin(project.childProjects).fetchJoin()     // 1:N 페치조인 (2단계에서는 OK)
                 .where(project.id.in(pageIds))
                 .fetch();
 
@@ -320,5 +319,52 @@ public class ReadProjectQueryDslAdapter implements
                 ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId()),
                 ProjectFilterPredicate.notDeleted()
         };
+    }
+
+    @Override
+    public Page<Project> findUserProjects(Long userId, Pageable pageable) {
+        // 기본 Pageable: page=0, size=5
+        Pageable effectivePageable = (pageable == null)
+                ? PageRequest.of(0, 5)
+                : pageable;
+
+        Instant startTime = LoggerFactory.query().logQueryStart(
+                "ProjectEntity",
+                "[findUserProjects] 해당 회원이 작성한 프로젝트 목록 조회 시작. userId=" + userId
+        );
+
+        List<ProjectEntity> entities = queryFactory
+                .selectFrom(project)
+                .orderBy(ProjectSortBuilder.fromSortOption(ProjectSortType.LATEST))
+                .where(
+                        ProjectFilterPredicate.userIdEq(userId),
+                        ProjectFilterPredicate.notDeleted()
+                )
+                .offset(effectivePageable.getOffset())
+                .limit(effectivePageable.getPageSize())
+                .fetch();
+
+        List<Project> contents = entities.stream()
+                .map(ProjectEntityMapper::toMinimal)
+                .toList();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(project.count())
+                        .from(project)
+                        .where(
+                                ProjectFilterPredicate.userIdEq(userId),
+                                ProjectFilterPredicate.notDeleted()
+                        )
+                        .fetchOne()
+        ).orElse(0L);
+
+        LoggerFactory.query().logQueryEnd(
+                "ProjectEntity",
+                "[findUserProjects] 해당 회원이 작성한 프로젝트 목록 조회 완료. userId=" + userId,
+                startTime
+        );
+
+        return new PageImpl<>(contents, effectivePageable, total);
     }
 }
