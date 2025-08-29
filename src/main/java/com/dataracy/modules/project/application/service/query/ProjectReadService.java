@@ -4,28 +4,16 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.application.port.in.query.read.FindConnectedDataSetsUseCase;
 import com.dataracy.modules.like.application.port.in.validate.ValidateTargetLikeUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
-import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
+import com.dataracy.modules.project.application.dto.response.read.*;
 import com.dataracy.modules.project.application.dto.response.support.ParentProjectResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectLabelMapResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectWithDataIdsResponse;
-import com.dataracy.modules.project.application.mapper.read.ConnectedProjectDtoMapper;
-import com.dataracy.modules.project.application.mapper.read.ContinuedProjectDtoMapper;
-import com.dataracy.modules.project.application.mapper.read.PopularProjectDtoMapper;
-import com.dataracy.modules.project.application.mapper.read.ProjectDetailDtoMapper;
+import com.dataracy.modules.project.application.mapper.read.*;
 import com.dataracy.modules.project.application.mapper.support.ParentProjectDtoMapper;
 import com.dataracy.modules.project.application.port.in.query.extractor.FindProjectLabelMapUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.FindConnectedProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.GetPopularProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.GetProjectDetailUseCase;
-import com.dataracy.modules.project.application.port.out.query.read.FindConnectedProjectsPort;
-import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
-import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
-import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
+import com.dataracy.modules.project.application.port.in.query.read.*;
+import com.dataracy.modules.project.application.port.out.query.read.*;
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByParentPort;
 import com.dataracy.modules.project.application.port.out.view.ManageProjectViewCountPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
@@ -57,13 +45,15 @@ public class ProjectReadService implements
         GetProjectDetailUseCase,
         FindContinuedProjectsUseCase,
         FindConnectedProjectsUseCase,
-        GetPopularProjectsUseCase
+        GetPopularProjectsUseCase,
+        FindUserProjectsUseCase
 {
     private final ContinuedProjectDtoMapper continuedProjectDtoMapper;
     private final ConnectedProjectDtoMapper connectedProjectDtoMapper;
     private final PopularProjectDtoMapper popularProjectDtoMapper;
     private final ProjectDetailDtoMapper projectDetailDtoMapper;
     private final ParentProjectDtoMapper parentProjectDtoMapper;
+    private final UserProjectDtoMapper userProjectDtoMapper;
 
     private final ManageProjectViewCountPort manageProjectViewCountPort;
 
@@ -73,6 +63,7 @@ public class ProjectReadService implements
     private final FindContinuedProjectsPort findContinuedProjectsPort;
     private final FindConnectedProjectsPort findConnectedProjectsPort;
     private final GetPopularProjectsPort getPopularProjectsPort;
+    private final FindUserProjectsPort findUserProjectsPort;
 
     private final GetUserInfoUseCase getUserInfoUseCase;
     private final FindUsernameUseCase findUsernameUseCase;
@@ -213,6 +204,7 @@ public class ProjectReadService implements
         LoggerFactory.service().logSuccess("FindContinuedProjectsUseCase", "이어가기 프로젝트 목록 조회 서비스 종료 projectId=" + projectId, startTime);
         return findContinuedProjectsResponse;
     }
+
     /**
          * 지정된 데이터셋과 연결된 프로젝트들을 페이지 단위로 조회하여, 각 프로젝트에 사용자명, 사용자 프로필 이미지 URL, 토픽 라벨을 포함한 응답 페이지를 반환합니다.
          *
@@ -296,5 +288,33 @@ public class ProjectReadService implements
 
         LoggerFactory.service().logSuccess("SearchPopularProjectsUseCase", "인기 프로젝트 목록 조회 서비스 종료", startTime);
         return popularProjectResponses;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserProjectResponse> findUserProjects(Long userId, Pageable pageable) {
+        Instant startTime = LoggerFactory.service().logStart("FindUserProjects", "해당 회원이 작성한 프로젝트 목록 조회 서비스 시작 userId=" + userId);
+
+        Page<Project> savedProjects = findUserProjectsPort.findUserProjects(userId, pageable);
+
+        List<Long> userIds = savedProjects.stream().map(Project::getUserId).toList();
+        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
+        List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
+
+        Map<Long, String> usernameMap = findUsernameUseCase.findUsernamesByIds(userIds);
+        Map<Long, String> userProfileUrlMap = findUserThumbnailUseCase.findUserThumbnailsByIds(userIds);
+        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
+        Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
+
+        Page<UserProjectResponse> findUserProjectsResponse = savedProjects.map(project -> userProjectDtoMapper.toResponseDto(
+                project,
+                usernameMap.get(project.getUserId()),
+                userProfileUrlMap.get(project.getUserId()),
+                topicLabelMap.get(project.getTopicId()),
+                authorLevelLabelMap.get(project.getAuthorLevelId())
+        ));
+
+        LoggerFactory.service().logSuccess("FindUserProjects", "해당 회원이 작성한 프로젝트 목록 조회 서비스 종료 userId=" + userId, startTime);
+        return findUserProjectsResponse;
     }
 }
