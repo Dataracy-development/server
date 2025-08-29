@@ -5,6 +5,7 @@ import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorL
 import com.dataracy.modules.reference.application.port.in.occupation.GetOccupationLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.visitsource.GetVisitSourceLabelFromIdUseCase;
+import com.dataracy.modules.user.application.dto.response.read.GetOtherUserInfoResponse;
 import com.dataracy.modules.user.application.dto.response.read.GetUserInfoResponse;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUserAuthorLevelIdsUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
@@ -204,5 +205,31 @@ public class UserProfileService implements
 
         LoggerFactory.service().logSuccess("GetUserInfoUseCase", "주어진 사용자 ID에 대한 유저 정보 조회 서비스 성공 userId=" + userId, startTime);
         return getUserInfoResponse;
+    }
+
+    @Override
+    public GetOtherUserInfoResponse getOtherUserInfo(Long userId) {
+        Instant startTime = LoggerFactory.service().logStart("GetOtherUserInfoUseCase", "주어진 사용자 ID에 대한 타인 유저 정보 조회 서비스 시작 userId=" + userId);
+
+        User user = userQueryPort.findUserById(userId)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("GetOtherUserInfoUseCase", "[타인 유저 정보 조회] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
+                });
+
+        String authorLevelLabel = user.getAuthorLevelId() == null ? null : getAuthorLevelLabelFromIdUseCase.getLabelById(user.getAuthorLevelId());
+        String occupationLabel = user.getOccupationId() == null ? null : getOccupationLabelFromIdUseCase.getLabelById(user.getOccupationId());
+
+        GetOtherUserInfoResponse getOtherUserInfoResponse = new GetOtherUserInfoResponse(
+                user.getId(),
+                user.getNickname(),
+                authorLevelLabel,
+                occupationLabel,
+                user.getProfileImageUrl(),
+                user.getIntroductionText()
+        );
+
+        LoggerFactory.service().logSuccess("GetOtherUserInfoUseCase", "주어진 사용자 ID에 대한 타인 정보 조회 서비스 성공 userId=" + userId, startTime);
+        return getOtherUserInfoResponse;
     }
 }

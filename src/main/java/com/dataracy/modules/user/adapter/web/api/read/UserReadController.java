@@ -3,7 +3,9 @@ package com.dataracy.modules.user.adapter.web.api.read;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.adapter.web.mapper.read.UserReadWebMapper;
+import com.dataracy.modules.user.adapter.web.response.read.GetOtherUserInfoWebResponse;
 import com.dataracy.modules.user.adapter.web.response.read.GetUserInfoWebResponse;
+import com.dataracy.modules.user.application.dto.response.read.GetOtherUserInfoResponse;
 import com.dataracy.modules.user.application.dto.response.read.GetUserInfoResponse;
 import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
@@ -46,5 +48,21 @@ public class UserReadController implements UserReadApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_GET_USER_INFO, webResponse));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<GetOtherUserInfoWebResponse>> getOtherUserInfo(Long userId) {
+        Instant startTime = LoggerFactory.api().logRequest("[GetOtherUserInfo] 타인 회원정보 조회 API 요청 시작");
+        GetOtherUserInfoWebResponse webResponse;
+
+        try {
+            GetOtherUserInfoResponse responseDto = getUserInfoUseCase.getOtherUserInfo(userId);
+            webResponse = userReadWebMapper.toWebDto(responseDto);
+        } finally {
+            LoggerFactory.api().logResponse("[GetOtherUserInfo] 타인 회원정보 조회 API 응답 완료", startTime);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(UserSuccessStatus.OK_GET_OTHER_USER_INFO, webResponse));
     }
 }
