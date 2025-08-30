@@ -122,18 +122,20 @@ public class DataReadDtoMapper {
     }
 
     /**
-     * Data 도메인과 작성자 및 표시용 라벨 정보를 결합해 상세 조회용 DataDetailResponse를 생성합니다.
+     * Data 도메인과 작성자·라벨 정보를 결합해 상세 조회용 DataDetailResponse를 생성합니다.
+     *
+     * 상세 응답에 필요한 필드(작성자 표시명·프로필·소개, 각종 라벨, 기간·설명·미리보기 등)를 Data 객체와 전달된 문자열들을 이용해 조합해 반환합니다.
      *
      * @param data 도메인 엔티티
      * @param username 화면에 표시할 작성자명(표시명)
-     * @param userProfileImageUrl 작성자 프로필 이미지 URL, 없으면 {@code null} 가능
-     * @param userIntroductionText 작성자 소개 문구, 없으면 {@code null} 가능
-     * @param authorLabel 작성자 표시용 라벨(예: 기관명 또는 역할)
+     * @param userProfileImageUrl 작성자 프로필 이미지 URL (없을 수 있음; {@code null} 허용)
+     * @param userIntroductionText 작성자 소개 문구 (없을 수 있음; {@code null} 허용)
+     * @param authorLabel 작성자 표시용 라벨(예: 기관명)
      * @param occupationLabel 직업/직무 표시용 라벨
      * @param topicLabel 주제 표시용 라벨
      * @param dataSourceLabel 데이터 출처 표시용 라벨
      * @param dataTypeLabel 데이터 타입 표시용 라벨
-     * @return 데이터의 상세 정보를 담은 {@link DataDetailResponse}
+     * @return 해당 데이터의 상세 정보를 담은 {@link DataDetailResponse}
      */
     public DataDetailResponse toResponseDto(
             Data data,
@@ -172,6 +174,18 @@ public class DataReadDtoMapper {
         );
     }
 
+    /**
+     * Data 도메인 객체와 라벨 정보를 결합하여 UserDataResponse DTO를 생성합니다.
+     *
+     * 지정된 Data의 식별자·제목·기간·썸네일·다운로드/크기·메타데이터(행/열 수)·생성일자를 응답 DTO에 복사하고,
+     * 전달된 토픽·데이터 타입 라벨 및 프로젝트 연결 수를 추가합니다.
+     *
+     * @param data 변환할 Data 도메인 객체
+     * @param topicLabel 사용자에게 표시할 토픽 라벨(예: "교통", "환경")
+     * @param dataTypeLabel 사용자에게 표시할 데이터 타입 라벨(예: "시계열", "이미지")
+     * @param countConnectedProjects 해당 데이터가 연결된 프로젝트 수
+     * @return 채워진 UserDataResponse 인스턴스
+     */
     public UserDataResponse toResponseDto(
             Data data,
             String topicLabel,

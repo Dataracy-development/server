@@ -27,6 +27,16 @@ public class OtherUserReadController implements OtherUserReadApi {
 
     private final GetOtherUserInfoUseCase getOtherUserInfoUseCase;
 
+    /**
+     * 타인(다른 사용자)의 공개 회원 정보를 조회하여 성공 응답을 반환한다.
+     *
+     * 요청을 받아 도메인 유스케이스에서 사용자 정보를 조회한 뒤 웹 응답 DTO로 변환하여
+     * HTTP 200과 함께 SuccessResponse로 감싸 반환한다. 유스케이스에서 발생한 예외는 전파되어
+     * 전역 예외 처리기에 의해 처리된다.
+     *
+     * @param userId 조회할 타인 회원의 ID
+     * @return HTTP 200과 함께 UserSuccessStatus.OK_GET_OTHER_USER_INFO 및 GetOtherUserInfoWebResponse를 포함한 SuccessResponse
+     */
     @Override
     public ResponseEntity<SuccessResponse<GetOtherUserInfoWebResponse>> getOtherUserInfo(Long userId) {
         Instant startTime = LoggerFactory.api().logRequest("[GetOtherUserInfo] 타인 회원정보 조회 API 요청 시작");
@@ -43,6 +53,15 @@ public class OtherUserReadController implements OtherUserReadApi {
                 .body(SuccessResponse.of(UserSuccessStatus.OK_GET_OTHER_USER_INFO, webResponse));
     }
 
+    /**
+     * 타인(다른 사용자)이 업로드한 프로젝트 목록을 페이지 단위로 조회하여 반환한다.
+     *
+     * 요청을 처리한 결과를 GetOtherUserProjectWebResponse의 Page로 매핑해 SuccessResponse에 담아 HTTP 200(OK)로 응답한다.
+     *
+     * @param userId  조회 대상 사용자의 식별자
+     * @param pageable  페이지 번호·크기·정렬을 포함한 페이징 정보
+     * @return HTTP 200과 함께 페이지화된 프로젝트 목록을 담은 SuccessResponse를 포함한 ResponseEntity
+     */
     @Override
     public ResponseEntity<SuccessResponse<Page<GetOtherUserProjectWebResponse>>> getOtherProjects(Long userId, Pageable pageable) {
         Instant startTime = LoggerFactory.api().logRequest("[GetOtherProjects] 타인이 업로드한 프로젝트 목록 추가 조회 API 요청 시작");
@@ -60,6 +79,17 @@ public class OtherUserReadController implements OtherUserReadApi {
 
     }
 
+    /**
+     * 다른 사용자가 업로드한 데이터셋의 추가 페이지를 조회하여 페이징된 웹 응답으로 반환한다.
+     *
+     * 요청된 사용자(userId)가 업로드한 데이터셋을 use case에서 조회하고, 각 도메인 응답을
+     * GetOtherUserDataWebResponse로 매핑한 후 SuccessResponse(UserSuccessStatus.OK_GET_OTHER_EXTRA_DATASETS)
+     * 로 감싸서 HTTP 200 응답으로 반환한다.
+     *
+     * @param userId   조회 대상 다른 사용자의 ID
+     * @param pageable 페이징 및 정렬 정보
+     * @return HTTP 200에 래핑된 SuccessResponse에 Page<GetOtherUserDataWebResponse>를 포함한 ResponseEntity
+     */
     @Override
     public ResponseEntity<SuccessResponse<Page<GetOtherUserDataWebResponse>>> getOtherDataSets(Long userId, Pageable pageable) {
         Instant startTime = LoggerFactory.api().logRequest("[GetOtherDataSets] 타인이 업로드한 데이터셋 목록 추가 조회 API 요청 시작");

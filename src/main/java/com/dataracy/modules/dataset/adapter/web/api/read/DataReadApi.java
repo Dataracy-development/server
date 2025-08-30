@@ -122,6 +122,15 @@ public interface DataReadApi {
             Pageable pageable
     );
 
+    /**
+     * 로그인한 회원이 업로드한 데이터셋의 페이징된 목록을 조회합니다.
+     *
+     * 인증된 사용자의 업로드 데이터셋을 페이지 단위로 반환합니다. 해당 엔드포인트는 인증(Authorization 헤더, Bearer 토큰)을 필요로 합니다.
+     *
+     * @param userId   현재 인증된 회원의 ID (컨트롤러에서 주입됨)
+     * @param pageable 페이지 정보 (기본 페이지 크기: 5)
+     * @return 인증된 회원이 업로드한 데이터셋을 담은 SuccessResponse를 포함한 ResponseEntity (Page<UserDataWebResponse>)
+     */
     @Operation(
             summary = "로그인한 회원이 업로드한 데이터셋 리스트를 조회한다.",
             description = "로그인한 회원이 업로드한 데이터셋 리스트를 조회한다."

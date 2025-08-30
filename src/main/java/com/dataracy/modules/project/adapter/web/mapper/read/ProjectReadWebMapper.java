@@ -156,6 +156,12 @@ public class ProjectReadWebMapper {
         );
     }
 
+    /**
+     * 애플리케이션 계층의 UserProjectResponse를 웹 계층의 UserProjectWebResponse로 변환한다.
+     *
+     * @param responseDto 변환할 프로젝트 읽기 응답 객체(프로젝트 ID, 제목, 내용, 썸네일 URL, 라벨들, 카운트, 생성일 등 포함)
+     * @return 웹 계층에서 사용하는 UserProjectWebResponse 인스턴스
+     */
     public UserProjectWebResponse toWebDto(UserProjectResponse responseDto) {
         return new UserProjectWebResponse(
                 responseDto.id(),

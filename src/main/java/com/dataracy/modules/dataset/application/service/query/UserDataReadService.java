@@ -30,6 +30,17 @@ public class UserDataReadService implements FindUserDataSetsUseCase {
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
 
 
+    /**
+     * 지정한 사용자가 업로드한 데이터셋 목록을 조회하고, 각 데이터셋에 대해 토픽 및 데이터 타입 라벨과 연결된 프로젝트 수를 포함한
+     * UserDataResponse 페이지로 변환하여 반환한다.
+     *
+     * <p>조회는 페이지네이션(pageable)에 따라 수행되며, 내부적으로 토픽 및 데이터 타입 ID들을 모아 일괄로 라벨을 조회한 다음
+     * 각 데이터셋 DTO를 매핑한다. 조회 결과가 없으면 빈 페이지를 반환한다.</p>
+     *
+     * @param userId   조회할 사용자의 식별자
+     * @param pageable 페이지네이션 정보
+     * @return 페이지 단위의 UserDataResponse (토픽 라벨, 데이터 타입 라벨, 연결된 프로젝트 수 포함)
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<UserDataResponse> findUserDataSets(Long userId, Pageable pageable) {
