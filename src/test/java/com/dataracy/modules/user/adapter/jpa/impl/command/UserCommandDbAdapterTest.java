@@ -79,6 +79,41 @@ class UserCommandDbAdapterTest {
     }
 
     @Test
+    @DisplayName("성공: 기존 유저의 프로필 이미지를 새로운 값으로 변경 후 저장")
+    void updateProfileImageFile() {
+        // given
+        Long userId = 1L;
+        UserEntity user = entity();
+        given(userJpaRepository.findById(userId)).willReturn(Optional.of(user));
+
+        // when
+        adapter.updateProfileImageFile(userId, "new.png");
+
+        // then
+        assertThat(user.getProfileImageUrl()).isEqualTo("new.png");
+        then(userJpaRepository).should().save(user);
+    }
+
+    @Test
+    @DisplayName("실패: 존재하지 않는 userId로 조회 시 UserException 발생")
+    void failUserNotFound() {
+        // given
+        Long userId = 99L;
+        given(userJpaRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when
+        Throwable thrown = catchThrowable(() ->
+                adapter.updateProfileImageFile(userId, "new.png")
+        );
+
+        // then
+        assertThat(thrown)
+                .isInstanceOf(UserException.class)
+                .hasMessageContaining(UserErrorStatus.NOT_FOUND_USER.getMessage());
+        then(userJpaRepository).should(never()).save(any());
+    }
+
+    @Test
     @DisplayName("회원 탈퇴 성공")
     void withdrawalUserSuccess() {
         adapter.withdrawalUser(1L);
