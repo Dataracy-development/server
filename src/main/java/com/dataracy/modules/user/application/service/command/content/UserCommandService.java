@@ -1,4 +1,4 @@
-package com.dataracy.modules.user.application.service.command.command;
+package com.dataracy.modules.user.application.service.command.content;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.lock.DistributedLock;
