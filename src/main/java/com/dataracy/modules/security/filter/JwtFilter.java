@@ -99,7 +99,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 프로젝트/데이터셋 GET 중 공개 API만 예외 처리 (popular, detail 등)
         if (method.equals("GET")) {
-            if (path.startsWith("/api/v1/projects/") && !path.startsWith("/api/v1/projects/me")) {
+            if (path.startsWith("/api/v1/projects/") && !path.startsWith("/api/v1/projects/me") && !path.startsWith("/api/v1/projects/like")) {
                 return true; // 프로젝트 공개 조회
             }
             if (path.startsWith("/api/v1/datasets/") && !path.startsWith("/api/v1/datasets/me")) {

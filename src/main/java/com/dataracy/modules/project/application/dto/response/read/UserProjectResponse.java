@@ -3,7 +3,7 @@ package com.dataracy.modules.project.application.dto.response.read;
 import java.time.LocalDateTime;
 
 /**
- * 인기있는 프로젝트 목록 조회 애플리케이션 응답 DTO.
+ * 유저가 업로드한 프로젝트 목록 조회 애플리케이션 응답 DTO.
  *
  * @param id 프로젝트 ID
  * @param title 프로젝트 제목
