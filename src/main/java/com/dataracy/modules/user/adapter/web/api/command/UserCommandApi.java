@@ -28,7 +28,7 @@ public interface UserCommandApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공", useReturnTypeSchema = true)
     })
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<SuccessResponse<Void>> modifyUserInfo(
             @Parameter(hidden = true)
             @CurrentUserId

@@ -31,6 +31,5 @@ public record ModifyUserInfoWebRequest(
         Long visitSourceId,
 
         @Schema(description = "자기 소개 글", example = "안녕하세요. 저는 ~~입니다.")
-        @Min(1)
         String introductionText
 ) {}
