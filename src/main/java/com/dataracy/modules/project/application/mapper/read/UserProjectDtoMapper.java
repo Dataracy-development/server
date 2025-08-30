@@ -10,15 +10,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserProjectDtoMapper {
     /**
-     * Project 도메인과 제공된 사용자·라벨 정보를 결합해 UserProjectResponse DTO를 생성합니다.
+     * Project 도메인 객체와 주제/작성자 레벨 라벨을 결합해 UserProjectResponse DTO를 생성합니다.
      *
-     * Project 객체의 id, title, thumbnailUrl, commentCount, likeCount, viewCount, createdAt 값을 사용하고,
-     * 추가로 전달된 topicLabel, authorLevelLabel, createdAt을 응답 DTO에 포함합니다.
+     * 상세: Project에서 id, title, content, thumbnailUrl, commentCount, likeCount, viewCount, createdAt 값을 추출하고,
+     * 전달된 topicLabel 및 authorLevelLabel을 포함해 새로운 UserProjectResponse 인스턴스를 반환합니다.
      *
-     * @param project 변환할 Project 도메인 객체(사용되는 필드: id, title, userId, thumbnailUrl, commentCount, likeCount, viewCount, createdAt)
+     * @param project 변환 대상 Project 도메인 객체(사용되는 필드: id, title, content, thumbnailUrl, commentCount, likeCount, viewCount, createdAt). null일 경우 NPE가 발생할 수 있습니다.
      * @param topicLabel 프로젝트의 주제 라벨
      * @param authorLevelLabel 작성자의 레벨 라벨
-     * @return 프로젝트 및 사용자·라벨 정보를 포함한 UserProjectResponse 인스턴스
+     * @return 프로젝트 정보와 주제/작성자 라벨을 포함한 UserProjectResponse 인스턴스
      */
     public UserProjectResponse toResponseDto(
             Project project,

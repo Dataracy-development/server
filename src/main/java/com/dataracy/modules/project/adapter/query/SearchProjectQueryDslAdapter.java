@@ -34,13 +34,17 @@ public class SearchProjectQueryDslAdapter implements
     private final QProjectEntity project = QProjectEntity.projectEntity;
 
     /**
-     * 필터 조건, 페이지네이션, 정렬 기준에 따라 프로젝트 목록을 검색하여 페이지 형태로 반환합니다.
-     * 최대 2단계의 자식 프로젝트 정보가 포함됩니다.
+     * 필터·정렬·페이징 조건에 따라 프로젝트를 조회하여 Page로 반환합니다.
      *
-     * @param request 프로젝트 필터링 조건이 담긴 요청 객체
-     * @param pageable 페이지네이션 정보
-     * @param sortType 프로젝트 정렬 기준
-     * @return 필터 및 정렬 조건에 맞는 프로젝트 목록과 전체 개수를 포함한 페이지 객체
+     * <p>루트 프로젝트 기준으로 페이징(컬렉션 조인 제외)을 수행한 뒤 해당 루트들만을 다시 로드하면서
+     * 1단계 자식은 fetch join으로 함께 가져오고 도메인 변환 시 최대 2단계 자식까지 포함합니다.
+     * ID 기반 조회로 인해 보장되지 않는 결과 순서는 원래의 페이지 순서로 복원합니다. 전체 개수(total)는
+     * 루트 프로젝트 기준으로 계산합니다.</p>
+     *
+     * @param request 필터링 조건을 담은 요청 객체(키워드, 토픽, 목적, 데이터소스, 저자레벨 등)
+     * @param pageable 페이징 정보(offset, pageSize 등)
+     * @param sortType 결과 정렬 방식
+     * @return 필터·정렬·페이징 결과를 담은 Page<Project> (contents는 도메인 객체, total은 루트 기준 카운트)
      */
     @Override
     public Page<Project> searchByFilters(FilteringProjectRequest request,

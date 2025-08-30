@@ -52,7 +52,9 @@ public class ReadDataQueryDslAdapter implements
     private final QTopicEntity topic = QTopicEntity.topicEntity;
 
     /**
-     * 주어진 데이터 ID로 데이터셋을 조회하여 Optional로 반환합니다.
+     * 주어진 데이터 ID로 삭제되지 않은 데이터셋을 조회하여 반환합니다.
+     *
+     * <p>데이터가 존재하면 도메인 객체를 담은 Optional을, 없으면 빈 Optional을 반환합니다.</p>
      *
      * @param dataId 조회할 데이터의 고유 ID
      * @return 데이터가 존재하면 해당 Data 도메인 객체를 포함한 Optional, 존재하지 않으면 빈 Optional
@@ -73,10 +75,10 @@ public class ReadDataQueryDslAdapter implements
     }
 
     /**
-     * 주어진 데이터 ID로 데이터와 연관된 메타데이터를 함께 조회합니다.
+     * ID로 데이터와 연관된 메타데이터를 함께 조회합니다. 삭제된 데이터는 조회 대상에서 제외됩니다.
      *
      * @param dataId 조회할 데이터의 ID
-     * @return 데이터와 메타데이터를 포함하는 도메인 객체의 Optional, 데이터가 없으면 빈 Optional 반환
+     * @return 데이터(메타데이터 포함)를 담은 Optional — 존재하지 않으면 빈 Optional
      */
     @Override
     public Optional<Data> findDataWithMetadataById(Long dataId) {
@@ -312,6 +314,15 @@ public class ReadDataQueryDslAdapter implements
         return result;
     }
 
+    /**
+     * 지정한 사용자가 업로드한 데이터셋 목록을 페이지 단위로 조회하고, 각 데이터셋마다 연결된 프로젝트 수를 함께 반환합니다.
+     *
+     * <p>조회 결과는 데이터 메타데이터를 페치 조인하여 반환하며, 삭제된 데이터는 제외합니다. 각 항목의 프로젝트 수는 데이터별로 중복을 제거한 프로젝트 수로 계산됩니다.
+     *
+     * @param userId 조회할 사용자 ID
+     * @param pageable 결과 페이징 정보(이전 값이 null인 경우 기본값 page=0, size=5 사용)
+     * @return 각 데이터셋과 해당 데이터셋에 연결된 프로젝트 수를 포함한 페이징 결과 (Page&lt;DataWithProjectCountDto&gt;)
+     */
     @Override
     public Page<DataWithProjectCountDto> findUserDataSets(Long userId, Pageable pageable) {
         // 기본 Pageable: page=0, size=5
