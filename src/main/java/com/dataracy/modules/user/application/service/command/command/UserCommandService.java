@@ -11,6 +11,7 @@ import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUse
 import com.dataracy.modules.reference.application.port.in.visitsource.ValidateVisitSourceUseCase;
 import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
 import com.dataracy.modules.user.application.port.in.command.command.ModifyUserInfoUseCase;
+import com.dataracy.modules.user.application.port.in.command.command.WithdrawUserUseCase;
 import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserCommandService implements ModifyUserInfoUseCase {
+public class UserCommandService implements
+        ModifyUserInfoUseCase,
+        WithdrawUserUseCase
+{
     private final UserCommandPort userCommandPort;
 
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
@@ -43,7 +47,7 @@ public class UserCommandService implements ModifyUserInfoUseCase {
     )
     @Transactional
     public void modifyUserInfo(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("ModifyUserInfoUseCase", "회원 정보 수정 서비스 시작 nickname=" + requestDto.nickname());
+        Instant startTime = LoggerFactory.service().logStart("ModifyUserInfoUseCase", "회원 정보 수정 서비스 시작 userId=" + userId);
 
         // 회원 정보 수정 요청 정보 유효성 검사
         validateModifyUserInfo(
@@ -59,7 +63,7 @@ public class UserCommandService implements ModifyUserInfoUseCase {
         // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
         modifyProfileImageFile(profileImageFile, userId, "ModifyUserInfoUseCase");
 
-        LoggerFactory.service().logSuccess("ModifyUserInfoUseCase", "회원 정보 수정 서비스 성공 nickname=" + requestDto.nickname(), startTime);
+        LoggerFactory.service().logSuccess("ModifyUserInfoUseCase", "회원 정보 수정 서비스 성공 userId=" + userId, startTime);
     }
 
     private void validateModifyUserInfo(
@@ -106,5 +110,13 @@ public class UserCommandService implements ModifyUserInfoUseCase {
                 throw new RuntimeException("유저 프로필 이미지 파일 업로드 실패", e);
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void withdrawUser(Long userId) {
+        Instant startTime = LoggerFactory.service().logStart("WithdrawUserUseCase", "회원 탈퇴 서비스 시작 userId=" + userId);
+        userCommandPort.withdrawalUser(userId);
+        LoggerFactory.service().logSuccess("WithdrawUserUseCase", "회원 탈퇴 서비스 성공 userId=" + userId, startTime);
     }
 }
