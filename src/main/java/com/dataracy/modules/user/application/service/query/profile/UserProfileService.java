@@ -34,6 +34,7 @@ public class UserProfileService implements
 {
     private final UserQueryPort userQueryPort;
     private final UserMultiQueryPort userMultiQueryPort;
+
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;

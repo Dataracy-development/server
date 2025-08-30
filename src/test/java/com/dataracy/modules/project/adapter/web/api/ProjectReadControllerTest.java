@@ -8,22 +8,13 @@ import com.dataracy.modules.project.adapter.web.api.read.ProjectReadController;
 import com.dataracy.modules.project.adapter.web.mapper.read.ProjectReadWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.support.ParentProjectWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.support.ProjectConnectedDataWebMapper;
-import com.dataracy.modules.project.adapter.web.response.read.ConnectedProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ContinuedProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
+import com.dataracy.modules.project.adapter.web.response.read.*;
 import com.dataracy.modules.project.adapter.web.response.support.ParentProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.support.ProjectConnectedDataWebResponse;
-import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
+import com.dataracy.modules.project.application.dto.response.read.*;
 import com.dataracy.modules.project.application.dto.response.support.ParentProjectResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
-import com.dataracy.modules.project.application.port.in.query.read.FindConnectedProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.GetPopularProjectsUseCase;
-import com.dataracy.modules.project.application.port.in.query.read.GetProjectDetailUseCase;
+import com.dataracy.modules.project.application.port.in.query.read.*;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,8 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -80,6 +73,9 @@ class ProjectReadControllerTest {
     @MockBean
     private GetPopularProjectsUseCase getPopularProjectsUseCase;
 
+    @MockBean
+    private FindUserProjectsUseCase findUserProjectsUseCase;
+
     // 공통 모킹
     @MockBean
     private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
@@ -101,9 +97,13 @@ class ProjectReadControllerTest {
                         getProjectDetailUseCase,
                         findContinuedProjectsUseCase,
                         findConnectedProjectsUseCase,
-                        getPopularProjectsUseCase
+                        getPopularProjectsUseCase,
+                        findUserProjectsUseCase
                 ))
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                .setCustomArgumentResolvers(
+                        new PageableHandlerMethodArgumentResolver(),
+                        currentUserIdArgumentResolver
+                )
                 .build();
 
         given(currentUserIdArgumentResolver.supportsParameter(any())).willReturn(true);
@@ -252,5 +252,81 @@ class ProjectReadControllerTest {
                 .andExpect(jsonPath("$.code").value(ProjectSuccessStatus.FIND_POPULAR_PROJECTS.getCode()))
                 .andExpect(jsonPath("$.data[0].title").value("인기 프로젝트"))
                 .andExpect(jsonPath("$.data[0].content").value("내용"));
+    }
+
+    @Test
+    @DisplayName("로그인한 회원이 업로드한 프로젝트 리스트 조회 성공 시 200 반환")
+    void findUserProjectsSuccess() throws Exception {
+        // given
+        Long userId = 1L;
+        Pageable pageable = PageRequest.of(0, 5);
+
+        UserProjectResponse dto = new UserProjectResponse(
+                100L, "내 프로젝트", "내용", "thumb.png",
+                "데이터 분석", "중급",
+                5L, 10L, 50L,
+                LocalDateTime.of(2023, 8, 30, 12, 0)
+        );
+        Page<UserProjectResponse> dtoPage = new PageImpl<>(List.of(dto), pageable, 1);
+
+        UserProjectWebResponse webDto = new UserProjectWebResponse(
+                dto.id(), dto.title(), dto.content(), dto.projectThumbnailUrl(),
+                dto.topicLabel(), dto.authorLevelLabel(),
+                dto.commentCount(), dto.likeCount(), dto.viewCount(), dto.createdAt()
+        );
+
+        given(findUserProjectsUseCase.findUserProjects(eq(userId), any(Pageable.class))).willReturn(dtoPage);
+        given(mapper.toWebDto(dto)).willReturn(webDto);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/projects/me")
+                        .param("page", "0")
+                        .param("size", "5")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ProjectSuccessStatus.GET_USER_PROJECTS.getCode()))
+                .andExpect(jsonPath("$.message").value(ProjectSuccessStatus.GET_USER_PROJECTS.getMessage()))
+                .andExpect(jsonPath("$.data.content[0].id").value(100L))
+                .andExpect(jsonPath("$.data.content[0].title").value("내 프로젝트"))
+                .andExpect(jsonPath("$.data.content[0].topicLabel").value("데이터 분석"))
+                .andExpect(jsonPath("$.data.content[0].authorLevelLabel").value("중급"));
+    }
+
+    @Test
+    @DisplayName("로그인한 회원이 좋아요한 프로젝트 조회 성공 시 200 반환")
+    void findLikeProjectsSuccess() throws Exception {
+        // given
+        Long userId = 1L;
+        PageRequest pageable = PageRequest.of(0, 5);
+
+        UserProjectResponse dto = new UserProjectResponse(
+                10L, "좋아요 프로젝트", "내용", "thumb.png",
+                "데이터 분석", "초급",
+                5L, 10L, 20L,
+                LocalDateTime.of(2023, 8, 30, 12, 0)
+        );
+        Page<UserProjectResponse> dtoPage = new PageImpl<>(List.of(dto), pageable, 1);
+
+        UserProjectWebResponse webDto = new UserProjectWebResponse(
+                dto.id(), dto.title(), dto.content(), dto.projectThumbnailUrl(),
+                dto.topicLabel(), dto.authorLevelLabel(),
+                dto.commentCount(), dto.likeCount(), dto.viewCount(), dto.createdAt()
+        );
+
+        given(findUserProjectsUseCase.findLikeProjects(anyLong(), any(Pageable.class)))
+                .willReturn(dtoPage);
+        given(mapper.toWebDto(dto)).willReturn(webDto);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/projects/like")
+                        .param("page", "0")
+                        .param("size", "5")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ProjectSuccessStatus.GET_LIKE_PROJECTS.getCode()))
+                .andExpect(jsonPath("$.message").value(ProjectSuccessStatus.GET_LIKE_PROJECTS.getMessage()))
+                .andExpect(jsonPath("$.data.content[0].title").value("좋아요 프로젝트"))
+                .andExpect(jsonPath("$.data.content[0].topicLabel").value("데이터 분석"))
+                .andExpect(jsonPath("$.data.content[0].authorLevelLabel").value("초급"));
     }
 }

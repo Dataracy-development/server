@@ -13,6 +13,7 @@ import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
@@ -58,7 +59,7 @@ public class SearchDataQueryDslAdapter implements
         NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
 
         // 각 데이터셋이 '전체' 몇 개 프로젝트에 연결됐는지 (distinct)
-        var projectCountSub = JPAExpressions
+        SubQueryExpression<Long> projectCountSub = JPAExpressions
                 .select(projectData.project.id.countDistinct())
                 .from(projectData)
                 .where(projectData.dataId.eq(data.id));
@@ -106,6 +107,7 @@ public class SearchDataQueryDslAdapter implements
      */
     private BooleanExpression[] buildFilterPredicates(FilteringDataRequest request) {
         return new BooleanExpression[] {
+                DataFilterPredicate.notDeleted(),
                 DataFilterPredicate.keywordContains(request.keyword()),
                 DataFilterPredicate.topicIdEq(request.topicId()),
                 DataFilterPredicate.dataSourceIdEq(request.dataSourceId()),

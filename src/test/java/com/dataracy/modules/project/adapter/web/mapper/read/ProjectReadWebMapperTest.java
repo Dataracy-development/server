@@ -2,17 +2,11 @@ package com.dataracy.modules.project.adapter.web.mapper.read;
 
 import com.dataracy.modules.project.adapter.web.mapper.support.ParentProjectWebMapper;
 import com.dataracy.modules.project.adapter.web.mapper.support.ProjectConnectedDataWebMapper;
-import com.dataracy.modules.project.adapter.web.response.read.ConnectedProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ContinuedProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
+import com.dataracy.modules.project.adapter.web.response.read.*;
 import com.dataracy.modules.project.adapter.web.response.support.ChildProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.support.ParentProjectWebResponse;
 import com.dataracy.modules.project.adapter.web.response.support.ProjectConnectedDataWebResponse;
-import com.dataracy.modules.project.application.dto.response.read.ConnectedProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.ContinuedProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.PopularProjectResponse;
-import com.dataracy.modules.project.application.dto.response.read.ProjectDetailResponse;
+import com.dataracy.modules.project.application.dto.response.read.*;
 import com.dataracy.modules.project.application.dto.response.support.ChildProjectResponse;
 import com.dataracy.modules.project.application.dto.response.support.ParentProjectResponse;
 import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
@@ -166,5 +160,38 @@ class ProjectReadWebMapperTest {
         assertThat(webResponse.id()).isEqualTo(44L);
         assertThat(webResponse.title()).isEqualTo("pop-title");
         assertThat(webResponse.commentCount()).isEqualTo(9L);
+    }
+
+    @Test
+    @DisplayName("UserProjectResponse → UserProjectWebResponse 변환 성공")
+    void toWebDtoUserProject() {
+        // given
+        UserProjectResponse responseDto = new UserProjectResponse(
+                1L,
+                "테스트 프로젝트",
+                "내용입니다",
+                "thumb.png",
+                "데이터 분석",
+                "초급",
+                2L,
+                5L,
+                100L,
+                LocalDateTime.of(2023, 8, 30, 12, 0)
+        );
+
+        // when
+        UserProjectWebResponse result = mapper.toWebDto(responseDto);
+
+        // then
+        assertThat(result.id()).isEqualTo(1L);
+        assertThat(result.title()).isEqualTo("테스트 프로젝트");
+        assertThat(result.content()).isEqualTo("내용입니다");
+        assertThat(result.projectThumbnailUrl()).isEqualTo("thumb.png");
+        assertThat(result.topicLabel()).isEqualTo("데이터 분석");
+        assertThat(result.authorLevelLabel()).isEqualTo("초급");
+        assertThat(result.commentCount()).isEqualTo(2L);
+        assertThat(result.likeCount()).isEqualTo(5L);
+        assertThat(result.viewCount()).isEqualTo(100L);
+        assertThat(result.createdAt()).isEqualTo(LocalDateTime.of(2023, 8, 30, 12, 0));
     }
 }

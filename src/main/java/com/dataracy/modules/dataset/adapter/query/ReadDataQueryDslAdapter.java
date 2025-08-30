@@ -26,6 +26,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -38,10 +39,11 @@ import java.util.Optional;
 public class ReadDataQueryDslAdapter implements
         FindDataPort,
         FindDataWithMetadataPort,
-        GetConnectedDataSetsPort,
+        FindConnectedDataSetsPort,
         GetDataGroupCountPort,
         GetRecentDataSetsPort,
-        GetPopularDataSetsPort
+        GetPopularDataSetsPort,
+        FindUserDataSetsPort
 {
     private final JPAQueryFactory queryFactory;
 
@@ -50,7 +52,9 @@ public class ReadDataQueryDslAdapter implements
     private final QTopicEntity topic = QTopicEntity.topicEntity;
 
     /**
-     * 주어진 데이터 ID로 데이터셋을 조회하여 Optional로 반환합니다.
+     * 주어진 데이터 ID로 삭제되지 않은 데이터셋을 조회하여 반환합니다.
+     *
+     * <p>데이터가 존재하면 도메인 객체를 담은 Optional을, 없으면 빈 Optional을 반환합니다.</p>
      *
      * @param dataId 조회할 데이터의 고유 ID
      * @return 데이터가 존재하면 해당 Data 도메인 객체를 포함한 Optional, 존재하지 않으면 빈 Optional
@@ -61,6 +65,7 @@ public class ReadDataQueryDslAdapter implements
         DataEntity entity = queryFactory
                 .selectFrom(data)
                 .where(
+                        DataFilterPredicate.notDeleted(),
                         DataFilterPredicate.dataIdEq(dataId)
                 )
                 .fetchOne();
@@ -70,10 +75,10 @@ public class ReadDataQueryDslAdapter implements
     }
 
     /**
-     * 주어진 데이터 ID로 데이터와 연관된 메타데이터를 함께 조회합니다.
+     * ID로 데이터와 연관된 메타데이터를 함께 조회합니다. 삭제된 데이터는 조회 대상에서 제외됩니다.
      *
      * @param dataId 조회할 데이터의 ID
-     * @return 데이터와 메타데이터를 포함하는 도메인 객체의 Optional, 데이터가 없으면 빈 Optional 반환
+     * @return 데이터(메타데이터 포함)를 담은 Optional — 존재하지 않으면 빈 Optional
      */
     @Override
     public Optional<Data> findDataWithMetadataById(Long dataId) {
@@ -82,6 +87,7 @@ public class ReadDataQueryDslAdapter implements
                 .selectFrom(data)
                 .leftJoin(data.metadata).fetchJoin()
                 .where(
+                        DataFilterPredicate.notDeleted(),
                         DataFilterPredicate.dataIdEq(dataId)
                 )
                 .fetchOne();
@@ -106,7 +112,10 @@ public class ReadDataQueryDslAdapter implements
                         data.count()
                 ))
                 .from(data)
-                .join(topic).on(data.topicId.eq(topic.id))
+                .join(topic).on(
+                        data.topicId.eq(topic.id),
+                        data.isDeleted.isFalse()
+                )
                 .groupBy(topic.id, topic.label)
                 .fetch();
 
@@ -125,7 +134,7 @@ public class ReadDataQueryDslAdapter implements
      * @return 각 데이터와 해당 데이터에 연결된 프로젝트 개수를 포함한 Page&lt;DataWithProjectCountDto&gt;
      */
     @Override
-    public Page<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
+    public Page<DataWithProjectCountDto> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
         Instant startTime = LoggerFactory.query().logQueryStart("DataEntity",  "[getConnectedDataSetsAssociatedWithProject] 지정된 프로젝트에 연결된 데이터셋 목록 조회 시작. projectId=" + projectId);
 
         // alias path (튜플에서 꺼낼 때 사용)
@@ -192,7 +201,7 @@ public class ReadDataQueryDslAdapter implements
      * @return 데이터셋과 연결된 프로젝트 수 정보를 담은 DataWithProjectCountDto 리스트. 입력 목록이 비어 있거나 null이면 빈 리스트를 반환합니다.
      */
     @Override
-    public List<DataWithProjectCountDto> getConnectedDataSetsAssociatedWithProjectByIds(List<Long> dataIds) {
+    public List<DataWithProjectCountDto> findConnectedDataSetsAssociatedWithProjectByIds(List<Long> dataIds) {
         if (dataIds == null || dataIds.isEmpty()) return List.of();
 
         Instant startTime = LoggerFactory.query()
@@ -303,5 +312,73 @@ public class ReadDataQueryDslAdapter implements
         LoggerFactory.query().logQueryEnd("DataEntity",
                 "[searchPopularDataSets] 인기있는 데이터셋 목록 조회 완료. size=" + size, startTime);
         return result;
+    }
+
+    /**
+     * 지정한 사용자가 업로드한 데이터셋 목록을 페이지 단위로 조회하고, 각 데이터셋마다 연결된 프로젝트 수를 함께 반환합니다.
+     *
+     * <p>조회 결과는 데이터 메타데이터를 페치 조인하여 반환하며, 삭제된 데이터는 제외합니다. 각 항목의 프로젝트 수는 데이터별로 중복을 제거한 프로젝트 수로 계산됩니다.
+     *
+     * @param userId 조회할 사용자 ID
+     * @param pageable 결과 페이징 정보(이전 값이 null인 경우 기본값 page=0, size=5 사용)
+     * @return 각 데이터셋과 해당 데이터셋에 연결된 프로젝트 수를 포함한 페이징 결과 (Page&lt;DataWithProjectCountDto&gt;)
+     */
+    @Override
+    public Page<DataWithProjectCountDto> findUserDataSets(Long userId, Pageable pageable) {
+        // 기본 Pageable: page=0, size=5
+        Pageable effectivePageable = (pageable == null)
+                ? PageRequest.of(0, 5)
+                : pageable;
+
+        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity",  "[findUserDataSets] 회원이 업로드한 데이터셋 목록 조회 시작. userId=" + userId);
+
+        // alias path (튜플에서 꺼낼 때 사용)
+        NumberPath<Long> projectCountPath = Expressions.numberPath(Long.class, "projectCount");
+
+        // 서브쿼리는 SubQueryExpression
+        SubQueryExpression<Long> projectCountSub =
+                JPAExpressions.select(projectData.project.id.countDistinct())
+                        .from(projectData)
+                        .where(projectData.dataId.eq(data.id));
+
+        // 목록 + 집계 (해당 projectId로 필터는 EXISTS로)
+        List<Tuple> tuples = queryFactory
+                .select(
+                        data,
+                        ExpressionUtils.as(projectCountSub, projectCountPath)
+                )
+                .from(data)
+                .leftJoin(data.metadata).fetchJoin() // 1:1이면 fetchJoin OK
+                .where(
+                        DataFilterPredicate.notDeleted(),
+                        DataFilterPredicate.userIdEq(userId)
+                )
+                .orderBy(DataSortBuilder.fromSortOption(DataSortType.LATEST, null))
+                .offset(effectivePageable.getOffset())
+                .limit(effectivePageable.getPageSize())
+                .fetch();
+
+        List<DataWithProjectCountDto> contents = tuples.stream()
+                .map(t -> new DataWithProjectCountDto(
+                        DataEntityMapper.toDomain(t.get(data)),
+                        t.get(projectCountPath)
+                ))
+                .toList();
+
+        // total은 EXISTS로만 계산 (JOIN/그룹 불필요)
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(data.id.count())
+                        .from(data)
+                        .where(
+                                DataFilterPredicate.notDeleted(),
+                                DataFilterPredicate.userIdEq(userId)
+                        )
+                        .fetchOne()
+        ).orElse(0L);
+
+        LoggerFactory.query().logQueryEnd("DataEntity",
+                "[findUserDataSets] 회원이 업로드한 데이터셋 목록 조회 완료. userId=" + userId, startTime);
+        return new PageImpl<>(contents, effectivePageable, total);
     }
 }

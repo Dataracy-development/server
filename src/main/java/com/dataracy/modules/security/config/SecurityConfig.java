@@ -30,13 +30,26 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     /**
-     * Spring Security의 보안 필터 체인을 구성하여 HTTP 요청에 대한 인증 및 인가 정책을 적용합니다.
-     *
-     * CORS 설정, CSRF 및 기본 인증 방식 비활성화, 세션 무상태화, OAuth2 로그인 처리, JWT 인증 필터 추가, 엔드포인트별 접근 권한 제어를 포함합니다.
-     * 인증 없이 접근 가능한 엔드포인트(예: Swagger, 정적 리소스, 회원가입, 비밀번호 재설정, 프로젝트/데이터셋/파일 조회 등)와 사용자 또는 관리자 권한이 필요한 엔드포인트를 구분하여 접근을 제한합니다.
-     *
-     * @return 구성된 SecurityFilterChain 인스턴스
-     */
+         * HTTP 요청에 대한 Spring Security 필터 체인을 구성하여 인증·인가 정책을 적용합니다.
+         *
+         * 구성 내용:
+         * - 지정된 CorsConfigurationSource로 CORS 활성화
+         * - CSRF, 폼 로그인, HTTP Basic 비활성화
+         * - 세션을 STATELESS로 설정
+         * - 커스텀 AuthenticationEntryPoint로 인증 예외 처리
+         * - OAuth2 로그인 성공/실패 핸들러 등록
+         * - JwtValidateUseCase 기반의 JwtFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
+         * - 엔드포인트별 접근 제어:
+         *   - Swagger, 정적 리소스, 헬스체크/액추에이터, 웹훅 등 공개 허용
+         *   - 회원가입·비밀번호 재설정·인증·이메일·레퍼런스 등 공개 허용
+         *   - GET /api/v1/projects/me, GET /api/v1/projects/like 및 GET /api/v1/datasets/me는 인증 필요
+         *   - 그 외 GET /api/v1/projects/**, GET /api/v1/datasets/**, /api/v1/files/**, /api/v1/users/** 등은 공개 허용
+         *   - /api/v1/user/** 는 USER 또는 ADMIN 역할 필요
+         *   - /api/v1/admin/** 는 ADMIN 역할 필요
+         *   - 위에 해당하지 않는 모든 요청은 인증 필요
+         *
+         * @return 구성된 SecurityFilterChain 인스턴스
+         */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -63,9 +76,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/references/**").permitAll()
                         .requestMatchers("/api/v1/email/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/projects/me", "/api/v1/projects/like").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/datasets/me").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/datasets/**").permitAll()
                         .requestMatchers("/api/v1/files/**").permitAll()
+                        .requestMatchers("/api/v1/users/**").permitAll()
                         .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
