@@ -147,4 +147,21 @@ public class ProjectReadController implements ProjectReadApi {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(ProjectSuccessStatus.GET_USER_PROJECTS, webResponse));
     }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Page<UserProjectWebResponse>>> findLikeProjects(Long userId, Pageable pageable) {
+        Instant startTime = LoggerFactory.api().logRequest("[FindLikeProjects] 로그인한 회원이 좋아요한 프로젝트 리스트를 조회 API 요청 시작");
+        Page<UserProjectWebResponse> webResponse;
+
+        try {
+            Page<UserProjectResponse> responseDto = findUserProjectsUseCase.findLikeProjects(userId, pageable);
+            webResponse = responseDto.map(projectReadWebMapper::toWebDto);
+        } finally {
+            LoggerFactory.api().logResponse("[FindLikeProjects] 로그인한 회원이 좋아요한 프로젝트 리스트를 조회 API 응답 완료", startTime);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(ProjectSuccessStatus.GET_LIKE_PROJECTS, webResponse));
+
+    }
 }

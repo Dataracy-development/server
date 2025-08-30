@@ -6,4 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface FindUserProjectsPort {
     Page<Project> findUserProjects(Long userId, Pageable pageable);
+    Page<Project> findLikeProjects(Long userId, Pageable pageable);
 }

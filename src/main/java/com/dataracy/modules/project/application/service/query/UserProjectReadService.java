@@ -20,9 +20,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class UserProjectReadService implements
-        FindUserProjectsUseCase
-{
+public class UserProjectReadService implements FindUserProjectsUseCase {
     private final UserProjectDtoMapper userProjectDtoMapper;
 
     private final FindUserProjectsPort findUserProjectsPort;
@@ -51,5 +49,27 @@ public class UserProjectReadService implements
 
         LoggerFactory.service().logSuccess("FindUserProjects", "해당 회원이 작성한 프로젝트 목록 조회 서비스 종료 userId=" + userId, startTime);
         return findUserProjectsResponse;
+    }
+
+    @Override
+    public Page<UserProjectResponse> findLikeProjects(Long userId, Pageable pageable) {
+        Instant startTime = LoggerFactory.service().logStart("FindLikeProjects", "해당 회원이 좋아요한 프로젝트 목록 조회 서비스 시작 userId=" + userId);
+
+        Page<Project> savedProjects = findUserProjectsPort.findLikeProjects(userId, pageable);
+
+        List<Long> topicIds = savedProjects.stream().map(Project::getTopicId).toList();
+        List<Long> authorLevelIds = savedProjects.stream().map(Project::getAuthorLevelId).toList();
+
+        Map<Long, String> topicLabelMap = getTopicLabelFromIdUseCase.getLabelsByIds(topicIds);
+        Map<Long, String> authorLevelLabelMap = getAuthorLevelLabelFromIdUseCase.getLabelsByIds(authorLevelIds);
+
+        Page<UserProjectResponse> findLikeProjectsResponse = savedProjects.map(project -> userProjectDtoMapper.toResponseDto(
+                project,
+                topicLabelMap.get(project.getTopicId()),
+                authorLevelLabelMap.get(project.getAuthorLevelId())
+        ));
+
+        LoggerFactory.service().logSuccess("FindLikeProjects", "해당 회원이 좋아요한 프로젝트 목록 조회 서비스 종료 userId=" + userId, startTime);
+        return findLikeProjectsResponse;
     }
 }

@@ -139,4 +139,26 @@ public interface ProjectReadApi {
             @PageableDefault(size = 5, page = 0)
             Pageable pageable
     );
+
+    @Operation(
+            summary = "로그인한 회원이 좋아요한 프로젝트 리스트를 조회한다.",
+            description = "로그인한 회원이 좋아요한 프로젝트 리스트를 조회한다."
+    )
+    @Parameter(
+            in = ParameterIn.HEADER,
+            name = "Authorization", required = true,
+            schema = @Schema(type = "string"),
+            description = "Bearer [Access 토큰]")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인한 회원이 좋아요한 프로젝트 리스트를 조회에 성공했습니다.", useReturnTypeSchema = true)
+    })
+    @GetMapping("/like")
+    ResponseEntity<SuccessResponse<Page<UserProjectWebResponse>>> findLikeProjects(
+            @Parameter(hidden = true)
+            @CurrentUserId
+            Long userId,
+
+            @PageableDefault(size = 5, page = 0)
+            Pageable pageable
+    );
 }

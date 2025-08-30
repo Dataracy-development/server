@@ -1,6 +1,8 @@
 package com.dataracy.modules.project.adapter.query;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.like.adapter.jpa.entity.QLikeEntity;
+import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectEntity;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity;
@@ -42,6 +44,7 @@ public class ReadProjectQueryDslAdapter implements
 
     private final QProjectEntity project = QProjectEntity.projectEntity;
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
+    private final QLikeEntity like = QLikeEntity.likeEntity;
 
     /**
      * 주어진 ID에 해당하며 삭제되지 않은 프로젝트를 최소 정보로 조회하여 반환합니다.
@@ -283,4 +286,59 @@ public class ReadProjectQueryDslAdapter implements
 
         return new PageImpl<>(contents, effectivePageable, total);
     }
+
+    @Override
+    public Page<Project> findLikeProjects(Long userId, Pageable pageable) {
+        Instant startTime = LoggerFactory.query().logQueryStart(
+                "ProjectEntity",
+                "[findLikeProjects] 해당 회원이 좋아요한 프로젝트 목록 조회 시작. userId=" + userId
+        );
+
+        // 좋아요 ID 페이징
+        List<Long> likeProjectIds = queryFactory
+                .select(like.targetId)
+                .from(like)
+                .where(like.userId.eq(userId), like.targetType.eq(TargetType.PROJECT))
+                .orderBy(like.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        if (likeProjectIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(like.count())
+                        .from(like)
+                        .where(like.userId.eq(userId), like.targetType.eq(TargetType.PROJECT))
+                        .fetchOne()
+        ).orElse(0L);
+
+        // 프로젝트 조회
+        List<ProjectEntity> entities = queryFactory
+                .selectFrom(project)
+                .where(project.id.in(likeProjectIds), ProjectFilterPredicate.notDeleted())
+                .fetch();
+
+        // 순서 보정
+        Map<Long, ProjectEntity> projectMap = entities.stream()
+                .collect(Collectors.toMap(ProjectEntity::getId, e -> e));
+
+        List<Project> contents = likeProjectIds.stream()
+                .map(projectMap::get)
+                .filter(Objects::nonNull)
+                .map(ProjectEntityMapper::toMinimal)
+                .toList();
+
+        LoggerFactory.query().logQueryEnd(
+                "ProjectEntity",
+                "[findLikeProjects] 해당 회원이 좋아요한 프로젝트 목록 조회 완료. userId=" + userId,
+                startTime
+        );
+
+        return new PageImpl<>(contents, pageable, total);
+    }
+
 }

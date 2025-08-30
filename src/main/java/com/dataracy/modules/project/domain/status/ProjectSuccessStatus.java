@@ -20,6 +20,7 @@ public enum ProjectSuccessStatus implements BaseSuccessCode {
     DELETE_PROJECT(HttpStatus.OK, "200", "프로젝트 삭제가 완료되었습니다."),
     RESTORE_PROJECT(HttpStatus.OK, "200", "프로젝트 복원에 완료되었습니다."),
     GET_USER_PROJECTS(HttpStatus.OK, "200", "로그인한 회원이 업로드한 프로젝트 목록 조회가 완료되었습니다."),
+    GET_LIKE_PROJECTS(HttpStatus.OK, "200", "로그인한 회원이 좋아요한 프로젝트 목록 조회가 완료되었습니다."),
     ;
 
     private final HttpStatus httpStatus;
