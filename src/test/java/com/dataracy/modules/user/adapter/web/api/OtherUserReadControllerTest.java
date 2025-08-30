@@ -55,7 +55,7 @@ class OtherUserReadControllerTest {
 
     @Test
     @DisplayName("타인 유저 기본 정보 조회 성공 시 200 응답")
-    void getOtherUserInfo_success() throws Exception {
+    void getOtherUserInfoSuccess() throws Exception {
         // given
         Long userId = 1L;
         Page<GetOtherUserProjectResponse> projects = Page.empty();
@@ -87,7 +87,7 @@ class OtherUserReadControllerTest {
 
     @Test
     @DisplayName("타인 유저 추가 프로젝트 조회 성공 시 200 응답")
-    void getOtherProjects_success() throws Exception {
+    void getOtherProjectsSuccess() throws Exception {
         // given
         Long userId = 1L;
 
@@ -121,7 +121,7 @@ class OtherUserReadControllerTest {
 
     @Test
     @DisplayName("타인 유저 추가 데이터셋 조회 성공 시 200 응답")
-    void getOtherDataSets_success() throws Exception {
+    void getOtherDataSetsSuccess() throws Exception {
         // given
         Long userId = 1L;
 
