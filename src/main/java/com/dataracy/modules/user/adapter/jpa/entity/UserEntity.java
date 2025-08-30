@@ -1,6 +1,7 @@
 package com.dataracy.modules.user.adapter.jpa.entity;
 
 import com.dataracy.modules.common.base.BaseTimeEntity;
+import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import jakarta.persistence.*;
@@ -94,6 +95,18 @@ public class UserEntity extends BaseTimeEntity {
     public void addUserTopic(UserTopicEntity topicEntity) {
         userTopicEntities.add(topicEntity);
         topicEntity.assignUser(this);
+    }
+
+    public void modifyUserInfo(ModifyUserInfoRequest requestDto) {
+        this.nickname = requestDto.nickname();
+        this.authorLevelId = requestDto.authorLevelId();
+        this.occupationId = requestDto.occupationId();
+        this.visitSourceId = requestDto.visitSourceId();
+        this.introductionText = requestDto.introductionText();
+    }
+
+    public void modifyProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     /**
