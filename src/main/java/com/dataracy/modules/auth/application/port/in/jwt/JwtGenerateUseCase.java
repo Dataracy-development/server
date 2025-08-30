@@ -38,4 +38,6 @@ public interface JwtGenerateUseCase {
      * @return 생성된 리프레시 JWT 토큰 문자열
      */
     String generateRefreshToken(Long userId, RoleType role);
+
+
 }

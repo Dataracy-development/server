@@ -1,4 +1,4 @@
-package com.dataracy.modules.auth.application.service;
+package com.dataracy.modules.auth.application.service.command;
 
 import com.dataracy.modules.auth.adapter.jwt.JwtProperties;
 import com.dataracy.modules.auth.application.dto.response.ReIssueTokenResponse;
@@ -6,7 +6,6 @@ import com.dataracy.modules.auth.application.port.in.auth.SelfLoginUseCase;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtGeneratorPort;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtValidatorPort;
 import com.dataracy.modules.auth.application.port.out.token.ManageRefreshTokenPort;
-import com.dataracy.modules.auth.application.service.command.AuthCommandService;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.exception.CommonException;
@@ -27,7 +26,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class ReIssueTokenUseCaseTest {
+class ReIssueTokenServiceTest {
 
     @Mock
     private JwtValidatorPort jwtValidatorPort;
