@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -84,7 +86,10 @@ class DataReadControllerTest {
                         findConnectedDataSetsUseCase,
                         findUserDataSetsUseCase
                 ))
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                .setCustomArgumentResolvers(
+                        new PageableHandlerMethodArgumentResolver(),
+                        currentUserIdArgumentResolver
+                )
                 .build();
 
         // 모든 @CurrentUserId → userId=1L
@@ -101,7 +106,6 @@ class DataReadControllerTest {
     @Test
     @DisplayName("인기 데이터셋 조회 성공 시 200 반환")
     void getPopularDataSetsShouldReturnOk() throws Exception {
-        // given
         PopularDataResponse resDto = new PopularDataResponse(
                 1L, "데이터1", 1L, "userA", "https://~~", "경제", "통계청", "CSV",
                 LocalDate.of(2023, 1, 1),
@@ -124,7 +128,6 @@ class DataReadControllerTest {
         given(getPopularDataSetsUseCase.getPopularDataSets(3)).willReturn(List.of(resDto));
         given(mapper.toWebDto(resDto)).willReturn(webRes);
 
-        // when & then
         mockMvc.perform(get("/api/v1/datasets/popular")
                         .param("size", "3")
                         .accept(MediaType.APPLICATION_JSON))
@@ -138,7 +141,6 @@ class DataReadControllerTest {
     @Test
     @DisplayName("데이터 상세 조회 성공 시 200 반환")
     void getDataDetailShouldReturnOk() throws Exception {
-        // given
         DataDetailResponse resDto = new DataDetailResponse(
                 2L, "데이터2", 1L, "userA",
                 "profile.png", "자기소개",
@@ -165,7 +167,6 @@ class DataReadControllerTest {
         given(getDataDetailUseCase.getDataDetail(2L)).willReturn(resDto);
         given(mapper.toWebDto(resDto)).willReturn(webRes);
 
-        // when & then
         mockMvc.perform(get("/api/v1/datasets/{dataId}", 2L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -179,14 +180,12 @@ class DataReadControllerTest {
     @Test
     @DisplayName("최근 데이터셋 조회 성공 시 200 반환")
     void getRecentDataSetsShouldReturnOk() throws Exception {
-        // given
         RecentMinimalDataResponse resDto = new RecentMinimalDataResponse(10L, "데이터10", 1L, "userA", "https://~~", "thumb.png", LocalDateTime.now());
         RecentMinimalDataWebResponse webRes = new RecentMinimalDataWebResponse(10L, "데이터10", 1L, "userA", "https://~~", "thumb.png", LocalDateTime.now());
 
         given(getRecentMinimalDataSetsUseCase.getRecentDataSets(2)).willReturn(List.of(resDto));
         given(mapper.toWebDto(resDto)).willReturn(webRes);
 
-        // when & then
         mockMvc.perform(get("/api/v1/datasets/recent")
                         .param("size", "2")
                         .accept(MediaType.APPLICATION_JSON))
@@ -199,14 +198,12 @@ class DataReadControllerTest {
     @Test
     @DisplayName("주제 라벨별 데이터셋 개수 조회 성공 시 200 반환")
     void getDataCountByTopicLabelShouldReturnOk() throws Exception {
-        // given
         DataGroupCountResponse resDto = new DataGroupCountResponse(3L, "경제", 5L);
         DataGroupCountWebResponse webRes = new DataGroupCountWebResponse(3L, "경제", 5L);
 
         given(getDataGroupCountUseCase.getDataGroupCountByTopicLabel()).willReturn(List.of(resDto));
         given(mapper.toWebDto(resDto)).willReturn(webRes);
 
-        // when & then
         mockMvc.perform(get("/api/v1/datasets/group-by/topic")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -239,7 +236,10 @@ class DataReadControllerTest {
                 4L
         );
 
-        Page<ConnectedDataResponse> pageRes = new PageImpl<>(List.of(resDto));
+        // PageImpl에 pageable, total 명시
+        Page<ConnectedDataResponse> pageRes =
+                new PageImpl<>(new ArrayList<>(List.of(resDto)), PageRequest.of(0, 1), 1);
+
         given(findConnectedDataSetsUseCase.findConnectedDataSetsAssociatedWithProject(any(), any()))
                 .willReturn(pageRes);
         given(mapper.toWebDto(resDto)).willReturn(webRes);
@@ -260,7 +260,6 @@ class DataReadControllerTest {
     @Test
     @DisplayName("로그인한 회원이 업로드한 데이터셋 목록 조회 성공 시 200 반환")
     void findUserDataSetsShouldReturnOk() throws Exception {
-        // given
         UserDataResponse resDto = new UserDataResponse(
                 7L, "연결된데이터", "경제", "CSV",
                 LocalDate.of(2023, 1, 1),
@@ -280,20 +279,19 @@ class DataReadControllerTest {
                 4L
         );
 
-        Page<UserDataResponse> pageRes = new PageImpl<>(List.of(resDto));
+        Page<UserDataResponse> pageRes = new PageImpl<>(new ArrayList<>(List.of(resDto)), PageRequest.of(0, 1), 1);
         given(findUserDataSetsUseCase.findUserDataSets(any(), any()))
                 .willReturn(pageRes);
         given(mapper.toWebDto(resDto)).willReturn(webRes);
 
-        // when & then
         mockMvc.perform(get("/api/v1/datasets/me")
                         .param("page", "0")
                         .param("size", "5")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-//                .andExpect(jsonPath("$.code").value(DataSuccessStatus.GET_USER_DATASETS.getCode()))
-//                .andExpect(jsonPath("$.message").value(DataSuccessStatus.GET_USER_DATASETS.getMessage()))
-//                .andExpect(jsonPath("$.data.content[0].title").value("연결된데이터"))
-//                .andExpect(jsonPath("$.data.content[0].topicLabel").value("경제"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(DataSuccessStatus.GET_USER_DATASETS.getCode()))
+                .andExpect(jsonPath("$.message").value(DataSuccessStatus.GET_USER_DATASETS.getMessage()))
+                .andExpect(jsonPath("$.data.content[0].title").value("연결된데이터"))
+                .andExpect(jsonPath("$.data.content[0].topicLabel").value("경제"));
     }
 }
