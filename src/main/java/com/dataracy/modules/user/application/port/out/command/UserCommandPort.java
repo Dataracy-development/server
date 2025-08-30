@@ -1,5 +1,6 @@
 package com.dataracy.modules.user.application.port.out.command;
 
+import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
 import com.dataracy.modules.user.domain.model.User;
 
 public interface UserCommandPort {
@@ -18,4 +19,8 @@ public interface UserCommandPort {
      * @param encodePassword 새로 설정할 인코딩된 비밀번호
      */
     void changePassword(Long userId, String encodePassword);
+
+    void modifyUserInfo(Long userId, ModifyUserInfoRequest requestDto);
+
+    void updateProfileImageFile(Long userId, String profileImageFileUrl);
 }

@@ -17,6 +17,7 @@ public enum UserSuccessStatus implements BaseSuccessCode {
     OK_CONFIRM_PASSWORD(HttpStatus.OK, "200", "본인 인증되었습니다."),
     OK_GET_OTHER_EXTRA_PROJECTS(HttpStatus.OK, "200", "타인이 업로드한 프로젝트 목록 추가 조회가 완료되었습니다."),
     OK_GET_OTHER_EXTRA_DATASETS(HttpStatus.OK, "200", "타인이 업로드한 데이터셋 목록 추가 조회가 완료되었습니다."),
+    OK_MODIFY_USER_INFO(HttpStatus.OK, "200", "회원 정보 수정이 완료되었습니다."),
     ;
 
     private final HttpStatus httpStatus;

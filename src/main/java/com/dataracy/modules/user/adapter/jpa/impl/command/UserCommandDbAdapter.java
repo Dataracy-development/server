@@ -2,8 +2,11 @@ package com.dataracy.modules.user.adapter.jpa.impl.command;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.adapter.jpa.entity.UserEntity;
+import com.dataracy.modules.user.adapter.jpa.entity.UserTopicEntity;
 import com.dataracy.modules.user.adapter.jpa.mapper.UserEntityMapper;
 import com.dataracy.modules.user.adapter.jpa.repository.UserJpaRepository;
+import com.dataracy.modules.user.adapter.jpa.repository.UserTopicJpaRepository;
+import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class UserCommandDbAdapter implements UserCommandPort {
     private final UserJpaRepository userJpaRepository;
+    private final UserTopicJpaRepository userTopicJpaRepository;
 
     /**
      * 유저 도메인 객체를 저장한 후, 저장된 결과를 반환합니다.
@@ -45,6 +49,38 @@ public class UserCommandDbAdapter implements UserCommandPort {
                 });
         userEntity.changePassword(encodePassword);
         LoggerFactory.db().logUpdate("UserEntity", String.valueOf(userEntity.getId()), "새 비밀번호를 변경하였습니다.");
+    }
+
+    @Override
+    public void modifyUserInfo(Long userId, ModifyUserInfoRequest requestDto) {
+        UserEntity userEntity = userJpaRepository.findById(userId)
+                .orElseThrow(() -> {
+                    LoggerFactory.db().logWarning("UserEntity", "[회원 정보 수정] 사용자를 찾을 수 없습니다. userId=" + userId);
+                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
+                });
+        userEntity.modifyUserInfo(requestDto);
+
+        // 기존 관심 주제 전부 삭제 (쿼리 직접)
+        userTopicJpaRepository.deleteAllByUserId(userId);
+
+        // 새 관심 주제 추가
+        for (Long topicId : requestDto.topicIds()) {
+            UserTopicEntity topicEntity = UserTopicEntity.of(userEntity, topicId);
+            userEntity.addUserTopic(topicEntity);
+            userTopicJpaRepository.save(topicEntity);
+        }
+        userJpaRepository.save(userEntity);
+    }
+
+    @Override
+    public void updateProfileImageFile(Long userId, String profileImageFileUrl) {
+        UserEntity userEntity = userJpaRepository.findById(userId)
+                .orElseThrow(() -> {
+                    LoggerFactory.db().logWarning("UserEntity", "[회원 정보 수정] 사용자를 찾을 수 없습니다. userId=" + userId);
+                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
+                });
+        userEntity.modifyProfileImageUrl(profileImageFileUrl);
+        userJpaRepository.save(userEntity);
     }
 
     /**
