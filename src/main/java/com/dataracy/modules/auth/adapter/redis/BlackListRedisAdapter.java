@@ -1,5 +1,6 @@
 package com.dataracy.modules.auth.adapter.redis;
 
+import com.dataracy.modules.auth.application.port.out.token.BlackListTokenPort;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -9,7 +10,7 @@ import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
-public class BlackListRedisAdapter {
+public class BlackListRedisAdapter implements BlackListTokenPort {
     private final StringRedisTemplate redisTemplate;
 
     /**

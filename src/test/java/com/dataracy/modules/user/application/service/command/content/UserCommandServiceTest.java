@@ -1,5 +1,10 @@
 package com.dataracy.modules.user.application.service.command.content;
 
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.auth.application.port.in.token.BlackListTokenUseCase;
+import com.dataracy.modules.auth.application.port.in.token.ManageRefreshTokenUseCase;
+import com.dataracy.modules.auth.domain.exception.AuthException;
+import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.ValidateOccupationUseCase;
@@ -51,6 +56,12 @@ class UserCommandServiceTest {
 
     @Mock
     private MultipartFile profileImageFile;
+
+    @Mock
+    private JwtValidateUseCase jwtValidateUseCase;
+
+    @Mock
+    private ManageRefreshTokenUseCase manageRefreshTokenUseCase;
 
     @InjectMocks
     private UserCommandService service;
@@ -182,6 +193,59 @@ class UserCommandServiceTest {
 
             // then
             then(userCommandPort).should().withdrawalUser(userId);
+        }
+    }
+
+    @Nested
+    @DisplayName("logout")
+    class Logout {
+
+        @Test
+        @DisplayName("성공: 유저의 refreshToken 삭제")
+        void success() {
+            // given
+            Long userId = 1L;
+            String refreshToken = "valid-refresh-token";
+            given(jwtValidateUseCase.getUserIdFromToken(refreshToken)).willReturn(userId);
+
+            // when
+            service.logout(userId, refreshToken);
+
+            // then
+            then(jwtValidateUseCase).should().getUserIdFromToken(refreshToken);
+            then(manageRefreshTokenUseCase).should().deleteRefreshToken(String.valueOf(userId));
+        }
+
+        @Test
+        @DisplayName("실패: 만료된 리프레시 토큰일 경우 AuthException(EXPIRED_REFRESH_TOKEN) 발생")
+        void fail_expiredToken() {
+            // given
+            Long userId = 1L;
+            String refreshToken = "expired-refresh-token";
+            given(jwtValidateUseCase.getUserIdFromToken(refreshToken)).willReturn(null);
+
+            // when
+            AuthException ex = catchThrowableOfType(() -> service.logout(userId, refreshToken), AuthException.class);
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
+            then(manageRefreshTokenUseCase).should(never()).deleteRefreshToken(anyString());
+        }
+
+        @Test
+        @DisplayName("실패: 토큰의 userId와 요청 userId가 다를 경우 AuthException(REFRESH_TOKEN_USER_MISMATCH_IN_REDIS) 발생")
+        void fail_userMismatch() {
+            // given
+            Long userId = 1L;
+            String refreshToken = "other-user-refresh-token";
+            given(jwtValidateUseCase.getUserIdFromToken(refreshToken)).willReturn(2L);
+
+            // when
+            AuthException ex = catchThrowableOfType(() -> service.logout(userId, refreshToken), AuthException.class);
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
+            then(manageRefreshTokenUseCase).should(never()).deleteRefreshToken(anyString());
         }
     }
 }

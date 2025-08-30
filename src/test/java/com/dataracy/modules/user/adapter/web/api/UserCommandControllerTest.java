@@ -6,9 +6,11 @@ import com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolve
 import com.dataracy.modules.user.adapter.web.api.command.UseCommandController;
 import com.dataracy.modules.user.adapter.web.mapper.command.UserCommandWebMapper;
 import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
+import com.dataracy.modules.user.application.port.in.command.command.LogoutUserUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.ModifyUserInfoUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.WithdrawUserUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,8 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,6 +45,9 @@ class UserCommandControllerTest {
 
     @MockBean
     private WithdrawUserUseCase withdrawUserUseCase;
+
+    @MockBean
+    private LogoutUserUseCase logoutUserUseCase;
 
     // --- 공통 모킹 (항상 필요) ---
     @MockBean
@@ -124,5 +128,24 @@ class UserCommandControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(UserSuccessStatus.OK_WITHDRAW_USER.getCode()))
                 .andExpect(jsonPath("$.message").value(UserSuccessStatus.OK_WITHDRAW_USER.getMessage()));
+    }
+
+    @Test
+    @DisplayName("로그아웃 성공 시 200 OK 반환")
+    void logoutSuccess() throws Exception {
+        // given
+        Long userId = 1L;
+        String refreshToken = "test-refresh-token";
+
+        // when & then
+        mockMvc.perform(post("/api/v1/user/logout")
+                        .cookie(new Cookie("refreshToken", refreshToken))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(UserSuccessStatus.OK_LOGOUT.getCode()))
+                .andExpect(jsonPath("$.message").value(UserSuccessStatus.OK_LOGOUT.getMessage()));
+
+        // verify
+        then(logoutUserUseCase).should().logout(userId, refreshToken);
     }
 }

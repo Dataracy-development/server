@@ -5,6 +5,7 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.adapter.web.mapper.command.UserCommandWebMapper;
 import com.dataracy.modules.user.adapter.web.request.command.ModifyUserInfoWebRequest;
 import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
+import com.dataracy.modules.user.application.port.in.command.command.LogoutUserUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.ModifyUserInfoUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.WithdrawUserUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
@@ -23,6 +24,7 @@ public class UseCommandController implements UserCommandApi {
 
     private final ModifyUserInfoUseCase modifyUserInfoUseCase;
     private final WithdrawUserUseCase withdrawUserUseCase;
+    private final LogoutUserUseCase logoutUserUseCase;
 
     @Override
     public ResponseEntity<SuccessResponse<Void>> modifyUserInfo(
@@ -55,5 +57,19 @@ public class UseCommandController implements UserCommandApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_WITHDRAW_USER));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> logout(Long userId, String refreshToken) {
+        Instant startTime = LoggerFactory.api().logRequest("[Logout] 회원 로그아웃 API 요청 시작");
+
+        try {
+            logoutUserUseCase.logout(userId, refreshToken);
+        } finally {
+            LoggerFactory.api().logResponse("[Logout] 회원 로그아웃 API 응답 완료", startTime);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(UserSuccessStatus.OK_LOGOUT));
     }
 }

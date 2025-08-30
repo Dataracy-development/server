@@ -1,5 +1,9 @@
 package com.dataracy.modules.user.application.service.command.content;
 
+import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.auth.application.port.in.token.ManageRefreshTokenUseCase;
+import com.dataracy.modules.auth.domain.exception.AuthException;
+import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.common.util.FileUtil;
@@ -10,6 +14,7 @@ import com.dataracy.modules.reference.application.port.in.occupation.ValidateOcc
 import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUseCase;
 import com.dataracy.modules.reference.application.port.in.visitsource.ValidateVisitSourceUseCase;
 import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
+import com.dataracy.modules.user.application.port.in.command.command.LogoutUserUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.ModifyUserInfoUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.WithdrawUserUseCase;
 import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
@@ -26,17 +31,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserCommandService implements
         ModifyUserInfoUseCase,
-        WithdrawUserUseCase
+        WithdrawUserUseCase,
+        LogoutUserUseCase
 {
     private final UserCommandPort userCommandPort;
 
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
-
     private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
     private final ValidateOccupationUseCase validateOccupationUseCase;
     private final ValidateVisitSourceUseCase validateVisitSourceUseCase;
     private final ValidateTopicUseCase validateTopicUseCase;
     private final FileCommandUseCase fileCommandUseCase;
+
+    private final JwtValidateUseCase jwtValidateUseCase;
+    private final ManageRefreshTokenUseCase manageRefreshTokenUseCase;
 
     @Override
     @DistributedLock(
@@ -118,5 +126,27 @@ public class UserCommandService implements
         Instant startTime = LoggerFactory.service().logStart("WithdrawUserUseCase", "회원 탈퇴 서비스 시작 userId=" + userId);
         userCommandPort.withdrawalUser(userId);
         LoggerFactory.service().logSuccess("WithdrawUserUseCase", "회원 탈퇴 서비스 성공 userId=" + userId, startTime);
+    }
+
+    @Override
+    @Transactional
+    public void logout(Long userId, String refreshToken) {
+        Instant startTime = LoggerFactory.service().logStart("LogoutUserUseCase", "회원 로그아웃 서비스 시작 userId=" + userId);
+
+        // 쿠키의 리프레시 토큰으로 유저 아이디를 반환한다.
+        Long refreshTokenUserId = jwtValidateUseCase.getUserIdFromToken(refreshToken);
+        if (refreshTokenUserId == null) {
+            LoggerFactory.service().logWarning("LogoutUserUseCase", "[로그아웃] 만료된 리프레시 토큰입니다.");
+            throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
+        }
+        if (!refreshTokenUserId.equals(userId)) {
+            LoggerFactory.service().logWarning("LogoutUserUseCase", "[로그아웃] 인증 요청을 한 유저와 일치하지 않는 리프레시 토큰입니다.");
+            throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
+        }
+
+        manageRefreshTokenUseCase.deleteRefreshToken(String.valueOf(userId));
+        // 추후 고보안 서비스일 경우 어세스토큰 블랙리스트 처리까지 생각
+
+        LoggerFactory.service().logSuccess("LogoutUserUseCase", "회원 로그아웃 서비스 성공 userId=" + userId, startTime);
     }
 }
