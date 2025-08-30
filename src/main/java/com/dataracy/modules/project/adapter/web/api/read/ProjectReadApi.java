@@ -1,12 +1,12 @@
 package com.dataracy.modules.project.adapter.web.api.read;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ConnectedProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ContinuedProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.PopularProjectWebResponse;
-import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
+import com.dataracy.modules.common.support.annotation.CurrentUserId;
+import com.dataracy.modules.project.adapter.web.response.read.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -116,5 +116,63 @@ public interface ProjectReadApi {
             @RequestParam(name = "size")
             @Min(1)
             int size
+    );
+
+    /**
+     * 로그인한 사용자가 업로드한 프로젝트들의 페이지를 조회한다.
+     *
+     * @param userId   호출된 요청의 인증된 사용자 ID (보안 컨텍스트에서 주입됨, API 문서에는 숨겨짐)
+     * @param pageable 페이지네이션 정보 (기본 페이지 크기 5, 기본 페이지 0)
+     * @return 사용자가 업로드한 프로젝트들의 페이지를 담은 ResponseEntity<SuccessResponse<Page<UserProjectWebResponse>>> 객체
+     */
+    @Operation(
+            summary = "로그인한 회원이 업로드한 프로젝트 리스트를 조회한다.",
+            description = "로그인한 회원이 업로드한 프로젝트 리스트를 조회한다."
+    )
+    @Parameter(
+            in = ParameterIn.HEADER,
+            name = "Authorization", required = true,
+            schema = @Schema(type = "string"),
+            description = "Bearer [Access 토큰]")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인한 회원이 업로드한 프로젝트 리스트를 조회에 성공했습니다.", useReturnTypeSchema = true)
+    })
+    @GetMapping("/me")
+    ResponseEntity<SuccessResponse<Page<UserProjectWebResponse>>> findUserProjects(
+            @Parameter(hidden = true)
+            @CurrentUserId
+            Long userId,
+
+            @PageableDefault(size = 5, page = 0)
+            Pageable pageable
+    );
+
+    /**
+     * 로그인한 회원이 좋아요한 프로젝트의 페이징된 목록을 조회한다.
+     *
+     * @param userId   현재 인증된 사용자의 ID (요청의 Authorization 토큰에서 주입됨)
+     * @param pageable 페이지 및 정렬 정보 (기본: page=0, size=5)
+     * @return 인증된 사용자가 좋아요 표시한 프로젝트들을 담은 페이지를 SuccessResponse로 래핑한 ResponseEntity
+     */
+    @Operation(
+            summary = "로그인한 회원이 좋아요한 프로젝트 리스트를 조회한다.",
+            description = "로그인한 회원이 좋아요한 프로젝트 리스트를 조회한다."
+    )
+    @Parameter(
+            in = ParameterIn.HEADER,
+            name = "Authorization", required = true,
+            schema = @Schema(type = "string"),
+            description = "Bearer [Access 토큰]")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인한 회원이 좋아요한 프로젝트 리스트를 조회에 성공했습니다.", useReturnTypeSchema = true)
+    })
+    @GetMapping("/like")
+    ResponseEntity<SuccessResponse<Page<UserProjectWebResponse>>> findLikeProjects(
+            @Parameter(hidden = true)
+            @CurrentUserId
+            Long userId,
+
+            @PageableDefault(size = 5, page = 0)
+            Pageable pageable
     );
 }

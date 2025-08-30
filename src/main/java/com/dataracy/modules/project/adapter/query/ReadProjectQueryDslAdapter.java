@@ -1,6 +1,8 @@
 package com.dataracy.modules.project.adapter.query;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.like.adapter.jpa.entity.QLikeEntity;
+import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectEntity;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity;
@@ -9,25 +11,23 @@ import com.dataracy.modules.project.adapter.query.predicates.ProjectDataFilterPr
 import com.dataracy.modules.project.adapter.query.predicates.ProjectFilterPredicate;
 import com.dataracy.modules.project.adapter.query.sort.ProjectPopularOrderBuilder;
 import com.dataracy.modules.project.adapter.query.sort.ProjectSortBuilder;
-import com.dataracy.modules.project.application.dto.request.search.FilteringProjectRequest;
 import com.dataracy.modules.project.application.dto.response.support.ProjectWithDataIdsResponse;
-import com.dataracy.modules.project.application.port.out.query.read.FindConnectedProjectsPort;
-import com.dataracy.modules.project.application.port.out.query.read.FindContinuedProjectsPort;
-import com.dataracy.modules.project.application.port.out.query.read.FindProjectPort;
-import com.dataracy.modules.project.application.port.out.query.read.GetPopularProjectsPort;
-import com.dataracy.modules.project.application.port.out.query.search.SearchFilteredProjectsPort;
+import com.dataracy.modules.project.application.port.out.query.read.*;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.model.Project;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,12 +38,13 @@ public class ReadProjectQueryDslAdapter implements
         FindContinuedProjectsPort,
         FindConnectedProjectsPort,
         GetPopularProjectsPort,
-        SearchFilteredProjectsPort
+        FindUserProjectsPort
 {
     private final JPAQueryFactory queryFactory;
 
     private final QProjectEntity project = QProjectEntity.projectEntity;
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
+    private final QLikeEntity like = QLikeEntity.likeEntity;
 
     /**
      * 주어진 ID에 해당하며 삭제되지 않은 프로젝트를 최소 정보로 조회하여 반환합니다.
@@ -240,85 +241,125 @@ public class ReadProjectQueryDslAdapter implements
     }
 
     /**
-     * 필터 조건, 페이지네이션, 정렬 기준에 따라 프로젝트 목록을 검색하여 페이지 형태로 반환합니다.
-     * 최대 2단계의 자식 프로젝트 정보가 포함됩니다.
+     * 특정 사용자가 작성한 비삭제 프로젝트들을 페이지 단위로 조회한다.
      *
-     * @param request 프로젝트 필터링 조건이 담긴 요청 객체
-     * @param pageable 페이지네이션 정보
-     * @param sortType 프로젝트 정렬 기준
-     * @return 필터 및 정렬 조건에 맞는 프로젝트 목록과 전체 개수를 포함한 페이지 객체
+     * <p>작성일 기준 최신순으로 정렬된 프로젝트들의 최소 정보(minimal)를 반환하며,
+     * 전달된 Pageable이 null이면 기본 페이지(PageRequest.of(0, 5))를 사용한다.
+     * 결과의 total은 해당 사용자에 대한 비삭제 프로젝트 총 개수를 반영한다.
+     *
+     * @param userId   조회할 사용자 ID
+     * @param pageable 결과 페이징/정렬 정보 (null이면 기본 페이징 사용)
+     * @return 주어진 페이징 조건에 따른 Project의 페이지 (각 항목은 minimal 형태)
      */
     @Override
-    public Page<Project> searchByFilters(FilteringProjectRequest request,
-                                         Pageable pageable,
-                                         ProjectSortType sortType) {
-        Instant start = LoggerFactory.query().logQueryStart("ProjectEntity",
-                "[searchByFilters] 프로젝트 필터링 조회 시작. keyword=" + request.keyword());
+    public Page<Project> findUserProjects(Long userId, Pageable pageable) {
+        // 기본 Pageable: page=0, size=5
+        Pageable effectivePageable = (pageable == null)
+                ? PageRequest.of(0, 5)
+                : pageable;
 
-        // 루트 ID만 페이징 (컬렉션 조인/페치 금지)
-        List<Long> pageIds = queryFactory
-                .select(project.id)
-                .from(project)
-                .where(buildFilterPredicates(request))
-                .orderBy(ProjectSortBuilder.fromSortOption(sortType))
+        Instant startTime = LoggerFactory.query().logQueryStart(
+                "ProjectEntity",
+                "[findUserProjects] 해당 회원이 작성한 프로젝트 목록 조회 시작. userId=" + userId
+        );
+
+        List<ProjectEntity> entities = queryFactory
+                .selectFrom(project)
+                .orderBy(ProjectSortBuilder.fromSortOption(ProjectSortType.LATEST))
+                .where(
+                        ProjectFilterPredicate.userIdEq(userId),
+                        ProjectFilterPredicate.notDeleted()
+                )
+                .offset(effectivePageable.getOffset())
+                .limit(effectivePageable.getPageSize())
+                .fetch();
+
+        List<Project> contents = entities.stream()
+                .map(ProjectEntityMapper::toMinimal)
+                .toList();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(project.count())
+                        .from(project)
+                        .where(
+                                ProjectFilterPredicate.userIdEq(userId),
+                                ProjectFilterPredicate.notDeleted()
+                        )
+                        .fetchOne()
+        ).orElse(0L);
+
+        LoggerFactory.query().logQueryEnd(
+                "ProjectEntity",
+                "[findUserProjects] 해당 회원이 작성한 프로젝트 목록 조회 완료. userId=" + userId,
+                startTime
+        );
+
+        return new PageImpl<>(contents, effectivePageable, total);
+    }
+
+    /**
+     * 특정 사용자가 '좋아요'한 프로젝트들을 좋아요 기준(최신 좋아요 순)으로 조회하여 페이징된 결과를 반환한다.
+     *
+     * 요청된 페이지의 좋아요 기록에서 프로젝트 ID들을 먼저 가져오고, 해당 ID에 대응하는 삭제되지 않은 프로젝트들을 로드한 뒤
+     * 좋아요 순서를 유지하여 최소 정보 형태(Project 최소 도메인)로 매핑해 반환한다.
+     *
+     * @param userId  조회할 사용자의 식별자
+     * @param pageable  결과 페이징 및 정렬을 지정하는 Pageable 객체(널이 아니어야 함)
+     * @return 페이징된 프로젝트 목록(Page<Project>) — 콘텐츠는 Project의 최소 정보이며 전체 항목 수(total)는 해당 사용자의 좋아요 총 개수에 기반함
+     */
+    @Override
+    public Page<Project> findLikeProjects(Long userId, Pageable pageable) {
+        Instant startTime = LoggerFactory.query().logQueryStart(
+                "ProjectEntity",
+                "[findLikeProjects] 해당 회원이 좋아요한 프로젝트 목록 조회 시작. userId=" + userId
+        );
+
+        // 좋아요 ID 페이징
+        List<Long> likeProjectIds = queryFactory
+                .select(like.targetId)
+                .from(like)
+                .where(like.userId.eq(userId), like.targetType.eq(TargetType.PROJECT))
+                .orderBy(like.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        if (pageIds.isEmpty()) {
-            LoggerFactory.query().logQueryEnd("ProjectEntity", "[searchByFilters] 결과 0", start);
-            return new PageImpl<>(List.of(), pageable, 0);
+        if (likeProjectIds.isEmpty()) {
+            return Page.empty(pageable);
         }
 
-        // 부모 + 1단계 자식만 한 번에 로딩 (여기서는 페이징 없음 → fetch join 가능 : 안전)
-        List<ProjectEntity> parentsWithChildren = queryFactory
-                .selectFrom(project)
-                .distinct()                                      // 루트 중복 방지
-                .leftJoin(project.childProjects).fetchJoin()     // ✅ 1:N 페치조인 (2단계에서는 OK)
-                .where(project.id.in(pageIds))
-                .fetch();
-
-        // ID 페이징에서의 정렬 순서 복원 (IN 결과는 순서 비보장)
-        var order = new HashMap<Long, Integer>(pageIds.size());
-        for (int i = 0; i < pageIds.size(); i++) {
-            order.put(pageIds.get(i), i);
-        }
-        parentsWithChildren.sort(Comparator.comparingInt(e -> order.get(e.getId())));
-
-        // 도메인 변환 (자식만 포함)
-        List<Project> contents = parentsWithChildren.stream()
-                .map(e -> ProjectEntityMapper.toWithChildren(e, 2))
-                .toList();
-
-        // total (루트만 카운트, 컬렉션 조인 불필요)
         long total = Optional.ofNullable(
-                queryFactory.select(project.id.count())
-                        .from(project)
-                        .where(buildFilterPredicates(request))
+                queryFactory
+                        .select(like.count())
+                        .from(like)
+                        .where(like.userId.eq(userId), like.targetType.eq(TargetType.PROJECT))
                         .fetchOne()
         ).orElse(0L);
 
-        LoggerFactory.query().logQueryEnd("ProjectEntity", "[searchByFilters] 완료", start);
+        // 프로젝트 조회
+        List<ProjectEntity> entities = queryFactory
+                .selectFrom(project)
+                .where(project.id.in(likeProjectIds), ProjectFilterPredicate.notDeleted())
+                .fetch();
+
+        // 순서 보정
+        Map<Long, ProjectEntity> projectMap = entities.stream()
+                .collect(Collectors.toMap(ProjectEntity::getId, e -> e));
+
+        List<Project> contents = likeProjectIds.stream()
+                .map(projectMap::get)
+                .filter(Objects::nonNull)
+                .map(ProjectEntityMapper::toMinimal)
+                .toList();
+
+        LoggerFactory.query().logQueryEnd(
+                "ProjectEntity",
+                "[findLikeProjects] 해당 회원이 좋아요한 프로젝트 목록 조회 완료. userId=" + userId,
+                startTime
+        );
+
         return new PageImpl<>(contents, pageable, total);
     }
 
-    /**
-     * 프로젝트 필터링 요청에 따라 QueryDSL BooleanExpression 조건 배열을 반환합니다.
-     *
-     * FilteringProjectRequest의 각 필드(키워드, 주제, 분석 목적, 데이터 소스, 작성자 레벨)에 해당하는 조건과
-     * 삭제되지 않은 프로젝트만을 포함하는 조건을 생성하여 배열로 제공합니다.
-     *
-     * @param request 프로젝트 검색에 사용할 다양한 필터 조건이 포함된 요청 객체
-     * @return 요청 조건에 맞는 QueryDSL BooleanExpression 조건 배열
-     */
-    private BooleanExpression[] buildFilterPredicates(FilteringProjectRequest request) {
-        return new BooleanExpression[] {
-                ProjectFilterPredicate.keywordContains(request.keyword()),
-                ProjectFilterPredicate.topicIdEq(request.topicId()),
-                ProjectFilterPredicate.analysisPurposeIdEq(request.analysisPurposeId()),
-                ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
-                ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId()),
-                ProjectFilterPredicate.notDeleted()
-        };
-    }
 }

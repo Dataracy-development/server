@@ -178,14 +178,14 @@ public class ProjectReadService implements
     }
 
     /**
-     * 지정한 프로젝트 ID를 기준으로 이어지는 프로젝트 목록을 페이지 단위로 반환합니다.
-     *
-     * 각 프로젝트에는 작성자 이름, 썸네일, 주제 라벨, 저자 레벨 라벨이 포함됩니다.
-     *
-     * @param projectId 이어지는 프로젝트를 조회할 기준 프로젝트의 ID
-     * @param pageable 페이지네이션 정보
-     * @return 이어지는 프로젝트 응답 DTO의 페이지 객체
-     */
+         * 주어진 프로젝트를 기준으로 이어지는(파생된) 프로젝트들을 페이지 단위로 조회하여 반환합니다.
+         *
+         * 반환되는 각 항목에는 작성자 이름, 작성자 썸네일 URL, 주제 라벨, 저자 레벨 라벨이 포함됩니다.
+         *
+         * @param projectId 이어지는 프로젝트를 조회할 기준이 되는 프로젝트의 ID
+         * @param pageable  조회할 페이지와 정렬 정보
+         * @return 이어지는 프로젝트 정보를 담은 Page<ContinuedProjectResponse>
+         */
     @Override
     @Transactional(readOnly = true)
     public Page<ContinuedProjectResponse> findContinuedProjects(Long projectId, Pageable pageable) {
@@ -213,6 +213,7 @@ public class ProjectReadService implements
         LoggerFactory.service().logSuccess("FindContinuedProjectsUseCase", "이어가기 프로젝트 목록 조회 서비스 종료 projectId=" + projectId, startTime);
         return findContinuedProjectsResponse;
     }
+
     /**
          * 지정된 데이터셋과 연결된 프로젝트들을 페이지 단위로 조회하여, 각 프로젝트에 사용자명, 사용자 프로필 이미지 URL, 토픽 라벨을 포함한 응답 페이지를 반환합니다.
          *

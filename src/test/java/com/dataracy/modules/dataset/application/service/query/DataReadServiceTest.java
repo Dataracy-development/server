@@ -63,7 +63,7 @@ class DataReadServiceTest {
     private GetDataGroupCountPort getDataGroupCountPort;
 
     @Mock
-    private GetConnectedDataSetsPort getConnectedDataSetsPort;
+    private FindConnectedDataSetsPort findConnectedDataSetsPort;
 
     @Mock
     private GetUserInfoUseCase getUserInfoUseCase;
@@ -255,7 +255,7 @@ class DataReadServiceTest {
             // given
             DataWithProjectCountDto dto = new DataWithProjectCountDto(sample(), 1L);
             Page<DataWithProjectCountDto> page = new PageImpl<>(List.of(dto));
-            given(getConnectedDataSetsPort.getConnectedDataSetsAssociatedWithProject(eq(99L), any()))
+            given(findConnectedDataSetsPort.findConnectedDataSetsAssociatedWithProject(eq(99L), any()))
                     .willReturn(page);
             given(labelMapUseCase.labelMapping(any()))
                     .willReturn(new DataLabelMapResponse(Map.of(), Map.of(), Map.of(), Map.of(), Map.of()));

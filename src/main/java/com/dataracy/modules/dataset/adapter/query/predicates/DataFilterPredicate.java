@@ -14,6 +14,17 @@ public class DataFilterPredicate {
     private DataFilterPredicate() {}
 
     /**
+     * 삭제되지 않은 DataEntity를 필터링하는 Predicate를 반환합니다.
+     *
+     * 반환값은 DataEntity.isDeleted가 false인 레코드만 선택하는 QueryDSL의 BooleanExpression입니다.
+     *
+     * @return isDeleted가 false인 조건을 나타내는 BooleanExpression
+     */
+    public static BooleanExpression notDeleted() {
+        return dataEntity.isDeleted.isFalse();
+    }
+
+    /**
      * 주어진 데이터 ID와 일치하는 데이터 엔터티를 필터링하는 QueryDSL 조건식을 반환합니다.
      *
      * @param dataId 필터링할 데이터 엔터티의 ID
@@ -77,5 +88,17 @@ public class DataFilterPredicate {
      */
     public static BooleanExpression dataIdIn(Collection<Long> dataIds) {
         return (dataIds == null || dataIds.isEmpty()) ? null : dataEntity.id.in(dataIds);
+    }
+
+    /**
+     * 지정한 사용자 ID로 DataEntity.userId를 필터링하는 Predicate를 반환합니다.
+     *
+     * null을 전달하면 필터를 적용하지 않기 위해 null을 반환합니다.
+     *
+     * @param userId 필터에 사용할 사용자 ID (null이면 필터 미적용)
+     * @return userId가 null이 아니면 DataEntity.userId.eq(userId) Predicate, 그렇지 않으면 null
+     */
+    public static BooleanExpression userIdEq(Long userId) {
+        return userId == null ? null : dataEntity.userId.eq(userId);
     }
 }

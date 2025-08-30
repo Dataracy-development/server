@@ -146,4 +146,28 @@ public class DataReadWebMapper {
                 responseDto.countConnectedProjects()
         );
     }
+
+    /**
+     * 애플리케이션 계층의 UserDataResponse를 웹 계층용 UserDataWebResponse로 변환한다.
+     *
+     * @param responseDto 변환할 애플리케이션 계층의 사용자 데이터 응답 DTO
+     * @return 웹 응답용 UserDataWebResponse (id, title, topicLabel, dataTypeLabel, startDate, endDate, dataThumbnailUrl, downloadCount, sizeBytes, rowCount, columnCount, createdAt, countConnectedProjects 포함)
+     */
+    public UserDataWebResponse toWebDto(UserDataResponse responseDto) {
+        return new UserDataWebResponse(
+                responseDto.id(),
+                responseDto.title(),
+                responseDto.topicLabel(),
+                responseDto.dataTypeLabel(),
+                responseDto.startDate(),
+                responseDto.endDate(),
+                responseDto.dataThumbnailUrl(),
+                responseDto.downloadCount(),
+                responseDto.sizeBytes(),
+                responseDto.rowCount(),
+                responseDto.columnCount(),
+                responseDto.createdAt(),
+                responseDto.countConnectedProjects()
+        );
+    }
 }
