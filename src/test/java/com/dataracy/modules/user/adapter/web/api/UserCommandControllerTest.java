@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = UseCommandController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class UseCommandControllerTest {
+class UserCommandControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
