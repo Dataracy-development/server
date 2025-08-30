@@ -6,6 +6,7 @@ import com.dataracy.modules.user.adapter.web.mapper.command.UserCommandWebMapper
 import com.dataracy.modules.user.adapter.web.request.command.ModifyUserInfoWebRequest;
 import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
 import com.dataracy.modules.user.application.port.in.command.command.ModifyUserInfoUseCase;
+import com.dataracy.modules.user.application.port.in.command.command.WithdrawUserUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ public class UseCommandController implements UserCommandApi {
     private final UserCommandWebMapper userCommandWebMapper;
 
     private final ModifyUserInfoUseCase modifyUserInfoUseCase;
+    private final WithdrawUserUseCase withdrawUserUseCase;
 
     @Override
     public ResponseEntity<SuccessResponse<Void>> modifyUserInfo(
@@ -39,5 +41,19 @@ public class UseCommandController implements UserCommandApi {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(UserSuccessStatus.OK_MODIFY_USER_INFO));
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> withdrawUser(Long userId) {
+        Instant startTime = LoggerFactory.api().logRequest("[WithdrawUser] 회원 탈퇴 API 요청 시작");
+
+        try {
+            withdrawUserUseCase.withdrawUser(userId);
+        } finally {
+            LoggerFactory.api().logResponse("[WithdrawUser] 회원 탈퇴 API 응답 완료", startTime);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(UserSuccessStatus.OK_WITHDRAW_USER));
     }
 }

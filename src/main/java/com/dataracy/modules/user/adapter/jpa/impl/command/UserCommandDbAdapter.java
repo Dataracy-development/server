@@ -88,6 +88,7 @@ public class UserCommandDbAdapter implements UserCommandPort {
      *
      * @param userId 탈퇴 처리할 사용자의 고유 ID
      */
+    @Override
     public void withdrawalUser(Long userId) {
         userJpaRepository.withdrawalUser(userId);
         LoggerFactory.db().logUpdate("UserEntity", String.valueOf(userId), "해당 사용자를 탈퇴 처리한다.");

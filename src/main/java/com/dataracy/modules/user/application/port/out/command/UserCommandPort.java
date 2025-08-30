@@ -23,4 +23,6 @@ public interface UserCommandPort {
     void modifyUserInfo(Long userId, ModifyUserInfoRequest requestDto);
 
     void updateProfileImageFile(Long userId, String profileImageFileUrl);
+
+    void withdrawalUser(Long userId);
 }
