@@ -81,7 +81,9 @@ public class ProjectFilterPredicate {
     }
 
     /**
-     * 주어진 프로젝트 ID와 일치하는 부모 프로젝트를 가진 프로젝트를 필터링하는 QueryDSL 조건식을 반환합니다.
+     * 주어진 부모 프로젝트 ID와 일치하는 프로젝트만 선택하는 QueryDSL 조건식을 반환합니다.
+     *
+     * <p>projectId가 null이면 조건식을 생성하지 않으므로 호출측에서 다른 조건과 병합할 때 무시됩니다.
      *
      * @param projectId 부모 프로젝트의 ID
      * @return 부모 프로젝트 ID가 일치하는 프로젝트에 대한 BooleanExpression, 입력값이 null이면 null 반환
@@ -90,6 +92,15 @@ public class ProjectFilterPredicate {
         return projectId == null ? null : projectEntity.parentProject.id.eq(projectId);
     }
 
+    /**
+     * 지정한 사용자 ID로 프로젝트를 필터링하는 QueryDSL Predicate를 반환합니다.
+     *
+     * <p>userId가 null이면 조건이 적용되지 않도록 null을 반환하고, 그렇지 않으면
+     * projectEntity.userId.eq(userId)와 동일한 BooleanExpression을 반환합니다.</p>
+     *
+     * @param userId 필터에 사용할 사용자 ID (null일 경우 조건 미적용)
+     * @return 사용자 ID로 매칭하는 BooleanExpression, userId가 null이면 null
+     */
     public static BooleanExpression userIdEq(Long userId) {
         return userId == null ? null : projectEntity.userId.eq(userId);
     }

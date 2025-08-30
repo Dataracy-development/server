@@ -146,6 +146,17 @@ public class DataReadController implements DataReadApi {
                 .body(SuccessResponse.of(DataSuccessStatus.GET_CONNECTED_DATASETS_ASSOCIATED_PROJECT, webResponse));
     }
 
+    /**
+     * 특정 사용자가 업로드한 데이터셋을 페이지 단위로 조회하여 반환합니다.
+     *
+     * <p>userId로 지정된 사용자가 업로드한 데이터셋을 조회하고, 애플리케이션 계층의 페이징 결과를
+     * 웹 응답 DTO(Page<UserDataWebResponse>)로 매핑한 뒤 SuccessResponse(DataSuccessStatus.GET_USER_DATASETS)를 담아
+     * HTTP 200 응답으로 반환합니다.</p>
+     *
+     * @param userId  조회할 사용자의 식별자
+     * @param pageable  페이지 번호, 크기, 정렬 등의 페이징 정보
+     * @return HTTP 200 상태와 함께 SuccessResponse에 래핑된 페이지형 UserDataWebResponse를 포함한 ResponseEntity
+     */
     @Override
     public ResponseEntity<SuccessResponse<Page<UserDataWebResponse>>> findUserDataSets(Long userId, Pageable pageable) {
         Instant startTime = LoggerFactory.api().logRequest("[FindUserDataSets] 로그인한 회원이 업로드한 데이터셋 리스트를 조회 API 요청 시작");

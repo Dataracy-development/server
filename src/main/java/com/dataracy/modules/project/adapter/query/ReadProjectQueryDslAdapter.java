@@ -240,6 +240,17 @@ public class ReadProjectQueryDslAdapter implements
         return popularProjects;
     }
 
+    /**
+     * 특정 사용자가 작성한 비삭제 프로젝트들을 페이지 단위로 조회한다.
+     *
+     * <p>작성일 기준 최신순으로 정렬된 프로젝트들의 최소 정보(minimal)를 반환하며,
+     * 전달된 Pageable이 null이면 기본 페이지(PageRequest.of(0, 5))를 사용한다.
+     * 결과의 total은 해당 사용자에 대한 비삭제 프로젝트 총 개수를 반영한다.
+     *
+     * @param userId   조회할 사용자 ID
+     * @param pageable 결과 페이징/정렬 정보 (null이면 기본 페이징 사용)
+     * @return 주어진 페이징 조건에 따른 Project의 페이지 (각 항목은 minimal 형태)
+     */
     @Override
     public Page<Project> findUserProjects(Long userId, Pageable pageable) {
         // 기본 Pageable: page=0, size=5
@@ -287,6 +298,16 @@ public class ReadProjectQueryDslAdapter implements
         return new PageImpl<>(contents, effectivePageable, total);
     }
 
+    /**
+     * 특정 사용자가 '좋아요'한 프로젝트들을 좋아요 기준(최신 좋아요 순)으로 조회하여 페이징된 결과를 반환한다.
+     *
+     * 요청된 페이지의 좋아요 기록에서 프로젝트 ID들을 먼저 가져오고, 해당 ID에 대응하는 삭제되지 않은 프로젝트들을 로드한 뒤
+     * 좋아요 순서를 유지하여 최소 정보 형태(Project 최소 도메인)로 매핑해 반환한다.
+     *
+     * @param userId  조회할 사용자의 식별자
+     * @param pageable  결과 페이징 및 정렬을 지정하는 Pageable 객체(널이 아니어야 함)
+     * @return 페이징된 프로젝트 목록(Page<Project>) — 콘텐츠는 Project의 최소 정보이며 전체 항목 수(total)는 해당 사용자의 좋아요 총 개수에 기반함
+     */
     @Override
     public Page<Project> findLikeProjects(Long userId, Pageable pageable) {
         Instant startTime = LoggerFactory.query().logQueryStart(

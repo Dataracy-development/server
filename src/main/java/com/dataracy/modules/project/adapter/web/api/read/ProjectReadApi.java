@@ -118,6 +118,13 @@ public interface ProjectReadApi {
             int size
     );
 
+    /**
+     * 로그인한 사용자가 업로드한 프로젝트들의 페이지를 조회한다.
+     *
+     * @param userId   호출된 요청의 인증된 사용자 ID (보안 컨텍스트에서 주입됨, API 문서에는 숨겨짐)
+     * @param pageable 페이지네이션 정보 (기본 페이지 크기 5, 기본 페이지 0)
+     * @return 사용자가 업로드한 프로젝트들의 페이지를 담은 ResponseEntity<SuccessResponse<Page<UserProjectWebResponse>>> 객체
+     */
     @Operation(
             summary = "로그인한 회원이 업로드한 프로젝트 리스트를 조회한다.",
             description = "로그인한 회원이 업로드한 프로젝트 리스트를 조회한다."
@@ -140,6 +147,13 @@ public interface ProjectReadApi {
             Pageable pageable
     );
 
+    /**
+     * 로그인한 회원이 좋아요한 프로젝트의 페이징된 목록을 조회한다.
+     *
+     * @param userId   현재 인증된 사용자의 ID (요청의 Authorization 토큰에서 주입됨)
+     * @param pageable 페이지 및 정렬 정보 (기본: page=0, size=5)
+     * @return 인증된 사용자가 좋아요 표시한 프로젝트들을 담은 페이지를 SuccessResponse로 래핑한 ResponseEntity
+     */
     @Operation(
             summary = "로그인한 회원이 좋아요한 프로젝트 리스트를 조회한다.",
             description = "로그인한 회원이 좋아요한 프로젝트 리스트를 조회한다."
