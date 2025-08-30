@@ -23,6 +23,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class UserProjectReadServiceTest {
@@ -92,4 +93,55 @@ class UserProjectReadServiceTest {
         assertThat(response.authorLevelLabel()).isEqualTo("초급");
         assertThat(response.likeCount()).isEqualTo(5L);
     }
+
+    @Test
+    @DisplayName("findLikeProjects: 좋아요한 프로젝트 목록 조회 성공")
+    void findLikeProjects_success() {
+        // given
+        Long userId = 1L;
+        PageRequest pageable = PageRequest.of(0, 5);
+
+        Project project = Project.builder()
+                .id(10L).userId(100L)
+                .topicId(10L).analysisPurposeId(20L).dataSourceId(30L).authorLevelId(40L)
+                .title("테스트 프로젝트").content("내용").createdAt(LocalDateTime.now())
+                .commentCount(5L).likeCount(10L).viewCount(15L)
+                .build();
+
+        Page<Project> projectPage = new PageImpl<>(List.of(project), pageable, 1);
+
+        given(findUserProjectsPort.findLikeProjects(userId, pageable))
+                .willReturn(projectPage);
+
+        // Project.topicId = 10L → "데이터 분석"
+        given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of(10L)))
+                .willReturn(Map.of(10L, "데이터 분석"));
+        // Project.authorLevelId = 40L → "초급"
+        given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(List.of(40L)))
+                .willReturn(Map.of(40L, "초급"));
+
+        UserProjectResponse mappedResponse = new UserProjectResponse(
+                project.getId(), project.getTitle(), project.getContent(), "thumb.png",
+                "데이터 분석", "초급",
+                project.getCommentCount(), project.getLikeCount(), project.getViewCount(),
+                project.getCreatedAt()
+        );
+        given(mapper.toResponseDto(project, "데이터 분석", "초급"))
+                .willReturn(mappedResponse);
+
+        // when
+        Page<UserProjectResponse> result = service.findLikeProjects(userId, pageable);
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.getContent().get(0).title()).isEqualTo("테스트 프로젝트");
+        assertThat(result.getContent().get(0).topicLabel()).isEqualTo("데이터 분석");
+        assertThat(result.getContent().get(0).authorLevelLabel()).isEqualTo("초급");
+
+        then(findUserProjectsPort).should().findLikeProjects(userId, pageable);
+        then(getTopicLabelFromIdUseCase).should().getLabelsByIds(List.of(10L));
+        then(getAuthorLevelLabelFromIdUseCase).should().getLabelsByIds(List.of(40L));
+        then(mapper).should().toResponseDto(project, "데이터 분석", "초급");
+    }
+
 }
