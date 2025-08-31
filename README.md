@@ -307,7 +307,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
    - **고급 검색/다중 조인**: `QueryDSL` 사용
      - `Predicate` + `BooleanBuilder`로 **동적 필터 조건** 조립
      - `OrderSpecifier<?>[]`를 항목별로 구현하여 요청 파라미터에 따라 정렬 기준 조합
-     - 응답 DTO로 변환 후 반환
+     - 되도록 조회한 엔티티에서 도메인 모델로 변환하여 반환하고, 추가적인 요소가 필요할 경우 별도 응답 DTO로 변환 후 반환
 
 ### 3. **트랜잭션 관리**
    - 서비스 계층(Application)에서 **트랜잭션 경계** 설정
@@ -320,14 +320,14 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 2. Application 유스케이스 서비스가 **도메인 규칙** 적용
 3. Ports-Out 어댑터에서 `BooleanBuilder`로 조건 조합
 4. `OrderSpecifier` 조합 후 QueryDSL 실행
-5. 결과를 DTO로 매핑 후 응답
+5. 결과를 도메인 모델로 변환 혹은 DTO로 매핑 후 응답
 
 <br/>
 
 ## 기대 효과
 - **정확성**: 소프트 딜리트 데이터가 조회 로직에 포함되지 않도록 보장
 - **유연성**: 단순 조건은 JPA, 중간 수준은 JPQL, 복잡 조건은 QueryDSL로 계층화
-- **성능 최적화**: Projection 기반 최소 컬럼 조회, 불필요한 Lazy Loading 방지
+- **성능 최적화**: 필요 시 Projection 기반 최소 컬럼 조회 가능, 불필요한 Lazy Loading 방지
 - **확장성**: 새로운 검색 조건/정렬 기준이 추가되어도 BooleanBuilder와 OrderSpecifier 모듈만 확장하면 대응 가능
 
 
@@ -339,7 +339,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 # ⚡ 08. Redis 캐싱
 
 ## 📌 적용 목적
-- **Redis**: 인메모리 기반의 고성능 데이터 저장소로, 주로 캐싱, 세션 저장, 카운터, 랭킹 처리 등에 활용
+- **Redis**: 인메모리 기반의 고성능 데이터 저장소로, 주로 캐싱, 세션, 토큰 등 저장, 카운터, 랭킹 처리 등에 활용
 - **Spring Data Redis**: Redis 연동을 단순화하고 직렬화/역직렬화를 자동 처리하는 Spring 모듈
 
 <br/>
@@ -347,10 +347,10 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 ## ⚙️ 적용 방식
 1. **읽기 성능 최적화**
    - **조회 빈도가 높은 데이터**(예: 인기 프로젝트 목록, 인기 데이터셋 목록)를 Redis에 캐싱  
-   - TTL(Time-To-Live) 기반 자동 만료 적용 → 오래된 데이터 자동 제거
+   - TTL(Time-To-Live) 기반 자동 만료 적용
 
 2. **데이터 갱신**
-   - DB 업데이트 시 관련 캐시 키 **무효화** 또는 **갱신** 처리
+   - DB 업데이트 시 관련 캐시 키 **갱신** 처리
    - 변경이 잦은 데이터는 TTL을 짧게 설정해 캐시 정합성 유지
 
 3. **다양한 캐시 패턴**
@@ -367,7 +367,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 ## 🔄 예시 흐름
 1. Web Adapter → Application 서비스 호출
 2. 캐시 키 기반으로 Redis 조회
-3. 데이터가 없으면(DB Hit) → JPA/QueryDSL로 DB 조회 후 Redis 저장
+3. 데이터가 없으면 → JPA/QueryDSL로 DB 조회 후 Redis 저장
 4. 데이터가 있으면 캐시에서 즉시 반환
 
 <br/>
@@ -399,6 +399,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 2. **토큰 블랙리스트 처리**
    - 로그아웃 시 Access Token을 `blacklist:<token>`에 저장, TTL은 남은 유효기간
    - JWT 검증 시 블랙리스트 조회 → 존재 시 인증 거부
+   -> 보안 등급이 높은 서비스에서 필요. 현재 프로젝트에서는 실무적으로 과한 기능이라 생각하여 유스케이스로 개발만 해두고 비활성화 처리 해둠.
 
 3. **TTL 기반 자동 만료**
    - Redis 자체 TTL 기능으로 만료 토큰 자동 제거
@@ -410,7 +411,6 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 <br/>
 
 ## 기대 효과
-- 로그아웃 즉시 토큰 차단 가능
 - 인증 처리 속도 단축 → 사용자 경험 개선
 - 유지보수 단순화 (TTL 자동 삭제)
 
@@ -445,7 +445,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 <br/>
 
 ## 🔄 동작 흐름
-1. 서비스 메서드에 `@DistributedLock(key = "'lock:post:' + #postId")` 적용
+1. 서비스 메서드에 `@DistributedLock(key = "'lock:post:' + #postId")`와 같이 적용
 2. AOP가 메서드 호출 전 락 키 생성 → Redisson을 통해 락 획득 시도
 3. 락을 획득하면 비즈니스 로직 실행
 4. 작업 완료 후 락 해제(또는 leaseTime 만료 시 자동 해제)
@@ -478,7 +478,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ## ⚙️ 구현 방식
 1. **Redis 캐싱 & Deduplication**  
-   - `viewDedup:{targetType}:{projectId}:{viewerId}` 키를 사용해 **5분 TTL** 동안 동일 사용자의 중복 조회를 방지.  
+   - `viewDedup:{targetType}:{projectId}:{viewerId}` 키를 사용해 **5분 TTL** 동안 동일 사용자의 중복 조회수 증가를 방지.  
    - 최초 조회일 때만 `viewCount:{targetType}:{projectId}` 카운트를 +1 증가.  
    - Redis의 빠른 쓰기 성능을 활용하여 고빈도 요청을 흡수.  
 
@@ -522,7 +522,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-## ⚙️ 메시지 & 토픽 설계
+## ⚙️ 메시지 & 토픽 설계 (적용 사례)
 - **메시지 타입**
   - **도메인 이벤트**: `DataUploadEvent{ dataId, dataFileUrl, originalFilename }` (JSON)
   - **경량 트리거**: `Long` (예: `projectId`, `commentId`)
@@ -552,7 +552,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ## 📥 컨슈머 (구현 기준)
 
-- **DataKafkaConsumerAdapter.consume — 파일 첨부 → 메타데이터 파싱/저장**
+- **DataKafkaConsumerAdapter.consume — 파일 첨부 및 업로드 → 메타데이터 파싱/저장**
   - Payload: `DataUploadEvent`
   - Topic: `spring.kafka.consumer.extract-metadata.topic` → `data-uploaded`
 
@@ -594,7 +594,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-# 🔍 13. 검색 & 분석 (Elasticsearch 중심)
+# 🔍 13. 검색 & 분석 (Elasticsearch)
 
 ## 🎯 적용 목적
 - 프로젝트에 대한 **전문 검색**, **유사 프로젝트 추천**, **실시간 검색어 대응**을 위해 Elasticsearch를 사용합니다.
@@ -619,10 +619,10 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 ## 🔎 검색 시나리오
 
 ### 1) 실시간 검색/자동완성
-- **쿼리**: `multi_match`(fuzziness **AUTO**)로 **title^3**, **username^2** 가중치 적용  
+- **쿼리**: `multi_match`(fuzziness **AUTO**)로 **title^3**, **username^2** 가중치 적용하여 제목과 업로더 검색
 - **필터**: `isDeleted=false`  
 - **정렬**: `createdAt` 내림차순  
-- **결과**: 가벼운 응답 모델(예: id, title, username, thumbnail)로 반환 → 목록/자동완성에 즉시 사용
+- **결과**: 가벼운 응답 모델(예: id, title, username, thumbnail)로 반환 → 목록/자동완성/실시간 검색에 즉시 사용
 
 ### 2) 유사 프로젝트 추천
 - **쿼리 조합**:
@@ -642,7 +642,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 ---
 
 ## ✅ 기대 효과
-- **검색 품질 향상**: 형태 기반 유사도 + 도메인 가중치로 랭킹 최적화
+- **검색 품질 향상**: 내용 기반 유사도 + 도메인 가중치로 랭킹 최적화
 - **실시간성**: 색인/증분 업데이트로 최신 지표 반영
 - **성능**: 대량 데이터에서도 ms~수십 ms 수준 응답
 
@@ -665,7 +665,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 ## 설계 개요
 - **`BaseLogger`**: 모든 로거의 기본 로깅 기능(info/debug/warn/error) 추상화
 - **전문화 Logger 클래스**: API, Service, Domain, Persistence, Kafka, Elasticsearch, Redis, 분산락 등 기능별 로깅 지원
-- **`LoggerFactory`**: 전역에서 각 Logger 싱글톤 제공  
+- **`LoggerFactory`**: 전역에서 각 Logger **싱글톤** 제공  
   → 호출 계층에 맞는 Logger를 선택적으로 사용 가능
 
 ---
@@ -690,10 +690,9 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ### 💾 세션 상태 관리
 - Refresh Token → `Redis` 저장 (사용자 단위 키, TTL 설정)
-- 로그아웃·탈취 의심 시 Access Token **블랙리스트 처리**로 즉시 차단
 
 ### 🔍 필터 체인
-- 요청마다 JWT **서명·만료·블랙리스트 검사**
+- 요청마다 어세스토큰 JWT 인증 검사
 - 실패 유형별 401(인증 실패) / 403(권한 부족) 구분 응답
 
 ### 🔄 재발급 플로우
@@ -724,7 +723,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ---
 
-## ⚙️ 동작 방식
+## ⚙️ 동작 방식 (적용 예시)
 1. 🏷️ 메서드에 `@AuthorizationDataEdit` 적용
 2. 🔍 AOP 실행:
    - 👤 인증 사용자 ID 조회
@@ -760,11 +759,16 @@ public void restore(Long dataId) { ... }
 
 ### 📁 파일 저장
 - 이미지/첨부 → `S3` 업로드
-- 업로드·삭제·조회 경로 분리, 응답엔 접근 가능한 URL만 노출 (서버 권한 처리)
+- 업로드·삭제·조회 적용, 응답엔 접근 가능한 URL만 노출 (서버 권한 처리)
+
+### 🔑 파일 다운로드
+- 파일 다운로드는 보안성을 생각
+- 일정시간동안만 다운로드를 할 수 있는 preSigned URL 링크를 제공
+- 해당 시간이 지날 시 만료된 URL로 파일 다운로드 불가
 
 ### 📧 메일 발송
 - `SendGrid API`로 인증·알림 메일 전송
-- 템플릿화(제목/본문/링크 변수치환)로 운영 효율성 확보
+- 템플릿화(제목/본문 변수치환)로 운영 효율성 확보
 
 ### ⚠️ 장애 대응
 - 외부 I/O 실패 시 재시도 정책 적용
@@ -783,7 +787,8 @@ public void restore(Long dataId) { ... }
 > Real-Time Behavioral Logging & Monitoring with Kafka, Elasticsearch, Redis, Prometheus, Grafana
 
 ## 🧩 프로젝트 개요
-> **Dataracy**는 사용자 행동(클릭, 이동, 체류 시간 등)을 Kafka → Elasticsearch로 비동기 수집하고, Kibana 대시보드 및 Prometheus + Grafana를 통해 실시간 분석/시각화하는 고성능 로그 수집 시스템입니다.
+> **Dataracy**는 사용자 행동(클릭, 이동, 체류 시간 등)을 행동 로그 기록을 통해
+> Kafka → Elasticsearch로 비동기 수집하고, Kibana 대시보드 및 Prometheus + Grafana를 통해 실시간 분석/시각화하는 고성능 로그 수집 시스템을 적용한다.
 
 ---
 
@@ -845,11 +850,11 @@ User
 ## 🧪 19. 테스트 & 품질 (k6)
 
 ### 🎯 목표
-- 로그인, 검색, 조회, 좋아요, 댓글 등 **핵심 API**의 지연·에러율을 수치 관리
+- 로그인, 검색, 조회, 좋아요, 댓글 등 **핵심 API**의 지연,에러율을 수치 관리
 - 배포 전/후 **성능 회귀** 조기 감지
 
 ### 🛠 전략
-- 시나리오 기반 부하 (러핑/피크/소진)로 현실 트래픽 근사
+- 시나리오 기반 부하 (연결/피크/소진)로 현실 트래픽 근사
 - Threshold 설정 (p95/p99, 실패율, TPS) → 자동 합/불판단
 - 결과를 모니터링 지표와 같은 축으로 비교 → 원인 파악 단순화
 
