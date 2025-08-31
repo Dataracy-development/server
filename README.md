@@ -211,7 +211,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 <br/>
 
 ## 일관성 & 성능 보장
-- 최종적 일관성: DB → Kafka → ES (단기 지연 허용)
+- 최종적 일관성: DB → 큐 기반 Worker → ES (단기 지연 허용)
 - 캐시 활용: Redis로 인기/핫 데이터 캐싱 (TTL + 키 무효화)
 - 분산락: Redisson으로 카운트·집계 동시성 제어
 - DLQ: Kafka, Elasticsearch 실패 이벤트 격리·재처리(Dead Letter Queue)
