@@ -29,7 +29,7 @@ class UserTopicEntityTest {
 
     @Test
     @DisplayName("of: UserTopicEntity 생성 성공")
-    void of_success() {
+    void ofSuccess() {
         // given
         UserEntity user = user();
 

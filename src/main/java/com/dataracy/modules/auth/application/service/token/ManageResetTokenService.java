@@ -1,4 +1,4 @@
-package com.dataracy.modules.auth.application.service.event;
+package com.dataracy.modules.auth.application.service.token;
 
 import com.dataracy.modules.auth.application.port.in.token.ManageResetTokenUseCase;
 import com.dataracy.modules.auth.application.port.out.token.ManageResetTokenPort;
