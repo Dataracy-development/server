@@ -97,6 +97,13 @@ public class UserEntity extends BaseTimeEntity {
         topicEntity.assignUser(this);
     }
 
+    /**
+     * 사용자 엔티티의 프로필 관련 필드들을 요청 DTO의 값으로 갱신한다.
+     *
+     * 수정되는 필드: nickname, authorLevelId, occupationId, visitSourceId, introductionText.
+     *
+     * @param requestDto 갱신할 닉네임, 작가 레벨 ID, 직업 ID, 방문 경로 ID 및 소개 텍스트를 제공하는 DTO
+     */
     public void modifyUserInfo(ModifyUserInfoRequest requestDto) {
         this.nickname = requestDto.nickname();
         this.authorLevelId = requestDto.authorLevelId();
@@ -105,6 +112,11 @@ public class UserEntity extends BaseTimeEntity {
         this.introductionText = requestDto.introductionText();
     }
 
+    /**
+     * 사용자 엔터티의 프로필 이미지 URL을 변경합니다.
+     *
+     * @param profileImageUrl 새 프로필 이미지의 URL 문자열
+     */
     public void modifyProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
