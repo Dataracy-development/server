@@ -19,6 +19,16 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "User - Command", description = "사용자 관련 API - 수정, 삭제")
 @RequestMapping("/api/v1/user")
 public interface UserCommandApi {
+    /**
+     * 회원 정보를 수정합니다.
+     *
+     * <p>요청 본문으로 회원 수정 정보(검증된 ModifyUserInfoWebRequest)와 선택적 프로필 이미지 파일을 받아
+     * 회원 정보를 업데이트하고 성공 시 200 OK와 SuccessResponse<Void>를 반환합니다.</p>
+     *
+     * @param profileImageFile 선택적 프로필 이미지 파일(Multipart). 없을 수 있습니다.
+     * @param webRequest 회원 수정에 필요한 검증된 요청 데이터(ModifyUserInfoWebRequest)
+     * @return 수정 성공 시 200 OK와 빈 SuccessResponse<Void>
+     */
     @Operation(
             summary = "회원 정보 수정",
             description = "회원 정보 수정을 진행합니다.",
@@ -40,6 +50,14 @@ public interface UserCommandApi {
             ModifyUserInfoWebRequest webRequest
     );
 
+    /**
+     * 회원을 소프트 탈퇴 처리합니다.
+     *
+     * 현재 인증된 사용자의 계정을 소프트 삭제(탈퇴)하고 성공 시 200 OK와 빈 SuccessResponse를 반환합니다.
+     *
+     * @param userId 현재 인증된 사용자의 식별자
+     * @return 200 OK 및 빈 SuccessResponse<Void>
+     */
     @Operation(
             summary = "회원 소프트 탈퇴",
             description = "회원 탈퇴를 진행합니다.",
@@ -55,6 +73,12 @@ public interface UserCommandApi {
             Long userId
     );
 
+    /**
+     * 현재 로그인한 사용자의 세션과 리프레시 토큰을 무효화하여 로그아웃을 수행합니다.
+     *
+     * @param refreshToken 쿠키에 담긴 리프레시 토큰 — 해당 토큰을 무효화하여 로그아웃을 완료합니다.
+     * @return 성공 응답을 담은 ResponseEntity(성공 시 본문은 비어있음)
+     */
     @Operation(
             summary = "로그아웃",
             description = "현재 로그인한 사용자의 세션 또는 RefreshToken을 무효화하고 로그아웃합니다.",

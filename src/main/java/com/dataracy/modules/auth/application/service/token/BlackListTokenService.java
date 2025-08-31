@@ -17,10 +17,10 @@ public class BlackListTokenService implements BlackListTokenUseCase {
     private static final String USE_CASE = "BlackListTokenUseCase";
 
     /**
-     * 주어진 토큰을 블랙리스트에 등록합니다.
+     * 주어진 토큰을 블랙리스트에 등록한다.
      *
-     * @param token 토큰 문자열
-     * @param expirationMillis 블랙리스트 유지 기간(밀리초)
+     * @param token 블랙리스트에 등록할 JWT 토큰 문자열
+     * @param expirationMillis 블랙리스트 유지 기간(밀리초, 현재 시점부터의 지속 시간)
      */
     @Override
     public void addToBlackList(String token, long expirationMillis) {
