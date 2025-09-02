@@ -26,9 +26,13 @@ public class UserReadWebMapper {
                 responseDto.role(),
                 responseDto.email(),
                 responseDto.nickname(),
+                responseDto.authorLevelId(),
                 responseDto.authorLevelLabel(),
+                responseDto.occupationId(),
                 responseDto.occupationLabel(),
+                responseDto.topicIds(),
                 responseDto.topicLabels(),
+                responseDto.visitSourceId(),
                 responseDto.visitSourceLabel(),
                 responseDto.profileImageUrl(),
                 responseDto.introductionText()

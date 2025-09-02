@@ -23,9 +23,13 @@ public record GetUserInfoResponse(
         RoleType role,
         String email,
         String nickname,
+        Long authorLevelId,
         String authorLevelLabel,
+        Long occupationId,
         String occupationLabel,
+        List<Long> topicIds,
         List<String> topicLabels,
+        Long visitSourceId,
         String visitSourceLabel,
         String profileImageUrl,
         String introductionText
