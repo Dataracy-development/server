@@ -19,14 +19,26 @@ public record GetUserInfoWebResponse(
         @Schema(description = "닉네임", example = "주니")
         String nickname,
 
+        @Schema(description = "작성자 유형 아이디", example = "1")
+        Long authorLevelId,
+
         @Schema(description = "작성자 유형 라벨", example = "실무자")
         String authorLevelLabel,
+
+        @Schema(description = "직업 아이디", example = "1")
+        Long occupationId,
 
         @Schema(description = "직업 라벨", example = "개발자")
         String occupationLabel,
 
+        @Schema(description = "토픽 아이디 리스트")
+        List<Long> topicIds,
+
         @Schema(description = "토픽 라벨 리스트")
         List<String> topicLabels,
+
+        @Schema(description = "방문 경로 아이디", example = "1")
+        Long visitSourceId,
 
         @Schema(description = "방문 경로", example = "SNS")
         String visitSourceLabel,

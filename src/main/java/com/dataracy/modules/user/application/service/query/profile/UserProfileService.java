@@ -195,9 +195,13 @@ public class UserProfileService implements
                 user.getRole(),
                 user.getEmail(),
                 user.getNickname(),
+                user.getAuthorLevelId(),
                 authorLevelLabel,
+                user.getOccupationId(),
                 occupationLabel,
+                user.getTopicIds(),
                 topicLabels,
+                user.getVisitSourceId(),
                 visitSourceLabel,
                 user.getProfileImageUrl(),
                 user.getIntroductionText()
