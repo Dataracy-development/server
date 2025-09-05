@@ -28,7 +28,7 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer()
-                .setAddress("rediss://" + properties.getHost() + ":" + properties.getPort())
+                .setAddress(properties.getProtocol() + "://" + properties.getHost() + ":" + properties.getPort())
                 .setConnectionPoolSize(10)
                 .setConnectionMinimumIdleSize(5)
                 .setConnectTimeout(3000)

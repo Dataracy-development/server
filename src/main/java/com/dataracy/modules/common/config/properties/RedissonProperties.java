@@ -21,4 +21,7 @@ public class RedissonProperties {
     @Min(value = 1, message = "Port는 1 이상이어야 합니다.")
     @Max(value = 65535, message = "Port는 65535 이하여야 합니다.")
     private int port;
+
+    @NotBlank(message = "Redis protocol은 필수입니다.")
+    private String protocol;
 }
