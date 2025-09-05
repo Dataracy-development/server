@@ -17,9 +17,10 @@ spring:
 
   data:
     redis:
-      url: rediss://${REDIS_HOST}:${REDIS_PORT}
+      url: ${REDIS_PROTOCOL}://${REDIS_HOST}:${REDIS_PORT}
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
+      protocol: ${REDIS_PROTOCOL}
 
   jpa:
     hibernate:
