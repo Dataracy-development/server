@@ -31,8 +31,8 @@ public final class CookieUtil {
     public static void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(false) // 운영시 true
-                .sameSite("Lax") // 또는 "None"
+                .secure(true) // 운영시 true
+                .sameSite("None") // 또는 "None"
                 .path("/")
                 .maxAge(Duration.ofSeconds(maxAge))
                 .build();
