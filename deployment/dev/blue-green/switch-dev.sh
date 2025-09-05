@@ -108,9 +108,25 @@ upstream kibana_dev {
   server REPLACE_KIBANA_UPSTREAM;
 }
 
+# 80: Cloudflare가 HTTPS로 리다이렉트하므로 원본에선 간단 응답만
 server {
   listen 80;
   server_name dataracy.store;
+  return 200 "ok\n";
+}
+
+
+server {
+  listen 443 ssl http2;
+  server_name dataracy.store;
+
+  # ★ 추가: Cloudflare Origin Certificate 경로
+  ssl_certificate     /etc/nginx/ssl/cloudflare/origin.crt;
+  ssl_certificate_key /etc/nginx/ssl/cloudflare/origin.key;
+
+  # TLS 보안 옵션
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_prefer_server_ciphers on;
 
   client_max_body_size 50m;
   client_body_timeout 120s;
