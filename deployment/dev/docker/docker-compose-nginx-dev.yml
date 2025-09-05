@@ -8,6 +8,7 @@ services:
     volumes:
       - ../nginx/nginx-dev.conf:/etc/nginx/nginx.conf:ro
       - ../nginx/upstream-blue-green-dev.conf:/etc/nginx/conf.d/upstream-blue-green.conf:ro
+      - /home/ubuntu/ssl/cloudflare:/etc/nginx/ssl/cloudflare:ro
     networks:
       - dataracy-network-dev
 
