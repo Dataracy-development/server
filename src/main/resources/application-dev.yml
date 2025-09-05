@@ -44,8 +44,8 @@ elasticsearch:
   connection:
     host: ${ELASTIC_SEARCH_HOST}
     port: ${ELASTIC_SEARCH_PORT}
-    protocol: https
-    ssl: true
+    protocol: http
+    ssl: false
 
 logging:
   level:
