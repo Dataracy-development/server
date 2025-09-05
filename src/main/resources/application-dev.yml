@@ -1,6 +1,6 @@
 server:
   port: 8080
-  url: http://${SERVER_HOST}:${SERVER_PORT}
+  url: https://${SERVER_HOST}:${SERVER_PORT}
 
 spring:
   application:
@@ -17,7 +17,7 @@ spring:
 
   data:
     redis:
-      url: redis://${REDIS_HOST}:${REDIS_PORT}
+      url: rediss://${REDIS_HOST}:${REDIS_PORT}
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
 
@@ -36,15 +36,15 @@ swagger:
   title: Dataracy
   description: Dataracy 백엔드 API 개발 문서입니다
   version: v1.2.0
-  server-url: http://dataracy.store
+  server-url: https://dataracy.store
   server-description: develop server
 
 elasticsearch:
   connection:
     host: ${ELASTIC_SEARCH_HOST}
     port: ${ELASTIC_SEARCH_PORT}
-    protocol: http
-    ssl: false
+    protocol: https
+    ssl: true
 
 logging:
   level:
