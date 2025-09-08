@@ -1,6 +1,7 @@
 server:
   port: 8080
-  url: https://${SERVER_HOST}:${SERVER_PORT}
+#  url: https://${SERVER_HOST}:${SERVER_PORT}
+  forward-headers-strategy: framework
 
 spring:
   application:
