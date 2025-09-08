@@ -108,19 +108,104 @@ upstream kibana_dev {
   server REPLACE_KIBANA_UPSTREAM;
 }
 
-# 80: Cloudflare가 HTTPS로 리다이렉트하므로 원본에선 간단 응답만
+# --------------------------------------
+# HTTP (80) : 프록시 동작
+# --------------------------------------
 server {
   listen 80;
   server_name dataracy.store;
-  return 200 "ok\n";
+
+  # 공통 헤더
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto $scheme;
+  proxy_http_version 1.1;
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Connection "upgrade";
+  proxy_set_header Cookie $http_cookie;
+
+  # API
+  location /api {
+    proxy_pass http://backend;
+    proxy_request_buffering off;
+    proxy_send_timeout 300s;
+    proxy_read_timeout 300s;
+  }
+
+  # Swagger/UI/Docs: 캐시 무효화
+  location /swagger-ui/ {
+    proxy_pass http://backend/swagger-ui/;
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+    add_header Pragma "no-cache" always;
+    expires -1;
+    etag off;
+  }
+  location /v3/api-docs {
+    proxy_pass http://backend/v3/api-docs;
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+    add_header Pragma "no-cache" always;
+    expires -1;
+    etag off;
+  }
+  location /swagger-config {
+    proxy_pass http://backend/swagger-config;
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+    add_header Pragma "no-cache" always;
+    expires -1;
+    etag off;
+  }
+  location /webjars/ {
+    proxy_pass http://backend/webjars/;
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+    add_header Pragma "no-cache" always;
+    expires -1;
+    etag off;
+  }
+
+  # ★ Kibana (경로 /kibana)
+  location /kibana/ {
+    proxy_pass http://kibana_dev/kibana/;     # 뒤 슬래시 필수
+    proxy_read_timeout 600s;
+    proxy_send_timeout 600s;
+
+    # WebSocket
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    # 프록시 뒤 basePath 사용 시 권장 헤더
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Prefix /kibana;
+  }
+
+  # 헬스
+  location /actuator/health {
+    proxy_pass http://backend/actuator/health;
+  }
+
+  # 기타
+  location / {
+    proxy_pass http://backend;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Cookie $http_cookie;
+  }
 }
 
-
+# --------------------------------------
+# HTTPS (443)
+# --------------------------------------
 server {
   listen 443 ssl http2;
   server_name dataracy.store;
 
-  # ★ 추가: Cloudflare Origin Certificate 경로
+  # ★ Cloudflare Origin Certificate 경로
   ssl_certificate     /etc/nginx/ssl/cloudflare/origin.crt;
   ssl_certificate_key /etc/nginx/ssl/cloudflare/origin.key;
 
