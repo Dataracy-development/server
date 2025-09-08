@@ -29,7 +29,8 @@ public class CorsConfig {
                 "https://dataracy.store",
                 "http://dataracy.co.kr",
                 "https://dataracy.co.kr",
-                "http://localhost:63342"
+                "http://localhost:63342",
+                "https://dataracy-client.vercel.app/"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 
