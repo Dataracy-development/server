@@ -3,20 +3,14 @@ services:
     image: juuuunny/backend:blue
     container_name: backend-blue
     restart: always
-    ports:
-      - "8081:8080"
-    env_file:
-      - /home/ubuntu/env-config/.env.dev
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
+    ports: ["8081:8080"]
+    env_file: [ /home/ubuntu/env-config/.env.dev ]
+    environment: { SPRING_PROFILES_ACTIVE: dev }
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 15s
       timeout: 5s
       retries: 10
-    networks:
-      - dataracy-network-dev
-
+    networks: [ dataracy-network-dev ]
 networks:
-  dataracy-network-dev:
-    external: true
+  dataracy-network-dev: { external: true }
