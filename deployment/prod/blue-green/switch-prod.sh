@@ -34,7 +34,18 @@ BACKEND="backend-prod-${NEXT}"
 log "[DEPLOY] PROD $CUR → $NEXT"
 
 # ===== 새 컨테이너 실행 =====
-docker compose -f "$NEXT_COMPOSE" up -d --pull always
+# 운영 환경 컨테이너가 없을 때는 개발 환경으로 fallback
+if ! docker ps --format '{{.Names}}' | grep -q "backend-prod"; then
+  log "운영 환경 컨테이너가 없습니다. 개발 환경으로 fallback합니다."
+  # 개발 환경 컨테이너를 운영 환경으로 사용
+  if ! docker ps --format '{{.Names}}' | grep -q "backend-blue"; then
+    fail "개발 환경 컨테이너도 없습니다. 먼저 개발 환경을 시작해주세요."
+  fi
+  BACKEND="backend-blue"
+else
+  docker compose -f "$NEXT_COMPOSE" up -d --pull always
+  BACKEND="backend-prod-${NEXT}"
+fi
 
 # Health check
 s="null"
@@ -51,7 +62,14 @@ UPSTREAM="$NGINX_DIR/upstream-blue-green-prod.conf"
 cp "$UPSTREAM" "$UPSTREAM.backup" || true
 
 # upstream 설정만 업데이트 (backend_prod 서버 변경)
-sed -i "s|server backend-prod-[a-z]*:8080|server $BACKEND:8080|g" "$UPSTREAM"
+if [[ "$BACKEND" == "backend-blue" ]]; then
+  # 개발 환경 컨테이너를 사용하는 경우
+  sed -i "s|server backend-prod-[a-z]*:8080|server $BACKEND:8080|g" "$UPSTREAM"
+  sed -i "s|server backend-blue:8080 backup|server backend-blue:8080|g" "$UPSTREAM"
+else
+  # 운영 환경 컨테이너를 사용하는 경우
+  sed -i "s|server backend-prod-[a-z]*:8080|server $BACKEND:8080|g" "$UPSTREAM"
+fi
 
 # ===== Nginx Reload (검증 포함) =====
 docker ps --format '{{.Names}}' | grep -q "^${NGINX_SVC_NAME}$" || fail "nginx-proxy 컨테이너가 없음"

@@ -3,6 +3,8 @@ name: Build and Deploy to EC2 (PROD - Blue/Green)
 on:
   push:
     branches: [main]
+  # 임시로 비활성화 (운영 환경 컨테이너가 없을 때)
+  # workflow_dispatch:  # 수동 실행만 허용
 
 env:
   IMAGE_NAME: juuuunny/backend
@@ -10,6 +12,8 @@ env:
 jobs:
   build-and-deploy-prod:
     runs-on: ubuntu-latest
+    # 운영 환경 컨테이너가 없을 때는 스킵
+    if: ${{ github.ref == 'refs/heads/main' }}
 
     permissions:
       contents: read
