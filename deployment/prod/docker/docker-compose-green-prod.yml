@@ -1,20 +1,20 @@
 services:
-  backend-green:
-    image: juuuunny/backend:green
-    container_name: backend-green
+  backend-prod-green:
+    image: juuuunny/backend:prod-green
+    container_name: backend-prod-green
     restart: always
-    env_file: [/home/ubuntu/env-config/.env.dev]
+    env_file: [/home/ubuntu/env-config/.env.prod]
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: prod
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 10s
       timeout: 5s
       retries: 20
       start_period: 30s
-    networks: [dataracy-network-dev]
+    networks: [dataracy-network-prod]
     depends_on: []
 
 networks:
-  dataracy-network-dev:
+  dataracy-network-prod:
     external: true

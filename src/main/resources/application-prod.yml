@@ -1,6 +1,6 @@
 server:
   port: 8080
-  url: http://${SERVER_HOST}:${SERVER_PORT}
+  url: https://api.dataracy.co.kr
 
 spring:
   application:
@@ -8,20 +8,17 @@ spring:
   config:
     activate:
       on-profile: prod
-
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   data:
     redis:
       url: ${REDIS_PROTOCOL}://${REDIS_HOST}:${REDIS_PORT}
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       protocol: ${REDIS_PROTOCOL}
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -36,18 +33,14 @@ spring:
 logging:
   level:
     root: INFO
-
-    # Hibernate 완전 최소화
     org.hibernate: WARN
     org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql: WARN
     org.hibernate.engine.jdbc.spi.SqlExceptionHelper: ERROR
-
-    # Spring / Kafka / 내부 모듈
     org.springframework: WARN
     org.apache.kafka: ERROR
     org.springframework.kafka: WARN
-    com.dataracy.modules.behaviorlog: INFO   # 운영 로그는 반드시 남김
+    com.dataracy.modules.behaviorlog: INFO
     com.dataracy.modules.behaviorlog.support.aop.DataAccessLatencyAspect: INFO
     com.dataracy.modules.common.logging: INFO
 
@@ -66,16 +59,14 @@ management:
       enabled: true
 
 springdoc:
-  swagger-ui:
-    enabled: true
-  api-docs:
-    enabled: true
+  swagger-ui: { enabled: true }
+  api-docs:   { enabled: true }
 
 swagger:
   title: Dataracy
   description: Dataracy 백엔드 API 운영 문서입니다
   version: v1.2.0
-  server-url: http://${SERVER_HOST}:${SERVER_PORT}
+  server-url: https://api.dataracy.co.kr
   server-description: prod server
 
 elasticsearch:
