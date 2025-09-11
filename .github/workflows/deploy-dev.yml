@@ -2,7 +2,7 @@ name: Build and Deploy to EC2 (DEV - Blue/Green)
 
 on:
   push:
-    branches: [ develop ]
+    branches: [develop]
 
 env:
   IMAGE_NAME: juuuunny/backend
@@ -12,61 +12,92 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Checkout Source
-        uses: actions/checkout@v3
-
-      - name: ☕ Set up JDK 17
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
 
-      - name: 🔐 Grant execute permission for Gradle
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties') }}"
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-
+
+      - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      - name: 🛠️ Build with Gradle (Skip Tests)
+      - name: Build with Gradle (Skip Tests)
         run: ./gradlew clean build -x test
 
-      - name: 🔐 Login to Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 🔑 Save PEM key
+      # 현재 활성 색상 읽어서 반대색을 태깅
+      - name: Decide Tag (blue or green)
+        id: get-color
         run: |
           echo "${{ secrets.EC2_DEV_SSH_KEY }}" > ec2key.pem
           chmod 600 ec2key.pem
-
-      - name: 🏷️ Set Docker Tag (blue or green)
-        run: |
-          COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_DEV_HOST }} "cat /home/ubuntu/color-config/current_color_dev || echo blue")
+          COLOR=$(ssh -o StrictHostKeyChecking=no -i ec2key.pem ubuntu@${{ secrets.EC2_DEV_HOST }} 'cat /home/ubuntu/color-config/current_color_dev 2>/dev/null || echo blue')
           if [ "$COLOR" = "blue" ]; then
             echo "TAG_NAME=green" >> $GITHUB_ENV
-            echo "DEPLOY_COLOR=green" >> $GITHUB_ENV
-            echo "PREVIOUS_COLOR=blue" >> $GITHUB_ENV
+            echo "NEXT_COLOR=green" >> $GITHUB_OUTPUT
           else
             echo "TAG_NAME=blue" >> $GITHUB_ENV
-            echo "DEPLOY_COLOR=blue" >> $GITHUB_ENV
-            echo "PREVIOUS_COLOR=green" >> $GITHUB_ENV
+            echo "NEXT_COLOR=blue" >> $GITHUB_OUTPUT
           fi
+          rm -f ec2key.pem
 
-      - name: 🐳 Build and Push Docker Image
+      - name: Build & Push Image (:blue or :green)
         run: |
-          docker build -t $IMAGE_NAME:$TAG_NAME -f Dockerfile .
-          docker push $IMAGE_NAME:$TAG_NAME
+          docker build --pull -t $IMAGE_NAME:${TAG_NAME} -f Dockerfile .
+          docker push $IMAGE_NAME:${TAG_NAME}
 
-      - name: 🚀 Deploy to EC2 (DEV)
+      - name: Deploy to EC2 (DEV switch)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_DEV_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_DEV_SSH_KEY }}
+          timeout: 10m
           script: |
-            cd ~/dataracy
-            git reset --hard
-            git clean -fd
+            set -euo pipefail
+
+            echo "=== DEV Blue/Green 배포 시작 ==="
+            echo "배포할 색상: ${{ steps.get-color.outputs.NEXT_COLOR }}"
+
+            # dev 작업 디렉터리 보장 (없으면 기존 ~/dataracy의 origin으로 클론)
+            if [ ! -d ~/dataracy-dev/.git ]; then
+              if [ -d ~/dataracy/.git ]; then
+                echo "기존 dataracy 디렉터리에서 클론..."
+                REMOTE=$(git -C ~/dataracy remote get-url origin)
+                git clone "$REMOTE" ~/dataracy-dev
+              else
+                echo "ERROR: ~/dataracy 디렉터리가 없습니다. 수동으로 클론해주세요."
+                exit 1
+              fi
+            fi
+
+            # 최신 코드로 업데이트
+            cd ~/dataracy-dev
             git fetch origin develop
             git reset --hard origin/develop
+
+            # 배포 스크립트 실행 권한 확인
             chmod +x deployment/dev/script/deploy.sh
+            chmod +x deployment/dev/blue-green/switch-dev.sh
+
+            # 배포 실행
+            echo "배포 스크립트 실행 중..."
             ./deployment/dev/script/deploy.sh
+
+            echo "=== DEV 배포 완료 ==="

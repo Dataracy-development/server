@@ -1,64 +1,67 @@
 #!/bin/bash
 set -Eeuo pipefail
+
+# ===== 공통 유틸 =====
 log(){ echo "[$(date -u +%FT%TZ)] $*"; }
 fail(){ log "[ERROR] $*"; exit 1; }
 
-exec 9>/tmp/dataracy.deploy.lock
+# 동시 실행 방지 락(PROD 전용)
+exec 9>/tmp/dataracy.prod.deploy.lock
 flock -n 9 || fail "다른 배포 중"
-trap 'fail "중단(line:$LINENO)"' ERR
+trap 'fail "스크립트 오류(line:$LINENO)"' ERR
 
+# ===== 경로 설정 =====
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 DOCKER_DIR="$SCRIPT_DIR/../docker"
-NGINX_DIR="$SCRIPT_DIR/../nginx"
+NGINX_DIR="$SCRIPT_DIR/../nginx"              # prod nginx 경로
 STATE_DIR="/home/ubuntu/color-config"
 CUR_FILE="$STATE_DIR/current_color_prod"
 
-mkdir -p "$STATE_DIR"; [[ -f "$CUR_FILE" ]] || echo "blue" > "$CUR_FILE"
-CUR="$(tr -d '[:space:]' < "$CUR_FILE")"; [[ "$CUR" =~ ^(blue|green)$ ]] || fail "색상 오류:$CUR"
+# Nginx (통합)
+NGINX_COMPOSE="$SCRIPT_DIR/../../../nginx/docker-compose-nginx.yml"
+NGINX_SVC_NAME="nginx-proxy"
+
+# ===== 현재 색상 =====
+mkdir -p "$STATE_DIR"
+[[ -f "$CUR_FILE" ]] || echo "blue" > "$CUR_FILE"
+CUR="$(tr -d '[:space:]' < "$CUR_FILE")"
+[[ "$CUR" =~ ^(blue|green)$ ]] || fail "current_color_prod 값 오류:$CUR"
+
 NEXT=$([[ "$CUR" == "blue" ]] && echo green || echo blue)
 NEXT_COMPOSE="$DOCKER_DIR/docker-compose-${NEXT}-prod.yml"
 BACKEND="backend-prod-${NEXT}"
 
-log "[DEPLOY] PROD $CUR -> $NEXT"
+log "[DEPLOY] PROD $CUR → $NEXT"
+
+# ===== 새 컨테이너 실행 =====
 docker compose -f "$NEXT_COMPOSE" up -d --pull always
+
+# Health check
+s="null"
 for i in {1..20}; do
   s="$(docker inspect --format='{{json .State.Health.Status}}' "$BACKEND" 2>/dev/null || echo null)"
-  [[ "$s" == "\"healthy\"" ]] && { log "healthy"; break; } || { log "  [$i/20] $s"; sleep 5; }
+  [[ "$s" == "\"healthy\"" ]] && { log "$BACKEND healthy"; break; } || { log "  [$i/20] $s"; sleep 5; }
 done
 [[ "$s" == "\"healthy\"" ]] || fail "$BACKEND healthy 실패"
 
+# ===== prod upstream 설정만 업데이트 =====
 UPSTREAM="$NGINX_DIR/upstream-blue-green-prod.conf"
-TMP="$UPSTREAM.tmp"
-cat > "$TMP" <<'EOF'
-upstream backend_prod { server REPLACE_BACKEND:8080; }
-server { listen 80; server_name api.dataracy.co.kr; return 301 https://$host$request_uri; }
-server {
-  listen 443 ssl http2;
-  server_name api.dataracy.co.kr;
-  ssl_certificate /etc/nginx/ssl/cloudflare/origin.crt;
-  ssl_certificate_key /etc/nginx/ssl/cloudflare/origin.key;
-  ssl_protocols TLSv1.2 TLSv1.3; ssl_prefer_server_ciphers on;
-  add_header Strict-Transport-Security "max-age=31536000" always;
-  client_max_body_size 50m; client_body_timeout 120s;
 
-  proxy_set_header Host $host;
-  proxy_set_header X-Real-IP $remote_addr;
-  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-  proxy_set_header X-Forwarded-Proto $scheme;
-  proxy_http_version 1.1;
-  proxy_set_header Upgrade $http_upgrade;
-  proxy_set_header Connection "upgrade";
+# 기존 설정 파일을 백업
+cp "$UPSTREAM" "$UPSTREAM.backup" || true
 
-  location /api { proxy_pass http://backend_prod; proxy_request_buffering off; proxy_send_timeout 300s; proxy_read_timeout 300s; }
-  location /actuator/health { proxy_pass http://backend_prod/actuator/health; }
-  location / { proxy_pass http://backend_prod; }
-}
-EOF
-sed -i "s|REPLACE_BACKEND|$BACKEND|g" "$TMP"; mv -f "$TMP" "$UPSTREAM"
+# upstream 설정만 업데이트 (backend_prod 서버 변경)
+sed -i "s|server backend-prod-[a-z]*:8080|server $BACKEND:8080|g" "$UPSTREAM"
 
-docker compose -f "$DOCKER_DIR/docker-compose-nginx-prod.yml" down -v
-docker compose -f "$DOCKER_DIR/docker-compose-nginx-prod.yml" up -d --build
+# ===== Nginx Reload (검증 포함) =====
+docker ps --format '{{.Names}}' | grep -q "^${NGINX_SVC_NAME}$" || fail "nginx-proxy 컨테이너가 없음"
+docker exec "$NGINX_SVC_NAME" nginx -t || fail "Nginx 설정 검사 실패(prod)"
+docker exec "$NGINX_SVC_NAME" nginx -s reload || fail "Nginx reload 실패(prod)"
 
-PREV="backend-prod-$CUR"; docker rm -f "$PREV" || true
+# ===== 이전 컨테이너 정리 =====
+PREV="backend-prod-$CUR"
+docker stop "$PREV" || true
+docker rm -f "$PREV" || true
+
 echo "$NEXT" > "$CUR_FILE"
 log "[DONE] PROD 활성: $NEXT"
