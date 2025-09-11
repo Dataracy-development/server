@@ -18,6 +18,12 @@ for network in dataracy-network-dev dataracy-network-prod; do
   fi
 done
 
+# 운영 환경 네트워크가 없어도 Nginx가 정상 작동하도록 설정
+log "네트워크 설정 확인 중..."
+if ! docker network ls --format '{{.Name}}' | grep -q "^dataracy-network-prod$"; then
+  log "운영 환경 네트워크가 없습니다. Nginx는 개발 환경만 사용합니다."
+fi
+
 # ===== 상태 디렉터리 생성 =====
 log "상태 디렉터리 생성 중..."
 STATE_DIR="/home/ubuntu/color-config"

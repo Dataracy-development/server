@@ -20,7 +20,6 @@ CUR_FILE="$STATE_DIR/current_color_dev"
 # Nginx (통합)
 NGINX_COMPOSE="$SCRIPT_DIR/../../../nginx/docker-compose-nginx.yml"
 NGINX_SVC_NAME="nginx-proxy"
-KIBANA_UPSTREAM="${KIBANA_UPSTREAM:-kibana-dev:5601}"
 
 # ===== 현재 색상 =====
 mkdir -p "$STATE_DIR"
@@ -53,7 +52,6 @@ cp "$UPSTREAM_DEST" "$UPSTREAM_DEST.backup" || true
 
 # upstream 설정만 업데이트 (backend_dev 서버 변경)
 sed -i "s|server backend-[a-z]*:8080|server $BACKEND_NAME:8080|g" "$UPSTREAM_DEST"
-sed -i "s|server REPLACE_KIBANA_UPSTREAM|server $KIBANA_UPSTREAM|g" "$UPSTREAM_DEST"
 
 # ===== Nginx Reload (검증 포함) =====
 docker ps --format '{{.Names}}' | grep -q "^${NGINX_SVC_NAME}$" || fail "nginx-proxy 컨테이너가 없음"

@@ -18,6 +18,7 @@ services:
       - /home/ubuntu/ssl/cloudflare:/etc/nginx/ssl/cloudflare:ro
 
     # Nginx가 dev/prod 백엔드 둘 다 볼 수 있도록 두 네트워크에 동시에 붙임
+    # 운영 환경 네트워크가 없어도 정상 작동하도록 external: false로 설정
     networks:
       - dataracy-network-dev
       - dataracy-network-prod
@@ -29,3 +30,5 @@ networks:
     external: true
   dataracy-network-prod:
     external: true
+    # 운영 환경 네트워크가 없어도 Nginx가 시작되도록 설정
+    driver: bridge

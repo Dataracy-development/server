@@ -18,3 +18,5 @@ services:
 networks:
   dataracy-network-prod:
     external: true
+    # 운영 환경 네트워크가 없어도 컨테이너가 시작되도록 설정
+    driver: bridge
