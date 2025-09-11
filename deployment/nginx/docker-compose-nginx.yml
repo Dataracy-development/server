@@ -12,7 +12,7 @@ services:
 
       # dev/prod 업스트림(서버블록) 각각 마운트
       - ../dev/nginx/upstream-blue-green-dev.conf:/etc/nginx/conf.d/dev.conf:ro
-      - ../prod/nginx/upstream-blue-green-prod.conf:/etc/nginx/conf.d/prod.conf:ro
+#      - ../prod/nginx/upstream-blue-green-prod.conf:/etc/nginx/conf.d/prod.conf:ro
 
       # Cloudflare Origin Cert (호스트에 파일이 실제 존재해야 함)
       - /home/ubuntu/ssl/cloudflare:/etc/nginx/ssl/cloudflare:ro
