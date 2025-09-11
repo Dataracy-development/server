@@ -19,7 +19,7 @@ CUR_FILE="$STATE_DIR/current_color_dev"
 
 # Nginx (통합)
 NGINX_COMPOSE="$SCRIPT_DIR/../../../nginx/docker-compose-nginx.yml"
-NGINX_SVC_NAME="nginx-proxy"
+NGINX_SVC_NAME="nginx-proxy-dev"
 
 # ===== 현재 색상 =====
 mkdir -p "$STATE_DIR"
