@@ -23,10 +23,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final SelectSocialProviderPort selectSocialProviderPort;
-
     private final IsNewUserUseCase isNewUserUseCase;
     private final HandleUserUseCase handleUserUseCase;
     private final JwtProperties jwtProperties;
+    private final CookieUtil cookieUtil;
 
     /**
      * OAuth2 로그인 성공 후 처리.
@@ -72,7 +72,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
 
         // 레지스터 토큰을 쿠키에 저장한다.
-        CookieUtil.setCookie(
+        cookieUtil.setCookie(
                 response,
                 "registerToken",
                 registerTokenResponse.registerToken(),
@@ -99,7 +99,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
 
         // 리프레시 토큰을 쿠키에 저장한다.
-        CookieUtil.setCookie(
+        cookieUtil.setCookie(
                 response,
                 "refreshToken",
                 refreshTokenResponseDto.refreshToken(),

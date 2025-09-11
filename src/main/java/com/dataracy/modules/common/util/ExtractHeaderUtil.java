@@ -12,6 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ExtractHeaderUtil {
     private final JwtValidateUseCase jwtValidateUseCase;
+    private final CookieUtil cookieUtil;
 
     /**
      * HTTP 요청의 Authorization 헤더에서 Bearer 타입의 액세스 토큰을 추출합니다.
@@ -67,9 +68,9 @@ public class ExtractHeaderUtil {
             }
         } catch (Exception ignored) {
             // 인증 실패 시 무시하고 anonymousId로 대체
-            return CookieUtil.getOrCreateAnonymousId(request, response);
+            return cookieUtil.getOrCreateAnonymousId(request, response);
         }
         // anonymousId 반환
-        return CookieUtil.getOrCreateAnonymousId(request, response);
+        return cookieUtil.getOrCreateAnonymousId(request, response);
     }
 }

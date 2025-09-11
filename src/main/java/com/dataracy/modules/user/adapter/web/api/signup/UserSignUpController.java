@@ -24,9 +24,9 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class UserSignUpController implements UserSignUpApi {
     private final UserSignUpWebMapper userSignUpWebMapper;
-
     private final SelfSignUpUseCase selfSignUpUseCase;
     private final OAuthSignUpUseCase oauthSignUpUseCase;
+    private final CookieUtil cookieUtil;
 
     /**
      * 자체 회원가입 요청을 처리하고, 회원 생성 시 리프레시 토큰을 쿠키에 저장한다.
@@ -49,7 +49,7 @@ public class UserSignUpController implements UserSignUpApi {
             // 리프레시 토큰을 쿠키에 저장
             long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
             int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
-            CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
+            cookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
         } finally {
             LoggerFactory.api().logResponse("[SignUpUserSelf] 자체 회원가입 API 응답 완료", startTime);
         }
@@ -81,7 +81,7 @@ public class UserSignUpController implements UserSignUpApi {
             // 리프레시 토큰을 쿠키에 저장
             long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
             int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
-            CookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
+            cookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
         } finally {
             LoggerFactory.api().logResponse("[SignUpUserOAuth] 소셜 회원가입 API 응답 완료", startTime);
         }
