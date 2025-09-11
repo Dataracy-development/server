@@ -33,6 +33,7 @@ import java.util.UUID;
 public class BehaviorLogTrackingFilter extends OncePerRequestFilter {
 
     private final BehaviorLogSendProducerPort producerPort;
+    private final CookieUtil cookieUtil;
 
     /**
      * HTTP 요청을 가로채어 사용자 행동 로그를 비동기적으로 수집 및 전송하는 필터의 핵심 메서드입니다.
@@ -87,7 +88,7 @@ public class BehaviorLogTrackingFilter extends OncePerRequestFilter {
                 : null;
         MDC.put(MdcKey.USER_ID, userId);
 
-        String anonymousId = CookieUtil.getOrCreateAnonymousId(request, response);
+        String anonymousId = cookieUtil.getOrCreateAnonymousId(request, response);
         MDC.put(MdcKey.ANONYMOUS_ID, anonymousId);
         MDC.put(MdcKey.REQUEST_ID, UUID.randomUUID().toString());
         MDC.put(MdcKey.SESSION_ID, anonymousId);

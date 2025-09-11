@@ -37,6 +37,12 @@ swagger:
   server-url: https://dev.api.dataracy.co.kr
   server-description: develop server
 
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
 elasticsearch:
   connection:
     host: ${ELASTIC_SEARCH_HOST}

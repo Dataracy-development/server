@@ -38,7 +38,7 @@ logging:
     root: INFO
 
     # Hibernate (SQL/파라미터까지 확인)
-    org.hibernate.SQL: DEBUG            # SQL 문장
+    org.hibernate.SQL: DEBUG # SQL 문장
     org.hibernate.type.descriptor.sql: TRACE # 바인딩 파라미터
     org.hibernate.engine.jdbc.spi.SqlExceptionHelper: WARN # SQL 에러만
     org.hibernate.orm.results: INFO
@@ -47,8 +47,8 @@ logging:
     # Spring / Kafka / 내부 모듈
     org.springframework: INFO
     org.apache.kafka: WARN
-    org.springframework.kafka: INFO   # 컨슈머/프로듀서 흐름 확인
-    com.dataracy.modules.behaviorlog: DEBUG   # 행동로그는 DEBUG까지
+    org.springframework.kafka: INFO # 컨슈머/프로듀서 흐름 확인
+    com.dataracy.modules.behaviorlog: DEBUG # 행동로그는 DEBUG까지
     com.dataracy.modules.behaviorlog.support.aop.DataAccessLatencyAspect: INFO
     com.dataracy.modules.common.logging: DEBUG
 
@@ -58,6 +58,12 @@ swagger:
   version: v1.2.0
   server-url: http://${SERVER_HOST}:${SERVER_PORT}
   server-description: local server
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
 
 elasticsearch:
   connection:
