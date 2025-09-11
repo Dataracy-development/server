@@ -21,6 +21,8 @@ services:
     networks:
       - dataracy-network-dev
       - dataracy-network-prod
+    # 운영 환경 컨테이너가 없을 때를 대비한 fallback 설정
+    depends_on: []
 
 networks:
   dataracy-network-dev:
