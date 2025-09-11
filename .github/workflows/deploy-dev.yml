@@ -11,6 +11,10 @@ jobs:
   build-and-deploy-dev:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4

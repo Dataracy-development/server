@@ -2,7 +2,7 @@ name: Build and Push Docker Image (PROD PR)
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
 
 env:
@@ -17,6 +17,7 @@ jobs:
 
     permissions:
       contents: read
+      packages: write
 
     concurrency:
       group: prod-pr-${{ github.event.pull_request.head.sha }}
@@ -27,8 +28,8 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -49,7 +50,7 @@ jobs:
 
       # 같은 리포의 PR에만 로그인/푸시 (fork는 시크릿 없음)
       - name: "Log in to Docker Hub"
-        if: ${{ !github.event.pull_request.head.repo.fork && secrets.DOCKER_USERNAME != '' && secrets.DOCKER_PASSWORD != '' }}
+        if: ${{ !github.event.pull_request.head.repo.fork }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -60,7 +61,7 @@ jobs:
           docker build --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .
 
       - name: "Push image (skip on forks)"
-        if: ${{ !github.event.pull_request.head.repo.fork && secrets.DOCKER_USERNAME != '' && secrets.DOCKER_PASSWORD != '' }}
+        if: ${{ !github.event.pull_request.head.repo.fork }}
         run: |
           docker push "${IMAGE_NAME}:${IMAGE_TAG}"
 
