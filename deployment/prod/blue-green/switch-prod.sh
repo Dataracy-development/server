@@ -42,6 +42,12 @@ if ! docker ps --format '{{.Names}}' | grep -q "backend-prod"; then
     fail "개발 환경 컨테이너도 없습니다. 먼저 개발 환경을 시작해주세요."
   fi
   BACKEND="backend-blue"
+  
+  # 개발 환경 컨테이너를 운영 환경 네트워크에도 연결 (Nginx가 접근할 수 있도록)
+  if docker network ls --format '{{.Name}}' | grep -q "^dataracy-network-prod$"; then
+    log "개발 환경 컨테이너를 운영 환경 네트워크에 연결합니다."
+    docker network connect dataracy-network-prod backend-blue 2>/dev/null || true
+  fi
 else
   docker compose -f "$NEXT_COMPOSE" up -d --pull always
   BACKEND="backend-prod-${NEXT}"

@@ -99,6 +99,12 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
+            # 운영 환경 네트워크 생성 (없을 경우)
+            if ! docker network ls --format '{{.Name}}' | grep -q "^dataracy-network-prod$"; then
+              echo "운영 환경 네트워크 생성 중..."
+              docker network create dataracy-network-prod
+            fi
+
             # 배포 스크립트 실행 권한 확인
             chmod +x deployment/prod/script/deploy-prod.sh
             chmod +x deployment/prod/blue-green/switch-prod.sh
