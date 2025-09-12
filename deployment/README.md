@@ -9,7 +9,7 @@
 ### 도메인 구조
 
 - **프론트엔드**: `https://dataracy.co.kr`
-- **개발 서버**: `https://dev.api.dataracy.co.kr` (HTTP/HTTPS 모두 지원)
+- **개발 서버**: `https://dev-api.dataracy.co.kr` (HTTP/HTTPS 모두 지원)
 - **운영 서버**: `https://api.dataracy.co.kr` (HTTPS 강제, HTTP→HTTPS 리다이렉트)
 
 ### 네트워크 구조
@@ -116,7 +116,7 @@ cd ~/dataracy-prod/deployment/prod/blue-green
 
 ### GitHub Actions
 
-- **develop 브랜치 푸시** → 개발 서버 블루-그린 배포 (`dev.api.dataracy.co.kr`)
+- **develop 브랜치 푸시** → 개발 서버 블루-그린 배포 (`dev-api.dataracy.co.kr`)
 - **main 브랜치 푸시** → 운영 서버 블루-그린 배포 (`api.dataracy.co.kr`)
 
 ### 배포 과정

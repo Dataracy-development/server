@@ -182,7 +182,7 @@ server {
 
   # ★ Kibana (경로 /kibana)
   location /kibana/ {
-    proxy_pass http://kibana/kibana/;     # 뒤 슬래시 필수
+    proxy_pass http://kibana_prod/kibana/;     # 뒤 슬래시 필수
     proxy_read_timeout 600s;
     proxy_send_timeout 600s;
 

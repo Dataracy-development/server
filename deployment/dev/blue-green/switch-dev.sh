@@ -108,10 +108,10 @@ upstream kibana_dev {
   server REPLACE_KIBANA_UPSTREAM;
 }
 
-# HTTP server for dev.api.dataracy.co.kr (개발 환경은 HTTP/HTTPS 모두 지원)
+# HTTP server for dev-api.dataracy.co.kr (개발 환경은 HTTP/HTTPS 모두 지원)
 server {
   listen 80;
-  server_name dev.api.dataracy.co.kr;
+  server_name dev-api.dataracy.co.kr;
   
   client_max_body_size 50m;
   client_body_timeout 120s;
@@ -166,7 +166,7 @@ server {
 
   # ★ Kibana (경로 /kibana)
   location /kibana/ {
-    proxy_pass http://kibana/kibana/;     # 뒤 슬래시 필수
+    proxy_pass http://kibana_dev/kibana/;     # 뒤 슬래시 필수
     proxy_read_timeout 600s;
     proxy_send_timeout 600s;
 
@@ -199,11 +199,11 @@ server {
   }
 }
 
-# HTTPS server for dev.api.dataracy.co.kr
+# HTTPS server for dev-api.dataracy.co.kr
 server {
   listen 443 ssl;
   http2 on;
-  server_name dev.api.dataracy.co.kr;
+  server_name dev-api.dataracy.co.kr;
 
   # ★ 추가: Cloudflare Origin Certificate 경로
   ssl_certificate     /etc/nginx/ssl/cloudflare/origin.crt;
@@ -266,7 +266,7 @@ server {
 
   # ★ Kibana (경로 /kibana)
   location /kibana/ {
-    proxy_pass http://kibana/kibana/;     # 뒤 슬래시 필수
+    proxy_pass http://kibana_dev/kibana/;     # 뒤 슬래시 필수
     proxy_read_timeout 600s;
     proxy_send_timeout 600s;
 
