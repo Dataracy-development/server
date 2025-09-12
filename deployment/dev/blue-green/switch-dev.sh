@@ -29,9 +29,9 @@ CURRENT_COLOR_FILE="$DEPLOY_STATE_DIR/current_color_dev"
 # 운영 의도: 기본은 NGINX 재시작(캐시/상태 완전 초기화). reload 원하면 true.
 ALWAYS_RELOAD=false
 
-# NGINX compose 파일/서비스명 (통합 NGINX 사용)
-NGINX_COMPOSE="../../nginx/docker-compose-nginx-unified.yml"
-NGINX_SVC_NAME="nginx-proxy"
+# NGINX compose 파일/서비스명 (개발 환경 NGINX 사용)
+NGINX_COMPOSE="../docker/docker-compose-nginx-dev.yml"
+NGINX_SVC_NAME="nginx-proxy-dev"
 
 # ★ Kibana 업스트림(환경변수로 오버라이드 가능)
 # - NGINX가 같은 docker 네트워크면: kibana-dev:5601
@@ -201,7 +201,8 @@ server {
 
 # HTTPS server for dev.api.dataracy.co.kr
 server {
-  listen 443 ssl http2;
+  listen 443 ssl;
+  http2 on;
   server_name dev.api.dataracy.co.kr;
 
   # ★ 추가: Cloudflare Origin Certificate 경로
