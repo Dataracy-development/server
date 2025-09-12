@@ -1,88 +1,49 @@
 #!/bin/bash
-set -euo pipefail
+# status.sh — 상태 확인 스크립트
 
-# ===== 공통 유틸 =====
-log(){ echo "[$(date -u +%FT%TZ)] $*"; }
+set -Eeuo pipefail
 
-# ===== 경로 설정 =====
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-STATE_DIR="/home/ubuntu/color-config"
+log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
 
-log "=== Dataracy 서비스 상태 확인 ==="
+log "========================================"
+log "[STATUS] Dataracy Blue/Green 배포 시스템 상태"
+log "========================================"
 
-# 현재 활성 색상 확인
+# Docker 네트워크 상태
+log "[INFO] Docker 네트워크 상태:"
+docker network ls | grep dataracy || log "[WARN] Dataracy 네트워크가 없습니다"
+
+# 개발 환경 상태
 log ""
-log "=== 현재 활성 색상 ==="
-for env in dev prod; do
-  state_file="$STATE_DIR/current_color_$env"
-  if [ -f "$state_file" ]; then
-    color=$(tr -d '[:space:]' < "$state_file")
-    log "$env: $color"
-  else
-    log "$env: 파일 없음 (초기 상태)"
-  fi
-done
-
-# 컨테이너 상태
-log ""
-log "=== 컨테이너 상태 ==="
-for container in backend-blue backend-green backend-prod-blue backend-prod-green nginx-proxy; do
-  if docker ps --format '{{.Names}}' | grep -q "^${container}$"; then
-    status=$(docker inspect --format='{{json .State.Health.Status}}' "$container" 2>/dev/null || echo "no-healthcheck")
-    log "$container: 실행 중 (Health: $status)"
-  else
-    log "$container: 중지됨"
-  fi
-done
-
-# Nginx 상태
-log ""
-log "=== Nginx 상태 ==="
-if docker ps --format '{{.Names}}' | grep -q "^nginx-proxy$"; then
-  log "nginx-proxy: 실행 중"
-  
-  # Nginx 설정 검증
-  if docker exec nginx-proxy nginx -t 2>/dev/null; then
-    log "Nginx 설정: 유효함"
-  else
-    log "Nginx 설정: 오류 있음"
-  fi
+log "[INFO] 개발 환경 상태:"
+if [ -f "/home/ubuntu/color-config/current_color_dev" ]; then
+  CURRENT_DEV=$(cat /home/ubuntu/color-config/current_color_dev)
+  log "  현재 활성 색상: $CURRENT_DEV"
 else
-  log "nginx-proxy: 중지됨"
+  log "  [WARN] 개발 환경 색상 파일이 없습니다"
 fi
 
-# 네트워크 상태
+# 개발 환경 컨테이너
+log "  개발 환경 컨테이너:"
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -E "(backend-blue|backend-green|nginx-proxy-dev)" || log "  [WARN] 개발 환경 컨테이너가 실행 중이 아닙니다"
+
+# 운영 환경 상태
 log ""
-log "=== 네트워크 상태 ==="
-for network in dataracy-network-dev dataracy-network-prod; do
-  if docker network ls --format '{{.Name}}' | grep -q "^${network}$"; then
-    log "$network: 존재함"
-  else
-    log "$network: 없음"
-  fi
-done
+log "[INFO] 운영 환경 상태:"
+if [ -f "/home/ubuntu/color-config/current_color_prod" ]; then
+  CURRENT_PROD=$(cat /home/ubuntu/color-config/current_color_prod)
+  log "  현재 활성 색상: $CURRENT_PROD"
+else
+  log "  [WARN] 운영 환경 색상 파일이 없습니다"
+fi
+
+# 운영 환경 컨테이너
+log "  운영 환경 컨테이너:"
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -E "(backend-prod-blue|backend-prod-green|nginx-proxy-prod)" || log "  [WARN] 운영 환경 컨테이너가 실행 중이 아닙니다"
 
 # 포트 사용 현황
 log ""
-log "=== 포트 사용 현황 ==="
-for port in 80 443; do
-  if netstat -tlnp 2>/dev/null | grep -q ":$port "; then
-    log "포트 $port: 사용 중"
-  else
-    log "포트 $port: 사용 안함"
-  fi
-done
+log "[INFO] 포트 사용 현황:"
+netstat -tlnp | grep -E ":(80|81|443|444|8081|8082|8083|8084)" || log "  [WARN] 관련 포트가 사용 중이 아닙니다"
 
-# 서비스 접근 테스트
-log ""
-log "=== 서비스 접근 테스트 ==="
-for url in "https://dev.api.dataracy.co.kr/actuator/health" "https://api.dataracy.co.kr/actuator/health"; do
-  if curl -s -f --max-time 10 "$url" >/dev/null 2>&1; then
-    log "$url: 접근 가능"
-  else
-    log "$url: 접근 불가"
-  fi
-done
-
-log ""
-log "=== 상태 확인 완료 ==="
+log "========================================"

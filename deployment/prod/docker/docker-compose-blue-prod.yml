@@ -3,20 +3,20 @@ services:
     image: juuuunny/backend:prod-blue
     container_name: backend-prod-blue
     restart: always
-    env_file: [/home/ubuntu/env-config/.env.prod]
+    ports:
+      - "8083:8080"
+    env_file:
+      - /home/ubuntu/env-config/.env.prod
     environment:
       SPRING_PROFILES_ACTIVE: prod
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 10s
+      interval: 15s
       timeout: 5s
-      retries: 20
-      start_period: 30s
-    networks: [dataracy-network-prod]
-    depends_on: []
+      retries: 10
+    networks:
+      - dataracy-network-prod
 
 networks:
   dataracy-network-prod:
     external: true
-    # 운영 환경 네트워크가 없어도 컨테이너가 시작되도록 설정
-    driver: bridge

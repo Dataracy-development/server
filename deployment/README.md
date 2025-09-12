@@ -10,27 +10,24 @@
 
 - **프론트엔드**: `https://dataracy.co.kr`
 - **개발 서버**: `https://dev.api.dataracy.co.kr` (HTTP/HTTPS 모두 지원)
-- **운영 서버**: `https://api.dataracy.co.kr` (HTTPS 강제)
+- **운영 서버**: `https://api.dataracy.co.kr` (HTTPS 강제, HTTP→HTTPS 리다이렉트)
 
 ### 네트워크 구조
 
 - `dataracy-network-dev`: 개발 환경 컨테이너들
 - `dataracy-network-prod`: 운영 환경 컨테이너들
-- `nginx-proxy`: 통합 Nginx 프록시 (두 네트워크 모두 접근 가능)
+- 각 환경별로 독립적인 NGINX 프록시 사용
 
 ### 컨테이너 구조
 
-- **개발**: `backend-blue`, `backend-green`
-- **운영**: `backend-prod-blue`, `backend-prod-green`
-- **프록시**: `nginx-proxy`
+- **개발**: `backend-blue`, `backend-green`, `nginx-proxy-dev`
+- **운영**: `backend-prod-blue`, `backend-prod-green`, `nginx-proxy-prod`
 
 ## 디렉터리 구조
 
 ```
 deployment/
-├── nginx/                          # 통합 Nginx 설정
-│   ├── docker-compose-nginx.yml
-│   └── nginx.conf
+├── nginx/                          # NGINX 설정 (각 환경별로 분리)
 ├── dev/                           # 개발 환경
 │   ├── blue-green/
 │   │   └── switch-dev.sh          # 개발 블루-그린 스위치
@@ -38,6 +35,7 @@ deployment/
 │   │   ├── docker-compose-blue-dev.yml
 │   │   └── docker-compose-green-dev.yml
 │   ├── nginx/
+│   │   ├── nginx-dev.conf
 │   │   └── upstream-blue-green-dev.conf
 │   └── script/
 │       └── deploy.sh
@@ -48,13 +46,13 @@ deployment/
 │   │   ├── docker-compose-blue-prod.yml
 │   │   └── docker-compose-green-prod.yml
 │   ├── nginx/
+│   │   ├── nginx-prod.conf
 │   │   └── upstream-blue-green-prod.conf
 │   └── script/
 │       └── deploy-prod.sh
 └── scripts/                       # 관리 스크립트
     ├── init.sh                    # 초기 설정
     ├── status.sh                  # 상태 확인
-    ├── rollback.sh                # 롤백
     └── cleanup.sh                 # 정리
 ```
 
@@ -63,7 +61,13 @@ deployment/
 ### 1. 초기 설정
 
 ```bash
-cd deployment/scripts
+# 개발 환경 초기화
+cd ~/dataracy-dev/deployment/scripts
+chmod +x *.sh
+./init.sh
+
+# 운영 환경 초기화
+cd ~/dataracy-prod/deployment/scripts
 chmod +x *.sh
 ./init.sh
 ```
@@ -78,29 +82,23 @@ chmod +x *.sh
 
 ```bash
 # 개발 환경 배포
-cd deployment/dev/script
+cd ~/dataracy-dev/deployment/dev/script
 ./deploy.sh
 
 # 운영 환경 배포
-cd deployment/prod/script
+cd ~/dataracy-prod/deployment/prod/script
 ./deploy-prod.sh
 ```
 
 ### 4. 롤백
 
 ```bash
-# 개발 환경 롤백
-./rollback.sh dev
+# 직접 스위치 스크립트 실행 (반대 색상으로 전환)
+cd ~/dataracy-dev/deployment/dev/blue-green
+./switch-dev.sh
 
-# 운영 환경 롤백
-./rollback.sh prod
-
-# 또는 직접 롤백 스크립트 실행
-cd deployment/dev/blue-green
-./rollback-dev.sh
-
-cd deployment/prod/blue-green
-./rollback-prod.sh
+cd ~/dataracy-prod/deployment/prod/blue-green
+./switch-prod.sh
 ```
 
 ### 5. 정리
@@ -118,8 +116,8 @@ cd deployment/prod/blue-green
 
 ### GitHub Actions
 
-- **develop 브랜치 푸시** → 개발 서버 블루-그린 배포
-- **main 브랜치 푸시** → 운영 서버 블루-그린 배포
+- **develop 브랜치 푸시** → 개발 서버 블루-그린 배포 (`dev.api.dataracy.co.kr`)
+- **main 브랜치 푸시** → 운영 서버 블루-그린 배포 (`api.dataracy.co.kr`)
 
 ### 배포 과정
 
@@ -133,10 +131,13 @@ cd deployment/prod/blue-green
 ## 주의사항
 
 1. **네트워크 분리**: dev와 prod는 각각 별도의 Docker 네트워크를 사용
-2. **Nginx 통합**: 하나의 Nginx 컨테이너가 dev/prod를 모두 처리
+2. **Nginx 분리**: 각 환경별로 독립적인 Nginx 컨테이너 사용
 3. **상태 관리**: `/home/ubuntu/color-config/` 디렉터리에 현재 색상 저장
 4. **SSL 인증서**: Cloudflare Origin Certificate 사용
 5. **헬스체크**: 각 컨테이너는 `/actuator/health` 엔드포인트로 헬스체크
+6. **포트 분리**:
+   - 개발: 80, 443, 8081, 8082
+   - 운영: 80, 443, 8083, 8084
 
 ## 문제 해결
 
