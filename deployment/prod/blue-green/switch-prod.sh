@@ -104,7 +104,7 @@ upstream backend {
 }
 
 # ★ Kibana 업스트림(경로 프록시용)
-upstream kibana {
+upstream kibana_prod {
   server REPLACE_KIBANA_UPSTREAM;
 }
 
