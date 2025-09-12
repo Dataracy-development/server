@@ -63,7 +63,7 @@ public class SwaggerConfig {
                     .url("https://api.dataracy.co.kr")
                     .description("Production Server (HTTPS Only)"));
         } else if ("dev".equals(activeProfile)) {
-            // 개발 환경: HTTP/HTTPS 모두
+            // 개발 환경: HTTP/HTTPS 모두 지원
             openAPI.addServersItem(new Server()
                     .url("https://dev.api.dataracy.co.kr")
                     .description("Development Server (HTTPS)"));

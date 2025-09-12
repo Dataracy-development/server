@@ -3,11 +3,16 @@ services:
     image: nginx:1.25
     container_name: nginx-proxy-prod
     restart: always
-    ports: ["80:80","443:443"]
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
+      - ../nginx/nginx-prod.conf:/etc/nginx/nginx.conf:ro
       - ../nginx/upstream-blue-green-prod.conf:/etc/nginx/conf.d/upstream-blue-green.conf:ro
-      - /home/ubuntu/ssl/cloudflare:/etc/nginx/ssl/cloudflare:ro
-      - ../nginx/../dev/nginx-dev.conf:/etc/nginx/nginx.conf:ro   # dev의 베이스 conf 재활용
-    networks: [ dataracy-network-prod ]
+      - /home/ubuntu/ssl/cloudflare:/etc/nginx/ssl/cloudflare:ro # SSL 인증서/키
+    networks:
+      - dataracy-network-prod
+
 networks:
-  dataracy-network-prod: { external: true }
+  dataracy-network-prod:
+    external: true

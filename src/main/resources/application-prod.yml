@@ -1,6 +1,5 @@
 server:
   port: 8080
-  url: https://api.dataracy.co.kr
 
 spring:
   application:
@@ -8,20 +7,23 @@ spring:
   config:
     activate:
       on-profile: prod
+
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   data:
     redis:
       url: ${REDIS_PROTOCOL}://${REDIS_HOST}:${REDIS_PORT}
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       protocol: ${REDIS_PROTOCOL}
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     open-in-view: false
     show-sql: false
     properties:
@@ -30,19 +32,37 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_SERVER_HOST}:${KAFKA_SERVER_PORT}
 
+swagger:
+  title: Dataracy
+  description: Dataracy 백엔드 API 운영 문서입니다
+  version: v1.2.0
+  server-url: https://api.dataracy.co.kr
+  server-description: Production Server
+
+elasticsearch:
+  connection:
+    host: ${ELASTIC_SEARCH_HOST}
+    port: ${ELASTIC_SEARCH_PORT}
+    protocol: http
+    ssl: false
+
 logging:
   level:
-    root: INFO
-    org.hibernate: WARN
-    org.hibernate.SQL: INFO
+    root: WARN
+
+    # Hibernate (SQL만 INFO, 파라미터는 끔)
+    org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql: WARN
-    org.hibernate.engine.jdbc.spi.SqlExceptionHelper: ERROR
+    org.hibernate.engine.jdbc.spi.SqlExceptionHelper: WARN
+    org.hibernate.engine.transaction.internal.TransactionImpl: WARN
+
+    # Spring / Kafka / 내부 모듈
     org.springframework: WARN
-    org.apache.kafka: ERROR
+    org.apache.kafka: WARN
     org.springframework.kafka: WARN
     com.dataracy.modules.behaviorlog: INFO
-    com.dataracy.modules.behaviorlog.support.aop.DataAccessLatencyAspect: INFO
-    com.dataracy.modules.common.logging: INFO
+    com.dataracy.modules.behaviorlog.support.aop.DataAccessLatencyAspect: WARN
+    com.dataracy.modules.common.logging: WARN
 
 management:
   metrics:
@@ -51,29 +71,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus
+        include: health, info, prometheus
   endpoint:
     health:
-      show-details: always
+      show-details: when-authorized
+      enabled: true
     prometheus:
       enabled: true
-
-springdoc:
-  swagger-ui: { enabled: true }
-  api-docs:   { enabled: true }
-
-swagger:
-  title: Dataracy
-  description: Dataracy 백엔드 API 운영 문서입니다
-  version: v1.2.0
-  server-url: https://api.dataracy.co.kr
-  server-description: prod server
-
-elasticsearch:
-  connection:
-    host: ${ELASTIC_SEARCH_HOST}
-    port: ${ELASTIC_SEARCH_PORT}
-    protocol: http
-    username: ${ELASTIC_USERNAME}
-    password: ${ELASTIC_PASSWORD}
-    ssl: false

@@ -1,75 +1,50 @@
 #!/bin/bash
-set -euo pipefail
+# cleanup.sh — 정리 스크립트
 
-# ===== 공통 유틸 =====
-log(){ echo "[$(date -u +%FT%TZ)] $*"; }
-fail(){ log "[ERROR] $*"; exit 1; }
+set -Eeuo pipefail
 
-# ===== 사용법 =====
-if [ $# -ne 1 ]; then
-  echo "사용법: $0 <dev|prod|all>"
-  echo "예시: $0 dev"
-  exit 1
+log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
+fail() { log "[ERROR] $*"; exit 1; }
+
+ENVIRONMENT=${1:-"all"}
+
+log "========================================"
+log "[CLEANUP] Dataracy Blue/Green 배포 시스템 정리"
+log "========================================"
+
+if [ "$ENVIRONMENT" = "dev" ] || [ "$ENVIRONMENT" = "all" ]; then
+  log "[INFO] 개발 환경 정리 중..."
+  
+  # 개발 환경 컨테이너 정리
+  docker stop backend-blue backend-green nginx-proxy-dev 2>/dev/null || true
+  docker rm -f backend-blue backend-green nginx-proxy-dev 2>/dev/null || true
+  
+  # 개발 환경 네트워크 정리
+  docker network rm dataracy-network-dev 2>/dev/null || true
+  
+  log "[SUCCESS] 개발 환경 정리 완료"
 fi
 
-TARGET="$1"
-if [[ "$TARGET" != "dev" && "$TARGET" != "prod" && "$TARGET" != "all" ]]; then
-  fail "대상은 dev, prod, 또는 all이어야 합니다."
+if [ "$ENVIRONMENT" = "prod" ] || [ "$ENVIRONMENT" = "all" ]; then
+  log "[INFO] 운영 환경 정리 중..."
+  
+  # 운영 환경 컨테이너 정리
+  docker stop backend-prod-blue backend-prod-green nginx-proxy-prod 2>/dev/null || true
+  docker rm -f backend-prod-blue backend-prod-green nginx-proxy-prod 2>/dev/null || true
+  
+  # 운영 환경 네트워크 정리
+  docker network rm dataracy-network-prod 2>/dev/null || true
+  
+  log "[SUCCESS] 운영 환경 정리 완료"
 fi
 
-log "=== Dataracy 정리 시작: $TARGET ==="
-
-# ===== 컨테이너 정리 =====
-if [[ "$TARGET" == "dev" || "$TARGET" == "all" ]]; then
-  log "DEV 컨테이너 정리 중..."
-  for container in backend-blue backend-green; do
-    if docker ps -a --format '{{.Names}}' | grep -q "^${container}$"; then
-      log "컨테이너 중지 및 제거: $container"
-      docker stop "$container" 2>/dev/null || true
-      docker rm -f "$container" 2>/dev/null || true
-    fi
-  done
+if [ "$ENVIRONMENT" = "all" ]; then
+  # 상태 파일 정리
+  rm -f /home/ubuntu/color-config/current_color_dev
+  rm -f /home/ubuntu/color-config/current_color_prod
+  
+  log "[SUCCESS] 상태 파일 정리 완료"
 fi
 
-if [[ "$TARGET" == "prod" || "$TARGET" == "all" ]]; then
-  log "PROD 컨테이너 정리 중..."
-  for container in backend-prod-blue backend-prod-green; do
-    if docker ps -a --format '{{.Names}}' | grep -q "^${container}$"; then
-      log "컨테이너 중지 및 제거: $container"
-      docker stop "$container" 2>/dev/null || true
-      docker rm -f "$container" 2>/dev/null || true
-    fi
-  done
-fi
-
-if [[ "$TARGET" == "all" ]]; then
-  log "Nginx 컨테이너 정리 중..."
-  if docker ps -a --format '{{.Names}}' | grep -q "^nginx-proxy$"; then
-    log "Nginx 컨테이너 중지 및 제거"
-    docker stop nginx-proxy 2>/dev/null || true
-    docker rm -f nginx-proxy 2>/dev/null || true
-  fi
-fi
-
-# ===== 네트워크 정리 =====
-if [[ "$TARGET" == "all" ]]; then
-  log "Docker 네트워크 정리 중..."
-  for network in dataracy-network-dev dataracy-network-prod; do
-    if docker network ls --format '{{.Name}}' | grep -q "^${network}$"; then
-      log "네트워크 제거: $network"
-      docker network rm "$network" 2>/dev/null || true
-    fi
-  done
-fi
-
-# ===== 상태 파일 정리 =====
-if [[ "$TARGET" == "all" ]]; then
-  log "상태 파일 정리 중..."
-  STATE_DIR="/home/ubuntu/color-config"
-  if [ -d "$STATE_DIR" ]; then
-    rm -rf "$STATE_DIR"
-    log "상태 디렉터리 제거: $STATE_DIR"
-  fi
-fi
-
-log "=== 정리 완료: $TARGET ==="
+log "[DONE] 정리 완료!"
+log "========================================"
