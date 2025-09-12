@@ -25,11 +25,13 @@ public class CorsConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",   // 프론트엔드 개발 주소
                 "http://localhost:8080",   // Swagger UI (같은 백엔드 서버지만, 브라우저에서 열기 때문에 Origin 임)
-                "http://dataracy.store",
-                "http://dataracy.store",
-                "https://dataracy.store",
                 "http://dataracy.co.kr",
                 "https://dataracy.co.kr",
+                "http://www.dataracy.co.kr",
+                "https://www.dataracy.co.kr",
+                "https://api.dataracy.co.kr",
+                "http://dev-api.dataracy.co.kr",
+                "https://dev-api.dataracy.co.kr",
                 "http://localhost:63342",
                 "https://dataracy-client.vercel.app/"
         ));
