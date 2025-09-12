@@ -1,0 +1,22 @@
+services:
+  nginx-proxy:
+    image: nginx:1.25
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-unified.conf:/etc/nginx/nginx.conf:ro
+      - ../dev/nginx/upstream-blue-green-dev.conf:/etc/nginx/conf.d/upstream-dev.conf:ro
+      - ../prod/nginx/upstream-blue-green-prod.conf:/etc/nginx/conf.d/upstream-prod.conf:ro
+      - /home/ubuntu/ssl/cloudflare:/etc/nginx/ssl/cloudflare:ro # SSL 인증서/키
+    networks:
+      - dataracy-network-dev
+      - dataracy-network-prod
+
+networks:
+  dataracy-network-dev:
+    external: true
+  dataracy-network-prod:
+    external: true

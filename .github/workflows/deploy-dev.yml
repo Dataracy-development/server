@@ -68,5 +68,5 @@ jobs:
             git clean -fd
             git fetch origin develop
             git reset --hard origin/develop
-            chmod +x deployment/dev/script/deploy.sh
-            ./deployment/dev/script/deploy.sh
+            chmod +x deployment/dev/script/deploy-dev.sh
+            ./deployment/dev/script/deploy-dev.sh

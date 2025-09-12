@@ -25,7 +25,7 @@ fi
 
 # 개발 환경 컨테이너
 log "  개발 환경 컨테이너:"
-docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -E "(backend-blue|backend-green|nginx-proxy-dev)" || log "  [WARN] 개발 환경 컨테이너가 실행 중이 아닙니다"
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -E "(backend-dev-blue|backend-dev-green|nginx-proxy-dev)" || log "  [WARN] 개발 환경 컨테이너가 실행 중이 아닙니다"
 
 # 운영 환경 상태
 log ""
