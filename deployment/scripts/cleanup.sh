@@ -16,8 +16,8 @@ if [ "$ENVIRONMENT" = "dev" ] || [ "$ENVIRONMENT" = "all" ]; then
   log "[INFO] 개발 환경 정리 중..."
   
   # 개발 환경 컨테이너 정리
-  docker stop backend-blue backend-green nginx-proxy-dev 2>/dev/null || true
-  docker rm -f backend-blue backend-green nginx-proxy-dev 2>/dev/null || true
+  docker stop backend-dev-blue backend-dev-green nginx-proxy-dev 2>/dev/null || true
+  docker rm -f backend-dev-blue backend-dev-green nginx-proxy-dev 2>/dev/null || true
   
   # 개발 환경 네트워크 정리
   docker network rm dataracy-network-dev 2>/dev/null || true

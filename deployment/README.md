@@ -136,7 +136,7 @@ cd ~/dataracy-prod/deployment/prod/blue-green
 4. **SSL 인증서**: Cloudflare Origin Certificate 사용
 5. **헬스체크**: 각 컨테이너는 `/actuator/health` 엔드포인트로 헬스체크
 6. **포트 분리**:
-   - 개발: 80, 443, 8081, 8082
+   - 개발: 8080, 8443, 8081, 8082
    - 운영: 80, 443, 8083, 8084
 
 ## 문제 해결

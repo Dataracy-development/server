@@ -29,9 +29,9 @@ CURRENT_COLOR_FILE="$DEPLOY_STATE_DIR/current_color_prod"
 # 운영 의도: 기본은 NGINX 재시작(캐시/상태 완전 초기화). reload 원하면 true.
 ALWAYS_RELOAD=false
 
-# NGINX compose 파일/서비스명
-NGINX_COMPOSE="$DOCKER_DIR/docker-compose-nginx-prod.yml"
-NGINX_SVC_NAME="nginx-proxy-prod"
+# NGINX compose 파일/서비스명 (통합 NGINX 사용)
+NGINX_COMPOSE="../../nginx/docker-compose-nginx-unified.yml"
+NGINX_SVC_NAME="nginx-proxy"
 
 # ★ Kibana 업스트림(환경변수로 오버라이드 가능)
 # - NGINX가 같은 docker 네트워크면: kibana-prod:5601
@@ -91,8 +91,8 @@ fi
 #######################################
 # 3) NGINX upstream 설정 — 원자적 교체(tmp→mv)
 #######################################
-UPSTREAM_DEST="$NGINX_DIR/upstream-blue-green-prod.conf"
-UPSTREAM_TMP="$NGINX_DIR/upstream-blue-green-prod.conf.tmp"
+UPSTREAM_DEST="../nginx/upstream-blue-green-prod.conf"
+UPSTREAM_TMP="../nginx/upstream-blue-green-prod.conf.tmp"
 
 log "[INFO] NGINX upstream 갱신(원자적 교체): $BACKEND_NAME:8080, Kibana:$KIBANA_UPSTREAM → $UPSTREAM_DEST"
 cat > "$UPSTREAM_TMP" <<'EOF'
@@ -104,7 +104,7 @@ upstream backend {
 }
 
 # ★ Kibana 업스트림(경로 프록시용)
-upstream kibana_prod {
+upstream kibana {
   server REPLACE_KIBANA_UPSTREAM;
 }
 
@@ -181,7 +181,7 @@ server {
 
   # ★ Kibana (경로 /kibana)
   location /kibana/ {
-    proxy_pass http://kibana_prod/kibana/;     # 뒤 슬래시 필수
+    proxy_pass http://kibana/kibana/;     # 뒤 슬래시 필수
     proxy_read_timeout 600s;
     proxy_send_timeout 600s;
 
