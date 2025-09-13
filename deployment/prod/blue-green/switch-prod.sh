@@ -108,11 +108,123 @@ upstream kibana_prod {
   server REPLACE_KIBANA_UPSTREAM;
 }
 
+# HTTP to HTTPS redirect for dataracy.co.kr (메인 도메인)
+server {
+  listen 80;
+  server_name dataracy.co.kr www.dataracy.co.kr;
+  return 301 https://$server_name$request_uri;
+}
+
 # HTTP to HTTPS redirect for api.dataracy.co.kr (운영 환경은 HTTPS 강제)
 server {
   listen 80;
   server_name api.dataracy.co.kr;
   return 301 https://$server_name$request_uri;
+}
+
+# HTTPS server for dataracy.co.kr (메인 도메인)
+server {
+  listen 443 ssl;
+  http2 on;
+  server_name dataracy.co.kr www.dataracy.co.kr;
+
+  ssl_certificate     /etc/nginx/ssl/cloudflare/origin.crt;
+  ssl_certificate_key /etc/nginx/ssl/cloudflare/origin.key;
+
+  # TLS 보안 옵션
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_prefer_server_ciphers on;
+
+  client_max_body_size 50m;
+  client_body_timeout 120s;
+
+  # 공통 헤더
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto $scheme;
+  proxy_http_version 1.1;
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Connection "upgrade";
+  proxy_set_header Cookie $http_cookie;
+
+  # API 요청 프록시
+  location /api {
+    proxy_pass http://backend;
+    proxy_request_buffering off;
+    proxy_send_timeout 300s;
+    proxy_read_timeout 300s;
+  }
+
+  # Swagger UI (정적 리소스) - 캐시 무효화
+  location /swagger-ui/ {
+    proxy_pass http://backend/swagger-ui/;
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+    add_header Pragma "no-cache" always;
+    expires -1;
+    etag off;
+  }
+
+  # OpenAPI JSON - 캐시 무효화
+  location /v3/api-docs {
+    proxy_pass http://backend/v3/api-docs;
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+    add_header Pragma "no-cache" always;
+    expires -1;
+    etag off;
+  }
+
+  # Swagger UI가 참조하는 설정 - 캐시 무효화
+  location /swagger-config {
+    proxy_pass http://backend/swagger-config;
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+    add_header Pragma "no-cache" always;
+    expires -1;
+    etag off;
+  }
+
+  # (선택) webjars도 최신 강제 반영 원하면 캐시 무효화
+  location /webjars/ {
+    proxy_pass http://backend/webjars/;
+    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+    add_header Pragma "no-cache" always;
+    expires -1;
+    etag off;
+  }
+
+  # Kibana 프록시 (경로 /kibana)
+  location /kibana/ {
+    proxy_pass http://kibana_prod/kibana/;     # 뒤 슬래시 필수
+    proxy_read_timeout 600s;
+    proxy_send_timeout 600s;
+
+    # WebSocket
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    # 프록시 뒤 basePath 사용 시 권장 헤더
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Prefix /kibana;
+  }
+
+  # 헬스 체크
+  location /actuator/health {
+    proxy_pass http://backend/actuator/health;
+  }
+
+  # 나머지 fallback
+  location / {
+    proxy_pass http://backend;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Cookie $http_cookie;
+  }
 }
 
 # HTTPS server for api.dataracy.co.kr (운영 환경)
