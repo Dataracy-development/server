@@ -8,6 +8,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx-unified.conf:/etc/nginx/nginx.conf:ro
+      - ./upstream-main-domain.conf:/etc/nginx/conf.d/upstream-main-domain.conf:ro
       - ../dev/nginx/upstream-blue-green-dev.conf:/etc/nginx/conf.d/upstream-dev.conf:ro
       - ../prod/nginx/upstream-blue-green-prod.conf:/etc/nginx/conf.d/upstream-prod.conf:ro
       - /home/ubuntu/ssl/cloudflare:/etc/nginx/ssl/cloudflare:ro # SSL 인증서/키
