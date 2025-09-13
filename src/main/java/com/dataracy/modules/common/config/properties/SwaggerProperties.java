@@ -22,9 +22,6 @@ public class SwaggerProperties {
     @NotBlank(message = "Swagger version은 필수입니다.")
     private String version;
 
-    @NotBlank(message = "Swagger serverUrl은 필수입니다.")
-    private String serverUrl;
-
     @NotBlank(message = "Swagger serverDescription은 필수입니다.")
     private String serverDescription;
 }
