@@ -65,16 +65,16 @@ public class SwaggerConfig {
         } else if ("dev".equals(activeProfile)) {
             // 개발 환경: HTTP/HTTPS 모두 지원
             openAPI.addServersItem(new Server()
-                    .url("https://dev.api.dataracy.co.kr")
+                    .url("https://dev-api.dataracy.co.kr:8443")
                     .description("Development Server (HTTPS)"));
             openAPI.addServersItem(new Server()
-                    .url("http://dev.api.dataracy.co.kr")
+                    .url("http://dev-api.dataracy.co.kr:8080")
                     .description("Development Server (HTTP)"));
         } else {
             // 로컬 환경: HTTP만
             openAPI.addServersItem(new Server()
-                    .url(swaggerProperties.getServerUrl())
-                    .description(swaggerProperties.getServerDescription()));
+                    .url("http://localhost:8080")
+                    .description("Local Development Server (HTTP)"));
         }
     }
 }
