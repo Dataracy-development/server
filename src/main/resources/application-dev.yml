@@ -36,7 +36,11 @@ swagger:
   title: Dataracy
   description: Dataracy 백엔드 API 개발 문서입니다
   version: v1.2.0
-  server-url: https://dev.api.dataracy.co.kr
+  servers:
+    - url: http://dev-api.dataracy.co.kr:8080
+      description: Development Server (HTTP)
+    - url: https://dev-api.dataracy.co.kr:8443
+      description: Development Server (HTTPS)
   server-description: Development Server
 
 elasticsearch:
