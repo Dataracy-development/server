@@ -30,8 +30,8 @@ public class CorsConfig {
                 "http://www.dataracy.co.kr",
                 "https://www.dataracy.co.kr",
                 "https://api.dataracy.co.kr",
-                "http://dev-api.dataracy.co.kr",
-                "https://dev-api.dataracy.co.kr",
+                "http://dev-api.dataracy.co.kr:8080",
+                "https://dev-api.dataracy.co.kr:8443",
                 "http://localhost:63342",
                 "https://dataracy-client.vercel.app/"
         ));
