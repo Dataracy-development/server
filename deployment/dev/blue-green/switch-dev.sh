@@ -108,23 +108,6 @@ upstream kibana_dev {
   server REPLACE_KIBANA_UPSTREAM;
 }
 
-# HTTP server for dataracy.co.kr (프론트엔드)
-server {
-  listen 80;
-  server_name dataracy.co.kr www.dataracy.co.kr;
-  
-  # Vercel 프론트엔드로 프록시
-  location / {
-    proxy_pass https://dataracy-client.vercel.app;
-    proxy_set_header Host dataracy-client.vercel.app;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-  }
-}
 
 # HTTP server for dev-api.dataracy.co.kr (개발 환경은 HTTP/HTTPS 모두 지원)
 server {
@@ -217,31 +200,6 @@ server {
   }
 }
 
-# HTTPS server for dataracy.co.kr (프론트엔드 - Vercel 프록시)
-server {
-  listen 443 ssl;
-  http2 on;
-  server_name dataracy.co.kr www.dataracy.co.kr;
-
-  ssl_certificate     /etc/nginx/ssl/cloudflare/origin.crt;
-  ssl_certificate_key /etc/nginx/ssl/cloudflare/origin.key;
-
-  # TLS 보안 옵션
-  ssl_protocols TLSv1.2 TLSv1.3;
-  ssl_prefer_server_ciphers on;
-
-  # Vercel 프론트엔드로 프록시
-  location / {
-    proxy_pass https://dataracy-client.vercel.app;
-    proxy_set_header Host dataracy-client.vercel.app;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-  }
-}
 
 # HTTPS server for dev-api.dataracy.co.kr
 server {
