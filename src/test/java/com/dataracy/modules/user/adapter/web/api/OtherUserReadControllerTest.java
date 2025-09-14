@@ -1,7 +1,8 @@
-package com.dataracy.modules.user.adapter.web.api.read;
+package com.dataracy.modules.user.adapter.web.api;
 
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
+import com.dataracy.modules.user.adapter.web.api.read.OtherUserReadController;
 import com.dataracy.modules.user.adapter.web.mapper.read.OtherUserReadWebMapper;
 import com.dataracy.modules.user.adapter.web.response.read.GetOtherUserDataWebResponse;
 import com.dataracy.modules.user.adapter.web.response.read.GetOtherUserInfoWebResponse;
@@ -102,7 +103,6 @@ class OtherUserReadControllerTest {
                 dto.topicLabel(), dto.authorLevelLabel(), dto.commentCount(),
                 dto.likeCount(), dto.viewCount(), dto.createdAt()
         );
-        Page<GetOtherUserProjectWebResponse> webPage = new PageImpl<>(List.of(webRes), PageRequest.of(0, 5), 1);
 
         given(getOtherUserInfoUseCase.getOtherExtraProjects(eq(userId), any())).willReturn(dtoPage);
         given(mapper.toWebDto(dto)).willReturn(webRes);
@@ -139,7 +139,6 @@ class OtherUserReadControllerTest {
                 dto.downloadCount(), dto.sizeBytes(), dto.rowCount(), dto.columnCount(),
                 dto.createdAt(), dto.countConnectedProjects()
         );
-        Page<GetOtherUserDataWebResponse> webPage = new PageImpl<>(List.of(webRes), PageRequest.of(0, 5), 1);
 
         given(getOtherUserInfoUseCase.getOtherExtraDataSets(eq(userId), any())).willReturn(dtoPage);
         given(mapper.toWebDto(dto)).willReturn(webRes);
