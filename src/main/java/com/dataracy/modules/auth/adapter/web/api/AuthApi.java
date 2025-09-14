@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +49,9 @@ public interface AuthApi {
             SelfLoginWebRequest webRequest,
 
             @Parameter(hidden = true)
+            HttpServletRequest request,
+
+            @Parameter(hidden = true)
             HttpServletResponse response
     );
 
@@ -76,6 +80,9 @@ public interface AuthApi {
             )
             @CookieValue(value = "refreshToken")
             String refreshToken,
+
+            @Parameter(hidden = true)
+            HttpServletRequest request,
 
             @Parameter(hidden = true)
             HttpServletResponse response

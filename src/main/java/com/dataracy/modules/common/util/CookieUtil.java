@@ -20,28 +20,6 @@ public class CookieUtil {
     @Value("${spring.profiles.active:local}")
     private String activeProfile;
 
-    /**
-     * 지정한 이름, 값, 만료 시간을 가진 HTTP-Only 쿠키를 HTTP 응답에 추가합니다.
-     * 환경에 따라 Secure, SameSite 설정이 동적으로 적용됩니다.
-     *
-     * @param name   쿠키의 이름
-     * @param value  쿠키의 값
-     * @param maxAge 쿠키의 만료 시간(초 단위)
-     */
-    public void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        boolean isSecure = isSecureEnvironment();
-        String sameSite = getSameSitePolicy();
-        
-        ResponseCookie cookie = ResponseCookie.from(name, value)
-                .httpOnly(true)
-                .secure(isSecure)
-                .sameSite(sameSite)
-                .path("/")
-                .maxAge(Duration.ofSeconds(maxAge))
-                .build();
-
-        response.addHeader("Set-Cookie", cookie.toString());
-    }
     
     /**
      * 지정한 이름, 값, 만료 시간을 가진 HTTP-Only 쿠키를 HTTP 응답에 추가합니다.
@@ -55,12 +33,14 @@ public class CookieUtil {
      */
     public void setCookie(HttpServletRequest request, HttpServletResponse response, String name, String value, int maxAge) {
         boolean isSecure = isSecureEnvironment(request);
-        String sameSite = getSameSitePolicy();
+        String sameSite = getSameSitePolicy(request);
+        String domain = getCookieDomain();
         
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .httpOnly(true)
                 .secure(isSecure)
                 .sameSite(sameSite)
+                .domain(domain)
                 .path("/")
                 .maxAge(Duration.ofSeconds(maxAge))
                 .build();
@@ -69,18 +49,6 @@ public class CookieUtil {
     }
     
 
-    /**
-     * 현재 환경이 HTTPS를 사용하는지 확인합니다.
-     * (기존 메서드 - request 객체가 없을 때 사용)
-     */
-    private boolean isSecureEnvironment() {
-        if ("prod".equals(activeProfile)) {
-            return true; // 운영 환경은 항상 HTTPS
-        } else {
-            // 개발/로컬 환경: 기본적으로 false (실제 요청에서는 request 기반으로 판단)
-            return false;
-        }
-    }
 
     /**
      * 실제 요청의 프로토콜을 감지하여 HTTPS 사용 여부를 확인합니다.
@@ -121,14 +89,31 @@ public class CookieUtil {
     
     /**
      * 환경에 따른 SameSite 정책을 반환합니다.
+     * HTTPS에서는 None, HTTP에서는 Lax를 사용합니다.
      */
-    private String getSameSitePolicy() {
+    private String getSameSitePolicy(HttpServletRequest request) {
+        boolean isSecure = isSecureEnvironment(request);
+        
         if ("prod".equals(activeProfile)) {
-            return "Strict"; // 운영 환경: Strict
+            return "None"; // 운영 환경: 항상 HTTPS이므로 None
         } else if ("dev".equals(activeProfile)) {
-            return "Lax"; // 개발 환경: Lax (HTTP/HTTPS 모두 지원)
+            return isSecure ? "None" : "Lax"; // 개발 환경: HTTPS면 None, HTTP면 Lax
         } else {
-            return "None"; // 로컬 환경: None
+            return isSecure ? "None" : "Lax"; // 로컬 환경: HTTPS면 None, HTTP면 Lax
+        }
+    }
+
+    /**
+     * 환경에 따른 쿠키 도메인을 반환합니다.
+     * dataracy.co.kr, api.dataracy.co.kr, dev-api.dataracy.co.kr 간의 쿠키 공유를 위해 상위 도메인으로 설정합니다.
+     */
+    private String getCookieDomain() {
+        if ("prod".equals(activeProfile)) {
+            return ".dataracy.co.kr"; // 운영 환경: dataracy.co.kr ↔ api.dataracy.co.kr 쿠키 공유
+        } else if ("dev".equals(activeProfile)) {
+            return ".dataracy.co.kr"; // 개발 환경: dataracy.co.kr ↔ dev-api.dataracy.co.kr 쿠키 공유
+        } else {
+            return null; // 로컬 환경: localhost에서는 도메인 설정 없음
         }
     }
 
