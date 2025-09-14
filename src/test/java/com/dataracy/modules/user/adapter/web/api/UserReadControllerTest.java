@@ -10,7 +10,6 @@ import com.dataracy.modules.user.application.dto.response.read.GetUserInfoRespon
 import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,9 +35,6 @@ class UserReadControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private GetUserInfoUseCase getUserInfoUseCase;
@@ -72,13 +68,14 @@ class UserReadControllerTest {
         // given
         GetUserInfoResponse dto = new GetUserInfoResponse(
                 FIXED_USER_ID, RoleType.ROLE_USER, "u@test.com", "nick",
-                "author", "job", List.of("topicA", "topicB"),
-                "visit", "img.png", "intro"
+                1L, "author", 2L, "job", List.of(10L, 20L), List.of("topicA", "topicB"),
+                3L, "visit", "img.png", "intro"
         );
         GetUserInfoWebResponse webDto = new GetUserInfoWebResponse(
                 dto.id(), dto.role(), dto.email(), dto.nickname(),
-                dto.authorLevelLabel(), dto.occupationLabel(), dto.topicLabels(),
-                dto.visitSourceLabel(), dto.profileImageUrl(), dto.introductionText()
+                dto.authorLevelId(), dto.authorLevelLabel(), dto.occupationId(), dto.occupationLabel(),
+                dto.topicIds(), dto.topicLabels(), dto.visitSourceId(), dto.visitSourceLabel(),
+                dto.profileImageUrl(), dto.introductionText()
         );
 
         given(getUserInfoUseCase.getUserInfo(FIXED_USER_ID)).willReturn(dto);
