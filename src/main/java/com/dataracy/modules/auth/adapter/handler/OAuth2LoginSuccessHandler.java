@@ -73,6 +73,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         // 레지스터 토큰을 쿠키에 저장한다.
         cookieUtil.setCookie(
+                request,
                 response,
                 "registerToken",
                 registerTokenResponse.registerToken(),
@@ -100,6 +101,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         // 리프레시 토큰을 쿠키에 저장한다.
         cookieUtil.setCookie(
+                request,
                 response,
                 "refreshToken",
                 refreshTokenResponseDto.refreshToken(),

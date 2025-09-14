@@ -12,6 +12,7 @@ import com.dataracy.modules.user.application.dto.request.signup.SelfSignUpReques
 import com.dataracy.modules.user.application.port.in.command.signup.OAuthSignUpUseCase;
 import com.dataracy.modules.user.application.port.in.command.signup.SelfSignUpUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,7 @@ public class UserSignUpController implements UserSignUpApi {
     @Override
     public ResponseEntity<SuccessResponse<Void>> signUpUserSelf(
             SelfSignUpWebRequest webRequest,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[SignUpUserSelf] 자체 회원가입 API 요청 시작");
@@ -49,7 +51,7 @@ public class UserSignUpController implements UserSignUpApi {
             // 리프레시 토큰을 쿠키에 저장
             long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
             int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
-            cookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
+            cookieUtil.setCookie(request, response, "refreshToken", responseDto.refreshToken(), maxAge);
         } finally {
             LoggerFactory.api().logResponse("[SignUpUserSelf] 자체 회원가입 API 응답 완료", startTime);
         }
@@ -70,6 +72,7 @@ public class UserSignUpController implements UserSignUpApi {
     public ResponseEntity<SuccessResponse<Void>> signUpUserOAuth(
             String registerToken,
             OnboardingWebRequest webRequest,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[SignUpUserOAuth] 소셜 회원가입 API 요청 시작");
@@ -81,7 +84,7 @@ public class UserSignUpController implements UserSignUpApi {
             // 리프레시 토큰을 쿠키에 저장
             long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
             int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
-            cookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
+            cookieUtil.setCookie(request, response, "refreshToken", responseDto.refreshToken(), maxAge);
         } finally {
             LoggerFactory.api().logResponse("[SignUpUserOAuth] 소셜 회원가입 API 응답 완료", startTime);
         }
