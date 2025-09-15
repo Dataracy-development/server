@@ -21,6 +21,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-dev:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-dev:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
     networks:
       - dataracy-network-dev
 
