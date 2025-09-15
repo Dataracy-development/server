@@ -1,5 +1,6 @@
 server:
   port: 8080
+  url: https://api.dataracy.co.kr
 
 spring:
   application:
