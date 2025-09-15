@@ -8,27 +8,11 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms256m -Xmx256m
-    ports:
-      - "9200:9200"
+    # 개발 환경에서도 포트 노출 제거 (내부 네트워크만 사용)
+    # ports:
+    #   - "9200:9200"
     networks:
       - dataracy-network-dev
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.13.4
-    container_name: kibana-dev
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200   # ← 서비스명 사용
-      - XPACK_SECURITY_ENABLED=false
-      - SERVER_HOST=0.0.0.0
-      - SERVER_BASEPATH=/kibana
-      - SERVER_REWRITEBASEPATH=true
-      - SERVER_PUBLICBASEURL=http://dataracy.store/kibana
-    ports:
-      - "5601:5601"
-    networks:
-      - dataracy-network-dev
-    depends_on:
-      - elasticsearch
 
 networks:
   dataracy-network-dev:
