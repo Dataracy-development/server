@@ -21,10 +21,10 @@ spring:
     secret: ${JWT_SECRET}
     redirect-onboarding: ${JWT_REDIRECT_ONBOARDING}
     redirect-base: ${JWT_REDIRECT_BASE}
-    register-token-expiration-time: ${REGISTER_TOKEN_EXPIRATION_TIME}    # 10 minutes
-    reset-token-expiration-time: ${RESET_TOKEN_EXPIRATION_TIME}    # 10 minutes
-    access-token-expiration-time: ${ACCESS_TOKEN_EXPIRATION_TIME}      # 1 hour
-    refresh-token-expiration-time: ${REFRESH_TOKEN_EXPIRATION_TIME}      # 14 days
+    register-token-expiration-time: ${REGISTER_TOKEN_EXPIRATION_TIME} # 10 minutes
+    reset-token-expiration-time: ${RESET_TOKEN_EXPIRATION_TIME} # 10 minutes
+    access-token-expiration-time: ${ACCESS_TOKEN_EXPIRATION_TIME} # 1 hour
+    refresh-token-expiration-time: ${REFRESH_TOKEN_EXPIRATION_TIME} # 14 days
 
   redis:
     refresh-token-expiration-days: ${REFRESH_TOKEN_EXPIRATION_DAYS} # 리프레시 토큰 유효기간 (일)
@@ -65,13 +65,15 @@ spring:
     properties:
       spring.json.add.type.headers: false
       partitioner.class: org.apache.kafka.clients.producer.internals.DefaultPartitioner
+      # 토픽 자동 생성 활성화
+      auto.create.topics.enable: true
 
     producer:
       acks: all
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        enable.idempotence: true                # 멱등 프로듀서: 중복 방지 + 순서 보장(파티션 단위)
+        enable.idempotence: true # 멱등 프로듀서: 중복 방지 + 순서 보장(파티션 단위)
         max.in.flight.requests.per.connection: 1 # 엄격 순서 보장 필요시 1 (성능↑ 원하면 2~5, 단 주문 보장 점검)
         retries: 10
         delivery.timeout.ms: 120000
@@ -104,8 +106,8 @@ spring:
       group-id: dataracy-default-consumer
 
       properties:
-        fetch.max.bytes: 5242880         # 5MB
-        max-poll-records: 500            # 한 번에 가져올 레코드 수
+        fetch.max.bytes: 5242880 # 5MB
+        max-poll-records: 500 # 한 번에 가져올 레코드 수
 
       behavior-log:
         topic: behavior-logs
@@ -150,11 +152,11 @@ springdoc:
     path: /swagger-ui
     # 태그/오퍼레이션 정렬
     tags-sorter: alpha
-    operations-sorter: method  # or alpha
+    operations-sorter: method # or alpha
     # 펼침(문서 트리/응답 모델)
-    doc-expansion: list        # none | list | full (원하면 full)
-    default-models-expand-depth: 0   # 좌측 Models 목록 접기
-    default-model-expand-depth: 3    # 응답/요청 모델 기본 펼침 깊이
+    doc-expansion: list # none | list | full (원하면 full)
+    default-models-expand-depth: 0 # 좌측 Models 목록 접기
+    default-model-expand-depth: 3 # 응답/요청 모델 기본 펼침 깊이
     default-model-rendering: example # model | example
     # 편의 옵션
     display-request-duration: true
