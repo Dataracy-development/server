@@ -2,26 +2,51 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper-prod
-    ports:
-      - "2181:2181" # 내부 접근만 허용
+    # 운영 환경에서는 포트 노출 제거 (내부 네트워크만 사용)
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
     networks:
-      - dataracy-network
+      - dataracy-network-prod
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+        reservations:
+          memory: 256M
+          cpus: "0.25"
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka-prod
-    ports:
-      - "9092:9092"
+    # 운영 환경에서는 포트 노출 제거 (내부 네트워크만 사용)
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-prod:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-prod:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      KAFKA_DELETE_TOPIC_ENABLE: true
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
     networks:
-      - dataracy-network
+      - dataracy-network-prod
+    depends_on:
+      - zookeeper
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+        reservations:
+          memory: 512M
+          cpus: "0.5"
 
 networks:
-  dataracy-network:
+  dataracy-network-prod:
     external: true
