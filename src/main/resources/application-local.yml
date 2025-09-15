@@ -1,27 +1,83 @@
 server:
   port: 8080
+  url: http://${SERVER_HOST}:${SERVER_PORT}
 
 spring:
+  application:
+    name: dataracy-local
   config:
     import: "optional:file:.env[.properties]"
     activate:
       on-profile: local
 
   datasource:
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   data:
     redis:
-      url: redis://${REDIS_HOST}:${REDIS_PORT}
-
+      url: ${REDIS_PROTOCOL}://${REDIS_HOST}:${REDIS_PORT}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      protocol: ${REDIS_PROTOCOL}
   jpa:
     hibernate:
       ddl-auto: update
     open-in-view: false
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER_HOST}:${KAFKA_SERVER_PORT}
+
+logging:
+  level:
+    root: INFO
+
+    # Hibernate (SQL/파라미터까지 확인)
+    org.hibernate.SQL: DEBUG # SQL 문장
+    org.hibernate.type.descriptor.sql: TRACE # 바인딩 파라미터
+    org.hibernate.engine.jdbc.spi.SqlExceptionHelper: WARN # SQL 에러만
+    org.hibernate.orm.results: INFO
+    org.hibernate.engine.transaction.internal.TransactionImpl: INFO
+
+    # Spring / Kafka / 내부 모듈
+    org.springframework: INFO
+    org.apache.kafka: WARN
+    org.springframework.kafka: INFO # 컨슈머/프로듀서 흐름 확인
+    com.dataracy.modules.behaviorlog: DEBUG # 행동로그는 DEBUG까지
+    com.dataracy.modules.behaviorlog.support.aop.DataAccessLatencyAspect: INFO
+    com.dataracy.modules.common.logging: DEBUG
+
+swagger:
+  title: Dataracy
+  description: Dataracy 백엔드 API 로컬 문서입니다
+  version: v1.2.0
+  server-url: http://${SERVER_HOST}:${SERVER_PORT}
+  server-description: local server
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
+elasticsearch:
+  connection:
+    host: ${ELASTIC_SEARCH_HOST}
+    port: ${ELASTIC_SEARCH_PORT}
+    protocol: http
+    url: http://${ELASTIC_SEARCH_HOST}:${ELASTIC_SEARCH_PORT}
+    ssl: false
+    enabled: false
+
+management:
+  metrics:
+    tags:
+      application: dataracy-local
+  endpoint:
+    prometheus:
+      enabled: true

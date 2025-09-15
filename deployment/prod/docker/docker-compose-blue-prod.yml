@@ -1,0 +1,22 @@
+services:
+  backend-prod-blue:
+    image: juuuunny/backend:prod-blue
+    container_name: backend-prod-blue
+    restart: always
+    ports:
+      - "8083:8080"
+    env_file:
+      - /home/ubuntu/env-config/.env.prod
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    networks:
+      - dataracy-network-prod
+
+networks:
+  dataracy-network-prod:
+    external: true

@@ -5,6 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+/build/generated/
+/out/
+
 ### STS ###
 .apt_generated
 .classpath
@@ -38,3 +41,12 @@ out/
 
 .env
 .env.*
+
+logs/
+*.log
+/logs/
+!/logs/.gitkeep
+
+/infrastructure/elasticsearch/ilm-policy.json
+/infrastructure/elasticsearch/index-template.json
+/infrastructure/kibana/behaviorlog-dashboard.ndjson

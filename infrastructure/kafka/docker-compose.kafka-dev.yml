@@ -1,0 +1,29 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper-dev
+    # 개발 환경에서도 포트 노출 제거 (내부 네트워크만 사용)
+    # ports:
+    #   - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - dataracy-network-dev
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-dev
+    # 개발 환경에서도 포트 노출 제거 (내부 네트워크만 사용)
+    # ports:
+    #   - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-dev:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-dev:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - dataracy-network-dev
+
+networks:
+  dataracy-network-dev:
+    external: true

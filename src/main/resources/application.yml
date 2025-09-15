@@ -1,11 +1,211 @@
 # 공통 설정
 spring:
+  application:
+    name: dataracy-backend
   profiles:
     active: local
+
   servlet:
     multipart:
-      max-file-size: 20MB
-      max-request-size: 20MB
+      max-file-size: 50MB
+      max-request-size: 60MB
+  mvc:
+    async:
+      request-timeout: 120s
+  task:
+    scheduling:
+      pool:
+        size: 1
+
+  jwt:
+    secret: ${JWT_SECRET}
+    redirect-onboarding: ${JWT_REDIRECT_ONBOARDING}
+    redirect-base: ${JWT_REDIRECT_BASE}
+    register-token-expiration-time: ${REGISTER_TOKEN_EXPIRATION_TIME}    # 10 minutes
+    reset-token-expiration-time: ${RESET_TOKEN_EXPIRATION_TIME}    # 10 minutes
+    access-token-expiration-time: ${ACCESS_TOKEN_EXPIRATION_TIME}      # 1 hour
+    refresh-token-expiration-time: ${REFRESH_TOKEN_EXPIRATION_TIME}      # 14 days
+
+  redis:
+    refresh-token-expiration-days: ${REFRESH_TOKEN_EXPIRATION_DAYS} # 리프레시 토큰 유효기간 (일)
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-name: Kakao
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            redirect-uri: ${KAKAO_REDIRECT_URI}
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            scope:
+              - profile_nickname
+              - account_email
+          google:
+            client-name: Google
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            authorization-grant-type: authorization_code
+            scope:
+              - email
+              - profile
+        provider:
+          kakao:
+            authorization-uri: ${KAKAO_AUTHORIZATION_URI}
+            token-uri: ${KAKAO_TOKEN_URI}
+            user-info-uri: ${KAKAO_USER_INFO_URI}
+            user-name-attribute: ${KAKAO_USER_NAME_ATTRIBUTE}
+  web:
+    resources:
+      static-locations: classpath:/static/
+  kafka:
+    properties:
+      spring.json.add.type.headers: false
+      partitioner.class: org.apache.kafka.clients.producer.internals.DefaultPartitioner
+
+    producer:
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        enable.idempotence: true                # 멱등 프로듀서: 중복 방지 + 순서 보장(파티션 단위)
+        max.in.flight.requests.per.connection: 1 # 엄격 순서 보장 필요시 1 (성능↑ 원하면 2~5, 단 주문 보장 점검)
+        retries: 10
+        delivery.timeout.ms: 120000
+        request.timeout.ms: 30000
+        linger.ms: 5
+        compression.type: lz4
+
+      behavior-log:
+        topic: behavior-logs
+      file-delete:
+        topic: file-delete-topic
+      extract-metadata:
+        topic: data-uploaded
+      comment-upload:
+        topic: comment-uploaded-topic
+      comment-delete:
+        topic: comment-deleted-topic
+      project-like-increase:
+        topic: project-like-increase-topic
+      project-like-decrease:
+        topic: project-like-decrease-topic
+      comment-like-increase:
+        topic: comment-like-increase-topic
+      comment-like-decrease:
+        topic: comment-like-decrease-topic
+
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+      group-id: dataracy-default-consumer
+
+      properties:
+        fetch.max.bytes: 5242880         # 5MB
+        max-poll-records: 500            # 한 번에 가져올 레코드 수
+
+      behavior-log:
+        topic: behavior-logs
+        group-id: behavior-log-consumer-group
+      file-delete:
+        topic: file-delete-topic
+        group-id: file-delete-consumer-group
+      extract-metadata:
+        topic: data-uploaded
+        group-id: data-upload-metadata-consumer-group
+      comment-upload:
+        topic: comment-uploaded-topic
+        group-id: project-comment-upload-consumer-group
+      comment-delete:
+        topic: comment-deleted-topic
+        group-id: project-comment-delete-consumer-group
+      project-like-increase:
+        topic: project-like-increase-topic
+        group-id: project-like-increase-consumer-group
+      project-like-decrease:
+        topic: project-like-decrease-topic
+        group-id: project-like-decrease-consumer-group
+      comment-like-increase:
+        topic: comment-like-increase-topic
+        group-id: comment-like-increase-consumer-group
+      comment-like-decrease:
+        topic: comment-like-decrease-topic
+        group-id: comment-like-decrease-consumer-group
+
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg [requestId=%X{requestId}] [userId=%X{userId}] [path=%X{path}]%n"
   level:
-    root: info
+    root: DEBUG
+    org.apache.kafka: WARN
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui
+    # 태그/오퍼레이션 정렬
+    tags-sorter: alpha
+    operations-sorter: method  # or alpha
+    # 펼침(문서 트리/응답 모델)
+    doc-expansion: list        # none | list | full (원하면 full)
+    default-models-expand-depth: 0   # 좌측 Models 목록 접기
+    default-model-expand-depth: 3    # 응답/요청 모델 기본 펼침 깊이
+    default-model-rendering: example # model | example
+    # 편의 옵션
+    display-request-duration: true
+    try-it-out-enabled: true
+    filter: true
+    persist-authorization: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    prometheus:
+      enabled: true
+      show-details: always
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+aws:
+  ses:
+    access-key: ${SES_ACCESS_KEY}
+    secret-key: ${SES_SECRET_KEY}
+    region: ${SES_REGION}
+    sender: ${SES_SENDER}
+    expire-minutes: ${SES_EXPIRE_MINUTES}
+
+sendgrid:
+  api-key: ${SENDGRID_API_KEY}
+  sender: ${SENDGRID_SENDER}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_S3_ACCESS_KEY}
+      secret-key: ${AWS_S3_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: ${AWS_S3_BUCKET_NAME}
+
+default:
+  profile:
+    image-url: ${DEFAULT_PROFILE_IMAGE_URL}
+  project:
+    image-url: ${DEFAULT_PROJECT_IMAGE_URL}
+  dataset:
+    image-url: ${DEFAULT_DATASET_IMAGE_URL}

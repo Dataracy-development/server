@@ -1,0 +1,7 @@
+reviews:
+  max_files: 500            # 최대 리뷰 파일 수
+  review_status: true       # 리뷰 상태 메시지 표시 여부
+  languages:
+    - java                  # 리뷰 대상 언어
+  summary_enabled: true     # 전체 요약 활성화
+  comment_inline: true      # 인라인 코멘트 활성화

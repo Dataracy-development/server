@@ -1,0 +1,37 @@
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: elasticsearch-prod
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    # 운영 환경에서는 포트 노출 제거 (내부 네트워크만 사용)
+    volumes:
+      - elasticsearch-prod-data:/usr/share/elasticsearch/data
+    networks:
+      - dataracy-network-prod
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    container_name: kibana-prod
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - XPACK_SECURITY_ENABLED=false
+      - SERVER_HOST=0.0.0.0
+      - SERVER_BASEPATH=/kibana
+      - SERVER_REWRITEBASEPATH=true
+      - SERVER_PUBLICBASEURL=https://api.dataracy.co.kr/kibana
+    # 운영 환경에서는 포트 노출 제거 (NGINX를 통해서만 접근)
+    networks:
+      - dataracy-network-prod
+    depends_on:
+      - elasticsearch
+
+networks:
+  dataracy-network-prod:
+    external: true
+
+volumes:
+  elasticsearch-prod-data:
+    driver: local

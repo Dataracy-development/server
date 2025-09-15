@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false">
+
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg [requestId=%X{requestId}] [sessionId=%X{sessionId}] [userId=%X{userId}] [anonymousId=%X{anonymousId}] [ip=%X{ip}] [path=%X{path}] [method=%X{method}]%n"/>
+
+    <!-- ✅ Async + TimeBased + SizeBased 파일 Appender -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="ROLLING_FILE"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/system.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/system.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>14</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/system-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/system-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ✅ 루트 로거 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+    </root>
+
+    <!-- ✅ 개발 환경 (DEBUG, 콘솔 우선) -->
+    <springProfile name="local,dev">
+        <logger name="com.dataracy" level="DEBUG"/>
+
+        <!-- Spring 전체 디버그 제거 -->
+        <logger name="org.springframework" level="INFO"/>
+
+        <!-- 너무 verbose한 Kafka 로그는 INFO로 제한 -->
+        <logger name="org.springframework.kafka" level="INFO"/>
+        <logger name="org.apache.kafka" level="INFO"/>
+        <logger name="org.apache.kafka.clients.consumer" level="WARN"/>
+    </springProfile>
+
+    <!-- ✅ 운영 환경 (INFO + 최소 override) -->
+    <springProfile name="prod">
+        <!-- ✅ 통합 패키지 단일 설정 -->
+        <logger name="com.dataracy.modules" level="INFO"/>
+
+        <!-- 필요 최소 override -->
+        <logger name="com.amazonaws.util" level="ERROR"/>
+        <logger name="org.hibernate.orm.deprecation" level="ERROR"/>
+        <logger name="nl.basjes.parse.useragent" level="WARN"/>
+        <logger name="io.netty" level="ERROR"/>
+    </springProfile>
+
+</configuration>

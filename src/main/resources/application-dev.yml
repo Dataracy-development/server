@@ -1,26 +1,81 @@
 server:
   port: 8080
+  url: http://dev-api.dataracy.co.kr:8080
 
 spring:
+  application:
+    name: dataracy-dev
   config:
     activate:
       on-profile: dev
 
   datasource:
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   data:
     redis:
-      url: redis://${REDIS_HOST}:${REDIS_PORT}
+      url: ${REDIS_PROTOCOL}://${REDIS_HOST}:${REDIS_PORT}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      protocol: ${REDIS_PROTOCOL}
 
   jpa:
     hibernate:
       ddl-auto: update
     open-in-view: false
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER_HOST}:${KAFKA_SERVER_PORT}
+
+swagger:
+  title: Dataracy
+  description: Dataracy 백엔드 API 개발 문서입니다
+  version: v1.2.0
+  server-url: http://dev-api.dataracy.co.kr:8080
+  server-description: Development Server (HTTP Only)
+
+elasticsearch:
+  connection:
+    host: ${ELASTIC_SEARCH_HOST}
+    port: ${ELASTIC_SEARCH_PORT}
+    protocol: http
+    ssl: false
+
+logging:
+  level:
+    root: INFO
+
+    # Hibernate (SQL만 INFO, 파라미터는 끔)
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql: WARN
+    org.hibernate.engine.jdbc.spi.SqlExceptionHelper: WARN
+    org.hibernate.engine.transaction.internal.TransactionImpl: INFO
+
+    # Spring / Kafka / 내부 모듈
+    org.springframework: INFO
+    org.apache.kafka: WARN
+    org.springframework.kafka: INFO # partition assignment 정도만 확인
+    com.dataracy.modules.behaviorlog: DEBUG
+    com.dataracy.modules.behaviorlog.support.aop.DataAccessLatencyAspect: INFO
+    com.dataracy.modules.common.logging: INFO
+
+management:
+  metrics:
+    tags:
+      application: dataracy-dev
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+    prometheus:
+      enabled: true

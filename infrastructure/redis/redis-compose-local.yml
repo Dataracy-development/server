@@ -4,7 +4,7 @@ services:
     container_name: redis-local
     restart: always
     ports:
-      - "6380:6379"
+      - "6379:6379"
     networks:
       - dataracy-network
 

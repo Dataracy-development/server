@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.0'
+	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -13,12 +13,23 @@ java {
 	}
 }
 
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs += ['-parameters']
+}
+
 configurations.all {
 	exclude group: 'commons-logging', module: 'commons-logging'
 }
 
 jar {
 	enabled = true
+	zip64 = true
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 	from { sourceSets.main.resources.srcDirs }
@@ -28,33 +39,133 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	springBootVersion = '3.2.5'
+	mysqlConnectorVersion = '8.0.33'
+	elasticsearchVersion = '8.13.4'
+	httpClientVersion = '5.2.1'
+	jakartaJsonApiVersion = '2.1.1'
+	jakartaJsonImplVersion = '2.0.1'
+	redissonVersion = '3.27.0'
+	sendGridVersion = '4.9.3'
+	sesVersion = '1.12.3'
+	s3Version = '1.12.787'
+	swaggerVersion = '2.6.0'
+	jjwtVersion = '0.12.3'
+	commonsPool2Version = '2.11.1'
+	lombokVersion = '1.18.30'
+	parseUserAgentVersion = '6.3'
+	thumbnailGenerateVersion = '0.4.20'
+	juniversalchardet= '1.0.3'
+	commonsCsvVersion = '1.14.0'
+	apachePoiVersion  = '5.2.3'
+	queryDslVersion = '5.0.0'
+}
+
 dependencies {
-	// Spring Boot
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-
-	// Redis & Kafka
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.kafka:spring-kafka'
-	implementation 'org.apache.commons:commons-pool2'
-
-	// AWS S3
-	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.643'
-
-	// Prometheus
-	implementation 'io.micrometer:micrometer-registry-prometheus'
+	// Spring Core
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-aop"
+	implementation "org.springframework.boot:spring-boot-starter-validation"
+	implementation "org.springframework.boot:spring-boot-starter-actuator"
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
 
 	// MySQL
-	implementation 'com.mysql:mysql-connector-j'
+	implementation "com.mysql:mysql-connector-j:${mysqlConnectorVersion}"
+
+	// Kafka
+	implementation "org.springframework.kafka:spring-kafka"
+
+	// Elasticsearch 공식 Java Client (Spring Data 미사용)
+	implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
+	// RestTransport
+	implementation "org.apache.httpcomponents.client5:httpclient5:${httpClientVersion}"
+
+	// JSON 처리
+	implementation "jakarta.json:jakarta.json-api:${jakartaJsonApiVersion}"
+	implementation "org.glassfish:jakarta.json:${jakartaJsonImplVersion}"
+
+	// OAuth 2.0
+	implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+
+	// Security
+	implementation "org.springframework.boot:spring-boot-starter-security"
+	testImplementation "org.springframework.security:spring-security-test"
+
+	// Redis & Redisson
+	implementation "org.springframework.boot:spring-boot-starter-data-redis"
+	implementation "org.redisson:redisson:${redissonVersion}"
+
+	// Prometheus
+	implementation "io.micrometer:micrometer-registry-prometheus"
+
+	// AWS S3
+	implementation "com.amazonaws:aws-java-sdk-s3:${s3Version}"
+
+	// Swagger
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${swaggerVersion}"
+
+	// JWT
+	implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+	implementation "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+	implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
 
 	// Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+	testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+	testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// Send Grid && SES & MAIL
+	implementation "org.springframework.boot:spring-boot-starter-mail"
+	implementation "com.sendgrid:sendgrid-java:${sendGridVersion}"
+	implementation "com.amazonaws:aws-java-sdk-ses:${sesVersion}"
+
+	// parser
+	implementation "nl.basjes.parse.useragent:yauaa:${parseUserAgentVersion}"
+
+	// thumnail
+	implementation "net.coobird:thumbnailator:${thumbnailGenerateVersion}"
+
+	// CSV 파싱
+	implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
+
+	// 엑셀 파싱
+	implementation "org.apache.poi:poi:${apachePoiVersion}"
+	implementation "org.apache.poi:poi-ooxml:${apachePoiVersion}"
+
+	// Querydsl
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	implementation "com.googlecode.juniversalchardet:juniversalchardet:${juniversalchardet}"
+
+	implementation "org.apache.commons:commons-pool2:${commonsPool2Version}"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testImplementation 'com.h2database:h2'
+}
+
+tasks.named('compileJava', JavaCompile).configure {
+	options.annotationProcessorGeneratedSourcesDirectory = file("$build/generated/sources/annotationProcessor/java/main")
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs += "$build/generated/sources/annotationProcessor/java/main"
+		}
+	}
+}
+
+tasks.named('compileJava') {
+	doFirst {
+		def generatedDir = file("$build/generated/sources/annotationProcessor/java/main")
+		if (generatedDir.exists()) {
+			generatedDir.deleteDir()
+		}
+	}
 }
 
 tasks.named('test') {

@@ -1,0 +1,39 @@
+package com.dataracy.modules.project.application.service.validate;
+
+import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.project.application.port.in.validate.ValidateProjectUseCase;
+import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByIdPort;
+import com.dataracy.modules.project.domain.exception.ProjectException;
+import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+
+@Service
+@RequiredArgsConstructor
+public class ProjectValidateService implements ValidateProjectUseCase {
+    private final CheckProjectExistsByIdPort checkProjectExistsByIdPort;
+
+    /**
+     * 주어진 프로젝트 ID에 해당하는 프로젝트의 존재 여부를 검증합니다.
+     *
+     * 프로젝트가 존재하지 않을 경우 {@code ProjectException}을 발생시킵니다.
+     *
+     * @param projectId 존재 여부를 확인할 프로젝트의 ID
+     * @throws ProjectException 프로젝트가 존재하지 않을 때 발생
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public void validateProject(Long projectId) {
+        Instant startTime = LoggerFactory.service().logStart("ValidateProjectUseCase", "프로젝트 존재 유효성 검사 서비스 시작 projectId=" + projectId);
+
+        boolean isValidate = checkProjectExistsByIdPort.checkProjectExistsById(projectId);
+        if (!isValidate) {
+            LoggerFactory.service().logWarning("ValidateProjectUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+            throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
+        }
+        LoggerFactory.service().logSuccess("ValidateProjectUseCase", "프로젝트 존재 유효성 검사 서비스 종료 projectId=" + projectId, startTime);
+    }
+}
