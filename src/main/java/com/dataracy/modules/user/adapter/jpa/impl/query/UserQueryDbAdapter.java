@@ -58,4 +58,12 @@ public class UserQueryDbAdapter implements UserQueryPort {
         LoggerFactory.db().logQueryEnd("UserEntity", "[findByEmail] 이메일로 유저 조회 종료 email=" + email, startTime);
         return userEntity.map(UserEntityMapper::toDomain);
     }
+
+    @Override
+    public Optional<String> findNicknameById(Long userId) {
+        Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", "[findNicknameById] 유저 아이디로 닉네임 조회 시작 userId=" + userId);
+        Optional<String> nickname = userJpaRepository.findNicknameById(userId);
+        LoggerFactory.db().logQueryEnd("UserEntity", "[findNicknameById] 유저 아이디로 닉네임 조회 종료 userId=" + userId, startTime);
+        return nickname;
+    }
 }

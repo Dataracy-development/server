@@ -48,4 +48,6 @@ public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
     @Modifying
     @Query("UPDATE UserEntity u SET u.isDeleted = true WHERE u.id = :userId")
     void withdrawalUser(Long userId);
+
+    Optional<String> findNicknameById(Long id);
 }
