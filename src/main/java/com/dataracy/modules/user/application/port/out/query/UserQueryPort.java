@@ -28,4 +28,6 @@ public interface UserQueryPort {
      * @return 해당 이메일을 가진 사용자가 존재하면 User를 포함한 Optional, 없으면 빈 Optional
      */
     Optional<User> findUserByEmail(String email);
+
+    Optional<String> findNicknameById(Long userId);
 }
