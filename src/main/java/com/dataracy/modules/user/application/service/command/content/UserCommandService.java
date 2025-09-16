@@ -17,8 +17,13 @@ import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoR
 import com.dataracy.modules.user.application.port.in.command.command.LogoutUserUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.ModifyUserInfoUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.WithdrawUserUseCase;
+import com.dataracy.modules.security.handler.SecurityContextProvider;
 import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
+import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
+import com.dataracy.modules.user.domain.exception.UserException;
+import com.dataracy.modules.user.domain.model.User;
+import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +40,7 @@ public class UserCommandService implements
         LogoutUserUseCase
 {
     private final UserCommandPort userCommandPort;
+    private final UserQueryPort userQueryPort;
 
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
     private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
@@ -70,6 +76,7 @@ public class UserCommandService implements
 
         // 회원 정보 수정 요청 정보 유효성 검사
         validateModifyUserInfo(
+                userId,
                 requestDto.nickname(),
                 requestDto.authorLevelId(),
                 requestDto.occupationId(),
@@ -90,6 +97,7 @@ public class UserCommandService implements
      *
      * 요청된 프로필 이미지, 닉네임, 작성자 유형(필수), 선택적 직업·방문경로 및 토픽 ID들의 유효성을 확인합니다.
      *
+     * @param userId 로그인한 유저 아이디
      * @param nickname 수정할 닉네임(중복 검사 대상)
      * @param authorLevelId 필수인 작성자 유형 ID
      * @param occupationId 선택적 직업 ID(널이면 검사하지 않음)
@@ -98,6 +106,7 @@ public class UserCommandService implements
      * @param profileImageFile 업로드할 프로필 이미지 파일(널 또는 비어있지 않은 경우 이미지 형식 검사)
      */
     private void validateModifyUserInfo(
+            Long userId,
             String nickname,
             Long authorLevelId,
             Long occupationId,
@@ -108,8 +117,16 @@ public class UserCommandService implements
         // 프로필 이미지 파일 유효성 검사
         FileUtil.validateImageFile(profileImageFile);
 
-        // 닉네임 중복 체크
-        duplicateNicknameUseCase.validateDuplicatedNickname(nickname);
+        String savedNickname = userQueryPort.findNicknameById(userId)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("ModifyUserInfoUseCase", "[회원 정보 수정] 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
+                });
+
+        if (!savedNickname.equals(nickname)) {
+            // 닉네임 중복 체크
+            duplicateNicknameUseCase.validateDuplicatedNickname(nickname);
+        }
 
         // 작성자 유형 유효성 검사(필수 컬럼)
         validateAuthorLevelUseCase.validateAuthorLevel(authorLevelId);
@@ -194,6 +211,10 @@ public class UserCommandService implements
         }
 
         manageRefreshTokenUseCase.deleteRefreshToken(String.valueOf(userId));
+        
+        // SecurityContext의 인증 정보 삭제
+        SecurityContextProvider.clearSecurityContext();
+
         // 추후 고보안 서비스일 경우 어세스토큰 블랙리스트 처리까지 생각
 
         LoggerFactory.service().logSuccess("LogoutUserUseCase", "회원 로그아웃 서비스 성공 userId=" + userId, startTime);
