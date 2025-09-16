@@ -135,6 +135,46 @@ public class CookieUtil {
     }
 
     /**
+     * 지정한 이름의 쿠키를 삭제합니다.
+     * 쿠키를 삭제하기 위해 maxAge를 0으로 설정하고 빈 값을 설정합니다.
+     *
+     * @param request HTTP 요청 객체 (프로토콜 감지용)
+     * @param response HTTP 응답 객체
+     * @param name 삭제할 쿠키의 이름
+     */
+    public void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
+        boolean isSecure = isSecureEnvironment(request);
+        String sameSite = getSameSitePolicy(request);
+        String domain = getCookieDomain();
+        
+        ResponseCookie cookie = ResponseCookie.from(name, "")
+                .httpOnly(true)
+                .secure(isSecure)
+                .sameSite(sameSite)
+                .domain(domain)
+                .path("/")
+                .maxAge(Duration.ofSeconds(0))
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    /**
+     * 로그아웃 시 모든 인증 관련 쿠키를 삭제합니다.
+     * accessToken, refreshToken, accessTokenExpiration, refreshTokenExpiration, registerToken 쿠키를 모두 삭제합니다.
+     *
+     * @param request HTTP 요청 객체 (프로토콜 감지용)
+     * @param response HTTP 응답 객체
+     */
+    public void deleteAllAuthCookies(HttpServletRequest request, HttpServletResponse response) {
+        deleteCookie(request, response, "accessToken");
+        deleteCookie(request, response, "refreshToken");
+        deleteCookie(request, response, "accessTokenExpiration");
+        deleteCookie(request, response, "refreshTokenExpiration");
+        deleteCookie(request, response, "registerToken");
+    }
+
+    /**
      * HTTP 요청에서 "anonymousId" 쿠키 값을 반환하거나, 존재하지 않을 경우 새로 생성하여 응답에 설정한 후 반환합니다.
      *
      * @param request HTTP 요청 객체

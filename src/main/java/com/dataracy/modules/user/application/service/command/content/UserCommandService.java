@@ -17,6 +17,7 @@ import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoR
 import com.dataracy.modules.user.application.port.in.command.command.LogoutUserUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.ModifyUserInfoUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.WithdrawUserUseCase;
+import com.dataracy.modules.security.handler.SecurityContextProvider;
 import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
 import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
@@ -210,6 +211,10 @@ public class UserCommandService implements
         }
 
         manageRefreshTokenUseCase.deleteRefreshToken(String.valueOf(userId));
+        
+        // SecurityContext의 인증 정보 삭제
+        SecurityContextProvider.clearSecurityContext();
+
         // 추후 고보안 서비스일 경우 어세스토큰 블랙리스트 처리까지 생각
 
         LoggerFactory.service().logSuccess("LogoutUserUseCase", "회원 로그아웃 서비스 성공 userId=" + userId, startTime);
