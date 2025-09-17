@@ -11,6 +11,7 @@ import com.dataracy.modules.auth.domain.status.AuthSuccessStatus;
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.CookieUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,7 @@ public class AuthController implements AuthApi {
     @Override
     public ResponseEntity<SuccessResponse<Void>> login(
             SelfLoginWebRequest webRequest,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[Login] 로그인 API 요청 시작");
@@ -49,7 +51,7 @@ public class AuthController implements AuthApi {
             // 리프레시 토큰 쿠키 저장
             long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
             int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
-            cookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), maxAge);
+            cookieUtil.setCookie(request, response, "refreshToken", responseDto.refreshToken(), maxAge);
         } finally {
             LoggerFactory.api().logResponse("[Login] 로그인 API 응답 완료", startTime);
         }
@@ -66,6 +68,7 @@ public class AuthController implements AuthApi {
     @Override
     public ResponseEntity<SuccessResponse<Void>> reIssueToken(
             String refreshToken,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
         Instant startTime = LoggerFactory.api().logRequest("[ReIssueToken] 토큰 재발급 API 요청 시작");
@@ -73,7 +76,7 @@ public class AuthController implements AuthApi {
             // 토큰 재발급 진행
             ReIssueTokenResponse responseDto = reIssueTokenUseCase.reIssueToken(refreshToken);
             // 어세스 토큰, 어세스 토큰 만료기간, 리프레시 토큰 쿠키 저장
-            setResponseHeaders(response, responseDto);
+            setResponseHeaders(request, response, responseDto);
         } finally {
             LoggerFactory.api().logResponse("[ReIssueToken] 토큰 재발급 API 응답 완료", startTime);
         }
@@ -84,17 +87,18 @@ public class AuthController implements AuthApi {
     /**
      * 재발급된 토큰 정보를 기반으로 어세스 토큰, 어세스 토큰 만료기간, 리프레시 토큰을 HTTP 응답 쿠키에 저장합니다.
      *
+     * @param request HTTP 요청 객체 (프로토콜 감지용)
      * @param response HTTP 응답 객체로, 쿠키가 설정됩니다.
      * @param responseDto 재발급된 토큰 및 만료 정보를 포함하는 DTO입니다.
      */
-    private void setResponseHeaders(HttpServletResponse response, ReIssueTokenResponse responseDto) {
+    private void setResponseHeaders(HttpServletRequest request, HttpServletResponse response, ReIssueTokenResponse responseDto) {
         long accessTokenExpirationSeconds = responseDto.accessTokenExpiration() / 1000;
         int accessTokenMaxAge = accessTokenExpirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) accessTokenExpirationSeconds;
-        cookieUtil.setCookie(response, "accessToken", responseDto.accessToken(), accessTokenMaxAge);
-        cookieUtil.setCookie(response, "accessTokenExpiration", String.valueOf(((long) accessTokenMaxAge) * 1000), accessTokenMaxAge);
+        cookieUtil.setCookie(request, response, "accessToken", responseDto.accessToken(), accessTokenMaxAge);
+        cookieUtil.setCookie(request, response, "accessTokenExpiration", String.valueOf(((long) accessTokenMaxAge) * 1000), accessTokenMaxAge);
 
         long refreshTokenExpirationSeconds = responseDto.refreshTokenExpiration() / 1000;
         int refreshTokenMaxAge = refreshTokenExpirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) refreshTokenExpirationSeconds;
-        cookieUtil.setCookie(response, "refreshToken", responseDto.refreshToken(), refreshTokenMaxAge);
+        cookieUtil.setCookie(request, response, "refreshToken", responseDto.refreshToken(), refreshTokenMaxAge);
     }
 }

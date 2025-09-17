@@ -4,36 +4,32 @@ services:
     container_name: elasticsearch-prod
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=${ELASTIC_XPACK_ENABLED}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
-    ports:
-      - "9200:9200"
+    # 운영 환경에서는 포트 노출 제거 (내부 네트워크만 사용)
     volumes:
       - elasticsearch-prod-data:/usr/share/elasticsearch/data
-    env_file:
-      - /home/ubuntu/env-config/.env.prod
     networks:
-      - dataracy-network
+      - dataracy-network-prod
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.13.4
     container_name: kibana-prod
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=${ELASTIC_USERNAME}
-      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
-    ports:
-      - "5601:5601"
-    env_file:
-      - /home/ubuntu/env-config/.env.prod
+      - XPACK_SECURITY_ENABLED=false
+      - SERVER_HOST=0.0.0.0
+      - SERVER_BASEPATH=/kibana
+      - SERVER_REWRITEBASEPATH=true
+      - SERVER_PUBLICBASEURL=https://api.dataracy.co.kr/kibana
+    # 운영 환경에서는 포트 노출 제거 (NGINX를 통해서만 접근)
     networks:
-      - dataracy-network
+      - dataracy-network-prod
     depends_on:
       - elasticsearch
 
 networks:
-  dataracy-network:
+  dataracy-network-prod:
     external: true
 
 volumes:
