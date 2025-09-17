@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -75,13 +77,16 @@ public interface UserCommandApi {
 
     /**
      * 현재 로그인한 사용자의 세션과 리프레시 토큰을 무효화하여 로그아웃을 수행합니다.
+     * 모든 인증 관련 쿠키(accessToken, refreshToken, accessTokenExpiration, resetToken)를 삭제합니다.
      *
      * @param refreshToken 쿠키에 담긴 리프레시 토큰 — 해당 토큰을 무효화하여 로그아웃을 완료합니다.
+     * @param request HTTP 요청 객체 (쿠키 삭제용)
+     * @param response HTTP 응답 객체 (쿠키 삭제용)
      * @return 성공 응답을 담은 ResponseEntity(성공 시 본문은 비어있음)
      */
     @Operation(
             summary = "로그아웃",
-            description = "현재 로그인한 사용자의 세션 또는 RefreshToken을 무효화하고 로그아웃합니다.",
+            description = "현재 로그인한 사용자의 세션 또는 RefreshToken을 무효화하고 모든 인증 관련 쿠키를 삭제하여 로그아웃합니다.",
             security = {}
     )
     @ApiResponses(value = {
@@ -101,6 +106,12 @@ public interface UserCommandApi {
                     schema = @Schema(type = "string")
             )
             @CookieValue(value = "refreshToken")
-            String refreshToken
+            String refreshToken,
+
+            @Parameter(hidden = true)
+            HttpServletRequest request,
+
+            @Parameter(hidden = true)
+            HttpServletResponse response
     );
 }

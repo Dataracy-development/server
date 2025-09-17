@@ -2,6 +2,7 @@ package com.dataracy.modules.user.adapter.web.api.command;
 
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.user.adapter.web.mapper.command.UserCommandWebMapper;
 import com.dataracy.modules.user.adapter.web.request.command.ModifyUserInfoWebRequest;
 import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
@@ -9,6 +10,8 @@ import com.dataracy.modules.user.application.port.in.command.command.LogoutUserU
 import com.dataracy.modules.user.application.port.in.command.command.ModifyUserInfoUseCase;
 import com.dataracy.modules.user.application.port.in.command.command.WithdrawUserUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ public class UseCommandController implements UserCommandApi {
     private final ModifyUserInfoUseCase modifyUserInfoUseCase;
     private final WithdrawUserUseCase withdrawUserUseCase;
     private final LogoutUserUseCase logoutUserUseCase;
+    private final CookieUtil cookieUtil;
 
     /**
      * 사용자 정보(프로필 이미지 포함)를 수정하고 성공 응답을 반환한다.
@@ -81,18 +85,22 @@ public class UseCommandController implements UserCommandApi {
      * 사용자 로그아웃을 수행하고 표준 성공 응답을 반환한다.
      *
      * 지정된 사용자의 리프레시 토큰을 무효화하도록 로그아웃 처리를 use case에 위임하고,
-     * 처리 완료 시 HTTP 200과 UserSuccessStatus.OK_LOGOUT을 담은 SuccessResponse<Void>를 반환한다.
+     * 모든 인증 관련 쿠키를 삭제한 후 HTTP 200과 UserSuccessStatus.OK_LOGOUT을 담은 SuccessResponse<Void>를 반환한다.
      *
      * @param userId 로그아웃 대상 사용자의 식별자
      * @param refreshToken 무효화할 리프레시 토큰 (null일 수 있음)
+     * @param request HTTP 요청 객체 (쿠키 삭제용)
+     * @param response HTTP 응답 객체 (쿠키 삭제용)
      * @return HTTP 200과 성공 상태를 포함한 SuccessResponse<Void>
      */
     @Override
-    public ResponseEntity<SuccessResponse<Void>> logout(Long userId, String refreshToken) {
+    public ResponseEntity<SuccessResponse<Void>> logout(Long userId, String refreshToken, HttpServletRequest request, HttpServletResponse response) {
         Instant startTime = LoggerFactory.api().logRequest("[Logout] 회원 로그아웃 API 요청 시작");
 
         try {
             logoutUserUseCase.logout(userId, refreshToken);
+            // 모든 인증 관련 쿠키 삭제
+            cookieUtil.deleteAllAuthCookies(request, response);
         } finally {
             LoggerFactory.api().logResponse("[Logout] 회원 로그아웃 API 응답 완료", startTime);
         }

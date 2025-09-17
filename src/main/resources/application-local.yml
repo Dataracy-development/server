@@ -72,6 +72,7 @@ elasticsearch:
     protocol: http
     url: http://${ELASTIC_SEARCH_HOST}:${ELASTIC_SEARCH_PORT}
     ssl: false
+    enabled: false
 
 management:
   metrics:

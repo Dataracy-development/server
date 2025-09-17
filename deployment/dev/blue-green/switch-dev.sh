@@ -1,5 +1,5 @@
 #!/bin/bash
-# switch-dev.sh — Blue/Green 무중단 배포 (upstream 교체 후 NGINX 재시작 기본)
+# switch-dev.sh — Blue/Green 무중단 배포 (개발 환경 - HTTP만 사용)
 set -Eeuo pipefail
 
 #######################################
@@ -33,10 +33,7 @@ ALWAYS_RELOAD=false
 NGINX_COMPOSE="../docker/docker-compose-nginx-dev.yml"
 NGINX_SVC_NAME="nginx-proxy-dev"
 
-# ★ Kibana 업스트림(환경변수로 오버라이드 가능)
-# - NGINX가 같은 docker 네트워크면: kibana-dev:5601
-# - 호스트에서 직접 프록시면: 127.0.0.1:5601
-KIBANA_UPSTREAM="${KIBANA_UPSTREAM:-kibana-dev:5601}"
+# 개발 환경에서는 kibana 제거됨 (모니터링 서비스 비활성화)
 
 #######################################
 # 현재/다음 색상
@@ -94,21 +91,18 @@ fi
 UPSTREAM_DEST="../nginx/upstream-blue-green-dev.conf"
 UPSTREAM_TMP="../nginx/upstream-blue-green-dev.conf.tmp"
 
-log "[INFO] NGINX upstream 갱신(원자적 교체): $BACKEND_NAME:8080, Kibana:$KIBANA_UPSTREAM → $UPSTREAM_DEST"
+log "[INFO] NGINX upstream 갱신(원자적 교체): $BACKEND_NAME:8080 → $UPSTREAM_DEST"
 cat > "$UPSTREAM_TMP" <<'EOF'
 # 이 파일은 switch-dev.sh에 의해 자동 생성된다.
-# backend와 kibana upstream 대상은 아래 server 라인만 변경된다.
+# backend upstream 대상은 아래 server 라인만 변경된다.
 
 upstream backend {
   server REPLACE_BACKEND_NAME:8080;
 }
 
-# ★ Kibana 업스트림(경로 프록시용)
-upstream kibana_dev {
-  server REPLACE_KIBANA_UPSTREAM;
-}
+# 개발 환경에서는 kibana 제거됨 (모니터링 서비스 비활성화)
 
-# HTTP server for dev-api.dataracy.co.kr (개발 환경은 HTTP/HTTPS 모두 지원)
+# HTTP server for dev-api.dataracy.co.kr (개발 환경은 HTTP만 사용)
 server {
   listen 80;
   server_name dev-api.dataracy.co.kr;
@@ -126,7 +120,7 @@ server {
   proxy_set_header Connection "upgrade";
   proxy_set_header Cookie $http_cookie;
 
-  # API
+  # API 요청 프록시
   location /api {
     proxy_pass http://backend;
     proxy_request_buffering off;
@@ -134,7 +128,7 @@ server {
     proxy_read_timeout 300s;
   }
 
-  # Swagger/UI/Docs: 캐시 무효화
+  # Swagger UI (정적 리소스) - 캐시 무효화
   location /swagger-ui/ {
     proxy_pass http://backend/swagger-ui/;
     add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
@@ -142,6 +136,8 @@ server {
     expires -1;
     etag off;
   }
+
+  # OpenAPI JSON - 캐시 무효화
   location /v3/api-docs {
     proxy_pass http://backend/v3/api-docs;
     add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
@@ -149,6 +145,8 @@ server {
     expires -1;
     etag off;
   }
+
+  # Swagger UI가 참조하는 설정 - 캐시 무효화
   location /swagger-config {
     proxy_pass http://backend/swagger-config;
     add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
@@ -156,6 +154,8 @@ server {
     expires -1;
     etag off;
   }
+
+  # (선택) webjars도 최신 강제 반영 원하면 캐시 무효화
   location /webjars/ {
     proxy_pass http://backend/webjars/;
     add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
@@ -164,28 +164,14 @@ server {
     etag off;
   }
 
-  # ★ Kibana (경로 /kibana)
-  location /kibana/ {
-    proxy_pass http://kibana_dev/kibana/;     # 뒤 슬래시 필수
-    proxy_read_timeout 600s;
-    proxy_send_timeout 600s;
+  # 개발 환경에서는 kibana 제거됨 (모니터링 서비스 비활성화)
 
-    # WebSocket
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-
-    # 프록시 뒤 basePath 사용 시 권장 헤더
-    proxy_set_header X-Forwarded-Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Forwarded-Prefix /kibana;
-  }
-
-  # 헬스
+  # 헬스 체크
   location /actuator/health {
     proxy_pass http://backend/actuator/health;
   }
 
-  # 기타
+  # 나머지 fallback
   location / {
     proxy_pass http://backend;
     proxy_set_header Host $host;
@@ -199,110 +185,12 @@ server {
   }
 }
 
-# HTTPS server for dev-api.dataracy.co.kr
-server {
-  listen 443 ssl;
-  http2 on;
-  server_name dev-api.dataracy.co.kr;
-
-  # ★ 추가: Cloudflare Origin Certificate 경로
-  ssl_certificate     /etc/nginx/ssl/cloudflare/origin.crt;
-  ssl_certificate_key /etc/nginx/ssl/cloudflare/origin.key;
-
-  # TLS 보안 옵션
-  ssl_protocols TLSv1.2 TLSv1.3;
-  ssl_prefer_server_ciphers on;
-
-  client_max_body_size 50m;
-  client_body_timeout 120s;
-
-  # 공통 헤더
-  proxy_set_header Host $host;
-  proxy_set_header X-Real-IP $remote_addr;
-  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-  proxy_set_header X-Forwarded-Proto $scheme;
-  proxy_http_version 1.1;
-  proxy_set_header Upgrade $http_upgrade;
-  proxy_set_header Connection "upgrade";
-  proxy_set_header Cookie $http_cookie;
-
-  # API
-  location /api {
-    proxy_pass http://backend;
-    proxy_request_buffering off;
-    proxy_send_timeout 300s;
-    proxy_read_timeout 300s;
-  }
-
-  # Swagger/UI/Docs: 캐시 무효화
-  location /swagger-ui/ {
-    proxy_pass http://backend/swagger-ui/;
-    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
-    add_header Pragma "no-cache" always;
-    expires -1;
-    etag off;
-  }
-  location /v3/api-docs {
-    proxy_pass http://backend/v3/api-docs;
-    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
-    add_header Pragma "no-cache" always;
-    expires -1;
-    etag off;
-  }
-  location /swagger-config {
-    proxy_pass http://backend/swagger-config;
-    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
-    add_header Pragma "no-cache" always;
-    expires -1;
-    etag off;
-  }
-  location /webjars/ {
-    proxy_pass http://backend/webjars/;
-    add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
-    add_header Pragma "no-cache" always;
-    expires -1;
-    etag off;
-  }
-
-  # ★ Kibana (경로 /kibana)
-  location /kibana/ {
-    proxy_pass http://kibana_dev/kibana/;     # 뒤 슬래시 필수
-    proxy_read_timeout 600s;
-    proxy_send_timeout 600s;
-
-    # WebSocket
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-
-    # 프록시 뒤 basePath 사용 시 권장 헤더
-    proxy_set_header X-Forwarded-Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Forwarded-Prefix /kibana;
-  }
-
-  # 헬스
-  location /actuator/health {
-    proxy_pass http://backend/actuator/health;
-  }
-
-  # 기타
-  location / {
-    proxy_pass http://backend;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_set_header Cookie $http_cookie;
-  }
-}
+# 개발 환경에서는 HTTPS 비활성화 (HTTP만 사용)
+# 보안 정책: 개발 환경은 HTTP만 허용, 운영 환경은 HTTPS만 허용
 EOF
 
-# 실제 backend/kibana 대상 치환
+# 실제 backend 대상 치환
 sed -i "s|REPLACE_BACKEND_NAME|$BACKEND_NAME|g" "$UPSTREAM_TMP"
-sed -i "s|REPLACE_KIBANA_UPSTREAM|$KIBANA_UPSTREAM|g" "$UPSTREAM_TMP"
 mv -f "$UPSTREAM_TMP" "$UPSTREAM_DEST"
 
 #######################################

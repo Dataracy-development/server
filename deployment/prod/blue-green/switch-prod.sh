@@ -38,6 +38,11 @@ NGINX_SVC_NAME="nginx-proxy-prod"
 # - 호스트에서 직접 프록시면: 127.0.0.1:5601
 KIBANA_UPSTREAM="${KIBANA_UPSTREAM:-kibana-prod:5601}"
 
+# ★ Grafana 업스트림(환경변수로 오버라이드 가능)
+# - NGINX가 같은 docker 네트워크면: grafana-prod:3000
+# - 호스트에서 직접 프록시면: 127.0.0.1:3000
+GRAFANA_UPSTREAM="${GRAFANA_UPSTREAM:-grafana-prod:3000}"
+
 #######################################
 # 현재/다음 색상
 #######################################
@@ -94,7 +99,7 @@ fi
 UPSTREAM_DEST="../nginx/upstream-blue-green-prod.conf"
 UPSTREAM_TMP="../nginx/upstream-blue-green-prod.conf.tmp"
 
-log "[INFO] NGINX upstream 갱신(원자적 교체): $BACKEND_NAME:8080, Kibana:$KIBANA_UPSTREAM → $UPSTREAM_DEST"
+log "[INFO] NGINX upstream 갱신(원자적 교체): $BACKEND_NAME:8080, Kibana:$KIBANA_UPSTREAM, Grafana:$GRAFANA_UPSTREAM → $UPSTREAM_DEST"
 cat > "$UPSTREAM_TMP" <<'EOF'
 # 이 파일은 switch-prod.sh에 의해 자동 생성된다.
 # backend와 kibana upstream 대상은 아래 server 라인만 변경된다.
@@ -108,12 +113,19 @@ upstream kibana_prod {
   server REPLACE_KIBANA_UPSTREAM;
 }
 
+# ★ Grafana 업스트림(경로 프록시용)
+upstream grafana_prod {
+  server REPLACE_GRAFANA_UPSTREAM;
+}
+
+
 # HTTP to HTTPS redirect for api.dataracy.co.kr (운영 환경은 HTTPS 강제)
 server {
   listen 80;
   server_name api.dataracy.co.kr;
   return 301 https://$server_name$request_uri;
 }
+
 
 # HTTPS server for api.dataracy.co.kr (운영 환경)
 server {
@@ -196,6 +208,22 @@ server {
     proxy_set_header X-Forwarded-Prefix /kibana;
   }
 
+  # ★ Grafana (경로 /grafana)
+  location /grafana/ {
+    proxy_pass http://grafana_prod/;     # 뒤 슬래시 필수
+    proxy_read_timeout 600s;
+    proxy_send_timeout 600s;
+
+    # WebSocket
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    # 프록시 뒤 basePath 사용 시 권장 헤더
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Prefix /grafana;
+  }
+
   # 헬스
   location /actuator/health {
     proxy_pass http://backend/actuator/health;
@@ -216,9 +244,10 @@ server {
 }
 EOF
 
-# 실제 backend/kibana 대상 치환
+# 실제 backend/kibana/grafana 대상 치환
 sed -i "s|REPLACE_BACKEND_NAME|$BACKEND_NAME|g" "$UPSTREAM_TMP"
 sed -i "s|REPLACE_KIBANA_UPSTREAM|$KIBANA_UPSTREAM|g" "$UPSTREAM_TMP"
+sed -i "s|REPLACE_GRAFANA_UPSTREAM|$GRAFANA_UPSTREAM|g" "$UPSTREAM_TMP"
 mv -f "$UPSTREAM_TMP" "$UPSTREAM_DEST"
 
 #######################################

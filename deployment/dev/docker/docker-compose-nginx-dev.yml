@@ -5,7 +5,7 @@ services:
     restart: always
     ports:
       - "8080:80"
-      - "8443:443"
+      # 개발 환경에서는 HTTPS 비활성화 (HTTP만 사용)
     volumes:
       - ../nginx/nginx-dev.conf:/etc/nginx/nginx.conf:ro
       - ../nginx/upstream-blue-green-dev.conf:/etc/nginx/conf.d/upstream.conf:ro

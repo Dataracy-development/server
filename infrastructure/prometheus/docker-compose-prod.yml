@@ -2,45 +2,60 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus-prod
-    ports:
-      - "9092:9090"
+    # 운영 환경에서는 포트 노출 제거 (내부 네트워크만 사용)
     volumes:
-      - ./prometheus-prod.yml:/etc/prometheus/prometheus.yml
+      - ../prometheus/prometheus-prod.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-prod-data:/prometheus
     networks:
-      - monitor
+      - dataracy-network-prod
     deploy:
       resources:
         limits:
           memory: 2G
-          cpus: '1.0'
+          cpus: "1.0"
         reservations:
           memory: 512M
-          cpus: '0.5'
+          cpus: "0.5"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.retention.time=30d"
+      - "--web.enable-lifecycle"
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana-prod
-    ports:
-      - "3002:3000"
+    # 운영 환경에서는 포트 노출 제거 (NGINX를 통해서만 접근)
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SERVER_ROOT_URL=https://api.dataracy.co.kr/grafana
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_ANONYMOUS_ENABLED=false
     volumes:
       - grafana-prod-data:/var/lib/grafana
     networks:
-      - monitor
+      - dataracy-network-prod
+    depends_on:
+      - prometheus
     deploy:
       resources:
         limits:
           memory: 1G
-          cpus: '0.5'
+          cpus: "0.5"
         reservations:
           memory: 256M
-          cpus: '0.25'
+          cpus: "0.25"
 
 networks:
-  monitor:
-    driver: bridge
+  dataracy-network-prod:
+    external: true
 
 volumes:
+  prometheus-prod-data:
+    driver: local
   grafana-prod-data:
+    driver: local
