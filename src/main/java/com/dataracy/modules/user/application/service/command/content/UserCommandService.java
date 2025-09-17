@@ -64,6 +64,26 @@ public class UserCommandService implements
      * @param requestDto        수정할 사용자 정보 DTO; 닉네임은 분산락 키로 사용됨
      */
     @Override
+    @Transactional
+    public void modifyUserInfo(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto) {
+        Instant startTime = LoggerFactory.service().logStart("ModifyUserInfoUseCase", "회원 정보 수정 서비스 시작 userId=" + userId);
+
+        // 기존 닉네임 조회
+        String savedNickname = userQueryPort.findNicknameById(userId)
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning("ModifyUserInfoUseCase", "[회원 정보 수정] 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
+                });
+
+        // 닉네임이 변경되는 경우에만 분산락 적용
+        if (!savedNickname.equals(requestDto.nickname())) {
+            modifyUserInfoWithLock(userId, savedNickname, profileImageFile, requestDto, startTime);
+        } else {
+            // 닉네임이 변경되지 않는 경우 분산락 없이 처리
+            modifyUserInfoWithoutLock(userId, profileImageFile, requestDto, startTime);
+        }
+    }
+
     @DistributedLock(
             key = "'lock:user:modify:nickname:' + #requestDto.nickname()",
             waitTime = 500L,
@@ -71,13 +91,28 @@ public class UserCommandService implements
             retry = 2
     )
     @Transactional
-    public void modifyUserInfo(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("ModifyUserInfoUseCase", "회원 정보 수정 서비스 시작 userId=" + userId);
-
+    public void modifyUserInfoWithLock(Long userId, String savedNickname, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
         // 회원 정보 수정 요청 정보 유효성 검사
         validateModifyUserInfo(
-                userId,
                 requestDto.nickname(),
+                requestDto.authorLevelId(),
+                requestDto.occupationId(),
+                requestDto.visitSourceId(),
+                requestDto.topicIds(),
+                profileImageFile
+        );
+        userCommandPort.modifyUserInfo(userId, requestDto);
+
+        // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
+        modifyProfileImageFile(profileImageFile, userId, "ModifyUserInfoUseCase");
+
+        LoggerFactory.service().logSuccess("ModifyUserInfoUseCase", "회원 정보 수정 서비스 성공 userId=" + userId, startTime);
+    }
+
+    @Transactional
+    public void modifyUserInfoWithoutLock(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
+        // 회원 정보 수정 요청 정보 유효성 검사 (닉네임 중복 검사 제외)
+        validateModifyUserInfoWithoutNickname(
                 requestDto.authorLevelId(),
                 requestDto.occupationId(),
                 requestDto.visitSourceId(),
@@ -97,7 +132,6 @@ public class UserCommandService implements
      *
      * 요청된 프로필 이미지, 닉네임, 작성자 유형(필수), 선택적 직업·방문경로 및 토픽 ID들의 유효성을 확인합니다.
      *
-     * @param userId 로그인한 유저 아이디
      * @param nickname 수정할 닉네임(중복 검사 대상)
      * @param authorLevelId 필수인 작성자 유형 ID
      * @param occupationId 선택적 직업 ID(널이면 검사하지 않음)
@@ -106,7 +140,6 @@ public class UserCommandService implements
      * @param profileImageFile 업로드할 프로필 이미지 파일(널 또는 비어있지 않은 경우 이미지 형식 검사)
      */
     private void validateModifyUserInfo(
-            Long userId,
             String nickname,
             Long authorLevelId,
             Long occupationId,
@@ -117,16 +150,44 @@ public class UserCommandService implements
         // 프로필 이미지 파일 유효성 검사
         FileUtil.validateImageFile(profileImageFile);
 
-        String savedNickname = userQueryPort.findNicknameById(userId)
-                .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("ModifyUserInfoUseCase", "[회원 정보 수정] 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
-                    return new UserException(UserErrorStatus.NOT_FOUND_USER);
-                });
+        duplicateNicknameUseCase.validateDuplicatedNickname(nickname);
 
-        if (!savedNickname.equals(nickname)) {
-            // 닉네임 중복 체크
-            duplicateNicknameUseCase.validateDuplicatedNickname(nickname);
+        // 작성자 유형 유효성 검사(필수 컬럼)
+        validateAuthorLevelUseCase.validateAuthorLevel(authorLevelId);
+        // 직업 유효성 검사(선택 컬럼)
+        if (occupationId != null) {
+            validateOccupationUseCase.validateOccupation(occupationId);
         }
+        // 방문 경로 유효성 검사(선택 컬럼)
+        if (visitSourceId != null) {
+            validateVisitSourceUseCase.validateVisitSource(visitSourceId);
+        }
+        // 토픽 id를 통해 토픽 존재 유효성 검사를 시행한다.
+        if (topicIds != null && !topicIds.isEmpty()) {
+            for (Long topicId : topicIds) {
+                validateTopicUseCase.validateTopic(topicId);
+            }
+        }
+    }
+
+    /**
+     * 닉네임 중복 검사 없이 사용자 정보 수정 요청의 입력값들을 검증합니다.
+     *
+     * @param authorLevelId 필수 작성자 유형 ID
+     * @param occupationId 선택적 직업 ID(널이면 검사하지 않음)
+     * @param visitSourceId 선택적 방문경로 ID(널이면 검사하지 않음)
+     * @param topicIds 선택적 토픽 ID 목록(널이거나 비어있지 않은 경우 각 ID 존재 여부를 검사)
+     * @param profileImageFile 업로드할 프로필 이미지 파일(널 또는 비어있지 않은 경우 이미지 형식 검사)
+     */
+    private void validateModifyUserInfoWithoutNickname(
+            Long authorLevelId,
+            Long occupationId,
+            Long visitSourceId,
+            List<Long> topicIds,
+            MultipartFile profileImageFile
+    ) {
+        // 프로필 이미지 파일 유효성 검사
+        FileUtil.validateImageFile(profileImageFile);
 
         // 작성자 유형 유효성 검사(필수 컬럼)
         validateAuthorLevelUseCase.validateAuthorLevel(authorLevelId);
