@@ -49,5 +49,12 @@ public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
     @Query("UPDATE UserEntity u SET u.isDeleted = true WHERE u.id = :userId")
     void withdrawalUser(Long userId);
 
+    /**
+     * 주어진 사용자 ID로 닉네임만 조회합니다.
+     *
+     * @param id 조회할 사용자의 ID
+     * @return 해당 사용자의 닉네임, 존재하지 않으면 Optional.empty()
+     */
+    @Query("SELECT u.nickname FROM UserEntity u WHERE u.id = :id")
     Optional<String> findNicknameById(Long id);
 }
