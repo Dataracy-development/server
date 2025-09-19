@@ -226,7 +226,7 @@ export function capacity() {
 
 ### 도메인별 특화 메트릭
 
-- **Auth**: `jwt_generation_time`, `password_validation_time`, `redis_operation_time`
+- **Auth**: `login_success_rate`, `login_response_time`, `login_attempts`, `auth_errors`, `bad_request_errors`, `unauthorized_errors`, `forbidden_errors`, `not_found_errors`, `concurrent_users`, `throughput`, `error_rate`
 - **Project**: `file_processing_time`, `s3_upload_time`, `metadata_processing_time`
 - **Dataset**: `file_processing_time`, `s3_upload_time`, `thumbnail_processing_time`
 - **Like**: `distributed_lock_acquisition_time`, `hotspot_conflicts`
@@ -243,6 +243,11 @@ export function capacity() {
 - 원인 분석: [문제의 근본 원인 분석]
 - 해결: [적용한 구체적인 해결책]
 - 결과: [정량적 개선 결과]
+
+⚠️ 주의사항:
+- 클라이언트 측 k6에서 측정 가능한 메트릭만 사용
+- 서버 내부 처리 시간은 측정 불가능하므로 제외
+- 실제 코드 구현을 기반으로 한 현실적인 스토리 작성
 ```
 
 ## 📝 체크리스트

@@ -21,7 +21,7 @@ services:
       - SERVER_HOST=0.0.0.0
       - SERVER_BASEPATH=/kibana
       - SERVER_REWRITEBASEPATH=true
-      - SERVER_PUBLICBASEURL=https://api.dataracy.co.kr/kibana
+      - SERVER_PUBLICBASEURL=https://api.dataracy.store/kibana
     # 운영 환경에서는 포트 노출 제거 (NGINX를 통해서만 접근)
     networks:
       - dataracy-network-prod

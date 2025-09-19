@@ -12,19 +12,19 @@ performance-test/
 │   ├── login.test.js        # 로그인 성능 최적화
 │   └── login-abuse.test.js  # 보안 시스템 구축
 ├── comment/                 # 댓글 도메인 (2개)
-│   ├── find-comments.test.js # 무한 스크롤 최적화
+│   ├── find-comments.test.js # 댓글 페이징 최적화
 │   └── modify-basic.test.js  # 실시간 댓글 시스템
 ├── dataset/                 # 데이터셋 도메인 (4개)
 │   ├── dataset-upload.test.js    # 대용량 파일 업로드
 │   ├── dataset-detail.test.js    # 복합 쿼리 최적화
 │   ├── dataset-popular.test.js   # 실시간 인기도 계산
-│   └── dataset-filter.test.js    # Elasticsearch 검색
+│   └── dataset-filter.test.js    # 데이터셋 필터링 검색
 ├── like/                    # 좋아요 도메인 (2개)
 │   ├── like-toggle-hotspot.test.js    # 핫스팟 분산 락
 │   └── like-distributed-load.test.js  # 분산 처리 최적화
 ├── project/                 # 프로젝트 도메인 (6개)
 │   ├── project-upload.test.js         # 대용량 프로젝트 업로드
-│   ├── project-search.test.js         # AI 기반 검색
+│   ├── project-search.test.js         # 프로젝트 실시간 검색
 │   ├── project-detail-read.test.js    # 복잡한 도메인 로직
 │   ├── project-popular-read.test.js   # 인기 콘텐츠 캐싱
 │   ├── project-latest-read.test.js    # 실시간 데이터 신선도
@@ -92,7 +92,7 @@ performance-test/
 
 ### 포트폴리오용 도메인별 특화 메트릭
 
-- **Auth 도메인 (2개)**: JWT 토큰 생성시간, 비밀번호 검증시간, 레이트 리미팅 효과성, 공격 탐지율
+- **Auth 도메인 (2개)**: 로그인 성공률, 응답시간, 에러율, 동시 사용자 수, 처리량, 레이트 리미팅 효과성, 공격 탐지율
 - **User 도메인 (3개)**: 회원가입 성공률, 데이터 마스킹시간, 이벤트 발행시간, 시스템 동기화
 - **Dataset 도메인 (4개)**: 파일 처리시간, S3 업로드시간, 복합 쿼리 성능, Elasticsearch 쿼리시간
 - **Project 도메인 (6개)**: 업로드 처리시간, 검색 응답시간, 캐시 히트율, 데이터 신선도, 필터링 정확성
@@ -251,7 +251,7 @@ k6 run --env AUTH_MODE=login --env EMAIL=test@example.com --env PASSWORD=passwor
 
 ### 응답 시간 목표
 
-- **인증 API**: p95 < 1000ms
+- **인증 API**: p95 < 500ms (로그인 성능 최적화 완료)
 - **조회 API**: p95 < 500ms
 - **수정 API**: p95 < 2000ms
 - **업로드 API**: p95 < 5000ms
