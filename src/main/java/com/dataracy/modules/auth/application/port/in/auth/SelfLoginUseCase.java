@@ -11,4 +11,13 @@ public interface SelfLoginUseCase {
      * @return 인증에 성공한 사용자를 위한 리프레시 토큰 응답
      */
     RefreshTokenResponse login(SelfLoginRequest requestDto);
+
+    /**
+     * 레이트 리미팅이 적용된 로그인 (IP 기반)
+     * 
+     * @param requestDto 로그인 요청 정보
+     * @param clientIp 클라이언트 IP 주소
+     * @return 발급된 리프레시 토큰과 만료 시간이 포함된 응답 객체
+     */
+    RefreshTokenResponse loginWithRateLimit(SelfLoginRequest requestDto, String clientIp);
 }

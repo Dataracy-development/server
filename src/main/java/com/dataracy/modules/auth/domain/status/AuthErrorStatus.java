@@ -39,7 +39,10 @@ public enum AuthErrorStatus implements BaseErrorCode {
     SHORT_JWT_SECRET(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-020", "JWT Secret 키는 최소 32자 이상이어야 합니다."),
 
     // 소셜 타입 오류
-    NOT_SUPPORTED_SOCIAL_PROVIDER_TYPE(HttpStatus.BAD_REQUEST, "AUTH-021", "지원되지 않는 소셜 로그인 유형입니다. (구글, 카카오만 가능)")
+    NOT_SUPPORTED_SOCIAL_PROVIDER_TYPE(HttpStatus.BAD_REQUEST, "AUTH-021", "지원되지 않는 소셜 로그인 유형입니다. (구글, 카카오만 가능)"),
+    
+    // 레이트 리미팅 오류
+    RATE_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "AUTH-022", "요청 횟수가 초과되었습니다. 잠시 후 다시 시도해주세요.")
     ;
 
     private final HttpStatus httpStatus;

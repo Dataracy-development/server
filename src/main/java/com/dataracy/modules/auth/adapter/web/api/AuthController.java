@@ -28,6 +28,36 @@ public class AuthController implements AuthApi {
     private final ReIssueTokenUseCase reIssueTokenUseCase;
     private final CookieUtil cookieUtil;
 
+/**
+     * 자체 로그인 요청을 처리하고, 인증에 성공하면 리프레시 토큰을 HTTP 쿠키에 저장한다.
+     *
+     * 사용자의 이메일과 비밀번호로 자체 로그인을 수행하며, 성공 시 리프레시 토큰을 응답 쿠키로 설정한다.
+     *
+     * @param webRequest 자체 로그인에 필요한 사용자 정보가 포함된 요청 객체
+     * @param response 리프레시 토큰을 쿠키로 저장할 HTTP 응답 객체
+     * @return 자체 로그인 성공 시 성공 상태를 포함한 응답
+     */
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> loginBefore(
+            SelfLoginWebRequest webRequest,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        Instant startTime = LoggerFactory.api().logRequest("[Login] 기본 로그인 API 요청 시작");
+        try {
+            SelfLoginRequest requestDto = authWebMapper.toApplicationDto(webRequest);
+            // 기본 로그인 진행 (레이트 리미팅 없음)
+            RefreshTokenResponse responseDto = selfLoginUseCase.login(requestDto);
+            // 리프레시 토큰 쿠키 저장
+            long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
+            int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
+            cookieUtil.setCookie(request, response, "refreshToken", responseDto.refreshToken(), maxAge);
+        } finally {
+            LoggerFactory.api().logResponse("[Login] 기본 로그인 API 응답 완료", startTime);
+        }
+        return ResponseEntity.ok(SuccessResponse.of(AuthSuccessStatus.OK_SELF_LOGIN));
+    }
+
     /**
      * 자체 로그인 요청을 처리하고, 인증에 성공하면 리프레시 토큰을 HTTP 쿠키에 저장한다.
      *
@@ -43,11 +73,15 @@ public class AuthController implements AuthApi {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        Instant startTime = LoggerFactory.api().logRequest("[Login] 로그인 API 요청 시작");
+        Instant startTime = LoggerFactory.api().logRequest("[Login] 개선된 레이트 리미팅 로그인 API 요청 시작");
         try {
+            // 클라이언트 IP 추출
+            String clientIp = getClientIp(request);
+            LoggerFactory.api().logInfo(String.format("클라이언트 IP 추출: %s", clientIp));
+            
             SelfLoginRequest requestDto = authWebMapper.toApplicationDto(webRequest);
-            // 자체 로그인 진행
-            RefreshTokenResponse responseDto = selfLoginUseCase.login(requestDto);
+            // 개선된 레이트 리미팅 적용 (사용자별+IP별, 정상/의심 사용자 구분)
+            RefreshTokenResponse responseDto = selfLoginUseCase.loginWithRateLimit(requestDto, clientIp);
             // 리프레시 토큰 쿠키 저장
             long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
             int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
@@ -56,6 +90,27 @@ public class AuthController implements AuthApi {
             LoggerFactory.api().logResponse("[Login] 로그인 API 응답 완료", startTime);
         }
         return ResponseEntity.ok(SuccessResponse.of(AuthSuccessStatus.OK_SELF_LOGIN));
+    }
+
+    /**
+     * 클라이언트의 실제 IP 주소를 추출합니다.
+     * 프록시나 로드 밸런서를 통한 요청도 고려합니다.
+     *
+     * @param request HTTP 요청 객체
+     * @return 클라이언트 IP 주소
+     */
+    private String getClientIp(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
+            return xForwardedFor.split(",")[0].trim();
+        }
+        
+        String xRealIp = request.getHeader("X-Real-IP");
+        if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
+            return xRealIp;
+        }
+        
+        return request.getRemoteAddr();
     }
 
     /**
