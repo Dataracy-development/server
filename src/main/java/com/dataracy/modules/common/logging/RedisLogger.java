@@ -80,4 +80,14 @@ public class RedisLogger extends BaseLogger {
     public void logError(String key, String message, Throwable e) {
         error(e, "[Redis 오류] {} - {}", key, message);
     }
+
+    /**
+     * Redis 작업에 대한 일반적인 정보를 기록합니다.
+     *
+     * @param key     Redis 연산과 관련된 키
+     * @param message 정보 메시지
+     */
+    public void logInfo(String key, String message) {
+        info("[Redis 정보] {} - {}", key, message);
+    }
 }

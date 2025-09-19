@@ -31,7 +31,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_SERVER_ROOT_URL=https://api.dataracy.co.kr/grafana
+      - GF_SERVER_ROOT_URL=https://api.dataracy.store/grafana
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_AUTH_ANONYMOUS_ENABLED=false

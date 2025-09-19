@@ -102,10 +102,10 @@ upstream backend {
 
 # 개발 환경에서는 kibana 제거됨 (모니터링 서비스 비활성화)
 
-# HTTP server for dev-api.dataracy.co.kr (개발 환경은 HTTP만 사용)
+# HTTP server for dev-api.dataracy.store (개발 환경은 HTTP만 사용)
 server {
   listen 80;
-  server_name dev-api.dataracy.co.kr;
+  server_name dev-api.dataracy.store;
   
   client_max_body_size 50m;
   client_body_timeout 120s;

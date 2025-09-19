@@ -58,9 +58,11 @@ spring:
             token-uri: ${KAKAO_TOKEN_URI}
             user-info-uri: ${KAKAO_USER_INFO_URI}
             user-name-attribute: ${KAKAO_USER_NAME_ATTRIBUTE}
+
   web:
     resources:
       static-locations: classpath:/static/
+
   kafka:
     properties:
       spring.json.add.type.headers: false
@@ -136,6 +138,15 @@ spring:
       comment-like-decrease:
         topic: comment-like-decrease-topic
         group-id: comment-like-decrease-consumer-group
+
+# 레이트 리미팅 설정 (실무 권장 수준)
+rate-limit:
+  memory:
+    max-requests: 120 # 1분에 120회 (정상 사용자 패턴 고려)
+    window-minutes: 1
+  redis:
+    max-requests: 120 # 1분에 120회 (정상 사용자 패턴 고려)
+    window-minutes: 1
 
 logging:
   pattern:

@@ -6,6 +6,7 @@ import com.dataracy.modules.auth.application.dto.response.ReIssueTokenResponse;
 import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.port.in.auth.ReIssueTokenUseCase;
 import com.dataracy.modules.auth.application.port.in.auth.SelfLoginUseCase;
+import com.dataracy.modules.auth.application.port.out.RateLimitPort;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtGeneratorPort;
 import com.dataracy.modules.auth.application.port.out.jwt.JwtValidatorPort;
 import com.dataracy.modules.auth.application.port.out.token.ManageRefreshTokenPort;
@@ -17,21 +18,36 @@ import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.user.application.port.in.query.auth.IsLoginPossibleUseCase;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
 @Service
-@RequiredArgsConstructor
 public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase {
     private final JwtProperties jwtProperties;
     private final JwtGeneratorPort jwtGeneratorPort;
     private final JwtValidatorPort jwtValidatorPort;
     private final ManageRefreshTokenPort manageRefreshTokenPort;
-
+    private final RateLimitPort rateLimitPort;
     private final IsLoginPossibleUseCase isLoginPossibleUseCase;
+
+    public AuthCommandService(
+            JwtProperties jwtProperties,
+            JwtGeneratorPort jwtGeneratorPort,
+            JwtValidatorPort jwtValidatorPort,
+            ManageRefreshTokenPort manageRefreshTokenPort,
+            @Qualifier("redisRateLimitAdapter") RateLimitPort rateLimitPort,
+            IsLoginPossibleUseCase isLoginPossibleUseCase
+    ) {
+        this.jwtProperties = jwtProperties;
+        this.jwtGeneratorPort = jwtGeneratorPort;
+        this.jwtValidatorPort = jwtValidatorPort;
+        this.manageRefreshTokenPort = manageRefreshTokenPort;
+        this.rateLimitPort = rateLimitPort;
+        this.isLoginPossibleUseCase = isLoginPossibleUseCase;
+    }
 
     /**
      * 사용자의 이메일과 비밀번호를 검증하여 로그인한 후, 새로운 리프레시 토큰을 발급한다.
@@ -57,6 +73,96 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
         );
 
         LoggerFactory.service().logSuccess("SelfLoginUseCase", "자체 로그인 서비스 성공 email=" + requestDto.email(), startTime);
+        return refreshTokenResponse;
+    }
+    
+    /**
+     * 정상 사용자인지 판별하는 간단한 로직
+     * 실제로는 DB에서 사용자 신뢰도, 로그인 패턴 등을 분석해야 함
+     */
+    private boolean isNormalUser(String email) {
+        // 실무적 사용자 구분 로직 (주니어 개발자 수준)
+        if (email == null) return false;
+        
+        // 1. 신뢰할 수 있는 도메인 기반 판별 (일반적인 이메일 서비스)
+        String[] trustedDomains = {
+            "gmail.com", "naver.com", "daum.net", "kakao.com",
+            "outlook.com", "yahoo.com", "hotmail.com"
+        };
+        
+        for (String domain : trustedDomains) {
+            if (email.endsWith("@" + domain)) {
+                return true;
+            }
+        }
+        
+        // 2. 테스트용 이메일 허용
+        if (email.equals("wnsgudAws@gmail.com")) {
+            return true;
+        }
+        
+        // 3. 의심스러운 패턴 감지 (공격자로 간주)
+        String[] suspiciousPatterns = {
+            "attacker", "hack", "brute", "test", "admin"
+        };
+        
+        for (String pattern : suspiciousPatterns) {
+            if (email.toLowerCase().contains(pattern)) {
+                return false;
+            }
+        }
+        
+        // 4. 기본적으로는 정상 사용자로 간주 (관대한 접근)
+        return true;
+    }
+
+    /**
+     * 레이트 리미팅이 적용된 로그인 (IP 기반)
+     * 
+     * @param requestDto 로그인 요청 정보
+     * @param clientIp 클라이언트 IP 주소
+     * @return 발급된 리프레시 토큰과 만료 시간이 포함된 응답 객체
+     */
+    @Override
+    @Transactional
+    public RefreshTokenResponse loginWithRateLimit(SelfLoginRequest requestDto, String clientIp) {
+        Instant startTime = LoggerFactory.service().logStart("SelfLoginUseCase", "레이트 리미팅 적용 로그인 서비스 시작 email=" + requestDto.email());
+
+        // 유저 db로부터 이메일이 일치하는 유저를 조회한다. (비밀번호 검증 먼저)
+        UserInfo userInfo = isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo(requestDto.email(), requestDto.password());
+        
+        // 로그인 성공한 경우에만 레이트 리미팅 확인 (사용자 ID + IP 조합으로 제한 - 공유 IP 문제 해결)
+        String rateLimitKey = requestDto.email() + ":" + clientIp; // 사용자별 + IP별 제한
+        
+        // 정상 사용자와 공격자 구분 로직 (실무 권장 수준)
+        int maxRequests = isNormalUser(requestDto.email()) ? 60 : 5; // 정상 사용자: 60회, 의심 사용자: 5회
+        
+        LoggerFactory.service().logInfo("SelfLoginUseCase", 
+            String.format("레이트 리미팅 확인 - 사용자: %s, IP: %s, 제한: %d회/분", requestDto.email(), clientIp, maxRequests));
+        
+        if (clientIp != null && !rateLimitPort.isAllowed(rateLimitKey, maxRequests, 1)) {
+            LoggerFactory.service().logWarning("SelfLoginUseCase", 
+                String.format("레이트 리미팅 초과 - 사용자: %s, IP: %s, 제한: %d회/분", requestDto.email(), clientIp, maxRequests));
+            throw new AuthException(AuthErrorStatus.RATE_LIMIT_EXCEEDED);
+        }
+
+        // 레이트 리미팅 카운터 증가 (사용자별 + IP별)
+        if (clientIp != null) {
+            rateLimitPort.incrementRequestCount(rateLimitKey, 1);
+            LoggerFactory.service().logInfo("SelfLoginUseCase", 
+                String.format("레이트 리미팅 카운터 증가 - 사용자: %s, IP: %s", requestDto.email(), clientIp));
+        }
+        AuthUser authUser = AuthUser.from(userInfo);
+
+        // 로그인 가능한 경우이므로 리프레시 토큰 발급 및 레디스에 저장
+        String refreshToken = jwtGeneratorPort.generateRefreshToken(authUser.userId(), authUser.role());
+        manageRefreshTokenPort.saveRefreshToken(authUser.userId().toString(), refreshToken);
+        RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(
+                refreshToken,
+                jwtProperties.getRefreshTokenExpirationTime()
+        );
+
+        LoggerFactory.service().logSuccess("SelfLoginUseCase", "레이트 리미팅 적용 로그인 서비스 성공 email=" + requestDto.email(), startTime);
         return refreshTokenResponse;
     }
 
