@@ -21,8 +21,8 @@ class UserReadWebMapperTest {
         // given
         GetUserInfoResponse dto = new GetUserInfoResponse(
                 1L, RoleType.ROLE_USER, "u@test.com", "nick",
-                "author", "job", List.of("A","B"),
-                "visit", "img.png", "intro"
+                1L, "author", 2L, "job", List.of(10L, 20L), List.of("A","B"),
+                3L, "visit", "img.png", "intro"
         );
 
         // when

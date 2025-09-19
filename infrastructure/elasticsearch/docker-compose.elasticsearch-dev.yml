@@ -7,7 +7,7 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+      - ES_JAVA_OPTS=-Xms128m -Xmx128m
     # 개발 환경에서도 포트 노출 제거 (내부 네트워크만 사용)
     # ports:
     #   - "9200:9200"

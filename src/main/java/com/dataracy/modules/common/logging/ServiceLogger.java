@@ -51,4 +51,27 @@ public class ServiceLogger extends BaseLogger {
     public void logException(String useCase, String message, Throwable e) {
         error(e, "[Service 예외] useCase={} message={}", useCase, message);
     }
+
+    /**
+     * 서비스 작업 중 발생한 예외를 유스케이스, 메시지, 예외 객체, 시작 시간과 함께 에러 로그로 기록합니다.
+     *
+     * @param useCase 예외가 발생한 서비스 작업의 식별자
+     * @param message 예외와 관련된 추가 설명 메시지
+     * @param e       기록할 예외 객체
+     * @param startTime 서비스 작업이 시작된 시각
+     */
+    public void logError(String useCase, String message, Throwable e, Instant startTime) {
+        long durationMs = Duration.between(startTime, Instant.now()).toMillis();
+        error(e, "[Service 오류] useCase={} message={} duration={}ms", useCase, message, durationMs);
+    }
+
+    /**
+     * 서비스 작업 중 발생한 일반적인 정보를 로그로 기록합니다.
+     *
+     * @param useCase 정보가 발생한 서비스 작업의 식별자
+     * @param message 정보와 관련된 메시지
+     */
+    public void logInfo(String useCase, String message) {
+        info("[Service 정보] useCase={} message={}", useCase, message);
+    }
 }
