@@ -21,12 +21,14 @@ public final class CookieUtil {
     private static final int COOKIE_EXPIRE_SECONDS = 60 * 60 * 24 * 30; // 30일
 
     /**
-     * 지정한 이름, 값, 만료 시간을 가진 HTTP-Only 쿠키를 HTTP 응답에 추가합니다.
-     * 쿠키는 SameSite=Lax, path="/"로 설정되며, Secure 플래그는 비활성화되어 있습니다.
+     * 주어진 이름과 값으로 HTTP 응답에 쿠키를 추가합니다.
      *
-     * @param name   쿠키의 이름
-     * @param value  쿠키의 값
-     * @param maxAge 쿠키의 만료 시간(초 단위)
+     * 생성된 쿠키는 HttpOnly이며 Secure 플래그가 설정되고 SameSite=None, path="/"로 지정됩니다.
+     * maxAge는 초 단위로 적용되며, 쿠키는 Set-Cookie 헤더를 통해 응답에 추가됩니다.
+     *
+     * @param name   쿠키 이름
+     * @param value  쿠키 값
+     * @param maxAge 쿠키 만료 시간(초)
      */
     public static void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
