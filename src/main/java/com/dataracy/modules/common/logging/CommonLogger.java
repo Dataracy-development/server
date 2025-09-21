@@ -53,4 +53,14 @@ public class CommonLogger extends BaseLogger {
     public void logError(String topic, String message, Throwable e) {
         error(e, "[{} 오류] message={}", topic, message);
     }
+
+    /**
+     * 지정된 주제와 메시지로 일반적인 정보를 기록합니다.
+     *
+     * @param topic   로그의 주제 또는 카테고리
+     * @param message 정보 메시지
+     */
+    public void logInfo(String topic, String message) {
+        info("[{} 정보] message={}", topic, message);
+    }
 }

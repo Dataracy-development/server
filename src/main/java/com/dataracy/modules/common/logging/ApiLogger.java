@@ -46,4 +46,36 @@ public class ApiLogger extends BaseLogger {
     public void logException(String message, Throwable e) {
         error(e, "[API 예외 발생] {}", message);
     }
+
+    /**
+     * API 요청/응답 중 발생한 일반적인 정보를 로그로 기록합니다.
+     *
+     * @param message 정보와 관련된 메시지
+     */
+    public void logInfo(String message) {
+        info("[API 정보] {}", message);
+    }
+
+    /**
+     * API 요청/응답 중 발생한 오류를 로그로 기록합니다.
+     *
+     * @param message 오류와 관련된 메시지
+     * @param e 발생한 예외 객체
+     * @param startTime 요청이 시작된 시각
+     */
+    public void logError(String message, Throwable e, Instant startTime) {
+        long durationMs = Duration.between(startTime, Instant.now()).toMillis();
+        error(e, "[API 오류] {} duration={}ms", message, durationMs);
+    }
+
+    /**
+     * API 요청/응답이 성공적으로 완료되었음을 로그로 기록합니다.
+     *
+     * @param message 성공과 관련된 메시지
+     * @param startTime 요청이 시작된 시각
+     */
+    public void logSuccess(String message, Instant startTime) {
+        long durationMs = Duration.between(startTime, Instant.now()).toMillis();
+        info("[API 성공] {} duration={}ms", message, durationMs);
+    }
 }
