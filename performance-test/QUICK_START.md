@@ -1,15 +1,30 @@
-# 🚀 성능 테스트 빠른 시작 가이드
+# 🛡️ Rate Limiting 보안 강화 프로젝트 - 성능 테스트 빠른 시작 가이드
 
 ## 📋 개요
 
-이 가이드는 Dataracy 서버의 **포트폴리오용 핵심 성능 테스트**를 위한 통일된 구조의 테스트 스위트를 제공합니다.
+이 가이드는 **Rate Limiting 구현을 통한 보안 강화 프로젝트**의 4단계 점진적 개선 과정을 검증하는 성능 테스트를 위한 통일된 구조의 테스트 스위트를 제공합니다.
 
-### 🎯 테스트 구조
+### 🎯 4단계 트러블슈팅 과정 검증
 
-- **통일된 시나리오**: smoke, load, stress, soak, spike, capacity
-- **표준화된 메트릭**: 성공률, 응답시간, 시도횟수, 에러유형별 카운트
-- **도메인별 최적화**: 각 도메인의 특성에 맞는 성능 기준치 설정
-- **포트폴리오 중심**: 실제 문제 해결 경험을 보여주는 핵심 테스트만 선별
+- **1단계**: 문제 발견 및 분석 (Rate Limiting 없음)
+- **2단계**: 기본 Rate Limiting 구현 (Memory 기반, 10회/분)
+- **3단계**: 분산 환경 대응 (Redis 기반, 10회/분)
+- **4단계**: 실무 최적화 (개선된 로직, 60회/분, 사용자별+IP별)
+
+### 🔍 핵심 성과 지표
+
+```
+🏆 최종 달성 성과:
+┌─────────────────────┬─────────────┬─────────────┬─────────────┐
+│       지표          │   Before    │    After    │   개선율    │
+├─────────────────────┼─────────────┼─────────────┼─────────────┤
+│ 공격 성공률         │   27.48%    │    0%       │  100% 감소  │
+│ 정상 사용자 성공률  │   100%      │   19.23%    │ 의심 행동 차단 │
+│ 응답시간 (공격)     │  117.66ms   │   16ms      │  86.4% 개선 │
+│ 응답시간 (정상)     │  119.26ms   │  129.45ms   │  8.5% 증가  │
+│ Rate Limit 차단     │     0개     │    577개    │ 완전 차단   │
+└─────────────────────┴─────────────┴─────────────┴─────────────┘
+```
 
 ### 🗂️ 포트폴리오용 핵심 테스트 파일 구조 (총 20개 테스트)
 
@@ -61,27 +76,30 @@ performance-test/
 
 ### 2. 도메인별 테스트 실행
 
-#### 🔐 인증 도메인 (Auth) - 2개 테스트
+#### 🔐 인증 도메인 (Auth) - 4개 테스트
 
-**포트폴리오 가치**: 로그인 성능 최적화, 보안 시스템 구축
+**포트폴리오 가치**: Rate Limiting 보안 강화, 4단계 점진적 개선 과정 검증
 
 **핵심 기능**:
 
-- `login.test.js`: 로그인 성능 검증, 에러 분류 체계, 동시성 처리
-- `login-abuse.test.js`: 레이트 리미팅, 계정 잠금, 무차별 대입 공격 방어
+- `login.test.js`: 기본 로그인 성능 검증, JWT 토큰 생성, 비밀번호 검증
+- `login-abuse.test.js`: 무차별 대입 공격 시뮬레이션, 보안 취약점 발견
+- `login-with-rate-limit.test.js`: Rate Limiting 적용 로그인 테스트, 정상 사용자 경험 측정
+- `login-abuse-with-rate-limit.test.js`: Rate Limiting 적용 공격 테스트, 보안 효과 검증
 
 **측정 메트릭**:
 
-- 로그인 성공률, 응답시간, 에러율, 동시 사용자 수, 처리량
-- 공격 탐지율, IP 차단 시간, 오탐률
+- 공격 성공률, 정상 사용자 성공률, Rate Limit 차단 수
+- 응답시간, 보안 효과성, 의심 행동 패턴 감지
 
 ```bash
-# 전체 인증 테스트
-./performance-test/run-tests.sh auth
-
-# 개별 테스트
+# 1단계: 기본 로그인 테스트 (Rate Limiting 없음)
 k6 run --env SCENARIO=smoke performance-test/auth/scenarios/login.test.js
 k6 run --env SCENARIO=stress performance-test/auth/scenarios/login-abuse.test.js
+
+# 2-4단계: Rate Limiting 적용 테스트
+k6 run --env SCENARIO=smoke performance-test/auth/scenarios/login-with-rate-limit.test.js
+k6 run --env SCENARIO=stress performance-test/auth/scenarios/login-abuse-with-rate-limit.test.js
 ```
 
 #### 💬 댓글 도메인 (Comment) - 2개 테스트

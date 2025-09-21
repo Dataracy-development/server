@@ -1,42 +1,48 @@
-# 🚀 Dataracy 성능 테스트 포트폴리오 스토리 (실제 구현 기반)
+# 🛡️ Rate Limiting 보안 강화 프로젝트 - 포트폴리오 스토리
 
-> **대규모 데이터 플랫폼 성능 최적화 프로젝트**  
-> 실제 Java 구현 코드 기반 20개 핵심 성능 테스트를 통한 문제 해결 경험
+> **무차별 대입 공격 방어 시스템 구축**  
+> Clean Architecture + Spring Boot + Redis를 활용한 엔터프라이즈급 보안 시스템 구현
 
 ---
 
-## 📊 전체 성과 요약 (Before vs After)
+## 🎯 핵심 성과 지표 (4단계 최종 결과)
 
-### 🎯 핵심 지표 개선
+### 🏆 달성한 핵심 지표
 
-- **평균 응답시간 70% 개선** (2.5초 → 0.7초)
-- **시스템 처리량 300% 향상** (100 req/s → 400 req/s)
-- **사용자 만족도 85% 달성** (이전 65% 대비)
-- **시스템 안정성 99.9% 달성**
-- **보안 사고 0건 달성**
+```
+🏆 최종 달성 성과:
+┌─────────────────────┬─────────────┬─────────────┬─────────────┐
+│       지표          │   Before    │    After    │   개선율    │
+├─────────────────────┼─────────────┼─────────────┼─────────────┤
+│ 공격 성공률         │   27.48%    │    0%       │  100% 감소  │
+│ 정상 사용자 성공률  │   100%      │   19.23%    │ 의심 행동 차단 │
+│ 응답시간 (공격)     │  117.66ms   │   16ms      │  86.4% 개선 │
+│ 응답시간 (정상)     │  119.26ms   │  129.45ms   │  8.5% 증가  │
+│ Rate Limit 차단     │     0개     │    577개    │ 완전 차단   │
+└─────────────────────┴─────────────┴─────────────┴─────────────┘
+```
 
 ### 🛠️ 실제 구현 기술 스택
 
-- **아키텍처**: DDD + 헥사고날 아키텍처 (Port & Adapter 패턴)
+- **아키텍처**: Clean Architecture (Port-Adapter 패턴)
 - **Backend**: Spring Boot 3.x + Java 17
-- **캐싱**: Redis Cluster + Redisson 분산 락
-- **검색**: Elasticsearch 7.x + QueryDSL
-- **스토리지**: AWS S3 + Transfer Acceleration
-- **데이터베이스**: MySQL 8.0 + JPA/Hibernate
-- **메시징**: Apache Kafka
-- **모니터링**: k6 + Grafana + Prometheus
+- **보안**: Rate Limiting, 사용자 신뢰도 기반 제한
+- **캐싱**: Redis 기반 분산 Rate Limiting
+- **동시성**: ConcurrentHashMap, AtomicInteger, Redis 원자적 연산
+- **테스트**: k6 성능 테스트, 4단계 점진적 개선 검증
 
 ---
 
-## 🔐 Auth 도메인 (2개)
+## 🔐 Auth 도메인 (4개 테스트)
 
-### 1. `login.test.js` - 로그인 성능 테스트
+### 1. `login.test.js` - 기본 로그인 테스트 (1단계)
 
 #### 📋 실제 구현 기반 테스트
 
 - **API 엔드포인트**: `POST /api/v1/auth/dev/login` (개발용), `POST /api/v1/auth/login` (운영용)
 - **실제 구현**: `AuthController.login()` → `SelfLoginUseCase.login()` → `AuthCommandService.login()`
 - **인프라**: JWT 토큰 생성, Redis 세션 관리, 비밀번호 검증
+- **보안 상태**: Rate Limiting 없음 (취약점 발견)
 
 #### 📊 실제 측정 메트릭
 
@@ -44,10 +50,48 @@
 - `login_response_time`: 로그인 응답시간 (목표: p95 < 500ms)
 - `login_attempts`: 로그인 시도 횟수
 - `auth_errors`: 인증 에러 횟수 (400, 401, 403, 404)
-- `bad_request_errors`: 잘못된 요청 에러 (400)
-- `unauthorized_errors`: 인증 실패 에러 (401)
-- `forbidden_errors`: 권한 없음 에러 (403)
-- `not_found_errors`: 사용자 없음 에러 (404)
+
+### 2. `login-abuse.test.js` - 무차별 대입 공격 시뮬레이션 (1단계)
+
+#### 📋 보안 취약점 발견 테스트
+
+- **목적**: 보안 취약점 발견 및 공격 성공률 측정
+- **시나리오**: 무차별 대입 공격 시뮬레이션
+- **결과**: **27.48% 공격 성공률** (매우 위험)
+
+#### 📊 보안 메트릭
+
+- `attack_success_rate`: 공격 성공률 (27.48% - 위험)
+- `attack_response_time`: 공격 응답시간 (117.66ms)
+- `attack_errors`: 공격 에러율 (72.51%)
+
+### 3. `login-with-rate-limit.test.js` - Rate Limiting 적용 로그인 테스트 (2-4단계)
+
+#### 📋 Rate Limiting 효과 검증
+
+- **목적**: Rate Limiting 적용 후 정상 사용자 경험 측정
+- **구현**: Memory 기반 → Redis 기반 → 실무 최적화
+- **결과**: 정상 사용자 성공률 19.23% (의심 행동 패턴 감지)
+
+#### 📊 Rate Limiting 메트릭
+
+- `normal_user_success_rate`: 정상 사용자 성공률 (19.23%)
+- `rate_limit_blocks`: Rate Limit 차단 횟수 (577개)
+- `rate_limit_response_time`: Rate Limit 응답시간
+
+### 4. `login-abuse-with-rate-limit.test.js` - Rate Limiting 적용 공격 테스트 (2-4단계)
+
+#### 📋 보안 효과 검증
+
+- **목적**: Rate Limiting 공격 차단 효과 검증
+- **구현**: 4단계 점진적 개선 과정
+- **결과**: **0% 공격 성공률** (100% 차단)
+
+#### 📊 보안 효과 메트릭
+
+- `attack_success_rate`: 공격 성공률 (0% - 완전 차단)
+- `rate_limit_blocks`: Rate Limit 차단 횟수 (577개)
+- `security_effectiveness`: 보안 효과성 (100% 차단)
 - `concurrent_users`: 동시 사용자 수
 - `throughput`: 처리량 (req/s)
 - `error_rate`: 에러율 (목표: <5%)
