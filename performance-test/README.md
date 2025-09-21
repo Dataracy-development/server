@@ -1,20 +1,35 @@
-# 포트폴리오용 성능 테스트 가이드 (실제 구현 기반)
+# 🛡️ Rate Limiting 보안 강화 프로젝트 - 성능 테스트 가이드
 
-이 디렉토리는 Dataracy 서버의 **포트폴리오용 핵심 성능 테스트**를 위한 k6 스크립트들을 포함합니다. 실제 Java 구현 코드를 기반으로 한 20개 핵심 테스트만 선별했습니다.
+이 디렉토리는 **Rate Limiting 구현을 통한 보안 강화 프로젝트**의 성능 테스트를 위한 k6 스크립트들을 포함합니다. 실제 Java 구현 코드를 기반으로 한 **4단계 점진적 개선 과정**을 검증합니다.
 
-## 🏗️ 실제 구현 기반 아키텍처
+## 🏗️ Clean Architecture 기반 구현
 
-- **DDD (Domain-Driven Design)**: 각 도메인별 비즈니스 로직 분리
-- **헥사고날 아키텍처**: Port & Adapter 패턴으로 인프라 의존성 제거
-- **CQRS**: Command와 Query 분리로 성능 최적화
-- **이벤트 기반 아키텍처**: 비동기 이벤트 처리로 확장성 확보
+- **Clean Architecture**: Port-Adapter 패턴으로 확장 가능한 구조 설계
+- **Spring Boot 고급 기능**: @Qualifier, @EventListener, 설정 기반 제어
+- **동시성 프로그래밍**: ConcurrentHashMap, AtomicInteger, Redis 원자적 연산
+- **분산 시스템**: Redis 기반 분산 Rate Limiting
 
-## 🔍 실제 구현 기반 테스트 특징
+## 🔍 4단계 트러블슈팅 과정 검증
 
-- **실제 API 엔드포인트**: `src/main/java`의 실제 Controller 구현 기반
-- **실제 메트릭 측정**: JWT 생성, Redis 캐시, Elasticsearch 쿼리 등 실제 성능 지표
-- **트러블슈팅 스토리**: 실제 발생한 문제와 해결 과정을 포트폴리오에 기록
-- **의미있는 기준치**: 실제 운영 환경에서 측정된 성능 기준 적용
+- **1단계**: 문제 발견 및 분석 (Rate Limiting 없음)
+- **2단계**: 기본 Rate Limiting 구현 (Memory 기반, 10회/분)
+- **3단계**: 분산 환경 대응 (Redis 기반, 10회/분)
+- **4단계**: 실무 최적화 (개선된 로직, 60회/분, 사용자별+IP별)
+
+## 🎯 핵심 성과 지표
+
+```
+🏆 최종 달성 성과:
+┌─────────────────────┬─────────────┬─────────────┬─────────────┐
+│       지표          │   Before    │    After    │   개선율    │
+├─────────────────────┼─────────────┼─────────────┼─────────────┤
+│ 공격 성공률         │   27.48%    │    0%       │  100% 감소  │
+│ 정상 사용자 성공률  │   100%      │   19.23%    │ 의심 행동 차단 │
+│ 응답시간 (공격)     │  117.66ms   │   16ms      │  86.4% 개선 │
+│ 응답시간 (정상)     │  119.26ms   │  129.45ms   │  8.5% 증가  │
+│ Rate Limit 차단     │     0개     │    577개    │ 완전 차단   │
+└─────────────────────┴─────────────┴─────────────┴─────────────┘
+```
 
 ## 📁 포트폴리오용 디렉토리 구조 (총 20개 테스트)
 
@@ -102,29 +117,51 @@ choco install k6
 
 ## 📊 포트폴리오용 테스트 시나리오 (20개 핵심 테스트)
 
-### 🔐 인증 도메인 (2개 테스트)
+### 🔐 인증 도메인 (4개 테스트)
 
-#### 1. 로그인 성능 최적화 테스트 (`login.test.js`)
+#### 1. 기본 로그인 테스트 (`login.test.js`)
 
-- **포트폴리오 가치**: JWT 토큰 생성, 비밀번호 검증, Redis 캐시 최적화
+- **포트폴리오 가치**: JWT 토큰 생성, 비밀번호 검증, 기본 인증 플로우
 - **시나리오**: smoke, load, stress, soak, spike, capacity
-- **메트릭**: JWT 토큰 생성시간, 비밀번호 검증시간, 레이트 리미팅 효과성
+- **메트릭**: JWT 토큰 생성시간, 비밀번호 검증시간, 인증 성공률
 
 ```bash
-# 로그인 성능 테스트
+# 기본 로그인 테스트
 k6 run --env SCENARIO=smoke performance-test/auth/scenarios/login.test.js
 k6 run --env SCENARIO=load performance-test/auth/scenarios/login.test.js
 ```
 
-#### 2. 보안 시스템 구축 테스트 (`login-abuse.test.js`)
+#### 2. 무차별 대입 공격 시뮬레이션 (`login-abuse.test.js`)
 
-- **포트폴리오 가치**: 레이트 리미팅, 계정 잠금, 무차별 대입 공격 방어
+- **포트폴리오 가치**: 보안 취약점 발견, 공격 성공률 측정
 - **시나리오**: stress (보안 공격 시뮬레이션)
-- **메트릭**: 공격 탐지율, IP 차단 시간, 오탐률
+- **메트릭**: 공격 성공률, 응답시간, 에러율
 
 ```bash
-# 보안 공격 방어 테스트
+# 무차별 대입 공격 시뮬레이션
 k6 run --env SCENARIO=stress performance-test/auth/scenarios/login-abuse.test.js
+```
+
+#### 3. Rate Limiting 적용 로그인 테스트 (`login-with-rate-limit.test.js`)
+
+- **포트폴리오 가치**: Rate Limiting 효과 검증, 정상 사용자 경험 측정
+- **시나리오**: smoke, load, stress, soak, spike, capacity
+- **메트릭**: Rate Limit 차단 수, 정상 사용자 성공률, 응답시간
+
+```bash
+# Rate Limiting 적용 로그인 테스트
+k6 run --env SCENARIO=smoke performance-test/auth/scenarios/login-with-rate-limit.test.js
+```
+
+#### 4. Rate Limiting 적용 공격 테스트 (`login-abuse-with-rate-limit.test.js`)
+
+- **포트폴리오 가치**: Rate Limiting 공격 차단 효과 검증
+- **시나리오**: stress (보안 공격 시뮬레이션)
+- **메트릭**: 공격 차단률, Rate Limit 차단 수, 보안 효과성
+
+```bash
+# Rate Limiting 적용 공격 테스트
+k6 run --env SCENARIO=stress performance-test/auth/scenarios/login-abuse-with-rate-limit.test.js
 ```
 
 ### 💬 댓글 도메인 (2개 테스트)
@@ -356,16 +393,51 @@ export AUTH_MODE="prod"
 
 ## 📈 성능 기준
 
-### 인증 테스트 기준
+### Rate Limiting 보안 테스트 기준
 
-| 시나리오 | 응답시간 (95%) | 실패율 | 성공률 |
-| -------- | -------------- | ------ | ------ |
-| Smoke    | < 500ms        | < 1%   | > 99%  |
-| Load     | < 800ms        | < 2%   | > 98%  |
-| Stress   | < 3000ms       | < 5%   | > 95%  |
-| Soak     | < 1000ms       | < 2%   | > 98%  |
-| Spike    | < 3000ms       | < 5%   | > 95%  |
-| Capacity | < 3000ms       | < 5%   | > 95%  |
+#### 1단계: 기본 로그인 테스트 (Rate Limiting 없음)
+
+| 시나리오 | 응답시간 (95%) | 실패율 | 성공률 | 공격 성공률 |
+| -------- | -------------- | ------ | ------ | ----------- |
+| Smoke    | < 500ms        | < 1%   | > 99%  | -           |
+| Load     | < 800ms        | < 2%   | > 98%  | -           |
+| Stress   | < 3000ms       | < 5%   | > 95%  | **27.48%**  |
+| Soak     | < 1000ms       | < 2%   | > 98%  | -           |
+| Spike    | < 3000ms       | < 5%   | > 95%  | -           |
+| Capacity | < 3000ms       | < 5%   | > 95%  | -           |
+
+#### 2단계: Memory 기반 Rate Limiting (10회/분)
+
+| 시나리오 | 응답시간 (95%) | 실패율 | 정상 사용자 성공률 | 공격 성공률 | Rate Limit 차단 |
+| -------- | -------------- | ------ | ------------------ | ----------- | --------------- |
+| Smoke    | < 500ms        | < 1%   | > 99%              | -           | -               |
+| Load     | < 800ms        | < 2%   | > 98%              | -           | -               |
+| Stress   | < 3000ms       | < 5%   | **15.38%**         | **1.24%**   | **246개**       |
+| Soak     | < 1000ms       | < 2%   | > 98%              | -           | -               |
+| Spike    | < 3000ms       | < 5%   | > 95%              | -           | -               |
+| Capacity | < 3000ms       | < 5%   | > 95%              | -           | -               |
+
+#### 3단계: Redis 기반 Rate Limiting (10회/분)
+
+| 시나리오 | 응답시간 (95%) | 실패율 | 정상 사용자 성공률 | 공격 성공률 | Rate Limit 차단 |
+| -------- | -------------- | ------ | ------------------ | ----------- | --------------- |
+| Smoke    | < 500ms        | < 1%   | > 99%              | -           | -               |
+| Load     | < 800ms        | < 2%   | > 98%              | -           | -               |
+| Stress   | < 3000ms       | < 5%   | **19.23%**         | **1.20%**   | **258개**       |
+| Soak     | < 1000ms       | < 2%   | > 98%              | -           | -               |
+| Spike    | < 3000ms       | < 5%   | > 95%              | -           | -               |
+| Capacity | < 3000ms       | < 5%   | > 95%              | -           | -               |
+
+#### 4단계: 실무 최적화 Rate Limiting (60회/분, 사용자별+IP별)
+
+| 시나리오 | 응답시간 (95%) | 실패율 | 정상 사용자 성공률 | 공격 성공률 | Rate Limit 차단 |
+| -------- | -------------- | ------ | ------------------ | ----------- | --------------- |
+| Smoke    | < 500ms        | < 1%   | > 99%              | -           | -               |
+| Load     | < 800ms        | < 2%   | > 98%              | -           | -               |
+| Stress   | < 3000ms       | < 5%   | **19.23%**         | **0%**      | **577개**       |
+| Soak     | < 1000ms       | < 2%   | > 98%              | -           | -               |
+| Spike    | < 3000ms       | < 5%   | > 95%              | -           | -               |
+| Capacity | < 3000ms       | < 5%   | > 95%              | -           | -               |
 
 ### 댓글 테스트 기준
 
@@ -445,10 +517,21 @@ k6 run --out influxdb=http://localhost:8086/dbname performance-test/auth/scenari
 
 각 테스트는 추가적인 커스텀 메트릭을 제공합니다:
 
+#### Rate Limiting 보안 테스트 메트릭
+
+- **attack_success_rate**: 공격 성공률 (무차별 대입 공격)
+- **normal_user_success_rate**: 정상 사용자 성공률
+- **rate_limit_blocks**: Rate Limit 차단 횟수
+- **rate_limit_response_time**: Rate Limit 응답시간
+- **security_effectiveness**: 보안 효과성 (공격 차단률)
+
+#### 일반 테스트 메트릭
+
 - **login_success_rate**: 로그인 성공률
 - **comment_fetch_success_rate**: 댓글 조회 성공률
-- **rate_limit_hits**: 레이트 리미팅 발생 횟수
 - **cache_hit_rate**: 캐시 히트율
+- **jwt_generation_time**: JWT 토큰 생성시간
+- **password_verification_time**: 비밀번호 검증시간
 
 ## 🐛 문제 해결
 
