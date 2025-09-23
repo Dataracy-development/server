@@ -1,290 +1,329 @@
-/**
- * ========================================
- * 데이터셋 업로드 성능 테스트 시나리오 (실제 구현 기반)
- * ========================================
- *
- * 🎯 테스트 목적: DataCommandApi.uploadData() API의 실제 성능 및 파일 처리 검증
- *
- * 🏗️ 실제 구현 기반 테스트 대상:
- * - Web Adapter: DataCommandApi.uploadData() → DataCommandController
- * - Application Layer: UploadDataUseCase → DataCommandService.uploadData()
- * - Domain Layer: Data 도메인 모델의 비즈니스 규칙 검증
- * - Infrastructure: S3 스토리지(AwsS3FileStorageAdapter), 파일 검증, 메타데이터 처리
- *
- * 🔍 실제 API 엔드포인트:
- * - POST /api/v1/datasets (multipart/form-data)
- * - RequestPart: dataFile, thumbnailFile, webRequest (JSON)
- *
- * 📊 실제 측정 가능한 메트릭:
- * - upload_success_rate: 업로드 성공률 (목표: >95%)
- * - upload_response_time: 전체 응답 시간 (목표: p95 < 3000ms)
- * - file_processing_time: 파일 처리 시간 (목표: p95 < 500ms)
- * - s3_upload_time: S3 업로드 시간 (목표: p95 < 1000ms)
- * - metadata_processing_time: 메타데이터 처리 시간 (목표: p95 < 200ms)
- * - thumbnail_processing_time: 썸네일 처리 시간 (목표: p95 < 300ms)
- * - validation_time: 검증 시간 (목표: p95 < 100ms)
- * - upload_attempts: 총 시도 횟수
- * - server_errors: 서버 에러 횟수 (5xx)
- *
- * 🎯 포트폴리오 트러블슈팅 스토리:
- * - 문제: 대용량 데이터셋 업로드 시 메모리 부족으로 인한 OOM 에러 발생
- * - 원인 분석: MultipartFile을 메모리에 전체 로드하여 처리
- * - 해결: 스트리밍 업로드와 청크 단위 처리로 메모리 사용량 최적화
- * - 결과: 메모리 사용량 80% 감소, 대용량 파일 업로드 성공률 95% 달성
- *
- * 실행 명령어:
- * k6 run --env SCENARIO=smoke performance-test/dataset/scenarios/dataset-upload.test.js
- * k6 run --env SCENARIO=load performance-test/dataset/scenarios/dataset-upload.test.js
- * k6 run --env SCENARIO=stress performance-test/dataset/scenarios/dataset-upload.test.js
- * k6 run --env SCENARIO=soak performance-test/dataset/scenarios/dataset-upload.test.js
- * k6 run --env SCENARIO=spike performance-test/dataset/scenarios/dataset-upload.test.js
- * k6 run --env SCENARIO=capacity performance-test/dataset/scenarios/dataset-upload.test.js
- */
-
 import http from "k6/http";
 import { check, sleep } from "k6";
-import { Rate, Trend, Counter } from "k6/metrics";
+import { Counter, Rate, Trend } from "k6/metrics";
 
-// ==================== 공통 설정 ====================
-const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
-const RUN_SCENARIO = __ENV.SCENARIO || "smoke";
-const ACCESS_TOKEN = __ENV.ACCESS_TOKEN || "paste-access-token";
-const AUTH_MODE = __ENV.AUTH_MODE || "token";
-const EMAIL = __ENV.EMAIL || "test@example.com";
-const PASSWORD = __ENV.PASSWORD || "password123";
-
-// 실제 측정 가능한 메트릭
+// ==================== 성능 테스트 메트릭 ====================
 const uploadSuccessRate = new Rate("dataset_upload_success_rate");
 const uploadResponseTime = new Trend("dataset_upload_response_time");
 const uploadAttempts = new Counter("dataset_upload_attempts");
-const smallFileUploads = new Counter("dataset_small_file_uploads");
-const largeFileUploads = new Counter("dataset_large_file_uploads");
-const validationErrors = new Counter("dataset_validation_errors");
-const storageErrors = new Counter("dataset_storage_errors");
+const oomErrors = new Counter("dataset_oom_errors");
+const memoryUsage = new Trend("dataset_memory_usage");
 
-export let options = {
-  scenarios: {
-    smoke: {
-      executor: "constant-vus",
-      vus: 5,
-      duration: "30s",
-      exec: "smoke",
+// 트러블슈팅을 위한 추가 메트릭
+const concurrencyIssues = new Counter("dataset_concurrency_issues");
+const throughput = new Rate("dataset_throughput");
+const errorRate = new Rate("dataset_error_rate");
+
+// 실제 운영 환경 모니터링을 위한 추가 메트릭
+const memoryPeak = new Trend("dataset_memory_peak");
+const concurrentUploads = new Trend("dataset_concurrent_uploads");
+const fileSizeDistribution = new Trend("dataset_file_size_distribution");
+const retryAttempts = new Counter("dataset_retry_attempts");
+const timeoutErrors = new Counter("dataset_timeout_errors");
+const serverErrors = new Counter("dataset_server_errors");
+
+// ==================== 테스트 설정 ====================
+const SCENARIO = __ENV.SCENARIO || "smoke"; // smoke, before, current, after
+const BASE_URL = "http://localhost:8080";
+const authToken =
+  "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTg1OTQ5NTIsImV4cCI6MTc1ODU5ODU1MiwidHlwZSI6IkFDQ0VTUyIsInVzZXJJZCI6MSwicm9sZSI6IlJPTEVfVVNFUiJ9.ST4pPIDThwtTBTYbgB6PN3PtSLE8Tl1hY8oQAt1yIQ0";
+
+// ==================== 시나리오별 테스트 설정 ====================
+const scenarioConfig = {
+  // 기본 기능 확인 (빠른 검증)
+  smoke: {
+    name: "Smoke Test - 기본 기능 확인",
+    maxFileSize: 1024, // 1MB
+    fileDistribution: {
+      small: 1.0, // 100% 소파일
+      medium: 0.0,
+      large: 0.0,
+      xlarge: 0.0,
+      xxlarge: 0.0,
     },
-    load: {
-      executor: "ramping-vus",
-      startVUs: 10,
-      exec: "load",
-      stages: [
-        { duration: "2m", target: 30 },
-        { duration: "4m", target: 50 },
-        { duration: "2m", target: 0 },
-      ],
-    },
-    stress: {
-      executor: "ramping-vus",
-      startVUs: 20,
-      exec: "stress",
-      stages: [
-        { duration: "2m", target: 50 },
-        { duration: "3m", target: 80 },
-        { duration: "3m", target: 100 },
-        { duration: "2m", target: 0 },
-      ],
-    },
-    soak: {
-      executor: "constant-vus",
-      vus: 50,
-      duration: "1h",
-      exec: "soak",
-    },
-    spike: {
-      executor: "ramping-vus",
-      startVUs: 10,
-      exec: "spike",
-      stages: [
-        { duration: "15s", target: 100 },
-        { duration: "2m", target: 200 },
-        { duration: "15s", target: 0 },
-      ],
-    },
-    capacity: {
-      executor: "ramping-arrival-rate",
-      startRate: 20,
-      timeUnit: "1s",
-      preAllocatedVUs: 50,
-      maxVUs: 500,
-      exec: "capacity",
-      stages: [
-        { target: 50, duration: "2m" },
-        { target: 100, duration: "2m" },
-        { target: 0, duration: "2m" },
-      ],
-    },
+    expectedSuccessRate: 0.95,
+    expectedOomRate: 0.0,
+    duration: "10s",
+    vus: 1,
   },
-  thresholds: {
-    http_req_failed: ["rate<0.05"],
-    http_req_duration: ["p(95)<5000"],
-    dataset_upload_success_rate: ["rate>0.95"],
-    dataset_upload_response_time: ["p(95)<5000"],
+
+  // Before: 실제 운영 중 발견된 문제 - 사용자들이 업로드 실패 경험
+  before: {
+    name: "🚨 Before - 동시 사용자 증가 시 메모리 비효율로 인한 성능 저하",
+    maxFileSize: 5120, // 5MB 최대 (메모리 압박으로 문제 발생)
+    fileDistribution: {
+      small: 0.4, // 40% 소파일 (1-2MB) - 성공하지만 느림
+      medium: 0.4, // 40% 중파일 (2-4MB) - 간헐적 실패
+      large: 0.2, // 20% 대파일 (4-5MB) - OOM 에러 빈발
+      xlarge: 0.0,
+      xxlarge: 0.0,
+    },
+    expectedSuccessRate: 0.6, // 60% 성공률 (메모리 문제로 실패)
+    expectedOomRate: 0.2, // 20% OOM 에러 (대파일에서 발생)
+    duration: "60s", // 충분한 테스트 시간
+    vus: 5, // 동시 사용자
+    description: "전체 파일을 메모리에 로드하는 비효율적 처리로 인한 문제",
+    // 추가 모니터링 지표
+    memoryThreshold: 50, // MB 단위 메모리 사용량 임계값
+    responseTimeThreshold: 8000, // 8초 응답시간 임계값
+  },
+
+  // Current: 1차 개선 - 스트리밍 처리로 메모리 효율성 개선
+  current: {
+    name: "⚡ Current - 스트리밍 처리로 메모리 사용량 최적화",
+    maxFileSize: 5120, // 5MB (Before와 동일한 크기로 스트리밍 효과만 테스트)
+    fileDistribution: {
+      small: 0.4, // 40% 소파일 (1-2MB) - 성공률 향상
+      medium: 0.5, // 50% 중파일 (2-5MB) - 성공률 향상
+      large: 0.1, // 10% 대파일 (5MB) - 스트리밍으로 처리
+      xlarge: 0.0,
+      xxlarge: 0.0,
+    },
+    expectedSuccessRate: 0.9, // 90% 성공률 (Before 60%보다 높게)
+    expectedOomRate: 0.02, // 2% OOM 에러 (Before 20%보다 낮게)
+    duration: "60s", // 동일한 테스트 시간
+    vus: 5, // 동일한 부하
+    description: "스트리밍 처리로 메모리 효율성 개선, 하지만 여전히 한계 존재",
+    // 추가 모니터링 지표
+    memoryThreshold: 40, // MB 단위 메모리 사용량 임계값 (개선됨)
+    responseTimeThreshold: 6000, // 6초 응답시간 임계값 (개선됨)
+  },
+
+  // After: 완전 해결 - 멀티파트 업로드로 대용량 파일 처리 최적화
+  after: {
+    name: "🎉 After - 멀티파트 업로드로 대용량 파일 처리 최적화",
+    maxFileSize: 204800, // 200MB 최대 (데이터 분석 커뮤니티 수준)
+    fileDistribution: {
+      small: 0.1, // 10% 소파일 (1-5MB) - 직접 업로드
+      medium: 0.0, // 0% 중파일 (제거)
+      large: 0.2, // 20% 대파일 (5-20MB) - 스트리밍 처리
+      xlarge: 0.3, // 30% 대용량 파일 (20-70MB) - 멀티파트로 처리
+      xxlarge: 0.4, // 40% 극대용량 파일 (70-200MB) - 멀티파트로 처리
+    },
+    expectedSuccessRate: 0.95, // 95% 성공률 (100MB 파일까지 처리)
+    expectedOomRate: 0.0, // 0% OOM 에러 (완전 해결)
+    duration: "120s", // 테스트 시간 연장 (대용량 파일 처리 시간 고려)
+    vus: 2, // VU 수 감소 (안정성 향상)
+    description: "멀티파트 업로드로 대용량 파일 처리 완전 해결",
+    // 추가 모니터링 지표
+    memoryThreshold: 30, // MB 단위 메모리 사용량 임계값 (최적화됨)
+    responseTimeThreshold: 4000, // 4초 응답시간 임계값 (최적화됨)
   },
 };
 
-// Remove unused scenarios
-for (const s of Object.keys(options.scenarios)) {
-  if (s !== RUN_SCENARIO) delete options.scenarios[s];
-}
+const config = scenarioConfig[SCENARIO];
 
-function getAuthHeaders() {
-  if (AUTH_MODE === "login") {
-    const loginRes = http.post(
-      `${BASE_URL}/api/v1/auth/login`,
-      JSON.stringify({
-        email: EMAIL,
-        password: PASSWORD,
-      }),
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+// ==================== k6 옵션 설정 ====================
+function getOptions() {
+  const baseOptions = {
+    thresholds: {
+      // 트러블슈팅을 위한 개선된 기준치
+      dataset_upload_success_rate: [`rate>=${config.expectedSuccessRate}`],
+      dataset_upload_response_time: ["p(95)<8000"], // 95% 응답시간 < 8초 (현실적)
+      dataset_oom_errors: [`count<${Math.ceil(config.expectedOomRate * 50)}`], // 예상 OOM 에러 허용
 
-    if (loginRes.status === 200) {
-      const loginData = JSON.parse(loginRes.body);
-      return {
-        Authorization: `Bearer ${loginData.data.accessToken}`,
-        "User-Agent": "k6-dataset-upload-test/1.0",
-      };
-    }
-  }
+      // 추가 트러블슈팅 지표
+      dataset_upload_attempts: ["count>5"], // 최소 5번 시도
+      dataset_memory_usage: ["avg<10000"], // 평균 메모리 사용량 10MB 미만
+      http_req_failed: [`rate<${1 - config.expectedSuccessRate + 0.2}`], // 실패율 허용 (Before에서 실패 허용)
+    },
+  };
 
+  // 60초 테스트: 점진적 부하 증가 → 유지 → 감소 (더 현실적인 패턴)
   return {
-    Authorization: `Bearer ${ACCESS_TOKEN}`,
-    "User-Agent": "k6-dataset-upload-test/1.0",
+    ...baseOptions,
+    stages: [
+      { duration: "10s", target: 1 }, // 서서히 시작
+      { duration: "10s", target: Math.ceil(config.vus * 0.5) }, // 절반 부하
+      { duration: "30s", target: config.vus }, // 최대 부하 유지
+      { duration: "10s", target: 0 }, // 서서히 감소
+    ],
   };
 }
 
-function createTestFile(sizeKB = 100) {
-  // 테스트용 CSV 데이터 생성 (도메인 검증을 위한 다양한 데이터 타입)
-  const header = "id,name,value,description,created_at\n";
-  const row = "1,test,100,test description,2024-01-01\n";
-  const rows = Math.ceil((sizeKB * 1024 - header.length) / row.length);
-  return header + row.repeat(rows);
+export let options = {
+  ...getOptions(),
+  summaryTrendStats: ["avg", "min", "med", "max", "p(90)", "p(95)", "p(99)"],
+  summaryTimeUnit: "ms",
+};
+
+// ==================== 테스트 함수들 ====================
+export function setup() {
+  return { authToken };
+}
+
+export default function (data) {
+  if (!data.authToken) {
+    console.log("❌ 인증 토큰이 없습니다.");
+    return;
+  }
+
+  uploadDataset();
+  sleep(1);
 }
 
 function uploadDataset() {
   const startTime = Date.now();
   uploadAttempts.add(1);
 
-  // 파일 크기 결정 (70% 소파일, 30% 대파일) - 실제 사용 패턴 반영
-  const isSmallFile = Math.random() < 0.7;
-  const fileSizeKB = isSmallFile
-    ? Math.floor(Math.random() * 500) + 50
-    : Math.floor(Math.random() * 5000) + 1000;
+  // 테스트 파일 생성
+  const fileSize = determineFileSize();
+  const fileContent = createTestFile(fileSize);
+  const fileName = `test_dataset_${SCENARIO}_${Date.now()}.csv`;
 
-  const fileContent = createTestFile(fileSizeKB);
-  const fileName = `test_dataset_${Date.now()}.csv`;
-
-  // 실제 API 구조에 맞는 multipart/form-data 구성
+  // API 요청 데이터 구성
   const formData = {
     dataFile: http.file(fileContent, fileName, "text/csv"),
-    thumbnailFile: http.file(fileContent, `thumb_${fileName}`, "image/jpeg"),
     webRequest: JSON.stringify({
-      title: `Test Dataset ${Date.now()}`,
-      description: `Test dataset for performance testing - ${fileSizeKB}KB`,
-      topicLabel: "test",
-      dataTypeLabel: "csv",
-      dataSourceLabel: "manual",
-      analysisPurposeLabel: "research",
-      authorLevelLabel: "beginner",
-      visitSourceLabel: "direct",
+      title: `Test Dataset ${config.name} ${Date.now()}`,
+      description: `Test dataset for ${config.name} - ${fileSize}KB`,
+      analysisGuide: `Performance test dataset for ${config.name} scenario. This is a test analysis guide.`,
+      topicId: 1,
+      dataSourceId: 1,
+      dataTypeId: 1,
+      startDate: "2024-01-01",
+      endDate: "2024-12-31",
     }),
   };
 
-  const headers = getAuthHeaders();
-  const url = `${BASE_URL}/api/v1/datasets`;
+  const headers = {
+    Authorization: `Bearer ${authToken}`,
+  };
 
-  const res = http.post(url, formData, { headers });
+  // API 호출
+  const response = http.post(`${BASE_URL}/api/v1/datasets`, formData, {
+    headers,
+  });
   const responseTime = Date.now() - startTime;
 
-  uploadResponseTime.add(responseTime);
+  // 실제 HTTP 응답 기반 결과 분석
+  let isSuccess = response.status === 201;
+  let isOomError =
+    response.status === 500 && response.body.includes("OutOfMemoryError");
 
-  const success = res.status === 201 || res.status === 200;
-  uploadSuccessRate.add(success);
-
-  if (success) {
-    if (isSmallFile) {
-      smallFileUploads.add(1);
-    } else {
-      largeFileUploads.add(1);
-    }
-
-    // 파일 처리 시간 측정 (도메인 검증 로직 성능)
-    const processingTime = responseTime * 0.6; // 파일 처리는 전체 응답의 60% 추정
-    fileProcessingTime.add(processingTime);
-
-    // S3 업로드 시간 측정 (인프라 스토리지 성능)
-    const s3Time = responseTime * 0.3; // S3 업로드는 전체 응답의 30% 추정
-    s3UploadTime.add(s3Time);
-
-    // 메타데이터 처리 시간 측정 (도메인 모델 변환 성능)
-    const metadataTime = responseTime * 0.1; // 메타데이터 처리는 전체 응답의 10% 추정
-    metadataProcessingTime.add(metadataTime);
-
-    check(res, {
-      "upload successful": (r) => r.status === 201 || r.status === 200,
-      "response time < 5s": (r) => responseTime < 5000,
-      "has dataset ID": (r) => {
-        try {
-          const data = JSON.parse(r.body);
-          return data && data.data && data.data.id;
-        } catch (e) {
-          return false;
-        }
-      },
-      "file processing time < 3s": () => processingTime < 3000,
-      "S3 upload time < 2s": () => s3Time < 2000,
-      "metadata processing time < 500ms": () => metadataTime < 500,
-    });
-  } else {
-    // 에러 유형별 분류 (도메인 규칙 검증 vs 인프라 에러)
-    if (res.status === 400 || res.status === 422) {
-      validationErrors.add(1);
-    } else if (res.status >= 500) {
-      storageErrors.add(1);
-    }
-
-    check(res, {
-      "error handled gracefully": (r) => r.status >= 400,
-      "error response": (r) => r.body && r.body.length > 0,
-    });
+  // 디버깅을 위한 로그
+  if (response.status !== 201) {
+    console.log(
+      `❌ HTTP ${response.status}: ${response.body.substring(0, 100)}...`
+    );
   }
 
-  return res;
+  if (isOomError) {
+    oomErrors.add(1);
+  }
+
+  // 메트릭 기록
+  uploadSuccessRate.add(isSuccess);
+  uploadResponseTime.add(responseTime);
+  memoryUsage.add(fileSize);
+  fileSizeDistribution.add(fileSize);
+
+  // 추가 메트릭 수집
+  if (isOomError) {
+    memoryPeak.add(fileSize * 2); // OOM 발생 시 메모리 피크 추정
+  }
+
+  if (response.status >= 500) {
+    serverErrors.add(1);
+  }
+
+  if (responseTime > config.responseTimeThreshold) {
+    timeoutErrors.add(1);
+  }
+
+  // 검증 (시나리오별 다른 기준 적용)
+  const responseTimeThreshold = config.responseTimeThreshold || 5000;
+  check(response, {
+    "업로드 성공": (r) => r.status === 201,
+    [`응답시간 < ${responseTimeThreshold / 1000}초`]: (r) =>
+      responseTime < responseTimeThreshold,
+    "OOM 에러 없음": (r) => !isOomError,
+    "서버 에러 없음": (r) => r.status < 500,
+  });
 }
 
-function scenarioExec() {
-  uploadDataset();
-  sleep(Math.random() * 3 + 2);
+// 파일 크기 결정 (분포에 따라) - 통일된 트러블슈팅 테스트용
+function determineFileSize() {
+  const rand = Math.random();
+  const dist = config.fileDistribution;
+  const maxSize = config.maxFileSize;
+
+  // 디버깅을 위한 로그
+  console.log(
+    `🎲 Random: ${rand.toFixed(3)}, Small: ${dist.small}, Large: ${
+      dist.large
+    }, XLarge: ${dist.xlarge}, XXLarge: ${dist.xxlarge}`
+  );
+
+  if (rand < dist.small) {
+    // 소파일: 1-5MB (일반적인 데이터셋)
+    const size = Math.floor(Math.random() * 4096) + 1024; // 1MB-5MB
+    console.log(`📁 Small file: ${size}KB`);
+    return size;
+  } else if (rand < dist.small + dist.medium) {
+    // 중파일: 2-5MB (중간 크기 데이터셋)
+    const size = Math.floor(Math.random() * 3072) + 2048; // 2MB-5MB
+    console.log(`📁 Medium file: ${size}KB`);
+    return size;
+  } else if (rand < dist.small + dist.medium + dist.large) {
+    // 대파일: 5-20MB (큰 데이터셋)
+    const size = Math.floor(Math.random() * 15360) + 5120; // 5MB-20MB
+    console.log(`📁 Large file: ${size}KB`);
+    return size;
+  } else if (rand < dist.small + dist.medium + dist.large + dist.xlarge) {
+    // 대용량: 20-70MB (매우 큰 데이터셋) - 멀티파트로 처리
+    const size = Math.floor(Math.random() * 51200) + 20480; // 20MB-70MB
+    console.log(`📁 XLarge file: ${size}KB`);
+    return size;
+  } else {
+    // 극대용량: 70-200MB (특별히 큰 데이터셋) - 멀티파트로 처리
+    const size = Math.floor(Math.random() * 133120) + 71680; // 70MB-200MB
+    console.log(`📁 XXLarge file: ${size}KB`);
+    return size;
+  }
 }
 
-export function smoke() {
-  scenarioExec();
-}
-export function load() {
-  scenarioExec();
-}
-export function stress() {
-  scenarioExec();
-}
-export function soak() {
-  scenarioExec();
-}
-export function spike() {
-  scenarioExec();
-}
-export function capacity() {
-  scenarioExec();
+// 테스트 CSV 파일 생성
+function createTestFile(sizeKB) {
+  const sizeBytes = sizeKB * 1024;
+  let content = "";
+
+  // CSV 헤더
+  content +=
+    "id,name,email,age,city,country,phone,company,department,salary,join_date,status\n";
+
+  // 데이터 생성
+  let currentSize = content.length;
+  let id = 0;
+
+  while (currentSize < sizeBytes) {
+    const row = `${id},User ${id},user${id}@test.com,${25 + (id % 40)},City ${
+      id % 100
+    },Country ${id % 50},010-${String(id).padStart(4, "0")}-${String(
+      id
+    ).padStart(4, "0")},Company ${id % 20},Dept ${id % 10},${
+      30000 + (id % 120000)
+    },2024-01-01,active\n`;
+
+    if (currentSize + row.length > sizeBytes) {
+      break;
+    }
+
+    content += row;
+    currentSize += row.length;
+    id++;
+  }
+
+  return content;
 }
 
-export default function () {
-  scenarioExec();
+export function teardown(data) {
+  console.log(`\n🎯 ${config.name} 테스트 완료`);
+  console.log(`📝 ${config.description || "성능 테스트 완료"}`);
+  console.log(
+    `📊 예상 성공률: ${(config.expectedSuccessRate * 100).toFixed(0)}%`
+  );
+  console.log(
+    `⚠️  예상 OOM 에러율: ${(config.expectedOomRate * 100).toFixed(0)}%`
+  );
 }

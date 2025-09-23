@@ -6,6 +6,7 @@ import com.dataracy.modules.filestorage.adapter.thumbnail.ThumbnailGenerator;
 import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

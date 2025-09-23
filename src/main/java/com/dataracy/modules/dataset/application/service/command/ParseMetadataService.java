@@ -21,6 +21,7 @@ import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFro
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ import java.time.Instant;
 @Service
 @RequiredArgsConstructor
 public class ParseMetadataService implements ParseMetadataUseCase {
+    // @Qualifier("awsS3FileStorageAdapterBefore") // 원래 구현체 사용
     private final FileStoragePort fileStoragePort;
 
     private final CreateMetadataPort metadataRepositoryPort;
