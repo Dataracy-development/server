@@ -9,8 +9,6 @@ import com.dataracy.modules.comment.application.dto.response.support.FindComment
 import com.dataracy.modules.comment.application.port.out.query.read.ReadCommentPort;
 import com.dataracy.modules.comment.domain.model.Comment;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,8 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -60,18 +61,12 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
      */
     @Override
     public Page<FindCommentWithReplyCountResponse> findComments(Long projectId, Pageable pageable) {
-        QCommentEntity child = new QCommentEntity("child");
         Instant startTime = LoggerFactory.query().logQueryStart("CommentEntity", "[findComments] 댓글당 답글 수를 포함한 댓글 목록 조회 시작. projectId=" + projectId);
+        int queryCount = 0;
 
-        List<Tuple> tuples = queryFactory
-                .select(
-                        comment,
-                        JPAExpressions
-                                .select(child.count())
-                                .from(child)
-                                .where(child.parentCommentId.eq(comment.id))
-                )
-                .from(comment)
+        // 1단계: 루트 댓글 조회 (1개 쿼리)
+        List<CommentEntity> commentEntities = queryFactory
+                .selectFrom(comment)
                 .where(
                         CommentFilterPredicate.projectIdEq(projectId),
                         CommentFilterPredicate.isRootComment()
@@ -80,14 +75,22 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+        queryCount++; // 메인 쿼리
 
-        List<FindCommentWithReplyCountResponse> contents = tuples.stream()
-                .map(tuple -> new FindCommentWithReplyCountResponse(
-                        CommentEntityMapper.toDomain(tuple.get(comment)),
-                        tuple.get(1, Long.class)
+        // 2단계: 배치로 답글 수 조회 (1개 쿼리)
+        List<Long> commentIds = commentEntities.stream().map(CommentEntity::getId).toList();
+        Map<Long, Long> replyCounts = getReplyCountsBatch(commentIds);
+        queryCount++; // 배치 쿼리
+
+        // 3단계: DTO 조합 (메모리에서 처리)
+        List<FindCommentWithReplyCountResponse> contents = commentEntities.stream()
+                .map(entity -> new FindCommentWithReplyCountResponse(
+                        CommentEntityMapper.toDomain(entity),
+                        replyCounts.getOrDefault(entity.getId(), 0L)
                 ))
                 .toList();
 
+        // 4단계: 총 개수 조회 (1개 쿼리)
         long total = Optional.ofNullable(
                 queryFactory
                         .select(comment.count())
@@ -98,8 +101,9 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
                         )
                         .fetchOne()
         ).orElse(0L);
+        queryCount++; // 카운트 쿼리
 
-        LoggerFactory.query().logQueryEnd("CommentEntity", "[findComments] 댓글당 답글 수를 포함한 댓글 목록 조회 종료. projectId=" + projectId, startTime);
+        LoggerFactory.query().logQueryEnd("CommentEntity", "[findComments] 댓글당 답글 수를 포함한 댓글 목록 조회 종료. projectId=" + projectId + ", queryCount=" + queryCount, startTime);
         return new PageImpl<>(contents, pageable, total);
     }
 
@@ -144,5 +148,25 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
 
         LoggerFactory.query().logQueryEnd("CommentEntity", "[findReplyComments] 해당 댓글에 대한 답글 목록 조회 종료. projectId=" + projectId + ", commentId=" + commentId, startTime);
         return new PageImpl<>(contents, pageable, total);
+    }
+
+    /**
+     * 배치로 답글 수를 조회합니다.
+     */
+    private Map<Long, Long> getReplyCountsBatch(List<Long> commentIds) {
+        if (commentIds.isEmpty()) return Collections.emptyMap();
+        
+        QCommentEntity child = new QCommentEntity("child");
+        return queryFactory
+                .select(child.parentCommentId, child.id.count())
+                .from(child)
+                .where(child.parentCommentId.in(commentIds))
+                .groupBy(child.parentCommentId)
+                .fetch()
+                .stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(child.parentCommentId),
+                        tuple -> tuple.get(child.id.count())
+                ));
     }
 }
