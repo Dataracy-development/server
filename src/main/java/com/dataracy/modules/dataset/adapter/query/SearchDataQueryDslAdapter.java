@@ -12,7 +12,6 @@ import com.dataracy.modules.dataset.application.dto.response.support.DataWithPro
 import com.dataracy.modules.dataset.application.port.out.query.search.SearchFilteredDataSetsPort;
 import com.dataracy.modules.dataset.domain.enums.DataSortType;
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectDataEntity;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -64,35 +63,23 @@ public class SearchDataQueryDslAdapter implements
                 .fetch();
         queryCount++; // 메인 쿼리 (데이터 조회)
 
-        // 배치 처리: 모든 데이터 ID에 대해 한 번에 프로젝트 수 조회
-        List<Long> dataIds = dataEntities.stream()
-                .map(DataEntity::getId)
-                .toList();
-        
-        Map<Long, Long> projectCountMap = Collections.emptyMap();
-        if (!dataIds.isEmpty()) {
-            List<Tuple> projectCountTuples = queryFactory
-                    .select(projectData.dataId, projectData.id.count())
-                    .from(projectData)
-                    .where(projectData.dataId.in(dataIds))
-                    .groupBy(projectData.dataId)
-                    .fetch();
-            queryCount++; // 배치 쿼리
-            
-            projectCountMap = projectCountTuples.stream()
-                    .collect(Collectors.toMap(
-                            tuple -> tuple.get(projectData.dataId),
-                            tuple -> tuple.get(projectData.id.count())
-                    ));
-        }
+        // 배치로 프로젝트 수 조회 (N+1 문제 해결)
+        List<Long> dataIds = dataEntities.stream().map(DataEntity::getId).toList();
+        Map<Long, Long> projectCounts = getProjectCountsBatch(dataIds);
+        queryCount++; // 배치 쿼리 1개
 
-        // 최종 결과 생성
-        final Map<Long, Long> finalProjectCountMap = projectCountMap;
+        // DTO 조합 및 프로젝트 수에 따른 메모리 정렬
         List<DataWithProjectCountDto> contents = dataEntities.stream()
                 .map(entity -> new DataWithProjectCountDto(
                         DataEntityMapper.toDomain(entity),
-                        finalProjectCountMap.getOrDefault(entity.getId(), 0L)
+                        projectCounts.getOrDefault(entity.getId(), 0L)
                 ))
+                .sorted((a, b) -> { // 프로젝트 수 정렬은 메모리에서 처리
+                    if (sortType == DataSortType.UTILIZE) { // UTILIZE는 프로젝트 수 기준 정렬을 의미
+                        return Long.compare(b.countConnectedProjects(), a.countConnectedProjects());
+                    }
+                    return 0; // 다른 정렬 타입은 DB에서 이미 처리됨
+                }) 
                 .toList();
 
         // 총 개수 조회
@@ -107,9 +94,24 @@ public class SearchDataQueryDslAdapter implements
         return new PageImpl<>(contents, pageable, total);
     }
 
-
-
-
+    /**
+     * 배치로 프로젝트 수를 조회합니다.
+     */
+    private Map<Long, Long> getProjectCountsBatch(List<Long> dataIds) {
+        if (dataIds.isEmpty()) return Collections.emptyMap();
+        
+        return queryFactory
+                .select(projectData.dataId, projectData.id.count())
+                .from(projectData)
+                .where(projectData.dataId.in(dataIds))
+                .groupBy(projectData.dataId)
+                .fetch()
+                .stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(projectData.dataId),
+                        tuple -> tuple.get(projectData.id.count())
+                ));
+    }
 
     /**
      * FilteringDataRequest의 조건에 따라 데이터셋 필터링에 사용할 QueryDSL BooleanExpression 배열을 생성합니다.
