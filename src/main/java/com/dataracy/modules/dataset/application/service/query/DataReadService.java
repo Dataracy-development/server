@@ -20,6 +20,9 @@ import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThu
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
+import com.dataracy.modules.dataset.application.port.out.storage.PopularDataSetsStoragePort;
+import com.dataracy.modules.dataset.application.port.in.storage.UpdatePopularDataSetsStorageUseCase;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,10 +60,16 @@ public class DataReadService implements
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
     private final FindDataLabelMapUseCase findDataLabelMapUseCase;
+    
+    // 저장소 관련 의존성
+    private final PopularDataSetsStoragePort popularDataSetsStoragePort;
+    private final UpdatePopularDataSetsStorageUseCase updatePopularDataSetsStorageUseCase;
 
     /**
          * 지정된 개수만큼 인기 데이터셋을 조회하여 사용자 닉네임, 프로필 썸네일 URL, 주제/데이터 소스/데이터 타입 라벨,
          * 및 각 데이터셋의 연결된 프로젝트 수를 포함한 응답 리스트를 반환합니다.
+         * 
+         * 캐시 우선 조회 후, 캐시가 없으면 DB에서 조회하고 캐시를 워밍업합니다.
          *
          * @param size 조회할 인기 데이터셋의 최대 개수
          * @return 인기 데이터셋 정보(닉네임, 프로필 썸네일 URL, 라벨들 및 연결된 프로젝트 수)를 담은 응답 리스트
@@ -70,6 +79,24 @@ public class DataReadService implements
     public List<PopularDataResponse> getPopularDataSets(int size) {
         Instant startTime = LoggerFactory.service().logStart("GetPopularDataSetsUseCase", "인기 데이터셋 목록 조회 서비스 시작 size=" + size);
 
+        // 저장소에서 먼저 조회
+        LoggerFactory.service().logInfo("GetPopularDataSetsUseCase", "저장소에서 캐시 조회 시작");
+        var cachedResult = popularDataSetsStoragePort.getPopularDataSets();
+        LoggerFactory.service().logInfo("GetPopularDataSetsUseCase", "저장소 캐시 조회 결과: " + (cachedResult.isPresent() ? "데이터 존재" : "데이터 없음"));
+        if (cachedResult.isPresent()) {
+            List<PopularDataResponse> cachedData = cachedResult.get();
+            List<PopularDataResponse> result = cachedData.stream()
+                    .limit(size)
+                    .toList();
+            
+            LoggerFactory.service().logSuccess("GetPopularDataSetsUseCase", 
+                "인기 데이터셋 저장소 조회 성공 size=" + size + " cachedCount=" + cachedData.size(), startTime);
+            return result;
+        }
+
+        // 저장소에 데이터가 없으면 DB에서 조회 (기존 로직)
+        LoggerFactory.service().logInfo("GetPopularDataSetsUseCase", "저장소에 데이터가 없어 DB에서 조회합니다. size=" + size);
+        
         List<DataWithProjectCountDto> savedDataSets = getPopularDataSetsPort.getPopularDataSets(size);
         DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets);
 
@@ -88,7 +115,10 @@ public class DataReadService implements
                 })
                 .toList();
 
-        LoggerFactory.service().logSuccess("GetPopularDataSetsUseCase", "인기 데이터셋 목록 조회 서비스 종료 size=" + size, startTime);
+        // 캐시 워밍업 (비동기)
+        updatePopularDataSetsStorageUseCase.warmUpCacheIfNeeded(Math.max(size, 20));
+
+        LoggerFactory.service().logSuccess("GetPopularDataSetsUseCase", "인기 데이터셋 DB 조회 서비스 종료 size=" + size, startTime);
         return popularDataResponses;
     }
 
