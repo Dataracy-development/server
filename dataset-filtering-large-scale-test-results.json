@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-09-25T09:50:08.905Z",
+  "scenario": "fixedLargePageTest",
+  "metrics": {
+    "success_rate": 0,
+    "avg_response_time": 43.01564166666665,
+    "p95_response_time": 77.17939999999996,
+    "max_response_time": 147.673,
+    "total_requests": 120,
+    "total_queries": 360,
+    "error_rate": 1
+  },
+  "thresholds": {
+    "success_rate_threshold": 0.95,
+    "response_time_threshold": 8000,
+    "error_rate_threshold": 0.05
+  },
+  "analysis": {
+    "query_efficiency": 0.3333333333333333,
+    "performance_impact": "LOW"
+  }
+}

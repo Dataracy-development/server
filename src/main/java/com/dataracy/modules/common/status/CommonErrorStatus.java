@@ -27,7 +27,7 @@ public enum CommonErrorStatus implements BaseErrorCode {
     // File Errors
     OVER_MAXIMUM_IMAGE_FILE_SIZE(HttpStatus.BAD_REQUEST, "FILE-001", "이미지 파일은 최대 10MB까지 업로드 가능합니다"),
     BAD_REQUEST_IMAGE_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE-002", "이미지 파일은 jpg, jpeg, png 형식만 허용됩니다"),
-    OVER_MAXIMUM_FILE_SIZE(HttpStatus.BAD_REQUEST, "FILE-003", "파일은 최대 10MB까지 업로드 가능합니다"),
+    OVER_MAXIMUM_FILE_SIZE(HttpStatus.BAD_REQUEST, "FILE-003", "파일은 최대 200MB까지 업로드 가능합니다"),
     BAD_REQUEST_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE-004", "파일은 csv, xlsx, json 형식만 허용됩니다"),
 
     // Util Errors
