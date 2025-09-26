@@ -14,7 +14,7 @@ public class ManageDataEsProjectionDlqDbAdapter implements ManageDataProjectionD
     /**
      * DataEsProjection DLQ 엔트리를 생성해 영속화한다.
      *
-     * <p>주어진 식별자와 상태 정보를 사용해 DataEsProjectionDlqEntity를 생성한 뒤 저장소에 저장한다.</p>
+     * 주어진 식별자와 상태 정보를 사용해 DataEsProjectionDlqEntity를 생성한 뒤 저장소에 저장한다.
      *
      * @param dataId       대상 데이터의 식별자
      * @param deltaDownload 다운로드 수 변경량(없으면 null 가능)

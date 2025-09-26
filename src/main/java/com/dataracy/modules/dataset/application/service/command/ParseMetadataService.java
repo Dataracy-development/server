@@ -21,7 +21,6 @@ import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFro
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

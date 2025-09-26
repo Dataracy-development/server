@@ -164,9 +164,9 @@ public class ReadProjectQueryDslAdapter implements
     /**
      * 지정된 데이터 ID와 연결된 프로젝트들을 페이징하여 조회합니다.
      *
-     * <p>프로젝트는 연결된 ProjectData 엔티티를 기준으로 프로젝트 생성일(createdAt) 내림차순으로 정렬되어 반환됩니다.
+     * 프로젝트는 연결된 ProjectData 엔티티를 기준으로 프로젝트 생성일(createdAt) 내림차순으로 정렬되어 반환됩니다.
      * 조회는 soft-delete(삭제 플래그가 설정되지 않은) 된 연결만 대상으로 하며, 결과 콘텐츠는 최소 정보(minimal) 형태로 매핑됩니다.
-     * 총건수는 해당 데이터와 연결된 서로 다른 프로젝트 수(distinct)를 기준으로 계산됩니다.</p>
+     * 총건수는 해당 데이터와 연결된 서로 다른 프로젝트 수(distinct)를 기준으로 계산됩니다.
      *
      * @param dataId 조회할 데이터(데이터셋)의 ID
      * @param pageable 페이지 번호·크기 및 정렬 정보를 포함한 페이징 파라미터
@@ -252,7 +252,7 @@ public class ReadProjectQueryDslAdapter implements
     /**
      * 특정 사용자가 작성한 비삭제 프로젝트들을 페이지 단위로 조회한다.
      *
-     * <p>작성일 기준 최신순으로 정렬된 프로젝트들의 최소 정보(minimal)를 반환하며,
+     * 작성일 기준 최신순으로 정렬된 프로젝트들의 최소 정보(minimal)를 반환하며,
      * 전달된 Pageable이 null이면 기본 페이지(PageRequest.of(0, 5))를 사용한다.
      * 결과의 total은 해당 사용자에 대한 비삭제 프로젝트 총 개수를 반영한다.
      *

@@ -19,7 +19,7 @@ public class ManageRefreshTokenService implements ManageRefreshTokenUseCase {
     /**
      * 지정한 사용자 ID의 리프레시 토큰을 Redis에 저장합니다.
      *
-     * <p>실제 저장은 ManageRefreshTokenPort에 위임됩니다.</p>
+     * 실제 저장은 ManageRefreshTokenPort에 위임됩니다.
      *
      * @param userId       리프레시 토큰을 저장할 대상 사용자 ID
      * @param refreshToken 저장할 리프레시 토큰 값
@@ -54,7 +54,7 @@ public class ManageRefreshTokenService implements ManageRefreshTokenUseCase {
     /**
      * 지정한 사용자 ID의 리프레시 토큰을 Redis에서 삭제한다.
      *
-     * <p>실제 삭제는 ManageRefreshTokenPort에 위임한다.
+     * 실제 삭제는 ManageRefreshTokenPort에 위임한다.
      *
      * @param userId 삭제할 대상의 사용자 ID
      */

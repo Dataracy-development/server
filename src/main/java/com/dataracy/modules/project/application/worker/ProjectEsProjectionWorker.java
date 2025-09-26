@@ -37,8 +37,8 @@ public class ProjectEsProjectionWorker {
     /**
      * ProjectEsProjectionWorker에 필요한 포트와 어댑터를 주입하고 필드에 할당하는 생성자.
      *
-     * <p>프로젝트 Elasticsearch 프로젝션 작업의 처리(삭제/복원, 댓글/좋아요/조회수 반영 등)에
-     * 필요한 외부 의존성을 초기화합니다.</p>
+     * 프로젝트 Elasticsearch 프로젝션 작업의 처리(삭제/복원, 댓글/좋아요/조회수 반영 등)에
+     * 필요한 외부 의존성을 초기화합니다.
      */
     public ProjectEsProjectionWorker(
             ManageProjectProjectionTaskPort manageProjectProjectionTaskPort,
@@ -61,7 +61,7 @@ public class ProjectEsProjectionWorker {
     /**
      * 재시도 횟수에 따른 백오프 간격(초)을 계산한다.
      *
-     * <p>동작:
+     * 동작:
      * <ul>
      *   <li>retryCount이 8 이상이면 고정 120초를 반환한다.</li>
      *   <li>그렇지 않으면 2^(max(0, retryCount-1)) 초를 반환하되 최대 64초까지 제한된다.</li>
@@ -96,12 +96,12 @@ public class ProjectEsProjectionWorker {
     /**
      * 단일 프로젝트 ES 프로젝션 작업을 독립된 트랜잭션에서 처리한다.
      *
-     * <p>주요 동작:
+     * 주요 동작:
      * - soft-delete/restore, 댓글/좋아요/조회수 델타를 ES에 적용한다.
      * - 성공 시 해당 작업을 삭제한다.
      * - 예외 발생 시 재시도 횟수를 증가시키고 재시도 한도를 초과하면 DLQ로 저장한 뒤 작업을 삭제한다.
      * - 재시도 시에는 상태를 RETRYING으로 설정하고 nextRunAt을 backoff 정책에 따라 갱신한다.
-     * - 발생한 오류는 로깅된다.</p>
+     * - 발생한 오류는 로깅된다.
      *
      * @param t 처리할 프로젝트 프로젝션 작업 엔티티 (ProjectEsProjectionTaskEntity)
      */

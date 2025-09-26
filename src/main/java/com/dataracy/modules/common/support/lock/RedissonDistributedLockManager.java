@@ -8,6 +8,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -73,7 +74,12 @@ public class RedissonDistributedLockManager {
                 
                 // 지수 백오프: 100ms, 200ms, 400ms, 800ms...
                 long backoffMs = Math.min(100L * (1L << (attempts - 1)), 5000L); // 최대 5초
-                Thread.sleep(backoffMs);
+                try {
+                    Thread.sleep(backoffMs);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new LockAcquisitionException("백오프 대기 중 인터럽트 발생", e);
+                }
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -100,6 +106,20 @@ public class RedissonDistributedLockManager {
 
         LoggerFactory.lock().logRetryExceeded(key);
         throw new LockAcquisitionException("다른 사용자가 해당 자원에 접근 중입니다. 잠시 후 다시 시도해주세요.");
+    }
+
+    /**
+     * 비동기로 분산 락을 획득하고 작업을 실행합니다.
+     *
+     * @param key        분산 락을 식별하는 고유 키
+     * @param waitTime   락 획득을 위해 대기할 최대 시간(밀리초)
+     * @param leaseTime  락을 소유할 임대 시간(밀리초)
+     * @param retryCount 락 획득 재시도 횟수
+     * @param action     락 획득 후 실행할 작업
+     * @return           CompletableFuture로 래핑된 작업 실행 결과
+     */
+    public <T> CompletableFuture<T> executeAsync(String key, long waitTime, long leaseTime, int retryCount, Supplier<T> action) {
+        return CompletableFuture.supplyAsync(() -> execute(key, waitTime, leaseTime, retryCount, action));
     }
 
     /**

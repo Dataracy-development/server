@@ -21,8 +21,8 @@ public class CommentKafkaProducerAdapter implements SendCommentEventPort {
     /**
          * 주어진 프로젝트 ID로 댓글 작성 이벤트를 비동기적으로 Kafka에 발행합니다.
          *
-         * <p>이 메서드는 토픽 {@code TOPIC_UPLOAD}에 키는 {@code String.valueOf(projectId)}, 값은 {@code projectId}로 메시지를 전송합니다.
-         * 전송 완료 시 콜백에서 실패하면 {@link RuntimeException}을 던지고, 성공하면 생산 로그를 남깁니다.</p>
+         * 이 메서드는 토픽 {@code TOPIC_UPLOAD}에 키는 {@code String.valueOf(projectId)}, 값은 {@code projectId}로 메시지를 전송합니다.
+         * 전송 완료 시 콜백에서 실패하면 {@link RuntimeException}을 던지고, 성공하면 생산 로그를 남깁니다.
          *
          * @param projectId 댓글이 작성된 프로젝트의 ID
          * @throws RuntimeException 전송 완료 콜백에서 예외가 발생한 경우 해당 예외를 래핑하여 던집니다.

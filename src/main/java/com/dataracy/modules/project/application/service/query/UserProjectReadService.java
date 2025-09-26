@@ -31,8 +31,8 @@ public class UserProjectReadService implements FindUserProjectsUseCase {
     /**
      * 지정된 사용자가 작성한 프로젝트들을 페이지 단위로 조회하여 각 프로젝트의 주제 및 저자 레벨 라벨을 포함한 응답 DTO 페이지를 반환합니다.
      *
-     * <p>데이터는 저장소에서 페이징으로 조회한 Project 엔티티를 기반으로 하며, 조회된 프로젝트들의 topicId와 authorLevelId를 모아서
-     * 각각의 라벨을 조회한 뒤 UserProjectResponse로 매핑합니다.</p>
+     * 데이터는 저장소에서 페이징으로 조회한 Project 엔티티를 기반으로 하며, 조회된 프로젝트들의 topicId와 authorLevelId를 모아서
+     * 각각의 라벨을 조회한 뒤 UserProjectResponse로 매핑합니다.
      *
      * @param userId   조회 대상 사용자 식별자
      * @param pageable 페이지 및 정렬 정보를 담은 객체

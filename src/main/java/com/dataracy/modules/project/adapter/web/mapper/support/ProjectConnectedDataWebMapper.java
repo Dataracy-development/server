@@ -9,9 +9,9 @@ public class ProjectConnectedDataWebMapper {
     /**
      * ProjectConnectedDataResponse를 ProjectConnectedDataWebResponse로 변환합니다.
      *
-     * <p>응답 DTO의 각 필드(id, title, creatorId, creatorName, userProfileImageUrl, topicLabel,
+     * 응답 DTO의 각 필드(id, title, creatorId, creatorName, userProfileImageUrl, topicLabel,
      * dataTypeLabel, startDate, endDate, dataThumbnailUrl, downloadCount, rowCount, columnCount,
-     * createdAt, countConnectedProjects)를 대응하는 웹 응답 DTO 필드로 그대로 매핑하여 새 객체를 생성합니다.</p>
+     * createdAt, countConnectedProjects)를 대응하는 웹 응답 DTO 필드로 그대로 매핑하여 새 객체를 생성합니다.
      *
      * @param responseDto 변환할 소스 DTO. null일 경우 내부 필드 접근으로 인해 NullPointerException이 발생할 수 있습니다.
      * @return 변환된 ProjectConnectedDataWebResponse 인스턴스

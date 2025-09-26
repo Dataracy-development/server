@@ -11,7 +11,7 @@ public class ProjectSearchWebMapper {
     /**
      * RealTimeProjectResponse DTO를 RealTimeProjectWebResponse로 변환합니다.
      *
-     * <p>DTO의 id, title, creatorId, creatorName, projectThumbnailUrl 필드를 대응하는 웹 응답 객체로 매핑합니다.</p>
+     * DTO의 id, title, creatorId, creatorName, projectThumbnailUrl 필드를 대응하는 웹 응답 객체로 매핑합니다.
      *
      * @param responseDto 변환할 실시간 프로젝트 검색 결과 DTO
      * @return 변환된 RealTimeProjectWebResponse 객체

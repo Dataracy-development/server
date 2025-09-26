@@ -24,8 +24,8 @@ public interface UserCommandApi {
     /**
      * 회원 정보를 수정합니다.
      *
-     * <p>요청 본문으로 회원 수정 정보(검증된 ModifyUserInfoWebRequest)와 선택적 프로필 이미지 파일을 받아
-     * 회원 정보를 업데이트하고 성공 시 200 OK와 SuccessResponse<Void>를 반환합니다.</p>
+     * 요청 본문으로 회원 수정 정보(검증된 ModifyUserInfoWebRequest)와 선택적 프로필 이미지 파일을 받아
+     * 회원 정보를 업데이트하고 성공 시 200 OK와 SuccessResponse<Void>를 반환합니다.
      *
      * @param profileImageFile 선택적 프로필 이미지 파일(Multipart). 없을 수 있습니다.
      * @param webRequest 회원 수정에 필요한 검증된 요청 데이터(ModifyUserInfoWebRequest)

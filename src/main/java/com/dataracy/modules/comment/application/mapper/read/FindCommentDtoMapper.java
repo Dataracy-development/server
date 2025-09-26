@@ -46,8 +46,8 @@ public class FindCommentDtoMapper {
     /**
          * 답글 도메인 객체와 관련 사용자 메타데이터를 FindReplyCommentResponse DTO로 변환합니다.
          *
-         * <p>Comment의 id, userId, content, likeCount, createdAt 값을 추출해
-         * 전달된 작성자 정보(username, userProfileImageUrl, authorLevelLabel)와 isLiked 플래그와 함께 DTO로 생성합니다.</p>
+         * Comment의 id, userId, content, likeCount, createdAt 값을 추출해
+         * 전달된 작성자 정보(username, userProfileImageUrl, authorLevelLabel)와 isLiked 플래그와 함께 DTO로 생성합니다.
          *
          * @param comment 변환할 답글 도메인 객체
          * @param username 답글 작성자의 사용자명
