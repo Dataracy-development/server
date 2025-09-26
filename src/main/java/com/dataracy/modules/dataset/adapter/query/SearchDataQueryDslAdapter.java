@@ -94,6 +94,7 @@ public class SearchDataQueryDslAdapter implements
         return new PageImpl<>(contents, pageable, total);
     }
 
+
     /**
      * 배치로 프로젝트 수를 조회합니다.
      */

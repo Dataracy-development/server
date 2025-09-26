@@ -15,6 +15,7 @@ import com.dataracy.modules.project.application.dto.response.support.ProjectWith
 import com.dataracy.modules.project.application.port.out.query.read.*;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.model.Project;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -73,6 +74,7 @@ public class ReadProjectQueryDslAdapter implements
          * 상세:
          * - 프로젝트가 존재하지 않으면 Optional.empty()를 반환합니다.
          * - 존재하면 프로젝트(부모 프로젝트 정보 포함)와 그에 연결된 데이터셋 ID 목록을 ProjectWithDataIdsResponse로 감싸 반환합니다.
+         * - 성능 최적화: 하나의 쿼리로 프로젝트와 연결된 데이터 ID를 함께 조회하여 N+1 문제 해결
          *
          * @param projectId 조회할 프로젝트의 ID
          * @return 프로젝트(부모 포함)과 연결된 데이터셋 ID 목록을 포함한 Optional. 프로젝트가 없으면 Optional.empty()
@@ -80,29 +82,36 @@ public class ReadProjectQueryDslAdapter implements
     @Override
     public Optional<ProjectWithDataIdsResponse> findProjectWithDataById(Long projectId) {
         Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 시작. projectId=" + projectId);
-        ProjectEntity entity = queryFactory
-                .selectFrom(project)
+        
+        // 최적화: 하나의 쿼리로 프로젝트와 연결된 데이터 ID를 함께 조회
+        List<Tuple> results = queryFactory
+                .select(project, projectData.dataId)
+                .from(project)
                 .leftJoin(project.parentProject)
+                .leftJoin(projectData).on(
+                        projectData.project.id.eq(project.id)
+                        .and(ProjectDataFilterPredicate.notDeleted())
+                )
                 .where(
                         ProjectFilterPredicate.projectIdEq(projectId),
                         ProjectFilterPredicate.notDeleted()
                 )
-                .fetchOne();
+                .fetch();
 
-        if (entity == null) {
+        if (results.isEmpty()) {
             LoggerFactory.query().logQueryEnd("ProjectEntity", "[findProjectWithDataById] 해당하는 프로젝트 리소스가 존재하지 않습니다. projectId=" + projectId, startTime);
             return Optional.empty();
         }
 
-        // 연결된 dataId 목록
-        List<Long> dataIds = queryFactory
-                .select(projectData.dataId)
-                .from(projectData)
-                .where(
-                        projectData.project.id.eq(projectId),
-                        ProjectDataFilterPredicate.notDeleted()
-                )
-                .fetch();
+        // 첫 번째 결과에서 프로젝트 엔티티 추출 (모든 결과는 같은 프로젝트)
+        ProjectEntity entity = results.get(0).get(project);
+        
+        // 연결된 dataId 목록 추출 (null 제외)
+        List<Long> dataIds = results.stream()
+                .map(tuple -> tuple.get(projectData.dataId))
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
 
         Optional<ProjectWithDataIdsResponse> projectWithDataIdsResponse = Optional.of(new ProjectWithDataIdsResponse(
                 ProjectEntityMapper.toWithParent(entity),
