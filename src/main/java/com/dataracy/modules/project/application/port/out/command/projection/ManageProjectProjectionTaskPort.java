@@ -1,5 +1,7 @@
 package com.dataracy.modules.project.application.port.out.command.projection;
 
+import java.util.Map;
+
 public interface ManageProjectProjectionTaskPort {
     /**
  * 프로젝트의 댓글 수 변경치를 프로젝션 업데이트 작업으로 큐에 등록한다.
@@ -39,9 +41,16 @@ void enqueueViewDelta(Long projectId, Long deltaView);
  */
 void enqueueSetDeleted(Long projectId, boolean deleted);
     /**
- * 지정한 프로젝트 ES 프로젝션 작업을 삭제한다.
- *
- * @param projectEsProjectionTaskId 삭제할 프로젝션 작업의 고유 ID
- */
-void delete(Long projectEsProjectionTaskId);
+     * 지정한 프로젝트 ES 프로젝션 작업을 삭제한다.
+     *
+     * @param projectEsProjectionTaskId 삭제할 프로젝션 작업의 고유 ID
+     */
+    void delete(Long projectEsProjectionTaskId);
+
+    /**
+     * 여러 프로젝트의 조회수 변경을 배치로 프로젝션 큐에 등록합니다.
+     *
+     * @param viewCountUpdates 프로젝트 ID와 조회수 변경량의 맵
+     */
+    void enqueueViewDeltaBatch(Map<Long, Long> viewCountUpdates);
 }

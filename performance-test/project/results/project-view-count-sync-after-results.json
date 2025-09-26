@@ -1,0 +1,14 @@
+{
+  "test_type": "after_optimization",
+  "timestamp": "2025-09-26T06:49:52.251Z",
+  "metrics": {
+    "avg_response_time": 0,
+    "p95_response_time": 0,
+    "max_response_time": 0,
+    "min_response_time": 0,
+    "success_rate": 0,
+    "total_iterations": 0,
+    "http_requests_success_rate": 0
+  },
+  "summary": "배치 처리 버전 - 고정 2개 쿼리 (DB 배치 UPDATE + 프로젝션 큐 배치 INSERT)"
+}
