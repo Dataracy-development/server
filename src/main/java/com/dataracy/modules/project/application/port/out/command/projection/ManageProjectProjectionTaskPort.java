@@ -15,7 +15,7 @@ void enqueueCommentDelta(Long projectId, int deltaComment);
     /**
  * 프로젝트의 좋아요 수 변경량을 프로젝션 작업 큐에 등록한다.
  *
- * <p>deltaLike 값만큼 해당 프로젝트의 좋아요 합계에 증감하는 비동기 프로젝션 업데이트를 요청한다.
+ * deltaLike 값만큼 해당 프로젝트의 좋아요 합계에 증감하는 비동기 프로젝션 업데이트를 요청한다.
  *
  * @param projectId 대상 프로젝트의 식별자
  * @param deltaLike 증가(양수) 또는 감소(음수)될 좋아요 수의 정수 값

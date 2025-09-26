@@ -63,7 +63,7 @@ public class UserProfileService implements
     /**
      * 주어진 사용자 ID 목록에 대응하는 닉네임을 ID->닉네임 맵으로 반환합니다.
      *
-     * <p>입력 목록이 null이거나 비어 있으면 빈 Map을 반환합니다.</p>
+     * 입력 목록이 null이거나 비어 있으면 빈 Map을 반환합니다.
      *
      * @param userIds 닉네임을 조회할 사용자 ID 목록(빈 목록 또는 null이면 빈 Map 반환)
      * @return 사용자 ID를 키로, 해당 닉네임을 값으로 하는 Map
@@ -164,8 +164,8 @@ public class UserProfileService implements
     /**
          * 주어진 사용자 ID에 대한 상세 사용자 정보를 조회하여 GetUserInfoResponse로 반환합니다.
          *
-         * <p>사용자 존재 시 사용자 역할, 이메일, 닉네임, 프로필 이미지, 소개 텍스트와
-         * 선택적 레이블(저자 레벨, 직업, 관심 주제 목록, 유입 경로)을 포함한 DTO를 생성해 반환합니다.</p>
+         * 사용자 존재 시 사용자 역할, 이메일, 닉네임, 프로필 이미지, 소개 텍스트와
+         * 선택적 레이블(저자 레벨, 직업, 관심 주제 목록, 유입 경로)을 포함한 DTO를 생성해 반환합니다.
          *
          * @param userId 조회할 사용자의 ID
          * @return 조회된 사용자의 정보를 담은 {@link GetUserInfoResponse}

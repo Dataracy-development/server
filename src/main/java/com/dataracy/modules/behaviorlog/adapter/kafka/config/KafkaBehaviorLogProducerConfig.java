@@ -35,11 +35,15 @@ public class KafkaBehaviorLogProducerConfig {
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        config.put(ProducerConfig.ACKS_CONFIG, "all");
-        config.put(ProducerConfig.RETRIES_CONFIG, 3);
-        config.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-        config.put(ProducerConfig.LINGER_MS_CONFIG, 1);
-        config.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
+        
+        // ----- 성능 최적화 설정 -----
+        config.put(ProducerConfig.ACKS_CONFIG, "1");                     // 성능 향상: 리더만 확인 (로그는 중요도 낮음)
+        config.put(ProducerConfig.RETRIES_CONFIG, 2);                     // 재시도 횟수 감소
+        config.put(ProducerConfig.BATCH_SIZE_CONFIG, 32_768);             // 배치 크기 증가 (처리량 향상)
+        config.put(ProducerConfig.LINGER_MS_CONFIG, 5);                   // 배칭 지연 시간 증가
+        config.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67_108_864);       // 버퍼 메모리 증가 (64MB)
+        config.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 5); // 동시 요청 수 증가
+        
         return new DefaultKafkaProducerFactory<>(config);
     }
 

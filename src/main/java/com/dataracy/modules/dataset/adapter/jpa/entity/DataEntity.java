@@ -164,7 +164,7 @@ public class DataEntity extends BaseTimeEntity {
     /**
      * 주어진 값들로 새로운 DataEntity 인스턴스를 생성하여 반환합니다.
      *
-     * <p>데이터셋의 식별·분류 정보, 설명 및 연관 메타데이터를 초기화한 엔티티를 빌더로 생성합니다.</p>
+     * 데이터셋의 식별·분류 정보, 설명 및 연관 메타데이터를 초기화한 엔티티를 빌더로 생성합니다.
      *
      * @param startDate 데이터셋 시작일 (null 허용)
      * @param endDate 데이터셋 종료일 (null 허용)

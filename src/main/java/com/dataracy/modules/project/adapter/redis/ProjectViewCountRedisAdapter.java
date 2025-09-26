@@ -56,7 +56,7 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
     /**
          * 지정된 프로젝트와 대상 유형의 조회수를 Redis에서 가져옵니다.
          *
-         * <p>키 `viewCount:{targetType}:{projectId}`의 값을 읽어 Long으로 반환합니다. 키가 존재하지 않으면 0L을 반환합니다.</p>
+         * 키 `viewCount:{targetType}:{projectId}`의 값을 읽어 Long으로 반환합니다. 키가 존재하지 않으면 0L을 반환합니다.
          *
          * @param projectId 조회수를 조회할 프로젝트의 ID
          * @param targetType 조회 대상의 유형

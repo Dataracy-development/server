@@ -82,7 +82,7 @@ public class OtherUserProfileService implements GetOtherUserInfoUseCase {
     /**
      * 특정 사용자가 업로드한 프로젝트의 추가 페이지 목록을 조회한다.
      *
-     * <p>주어진 사용자 ID에 대해 페이지네이션된 프로젝트들을 조회하여 {@code GetOtherUserProjectResponse}로 매핑한 결과를 반환한다.</p>
+     * 주어진 사용자 ID에 대해 페이지네이션된 프로젝트들을 조회하여 {@code GetOtherUserProjectResponse}로 매핑한 결과를 반환한다.
      *
      * @param userId   조회할 대상 사용자의 식별자
      * @param pageable 페이지 번호·크기·정렬 정보를 포함한 페이징 파라미터

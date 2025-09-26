@@ -22,10 +22,10 @@ public class ProjectViewCountWorker {
     /**
      * ProjectViewCountWorker를 생성하고 동작에 필요한 포트를 주입합니다.
      *
-     * <p>주입되는 포트:
+     * 주입되는 포트:
      * - ManageProjectViewCountPort: Redis에 저장된 프로젝트 조회수 키/카운트를 관리.
      * - UpdateProjectViewPort (DB 어댑터로 주입): Redis에서 꺼낸 증가분을 메인 데이터베이스에 반영.
-     * - ManageProjectProjectionTaskPort: 뷰 카운트 델타에 대한 프로젝션(예: 색인/비동기 작업) 작업을 큐에 등록.</p>
+     * - ManageProjectProjectionTaskPort: 뷰 카운트 델타에 대한 프로젝션(예: 색인/비동기 작업) 작업을 큐에 등록.
      */
     public ProjectViewCountWorker(
             ManageProjectViewCountPort manageProjectViewCountPort,

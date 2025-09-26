@@ -12,10 +12,10 @@ public class DataReadWebMapper {
     /**
      * 애플리케이션 계층의 DataDetailResponse를 웹 계층의 DataDetailWebResponse로 변환합니다.
      *
-     * <p>원본 DTO의 각 필드(id, title, username, userProfileImageUrl, userIntroductionText,
+     * 원본 DTO의 각 필드(id, title, username, userProfileImageUrl, userIntroductionText,
      * authorLabel, occupationLabel, topicLabel, dataSourceLabel, dataTypeLabel, startDate, endDate,
      * description, analysisGuide, dataThumbnailUrl, downloadCount, sizeBytes, rowCount, columnCount,
-     * previewJson, createdAt)를 그대로 전달하여 웹 응답 객체를 생성합니다.</p>
+     * previewJson, createdAt)를 그대로 전달하여 웹 응답 객체를 생성합니다.
      *
      * @param responseDto 변환할 애플리케이션 계층의 데이터셋 상세 응답 DTO
      * @return 변환된 웹 계층의 데이터셋 상세 응답 객체
@@ -95,8 +95,8 @@ public class DataReadWebMapper {
     /**
      * RecentMinimalDataResponse를 RecentMinimalDataWebResponse로 변환합니다.
      *
-     * <p>변환된 웹 응답에는 다음 필드가 포함됩니다: id, title, creatorId, creatorName,
-     * userProfileImageUrl, dataThumbnailUrl, createdAt.</p>
+     * 변환된 웹 응답에는 다음 필드가 포함됩니다: id, title, creatorId, creatorName,
+     * userProfileImageUrl, dataThumbnailUrl, createdAt.
      *
      * @param responseDto 변환할 애플리케이션 계층의 최근 최소 데이터 응답 DTO
      * @return 위에 열거된 필드를 포함한 RecentMinimalDataWebResponse
@@ -116,10 +116,10 @@ public class DataReadWebMapper {
     /**
      * 인기 데이터 애플리케이션 응답을 웹 응답 DTO로 변환합니다.
      *
-     * <p>다음 필드를 PopularDataWebResponse로 매핑하여 새 인스턴스를 반환합니다:
+     * 다음 필드를 PopularDataWebResponse로 매핑하여 새 인스턴스를 반환합니다:
      * id, title, creatorId, creatorName, userProfileImageUrl, topicLabel, dataSourceLabel,
      * dataTypeLabel, startDate, endDate, description, dataThumbnailUrl, downloadCount,
-     * sizeBytes, rowCount, columnCount, createdAt, countConnectedProjects.</p>
+     * sizeBytes, rowCount, columnCount, createdAt, countConnectedProjects.
      *
      * @param responseDto 인기 데이터 검색 애플리케이션 응답 DTO
      * @return 매핑된 인기 데이터 웹 응답 DTO

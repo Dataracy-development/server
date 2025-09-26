@@ -32,25 +32,25 @@ public class KafkaDataUploadProducerConfig {
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        // ----- 안정성/정합성 핵심 -----
-        config.put(ProducerConfig.ACKS_CONFIG, "all");                    // 리더+팔로워 커밋까지 대기
+        // ----- 안정성/정합성 핵심 (성능 최적화) -----
+        config.put(ProducerConfig.ACKS_CONFIG, "1");                     // 성능 향상: 리더만 확인 (데이터 업로드는 중요도 낮음)
         config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);       // 멱등 프로듀서(중복 방지)
-        config.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1); // 재시도 시 순서 역전 방지(주문 중요시 1)
+        config.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 5); // 성능 향상: 동시 요청 수 증가 (순서 보장 포기)
 
-        // ----- 재시도/타임아웃/성능 -----
-        config.put(ProducerConfig.RETRIES_CONFIG, 10);                    // 브로커/네트워크 일시 오류 재시도
-        config.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 30_000);
-        config.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, 120_000);   // request.timeout + linger를 덮는 충분한 값
-        config.put(ProducerConfig.LINGER_MS_CONFIG, 5);                   // 소량 TPS에서 배칭 이득
+        // ----- 재시도/타임아웃/성능 최적화 -----
+        config.put(ProducerConfig.RETRIES_CONFIG, 3);                     // 재시도 횟수 감소 (성능 향상)
+        config.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 15_000);     // 타임아웃 단축
+        config.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, 60_000);   // 배송 타임아웃 단축
+        config.put(ProducerConfig.LINGER_MS_CONFIG, 10);                 // 배칭 지연 시간 증가 (처리량 향상)
         config.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, CompressionType.LZ4.name().toLowerCase());
+
+        // ----- 성능 최적화 배치/버퍼 설정 -----
+        config.put(ProducerConfig.BATCH_SIZE_CONFIG, 64_000);             // 배치 크기 증가 (처리량 향상)
+        config.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 134_217_728);     // 버퍼 메모리 증가 (128MB)
 
         // ----- JSON 타입 헤더 비활성(전역 yml과 일치) -----
         // 컨슈머가 타입 헤더 없이도 역직렬화하도록 운용 중이면 명시적으로 false
         config.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
-
-        // (선택) 배치/버퍼: 굳이 오버라이드 안 해도 됩니다. 필요한 경우에만 조정
-        // config.put(ProducerConfig.BATCH_SIZE_CONFIG, 32_768);
-        // config.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67_108_864);
 
         return new DefaultKafkaProducerFactory<>(config);
     }

@@ -83,7 +83,7 @@ public class ReadCommentService implements
     /**
          * 지정된 프로젝트의 원본 댓글에 대한 답글 목록을 페이지 단위로 조회한다.
          *
-         * <p>각 답글에는 작성자 닉네임, 프로필 이미지 URL, 작성자 레벨 라벨과 현재 사용자의 좋아요 여부가 포함된 DTO로 변환되어 반환된다.</p>
+         * 각 답글에는 작성자 닉네임, 프로필 이미지 URL, 작성자 레벨 라벨과 현재 사용자의 좋아요 여부가 포함된 DTO로 변환되어 반환된다.
          *
          * @param userId    현재 사용자의 ID (좋아요 여부 판정에 사용)
          * @param projectId 프로젝트 ID

@@ -22,7 +22,6 @@ import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameU
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
 import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
-import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -55,9 +54,9 @@ public class UserCommandService implements
     /**
      * 회원의 정보를 수정하고(필수 유효성 검사 수행) 필요 시 프로필 이미지를 업로드하여 갱신한다.
      *
-     * <p>요청한 닉네임을 키로 분산락을 획득하여 동시성 충돌을 방지한다. 요청 데이터 유효성 검사(닉네임 중복,
+     * 요청한 닉네임을 키로 분산락을 획득하여 동시성 충돌을 방지한다. 요청 데이터 유효성 검사(닉네임 중복,
      * 저자 레벨 필수 등)와 선택적 연관 엔터티 검사(직업, 방문경로, 관심 토픽)를 수행한 뒤 사용자 정보를 갱신한다.
-     * profileImageFile이 null이 아니고 비어있지 않으면 파일을 저장소에 업로드하고 사용자 프로필 이미지 URL을 업데이트한다.</p>
+     * profileImageFile이 null이 아니고 비어있지 않으면 파일을 저장소에 업로드하고 사용자 프로필 이미지 URL을 업데이트한다.
      *
      * @param userId            수정 대상 사용자 계정의 식별자
      * @param profileImageFile  새 프로필 이미지 파일(없으면 null 또는 비어있는 파일을 전달하여 이미지를 유지)
@@ -259,7 +258,7 @@ public class UserCommandService implements
     /**
      * 지정된 사용자를 탈퇴(삭제/비활성화) 처리한다.
      *
-     * <p>데이터베이스 트랜잭션 내에서 사용자 탈퇴를 수행하며, 내부적으로 사용자 저장소를 통해 탈퇴 상태로 갱신한다.
+     * 데이터베이스 트랜잭션 내에서 사용자 탈퇴를 수행하며, 내부적으로 사용자 저장소를 통해 탈퇴 상태로 갱신한다.
      *
      * @param userId 탈퇴할 사용자의 식별자
      */
@@ -274,7 +273,7 @@ public class UserCommandService implements
     /**
      * 사용자의 로그아웃을 처리한다.
      *
-     * <p>전달된 리프레시 토큰으로 토큰에 포함된 사용자 ID를 검증한 뒤, 일치하면 해당 사용자의 리프레시 토큰을 삭제한다.</p>
+     * 전달된 리프레시 토큰으로 토큰에 포함된 사용자 ID를 검증한 뒤, 일치하면 해당 사용자의 리프레시 토큰을 삭제한다.
      *
      * @param userId       로그아웃을 요청한 사용자의 ID
      * @param refreshToken 클라이언트가 보유한 리프레시 토큰 문자열
