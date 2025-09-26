@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,6 +33,23 @@ public class MemoryRateLimitAdapter implements RateLimitPort {
         // 1분마다 만료된 카운터 정리
         scheduler.scheduleAtFixedRate(this::cleanupExpiredCounters, 1, 1, TimeUnit.MINUTES);
         LoggerFactory.common().logInfo("MemoryRateLimitAdapter", "메모리 기반 레이트 리미팅 어댑터 초기화 완료");
+    }
+    
+    @PreDestroy
+    public void destroy() {
+        LoggerFactory.common().logInfo("MemoryRateLimitAdapter", "메모리 기반 레이트 리미팅 어댑터 종료 시작");
+        scheduler.shutdown();
+        try {
+            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                scheduler.shutdownNow();
+                LoggerFactory.common().logWarning("MemoryRateLimitAdapter", "스케줄러 강제 종료됨");
+            }
+        } catch (InterruptedException e) {
+            scheduler.shutdownNow();
+            Thread.currentThread().interrupt();
+            LoggerFactory.common().logError("MemoryRateLimitAdapter", "스케줄러 종료 중 인터럽트 발생", e);
+        }
+        LoggerFactory.common().logInfo("MemoryRateLimitAdapter", "메모리 기반 레이트 리미팅 어댑터 종료 완료");
     }
     
     @Override
@@ -95,22 +113,22 @@ public class MemoryRateLimitAdapter implements RateLimitPort {
     }
     
     private static class RequestCounter {
-        private int count = 0;
-        private long firstRequestTime = System.currentTimeMillis();
+        private volatile int count = 0;
+        private volatile long firstRequestTime = System.currentTimeMillis();
         
-        public synchronized void increment() {
+        public void increment() {
             count++;
         }
         
-        public synchronized int getCount() {
+        public int getCount() {
             return count;
         }
         
-        public synchronized long getFirstRequestTime() {
+        public long getFirstRequestTime() {
             return firstRequestTime;
         }
         
-        public synchronized void reset(long currentTime) {
+        public void reset(long currentTime) {
             count = 0;
             firstRequestTime = currentTime;
         }

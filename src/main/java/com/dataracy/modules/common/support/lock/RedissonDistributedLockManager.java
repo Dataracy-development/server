@@ -70,7 +70,10 @@ public class RedissonDistributedLockManager {
 
                 attempts++;
                 LoggerFactory.lock().logFail(key, attempts);
-                Thread.sleep(100);
+                
+                // 지수 백오프: 100ms, 200ms, 400ms, 800ms...
+                long backoffMs = Math.min(100L * (1L << (attempts - 1)), 5000L); // 최대 5초
+                Thread.sleep(backoffMs);
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
