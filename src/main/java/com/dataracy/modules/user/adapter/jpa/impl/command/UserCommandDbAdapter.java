@@ -14,6 +14,8 @@ import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class UserCommandDbAdapter implements UserCommandPort {
@@ -77,12 +79,17 @@ public class UserCommandDbAdapter implements UserCommandPort {
         // 기존 관심 주제 전부 삭제 (쿼리 직접)
         userTopicJpaRepository.deleteAllByUserId(userId);
 
-        // 새 관심 주제 추가
-        for (Long topicId : requestDto.topicIds()) {
-            UserTopicEntity topicEntity = UserTopicEntity.of(userEntity, topicId);
-            userEntity.addUserTopic(topicEntity);
-            userTopicJpaRepository.save(topicEntity);
-        }
+        // 새 관심 주제 추가 (배치 처리로 N+1 문제 해결)
+        List<UserTopicEntity> topicEntities = requestDto.topicIds().stream()
+                .map(topicId -> {
+                    UserTopicEntity topicEntity = UserTopicEntity.of(userEntity, topicId);
+                    userEntity.addUserTopic(topicEntity);
+                    return topicEntity;
+                })
+                .toList();
+        
+        // 배치로 한 번에 저장 (N+1 문제 해결)
+        userTopicJpaRepository.saveAll(topicEntities);
         userJpaRepository.save(userEntity);
     }
 

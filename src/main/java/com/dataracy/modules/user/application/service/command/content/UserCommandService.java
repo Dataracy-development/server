@@ -75,26 +75,51 @@ public class UserCommandService implements
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 
-        // 닉네임이 변경되는 경우에만 분산락 적용
-        if (!savedNickname.equals(requestDto.nickname())) {
-            modifyUserInfoWithLock(userId, savedNickname, profileImageFile, requestDto, startTime);
+        // 닉네임 변경 여부에 따라 다른 분산락 적용
+        if (requestDto.nickname().equals(savedNickname)) {
+            // 닉네임이 변경되지 않은 경우 - userId 기반 분산락 (동시성 문제 방지)
+            modifyUserInfoWithUserIdLock(userId, profileImageFile, requestDto, startTime);
         } else {
-            // 닉네임이 변경되지 않는 경우 분산락 없이 처리
-            modifyUserInfoWithoutLock(userId, profileImageFile, requestDto, startTime);
+            // 닉네임이 변경된 경우 - 닉네임 기반 분산락 (중복 방지)
+            modifyUserInfoWithNicknameLock(userId, savedNickname, profileImageFile, requestDto, startTime);
         }
     }
 
     @DistributedLock(
-            key = "'lock:user:modify:nickname:' + #requestDto.nickname()",
+            key = "'lock:nickname:' + #requestDto.nickname()",
             waitTime = 500L,
-            leaseTime = 1500L,
-            retry = 2
+            leaseTime = 5000L,
+            retry = 3
     )
     @Transactional
-    public void modifyUserInfoWithLock(Long userId, String savedNickname, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
+    public void modifyUserInfoWithNicknameLock(Long userId, String savedNickname, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
         // 회원 정보 수정 요청 정보 유효성 검사
         validateModifyUserInfo(
                 requestDto.nickname(),
+                requestDto.authorLevelId(),
+                requestDto.occupationId(),
+                requestDto.visitSourceId(),
+                requestDto.topicIds(),
+                profileImageFile
+        );
+        userCommandPort.modifyUserInfo(userId, requestDto);
+
+        // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
+        modifyProfileImageFile(profileImageFile, userId, "ModifyUserInfoUseCase");
+
+        LoggerFactory.service().logSuccess("ModifyUserInfoUseCase", "회원 정보 수정 서비스 성공 userId=" + userId, startTime);
+    }
+
+    @DistributedLock(
+            key = "'lock:user:modify:' + #userId",
+            waitTime = 500L,
+            leaseTime = 5000L,
+            retry = 3
+    )
+    @Transactional
+    public void modifyUserInfoWithUserIdLock(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
+        // 회원 정보 수정 요청 정보 유효성 검사 (닉네임 중복 검사 제외)
+        validateModifyUserInfoWithoutNickname(
                 requestDto.authorLevelId(),
                 requestDto.occupationId(),
                 requestDto.visitSourceId(),
