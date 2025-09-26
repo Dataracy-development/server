@@ -222,3 +222,15 @@ default:
     image-url: ${DEFAULT_PROJECT_IMAGE_URL}
   dataset:
     image-url: ${DEFAULT_DATASET_IMAGE_URL}
+
+# 파일 스토리지 설정 (하드코딩된 값들 외부화)
+file-storage:
+  file-size:
+    multipart-threshold: 20971520 # 20MB (20 * 1024 * 1024)
+    streaming-threshold: 5242880 # 5MB (5 * 1024 * 1024)
+  multipart:
+    chunk-size: 5242880 # 5MB (5 * 1024 * 1024)
+    max-parts: 10000
+  buffer:
+    default-size: 8192 # 8KB
+    streaming-size: 16384 # 16KB

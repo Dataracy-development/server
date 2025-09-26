@@ -2,6 +2,7 @@ package com.dataracy.modules.filestorage.adapter.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.dataracy.modules.filestorage.config.FileStorageProperties;
 import com.dataracy.modules.filestorage.domain.exception.S3UploadException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,9 @@ class AwsS3FileStorageAdapterTest {
     private AmazonS3 amazonS3;
 
     @Mock
+    private FileStorageProperties fileStorageProperties;
+
+    @Mock
     private MultipartFile file;
 
     @InjectMocks
@@ -35,6 +39,23 @@ class AwsS3FileStorageAdapterTest {
     @BeforeEach
     void init() {
         ReflectionTestUtils.setField(adapter, "bucket", "my-bucket");
+        
+        // FileStorageProperties 모킹 설정 (기본값으로 설정)
+        FileStorageProperties.FileSize fileSize = new FileStorageProperties.FileSize();
+        fileSize.setMultipartThreshold(20 * 1024 * 1024L); // 20MB
+        fileSize.setStreamingThreshold(5 * 1024 * 1024L);   // 5MB
+        
+        FileStorageProperties.Multipart multipart = new FileStorageProperties.Multipart();
+        multipart.setChunkSize(5 * 1024 * 1024L); // 5MB
+        
+        FileStorageProperties.Buffer buffer = new FileStorageProperties.Buffer();
+        buffer.setDefaultSize(8192);     // 8KB
+        buffer.setStreamingSize(16384);  // 16KB
+        
+        // lenient()를 사용하여 불필요한 스터빙 경고 방지
+        lenient().when(fileStorageProperties.getFileSize()).thenReturn(fileSize);
+        lenient().when(fileStorageProperties.getMultipart()).thenReturn(multipart);
+        lenient().when(fileStorageProperties.getBuffer()).thenReturn(buffer);
     }
 
     @Nested
