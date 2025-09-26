@@ -31,7 +31,7 @@ public class LikeCommandService implements LikeTargetUseCase {
      * 사용자가 프로젝트 또는 댓글에 대해 좋아요 또는 좋아요 취소를 수행합니다.
      * 대상 엔티티의 존재를 검증한 후, 이전 좋아요 여부에 따라 좋아요를 저장하거나 취소하며, 성공 시 해당 이벤트를 발행합니다.
      * 
-     * 주의: 현재 분산 락이 제거된 상태로, 동시성 이슈가 발생할 수 있습니다.
+     * 동시성 제어를 위해 분산 락을 적용하여 같은 사용자가 동시에 좋아요/취소를 요청할 때 데이터 일관성을 보장합니다.
      *
      * @param userId 좋아요 또는 좋아요 취소를 요청하는 사용자의 ID
      * @param requestDto 대상 타입, 대상 ID, 이전 좋아요 여부를 포함한 요청 정보
@@ -39,11 +39,11 @@ public class LikeCommandService implements LikeTargetUseCase {
      * @throws LikeException 좋아요 또는 좋아요 취소 과정에서 실패 시, 대상 및 작업에 따라 도메인별 예외가 발생합니다.
      */
     @Override
-    @DistributedLock( // 분산 락 제거 (동시성 이슈 시뮬레이션)
+    @DistributedLock(
             key = "'lock:like:' + #requestDto.targetType + ':' + #requestDto.targetId() + ':user:' + #userId",
-            waitTime = 300L,
-            leaseTime = 2000L,
-            retry = 2
+            waitTime = 500L,
+            leaseTime = 3000L,
+            retry = 3
     )
     @Transactional
     public TargetType likeTarget(Long userId, TargetLikeRequest requestDto) {
