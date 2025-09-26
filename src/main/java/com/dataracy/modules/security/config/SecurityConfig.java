@@ -25,6 +25,7 @@ public class SecurityConfig {
     private final CorsConfigurationSource corsConfigurationSource;
 
     private final JwtValidateUseCase jwtValidateUseCase;
+    private final SecurityPathConfig securityPathConfig;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
@@ -86,7 +87,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(jwtValidateUseCase), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtValidateUseCase, securityPathConfig), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

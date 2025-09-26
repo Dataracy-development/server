@@ -128,42 +128,59 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     public RefreshTokenResponse loginWithRateLimit(SelfLoginRequest requestDto, String clientIp) {
         Instant startTime = LoggerFactory.service().logStart("SelfLoginUseCase", "레이트 리미팅 적용 로그인 서비스 시작 email=" + requestDto.email());
 
-        // 유저 db로부터 이메일이 일치하는 유저를 조회한다. (비밀번호 검증 먼저)
-        UserInfo userInfo = isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo(requestDto.email(), requestDto.password());
+        // 1. 사용자 인증
+        UserInfo userInfo = authenticateUser(requestDto);
         
-        // 로그인 성공한 경우에만 레이트 리미팅 확인 (사용자 ID + IP 조합으로 제한 - 공유 IP 문제 해결)
-        String rateLimitKey = requestDto.email() + ":" + clientIp; // 사용자별 + IP별 제한
+        // 2. 레이트 리미팅 검증
+        validateRateLimit(requestDto.email(), clientIp);
         
-        // 정상 사용자와 공격자 구분 로직 (실무 권장 수준)
-        int maxRequests = isNormalUser(requestDto.email()) ? 60 : 5; // 정상 사용자: 60회, 의심 사용자: 5회
+        // 3. 토큰 발급 및 반환
+        RefreshTokenResponse response = generateRefreshTokenResponse(userInfo);
+
+        LoggerFactory.service().logSuccess("SelfLoginUseCase", "레이트 리미팅 적용 로그인 서비스 성공 email=" + requestDto.email(), startTime);
+        return response;
+    }
+
+    /**
+     * 사용자 인증 처리
+     */
+    private UserInfo authenticateUser(SelfLoginRequest requestDto) {
+        return isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo(requestDto.email(), requestDto.password());
+    }
+
+    /**
+     * 레이트 리미팅 검증 및 카운터 증가
+     */
+    private void validateRateLimit(String email, String clientIp) {
+        if (clientIp == null) return;
+        
+        String rateLimitKey = email + ":" + clientIp;
+        int maxRequests = isNormalUser(email) ? 60 : 5;
         
         LoggerFactory.service().logInfo("SelfLoginUseCase", 
-            String.format("레이트 리미팅 확인 - 사용자: %s, IP: %s, 제한: %d회/분", requestDto.email(), clientIp, maxRequests));
+            String.format("레이트 리미팅 확인 - 사용자: %s, IP: %s, 제한: %d회/분", email, clientIp, maxRequests));
         
-        if (clientIp != null && !rateLimitPort.isAllowed(rateLimitKey, maxRequests, 1)) {
+        if (!rateLimitPort.isAllowed(rateLimitKey, maxRequests, 1)) {
             LoggerFactory.service().logWarning("SelfLoginUseCase", 
-                String.format("레이트 리미팅 초과 - 사용자: %s, IP: %s, 제한: %d회/분", requestDto.email(), clientIp, maxRequests));
+                String.format("레이트 리미팅 초과 - 사용자: %s, IP: %s, 제한: %d회/분", email, clientIp, maxRequests));
             throw new AuthException(AuthErrorStatus.RATE_LIMIT_EXCEEDED);
         }
 
-        // 레이트 리미팅 카운터 증가 (사용자별 + IP별)
-        if (clientIp != null) {
-            rateLimitPort.incrementRequestCount(rateLimitKey, 1);
-            LoggerFactory.service().logInfo("SelfLoginUseCase", 
-                String.format("레이트 리미팅 카운터 증가 - 사용자: %s, IP: %s", requestDto.email(), clientIp));
-        }
-        AuthUser authUser = AuthUser.from(userInfo);
+        rateLimitPort.incrementRequestCount(rateLimitKey, 1);
+        LoggerFactory.service().logInfo("SelfLoginUseCase", 
+            String.format("레이트 리미팅 카운터 증가 - 사용자: %s, IP: %s", email, clientIp));
+    }
 
-        // 로그인 가능한 경우이므로 리프레시 토큰 발급 및 레디스에 저장
+    /**
+     * 리프레시 토큰 응답 생성
+     */
+    private RefreshTokenResponse generateRefreshTokenResponse(UserInfo userInfo) {
+        AuthUser authUser = AuthUser.from(userInfo);
+        
         String refreshToken = jwtGeneratorPort.generateRefreshToken(authUser.userId(), authUser.role());
         manageRefreshTokenPort.saveRefreshToken(authUser.userId().toString(), refreshToken);
-        RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse(
-                refreshToken,
-                jwtProperties.getRefreshTokenExpirationTime()
-        );
-
-        LoggerFactory.service().logSuccess("SelfLoginUseCase", "레이트 리미팅 적용 로그인 서비스 성공 email=" + requestDto.email(), startTime);
-        return refreshTokenResponse;
+        
+        return new RefreshTokenResponse(refreshToken, jwtProperties.getRefreshTokenExpirationTime());
     }
 
     /**
