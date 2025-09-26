@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
 
 @Configuration
+@EnableAspectJAutoProxy
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
     private final MultipartJackson2HttpMessageConverter multipartJackson2HttpMessageConverter;
