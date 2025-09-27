@@ -92,6 +92,12 @@ class DataReadServiceTest {
     @Mock
     private FindDataLabelMapUseCase labelMapUseCase;
 
+    @Mock
+    private com.dataracy.modules.dataset.application.port.out.storage.PopularDataSetsStoragePort popularDataSetsStoragePort;
+
+    @Mock
+    private com.dataracy.modules.dataset.application.port.in.storage.UpdatePopularDataSetsStorageUseCase updatePopularDataSetsStorageUseCase;
+
     private Data sample() {
         return Data.of(
                 1L,
@@ -122,6 +128,10 @@ class DataReadServiceTest {
         void getPopularDataSetsSuccess() {
             // given
             DataWithProjectCountDto dto = new DataWithProjectCountDto(sample(), 2L);
+            
+            // 저장소에서 데이터가 없다고 Mock
+            given(popularDataSetsStoragePort.getPopularDataSets()).willReturn(Optional.empty());
+            
             given(getPopularDataSetsPort.getPopularDataSets(3)).willReturn(List.of(dto));
             given(labelMapUseCase.labelMapping(any()))
                     .willReturn(new DataLabelMapResponse(

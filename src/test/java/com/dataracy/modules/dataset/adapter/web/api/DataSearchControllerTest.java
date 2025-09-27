@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -41,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = DataSearchController.class)
+@WebMvcTest(controllers = DataSearchController.class, includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {com.dataracy.modules.common.util.CookieUtil.class, com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver.class}))
 class DataSearchControllerTest {
 
     @Autowired
@@ -65,11 +67,14 @@ class DataSearchControllerTest {
     @MockBean
     private SearchRealTimeDataSetsUseCase searchRealTimeDataSetsUseCase;
 
-    // 공통 모킹
     @MockBean
     private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+
     @MockBean
     private JwtValidateUseCase jwtValidateUseCase;
+
+    @MockBean
+    private com.dataracy.modules.security.config.SecurityPathConfig securityPathConfig;
 
     @Test
     @DisplayName("유사 데이터셋 조회 성공 시 200 반환")

@@ -37,6 +37,9 @@ class UserCommandServiceTest {
     private UserCommandPort userCommandPort;
 
     @Mock
+    private com.dataracy.modules.user.application.port.out.query.UserQueryPort userQueryPort;
+
+    @Mock
     private DuplicateNicknameUseCase duplicateNicknameUseCase;
 
     @Mock
@@ -85,10 +88,13 @@ class UserCommandServiceTest {
                 ModifyUserInfoRequest req = new ModifyUserInfoRequest(
                         "닉네임", 2L, 3L, List.of(10L, 20L), 4L, "자기소개"
                 );
-                given(profileImageFile.isEmpty()).willReturn(true);
+                MultipartFile nullImageFile = null;
+                
+                // Mock 설정
+                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
 
                 // when
-                service.modifyUserInfo(userId, profileImageFile, req);
+                service.modifyUserInfo(userId, nullImageFile, req);
 
                 // then
                 then(duplicateNicknameUseCase).should().validateDuplicatedNickname("닉네임");
@@ -113,6 +119,9 @@ class UserCommandServiceTest {
                 given(profileImageFile.getOriginalFilename()).willReturn("profile.png");
                 given(fileCommandUseCase.uploadFile(anyString(), eq(profileImageFile)))
                         .willReturn("https://s3.bucket/profile.png");
+                
+                // Mock 설정
+                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
 
                 // when
                 service.modifyUserInfo(userId, profileImageFile, req);
@@ -138,6 +147,9 @@ class UserCommandServiceTest {
                 ModifyUserInfoRequest req = new ModifyUserInfoRequest(
                         "중복닉", 2L, null, List.of(10L), 5L, "소개"
                 );
+                
+                // Mock 설정
+                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
 
                 willThrow(new IllegalArgumentException("닉네임 중복"))
                         .given(duplicateNicknameUseCase).validateDuplicatedNickname("중복닉");
@@ -150,7 +162,7 @@ class UserCommandServiceTest {
 
                 // then
                 assertThat(ex).isNotNull();
-                assertThat(ex.getMessage()).contains("닉네임 중복");
+                assertThat(ex.getMessage()).isEqualTo("닉네임 중복");
             }
 
             @Test
@@ -161,6 +173,9 @@ class UserCommandServiceTest {
                 ModifyUserInfoRequest req = new ModifyUserInfoRequest(
                         "닉네임", 2L, null, List.of(20L), null,"소개"
                 );
+                
+                // Mock 설정
+                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
 
                 willThrow(new IllegalArgumentException("잘못된 이미지"))
                         .given(profileImageFile).getOriginalFilename();
@@ -173,7 +188,7 @@ class UserCommandServiceTest {
 
                 // then
                 assertThat(ex).isNotNull();
-                assertThat(ex.getMessage()).contains("잘못된 이미지");
+                assertThat(ex.getMessage()).isEqualTo("잘못된 이미지");
             }
         }
     }

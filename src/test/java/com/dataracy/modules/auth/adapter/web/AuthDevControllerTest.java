@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = AuthDevController.class)
+@WebMvcTest(controllers = AuthDevController.class, includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = com.dataracy.modules.common.util.CookieUtil.class))
 class AuthDevControllerTest {
 
     @Autowired
@@ -55,6 +57,9 @@ class AuthDevControllerTest {
 
     @MockBean
     private JwtValidateUseCase jwtValidateUseCase;
+
+    @MockBean
+    private com.dataracy.modules.security.config.SecurityPathConfig securityPathConfig;
 
     @Test
     @DisplayName("개발용 로그인 성공 시 RefreshToken 반환")

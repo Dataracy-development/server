@@ -1,38 +1,42 @@
 package com.dataracy.modules.project.application.service.query;
 
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.application.dto.response.read.UserProjectResponse;
 import com.dataracy.modules.project.application.mapper.read.UserProjectDtoMapper;
 import com.dataracy.modules.project.application.port.out.query.read.FindUserProjectsPort;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserProjectReadServiceTest {
 
-    @InjectMocks
-    private UserProjectReadService service;
-
     @Mock
-    private UserProjectDtoMapper mapper;
+    private UserProjectDtoMapper userProjectDtoMapper;
 
     @Mock
     private FindUserProjectsPort findUserProjectsPort;
@@ -43,105 +47,188 @@ class UserProjectReadServiceTest {
     @Mock
     private GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
 
-    private Project sampleProject() {
-        return Project.builder()
-                .id(1L)
-                .title("테스트 프로젝트")
-                .content("내용입니다")
-                .topicId(10L)
-                .authorLevelId(20L)
-                .thumbnailUrl("thumb.png")
-                .commentCount(2L)
-                .likeCount(5L)
-                .viewCount(100L)
-                .createdAt(LocalDateTime.of(2023, 8, 30, 12, 0))
-                .build();
+    @InjectMocks
+    private UserProjectReadService service;
+
+    private MockedStatic<LoggerFactory> loggerFactoryMock;
+    private com.dataracy.modules.common.logging.ServiceLogger loggerService;
+
+    @BeforeEach
+    void setUp() {
+        loggerFactoryMock = mockStatic(LoggerFactory.class);
+        loggerService = mock(com.dataracy.modules.common.logging.ServiceLogger.class);
+        loggerFactoryMock.when(() -> LoggerFactory.service()).thenReturn(loggerService);
+        lenient().when(loggerService.logStart(anyString(), anyString())).thenReturn(Instant.now());
+        lenient().doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
     }
 
-    @Test
-    @DisplayName("로그인한 회원이 작성한 프로젝트 목록 조회 성공 → UserProjectResponse 반환")
-    void findUserProjectsSuccess() {
-        // given
-        Project project = sampleProject();
-        Page<Project> page = new PageImpl<>(List.of(project), PageRequest.of(0, 5), 1);
+    @AfterEach
+    void tearDown() {
+        if (loggerFactoryMock != null) {
+            loggerFactoryMock.close();
+        }
+    }
 
-        given(findUserProjectsPort.findUserProjects(1L, PageRequest.of(0, 5)))
-                .willReturn(page);
+    @Nested
+    @DisplayName("findUserProjects 메서드 테스트")
+    class FindUserProjectsTest {
 
-        given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of(10L)))
-                .willReturn(Map.of(10L, "데이터 분석"));
-        given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(List.of(20L)))
-                .willReturn(Map.of(20L, "초급"));
+        @Test
+        @DisplayName("사용자 프로젝트 조회 성공 및 로깅 검증")
+        void findUserProjectsSuccess() {
+            // given
+            Long userId = 100L;
+            Pageable pageable = PageRequest.of(0, 10);
 
-        UserProjectResponse mockRes = new UserProjectResponse(
-                1L, "테스트 프로젝트", "내용입니다", "thumb.png",
-                "데이터 분석", "초급",
-                2L, 5L, 100L,
-                LocalDateTime.of(2023, 8, 30, 12, 0)
+            List<Project> projects = List.of(
+                    createProject(1L, "Project 1", 1L, userId, 2L),
+                    createProject(2L, "Project 2", 3L, userId, 4L)
+            );
+            Page<Project> projectPage = new PageImpl<>(projects, pageable, 2);
+
+            Map<Long, String> topicLabelMap = Map.of(1L, "AI", 3L, "Data Science");
+            Map<Long, String> authorLevelLabelMap = Map.of(2L, "Expert", 4L, "Beginner");
+
+            UserProjectResponse response1 = mock(UserProjectResponse.class);
+            UserProjectResponse response2 = mock(UserProjectResponse.class);
+
+            given(findUserProjectsPort.findUserProjects(userId, pageable)).willReturn(projectPage);
+            given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of(1L, 3L))).willReturn(topicLabelMap);
+            given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(List.of(2L, 4L))).willReturn(authorLevelLabelMap);
+            given(userProjectDtoMapper.toResponseDto(projects.get(0), "AI", "Expert")).willReturn(response1);
+            given(userProjectDtoMapper.toResponseDto(projects.get(1), "Data Science", "Beginner")).willReturn(response2);
+
+            // when
+            Page<UserProjectResponse> result = service.findUserProjects(userId, pageable);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getContent()).hasSize(2);
+            assertThat(result.getContent()).containsExactly(response1, response2);
+
+            // 포트 호출 검증
+            then(findUserProjectsPort).should().findUserProjects(userId, pageable);
+            then(getTopicLabelFromIdUseCase).should().getLabelsByIds(List.of(1L, 3L));
+            then(getAuthorLevelLabelFromIdUseCase).should().getLabelsByIds(List.of(2L, 4L));
+
+            // 로깅 검증
+            then(loggerService).should().logStart(eq("FindUserProjects"),
+                    contains("해당 회원이 작성한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
+            then(loggerService).should().logSuccess(eq("FindUserProjects"),
+                    contains("해당 회원이 작성한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
+        }
+
+        @Test
+        @DisplayName("빈 결과에 대한 사용자 프로젝트 조회")
+        void findUserProjectsWithEmptyResult() {
+            // given
+            Long userId = 100L;
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Project> emptyPage = new PageImpl<>(List.of(), pageable, 0);
+
+            given(findUserProjectsPort.findUserProjects(userId, pageable)).willReturn(emptyPage);
+            given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of())).willReturn(Map.of());
+            given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(List.of())).willReturn(Map.of());
+
+            // when
+            Page<UserProjectResponse> result = service.findUserProjects(userId, pageable);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getContent()).isEmpty();
+            assertThat(result.getTotalElements()).isEqualTo(0);
+
+            // 로깅 검증
+            then(loggerService).should().logStart(eq("FindUserProjects"),
+                    contains("해당 회원이 작성한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
+            then(loggerService).should().logSuccess(eq("FindUserProjects"),
+                    contains("해당 회원이 작성한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("findLikeProjects 메서드 테스트")
+    class FindLikeProjectsTest {
+
+        @Test
+        @DisplayName("사용자가 좋아요한 프로젝트 조회 성공 및 로깅 검증")
+        void findLikeProjectsSuccess() {
+            // given
+            Long userId = 200L;
+            Pageable pageable = PageRequest.of(0, 5);
+
+            List<Project> projects = List.of(
+                    createProject(10L, "Liked Project 1", 5L, 300L, 6L),
+                    createProject(11L, "Liked Project 2", 7L, 400L, 8L)
+            );
+            Page<Project> projectPage = new PageImpl<>(projects, pageable, 2);
+
+            Map<Long, String> topicLabelMap = Map.of(5L, "Machine Learning", 7L, "Deep Learning");
+            Map<Long, String> authorLevelLabelMap = Map.of(6L, "Advanced", 8L, "Intermediate");
+
+            UserProjectResponse response1 = mock(UserProjectResponse.class);
+            UserProjectResponse response2 = mock(UserProjectResponse.class);
+
+            given(findUserProjectsPort.findLikeProjects(userId, pageable)).willReturn(projectPage);
+            given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of(5L, 7L))).willReturn(topicLabelMap);
+            given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(List.of(6L, 8L))).willReturn(authorLevelLabelMap);
+            given(userProjectDtoMapper.toResponseDto(projects.get(0), "Machine Learning", "Advanced")).willReturn(response1);
+            given(userProjectDtoMapper.toResponseDto(projects.get(1), "Deep Learning", "Intermediate")).willReturn(response2);
+
+            // when
+            Page<UserProjectResponse> result = service.findLikeProjects(userId, pageable);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getContent()).hasSize(2);
+            assertThat(result.getContent()).containsExactly(response1, response2);
+
+            // 포트 호출 검증
+            then(findUserProjectsPort).should().findLikeProjects(userId, pageable);
+            then(getTopicLabelFromIdUseCase).should().getLabelsByIds(List.of(5L, 7L));
+            then(getAuthorLevelLabelFromIdUseCase).should().getLabelsByIds(List.of(6L, 8L));
+
+            // 로깅 검증
+            then(loggerService).should().logStart(eq("FindLikeProjects"),
+                    contains("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
+            then(loggerService).should().logSuccess(eq("FindLikeProjects"),
+                    contains("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
+        }
+
+        @Test
+        @DisplayName("좋아요한 프로젝트가 없는 경우")
+        void findLikeProjectsWithEmptyResult() {
+            // given
+            Long userId = 200L;
+            Pageable pageable = PageRequest.of(0, 5);
+            Page<Project> emptyPage = new PageImpl<>(List.of(), pageable, 0);
+
+            given(findUserProjectsPort.findLikeProjects(userId, pageable)).willReturn(emptyPage);
+            given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of())).willReturn(Map.of());
+            given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(List.of())).willReturn(Map.of());
+
+            // when
+            Page<UserProjectResponse> result = service.findLikeProjects(userId, pageable);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getContent()).isEmpty();
+            assertThat(result.getTotalElements()).isEqualTo(0);
+
+            // 로깅 검증
+            then(loggerService).should().logStart(eq("FindLikeProjects"),
+                    contains("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
+            then(loggerService).should().logSuccess(eq("FindLikeProjects"),
+                    contains("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
+        }
+    }
+
+    private Project createProject(Long id, String title, Long topicId, Long userId, Long authorLevelId) {
+        return Project.of(
+                id, title, topicId, userId, 1L, 2L, authorLevelId,
+                false, null, "Content", "thumbnail.jpg",
+                List.of(), LocalDateTime.now(),
+                0L, 0L, 0L, false, List.of()
         );
-        given(mapper.toResponseDto(any(), any(), any()))
-                .willReturn(mockRes);
-
-        // when
-        Page<UserProjectResponse> result = service.findUserProjects(1L, PageRequest.of(0, 5));
-
-        // then
-        assertThat(result).hasSize(1);
-        UserProjectResponse response = result.getContent().get(0);
-        assertThat(response.title()).isEqualTo("테스트 프로젝트");
-        assertThat(response.topicLabel()).isEqualTo("데이터 분석");
-        assertThat(response.authorLevelLabel()).isEqualTo("초급");
-        assertThat(response.likeCount()).isEqualTo(5L);
     }
-
-    @Test
-    @DisplayName("findLikeProjects: 좋아요한 프로젝트 목록 조회 성공")
-    void findLikeProjects_success() {
-        // given
-        Long userId = 1L;
-        PageRequest pageable = PageRequest.of(0, 5);
-
-        Project project = Project.builder()
-                .id(10L).userId(100L)
-                .topicId(10L).analysisPurposeId(20L).dataSourceId(30L).authorLevelId(40L)
-                .title("테스트 프로젝트").content("내용").createdAt(LocalDateTime.now())
-                .commentCount(5L).likeCount(10L).viewCount(15L)
-                .build();
-
-        Page<Project> projectPage = new PageImpl<>(List.of(project), pageable, 1);
-
-        given(findUserProjectsPort.findLikeProjects(userId, pageable))
-                .willReturn(projectPage);
-
-        // Project.topicId = 10L → "데이터 분석"
-        given(getTopicLabelFromIdUseCase.getLabelsByIds(List.of(10L)))
-                .willReturn(Map.of(10L, "데이터 분석"));
-        // Project.authorLevelId = 40L → "초급"
-        given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(List.of(40L)))
-                .willReturn(Map.of(40L, "초급"));
-
-        UserProjectResponse mappedResponse = new UserProjectResponse(
-                project.getId(), project.getTitle(), project.getContent(), "thumb.png",
-                "데이터 분석", "초급",
-                project.getCommentCount(), project.getLikeCount(), project.getViewCount(),
-                project.getCreatedAt()
-        );
-        given(mapper.toResponseDto(project, "데이터 분석", "초급"))
-                .willReturn(mappedResponse);
-
-        // when
-        Page<UserProjectResponse> result = service.findLikeProjects(userId, pageable);
-
-        // then
-        assertThat(result).hasSize(1);
-        assertThat(result.getContent().get(0).title()).isEqualTo("테스트 프로젝트");
-        assertThat(result.getContent().get(0).topicLabel()).isEqualTo("데이터 분석");
-        assertThat(result.getContent().get(0).authorLevelLabel()).isEqualTo("초급");
-
-        then(findUserProjectsPort).should().findLikeProjects(userId, pageable);
-        then(getTopicLabelFromIdUseCase).should().getLabelsByIds(List.of(10L));
-        then(getAuthorLevelLabelFromIdUseCase).should().getLabelsByIds(List.of(40L));
-        then(mapper).should().toResponseDto(project, "데이터 분석", "초급");
-    }
-
 }

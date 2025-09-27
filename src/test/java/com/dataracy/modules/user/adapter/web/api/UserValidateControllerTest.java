@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = UserValidateController.class)
+@WebMvcTest(controllers = UserValidateController.class, includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {com.dataracy.modules.common.util.CookieUtil.class, com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver.class}))
 class UserValidateControllerTest {
 
     @Autowired
@@ -42,11 +44,14 @@ class UserValidateControllerTest {
     @MockBean
     private DuplicateNicknameUseCase duplicateNicknameUseCase;
 
-    // 공통 모킹 (필터 무시 목적)
-    @MockBean
-    private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
     @MockBean
     private JwtValidateUseCase jwtValidateUseCase;
+
+    @MockBean
+    private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+
+    @MockBean
+    private com.dataracy.modules.security.config.SecurityPathConfig securityPathConfig;
 
     @Test
     @DisplayName("duplicateNickname API: 성공 → 200 OK + 코드 검증")
