@@ -3,13 +3,14 @@ package com.dataracy.modules.dataset.adapter.web.api;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
 import com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver;
+import com.dataracy.modules.common.util.CookieUtil;
 import com.dataracy.modules.dataset.adapter.web.api.read.DataReadController;
 import com.dataracy.modules.dataset.adapter.web.mapper.read.DataReadWebMapper;
 import com.dataracy.modules.dataset.adapter.web.response.read.*;
 import com.dataracy.modules.dataset.application.dto.response.read.*;
 import com.dataracy.modules.dataset.application.port.in.query.read.*;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.dataracy.modules.security.config.SecurityPathConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -37,13 +40,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = DataReadController.class)
+@WebMvcTest(controllers = DataReadController.class, includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {CookieUtil.class, CurrentUserIdArgumentResolver.class}))
 class DataReadControllerTest {
 
-    private MockMvc mockMvc;
-
     @Autowired
-    private ObjectMapper objectMapper;
+    private MockMvc mockMvc;
 
     @MockBean
     private DataReadWebMapper mapper;
@@ -68,8 +69,12 @@ class DataReadControllerTest {
 
     @MockBean
     private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+
     @MockBean
     private JwtValidateUseCase jwtValidateUseCase;
+
+    @MockBean
+    private SecurityPathConfig securityPathConfig;
 
     @MockBean
     private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;

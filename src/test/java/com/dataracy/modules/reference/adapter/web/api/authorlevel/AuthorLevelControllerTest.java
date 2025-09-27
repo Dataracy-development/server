@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = AuthorLevelController.class)
+@WebMvcTest(controllers = AuthorLevelController.class, includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {com.dataracy.modules.common.util.CookieUtil.class, com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver.class}))
 class AuthorLevelControllerTest {
 
     @Autowired
@@ -46,6 +48,8 @@ class AuthorLevelControllerTest {
     private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
     @MockBean
     private JwtValidateUseCase jwtValidateUseCase;
+    @MockBean
+    private com.dataracy.modules.security.config.SecurityPathConfig securityPathConfig;
 
     @Test
     @DisplayName("findAllAuthorLevels API: 성공 - 200 OK와 응답 JSON 검증")
