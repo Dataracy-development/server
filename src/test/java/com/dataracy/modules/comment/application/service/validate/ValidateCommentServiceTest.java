@@ -15,20 +15,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ValidateCommentServiceTest {
 
     @InjectMocks
@@ -45,9 +43,9 @@ class ValidateCommentServiceTest {
         loggerFactoryMock = mockStatic(LoggerFactory.class);
         loggerService = mock(ServiceLogger.class);
         loggerFactoryMock.when(LoggerFactory::service).thenReturn(loggerService);
-        lenient().when(loggerService.logStart(anyString(), anyString())).thenReturn(Instant.now());
-        lenient().doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
-        lenient().doNothing().when(loggerService).logWarning(anyString(), anyString());
+        doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
+        doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
+        doNothing().when(loggerService).logWarning(anyString(), anyString());
     }
 
     @AfterEach
@@ -88,12 +86,9 @@ class ValidateCommentServiceTest {
             given(validateCommentPort.existsByCommentId(commentId)).willReturn(false);
 
             // when & then
-            assertThatThrownBy(() -> service.validateComment(commentId))
-                    .isInstanceOf(CommentException.class)
-                    .satisfies(exception -> {
-                        CommentException commentException = (CommentException) exception;
-                        assertThat(commentException.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
-                    });
+            CommentException exception = catchThrowableOfType(() -> service.validateComment(commentId), CommentException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
 
             then(validateCommentPort).should().existsByCommentId(commentId);
             then(loggerService).should().logStart(eq("ValidateCommentUseCase"), 
@@ -111,12 +106,9 @@ class ValidateCommentServiceTest {
             given(validateCommentPort.existsByCommentId(commentId)).willReturn(false);
 
             // when & then
-            assertThatThrownBy(() -> service.validateComment(commentId))
-                    .isInstanceOf(CommentException.class)
-                    .satisfies(exception -> {
-                        CommentException commentException = (CommentException) exception;
-                        assertThat(commentException.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
-                    });
+            CommentException exception = catchThrowableOfType(() -> service.validateComment(commentId), CommentException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
 
             then(validateCommentPort).should().existsByCommentId(commentId);
             then(loggerService).should().logStart(eq("ValidateCommentUseCase"), 
@@ -134,9 +126,9 @@ class ValidateCommentServiceTest {
             given(validateCommentPort.existsByCommentId(commentId)).willThrow(portException);
 
             // when & then
-            assertThatThrownBy(() -> service.validateComment(commentId))
-                    .isInstanceOf(RuntimeException.class)
-                    .hasMessage("Database connection failed");
+            RuntimeException exception = catchThrowableOfType(() -> service.validateComment(commentId), RuntimeException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getMessage()).isEqualTo("Database connection failed");
 
             then(validateCommentPort).should().existsByCommentId(commentId);
             then(loggerService).should().logStart(eq("ValidateCommentUseCase"), 

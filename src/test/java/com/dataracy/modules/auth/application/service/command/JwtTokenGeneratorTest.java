@@ -13,16 +13,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class JwtTokenGeneratorTest {
 
     @Mock
@@ -64,7 +67,7 @@ class JwtTokenGeneratorTest {
 
         // then
         assertThat(result).isEqualTo(expectedToken);
-        verify(jwtGeneratorPort).generateRegisterToken(provider, providerId, email);
+        then(jwtGeneratorPort).should().generateRegisterToken(provider, providerId, email);
     }
 
     @Test
@@ -81,9 +84,9 @@ class JwtTokenGeneratorTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> jwtTokenGenerator.generateRegisterToken(provider, providerId, email))
-                .isInstanceOf(AuthException.class)
-                .hasFieldOrPropertyWithValue("errorCode", AuthErrorStatus.FAILED_GENERATE_REGISTER_TOKEN);
+        AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateRegisterToken(provider, providerId, email), AuthException.class);
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_REGISTER_TOKEN);
     }
 
     @Test
@@ -103,7 +106,7 @@ class JwtTokenGeneratorTest {
 
         // then
         assertThat(result).isEqualTo(expectedToken);
-        verify(jwtGeneratorPort).generateResetPasswordToken(email);
+        then(jwtGeneratorPort).should().generateResetPasswordToken(email);
     }
 
     @Test
@@ -118,9 +121,9 @@ class JwtTokenGeneratorTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> jwtTokenGenerator.generateResetPasswordToken(email))
-                .isInstanceOf(AuthException.class)
-                .hasFieldOrPropertyWithValue("errorCode", AuthErrorStatus.FAILED_GENERATE_RESET_PASSWORD_TOKEN);
+        AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateResetPasswordToken(email), AuthException.class);
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_RESET_PASSWORD_TOKEN);
     }
 
     @Test
@@ -141,7 +144,7 @@ class JwtTokenGeneratorTest {
 
         // then
         assertThat(result).isEqualTo(expectedToken);
-        verify(jwtGeneratorPort).generateAccessToken(userId, role);
+        then(jwtGeneratorPort).should().generateAccessToken(userId, role);
     }
 
     @Test
@@ -157,9 +160,9 @@ class JwtTokenGeneratorTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> jwtTokenGenerator.generateAccessToken(userId, role))
-                .isInstanceOf(AuthException.class)
-                .hasFieldOrPropertyWithValue("errorCode", AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN);
+        AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateAccessToken(userId, role), AuthException.class);
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN);
     }
 
     @Test
@@ -180,7 +183,7 @@ class JwtTokenGeneratorTest {
 
         // then
         assertThat(result).isEqualTo(expectedToken);
-        verify(jwtGeneratorPort).generateRefreshToken(userId, role);
+        then(jwtGeneratorPort).should().generateRefreshToken(userId, role);
     }
 
     @Test
@@ -196,9 +199,9 @@ class JwtTokenGeneratorTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> jwtTokenGenerator.generateRefreshToken(userId, role))
-                .isInstanceOf(AuthException.class)
-                .hasFieldOrPropertyWithValue("errorCode", AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN);
+        AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateRefreshToken(userId, role), AuthException.class);
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN);
     }
 
     @Test
@@ -215,16 +218,16 @@ class JwtTokenGeneratorTest {
         
         mockLoggerFactory();
 
-        assertThatThrownBy(() -> jwtTokenGenerator.generateAccessToken(1L, RoleType.ROLE_USER))
-                .isInstanceOf(AuthException.class)
-                .hasFieldOrPropertyWithValue("errorCode", AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN);
+        AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateAccessToken(1L, RoleType.ROLE_USER), AuthException.class);
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN);
     }
 
     private void mockLoggerFactory() {
-        var loggerService = mock(com.dataracy.modules.common.logging.ServiceLogger.class);
+        com.dataracy.modules.common.logging.ServiceLogger loggerService = mock(com.dataracy.modules.common.logging.ServiceLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.service()).thenReturn(loggerService);
         when(loggerService.logStart(anyString(), anyString())).thenReturn(Instant.now());
-        lenient().doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
-        lenient().doNothing().when(loggerService).logException(anyString(), anyString(), any(Exception.class));
+        doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
+        doNothing().when(loggerService).logException(anyString(), anyString(), any(Exception.class));
     }
 }

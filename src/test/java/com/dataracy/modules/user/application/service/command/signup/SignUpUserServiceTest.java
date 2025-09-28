@@ -30,7 +30,8 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SignUpUserServiceTest {
 
@@ -128,7 +129,7 @@ class SignUpUserServiceTest {
                 true
         );
 
-        willThrow(new UserException(UserErrorStatus.DUPLICATED_EMAIL))
+        willThrow(new  UserException(UserErrorStatus.DUPLICATED_EMAIL))
                 .given(duplicateEmailUseCase).validateDuplicatedEmail("dup@test.com");
 
         // when

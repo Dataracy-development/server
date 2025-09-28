@@ -10,7 +10,7 @@ import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.data.redis.serializer.RedisSerializer;import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;

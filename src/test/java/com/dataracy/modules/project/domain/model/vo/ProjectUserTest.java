@@ -19,12 +19,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@Disabled("ProjectUser 테스트 - UserInfo 생성자 문제로 임시 비활성화")
 class ProjectUserTest {
 
     private MockedStatic<LoggerFactory> loggerFactoryMock;
@@ -34,7 +34,7 @@ class ProjectUserTest {
     void setUp() {
         loggerFactoryMock = mockStatic(LoggerFactory.class);
         domainLogger = org.mockito.Mockito.mock(com.dataracy.modules.common.logging.DomainLogger.class);
-        loggerFactoryMock.when(LoggerFactory::domain).thenReturn(domainLogger);
+        given(LoggerFactory.domain()).willReturn(domainLogger);
     }
 
     @AfterEach
@@ -140,8 +140,8 @@ class ProjectUserTest {
                     RoleType.ROLE_USER,
                     "user@test.com",
                     "testUser",
-                    1L,
-                    2L,
+                    2L,  // authorLevelId
+                    1L,  // occupationId
                     List.of(1L, 2L),
                     3L,
                     "profile.jpg",
@@ -197,15 +197,12 @@ class ProjectUserTest {
         @DisplayName("null UserInfo로 변환 시 ProjectException 발생 및 로깅 검증")
         void fromUserInfoWithNullThrowsExceptionAndLogs() {
             // when & then
-            assertThatThrownBy(() -> ProjectUser.fromUserInfo(null))
-                    .isInstanceOf(ProjectException.class)
-                    .satisfies(exception -> {
-                        ProjectException projectException = (ProjectException) exception;
-                        assertThat(projectException.getErrorCode()).isEqualTo(ProjectErrorStatus.FAIL_GET_USER_INFO);
-                    });
+            ProjectException exception = catchThrowableOfType(() -> ProjectUser.fromUserInfo(null), ProjectException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.FAIL_GET_USER_INFO);
 
             // 로깅 검증
-            verify(domainLogger).logWarning("ProjectUser을 생성하기 위한 유저 정보가 주입되지 않았습니다.");
+            then(domainLogger).should().logWarning("ProjectUser을 생성하기 위한 유저 정보가 주입되지 않았습니다.");
         }
 
         @Test
@@ -217,8 +214,8 @@ class ProjectUserTest {
                     RoleType.ROLE_ADMIN,
                     "admin@test.com",
                     "admin",
-                    3L,
-                    4L,
+                    4L,  // authorLevelId
+                    3L,  // occupationId
                     List.of(5L, 6L),
                     7L,
                     "admin.jpg",

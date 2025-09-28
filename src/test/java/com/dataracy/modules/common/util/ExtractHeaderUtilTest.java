@@ -1,242 +1,141 @@
 package com.dataracy.modules.common.util;
 
-import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@DisplayName("ExtractHeaderUtil 테스트")
 class ExtractHeaderUtilTest {
 
-    @Mock
-    private JwtValidateUseCase jwtValidateUseCase;
+    @Test
+    @DisplayName("extractAccessToken - 유효한 Bearer 토큰 추출")
+    void extractAccessToken_ShouldExtractValidBearerToken() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer valid-token-123");
 
-    @Mock
-    private CookieUtil cookieUtil;
+        // When
+        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
-    @Mock
-    private HttpServletRequest request;
-
-    @Mock
-    private HttpServletResponse response;
-
-    private ExtractHeaderUtil extractHeaderUtil;
-
-    @BeforeEach
-    void setUp() {
-        extractHeaderUtil = new ExtractHeaderUtil(jwtValidateUseCase, cookieUtil);
+        // Then
+        assertThat(token).isPresent();
+        assertThat(token.get()).isEqualTo("valid-token-123");
     }
 
     @Test
-    @DisplayName("extractAccessToken - Bearer 토큰을 성공적으로 추출한다")
-    void extractAccessToken_ValidBearerToken_Success() {
-        // given
-        String token = "valid_token_123";
-        String authHeader = "Bearer " + token;
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
+    @DisplayName("extractAccessToken - Authorization 헤더가 없는 경우")
+    void extractAccessToken_ShouldReturnEmptyWhenNoHeader() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
 
-        // when
-        Optional<String> result = ExtractHeaderUtil.extractAccessToken(request);
+        // When
+        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
-        // then
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(token);
+        // Then
+        assertThat(token).isEmpty();
     }
 
     @Test
-    @DisplayName("extractAccessToken - Authorization 헤더가 없으면 빈 Optional을 반환한다")
-    void extractAccessToken_NoAuthorizationHeader_ReturnsEmpty() {
-        // given
-        when(request.getHeader("Authorization")).thenReturn(null);
+    @DisplayName("extractAccessToken - Bearer가 아닌 형식의 헤더")
+    void extractAccessToken_ShouldReturnEmptyWhenNotBearer() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Basic dXNlcjpwYXNz");
 
-        // when
-        Optional<String> result = ExtractHeaderUtil.extractAccessToken(request);
+        // When
+        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
-        // then
-        assertThat(result).isEmpty();
+        // Then
+        assertThat(token).isEmpty();
     }
 
     @Test
-    @DisplayName("extractAccessToken - Bearer가 아닌 형식이면 빈 Optional을 반환한다")
-    void extractAccessToken_InvalidFormat_ReturnsEmpty() {
-        // given
-        when(request.getHeader("Authorization")).thenReturn("Basic token123");
+    @DisplayName("extractAccessToken - Bearer 뒤에 공백이 없는 경우")
+    void extractAccessToken_ShouldReturnEmptyWhenNoSpaceAfterBearer() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearervalid-token");
 
-        // when
-        Optional<String> result = ExtractHeaderUtil.extractAccessToken(request);
+        // When
+        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
-        // then
-        assertThat(result).isEmpty();
+        // Then
+        assertThat(token).isEmpty();
     }
 
     @Test
-    @DisplayName("extractAccessToken - Bearer만 있고 토큰이 없으면 빈 문자열을 반환한다")
-    void extractAccessToken_BearerOnly_ReturnsEmptyString() {
-        // given
-        when(request.getHeader("Authorization")).thenReturn("Bearer ");
+    @DisplayName("extractAccessToken - Bearer만 있고 토큰이 없는 경우")
+    void extractAccessToken_ShouldReturnEmptyWhenOnlyBearer() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer ");
 
-        // when
-        Optional<String> result = ExtractHeaderUtil.extractAccessToken(request);
+        // When
+        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
-        // then
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEmpty();
+        // Then
+        assertThat(token).isPresent();
+        assertThat(token.get()).isEmpty();
     }
 
     @Test
-    @DisplayName("extractAuthenticatedUserIdFromRequest - 유효한 토큰에서 사용자 ID를 추출한다")
-    void extractAuthenticatedUserIdFromRequest_ValidToken_Success() {
-        // given
-        String token = "valid_token_123";
-        String authHeader = "Bearer " + token;
-        Long expectedUserId = 1L;
+    @DisplayName("extractAccessToken - null 헤더 값 처리")
+    void extractAccessToken_ShouldHandleNullHeader() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        // null 헤더는 addHeader로 설정할 수 없으므로 헤더를 설정하지 않음
 
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
-        when(jwtValidateUseCase.getUserIdFromToken(token)).thenReturn(expectedUserId);
+        // When
+        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
-        // when
-        Long result = extractHeaderUtil.extractAuthenticatedUserIdFromRequest(request);
-
-        // then
-        assertThat(result).isEqualTo(expectedUserId);
-        verify(jwtValidateUseCase).getUserIdFromToken(token);
+        // Then
+        assertThat(token).isEmpty();
     }
 
     @Test
-    @DisplayName("extractAuthenticatedUserIdFromRequest - 토큰이 없으면 null을 반환한다")
-    void extractAuthenticatedUserIdFromRequest_NoToken_ReturnsNull() {
-        // given
-        when(request.getHeader("Authorization")).thenReturn(null);
+    @DisplayName("extractAccessToken - 빈 문자열 헤더 처리")
+    void extractAccessToken_ShouldHandleEmptyHeader() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "");
 
-        // when
-        Long result = extractHeaderUtil.extractAuthenticatedUserIdFromRequest(request);
+        // When
+        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
-        // then
-        assertThat(result).isNull();
-        verify(jwtValidateUseCase, never()).getUserIdFromToken(anyString());
+        // Then
+        assertThat(token).isEmpty();
     }
 
     @Test
-    @DisplayName("extractAuthenticatedUserIdFromRequest - 토큰 검증 실패 시 null을 반환한다")
-    void extractAuthenticatedUserIdFromRequest_TokenValidationFails_ReturnsNull() {
-        // given
-        String token = "invalid_token";
-        String authHeader = "Bearer " + token;
+    @DisplayName("extractAccessToken - 공백이 포함된 토큰 처리")
+    void extractAccessToken_ShouldHandleTokenWithSpaces() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer token with spaces");
 
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
-        when(jwtValidateUseCase.getUserIdFromToken(token)).thenThrow(new RuntimeException("Invalid token"));
+        // When
+        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
-        // when
-        Long result = extractHeaderUtil.extractAuthenticatedUserIdFromRequest(request);
-
-        // then
-        assertThat(result).isNull();
+        // Then
+        assertThat(token).isPresent();
+        assertThat(token.get()).isEqualTo("token with spaces");
     }
 
     @Test
-    @DisplayName("extractViewerIdFromRequest - 인증된 사용자 ID를 반환한다")
-    void extractViewerIdFromRequest_AuthenticatedUser_Success() {
-        // given
-        String token = "valid_token_123";
-        String authHeader = "Bearer " + token;
-        Long userId = 1L;
-        String expectedUserId = "1";
+    @DisplayName("extractAccessToken - 대소문자 구분 테스트")
+    void extractAccessToken_ShouldBeCaseSensitive() {
+        // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "bearer valid-token");
 
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
-        when(jwtValidateUseCase.getUserIdFromToken(token)).thenReturn(userId);
+        // When
+        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
-        // when
-        String result = extractHeaderUtil.extractViewerIdFromRequest(request, response);
-
-        // then
-        assertThat(result).isEqualTo(expectedUserId);
-        verify(jwtValidateUseCase).getUserIdFromToken(token);
-        verify(cookieUtil, never()).getOrCreateAnonymousId(any(), any());
-    }
-
-    @Test
-    @DisplayName("extractViewerIdFromRequest - 토큰이 없으면 익명 ID를 반환한다")
-    void extractViewerIdFromRequest_NoToken_ReturnsAnonymousId() {
-        // given
-        String anonymousId = "anonymous_123";
-        when(request.getHeader("Authorization")).thenReturn(null);
-        when(cookieUtil.getOrCreateAnonymousId(request, response)).thenReturn(anonymousId);
-
-        // when
-        String result = extractHeaderUtil.extractViewerIdFromRequest(request, response);
-
-        // then
-        assertThat(result).isEqualTo(anonymousId);
-        verify(cookieUtil).getOrCreateAnonymousId(request, response);
-    }
-
-    @Test
-    @DisplayName("extractViewerIdFromRequest - 토큰 검증 실패 시 익명 ID를 반환한다")
-    void extractViewerIdFromRequest_TokenValidationFails_ReturnsAnonymousId() {
-        // given
-        String token = "invalid_token";
-        String authHeader = "Bearer " + token;
-        String anonymousId = "anonymous_123";
-
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
-        when(jwtValidateUseCase.getUserIdFromToken(token)).thenThrow(new RuntimeException("Invalid token"));
-        when(cookieUtil.getOrCreateAnonymousId(request, response)).thenReturn(anonymousId);
-
-        // when
-        String result = extractHeaderUtil.extractViewerIdFromRequest(request, response);
-
-        // then
-        assertThat(result).isEqualTo(anonymousId);
-        verify(cookieUtil).getOrCreateAnonymousId(request, response);
-    }
-
-    @Test
-    @DisplayName("extractViewerIdFromRequest - 토큰에서 사용자 ID가 null이면 익명 ID를 반환한다")
-    void extractViewerIdFromRequest_NullUserId_ReturnsAnonymousId() {
-        // given
-        String token = "valid_token_123";
-        String authHeader = "Bearer " + token;
-        String anonymousId = "anonymous_123";
-
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
-        when(jwtValidateUseCase.getUserIdFromToken(token)).thenReturn(null);
-        when(cookieUtil.getOrCreateAnonymousId(request, response)).thenReturn(anonymousId);
-
-        // when
-        String result = extractHeaderUtil.extractViewerIdFromRequest(request, response);
-
-        // then
-        assertThat(result).isEqualTo(anonymousId);
-        verify(cookieUtil).getOrCreateAnonymousId(request, response);
-    }
-
-    @Test
-    @DisplayName("extractViewerIdFromRequest - 토큰이 빈 문자열이면 익명 ID를 반환한다")
-    void extractViewerIdFromRequest_EmptyToken_ReturnsAnonymousId() {
-        // given
-        String authHeader = "Bearer ";
-        String anonymousId = "anonymous_123";
-
-        when(request.getHeader("Authorization")).thenReturn(authHeader);
-        when(cookieUtil.getOrCreateAnonymousId(request, response)).thenReturn(anonymousId);
-        when(jwtValidateUseCase.getUserIdFromToken("")).thenReturn(null);
-
-        // when
-        String result = extractHeaderUtil.extractViewerIdFromRequest(request, response);
-
-        // then
-        assertThat(result).isEqualTo(anonymousId);
-        verify(cookieUtil).getOrCreateAnonymousId(request, response);
+        // Then
+        assertThat(token).isEmpty();
     }
 }

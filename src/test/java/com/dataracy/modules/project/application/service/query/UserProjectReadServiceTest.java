@@ -17,9 +17,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Page;import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.Instant;
@@ -28,11 +29,11 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class UserProjectReadServiceTest {
 
     @Mock
@@ -58,8 +59,8 @@ class UserProjectReadServiceTest {
         loggerFactoryMock = mockStatic(LoggerFactory.class);
         loggerService = mock(com.dataracy.modules.common.logging.ServiceLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.service()).thenReturn(loggerService);
-        lenient().when(loggerService.logStart(anyString(), anyString())).thenReturn(Instant.now());
-        lenient().doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
+        doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
+        doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
     }
 
     @AfterEach

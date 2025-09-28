@@ -8,8 +8,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.multipart.MultipartFile;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.test.util.ReflectionTestUtils;import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -17,8 +18,10 @@ import java.net.URL;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AwsS3FileStorageAdapterTest {
 
     @Mock
@@ -53,9 +56,9 @@ class AwsS3FileStorageAdapterTest {
         buffer.setStreamingSize(16384);  // 16KB
         
         // lenient()를 사용하여 불필요한 스터빙 경고 방지
-        lenient().when(fileStorageProperties.getFileSize()).thenReturn(fileSize);
-        lenient().when(fileStorageProperties.getMultipart()).thenReturn(multipart);
-        lenient().when(fileStorageProperties.getBuffer()).thenReturn(buffer);
+        doReturn(fileSize).when(fileStorageProperties).getFileSize();
+        doReturn(multipart).when(fileStorageProperties).getMultipart();
+        doReturn(buffer).when(fileStorageProperties).getBuffer();
     }
 
     @Nested

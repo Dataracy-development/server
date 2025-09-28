@@ -19,20 +19,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class TopicQueryServiceTest {
 
     @InjectMocks
@@ -52,9 +54,9 @@ class TopicQueryServiceTest {
         loggerFactoryMock = mockStatic(LoggerFactory.class);
         loggerService = mock(ServiceLogger.class);
         loggerFactoryMock.when(LoggerFactory::service).thenReturn(loggerService);
-        lenient().when(loggerService.logStart(anyString(), anyString())).thenReturn(Instant.now());
-        lenient().doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
-        lenient().doNothing().when(loggerService).logWarning(anyString(), anyString());
+        doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
+        doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
+        doNothing().when(loggerService).logWarning(anyString(), anyString());
     }
 
     @AfterEach
@@ -135,12 +137,9 @@ class TopicQueryServiceTest {
             given(topicPort.findTopicById(topicId)).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> service.findTopic(topicId))
-                    .isInstanceOf(ReferenceException.class)
-                    .satisfies(exception -> {
-                        ReferenceException refException = (ReferenceException) exception;
-                        assertThat(refException.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
-                    });
+            ReferenceException exception = catchThrowableOfType(() -> service.findTopic(topicId), ReferenceException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
 
             then(topicPort).should().findTopicById(topicId);
             then(topicDtoMapper).should(never()).toResponseDto(any(Topic.class));
@@ -183,12 +182,9 @@ class TopicQueryServiceTest {
             given(topicPort.existsTopicById(topicId)).willReturn(false);
 
             // when & then
-            assertThatThrownBy(() -> service.validateTopic(topicId))
-                    .isInstanceOf(ReferenceException.class)
-                    .satisfies(exception -> {
-                        ReferenceException refException = (ReferenceException) exception;
-                        assertThat(refException.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
-                    });
+            ReferenceException exception = catchThrowableOfType(() -> service.validateTopic(topicId), ReferenceException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
 
             then(topicPort).should().existsTopicById(topicId);
             then(loggerService).should().logStart(eq("ValidateTopicUseCase"), 
@@ -231,12 +227,9 @@ class TopicQueryServiceTest {
             given(topicPort.getLabelById(topicId)).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> service.getLabelById(topicId))
-                    .isInstanceOf(ReferenceException.class)
-                    .satisfies(exception -> {
-                        ReferenceException refException = (ReferenceException) exception;
-                        assertThat(refException.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
-                    });
+            ReferenceException exception = catchThrowableOfType(() -> service.getLabelById(topicId), ReferenceException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
 
             then(topicPort).should().getLabelById(topicId);
             then(loggerService).should().logStart(eq("GetTopicLabelFromIdUseCase"), 

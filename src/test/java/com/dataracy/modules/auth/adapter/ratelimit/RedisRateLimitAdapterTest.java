@@ -1,0 +1,310 @@
+package com.dataracy.modules.auth.adapter.ratelimit;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.concurrent.TimeUnit;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+/**
+ * RedisRateLimitAdapter 테스트
+ */
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+class RedisRateLimitAdapterTest {
+
+    @Mock
+    private StringRedisTemplate redisTemplate;
+    
+    @Mock
+    private ValueOperations<String, String> valueOperations;
+    
+    private RedisRateLimitAdapter adapter;
+
+    @BeforeEach
+    void setUp() {
+        given(redisTemplate.opsForValue()).willReturn(valueOperations);
+        adapter = new RedisRateLimitAdapter(redisTemplate);
+        
+        // @Value 필드 설정
+        ReflectionTestUtils.setField(adapter, "defaultMaxRequests", 10);
+        ReflectionTestUtils.setField(adapter, "defaultWindowMinutes", 1);
+    }
+
+    @Nested
+    @DisplayName("isAllowed 메서드 테스트")
+    class IsAllowedTest {
+
+        @Test
+        @DisplayName("성공: 요청 허용 (카운트가 제한보다 적음)")
+        void isAllowed_카운트가제한보다적음_true반환() {
+            // given
+            String key = "192.168.1.1";
+            int maxRequests = 5;
+            int windowMinutes = 1;
+            String redisKey = "rate_limit:" + key;
+            given(valueOperations.get(redisKey)).willReturn("3");
+
+            // when
+            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
+
+            // then
+            assertThat(result).isTrue();
+            then(valueOperations).should().get(redisKey);
+        }
+
+        @Test
+        @DisplayName("요청 차단: 카운트가 제한과 같음")
+        void isAllowed_카운트가제한과같음_false반환() {
+            // given
+            String key = "192.168.1.1";
+            int maxRequests = 5;
+            int windowMinutes = 1;
+            String redisKey = "rate_limit:" + key;
+            given(valueOperations.get(redisKey)).willReturn("5");
+
+            // when
+            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
+
+            // then
+            assertThat(result).isFalse();
+            then(valueOperations).should().get(redisKey);
+        }
+
+        @Test
+        @DisplayName("요청 차단: 카운트가 제한보다 많음")
+        void isAllowed_카운트가제한보다많음_false반환() {
+            // given
+            String key = "192.168.1.1";
+            int maxRequests = 5;
+            int windowMinutes = 1;
+            String redisKey = "rate_limit:" + key;
+            given(valueOperations.get(redisKey)).willReturn("7");
+
+            // when
+            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
+
+            // then
+            assertThat(result).isFalse();
+            then(valueOperations).should().get(redisKey);
+        }
+
+        @Test
+        @DisplayName("key가 null일 때 true 반환")
+        void isAllowed_key가null_true반환() {
+            // given
+            String key = null;
+            int maxRequests = 5;
+            int windowMinutes = 1;
+
+            // when
+            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
+
+            // then
+            assertThat(result).isTrue();
+            then(valueOperations).should(never()).get(anyString());
+        }
+
+        @Test
+        @DisplayName("key가 빈 문자열일 때 true 반환")
+        void isAllowed_key가빈문자열_true반환() {
+            // given
+            String key = "";
+            int maxRequests = 5;
+            int windowMinutes = 1;
+
+            // when
+            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
+
+            // then
+            assertThat(result).isTrue();
+            then(valueOperations).should(never()).get(anyString());
+        }
+
+        @Test
+        @DisplayName("key가 공백만 있을 때 true 반환")
+        void isAllowed_key가공백_true반환() {
+            // given
+            String key = "   ";
+            int maxRequests = 5;
+            int windowMinutes = 1;
+
+            // when
+            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
+
+            // then
+            assertThat(result).isTrue();
+            then(valueOperations).should(never()).get(anyString());
+        }
+
+        @Test
+        @DisplayName("Redis에서 null 반환 시 첫 요청으로 처리하여 허용")
+        void isAllowed_Redis에서null반환_true반환() {
+            // given
+            String key = "192.168.1.1";
+            int maxRequests = 5;
+            int windowMinutes = 1;
+            String redisKey = "rate_limit:" + key;
+            given(valueOperations.get(redisKey)).willReturn(null);
+
+            // when
+            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
+
+            // then
+            assertThat(result).isTrue();
+            then(valueOperations).should().get(redisKey);
+        }
+
+        @Test
+        @DisplayName("Redis에서 잘못된 형식 반환 시 첫 요청으로 처리하여 허용")
+        void isAllowed_Redis에서잘못된형식반환_true반환() {
+            // given
+            String key = "192.168.1.1";
+            int maxRequests = 5;
+            int windowMinutes = 1;
+            String redisKey = "rate_limit:" + key;
+            given(valueOperations.get(redisKey)).willReturn("invalid-number");
+
+            // when
+            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
+
+            // then
+            assertThat(result).isTrue();
+            then(valueOperations).should().get(redisKey);
+        }
+    }
+
+    @Nested
+    @DisplayName("incrementRequestCount 메서드 테스트")
+    class IncrementRequestCountTest {
+
+        @Test
+        @DisplayName("성공: 첫 번째 요청 시 TTL 설정")
+        void incrementRequestCount_첫요청_TTL설정() {
+            // given
+            String key = "192.168.1.1";
+            int incrementBy = 1;
+            String redisKey = "rate_limit:" + key;
+            given(valueOperations.increment(redisKey, incrementBy)).willReturn(1L);
+
+            // when
+            adapter.incrementRequestCount(key, incrementBy);
+
+            // then
+            then(valueOperations).should().increment(redisKey, incrementBy);
+            then(redisTemplate).should().expire(redisKey, 1, TimeUnit.MINUTES);
+        }
+
+        @Test
+        @DisplayName("성공: 기존 요청 시 TTL 설정하지 않음")
+        void incrementRequestCount_기존요청_TTL설정하지않음() {
+            // given
+            String key = "192.168.1.1";
+            int incrementBy = 1;
+            String redisKey = "rate_limit:" + key;
+            given(valueOperations.increment(redisKey, incrementBy)).willReturn(5L);
+
+            // when
+            adapter.incrementRequestCount(key, incrementBy);
+
+            // then
+            then(valueOperations).should().increment(redisKey, incrementBy);
+            then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
+        }
+
+        @Test
+        @DisplayName("key가 null일 때 아무것도 하지 않음")
+        void incrementRequestCount_key가null_아무것도하지않음() {
+            // given
+            String key = null;
+            int incrementBy = 1;
+
+            // when
+            adapter.incrementRequestCount(key, incrementBy);
+
+            // then
+            then(valueOperations).should(never()).increment(anyString(), anyInt());
+            then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
+        }
+
+        @Test
+        @DisplayName("key가 빈 문자열일 때 아무것도 하지 않음")
+        void incrementRequestCount_key가빈문자열_아무것도하지않음() {
+            // given
+            String key = "";
+            int incrementBy = 1;
+
+            // when
+            adapter.incrementRequestCount(key, incrementBy);
+
+            // then
+            then(valueOperations).should(never()).increment(anyString(), anyInt());
+            then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
+        }
+
+        @Test
+        @DisplayName("key가 공백만 있을 때 아무것도 하지 않음")
+        void incrementRequestCount_key가공백_아무것도하지않음() {
+            // given
+            String key = "   ";
+            int incrementBy = 1;
+
+            // when
+            adapter.incrementRequestCount(key, incrementBy);
+
+            // then
+            then(valueOperations).should(never()).increment(anyString(), anyInt());
+            then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
+        }
+
+        @Test
+        @DisplayName("Redis 예외 발생 시 로그만 남기고 계속 진행")
+        void incrementRequestCount_Redis예외발생_로그만남기고계속진행() {
+            // given
+            String key = "192.168.1.1";
+            int incrementBy = 1;
+            String redisKey = "rate_limit:" + key;
+            willThrow(new  RuntimeException("Redis error"))
+                    .given(valueOperations).increment(redisKey, incrementBy);
+
+            // when & then (예외가 발생하지 않아야 함)
+            adapter.incrementRequestCount(key, incrementBy);
+
+            // then
+            then(valueOperations).should().increment(redisKey, incrementBy);
+            then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
+        }
+
+        @Test
+        @DisplayName("incrementBy가 1보다 클 때도 정상 처리")
+        void incrementRequestCount_incrementBy가1보다큼_정상처리() {
+            // given
+            String key = "192.168.1.1";
+            int incrementBy = 3;
+            String redisKey = "rate_limit:" + key;
+            given(valueOperations.increment(redisKey, incrementBy)).willReturn(3L);
+
+            // when
+            adapter.incrementRequestCount(key, incrementBy);
+
+            // then
+            then(valueOperations).should().increment(redisKey, incrementBy);
+            then(redisTemplate).should().expire(redisKey, 1, TimeUnit.MINUTES);
+        }
+    }
+}

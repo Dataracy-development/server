@@ -1,515 +1,290 @@
 package com.dataracy.modules.common.exception;
 
 import com.dataracy.modules.common.dto.response.ErrorResponse;
-import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.common.logging.CommonLogger;
 import com.dataracy.modules.common.status.CommonErrorStatus;
-import com.dataracy.modules.common.status.CommonSuccessStatus;
 import com.dataracy.modules.common.support.lock.LockAcquisitionException;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
-import com.dataracy.modules.project.domain.exception.ProjectException;
-import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import com.dataracy.modules.security.exception.SecurityException;
-import com.dataracy.modules.security.status.SecurityErrorStatus;
 import jakarta.validation.ConstraintViolationException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MissingRequestHeaderException;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.core.MethodParameter;
+import java.util.HashSet;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("GlobalExceptionHandler 테스트")
 class GlobalExceptionHandlerTest {
 
-    private GlobalExceptionHandler handler;
-
-    @BeforeEach
-    void setUp() {
-        handler = new GlobalExceptionHandler();
-        // LoggerFactory 모킹을 각 테스트에서 개별적으로 설정
-    }
+    private final GlobalExceptionHandler exceptionHandler = new GlobalExceptionHandler();
 
     @Nested
-    @DisplayName("BusinessException 처리 테스트")
-    class BusinessExceptionTest {
+    @DisplayName("비즈니스 예외 처리 테스트")
+    class BusinessExceptionHandlingTest {
 
         @Test
-        @DisplayName("BusinessException 처리 - DataException")
-        void handleBusinessException_DataException() {
+        @DisplayName("성공: BusinessException을 올바른 HTTP 상태 코드로 처리한다")
+        void success_handleBusinessException() {
             // given
-            DataException exception = new DataException(DataErrorStatus.NOT_FOUND_DATA);
+            DataException dataException = new DataException(DataErrorStatus.NOT_FOUND_DATA);
 
             // when
-            ResponseEntity<ErrorResponse> response = handler.handleCustomException(exception);
+            ResponseEntity<ErrorResponse> response = exceptionHandler.handleCustomException(dataException);
 
             // then
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("DATA-002");
-            assertThat(response.getBody().getMessage()).isEqualTo("해당 데이터셋 리소스가 존재하지 않습니다.");
+            assertThat(response.getBody().getCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA.getCode());
+            assertThat(response.getBody().getMessage()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA.getMessage());
         }
 
         @Test
-        @DisplayName("BusinessException 처리 - ProjectException")
-        void handleBusinessException_ProjectException() {
+        @DisplayName("성공: CommonException을 올바른 HTTP 상태 코드로 처리한다")
+        void success_handleCommonException() {
             // given
-            ProjectException exception = new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
+            CommonException commonException = new CommonException(CommonErrorStatus.INTERNAL_SERVER_ERROR);
 
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleCustomException(exception);
+            try (MockedStatic<com.dataracy.modules.common.logging.support.LoggerFactory> mockedLoggerFactory = 
+                 mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
+                
+                var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
+                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                        .thenReturn(mockLogger);
 
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("PROJECT-002");
-            assertThat(response.getBody().getMessage()).isEqualTo("해당 프로젝트 리소스가 존재하지 않습니다.");
+                // when
+                ResponseEntity<ErrorResponse> response = exceptionHandler.handleCommonException(commonException);
+
+                // then
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getCode());
+                assertThat(response.getBody().getMessage()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getMessage());
+                
+                verify(mockLogger).logError("CommonException", "공통 글로벌 예외입니다.", commonException);
+            }
         }
     }
 
     @Nested
-    @DisplayName("CommonException 처리 테스트")
-    class CommonExceptionTest {
-
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
-
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
-
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
-            }
-        }
+    @DisplayName("동시성 락 예외 처리 테스트")
+    class LockExceptionHandlingTest {
 
         @Test
-        @DisplayName("CommonException 처리")
-        void handleCommonException() {
+        @DisplayName("성공: LockAcquisitionException을 HTTP 409로 처리한다")
+        void success_handleLockAcquisitionException() {
             // given
-            CommonException exception = new CommonException(CommonErrorStatus.INTERNAL_SERVER_ERROR);
+            LockAcquisitionException lockException = new LockAcquisitionException("락 획득 실패");
 
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleCommonException(exception);
+            try (MockedStatic<com.dataracy.modules.common.logging.support.LoggerFactory> mockedLoggerFactory = 
+                 mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
+                
+                var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
+                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                        .thenReturn(mockLogger);
 
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-500");
-            assertThat(response.getBody().getMessage()).isEqualTo("서버 내부 오류가 발생했습니다. 관리자에게 문의하세요.");
+                // when
+                ResponseEntity<ErrorResponse> response = exceptionHandler.handleLockError(lockException);
+
+                // then
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.CONFLICT.getCode());
+                assertThat(response.getBody().getMessage()).isEqualTo("락 획득 실패");
+                
+                verify(mockLogger).logError("LockException", "동시성 락 예외입니다.", lockException);
+            }
         }
     }
 
     @Nested
-    @DisplayName("LockAcquisitionException 처리 테스트")
-    class LockAcquisitionExceptionTest {
-
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
-
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
-
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
-            }
-        }
+    @DisplayName("보안 예외 처리 테스트")
+    class SecurityExceptionHandlingTest {
 
         @Test
-        @DisplayName("LockAcquisitionException 처리")
-        void handleLockError() {
+        @DisplayName("성공: SecurityException을 HTTP 401로 처리한다")
+        void success_handleSecurityException() {
             // given
-            LockAcquisitionException exception = new LockAcquisitionException("Lock acquisition failed");
+            SecurityException securityException = mock(SecurityException.class);
+            when(securityException.getMessage()).thenReturn("인증 실패");
 
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleLockError(exception);
+            try (MockedStatic<com.dataracy.modules.common.logging.support.LoggerFactory> mockedLoggerFactory = 
+                 mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
+                
+                var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
+                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                        .thenReturn(mockLogger);
 
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-409");
-            assertThat(response.getBody().getMessage()).isEqualTo("Lock acquisition failed");
+                // when
+                ResponseEntity<ErrorResponse> response = exceptionHandler.handleSecurityException(securityException);
+
+                // then
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.UNAUTHORIZED.getCode());
+                assertThat(response.getBody().getMessage()).isEqualTo("인증 실패");
+                
+                verify(mockLogger).logError("SecurityException", "인증 예외입니다.", securityException);
+            }
         }
     }
 
     @Nested
-    @DisplayName("SecurityException 처리 테스트")
-    class SecurityExceptionTest {
-
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
-
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
-
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
-            }
-        }
+    @DisplayName("잘못된 인자 예외 처리 테스트")
+    class IllegalArgumentHandlingTest {
 
         @Test
-        @DisplayName("SecurityException 처리")
-        void handleSecurityException() {
+        @DisplayName("성공: IllegalArgumentException을 HTTP 400으로 처리한다")
+        void success_handleIllegalArgumentException() {
             // given
-            SecurityException exception = new SecurityException(SecurityErrorStatus.UNEXPECTED_PRINCIPAL_TYPE_NOT_USER_DETAILS);
+            IllegalArgumentException illegalArgException = new IllegalArgumentException("잘못된 인자");
 
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleSecurityException(exception);
+            try (MockedStatic<com.dataracy.modules.common.logging.support.LoggerFactory> mockedLoggerFactory = 
+                 mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
+                
+                var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
+                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                        .thenReturn(mockLogger);
 
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-401");
-            assertThat(response.getBody().getMessage()).isEqualTo("인증 객체에 저장된 인증 객체의 principal가 CustomUserDetails가 아닙니다.");
+                // when
+                ResponseEntity<ErrorResponse> response = exceptionHandler.handleIllegalArgumentException(illegalArgException);
+
+                // then
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.BAD_REQUEST.getCode());
+                assertThat(response.getBody().getMessage()).isEqualTo("잘못된 인자");
+                
+                verify(mockLogger).logError("IllegalArgumentException", "잘못된 인자가 전달되었습니다.", illegalArgException);
+            }
         }
     }
 
     @Nested
-    @DisplayName("IllegalArgumentException 처리 테스트")
-    class IllegalArgumentExceptionTest {
+    @DisplayName("데이터베이스 예외 처리 테스트")
+    class DatabaseExceptionHandlingTest {
 
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
-
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
-
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
-            }
-        }
-
-        @Test
-        @DisplayName("IllegalArgumentException 처리")
-        void handleIllegalArgumentException() {
-            // given
-            IllegalArgumentException exception = new IllegalArgumentException("Invalid argument");
-
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleIllegalArgumentException(exception);
-
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-400");
-            assertThat(response.getBody().getMessage()).isEqualTo("Invalid argument");
-        }
     }
 
     @Nested
-    @DisplayName("NullPointerException 처리 테스트")
-    class NullPointerExceptionTest {
+    @DisplayName("기타 예외 처리 테스트")
+    class OtherExceptionHandlingTest {
 
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
+        @Test
+        @DisplayName("성공: NullPointerException을 HTTP 500으로 처리한다")
+        void success_handleNullPointerException() {
+            // given
+            NullPointerException nullPointerException = new NullPointerException("null 값 참조");
 
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
+            try (MockedStatic<com.dataracy.modules.common.logging.support.LoggerFactory> mockedLoggerFactory = 
+                 mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
+                
+                var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
+                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                        .thenReturn(mockLogger);
 
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
+                // when
+                ResponseEntity<ErrorResponse> response = exceptionHandler.handleNullPointerException(nullPointerException);
+
+                // then
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getCode());
+                
+                verify(mockLogger).logError("NullPointerException", "요청을 처리하는 중에 Null 값이 참조되었습니다.", nullPointerException);
             }
         }
 
         @Test
-        @DisplayName("NullPointerException 처리")
-        void handleNullPointerException() {
+        @DisplayName("성공: NumberFormatException을 HTTP 400으로 처리한다")
+        void success_handleNumberFormatException() {
             // given
-            NullPointerException exception = new NullPointerException("Null pointer");
+            NumberFormatException numberFormatException = new NumberFormatException("숫자 형식 오류");
 
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleNullPointerException(exception);
+            try (MockedStatic<com.dataracy.modules.common.logging.support.LoggerFactory> mockedLoggerFactory = 
+                 mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
+                
+                var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
+                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                        .thenReturn(mockLogger);
 
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-500");
-            assertThat(response.getBody().getMessage()).isEqualTo("Null pointer");
+                // when
+                ResponseEntity<ErrorResponse> response = exceptionHandler.handleNumberFormatException(numberFormatException);
+
+                // then
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.BAD_REQUEST.getCode());
+                
+                verify(mockLogger).logError("NumberFormatException", "숫자 형식이 잘못되었습니다.", numberFormatException);
+            }
+        }
+
+        @Test
+        @DisplayName("성공: IndexOutOfBoundsException을 HTTP 400으로 처리한다")
+        void success_handleIndexOutOfBoundsException() {
+            // given
+            IndexOutOfBoundsException indexOutOfBoundsException = new IndexOutOfBoundsException("인덱스 범위 초과");
+
+            try (MockedStatic<com.dataracy.modules.common.logging.support.LoggerFactory> mockedLoggerFactory = 
+                 mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
+                
+                var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
+                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                        .thenReturn(mockLogger);
+
+                // when
+                ResponseEntity<ErrorResponse> response = exceptionHandler.handleIndexOutOfBoundsException(indexOutOfBoundsException);
+
+                // then
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.BAD_REQUEST.getCode());
+                
+                verify(mockLogger).logError("IndexOutOfBoundsException", "인덱스가 범위를 벗어났습니다.", indexOutOfBoundsException);
+            }
         }
     }
 
+
+
     @Nested
-    @DisplayName("NumberFormatException 처리 테스트")
-    class NumberFormatExceptionTest {
+    @DisplayName("기본 예외 처리 테스트")
+    class GeneralExceptionHandlingTest {
 
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
+        @Test
+        @DisplayName("성공: 일반 Exception을 HTTP 500으로 처리한다")
+        void success_handleGeneralException() {
+            // given
+            Exception generalException = new Exception("예상치 못한 오류");
 
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
+            try (MockedStatic<com.dataracy.modules.common.logging.support.LoggerFactory> mockedLoggerFactory = 
+                 mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
+                
+                var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
+                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                        .thenReturn(mockLogger);
 
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
+                // when
+                ResponseEntity<ErrorResponse> response = exceptionHandler.handleException(generalException);
+
+                // then
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+                assertThat(response.getBody()).isNotNull();
+                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getCode());
+                assertThat(response.getBody().getMessage()).isEqualTo("예상치 못한 오류");
+                
+                verify(mockLogger).logError("Exception", "내부 서버 오류입니다.", generalException);
             }
         }
 
-        @Test
-        @DisplayName("NumberFormatException 처리")
-        void handleNumberFormatException() {
-            // given
-            NumberFormatException exception = new NumberFormatException("Invalid number format");
-
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleNumberFormatException(exception);
-
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-400");
-            assertThat(response.getBody().getMessage()).isEqualTo("Invalid number format");
-        }
-    }
-
-    @Nested
-    @DisplayName("IndexOutOfBoundsException 처리 테스트")
-    class IndexOutOfBoundsExceptionTest {
-
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
-
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
-
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
-            }
-        }
-
-        @Test
-        @DisplayName("IndexOutOfBoundsException 처리")
-        void handleIndexOutOfBoundsException() {
-            // given
-            IndexOutOfBoundsException exception = new IndexOutOfBoundsException("Index out of bounds");
-
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleIndexOutOfBoundsException(exception);
-
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-400");
-            assertThat(response.getBody().getMessage()).isEqualTo("Index out of bounds");
-        }
-    }
-
-    @Nested
-    @DisplayName("ConstraintViolationException 처리 테스트")
-    class ConstraintViolationExceptionTest {
-
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
-
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
-
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
-            }
-        }
-
-        @Test
-        @DisplayName("ConstraintViolationException 처리")
-        void handleValidationParameterException() {
-            // given
-            ConstraintViolationException exception = new ConstraintViolationException("Validation failed", null);
-
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleValidationParameterException(exception);
-
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-400");
-            assertThat(response.getBody().getMessage()).isEqualTo("Validation failed");
-        }
-    }
-
-    @Nested
-    @DisplayName("MissingRequestHeaderException 처리 테스트")
-    class MissingRequestHeaderExceptionTest {
-
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
-
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
-
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
-            }
-        }
-
-        @Test
-        @DisplayName("MissingRequestHeaderException 처리")
-        void handleMissingRequestHeaderException() {
-            // given
-            MissingRequestHeaderException exception = mock(MissingRequestHeaderException.class);
-            when(exception.getHeaderName()).thenReturn("Authorization");
-            when(exception.getMessage()).thenReturn("Required request header 'Authorization' for method parameter type String is not present");
-
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleMissingRequestHeaderException(exception);
-
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-400");
-            assertThat(response.getBody().getMessage()).contains("Authorization");
-        }
-    }
-
-    @Nested
-    @DisplayName("MethodArgumentTypeMismatchException 처리 테스트")
-    class MethodArgumentTypeMismatchExceptionTest {
-
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
-
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
-
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
-            }
-        }
-
-        @Test
-        @DisplayName("MethodArgumentTypeMismatchException 처리")
-        void handleMethodArgumentTypeMismatchException() {
-            // given
-            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Invalid type");
-            MethodArgumentTypeMismatchException exception = new MethodArgumentTypeMismatchException(
-                    "invalid", String.class, "id", null, illegalArgumentException);
-
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleIllegalArgumentException(illegalArgumentException);
-
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-400");
-            assertThat(response.getBody().getMessage()).contains("Invalid type");
-        }
-    }
-
-    @Nested
-    @DisplayName("Exception 처리 테스트")
-    class ExceptionTest {
-
-        private MockedStatic<LoggerFactory> loggerFactoryMock;
-
-        @BeforeEach
-        void setUp() {
-            loggerFactoryMock = mockStatic(LoggerFactory.class);
-            // CommonLogger 모킹
-            CommonLogger commonLogger = mock(CommonLogger.class);
-            loggerFactoryMock.when(LoggerFactory::common).thenReturn(commonLogger);
-            lenient().doNothing().when(commonLogger).logError(anyString(), anyString(), any(Exception.class));
-        }
-
-        @AfterEach
-        void tearDown() {
-            if (loggerFactoryMock != null) {
-                loggerFactoryMock.close();
-            }
-        }
-
-        @Test
-        @DisplayName("일반 Exception 처리")
-        void handleException() {
-            // given
-            Exception exception = new Exception("General exception");
-
-            // when
-            ResponseEntity<ErrorResponse> response = handler.handleException(exception);
-
-            // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo("COMMON-500");
-            assertThat(response.getBody().getMessage()).isEqualTo("General exception");
-        }
     }
 }

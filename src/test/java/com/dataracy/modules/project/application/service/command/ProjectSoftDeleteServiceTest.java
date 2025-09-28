@@ -13,14 +13,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import java.time.Instant;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ProjectSoftDeleteServiceTest {
 
     @Mock
@@ -39,8 +41,8 @@ class ProjectSoftDeleteServiceTest {
         loggerFactoryMock = mockStatic(LoggerFactory.class);
         loggerService = mock(ServiceLogger.class);
         loggerFactoryMock.when(LoggerFactory::service).thenReturn(loggerService);
-        lenient().when(loggerService.logStart(anyString(), anyString())).thenReturn(Instant.now());
-        lenient().doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
+        doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
+        doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
     }
 
     @AfterEach
@@ -59,8 +61,8 @@ class ProjectSoftDeleteServiceTest {
         void deleteProjectSuccess() {
             // given
             Long projectId = 1L;
-            doNothing().when(softDeleteProjectDbPort).deleteProject(projectId);
-            doNothing().when(manageProjectProjectionTaskPort).enqueueSetDeleted(projectId, true);
+            willDoNothing().given(softDeleteProjectDbPort).deleteProject(projectId);
+            willDoNothing().given(manageProjectProjectionTaskPort).enqueueSetDeleted(projectId, true);
 
             // when
             service.deleteProject(projectId);
@@ -80,7 +82,7 @@ class ProjectSoftDeleteServiceTest {
             // given
             Long projectId = 1L;
             RuntimeException exception = new RuntimeException("Database error");
-            doThrow(exception).when(softDeleteProjectDbPort).deleteProject(projectId);
+            willThrow(exception).given(softDeleteProjectDbPort).deleteProject(projectId);
 
             // when & then
             try {
@@ -106,8 +108,8 @@ class ProjectSoftDeleteServiceTest {
         void restoreProjectSuccess() {
             // given
             Long projectId = 1L;
-            doNothing().when(softDeleteProjectDbPort).restoreProject(projectId);
-            doNothing().when(manageProjectProjectionTaskPort).enqueueSetDeleted(projectId, false);
+            willDoNothing().given(softDeleteProjectDbPort).restoreProject(projectId);
+            willDoNothing().given(manageProjectProjectionTaskPort).enqueueSetDeleted(projectId, false);
 
             // when
             service.restoreProject(projectId);
@@ -127,7 +129,7 @@ class ProjectSoftDeleteServiceTest {
             // given
             Long projectId = 1L;
             RuntimeException exception = new RuntimeException("Database error");
-            doThrow(exception).when(softDeleteProjectDbPort).restoreProject(projectId);
+            willThrow(exception).given(softDeleteProjectDbPort).restoreProject(projectId);
 
             // when & then
             try {

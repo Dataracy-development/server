@@ -84,7 +84,7 @@ class AnalysisPurposeControllerTest {
     void findAllAnalysisPurposesFailureReturns500() throws Exception {
         // given
         given(findAllAnalysisPurposesUseCase.findAllAnalysisPurposes())
-                .willThrow(new RuntimeException("boom"));
+                .willThrow(new  RuntimeException("boom"));
 
         // when & then
         mockMvc.perform(get("/api/v1/references/analysis-purposes")

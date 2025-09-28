@@ -13,14 +13,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class JwtQueryServiceTest {
 
     @Mock
@@ -40,8 +43,8 @@ class JwtQueryServiceTest {
         loggerFactoryMock = mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class);
         loggerService = mock(com.dataracy.modules.common.logging.ServiceLogger.class);
         loggerFactoryMock.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.service()).thenReturn(loggerService);
-        lenient().when(loggerService.logStart(anyString(), anyString())).thenReturn(Instant.now());
-        lenient().doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
+        doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
+        doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
     }
 
     @AfterEach
@@ -79,7 +82,7 @@ class JwtQueryServiceTest {
         void fail() {
             // given
             String token = "bad.jwt.token";
-            willThrow(new IllegalArgumentException("invalid token")).given(jwtValidatorPort).validateToken(token);
+            willThrow(new  IllegalArgumentException("invalid token")).given(jwtValidatorPort).validateToken(token);
 
             // when
             IllegalArgumentException ex = catchThrowableOfType(
@@ -101,7 +104,7 @@ class JwtQueryServiceTest {
         void failWhenTokenIsNull() {
             // given
             String token = null;
-            willThrow(new IllegalArgumentException("Token cannot be null")).given(jwtValidatorPort).validateToken(token);
+            willThrow(new  IllegalArgumentException("Token cannot be null")).given(jwtValidatorPort).validateToken(token);
 
             // when
             IllegalArgumentException ex = catchThrowableOfType(
@@ -149,7 +152,7 @@ class JwtQueryServiceTest {
         void failWhenInvalidToken() {
             // given
             String token = "invalid.token";
-            willThrow(new IllegalArgumentException("Invalid token format")).given(jwtValidatorPort).getUserIdFromToken(token);
+            willThrow(new  IllegalArgumentException("Invalid token format")).given(jwtValidatorPort).getUserIdFromToken(token);
 
             // when
             IllegalArgumentException ex = catchThrowableOfType(

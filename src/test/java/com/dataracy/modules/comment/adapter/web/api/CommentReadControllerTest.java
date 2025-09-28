@@ -13,8 +13,12 @@ import com.dataracy.modules.common.util.ExtractHeaderUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -31,32 +35,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
 class CommentReadControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
     private ReadCommentWebMapper readCommentWebMapper;
+
+    @MockBean
     private FindCommentListUseCase findCommentListUseCase;
+
+    @MockBean
     private FindReplyCommentListUseCase findReplyCommentListUseCase;
+
+    @MockBean
     private ExtractHeaderUtil extractHeaderUtil;
 
-    @BeforeEach
-    void setup() {
-        readCommentWebMapper = org.mockito.Mockito.mock(ReadCommentWebMapper.class);
-        findCommentListUseCase = org.mockito.Mockito.mock(FindCommentListUseCase.class);
-        findReplyCommentListUseCase = org.mockito.Mockito.mock(FindReplyCommentListUseCase.class);
-        extractHeaderUtil = org.mockito.Mockito.mock(ExtractHeaderUtil.class);
-
-        CommentReadController controller = new CommentReadController(
-                extractHeaderUtil,
-                readCommentWebMapper,
-                findCommentListUseCase,
-                findReplyCommentListUseCase
-        );
-
-        mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-                .build();
-    }
 
     @Test
     @DisplayName("댓글 목록 조회 성공 → 200 OK + GET_COMMENTS 반환")

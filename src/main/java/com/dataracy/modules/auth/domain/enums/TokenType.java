@@ -4,12 +4,10 @@ import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
 @Getter
-@RequiredArgsConstructor
 public enum TokenType {
     REGISTER("REGISTER"),
     ACCESS("ACCESS"),
@@ -18,6 +16,10 @@ public enum TokenType {
     ;
 
     private final String value;
+    
+    TokenType(String value) {
+        this.value = value;
+    }
 
     /**
      * 주어진 문자열에 해당하는 TokenType 열거형 상수를 반환합니다.

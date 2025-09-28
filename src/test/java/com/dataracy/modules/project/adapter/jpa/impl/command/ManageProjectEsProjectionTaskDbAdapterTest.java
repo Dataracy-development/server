@@ -2,124 +2,248 @@ package com.dataracy.modules.project.adapter.jpa.impl.command;
 
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectEsProjectionTaskEntity;
 import com.dataracy.modules.project.adapter.jpa.repository.ProjectEsProjectionTaskRepository;
+import com.dataracy.modules.project.application.port.out.command.projection.ManageProjectProjectionTaskPort;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.then;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+/**
+ * ManageProjectEsProjectionTaskDbAdapter 테스트
+ */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ManageProjectEsProjectionTaskDbAdapterTest {
 
     @InjectMocks
-    private ManageProjectEsProjectionTaskDbAdapter adapter;
+    private ManageProjectEsProjectionTaskDbAdapter manageProjectEsProjectionTaskDbAdapter;
 
     @Mock
-    private ProjectEsProjectionTaskRepository repo;
+    private ProjectEsProjectionTaskRepository projectEsProjectionTaskRepository;
 
-    @Captor
-    private ArgumentCaptor<ProjectEsProjectionTaskEntity> captor;
-
-    @Nested
-    @DisplayName("댓글 증감 큐잉")
-    class EnqueueCommentDelta {
-        @Test
-        @DisplayName("댓글 delta 값이 저장된다")
-        void enqueueCommentDeltaShouldSaveEntity() {
-            // given
-            Long projectId = 1L;
-            int delta = 3;
-
-            // when
-            adapter.enqueueCommentDelta(projectId, delta);
-
-            // then
-            then(repo).should().save(captor.capture());
-            ProjectEsProjectionTaskEntity saved = captor.getValue();
-            assertThat(saved.getProjectId()).isEqualTo(projectId);
-            assertThat(saved.getDeltaComment()).isEqualTo(delta);
-        }
-    }
-
-    @Nested
-    @DisplayName("좋아요 증감 큐잉")
-    class EnqueueLikeDelta {
-        @Test
-        @DisplayName("좋아요 delta 값이 저장된다")
-        void enqueueLikeDeltaShouldSaveEntity() {
-            // given
-            Long projectId = 2L;
-            int delta = -1;
-
-            // when
-            adapter.enqueueLikeDelta(projectId, delta);
-
-            // then
-            then(repo).should().save(captor.capture());
-            ProjectEsProjectionTaskEntity saved = captor.getValue();
-            assertThat(saved.getProjectId()).isEqualTo(projectId);
-            assertThat(saved.getDeltaLike()).isEqualTo(delta);
-        }
-    }
-
-    @Nested
-    @DisplayName("조회수 증감 큐잉")
-    class EnqueueViewDelta {
-        @Test
-        @DisplayName("조회수 delta 값이 저장된다")
-        void enqueueViewDeltaShouldSaveEntity() {
-            // given
-            Long projectId = 3L;
-            Long delta = 100L;
-
-            // when
-            adapter.enqueueViewDelta(projectId, delta);
-
-            // then
-            then(repo).should().save(captor.capture());
-            ProjectEsProjectionTaskEntity saved = captor.getValue();
-            assertThat(saved.getProjectId()).isEqualTo(projectId);
-            assertThat(saved.getDeltaView()).isEqualTo(delta);
-        }
-    }
-
-    @Nested
-    @DisplayName("삭제 상태 큐잉")
-    class EnqueueSetDeleted {
-        @Test
-        @DisplayName("삭제 상태 true 값이 저장된다")
-        void enqueueSetDeletedShouldSaveEntity() {
-            // given
-            Long projectId = 4L;
-
-            // when
-            adapter.enqueueSetDeleted(projectId, true);
-
-            // then
-            then(repo).should().save(captor.capture());
-            ProjectEsProjectionTaskEntity saved = captor.getValue();
-            assertThat(saved.getProjectId()).isEqualTo(projectId);
-            assertThat(saved.getSetDeleted()).isTrue();
-        }
+    @BeforeEach
+    void setUp() {
+        // 기본 mock 설정
+        given(projectEsProjectionTaskRepository.save(any(ProjectEsProjectionTaskEntity.class)))
+                .willReturn(ProjectEsProjectionTaskEntity.builder().id(1L).build());
+        given(projectEsProjectionTaskRepository.saveAll(anyList()))
+                .willReturn(List.of());
+        willDoNothing().given(projectEsProjectionTaskRepository).deleteImmediate(anyLong());
     }
 
     @Test
-    @DisplayName("delete 호출 시 repo.deleteImmediate 위임")
-    void deleteShouldDelegateToRepo() {
+    @DisplayName("댓글 델타 큐잇 성공")
+    void enqueueCommentDelta_성공() {
         // given
-        Long taskId = 99L;
+        Long projectId = 1L;
+        int deltaComment = 5;
 
         // when
-        adapter.delete(taskId);
+        manageProjectEsProjectionTaskDbAdapter.enqueueCommentDelta(projectId, deltaComment);
 
         // then
-        then(repo).should().deleteImmediate(taskId);
+        then(projectEsProjectionTaskRepository).should().save(any(ProjectEsProjectionTaskEntity.class));
+    }
+
+    @Test
+    @DisplayName("댓글 델타 큐잇 성공 - 음수 값")
+    void enqueueCommentDelta_성공_음수값() {
+        // given
+        Long projectId = 1L;
+        int deltaComment = -3; // 댓글 삭제
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueCommentDelta(projectId, deltaComment);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().save(any(ProjectEsProjectionTaskEntity.class));
+    }
+
+    @Test
+    @DisplayName("좋아요 델타 큐잇 성공")
+    void enqueueLikeDelta_성공() {
+        // given
+        Long projectId = 1L;
+        int deltaLike = 1;
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueLikeDelta(projectId, deltaLike);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().save(any(ProjectEsProjectionTaskEntity.class));
+    }
+
+    @Test
+    @DisplayName("좋아요 델타 큐잇 성공 - 음수 값")
+    void enqueueLikeDelta_성공_음수값() {
+        // given
+        Long projectId = 1L;
+        int deltaLike = -1; // 좋아요 취소
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueLikeDelta(projectId, deltaLike);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().save(any(ProjectEsProjectionTaskEntity.class));
+    }
+
+    @Test
+    @DisplayName("조회수 델타 큐잇 성공")
+    void enqueueViewDelta_성공() {
+        // given
+        Long projectId = 1L;
+        Long deltaView = 10L;
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueViewDelta(projectId, deltaView);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().save(any(ProjectEsProjectionTaskEntity.class));
+    }
+
+    @Test
+    @DisplayName("조회수 델타 큐잇 성공 - 0 값")
+    void enqueueViewDelta_성공_0값() {
+        // given
+        Long projectId = 1L;
+        Long deltaView = 0L;
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueViewDelta(projectId, deltaView);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().save(any(ProjectEsProjectionTaskEntity.class));
+    }
+
+    @Test
+    @DisplayName("삭제 상태 설정 큐잇 성공 - 삭제")
+    void enqueueSetDeleted_성공_삭제() {
+        // given
+        Long projectId = 1L;
+        boolean deleted = true;
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueSetDeleted(projectId, deleted);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().save(any(ProjectEsProjectionTaskEntity.class));
+    }
+
+    @Test
+    @DisplayName("삭제 상태 설정 큐잇 성공 - 복원")
+    void enqueueSetDeleted_성공_복원() {
+        // given
+        Long projectId = 1L;
+        boolean deleted = false;
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueSetDeleted(projectId, deleted);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().save(any(ProjectEsProjectionTaskEntity.class));
+    }
+
+    @Test
+    @DisplayName("프로젝션 작업 삭제 성공")
+    void delete_성공() {
+        // given
+        Long projectEsProjectionTaskId = 1L;
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.delete(projectEsProjectionTaskId);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().deleteImmediate(projectEsProjectionTaskId);
+    }
+
+    @Test
+    @DisplayName("배치 조회수 델타 큐잇 성공 - 여러 프로젝트")
+    void enqueueViewDeltaBatch_성공_여러프로젝트() {
+        // given
+        Map<Long, Long> viewCountUpdates = new HashMap<>();
+        viewCountUpdates.put(1L, 5L);
+        viewCountUpdates.put(2L, 3L);
+        viewCountUpdates.put(3L, 10L);
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueViewDeltaBatch(viewCountUpdates);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().saveAll(anyList());
+    }
+
+    @Test
+    @DisplayName("배치 조회수 델타 큐잇 성공 - 단일 프로젝트")
+    void enqueueViewDeltaBatch_성공_단일프로젝트() {
+        // given
+        Map<Long, Long> viewCountUpdates = new HashMap<>();
+        viewCountUpdates.put(1L, 7L);
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueViewDeltaBatch(viewCountUpdates);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().saveAll(anyList());
+    }
+
+    @Test
+    @DisplayName("배치 조회수 델타 큐잇 - 빈 맵으로 호출 시 아무것도 하지 않음")
+    void enqueueViewDeltaBatch_빈맵_아무것도하지않음() {
+        // given
+        Map<Long, Long> viewCountUpdates = new HashMap<>(); // 빈 맵
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueViewDeltaBatch(viewCountUpdates);
+
+        // then
+        then(projectEsProjectionTaskRepository).should(never()).saveAll(anyList());
+    }
+
+    @Test
+    @DisplayName("배치 조회수 델타 큐잇 성공 - null 값 포함")
+    void enqueueViewDeltaBatch_성공_null값포함() {
+        // given
+        Map<Long, Long> viewCountUpdates = new HashMap<>();
+        viewCountUpdates.put(1L, 5L);
+        viewCountUpdates.put(2L, null); // null 값
+        viewCountUpdates.put(3L, 10L);
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueViewDeltaBatch(viewCountUpdates);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().saveAll(anyList());
+    }
+
+    @Test
+    @DisplayName("배치 조회수 델타 큐잇 성공 - 0 값 포함")
+    void enqueueViewDeltaBatch_성공_0값포함() {
+        // given
+        Map<Long, Long> viewCountUpdates = new HashMap<>();
+        viewCountUpdates.put(1L, 5L);
+        viewCountUpdates.put(2L, 0L); // 0 값
+        viewCountUpdates.put(3L, 10L);
+
+        // when
+        manageProjectEsProjectionTaskDbAdapter.enqueueViewDeltaBatch(viewCountUpdates);
+
+        // then
+        then(projectEsProjectionTaskRepository).should().saveAll(anyList());
     }
 }

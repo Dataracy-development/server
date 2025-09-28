@@ -8,6 +8,7 @@ import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.like.domain.exception.LikeException;
 import com.dataracy.modules.like.domain.model.Like;
 import com.dataracy.modules.project.application.port.in.validate.ValidateProjectUseCase;
+import com.dataracy.modules.common.test.support.TestDataBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,12 +18,15 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class LikeCommandServiceTest {
 
     @Mock
@@ -51,9 +55,10 @@ class LikeCommandServiceTest {
         @DisplayName("프로젝트에 새 좋아요 → 저장 및 이벤트 전송")
         void likeProjectSuccess() {
             // given
-            Long userId = 5L;
-            TargetLikeRequest req = new TargetLikeRequest(100L, "PROJECT", false);
-            willDoNothing().given(validateProjectUseCase).validateProject(100L);
+            Long userId = TestDataBuilder.RandomData.randomId();
+            Long targetId = TestDataBuilder.RandomData.randomId();
+            TargetLikeRequest req = new TargetLikeRequest(targetId, "PROJECT", false);
+            willDoNothing().given(validateProjectUseCase).validateProject(targetId);
 
             // when
             TargetType result = service.likeTarget(userId, req);
@@ -62,11 +67,11 @@ class LikeCommandServiceTest {
             assertThat(result).isEqualTo(TargetType.PROJECT);
             then(likeCommandPort).should().save(likeCaptor.capture());
             Like saved = likeCaptor.getValue();
-            assertThat(saved.getTargetId()).isEqualTo(100L);
+            assertThat(saved.getTargetId()).isEqualTo(targetId);
             assertThat(saved.getTargetType()).isEqualTo(TargetType.PROJECT);
-            assertThat(saved.getUserId()).isEqualTo(5L);
+            assertThat(saved.getUserId()).isEqualTo(userId);
 
-            then(sendLikeEventPort).should().sendLikeEvent(TargetType.PROJECT, 100L, false);
+            then(sendLikeEventPort).should().sendLikeEvent(TargetType.PROJECT, targetId, false);
         }
 
         @Test

@@ -2,8 +2,10 @@ package com.dataracy.modules.common.config.web;
 
 import com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -33,5 +35,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(currentUserIdArgumentResolver);
+        resolvers.add(pageableHandlerMethodArgumentResolver());
+    }
+
+    @Bean
+    public PageableHandlerMethodArgumentResolver pageableHandlerMethodArgumentResolver() {
+        return new PageableHandlerMethodArgumentResolver();
     }
 }

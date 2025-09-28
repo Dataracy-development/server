@@ -27,6 +27,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -39,12 +41,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DataSearchServiceTest {
 
     @Mock
@@ -76,9 +79,9 @@ class DataSearchServiceTest {
         loggerFactoryMock = mockStatic(LoggerFactory.class);
         loggerService = mock(com.dataracy.modules.common.logging.ServiceLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.service()).thenReturn(loggerService);
-        lenient().when(loggerService.logStart(anyString(), anyString())).thenReturn(Instant.now());
-        lenient().doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
-        lenient().doNothing().when(loggerService).logWarning(anyString(), anyString());
+        doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
+        doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
+        doNothing().when(loggerService).logWarning(anyString(), anyString());
     }
 
     @AfterEach
@@ -134,12 +137,9 @@ class DataSearchServiceTest {
             given(findDataPort.findDataById(dataId)).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> service.searchSimilarDataSets(dataId, size))
-                    .isInstanceOf(DataException.class)
-                    .satisfies(exception -> {
-                        DataException dataException = (DataException) exception;
-                        assertThat(dataException.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
-                    });
+            DataException exception = catchThrowableOfType(() -> service.searchSimilarDataSets(dataId, size), DataException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
 
             // 포트 호출 검증
             then(findDataPort).should().findDataById(dataId);

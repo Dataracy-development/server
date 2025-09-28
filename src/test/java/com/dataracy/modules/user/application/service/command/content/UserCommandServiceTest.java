@@ -29,7 +29,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserCommandServiceTest {
 
@@ -151,7 +152,7 @@ class UserCommandServiceTest {
                 // Mock 설정
                 given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
 
-                willThrow(new IllegalArgumentException("닉네임 중복"))
+                willThrow(new  IllegalArgumentException("닉네임 중복"))
                         .given(duplicateNicknameUseCase).validateDuplicatedNickname("중복닉");
 
                 // when
@@ -177,7 +178,7 @@ class UserCommandServiceTest {
                 // Mock 설정
                 given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
 
-                willThrow(new IllegalArgumentException("잘못된 이미지"))
+                willThrow(new  IllegalArgumentException("잘못된 이미지"))
                         .given(profileImageFile).getOriginalFilename();
 
                 // when

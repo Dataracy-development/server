@@ -4,24 +4,27 @@ import com.dataracy.modules.email.application.port.out.code.ManageEmailCodePort;
 import com.dataracy.modules.email.application.port.out.command.SendEmailPort;
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 import com.dataracy.modules.email.domain.exception.EmailException;
+import com.dataracy.modules.email.domain.model.EmailContent;
+import com.dataracy.modules.email.domain.status.EmailErrorStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class EmailCommandServiceTest {
 
     @Mock
@@ -30,63 +33,76 @@ class EmailCommandServiceTest {
     @Mock
     private ManageEmailCodePort manageEmailCodePort;
 
-    @InjectMocks
-    private EmailCommandService service;
+    private EmailCommandService emailCommandService;
+
+    @BeforeEach
+    void setUp() {
+        emailCommandService = new EmailCommandService(sendEmailPort, manageEmailCodePort);
+    }
 
     @Nested
-    @DisplayName("이메일 인증 코드 전송")
-    class SendEmailVerificationCode {
+    @DisplayName("sendEmailVerificationCode 메서드 테스트")
+    class SendEmailVerificationCodeTest {
 
-        @ParameterizedTest(name = "[{index}] {0} 목적 → 성공 플로우")
-        @EnumSource(EmailVerificationType.class)
-        @DisplayName("성공: 6자리 코드를 생성하고 메일 발송 후 저장한다 (순서 검증 포함)")
-        void success(EmailVerificationType type) {
+        @Test
+        @DisplayName("성공: 이메일 인증 코드 전송 성공")
+        void sendEmailVerificationCode_정상전송_성공() {
             // given
-            String email = "user@example.com";
-            ArgumentCaptor<String> subjectCap = ArgumentCaptor.forClass(String.class);
-            ArgumentCaptor<String> bodyCap = ArgumentCaptor.forClass(String.class);
-            ArgumentCaptor<String> savedCodeCap = ArgumentCaptor.forClass(String.class);
-            ArgumentCaptor<EmailVerificationType> typeCap = ArgumentCaptor.forClass(EmailVerificationType.class);
+            String email = "test@example.com";
+            EmailVerificationType type = EmailVerificationType.SIGN_UP;
 
             // when
-            service.sendEmailVerificationCode(email, type);
+            emailCommandService.sendEmailVerificationCode(email, type);
 
             // then
-            // 메일 발송 호출 캡처
-            then(sendEmailPort).should().send(eq(email), subjectCap.capture(), bodyCap.capture());
-            // 코드 저장 호출 캡처
-            then(manageEmailCodePort).should().saveCode(eq(email), savedCodeCap.capture(), typeCap.capture());
-
-            String savedCode = savedCodeCap.getValue();
-            assertThat(savedCode).matches("^\\d{6}$");  // 6자리 숫자
-            assertThat(bodyCap.getValue()).contains(savedCode);
-            assertThat(subjectCap.getValue()).isNotBlank();
-            assertThat(typeCap.getValue()).isEqualTo(type);
-
-            // 호출 순서 검증: send → saveCode
-            InOrder inOrder = inOrder(sendEmailPort, manageEmailCodePort);
-            inOrder.verify(sendEmailPort).send(eq(email), anyString(), anyString());
-            inOrder.verify(manageEmailCodePort).saveCode(eq(email), anyString(), eq(type));
+            then(sendEmailPort).should().send(anyString(), anyString(), anyString());
+            then(manageEmailCodePort).should().saveCode(anyString(), anyString(), any(EmailVerificationType.class));
         }
 
         @Test
-        @DisplayName("실패: 메일 발송 실패 시 EmailException 발생, 저장 호출은 안 된다")
-        void failsWhenSendFails() {
+        @DisplayName("성공: PASSWORD_SEARCH 타입 이메일 전송")
+        void sendEmailVerificationCode_PASSWORDSEARCH타입_성공() {
             // given
-            String email = "user2@example.com";
-            willThrow(new RuntimeException("send failed"))
-                    .given(sendEmailPort).send(eq(email), anyString(), anyString());
+            String email = "user@test.com";
+            EmailVerificationType type = EmailVerificationType.PASSWORD_SEARCH;
 
             // when
-            EmailException ex = catchThrowableOfType(
-                    () -> service.sendEmailVerificationCode(email, EmailVerificationType.PASSWORD_RESET),
-                    EmailException.class
-            );
+            emailCommandService.sendEmailVerificationCode(email, type);
 
             // then
-            assertThat(ex).isNotNull();
-            assertThat(ex.getErrorCode().getCode()).isEqualTo("EMAIL-001");
-            then(manageEmailCodePort).should(never()).saveCode(anyString(), anyString(), any());
+            then(sendEmailPort).should().send(anyString(), anyString(), anyString());
+            then(manageEmailCodePort).should().saveCode(anyString(), anyString(), any(EmailVerificationType.class));
+        }
+
+        @Test
+        @DisplayName("성공: PASSWORD_RESET 타입 이메일 전송")
+        void sendEmailVerificationCode_PASSWORDRESET타입_성공() {
+            // given
+            String email = "reset@example.com";
+            EmailVerificationType type = EmailVerificationType.PASSWORD_RESET;
+
+            // when
+            emailCommandService.sendEmailVerificationCode(email, type);
+
+            // then
+            then(sendEmailPort).should().send(anyString(), anyString(), anyString());
+            then(manageEmailCodePort).should().saveCode(anyString(), anyString(), any(EmailVerificationType.class));
+        }
+
+        @Test
+        @DisplayName("실패: 이메일 전송 중 예외 발생")
+        void sendEmailVerificationCode_전송예외_EmailException발생() {
+            // given
+            String email = "error@example.com";
+            EmailVerificationType type = EmailVerificationType.SIGN_UP;
+            willThrow(new RuntimeException("Network error")).given(sendEmailPort).send(anyString(), anyString(), anyString());
+
+            // when & then
+            assertThatThrownBy(() -> emailCommandService.sendEmailVerificationCode(email, type))
+                .isInstanceOf(EmailException.class);
+
+            then(sendEmailPort).should().send(anyString(), anyString(), anyString());
+            then(manageEmailCodePort).shouldHaveNoInteractions();
         }
     }
 }

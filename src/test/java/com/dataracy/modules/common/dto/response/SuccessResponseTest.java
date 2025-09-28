@@ -2,166 +2,123 @@ package com.dataracy.modules.common.dto.response;
 
 import com.dataracy.modules.common.status.BaseSuccessCode;
 import com.dataracy.modules.common.status.CommonSuccessStatus;
+import com.dataracy.modules.user.domain.status.UserSuccessStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SuccessResponseTest {
 
     @Test
-    @DisplayName("of(BaseSuccessCode, T) - 데이터와 함께 성공 응답 생성")
-    void of_WithData_CreatesSuccessResponse() {
+    @DisplayName("of - BaseSuccessCode와 데이터로 SuccessResponse를 생성한다")
+    void of_WithSuccessCodeAndData_CreatesSuccessResponse() {
         // given
         BaseSuccessCode successCode = CommonSuccessStatus.OK;
-        String testData = "test data";
+        String data = "test data";
 
         // when
-        SuccessResponse<String> response = SuccessResponse.of(successCode, testData);
+        SuccessResponse<String> result = SuccessResponse.of(successCode, data);
 
         // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getCode()).isEqualTo(successCode.getCode());
-        assertThat(response.getMessage()).isEqualTo(successCode.getMessage());
-        assertThat(response.getData()).isEqualTo(testData);
+        assertThat(result.getHttpStatus()).isEqualTo(200);
+        assertThat(result.getCode()).isEqualTo("COMMON-200");
+        assertThat(result.getMessage()).isEqualTo("성공입니다.");
+        assertThat(result.getData()).isEqualTo("test data");
     }
 
     @Test
-    @DisplayName("of(BaseSuccessCode) - 데이터 없이 성공 응답 생성")
-    void of_WithoutData_CreatesSuccessResponse() {
+    @DisplayName("of - BaseSuccessCode만으로 SuccessResponse를 생성한다")
+    void of_WithSuccessCodeOnly_CreatesSuccessResponse() {
         // given
-        BaseSuccessCode successCode = CommonSuccessStatus.OK;
+        BaseSuccessCode successCode = CommonSuccessStatus.CREATED;
 
         // when
-        SuccessResponse<Void> response = SuccessResponse.of(successCode);
+        SuccessResponse<Void> result = SuccessResponse.of(successCode);
 
         // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getCode()).isEqualTo(successCode.getCode());
-        assertThat(response.getMessage()).isEqualTo(successCode.getMessage());
-        assertThat(response.getData()).isNull();
+        assertThat(result.getHttpStatus()).isEqualTo(201);
+        assertThat(result.getCode()).isEqualTo("COMMON-201");
+        assertThat(result.getMessage()).isEqualTo("생성에 성공했습니다.");
+        assertThat(result.getData()).isNull();
     }
 
     @Test
-    @DisplayName("of(BaseSuccessCode, T) - null 데이터와 함께 성공 응답 생성")
+    @DisplayName("of - UserSuccessStatus로 SuccessResponse를 생성한다")
+    void of_WithUserSuccessStatus_CreatesSuccessResponse() {
+        // given
+        BaseSuccessCode successCode = UserSuccessStatus.CREATED_USER;
+        Long userId = 1L;
+
+        // when
+        SuccessResponse<Long> result = SuccessResponse.of(successCode, userId);
+
+        // then
+        assertThat(result.getHttpStatus()).isEqualTo(201);
+        assertThat(result.getCode()).isEqualTo("201");
+        assertThat(result.getMessage()).isEqualTo("회원가입에 성공했습니다");
+        assertThat(result.getData()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("of - null 데이터로 SuccessResponse를 생성한다")
     void of_WithNullData_CreatesSuccessResponse() {
         // given
-        BaseSuccessCode successCode = CommonSuccessStatus.OK;
+        BaseSuccessCode successCode = CommonSuccessStatus.NO_CONTENT;
+        String data = null;
 
         // when
-        SuccessResponse<String> response = SuccessResponse.of(successCode, null);
+        SuccessResponse<String> result = SuccessResponse.of(successCode, data);
 
         // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getCode()).isEqualTo(successCode.getCode());
-        assertThat(response.getMessage()).isEqualTo(successCode.getMessage());
-        assertThat(response.getData()).isNull();
+        assertThat(result.getHttpStatus()).isEqualTo(204);
+        assertThat(result.getCode()).isEqualTo("COMMON-204");
+        assertThat(result.getMessage()).isEqualTo("성공입니다.");
+        assertThat(result.getData()).isNull();
     }
 
     @Test
-    @DisplayName("of(BaseSuccessCode, T) - 복잡한 객체 데이터와 함께 성공 응답 생성")
+    @DisplayName("of - 복잡한 객체 데이터로 SuccessResponse를 생성한다")
     void of_WithComplexData_CreatesSuccessResponse() {
         // given
-        BaseSuccessCode successCode = CommonSuccessStatus.OK;
-        TestData testData = new TestData("name", 25);
+        BaseSuccessCode successCode = UserSuccessStatus.OK_GET_USER_INFO;
+        UserInfo data = new UserInfo(1L, "test@example.com", "TestUser");
 
         // when
-        SuccessResponse<TestData> response = SuccessResponse.of(successCode, testData);
+        SuccessResponse<UserInfo> result = SuccessResponse.of(successCode, data);
 
         // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getCode()).isEqualTo(successCode.getCode());
-        assertThat(response.getMessage()).isEqualTo(successCode.getMessage());
-        assertThat(response.getData()).isEqualTo(testData);
-        assertThat(response.getData().getName()).isEqualTo("name");
-        assertThat(response.getData().getAge()).isEqualTo(25);
+        assertThat(result.getHttpStatus()).isEqualTo(200);
+        assertThat(result.getCode()).isEqualTo("200");
+        assertThat(result.getMessage()).isEqualTo("유저 정보 조회가 완료되었습니다.");
+        assertThat(result.getData()).isEqualTo(data);
     }
 
-    @Test
-    @DisplayName("builder() - 빌더 패턴으로 성공 응답 생성")
-    void builder_CreatesSuccessResponse() {
-        // when
-        SuccessResponse<String> response = SuccessResponse.<String>builder()
-                .httpStatus(200)
-                .code("SUCCESS")
-                .message("Operation completed successfully")
-                .data("test data")
-                .build();
+    // 테스트용 UserInfo 클래스
+    private static class UserInfo {
+        private final Long id;
+        private final String email;
+        private final String nickname;
 
-        // then
-        assertThat(response.getHttpStatus()).isEqualTo(200);
-        assertThat(response.getCode()).isEqualTo("SUCCESS");
-        assertThat(response.getMessage()).isEqualTo("Operation completed successfully");
-        assertThat(response.getData()).isEqualTo("test data");
-    }
-
-    @Test
-    @DisplayName("builder() - 빌더 패턴으로 데이터 없는 성공 응답 생성")
-    void builder_WithoutData_CreatesSuccessResponse() {
-        // when
-        SuccessResponse<Void> response = SuccessResponse.<Void>builder()
-                .httpStatus(201)
-                .code("CREATED")
-                .message("Resource created successfully")
-                .data(null)
-                .build();
-
-        // then
-        assertThat(response.getHttpStatus()).isEqualTo(201);
-        assertThat(response.getCode()).isEqualTo("CREATED");
-        assertThat(response.getMessage()).isEqualTo("Resource created successfully");
-        assertThat(response.getData()).isNull();
-    }
-
-    @Test
-    @DisplayName("of(BaseSuccessCode, T) - 제네릭 타입 검증")
-    void of_GenericTypeVerification() {
-        // given
-        BaseSuccessCode successCode = CommonSuccessStatus.OK;
-        Integer intData = 42;
-        Boolean boolData = true;
-
-        // when
-        SuccessResponse<Integer> intResponse = SuccessResponse.of(successCode, intData);
-        SuccessResponse<Boolean> boolResponse = SuccessResponse.of(successCode, boolData);
-
-        // then
-        assertThat(intResponse.getData()).isInstanceOf(Integer.class);
-        assertThat(intResponse.getData()).isEqualTo(42);
-        assertThat(boolResponse.getData()).isInstanceOf(Boolean.class);
-        assertThat(boolResponse.getData()).isTrue();
-    }
-
-    // 테스트용 내부 클래스
-    private static class TestData {
-        private final String name;
-        private final int age;
-
-        public TestData(String name, int age) {
-            this.name = name;
-            this.age = age;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getAge() {
-            return age;
+        public UserInfo(Long id, String email, String nickname) {
+            this.id = id;
+            this.email = email;
+            this.nickname = nickname;
         }
 
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (obj == null || getClass() != obj.getClass()) return false;
-            TestData testData = (TestData) obj;
-            return age == testData.age && name.equals(testData.name);
+            UserInfo userInfo = (UserInfo) obj;
+            return java.util.Objects.equals(id, userInfo.id) &&
+                    java.util.Objects.equals(email, userInfo.email) &&
+                    java.util.Objects.equals(nickname, userInfo.nickname);
         }
 
         @Override
         public int hashCode() {
-            return java.util.Objects.hash(name, age);
+            return java.util.Objects.hash(id, email, nickname);
         }
     }
 }

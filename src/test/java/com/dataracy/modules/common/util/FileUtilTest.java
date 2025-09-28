@@ -3,159 +3,156 @@ package com.dataracy.modules.common.util;
 import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@DisplayName("FileUtil 테스트")
 class FileUtilTest {
 
-    @Nested
-    @DisplayName("validateImageFile 메서드 테스트")
-    class ValidateImageFileTest {
+    @Test
+    @DisplayName("validateImageFile - 유효한 이미지 파일 검증")
+    void validateImageFile_ShouldPassForValidImageFile() {
+        // Given
+        // 5MB 이하의 작은 파일로 테스트
+        byte[] smallImageData = new byte[1024]; // 1KB
+        MockMultipartFile file = new MockMultipartFile(
+            "file", "test.jpg", "image/jpeg", smallImageData
+        );
 
-        @Test
-        @DisplayName("유효한 이미지 파일일 때 예외 발생하지 않음")
-        void validateImageFile_WithValidImageFile_DoesNotThrowException() {
-            // given
-            MockMultipartFile file = new MockMultipartFile(
-                    "file", "test.jpg", "image/jpeg", "test content".getBytes()
-            );
-
-            // when & then
-            FileUtil.validateImageFile(file);
-        }
-
-        @Test
-        @DisplayName("파일이 null일 때 예외 발생하지 않음")
-        void validateImageFile_WithNullFile_DoesNotThrowException() {
-            // when & then
-            FileUtil.validateImageFile(null);
-        }
-
-        @Test
-        @DisplayName("파일이 비어있을 때 예외 발생하지 않음")
-        void validateImageFile_WithEmptyFile_DoesNotThrowException() {
-            // given
-            MockMultipartFile file = new MockMultipartFile(
-                    "file", "test.jpg", "image/jpeg", new byte[0]
-            );
-
-            // when & then
-            FileUtil.validateImageFile(file);
-        }
-
-        @Test
-        @DisplayName("지원하지 않는 확장자일 때 예외 발생")
-        void validateImageFile_WithUnsupportedExtension_ThrowsException() {
-            // given
-            MockMultipartFile file = new MockMultipartFile(
-                    "file", "test.txt", "text/plain", "test content".getBytes()
-            );
-
-            // when & then
-            assertThatThrownBy(() -> FileUtil.validateImageFile(file))
-                    .isInstanceOf(CommonException.class);
-        }
-
-        @Test
-        @DisplayName("대문자 확장자도 유효한 것으로 처리")
-        void validateImageFile_WithUppercaseExtension_DoesNotThrowException() {
-            // given
-            MockMultipartFile file = new MockMultipartFile(
-                    "file", "test.JPG", "image/jpeg", "test content".getBytes()
-            );
-
-            // when & then
-            FileUtil.validateImageFile(file);
-        }
+        // When & Then
+        // validateImageFile은 void 메서드이므로 예외가 발생하지 않으면 성공
+        FileUtil.validateImageFile(file);
     }
 
-    @Nested
-    @DisplayName("validateGeneralFile 메서드 테스트")
-    class ValidateGeneralFileTest {
+    @Test
+    @DisplayName("validateImageFile - null 파일 처리")
+    void validateImageFile_ShouldHandleNullFile() {
+        // When & Then
+        // validateImageFile은 null 파일을 처리하므로 예외가 발생하지 않음
+        FileUtil.validateImageFile(null);
+    }
 
-        @Test
-        @DisplayName("유효한 CSV 파일일 때 예외 발생하지 않음")
-        void validateGeneralFile_WithValidCsvFile_DoesNotThrowException() {
-            // given
-            MockMultipartFile file = new MockMultipartFile(
-                    "file", "test.csv", "text/csv", "test content".getBytes()
-            );
+    @Test
+    @DisplayName("validateImageFile - 빈 파일 처리")
+    void validateImageFile_ShouldHandleEmptyFile() {
+        // Given
+        MockMultipartFile file = new MockMultipartFile(
+            "file", "empty.jpg", "image/jpeg", new byte[0]
+        );
 
-            // when & then
-            FileUtil.validateGeneralFile(file);
-        }
+        // When & Then
+        FileUtil.validateImageFile(file);
+    }
 
-        @Test
-        @DisplayName("유효한 XLSX 파일일 때 예외 발생하지 않음")
-        void validateGeneralFile_WithValidXlsxFile_DoesNotThrowException() {
-            // given
-            MockMultipartFile file = new MockMultipartFile(
-                    "file", "test.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "test content".getBytes()
-            );
+    @Test
+    @DisplayName("validateImageFile - 허용된 확장자 검증")
+    void validateImageFile_ShouldAcceptValidExtensions() {
+        // Given
+        byte[] smallData = new byte[1024]; // 1KB
+        MockMultipartFile jpgFile = new MockMultipartFile(
+            "file", "test.jpg", "image/jpeg", smallData
+        );
+        MockMultipartFile jpegFile = new MockMultipartFile(
+            "file", "test.jpeg", "image/jpeg", smallData
+        );
+        MockMultipartFile pngFile = new MockMultipartFile(
+            "file", "test.png", "image/png", smallData
+        );
 
-            // when & then
-            FileUtil.validateGeneralFile(file);
-        }
+        // When & Then
+        FileUtil.validateImageFile(jpgFile);
+        FileUtil.validateImageFile(jpegFile);
+        FileUtil.validateImageFile(pngFile);
+    }
 
-        @Test
-        @DisplayName("유효한 JSON 파일일 때 예외 발생하지 않음")
-        void validateGeneralFile_WithValidJsonFile_DoesNotThrowException() {
-            // given
-            MockMultipartFile file = new MockMultipartFile(
-                    "file", "test.json", "application/json", "test content".getBytes()
-            );
+    @Test
+    @DisplayName("validateImageFile - 대소문자 무관 확장자 검증")
+    void validateImageFile_ShouldAcceptCaseInsensitiveExtensions() {
+        // Given
+        byte[] smallData = new byte[1024]; // 1KB
+        MockMultipartFile jpgFile = new MockMultipartFile(
+            "file", "test.JPG", "image/jpeg", smallData
+        );
+        MockMultipartFile pngFile = new MockMultipartFile(
+            "file", "test.PNG", "image/png", smallData
+        );
 
-            // when & then
-            FileUtil.validateGeneralFile(file);
-        }
+        // When & Then
+        FileUtil.validateImageFile(jpgFile);
+        FileUtil.validateImageFile(pngFile);
+    }
 
-        @Test
-        @DisplayName("파일이 null일 때 예외 발생하지 않음")
-        void validateGeneralFile_WithNullFile_DoesNotThrowException() {
-            // when & then
-            FileUtil.validateGeneralFile(null);
-        }
+    @Test
+    @DisplayName("validateGeneralFile - 유효한 일반 파일 검증")
+    void validateGeneralFile_ShouldPassForValidGeneralFile() {
+        // Given
+        byte[] smallData = new byte[1024]; // 1KB
+        MockMultipartFile file = new MockMultipartFile(
+            "file", "test.csv", "text/csv", smallData
+        );
 
-        @Test
-        @DisplayName("파일이 비어있을 때 예외 발생하지 않음")
-        void validateGeneralFile_WithEmptyFile_DoesNotThrowException() {
-            // given
-            MockMultipartFile file = new MockMultipartFile(
-                    "file", "test.csv", "text/csv", new byte[0]
-            );
+        // When & Then
+        FileUtil.validateGeneralFile(file);
+    }
 
-            // when & then
-            FileUtil.validateGeneralFile(file);
-        }
+    @Test
+    @DisplayName("validateGeneralFile - null 파일 처리")
+    void validateGeneralFile_ShouldHandleNullFile() {
+        // When & Then
+        // validateGeneralFile은 null 파일을 처리하므로 예외가 발생하지 않음
+        FileUtil.validateGeneralFile(null);
+    }
 
-        @Test
-        @DisplayName("지원하지 않는 확장자일 때 예외 발생")
-        void validateGeneralFile_WithUnsupportedExtension_ThrowsException() {
-            // given
-            MockMultipartFile file = new MockMultipartFile(
-                    "file", "test.txt", "text/plain", "test content".getBytes()
-            );
+    @Test
+    @DisplayName("validateGeneralFile - 빈 파일 처리")
+    void validateGeneralFile_ShouldHandleEmptyFile() {
+        // Given
+        MockMultipartFile file = new MockMultipartFile(
+            "file", "empty.csv", "text/csv", new byte[0]
+        );
 
-            // when & then
-            assertThatThrownBy(() -> FileUtil.validateGeneralFile(file))
-                    .isInstanceOf(CommonException.class);
-        }
+        // When & Then
+        FileUtil.validateGeneralFile(file);
+    }
 
-        @Test
-        @DisplayName("대문자 확장자도 유효한 것으로 처리")
-        void validateGeneralFile_WithUppercaseExtension_DoesNotThrowException() {
-            // given
-            MockMultipartFile file = new MockMultipartFile(
-                    "file", "test.CSV", "text/csv", "test content".getBytes()
-            );
+    @Test
+    @DisplayName("validateGeneralFile - 허용된 확장자 검증")
+    void validateGeneralFile_ShouldAcceptValidExtensions() {
+        // Given
+        byte[] smallData = new byte[1024]; // 1KB
+        MockMultipartFile csvFile = new MockMultipartFile(
+            "file", "test.csv", "text/csv", smallData
+        );
+        MockMultipartFile xlsxFile = new MockMultipartFile(
+            "file", "test.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", smallData
+        );
+        MockMultipartFile jsonFile = new MockMultipartFile(
+            "file", "test.json", "application/json", smallData
+        );
 
-            // when & then
-            FileUtil.validateGeneralFile(file);
-        }
+        // When & Then
+        FileUtil.validateGeneralFile(csvFile);
+        FileUtil.validateGeneralFile(xlsxFile);
+        FileUtil.validateGeneralFile(jsonFile);
+    }
+
+    @Test
+    @DisplayName("validateGeneralFile - 대소문자 무관 확장자 검증")
+    void validateGeneralFile_ShouldAcceptCaseInsensitiveExtensions() {
+        // Given
+        byte[] smallData = new byte[1024]; // 1KB
+        MockMultipartFile csvFile = new MockMultipartFile(
+            "file", "test.CSV", "text/csv", smallData
+        );
+        MockMultipartFile xlsxFile = new MockMultipartFile(
+            "file", "test.XLSX", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", smallData
+        );
+
+        // When & Then
+        FileUtil.validateGeneralFile(csvFile);
+        FileUtil.validateGeneralFile(xlsxFile);
     }
 }

@@ -6,6 +6,7 @@ import com.dataracy.modules.reference.adapter.web.mapper.DataTypeWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllDataTypesWebResponse;
 import com.dataracy.modules.reference.adapter.web.response.singleview.DataTypeWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllDataTypesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.DataTypeResponse;
 import com.dataracy.modules.reference.application.port.in.datatype.FindAllDataTypesUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -21,8 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,7 +57,10 @@ class DataTypeControllerTest {
         // given
         AllDataTypesResponse svc = new AllDataTypesResponse(List.of());
         AllDataTypesWebResponse web = new AllDataTypesWebResponse(
-                List.of(new DataTypeWebResponse(1L, "VAL_X", "데이터 타입X"))
+                List.of(
+                        new DataTypeWebResponse(1L, "CSV", "Comma Separated Values"),
+                        new DataTypeWebResponse(2L, "JSON", "JavaScript Object Notation")
+                )
         );
 
         given(findAllDataTypesUseCase.findAllDataTypes()).willReturn(svc);
@@ -68,8 +71,11 @@ class DataTypeControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.dataTypes[0].id").value(1))
-                .andExpect(jsonPath("$.data.dataTypes[0].value").value("VAL_X"))
-                .andExpect(jsonPath("$.data.dataTypes[0].label").value("데이터 타입X"));
+                .andExpect(jsonPath("$.data.dataTypes[0].value").value("CSV"))
+                .andExpect(jsonPath("$.data.dataTypes[0].label").value("Comma Separated Values"))
+                .andExpect(jsonPath("$.data.dataTypes[1].id").value(2))
+                .andExpect(jsonPath("$.data.dataTypes[1].value").value("JSON"))
+                .andExpect(jsonPath("$.data.dataTypes[1].label").value("JavaScript Object Notation"));
 
         then(findAllDataTypesUseCase).should().findAllDataTypes();
         then(webMapper).should().toWebDto(svc);

@@ -10,12 +10,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class JwtCommandServiceTest {
 
     @Mock
@@ -47,7 +51,7 @@ class JwtCommandServiceTest {
         void fail() {
             // given
             given(jwtTokenGenerator.generateRegisterToken(any(), any(), any()))
-                    .willThrow(new AuthException(AuthErrorStatus.FAILED_GENERATE_REGISTER_TOKEN));
+                    .willThrow(new  AuthException(AuthErrorStatus.FAILED_GENERATE_REGISTER_TOKEN));
 
             // when
             AuthException ex = catchThrowableOfType(
@@ -79,7 +83,7 @@ class JwtCommandServiceTest {
         @DisplayName("실패 - 내부 에러 발생 시 AuthException 반환")
         void fail() {
             given(jwtTokenGenerator.generateResetPasswordToken(any()))
-                    .willThrow(new AuthException(AuthErrorStatus.FAILED_GENERATE_RESET_PASSWORD_TOKEN));
+                    .willThrow(new  AuthException(AuthErrorStatus.FAILED_GENERATE_RESET_PASSWORD_TOKEN));
 
             AuthException ex = catchThrowableOfType(
                     () -> service.generateResetPasswordToken("user@test.com"),
@@ -109,7 +113,7 @@ class JwtCommandServiceTest {
         @DisplayName("실패 - 내부 에러 발생 시 AuthException 반환")
         void fail() {
             given(jwtTokenGenerator.generateAccessToken(anyLong(), any()))
-                    .willThrow(new AuthException(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN));
+                    .willThrow(new  AuthException(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN));
 
             AuthException ex = catchThrowableOfType(
                     () -> service.generateAccessToken(1L, RoleType.ROLE_USER),
@@ -139,7 +143,7 @@ class JwtCommandServiceTest {
         @DisplayName("실패 - 내부 에러 발생 시 AuthException 반환")
         void fail() {
             given(jwtTokenGenerator.generateRefreshToken(anyLong(), any()))
-                    .willThrow(new AuthException(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN));
+                    .willThrow(new  AuthException(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN));
 
             AuthException ex = catchThrowableOfType(
                     () -> service.generateRefreshToken(1L, RoleType.ROLE_USER),
