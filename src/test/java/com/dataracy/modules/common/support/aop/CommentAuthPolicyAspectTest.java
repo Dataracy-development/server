@@ -15,12 +15,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class CommentAuthPolicyAspectTest {
 
     @Mock
@@ -67,7 +71,7 @@ class CommentAuthPolicyAspectTest {
         commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId);
 
         // verify
-        verify(findUserIdByCommentIdUseCase).findUserIdByCommentId(commentId);
+        then(findUserIdByCommentIdUseCase).should().findUserIdByCommentId(commentId);
     }
 
     @Test
@@ -83,12 +87,12 @@ class CommentAuthPolicyAspectTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId))
-                .isInstanceOf(CommentException.class)
-                .hasFieldOrPropertyWithValue("errorCode", CommentErrorStatus.NOT_MATCH_CREATOR);
+        CommentException exception = catchThrowableOfType(() -> commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId), CommentException.class);
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_MATCH_CREATOR);
 
         // verify
-        verify(findUserIdByCommentIdUseCase).findUserIdByCommentId(commentId);
+        then(findUserIdByCommentIdUseCase).should().findUserIdByCommentId(commentId);
     }
 
     @Test
@@ -104,11 +108,11 @@ class CommentAuthPolicyAspectTest {
         
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
-        lenient().doNothing().when(loggerCommon).logWarning(anyString(), anyString());
+        doNothing().when(loggerCommon).logWarning(anyString(), anyString());
 
         // when
-        assertThatThrownBy(() -> commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId))
-                .isInstanceOf(CommentException.class);
+        CommentException exception = catchThrowableOfType(() -> commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId), CommentException.class);
+        assertThat(exception).isNotNull();
 
         // then - 로깅 검증
         verify(loggerCommon).logWarning("Comment", "댓글 작성자만 수정 및 삭제 할 수 있습니다.");
@@ -129,7 +133,7 @@ class CommentAuthPolicyAspectTest {
         commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId);
 
         // verify
-        verify(findUserIdByCommentIdUseCase).findUserIdByCommentId(commentId);
+        then(findUserIdByCommentIdUseCase).should().findUserIdByCommentId(commentId);
     }
 
     @Test
@@ -145,16 +149,16 @@ class CommentAuthPolicyAspectTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(() -> commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId), NullPointerException.class);
+        assertThat(exception).isNotNull();
 
         // verify
-        verify(findUserIdByCommentIdUseCase).findUserIdByCommentId(commentId);
+        then(findUserIdByCommentIdUseCase).should().findUserIdByCommentId(commentId);
     }
 
     private void mockLoggerFactory() {
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
-        lenient().doNothing().when(loggerCommon).logWarning(anyString(), anyString());
+        doNothing().when(loggerCommon).logWarning(anyString(), anyString());
     }
 }

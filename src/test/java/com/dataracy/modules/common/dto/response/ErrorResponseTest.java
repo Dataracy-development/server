@@ -2,155 +2,120 @@ package com.dataracy.modules.common.dto.response;
 
 import com.dataracy.modules.common.status.BaseErrorCode;
 import com.dataracy.modules.common.status.CommonErrorStatus;
+import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ErrorResponseTest {
 
     @Test
-    @DisplayName("of(BaseErrorCode) - 기본 에러 응답 생성")
+    @DisplayName("of - BaseErrorCode로 ErrorResponse를 생성한다")
     void of_WithErrorCode_CreatesErrorResponse() {
         // given
         BaseErrorCode errorCode = CommonErrorStatus.BAD_REQUEST;
 
         // when
-        ErrorResponse response = ErrorResponse.of(errorCode);
+        ErrorResponse result = ErrorResponse.of(errorCode);
 
         // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(response.getCode()).isEqualTo(errorCode.getCode());
-        assertThat(response.getMessage()).isEqualTo(errorCode.getMessage());
+        assertThat(result.getHttpStatus()).isEqualTo(400);
+        assertThat(result.getCode()).isEqualTo("COMMON-400");
+        assertThat(result.getMessage()).isEqualTo("잘못된 요청입니다.");
     }
 
     @Test
-    @DisplayName("of(BaseErrorCode, String) - 커스텀 메시지와 함께 에러 응답 생성")
-    void of_WithCustomMessage_CreatesErrorResponse() {
+    @DisplayName("of - BaseErrorCode와 커스텀 메시지로 ErrorResponse를 생성한다")
+    void of_WithErrorCodeAndCustomMessage_CreatesErrorResponse() {
         // given
-        BaseErrorCode errorCode = CommonErrorStatus.BAD_REQUEST;
-        String customMessage = "Custom error message";
+        BaseErrorCode errorCode = CommonErrorStatus.UNAUTHORIZED;
+        String customMessage = "인증이 필요합니다.";
 
         // when
-        ErrorResponse response = ErrorResponse.of(errorCode, customMessage);
+        ErrorResponse result = ErrorResponse.of(errorCode, customMessage);
 
         // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(response.getCode()).isEqualTo(errorCode.getCode());
-        assertThat(response.getMessage()).isEqualTo(customMessage);
+        assertThat(result.getHttpStatus()).isEqualTo(401);
+        assertThat(result.getCode()).isEqualTo("COMMON-401");
+        assertThat(result.getMessage()).isEqualTo("인증이 필요합니다.");
     }
 
     @Test
-    @DisplayName("of(BaseErrorCode) - 500 에러 응답 생성")
-    void of_InternalServerError_CreatesErrorResponse() {
+    @DisplayName("of - UserErrorStatus로 ErrorResponse를 생성한다")
+    void of_WithUserErrorStatus_CreatesErrorResponse() {
+        // given
+        BaseErrorCode errorCode = UserErrorStatus.BAD_REQUEST_LOGIN;
+
+        // when
+        ErrorResponse result = ErrorResponse.of(errorCode);
+
+        // then
+        assertThat(result.getHttpStatus()).isEqualTo(400);
+        assertThat(result.getCode()).isEqualTo("USER-020");
+        assertThat(result.getMessage()).isEqualTo("이메일 또는 비밀번호를 확인해주세요");
+    }
+
+    @Test
+    @DisplayName("of - UserErrorStatus와 커스텀 메시지로 ErrorResponse를 생성한다")
+    void of_WithUserErrorStatusAndCustomMessage_CreatesErrorResponse() {
+        // given
+        BaseErrorCode errorCode = UserErrorStatus.DUPLICATED_NICKNAME;
+        String customMessage = "닉네임은 2-8자 사이여야 합니다.";
+
+        // when
+        ErrorResponse result = ErrorResponse.of(errorCode, customMessage);
+
+        // then
+        assertThat(result.getHttpStatus()).isEqualTo(409);
+        assertThat(result.getCode()).isEqualTo("USER-004");
+        assertThat(result.getMessage()).isEqualTo("닉네임은 2-8자 사이여야 합니다.");
+    }
+
+    @Test
+    @DisplayName("of - INTERNAL_SERVER_ERROR로 ErrorResponse를 생성한다")
+    void of_WithInternalServerError_CreatesErrorResponse() {
         // given
         BaseErrorCode errorCode = CommonErrorStatus.INTERNAL_SERVER_ERROR;
 
         // when
-        ErrorResponse response = ErrorResponse.of(errorCode);
+        ErrorResponse result = ErrorResponse.of(errorCode);
 
         // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        assertThat(response.getCode()).isEqualTo(errorCode.getCode());
-        assertThat(response.getMessage()).isEqualTo(errorCode.getMessage());
+        assertThat(result.getHttpStatus()).isEqualTo(500);
+        assertThat(result.getCode()).isEqualTo("COMMON-500");
+        assertThat(result.getMessage()).isEqualTo("서버 내부 오류가 발생했습니다. 관리자에게 문의하세요.");
     }
 
     @Test
-    @DisplayName("of(BaseErrorCode, String) - 404 에러 응답 생성")
-    void of_NotFoundError_CreatesErrorResponse() {
-        // given
-        BaseErrorCode errorCode = CommonErrorStatus.NOT_FOUND_HANDLER;
-        String customMessage = "Resource not found";
-
-        // when
-        ErrorResponse response = ErrorResponse.of(errorCode, customMessage);
-
-        // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-        assertThat(response.getCode()).isEqualTo(errorCode.getCode());
-        assertThat(response.getMessage()).isEqualTo(customMessage);
-    }
-
-    @Test
-    @DisplayName("builder() - 빌더 패턴으로 에러 응답 생성")
-    void builder_CreatesErrorResponse() {
-        // when
-        ErrorResponse response = ErrorResponse.builder()
-                .httpStatus(400)
-                .code("BAD_REQUEST")
-                .message("Invalid request parameters")
-                .build();
-
-        // then
-        assertThat(response.getHttpStatus()).isEqualTo(400);
-        assertThat(response.getCode()).isEqualTo("BAD_REQUEST");
-        assertThat(response.getMessage()).isEqualTo("Invalid request parameters");
-    }
-
-    @Test
-    @DisplayName("of(BaseErrorCode) - null 메시지 처리")
-    void of_WithNullMessage_CreatesErrorResponse() {
+    @DisplayName("of - 빈 문자열 커스텀 메시지로 ErrorResponse를 생성한다")
+    void of_WithEmptyCustomMessage_CreatesErrorResponse() {
         // given
         BaseErrorCode errorCode = CommonErrorStatus.BAD_REQUEST;
+        String customMessage = "";
 
         // when
-        ErrorResponse response = ErrorResponse.of(errorCode, null);
+        ErrorResponse result = ErrorResponse.of(errorCode, customMessage);
 
         // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(response.getCode()).isEqualTo(errorCode.getCode());
-        assertThat(response.getMessage()).isNull();
+        assertThat(result.getHttpStatus()).isEqualTo(400);
+        assertThat(result.getCode()).isEqualTo("COMMON-400");
+        assertThat(result.getMessage()).isEqualTo("");
     }
 
     @Test
-    @DisplayName("of(BaseErrorCode) - 빈 문자열 메시지 처리")
-    void of_WithEmptyMessage_CreatesErrorResponse() {
+    @DisplayName("of - null 커스텀 메시지로 ErrorResponse를 생성한다")
+    void of_WithNullCustomMessage_CreatesErrorResponse() {
         // given
         BaseErrorCode errorCode = CommonErrorStatus.BAD_REQUEST;
-        String emptyMessage = "";
+        String customMessage = null;
 
         // when
-        ErrorResponse response = ErrorResponse.of(errorCode, emptyMessage);
+        ErrorResponse result = ErrorResponse.of(errorCode, customMessage);
 
         // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(response.getCode()).isEqualTo(errorCode.getCode());
-        assertThat(response.getMessage()).isEqualTo(emptyMessage);
-    }
-
-    @Test
-    @DisplayName("of(BaseErrorCode) - 다양한 HTTP 상태 코드 테스트")
-    void of_VariousHttpStatusCodes_CreatesErrorResponse() {
-        // given
-        BaseErrorCode badRequest = CommonErrorStatus.BAD_REQUEST;
-        BaseErrorCode notFound = CommonErrorStatus.NOT_FOUND_HANDLER;
-        BaseErrorCode internalError = CommonErrorStatus.INTERNAL_SERVER_ERROR;
-
-        // when
-        ErrorResponse badRequestResponse = ErrorResponse.of(badRequest);
-        ErrorResponse notFoundResponse = ErrorResponse.of(notFound);
-        ErrorResponse internalErrorResponse = ErrorResponse.of(internalError);
-
-        // then
-        assertThat(badRequestResponse.getHttpStatus()).isEqualTo(400);
-        assertThat(notFoundResponse.getHttpStatus()).isEqualTo(404);
-        assertThat(internalErrorResponse.getHttpStatus()).isEqualTo(500);
-    }
-
-    @Test
-    @DisplayName("of(BaseErrorCode, String) - 긴 메시지 처리")
-    void of_WithLongMessage_CreatesErrorResponse() {
-        // given
-        BaseErrorCode errorCode = CommonErrorStatus.BAD_REQUEST;
-        String longMessage = "This is a very long error message that contains detailed information about what went wrong during the request processing and should be handled properly by the error response system";
-
-        // when
-        ErrorResponse response = ErrorResponse.of(errorCode, longMessage);
-
-        // then
-        assertThat(response.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(response.getCode()).isEqualTo(errorCode.getCode());
-        assertThat(response.getMessage()).isEqualTo(longMessage);
+        assertThat(result.getHttpStatus()).isEqualTo(400);
+        assertThat(result.getCode()).isEqualTo("COMMON-400");
+        assertThat(result.getMessage()).isNull();
     }
 }

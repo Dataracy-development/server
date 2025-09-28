@@ -16,12 +16,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ProjectAuthPolicyAspectTest {
 
     @Mock
@@ -72,7 +76,7 @@ class ProjectAuthPolicyAspectTest {
         projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId);
 
         // verify
-        verify(findUserIdUseCase).findUserIdByProjectId(projectId);
+        then(findUserIdUseCase).should().findUserIdByProjectId(projectId);
     }
 
     @Test
@@ -92,7 +96,7 @@ class ProjectAuthPolicyAspectTest {
         projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId);
 
         // verify
-        verify(findUserIdIncludingDeletedUseCase).findUserIdIncludingDeleted(projectId);
+        then(findUserIdIncludingDeletedUseCase).should().findUserIdIncludingDeleted(projectId);
     }
 
     @Test
@@ -109,12 +113,12 @@ class ProjectAuthPolicyAspectTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId))
-                .isInstanceOf(ProjectException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ProjectErrorStatus.NOT_MATCH_CREATOR);
+        ProjectException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), ProjectException.class);
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_MATCH_CREATOR);
 
         // verify
-        verify(findUserIdUseCase).findUserIdByProjectId(projectId);
+        then(findUserIdUseCase).should().findUserIdByProjectId(projectId);
     }
 
     @Test
@@ -131,12 +135,12 @@ class ProjectAuthPolicyAspectTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId))
-                .isInstanceOf(ProjectException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ProjectErrorStatus.NOT_MATCH_CREATOR);
+        ProjectException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), ProjectException.class);
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_MATCH_CREATOR);
 
         // verify
-        verify(findUserIdIncludingDeletedUseCase).findUserIdIncludingDeleted(projectId);
+        then(findUserIdIncludingDeletedUseCase).should().findUserIdIncludingDeleted(projectId);
     }
 
     @Test
@@ -153,11 +157,11 @@ class ProjectAuthPolicyAspectTest {
         
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
-        lenient().doNothing().when(loggerCommon).logWarning(anyString(), anyString());
+        doNothing().when(loggerCommon).logWarning(anyString(), anyString());
 
         // when
-        assertThatThrownBy(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId))
-                .isInstanceOf(ProjectException.class);
+        ProjectException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), ProjectException.class);
+        assertThat(exception).isNotNull();
 
         // then - 로깅 검증
         verify(loggerCommon).logWarning("Project", "프로젝트 작성자만 수정 및 삭제할 수 있습니다.");
@@ -177,11 +181,11 @@ class ProjectAuthPolicyAspectTest {
         
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
-        lenient().doNothing().when(loggerCommon).logWarning(anyString(), anyString());
+        doNothing().when(loggerCommon).logWarning(anyString(), anyString());
 
         // when
-        assertThatThrownBy(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId))
-                .isInstanceOf(ProjectException.class);
+        ProjectException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), ProjectException.class);
+        assertThat(exception).isNotNull();
 
         // then - 로깅 검증
         verify(loggerCommon).logWarning("Project", "프로젝트 작성자만 복원할 수 있습니다.");
@@ -203,7 +207,7 @@ class ProjectAuthPolicyAspectTest {
         projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId);
 
         // verify
-        verify(findUserIdUseCase).findUserIdByProjectId(projectId);
+        then(findUserIdUseCase).should().findUserIdByProjectId(projectId);
     }
 
     @Test
@@ -220,16 +224,16 @@ class ProjectAuthPolicyAspectTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), NullPointerException.class);
+        assertThat(exception).isNotNull();
 
         // verify
-        verify(findUserIdUseCase).findUserIdByProjectId(projectId);
+        then(findUserIdUseCase).should().findUserIdByProjectId(projectId);
     }
 
     private void mockLoggerFactory() {
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
-        lenient().doNothing().when(loggerCommon).logWarning(anyString(), anyString());
+        doNothing().when(loggerCommon).logWarning(anyString(), anyString());
     }
 }

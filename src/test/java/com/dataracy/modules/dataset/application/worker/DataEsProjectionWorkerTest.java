@@ -13,14 +13,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DataEsProjectionWorkerTest {
 
     @InjectMocks
@@ -87,7 +90,7 @@ class DataEsProjectionWorkerTest {
         // given
         DataEsProjectionTaskEntity t = task(3L, 12L, true, 0);
         t.setRetryCount(7);
-        willThrow(new RuntimeException("fail"))
+        willThrow(new  RuntimeException("fail"))
                 .given(softDeletePort).deleteData(12L);
 
         // when

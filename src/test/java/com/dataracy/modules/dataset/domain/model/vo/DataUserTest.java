@@ -9,51 +9,110 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DataUserTest {
 
     @Test
-    @DisplayName("UserInfo → DataUser 매핑 시 필드가 올바르게 매핑된다")
-    void fromUserInfoShouldMapCorrectly() {
+    @DisplayName("fromUserInfo - UserInfo로부터 DataUser를 생성한다")
+    void fromUserInfo_WhenValidUserInfo_CreatesDataUser() {
         // given
         UserInfo userInfo = new UserInfo(
                 1L,
                 RoleType.ROLE_USER,
-                "test@test.com",
-                "nickname",
+                "test@example.com",
+                "TestUser",
                 1L,
-                1L,
+                2L,
                 List.of(1L, 2L),
-                1L,
-                "img.png",
-                "intro"
+                3L,
+                "http://example.com/profile.jpg",
+                "Hello, I am a test user."
         );
 
         // when
-        DataUser dataUser = DataUser.fromUserInfo(userInfo);
+        DataUser result = DataUser.fromUserInfo(userInfo);
 
         // then
-        assertThat(dataUser.userId()).isEqualTo(1L);
-        assertThat(dataUser.role()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(dataUser.email()).isEqualTo("test@test.com");
-        assertThat(dataUser.nickname()).isEqualTo("nickname");
-        assertThat(dataUser.profileImageUrl()).isEqualTo("img.png");
-        assertThat(dataUser.introductionText()).isEqualTo("intro");
-        assertThat(dataUser.occupationId()).isEqualTo(1L);
-        assertThat(dataUser.authorLevelId()).isEqualTo(1L);
+        assertThat(result.userId()).isEqualTo(1L);
+        assertThat(result.role()).isEqualTo(RoleType.ROLE_USER);
+        assertThat(result.email()).isEqualTo("test@example.com");
+        assertThat(result.nickname()).isEqualTo("TestUser");
+        assertThat(result.profileImageUrl()).isEqualTo("http://example.com/profile.jpg");
+        assertThat(result.introductionText()).isEqualTo("Hello, I am a test user.");
+        assertThat(result.occupationId()).isEqualTo(2L);
+        assertThat(result.authorLevelId()).isEqualTo(1L);
     }
 
     @Test
-    @DisplayName("UserInfo가 null일 경우 DataException(FAIL_GET_USER_INFO)을 던진다")
-    void fromUserInfoShouldThrowWhenNull() {
-        // given & when
-        DataException exception = catchThrowableOfType(
-                () -> DataUser.fromUserInfo(null),
-                DataException.class
+    @DisplayName("fromUserInfo - UserInfo가 null인 경우 DataException이 발생한다")
+    void fromUserInfo_WhenUserInfoIsNull_ThrowsDataException() {
+        // when & then
+        assertThatThrownBy(() -> DataUser.fromUserInfo(null))
+                .isInstanceOf(DataException.class)
+                .hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.FAIL_GET_USER_INFO);
+    }
+
+    @Test
+    @DisplayName("fromUserInfo - UserInfo의 모든 필드가 null인 경우에도 DataUser를 생성한다")
+    void fromUserInfo_WhenUserInfoFieldsAreNull_CreatesDataUser() {
+        // given
+        UserInfo userInfo = new UserInfo(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
         );
 
+        // when
+        DataUser result = DataUser.fromUserInfo(userInfo);
+
         // then
-        assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.FAIL_GET_USER_INFO);
+        assertThat(result.userId()).isNull();
+        assertThat(result.role()).isNull();
+        assertThat(result.email()).isNull();
+        assertThat(result.nickname()).isNull();
+        assertThat(result.profileImageUrl()).isNull();
+        assertThat(result.introductionText()).isNull();
+        assertThat(result.occupationId()).isNull();
+        assertThat(result.authorLevelId()).isNull();
+    }
+
+    @Test
+    @DisplayName("fromUserInfo - UserInfo의 일부 필드만 있는 경우 DataUser를 생성한다")
+    void fromUserInfo_WhenUserInfoHasPartialFields_CreatesDataUser() {
+        // given
+        UserInfo userInfo = new UserInfo(
+                1L,
+                RoleType.ROLE_ADMIN,
+                "admin@example.com",
+                "AdminUser",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // when
+        DataUser result = DataUser.fromUserInfo(userInfo);
+
+        // then
+        assertThat(result.userId()).isEqualTo(1L);
+        assertThat(result.role()).isEqualTo(RoleType.ROLE_ADMIN);
+        assertThat(result.email()).isEqualTo("admin@example.com");
+        assertThat(result.nickname()).isEqualTo("AdminUser");
+        assertThat(result.profileImageUrl()).isNull();
+        assertThat(result.introductionText()).isNull();
+        assertThat(result.occupationId()).isNull();
+        assertThat(result.authorLevelId()).isNull();
     }
 }

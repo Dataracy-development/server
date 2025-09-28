@@ -79,6 +79,7 @@ public class DataEsProjectionWorker {
      * - 독립성 보장: 각 작업은 여전히 독립적인 트랜잭션에서 실행
      */
     @Scheduled(fixedDelayString = "PT3S")
+    @Transactional
     public void run() {
         List<DataEsProjectionTaskEntity> tasks = loadDataProjectionTaskPort.findBatchForWork(
                 LocalDateTime.now(),

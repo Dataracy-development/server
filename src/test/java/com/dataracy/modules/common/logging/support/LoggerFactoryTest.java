@@ -2,192 +2,243 @@ package com.dataracy.modules.common.logging.support;
 
 import com.dataracy.modules.common.logging.*;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("LoggerFactory 테스트")
 class LoggerFactoryTest {
 
-    @Test
-    @DisplayName("api() - ApiLogger 싱글톤 인스턴스 반환")
-    void api_ReturnsSingletonApiLogger() {
-        // when
-        ApiLogger logger1 = LoggerFactory.api();
-        ApiLogger logger2 = LoggerFactory.api();
+    @Nested
+    @DisplayName("api 메서드 테스트")
+    class ApiTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(ApiLogger.class);
+        @Test
+        @DisplayName("ApiLogger 싱글톤 인스턴스 반환")
+        void api_ApiLogger싱글톤인스턴스반환() {
+            // when
+            ApiLogger logger1 = LoggerFactory.api();
+            ApiLogger logger2 = LoggerFactory.api();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("service() - ServiceLogger 싱글톤 인스턴스 반환")
-    void service_ReturnsSingletonServiceLogger() {
-        // when
-        ServiceLogger logger1 = LoggerFactory.service();
-        ServiceLogger logger2 = LoggerFactory.service();
+    @Nested
+    @DisplayName("service 메서드 테스트")
+    class ServiceTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(ServiceLogger.class);
+        @Test
+        @DisplayName("ServiceLogger 싱글톤 인스턴스 반환")
+        void service_ServiceLogger싱글톤인스턴스반환() {
+            // when
+            ServiceLogger logger1 = LoggerFactory.service();
+            ServiceLogger logger2 = LoggerFactory.service();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("domain() - DomainLogger 싱글톤 인스턴스 반환")
-    void domain_ReturnsSingletonDomainLogger() {
-        // when
-        DomainLogger logger1 = LoggerFactory.domain();
-        DomainLogger logger2 = LoggerFactory.domain();
+    @Nested
+    @DisplayName("domain 메서드 테스트")
+    class DomainTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(DomainLogger.class);
+        @Test
+        @DisplayName("DomainLogger 싱글톤 인스턴스 반환")
+        void domain_DomainLogger싱글톤인스턴스반환() {
+            // when
+            DomainLogger logger1 = LoggerFactory.domain();
+            DomainLogger logger2 = LoggerFactory.domain();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("persistence() - PersistenceLogger 싱글톤 인스턴스 반환")
-    void persistence_ReturnsSingletonPersistenceLogger() {
-        // when
-        PersistenceLogger logger1 = LoggerFactory.db();
-        PersistenceLogger logger2 = LoggerFactory.db();
+    @Nested
+    @DisplayName("persistence 메서드 테스트")
+    class PersistenceTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(PersistenceLogger.class);
+        @Test
+        @DisplayName("PersistenceLogger 싱글톤 인스턴스 반환")
+        void persistence_PersistenceLogger싱글톤인스턴스반환() {
+            // when
+            PersistenceLogger logger1 = LoggerFactory.db();
+            PersistenceLogger logger2 = LoggerFactory.db();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("query() - QueryDslLogger 싱글톤 인스턴스 반환")
-    void query_ReturnsSingletonQueryDslLogger() {
-        // when
-        QueryDslLogger logger1 = LoggerFactory.query();
-        QueryDslLogger logger2 = LoggerFactory.query();
+    @Nested
+    @DisplayName("queryDsl 메서드 테스트")
+    class QueryDslTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(QueryDslLogger.class);
+        @Test
+        @DisplayName("QueryDslLogger 싱글톤 인스턴스 반환")
+        void queryDsl_QueryDslLogger싱글톤인스턴스반환() {
+            // when
+            QueryDslLogger logger1 = LoggerFactory.query();
+            QueryDslLogger logger2 = LoggerFactory.query();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("kafka() - KafkaLogger 싱글톤 인스턴스 반환")
-    void kafka_ReturnsSingletonKafkaLogger() {
-        // when
-        KafkaLogger logger1 = LoggerFactory.kafka();
-        KafkaLogger logger2 = LoggerFactory.kafka();
+    @Nested
+    @DisplayName("kafka 메서드 테스트")
+    class KafkaTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(KafkaLogger.class);
+        @Test
+        @DisplayName("KafkaLogger 싱글톤 인스턴스 반환")
+        void kafka_KafkaLogger싱글톤인스턴스반환() {
+            // when
+            KafkaLogger logger1 = LoggerFactory.kafka();
+            KafkaLogger logger2 = LoggerFactory.kafka();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("elastic() - ElasticLogger 싱글톤 인스턴스 반환")
-    void elastic_ReturnsSingletonElasticLogger() {
-        // when
-        ElasticLogger logger1 = LoggerFactory.elastic();
-        ElasticLogger logger2 = LoggerFactory.elastic();
+    @Nested
+    @DisplayName("elastic 메서드 테스트")
+    class ElasticTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(ElasticLogger.class);
+        @Test
+        @DisplayName("ElasticLogger 싱글톤 인스턴스 반환")
+        void elastic_ElasticLogger싱글톤인스턴스반환() {
+            // when
+            ElasticLogger logger1 = LoggerFactory.elastic();
+            ElasticLogger logger2 = LoggerFactory.elastic();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("redis() - RedisLogger 싱글톤 인스턴스 반환")
-    void redis_ReturnsSingletonRedisLogger() {
-        // when
-        RedisLogger logger1 = LoggerFactory.redis();
-        RedisLogger logger2 = LoggerFactory.redis();
+    @Nested
+    @DisplayName("redis 메서드 테스트")
+    class RedisTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(RedisLogger.class);
+        @Test
+        @DisplayName("RedisLogger 싱글톤 인스턴스 반환")
+        void redis_RedisLogger싱글톤인스턴스반환() {
+            // when
+            RedisLogger logger1 = LoggerFactory.redis();
+            RedisLogger logger2 = LoggerFactory.redis();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("scheduler() - SchedulerLogger 싱글톤 인스턴스 반환")
-    void scheduler_ReturnsSingletonSchedulerLogger() {
-        // when
-        SchedulerLogger logger1 = LoggerFactory.scheduler();
-        SchedulerLogger logger2 = LoggerFactory.scheduler();
+    @Nested
+    @DisplayName("scheduler 메서드 테스트")
+    class SchedulerTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(SchedulerLogger.class);
+        @Test
+        @DisplayName("SchedulerLogger 싱글톤 인스턴스 반환")
+        void scheduler_SchedulerLogger싱글톤인스턴스반환() {
+            // when
+            SchedulerLogger logger1 = LoggerFactory.scheduler();
+            SchedulerLogger logger2 = LoggerFactory.scheduler();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("distributedLock() - DistributedLockLogger 싱글톤 인스턴스 반환")
-    void distributedLock_ReturnsSingletonDistributedLockLogger() {
-        // when
-        DistributedLockLogger logger1 = LoggerFactory.lock();
-        DistributedLockLogger logger2 = LoggerFactory.lock();
+    @Nested
+    @DisplayName("distributedLock 메서드 테스트")
+    class DistributedLockTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(DistributedLockLogger.class);
+        @Test
+        @DisplayName("DistributedLockLogger 싱글톤 인스턴스 반환")
+        void distributedLock_DistributedLockLogger싱글톤인스턴스반환() {
+            // when
+            DistributedLockLogger logger1 = LoggerFactory.lock();
+            DistributedLockLogger logger2 = LoggerFactory.lock();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("common() - CommonLogger 싱글톤 인스턴스 반환")
-    void common_ReturnsSingletonCommonLogger() {
-        // when
-        CommonLogger logger1 = LoggerFactory.common();
-        CommonLogger logger2 = LoggerFactory.common();
+    @Nested
+    @DisplayName("common 메서드 테스트")
+    class CommonTest {
 
-        // then
-        assertThat(logger1).isNotNull();
-        assertThat(logger2).isNotNull();
-        assertThat(logger1).isSameAs(logger2);
-        assertThat(logger1).isInstanceOf(CommonLogger.class);
+        @Test
+        @DisplayName("CommonLogger 싱글톤 인스턴스 반환")
+        void common_CommonLogger싱글톤인스턴스반환() {
+            // when
+            CommonLogger logger1 = LoggerFactory.common();
+            CommonLogger logger2 = LoggerFactory.common();
+
+            // then
+            assertThat(logger1).isNotNull();
+            assertThat(logger2).isNotNull();
+            assertThat(logger1).isSameAs(logger2);
+        }
     }
 
-    @Test
-    @DisplayName("모든 로거가 서로 다른 인스턴스인지 확인")
-    void allLoggers_AreDifferentInstances() {
-        // when
-        ApiLogger apiLogger = LoggerFactory.api();
-        ServiceLogger serviceLogger = LoggerFactory.service();
-        DomainLogger domainLogger = LoggerFactory.domain();
-        PersistenceLogger persistenceLogger = LoggerFactory.db();
-        QueryDslLogger queryLogger = LoggerFactory.query();
-        KafkaLogger kafkaLogger = LoggerFactory.kafka();
-        ElasticLogger elasticLogger = LoggerFactory.elastic();
-        RedisLogger redisLogger = LoggerFactory.redis();
-        SchedulerLogger schedulerLogger = LoggerFactory.scheduler();
-        DistributedLockLogger distributedLockLogger = LoggerFactory.lock();
-        CommonLogger commonLogger = LoggerFactory.common();
+    @Nested
+    @DisplayName("모든 로거 타입 테스트")
+    class AllLoggersTest {
 
-        // then
-        assertThat(apiLogger).isNotSameAs(serviceLogger);
-        assertThat(apiLogger).isNotSameAs(domainLogger);
-        assertThat(apiLogger).isNotSameAs(persistenceLogger);
-        assertThat(apiLogger).isNotSameAs(queryLogger);
-        assertThat(apiLogger).isNotSameAs(kafkaLogger);
-        assertThat(apiLogger).isNotSameAs(elasticLogger);
-        assertThat(apiLogger).isNotSameAs(redisLogger);
-        assertThat(apiLogger).isNotSameAs(schedulerLogger);
-        assertThat(apiLogger).isNotSameAs(distributedLockLogger);
-        assertThat(apiLogger).isNotSameAs(commonLogger);
+        @Test
+        @DisplayName("모든 로거가 서로 다른 인스턴스인지 확인")
+        void 모든로거_서로다른인스턴스확인() {
+            // when
+            ApiLogger apiLogger = LoggerFactory.api();
+            ServiceLogger serviceLogger = LoggerFactory.service();
+            DomainLogger domainLogger = LoggerFactory.domain();
+            PersistenceLogger persistenceLogger = LoggerFactory.db();
+            QueryDslLogger queryDslLogger = LoggerFactory.query();
+            KafkaLogger kafkaLogger = LoggerFactory.kafka();
+            ElasticLogger elasticLogger = LoggerFactory.elastic();
+            RedisLogger redisLogger = LoggerFactory.redis();
+            SchedulerLogger schedulerLogger = LoggerFactory.scheduler();
+            DistributedLockLogger distributedLockLogger = LoggerFactory.lock();
+            CommonLogger commonLogger = LoggerFactory.common();
+
+            // then
+            assertThat(apiLogger).isNotSameAs(serviceLogger);
+            assertThat(serviceLogger).isNotSameAs(domainLogger);
+            assertThat(domainLogger).isNotSameAs(persistenceLogger);
+            assertThat(persistenceLogger).isNotSameAs(queryDslLogger);
+            assertThat(queryDslLogger).isNotSameAs(kafkaLogger);
+            assertThat(kafkaLogger).isNotSameAs(elasticLogger);
+            assertThat(elasticLogger).isNotSameAs(redisLogger);
+            assertThat(redisLogger).isNotSameAs(schedulerLogger);
+            assertThat(schedulerLogger).isNotSameAs(distributedLockLogger);
+            assertThat(distributedLockLogger).isNotSameAs(commonLogger);
+        }
     }
 }

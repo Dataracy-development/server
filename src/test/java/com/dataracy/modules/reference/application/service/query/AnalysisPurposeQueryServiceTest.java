@@ -19,20 +19,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AnalysisPurposeQueryServiceTest {
 
     @InjectMocks
@@ -52,9 +54,9 @@ class AnalysisPurposeQueryServiceTest {
         loggerFactoryMock = mockStatic(LoggerFactory.class);
         loggerService = mock(ServiceLogger.class);
         loggerFactoryMock.when(LoggerFactory::service).thenReturn(loggerService);
-        lenient().when(loggerService.logStart(anyString(), anyString())).thenReturn(Instant.now());
-        lenient().doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
-        lenient().doNothing().when(loggerService).logWarning(anyString(), anyString());
+        doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
+        doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
+        doNothing().when(loggerService).logWarning(anyString(), anyString());
     }
 
     @AfterEach
@@ -137,12 +139,9 @@ class AnalysisPurposeQueryServiceTest {
                     .willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> service.findAnalysisPurpose(analysisPurposeId))
-                    .isInstanceOf(ReferenceException.class)
-                    .satisfies(exception -> {
-                        ReferenceException refException = (ReferenceException) exception;
-                        assertThat(refException.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
-                    });
+            ReferenceException exception = catchThrowableOfType(() -> service.findAnalysisPurpose(analysisPurposeId), ReferenceException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
 
             then(analysisPurposePort).should().findAnalysisPurposeById(analysisPurposeId);
             then(analysisPurposeDtoMapper).should(never()).toResponseDto(any(AnalysisPurpose.class));
@@ -185,12 +184,9 @@ class AnalysisPurposeQueryServiceTest {
             given(analysisPurposePort.existsAnalysisPurposeById(analysisPurposeId)).willReturn(false);
 
             // when & then
-            assertThatThrownBy(() -> service.validateAnalysisPurpose(analysisPurposeId))
-                    .isInstanceOf(ReferenceException.class)
-                    .satisfies(exception -> {
-                        ReferenceException refException = (ReferenceException) exception;
-                        assertThat(refException.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
-                    });
+            ReferenceException exception = catchThrowableOfType(() -> service.validateAnalysisPurpose(analysisPurposeId), ReferenceException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
 
             then(analysisPurposePort).should().existsAnalysisPurposeById(analysisPurposeId);
             then(loggerService).should().logStart(eq("ValidateAnalysisPurposeUseCase"), 
@@ -235,12 +231,9 @@ class AnalysisPurposeQueryServiceTest {
                     .willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> service.getLabelById(analysisPurposeId))
-                    .isInstanceOf(ReferenceException.class)
-                    .satisfies(exception -> {
-                        ReferenceException refException = (ReferenceException) exception;
-                        assertThat(refException.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
-                    });
+            ReferenceException exception = catchThrowableOfType(() -> service.getLabelById(analysisPurposeId), ReferenceException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
 
             then(analysisPurposePort).should().getLabelById(analysisPurposeId);
             then(loggerService).should().logStart(eq("GetAnalysisPurposeLabelFromIdUseCase"), 

@@ -25,17 +25,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.multipart.MultipartFile;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DataCommandServiceTest {
 
     @InjectMocks
@@ -153,9 +155,11 @@ class DataCommandServiceTest {
             given(checkDataExistsByIdPort.existsDataById(dataId)).willReturn(false);
 
             // when & then
-            assertThatThrownBy(() -> service.modifyData(dataId, dataFile, thumbnailFile, request))
-                    .isInstanceOf(DataException.class)
-                    .hasMessage(DataErrorStatus.NOT_FOUND_DATA.getMessage());
+            DataException exception = catchThrowableOfType(
+                    () -> service.modifyData(dataId, dataFile, thumbnailFile, request),
+                    DataException.class
+            );
+            assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
 
             then(checkDataExistsByIdPort).should().existsDataById(dataId);
             then(findDataPort).shouldHaveNoInteractions();

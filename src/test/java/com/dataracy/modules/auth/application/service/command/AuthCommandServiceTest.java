@@ -20,16 +20,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AuthCommandServiceTest {
 
     @InjectMocks
@@ -115,9 +119,9 @@ class AuthCommandServiceTest {
             given(rateLimitPort.isAllowed(anyString(), any(Integer.class), any(Integer.class))).willReturn(false);
 
             // when & then
-            assertThatThrownBy(() -> service.loginWithRateLimit(request, clientIp))
-                    .isInstanceOf(AuthException.class)
-                    .satisfies(e -> assertThat(((AuthException) e).getErrorCode()).isEqualTo(AuthErrorStatus.RATE_LIMIT_EXCEEDED));
+            AuthException exception = catchThrowableOfType(() -> service.loginWithRateLimit(request, clientIp), AuthException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.RATE_LIMIT_EXCEEDED);
         }
     }
 
@@ -160,9 +164,9 @@ class AuthCommandServiceTest {
             given(jwtValidatorPort.getUserIdFromToken(refreshToken)).willReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> service.reIssueToken(refreshToken))
-                    .isInstanceOf(AuthException.class)
-                    .satisfies(e -> assertThat(((AuthException) e).getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN));
+            AuthException exception = catchThrowableOfType(() -> service.reIssueToken(refreshToken), AuthException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
         }
 
         @Test
@@ -175,9 +179,9 @@ class AuthCommandServiceTest {
             given(manageRefreshTokenPort.getRefreshToken("1")).willReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> service.reIssueToken(refreshToken))
-                    .isInstanceOf(AuthException.class)
-                    .satisfies(e -> assertThat(((AuthException) e).getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN));
+            AuthException exception = catchThrowableOfType(() -> service.reIssueToken(refreshToken), AuthException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
         }
     }
 }

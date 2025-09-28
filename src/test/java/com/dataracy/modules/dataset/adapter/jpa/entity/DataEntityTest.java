@@ -104,6 +104,23 @@ class DataEntityTest {
     }
 
     @Test
+    @DisplayName("updateDataFile() 호출 시 동일한 URL이면 변경하지 않는다")
+    void updateDataFileShouldNotUpdateWhenSameUrl() {
+        // given
+        DataEntity entity = DataEntity.builder()
+                .dataFileUrl("sameUrl")
+                .sizeBytes(100L)
+                .build();
+
+        // when
+        entity.updateDataFile("sameUrl", 200L);
+
+        // then
+        assertThat(entity.getDataFileUrl()).isEqualTo("sameUrl");
+        assertThat(entity.getSizeBytes()).isEqualTo(100L); // 변경되지 않음
+    }
+
+    @Test
     @DisplayName("updateDataThumbnailFile() 호출 시 URL이 비정상이면 예외 발생")
     void updateThumbnailFileShouldThrowWhenInvalid() {
         // given
@@ -128,6 +145,19 @@ class DataEntityTest {
 
         // then
         assertThat(entity.getDataThumbnailUrl()).isEqualTo("newThumb");
+    }
+
+    @Test
+    @DisplayName("updateDataThumbnailFile() 호출 시 동일한 URL이면 변경하지 않는다")
+    void updateThumbnailFileShouldNotUpdateWhenSameUrl() {
+        // given
+        DataEntity entity = DataEntity.builder().dataThumbnailUrl("sameThumb").build();
+
+        // when
+        entity.updateDataThumbnailFile("sameThumb");
+
+        // then
+        assertThat(entity.getDataThumbnailUrl()).isEqualTo("sameThumb");
     }
 
     @Test

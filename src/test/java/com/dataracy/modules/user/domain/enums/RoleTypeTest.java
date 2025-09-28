@@ -6,40 +6,124 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class RoleTypeTest {
 
     @Test
-    @DisplayName("of: 대소문자 무시하고 이름/값 매칭")
-    void ofShouldReturnEnumWhenValidCaseInsensitive() {
-        // given
-        String v1 = "ROLE_USER";
-        String v2 = "role_admin";
-        String v3 = "RoLe_AnOnYmOuS";
-
+    @DisplayName("of - ROLE_USER 문자열로 ROLE_USER enum을 반환한다")
+    void of_WhenRoleUserString_ReturnsRoleUserEnum() {
         // when
-        RoleType byName = RoleType.of(v1);
-        RoleType byValueLower = RoleType.of(v2);
-        RoleType mixed = RoleType.of(v3);
+        RoleType result = RoleType.of("ROLE_USER");
 
         // then
-        assertThat(byName).isEqualTo(RoleType.ROLE_USER);
-        assertThat(byValueLower).isEqualTo(RoleType.ROLE_ADMIN);
-        assertThat(mixed).isEqualTo(RoleType.ROLE_ANONYMOUS);
+        assertThat(result).isEqualTo(RoleType.ROLE_USER);
     }
 
     @Test
-    @DisplayName("of: 유효하지 않은 값이면 UserException(INVALID_ROLE_TYPE)")
-    void ofShouldThrowWhenInvalid() {
-        // given
-        String invalid = "MANAGER";
-
+    @DisplayName("of - role_user 소문자로 ROLE_USER enum을 반환한다")
+    void of_WhenRoleUserLowerCase_ReturnsRoleUserEnum() {
         // when
-        UserException ex = catchThrowableOfType(() -> RoleType.of(invalid), UserException.class);
+        RoleType result = RoleType.of("role_user");
 
         // then
-        assertThat(ex).isNotNull();
-        assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.INVALID_ROLE_TYPE);
+        assertThat(result).isEqualTo(RoleType.ROLE_USER);
+    }
+
+    @Test
+    @DisplayName("of - ROLE_ADMIN 문자열로 ROLE_ADMIN enum을 반환한다")
+    void of_WhenRoleAdminString_ReturnsRoleAdminEnum() {
+        // when
+        RoleType result = RoleType.of("ROLE_ADMIN");
+
+        // then
+        assertThat(result).isEqualTo(RoleType.ROLE_ADMIN);
+    }
+
+    @Test
+    @DisplayName("of - role_admin 소문자로 ROLE_ADMIN enum을 반환한다")
+    void of_WhenRoleAdminLowerCase_ReturnsRoleAdminEnum() {
+        // when
+        RoleType result = RoleType.of("role_admin");
+
+        // then
+        assertThat(result).isEqualTo(RoleType.ROLE_ADMIN);
+    }
+
+    @Test
+    @DisplayName("of - ROLE_ANONYMOUS 문자열로 ROLE_ANONYMOUS enum을 반환한다")
+    void of_WhenRoleAnonymousString_ReturnsRoleAnonymousEnum() {
+        // when
+        RoleType result = RoleType.of("ROLE_ANONYMOUS");
+
+        // then
+        assertThat(result).isEqualTo(RoleType.ROLE_ANONYMOUS);
+    }
+
+    @Test
+    @DisplayName("of - role_anonymous 소문자로 ROLE_ANONYMOUS enum을 반환한다")
+    void of_WhenRoleAnonymousLowerCase_ReturnsRoleAnonymousEnum() {
+        // when
+        RoleType result = RoleType.of("role_anonymous");
+
+        // then
+        assertThat(result).isEqualTo(RoleType.ROLE_ANONYMOUS);
+    }
+
+    @Test
+    @DisplayName("of - 유효하지 않은 문자열로 UserException이 발생한다")
+    void of_WhenInvalidString_ThrowsUserException() {
+        // when & then
+        assertThatThrownBy(() -> RoleType.of("INVALID"))
+                .isInstanceOf(UserException.class)
+                .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.INVALID_ROLE_TYPE);
+    }
+
+    @Test
+    @DisplayName("of - null로 UserException이 발생한다")
+    void of_WhenNull_ThrowsUserException() {
+        // when & then
+        assertThatThrownBy(() -> RoleType.of(null))
+                .isInstanceOf(UserException.class)
+                .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.INVALID_ROLE_TYPE);
+    }
+
+    @Test
+    @DisplayName("of - 빈 문자열로 UserException이 발생한다")
+    void of_WhenEmptyString_ThrowsUserException() {
+        // when & then
+        assertThatThrownBy(() -> RoleType.of(""))
+                .isInstanceOf(UserException.class)
+                .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.INVALID_ROLE_TYPE);
+    }
+
+    @Test
+    @DisplayName("getValue - ROLE_USER의 value를 반환한다")
+    void getValue_WhenRoleUser_ReturnsRoleUserValue() {
+        // when
+        String result = RoleType.ROLE_USER.getValue();
+
+        // then
+        assertThat(result).isEqualTo("ROLE_USER");
+    }
+
+    @Test
+    @DisplayName("getValue - ROLE_ADMIN의 value를 반환한다")
+    void getValue_WhenRoleAdmin_ReturnsRoleAdminValue() {
+        // when
+        String result = RoleType.ROLE_ADMIN.getValue();
+
+        // then
+        assertThat(result).isEqualTo("ROLE_ADMIN");
+    }
+
+    @Test
+    @DisplayName("getValue - ROLE_ANONYMOUS의 value를 반환한다")
+    void getValue_WhenRoleAnonymous_ReturnsRoleAnonymousValue() {
+        // when
+        String result = RoleType.ROLE_ANONYMOUS.getValue();
+
+        // then
+        assertThat(result).isEqualTo("ROLE_ANONYMOUS");
     }
 }

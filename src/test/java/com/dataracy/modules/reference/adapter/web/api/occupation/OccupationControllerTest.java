@@ -21,8 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -79,7 +78,7 @@ class OccupationControllerTest {
     @DisplayName("findAllOccupations API: 실패 - 내부 예외 발생 시 500 반환")
     void findAllOccupationsFailure() throws Exception {
         // given
-        given(findAllOccupationsUseCase.findAllOccupations()).willThrow(new RuntimeException("boom"));
+        given(findAllOccupationsUseCase.findAllOccupations()).willThrow(new  RuntimeException("boom"));
 
         // when & then
         mockMvc.perform(get("/api/v1/references/occupations")

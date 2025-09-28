@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.PageRequest;import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -273,6 +273,88 @@ class DataQueryDslAdapterIntegrationTest {
             assertThat(result).isNotNull();
             // metadata join으로 인한 문제가 있을 수 있음
         }
+
+        @Test
+        @DisplayName("데이터 ID 목록으로 연결된 데이터셋 조회 - 빈 목록")
+        void findConnectedDataSetsAssociatedWithProjectByIds_빈_목록_조회() {
+            // given
+            List<Long> dataIds = List.of();
+
+            // when
+            List<DataWithProjectCountDto> result = readAdapter.findConnectedDataSetsAssociatedWithProjectByIds(dataIds);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("사용자 데이터셋 조회 - null Pageable 처리")
+        void findUserDataSets_null_Pageable_처리() {
+            // given
+            Long userId = savedData.getUserId();
+
+            // when
+            Page<DataWithProjectCountDto> result = readAdapter.findUserDataSets(userId, null);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getContent()).hasSizeGreaterThanOrEqualTo(2);
+        }
+
+        @Test
+        @DisplayName("사용자 데이터셋 조회 - 존재하지 않는 사용자")
+        void findUserDataSets_존재하지_않는_사용자() {
+            // given
+            Long userId = 999L;
+            Pageable pageable = PageRequest.of(0, 10);
+
+            // when
+            Page<DataWithProjectCountDto> result = readAdapter.findUserDataSets(userId, pageable);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("프로젝트에 연결된 데이터셋 조회 - 연결된 데이터가 없는 경우")
+        void findConnectedDataSetsAssociatedWithProject_연결된_데이터_없음() {
+            // given
+            ProjectEntity anotherProject = ProjectEntity.of(
+                    "다른 프로젝트",
+                    1L, // topicId
+                    5L, // userId
+                    1L, // analysisPurposeId
+                    1L, // dataSourceId
+                    1L, // authorLevelId
+                    false, // isContinue
+                    null, // parentProject
+                    "다른 내용",
+                    "https://example.com/thumbnail5.jpg"
+            );
+            entityManager.persist(anotherProject);
+            entityManager.flush();
+            
+            Pageable pageable = PageRequest.of(0, 10);
+
+            // when
+            Page<DataWithProjectCountDto> result = readAdapter.findConnectedDataSetsAssociatedWithProject(anotherProject.getId(), pageable);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("프로젝트에 연결된 데이터셋 조회 - 존재하지 않는 프로젝트")
+        void findConnectedDataSetsAssociatedWithProject_존재하지_않는_프로젝트() {
+            // given
+            Pageable pageable = PageRequest.of(0, 10);
+
+            // when
+            Page<DataWithProjectCountDto> result = readAdapter.findConnectedDataSetsAssociatedWithProject(999L, pageable);
+
+            // then
+            assertThat(result).isEmpty();
+        }
     }
 
     @Nested
@@ -309,6 +391,9 @@ class DataQueryDslAdapterIntegrationTest {
 
             Page<DataWithProjectCountDto> downloadResult = searchAdapter.searchByFilters(request, pageable, DataSortType.DOWNLOAD);
             assertThat(downloadResult).isNotNull();
+
+            Page<DataWithProjectCountDto> oldestResult = searchAdapter.searchByFilters(request, pageable, DataSortType.OLDEST);
+            assertThat(oldestResult).isNotNull();
         }
 
         @Test

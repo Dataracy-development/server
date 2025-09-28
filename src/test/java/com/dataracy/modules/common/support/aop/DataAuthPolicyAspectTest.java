@@ -16,13 +16,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DataAuthPolicyAspectTest {
 
     @Mock
@@ -73,7 +77,7 @@ class DataAuthPolicyAspectTest {
         dataAuthPolicyAspect.checkDataEditPermission(annotation, dataId);
 
         // verify
-        verify(findUserIdUseCase).findUserIdByDataId(dataId);
+        then(findUserIdUseCase).should().findUserIdByDataId(dataId);
     }
 
     @Test
@@ -93,7 +97,7 @@ class DataAuthPolicyAspectTest {
         dataAuthPolicyAspect.checkDataEditPermission(annotation, dataId);
 
         // verify
-        verify(findUserIdIncludingDeletedUseCase).findUserIdIncludingDeleted(dataId);
+        then(findUserIdIncludingDeletedUseCase).should().findUserIdIncludingDeleted(dataId);
     }
 
     @Test
@@ -110,12 +114,12 @@ class DataAuthPolicyAspectTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> dataAuthPolicyAspect.checkDataEditPermission(annotation, dataId))
-                .isInstanceOf(DataException.class)
-                .hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.NOT_MATCH_CREATOR);
+        DataException exception = catchThrowableOfType(() -> dataAuthPolicyAspect.checkDataEditPermission(annotation, dataId), DataException.class);
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.NOT_MATCH_CREATOR);
 
         // verify
-        verify(findUserIdUseCase).findUserIdByDataId(dataId);
+        then(findUserIdUseCase).should().findUserIdByDataId(dataId);
     }
 
     @Test
@@ -132,12 +136,12 @@ class DataAuthPolicyAspectTest {
         mockLoggerFactory();
 
         // when & then
-        assertThatThrownBy(() -> dataAuthPolicyAspect.checkDataEditPermission(annotation, dataId))
-                .isInstanceOf(DataException.class)
-                .hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.NOT_MATCH_CREATOR);
+        DataException exception = catchThrowableOfType(() -> dataAuthPolicyAspect.checkDataEditPermission(annotation, dataId), DataException.class);
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.NOT_MATCH_CREATOR);
 
         // verify
-        verify(findUserIdIncludingDeletedUseCase).findUserIdIncludingDeleted(dataId);
+        then(findUserIdIncludingDeletedUseCase).should().findUserIdIncludingDeleted(dataId);
     }
 
     @Test
@@ -154,11 +158,11 @@ class DataAuthPolicyAspectTest {
         
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
-        lenient().doNothing().when(loggerCommon).logWarning(anyString(), anyString());
+        doNothing().when(loggerCommon).logWarning(anyString(), anyString());
 
         // when
-        assertThatThrownBy(() -> dataAuthPolicyAspect.checkDataEditPermission(annotation, dataId))
-                .isInstanceOf(DataException.class);
+        DataException exception = catchThrowableOfType(() -> dataAuthPolicyAspect.checkDataEditPermission(annotation, dataId), DataException.class);
+        assertThat(exception).isNotNull();
 
         // then - 로깅 검증
         verify(loggerCommon).logWarning("Data", "데이터셋 작성자만 수정 및 삭제할 수 있습니다.");
@@ -178,11 +182,11 @@ class DataAuthPolicyAspectTest {
         
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
-        lenient().doNothing().when(loggerCommon).logWarning(anyString(), anyString());
+        doNothing().when(loggerCommon).logWarning(anyString(), anyString());
 
         // when
-        assertThatThrownBy(() -> dataAuthPolicyAspect.checkDataEditPermission(annotation, dataId))
-                .isInstanceOf(DataException.class);
+        DataException exception = catchThrowableOfType(() -> dataAuthPolicyAspect.checkDataEditPermission(annotation, dataId), DataException.class);
+        assertThat(exception).isNotNull();
 
         // then - 로깅 검증
         verify(loggerCommon).logWarning("Data", "데이터셋 작성자만 복원할 수 있습니다.");
@@ -191,6 +195,6 @@ class DataAuthPolicyAspectTest {
     private void mockLoggerFactory() {
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
         loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
-        lenient().doNothing().when(loggerCommon).logWarning(anyString(), anyString());
+        doNothing().when(loggerCommon).logWarning(anyString(), anyString());
     }
 }

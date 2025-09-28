@@ -4,18 +4,20 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.like.domain.exception.LikeException;
 import com.dataracy.modules.like.domain.status.LikeErrorStatus;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
 @Getter
-@RequiredArgsConstructor
 public enum TargetType {
     PROJECT("PROJECT"),
     COMMENT("COMMENT"),
     ;
 
     private final String value;
+    
+    TargetType(String value) {
+        this.value = value;
+    }
 
     /**
      * 주어진 문자열에 해당하는 TargetType enum 값을 반환합니다.

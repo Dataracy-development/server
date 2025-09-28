@@ -10,35 +10,58 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("DataSourceDtoMapper 테스트")
 class DataSourceDtoMapperTest {
+
     private final DataSourceDtoMapper mapper = new DataSourceDtoMapper();
 
     @Test
-    @DisplayName("toResponseDto(single): 성공 - 도메인에서 DTO로 매핑")
-    void toResponseDtoSingleSuccess() {
-        // given
-        DataSource domain = new DataSource(1L, "v", "l");
+    @DisplayName("단일 DataSource를 DataSourceResponse로 변환 성공")
+    void toResponseDto_ShouldConvertSingleDataSource() {
+        // Given
+        DataSource dataSource = new DataSource(1L, "government", "정부 기관");
 
-        // when
-        DataSourceResponse dto = mapper.toResponseDto(domain);
+        // When
+        DataSourceResponse response = mapper.toResponseDto(dataSource);
 
-        // then
-        assertThat(dto.id()).isEqualTo(1L);
-        assertThat(dto.value()).isEqualTo("v");
-        assertThat(dto.label()).isEqualTo("l");
+        // Then
+        assertThat(response).isNotNull();
+        assertThat(response.id()).isEqualTo(1L);
+        assertThat(response.value()).isEqualTo("government");
+        assertThat(response.label()).isEqualTo("정부 기관");
     }
 
     @Test
-    @DisplayName("toResponseDto(list): 성공 - 리스트 변환")
-    void toResponseDtoListSuccess() {
-        // given
-        List<DataSource> domains = List.of(new DataSource(1L,"v1","l1"), new DataSource(2L,"v2","l2"));
+    @DisplayName("DataSource 리스트를 AllDataSourcesResponse로 변환 성공")
+    void toResponseDto_ShouldConvertDataSourceList() {
+        // Given
+        DataSource dataSource1 = new DataSource(1L, "government", "정부 기관");
+        DataSource dataSource2 = new DataSource(2L, "private", "민간 기업");
+        List<DataSource> dataSources = List.of(dataSource1, dataSource2);
 
-        // when
-        AllDataSourcesResponse all = mapper.toResponseDto(domains);
+        // When
+        AllDataSourcesResponse response = mapper.toResponseDto(dataSources);
 
-        // then
-        assertThat(all.dataSources()).hasSize(2);
-        assertThat(all.dataSources().get(0).id()).isEqualTo(1L);
+        // Then
+        assertThat(response).isNotNull();
+        assertThat(response.dataSources()).hasSize(2);
+        assertThat(response.dataSources().get(0).id()).isEqualTo(1L);
+        assertThat(response.dataSources().get(0).value()).isEqualTo("government");
+        assertThat(response.dataSources().get(1).id()).isEqualTo(2L);
+        assertThat(response.dataSources().get(1).value()).isEqualTo("private");
+    }
+
+    @Test
+    @DisplayName("빈 DataSource 리스트를 AllDataSourcesResponse로 변환 성공")
+    void toResponseDto_ShouldConvertEmptyDataSourceList() {
+        // Given
+        List<DataSource> dataSources = List.of();
+
+        // When
+        AllDataSourcesResponse response = mapper.toResponseDto(dataSources);
+
+        // Then
+        assertThat(response).isNotNull();
+        assertThat(response.dataSources()).isEmpty();
     }
 }

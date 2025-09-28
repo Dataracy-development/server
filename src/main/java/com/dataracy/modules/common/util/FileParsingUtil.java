@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.mozilla.universalchardet.UniversalDetector;
 
@@ -88,7 +90,7 @@ public class FileParsingUtil {
             int rowCount = 0;
             int colCount = parser.getHeaderMap().size();
 
-            for (var record : parser) {
+            for (CSVRecord record : parser) {
                 rowCount++;
 
                 if (preview.size() < PREVIEW_LIMIT) {
@@ -118,13 +120,13 @@ public class FileParsingUtil {
      * @throws IOException 파일 읽기 또는 파싱 중 오류가 발생한 경우
      */
     private static ParsedMetadataResponse parseXlsx(InputStream is) throws IOException {
-        try (var wb = WorkbookFactory.create(is)) {
-            var sheet = wb.getSheetAt(SHEET_INDEX);
+        try (Workbook wb = WorkbookFactory.create(is)) {
+            Sheet sheet = wb.getSheetAt(SHEET_INDEX);
             int rowCount = sheet.getPhysicalNumberOfRows();
             if (rowCount == 0) {
                 return new ParsedMetadataResponse(0, 0, toJson(new ArrayList<>()));
             }
-            var firstRow = sheet.getRow(0);
+            Row firstRow = sheet.getRow(0);
             if (firstRow == null) {
                 return new ParsedMetadataResponse(0, 0, toJson(new ArrayList<>()));
             }

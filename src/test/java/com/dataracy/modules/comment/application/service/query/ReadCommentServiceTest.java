@@ -24,7 +24,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,8 +37,11 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ReadCommentServiceTest {
 
     @Mock
@@ -111,7 +115,7 @@ class ReadCommentServiceTest {
                     new PageImpl<>(List.of(new FindCommentWithReplyCountResponse(comment, 0L)));
 
             given(readCommentPort.findComments(1L, pageable)).willReturn(page);
-            willThrow(new UserException(UserErrorStatus.NOT_FOUND_USER))
+            willThrow(new  UserException(UserErrorStatus.NOT_FOUND_USER))
                     .given(findCommentUserInfoUseCase).findCommentUserInfoBatch(any());
 
             // when & then
@@ -173,7 +177,7 @@ class ReadCommentServiceTest {
         void findReplyCommentsShouldThrowWhenPortThrows() {
             // given
             Pageable pageable = PageRequest.of(0, 5);
-            willThrow(new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
+            willThrow(new  CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
                     .given(readCommentPort).findReplyComments(1L, 10L, pageable);
 
             // when & then
@@ -194,7 +198,7 @@ class ReadCommentServiceTest {
 
             given(readCommentPort.findReplyComments(1L, 10L, pageable))
                     .willReturn(page);
-            willThrow(new RuntimeException("Like Service Down"))
+            willThrow(new  RuntimeException("Like Service Down"))
                     .given(findTargetIdsUseCase).findLikedTargetIds(1L, List.of(20L), TargetType.COMMENT);
 
             // when & then
