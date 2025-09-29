@@ -61,27 +61,23 @@ public class PopularProjectsRedisAdapter implements PopularProjectsStoragePort {
      * @param popularProjects 저장할 인기 프로젝트 목록
      */
     public void setPopularProjects(List<PopularProjectResponse> popularProjects) {
-        System.out.println("🔥 PopularProjectsRedisAdapter.setPopularProjects() 호출됨 - count=" + popularProjects.size());
         LoggerFactory.redis().logInfo(POPULAR_PROJECTS_KEY, "PopularProjectsRedisAdapter.setPopularProjects() 호출됨 - count=" + popularProjects.size());
         try {
             String jsonData = objectMapper.writeValueAsString(popularProjects);
-            System.out.println("🔥 JSON 직렬화 완료 - size=" + jsonData.length());
+            LoggerFactory.redis().logInfo(POPULAR_PROJECTS_KEY, "JSON 직렬화 완료 - size=" + jsonData.length());
             
             redisTemplate.opsForValue().set(POPULAR_PROJECTS_KEY, jsonData, CACHE_TTL);
-            System.out.println("🔥 Redis 저장 완료 - key=" + POPULAR_PROJECTS_KEY);
+            LoggerFactory.redis().logInfo(POPULAR_PROJECTS_KEY, "Redis 저장 완료 - key=" + POPULAR_PROJECTS_KEY);
             
             // 메타데이터도 함께 저장 (마지막 업데이트 시간)
             String metadata = String.valueOf(System.currentTimeMillis());
             redisTemplate.opsForValue().set(POPULAR_PROJECTS_METADATA_KEY, metadata, CACHE_TTL);
-            System.out.println("🔥 메타데이터 저장 완료 - key=" + POPULAR_PROJECTS_METADATA_KEY);
+            LoggerFactory.redis().logInfo(POPULAR_PROJECTS_KEY, "메타데이터 저장 완료 - key=" + POPULAR_PROJECTS_METADATA_KEY);
             
             LoggerFactory.redis().logSaveOrUpdate(POPULAR_PROJECTS_KEY, 
                 "인기 프로젝트 캐시 저장 성공 count=" + popularProjects.size());
-            System.out.println("🔥 캐시 저장 완료!");
                 
         } catch (Exception e) {
-            System.out.println("🔥 캐시 저장 실패: " + e.getMessage());
-            e.printStackTrace();
             LoggerFactory.redis().logError(POPULAR_PROJECTS_KEY, "인기 프로젝트 캐시 저장 실패", e);
         }
     }
