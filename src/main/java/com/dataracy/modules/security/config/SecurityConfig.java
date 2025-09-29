@@ -49,12 +49,19 @@ public class SecurityConfig {
          *   - /api/v1/admin/** 는 ADMIN 역할 필요
          *   - 위에 해당하지 않는 모든 요청은 인증 필요
          *
+         * CSRF 보호 비활성화 이유:
+         * - 이 애플리케이션은 JWT 기반의 Stateless REST API입니다
+         * - 세션 쿠키를 사용하지 않으므로 CSRF 공격에 취약하지 않습니다
+         * - 모든 인증은 JWT 토큰을 통해 처리되며, 토큰은 Authorization 헤더에 포함됩니다
+         * - CORS 정책이 적절히 설정되어 있어 Cross-Origin 요청이 제어됩니다
+         *
          * @return 구성된 SecurityFilterChain 인스턴스
          */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                // CSRF 보호 비활성화: JWT 기반 Stateless API이므로 세션 쿠키를 사용하지 않아 CSRF 공격에 취약하지 않음
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)

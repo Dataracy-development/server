@@ -208,7 +208,5 @@ sonarqube {
 		property "sonar.exclusions", "**/generated/**/*,**/build/**/*"
 		property "sonar.test.exclusions", "**/generated/**/*,**/build/**/*"
 		property "sonar.qualitygate.wait", true
-		property "sonar.login", "admin"
-		property "sonar.password", "admin"
 	}
 }

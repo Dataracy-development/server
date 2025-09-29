@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 메모리 기반 레이트 리미팅 구현체
@@ -113,15 +114,15 @@ public class MemoryRateLimitAdapter implements RateLimitPort {
     }
     
     private static class RequestCounter {
-        private volatile int count = 0;
+        private final AtomicInteger count = new AtomicInteger(0);
         private volatile long firstRequestTime = System.currentTimeMillis();
         
         public void increment() {
-            count++;
+            count.incrementAndGet();
         }
         
         public int getCount() {
-            return count;
+            return count.get();
         }
         
         public long getFirstRequestTime() {
@@ -129,7 +130,7 @@ public class MemoryRateLimitAdapter implements RateLimitPort {
         }
         
         public void reset(long currentTime) {
-            count = 0;
+            count.set(0);
             firstRequestTime = currentTime;
         }
     }
