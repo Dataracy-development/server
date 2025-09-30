@@ -5,6 +5,13 @@ import com.dataracy.modules.email.domain.model.EmailContent;
 
 public class EmailContentFactory {
     /**
+     * Utility 클래스이므로 인스턴스화를 방지합니다.
+     */
+    private EmailContentFactory() {
+        throw new UnsupportedOperationException("Utility class cannot be instantiated");
+    }
+
+    /**
      * 이메일 전송 목적에 따라 내용을 결정한다.
      *
      * @param type 이메일 전송 목적 enum

@@ -16,6 +16,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityContextProvider {
 
     /**
+     * Utility 클래스이므로 인스턴스화를 방지합니다.
+     */
+    private SecurityContextProvider() {
+        throw new UnsupportedOperationException("Utility class cannot be instantiated");
+    }
+
+    /**
      * 인증 객체 추출
      *
      * @return 인증 객체
