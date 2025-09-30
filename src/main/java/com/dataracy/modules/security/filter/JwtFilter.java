@@ -83,11 +83,10 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // 2. GET 메서드의 공개 API 확인
-        if ("GET".equals(method)) {
-            if (securityPathConfig.isPublicProjectPath(path) || 
-                securityPathConfig.isPublicDatasetPath(path)) {
-                return true;
-            }
+        if ("GET".equals(method) && 
+            (securityPathConfig.isPublicProjectPath(path) || 
+             securityPathConfig.isPublicDatasetPath(path))) {
+            return true;
         }
 
         return false; // 나머지는 JWT 필터 적용
