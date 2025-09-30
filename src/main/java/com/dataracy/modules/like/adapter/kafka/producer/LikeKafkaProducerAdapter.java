@@ -14,16 +14,16 @@ public class LikeKafkaProducerAdapter implements SendLikeEventPort {
     private final KafkaTemplate<String, Long> kafkaTemplate;
 
     @Value("${spring.kafka.producer.project-like-increase.topic:project-like-increase-topic}")
-    private String TOPIC_PROJECT_LIKE_INCREASE;
+    private String topicProjectLikeIncrease;
 
     @Value("${spring.kafka.producer.project-like-decrease.topic:project-like-decrease-topic}")
-    private String TOPIC_PROJECT_LIKE_DECREASE;
+    private String topicProjectLikeDecrease;
 
     @Value("${spring.kafka.producer.comment-like-increase.topic:comment-like-increase-topic}")
-    private String TOPIC_COMMENT_LIKE_INCREASE;
+    private String topicCommentLikeIncrease;
 
     @Value("${spring.kafka.producer.comment-like-decrease.topic:comment-like-decrease-topic}")
-    private String TOPIC_COMMENT_LIKE_DECREASE;
+    private String topicCommentLikeDecrease;
 
     /**
      * 프로젝트 또는 댓글에 대한 좋아요 또는 좋아요 취소 이벤트를 Kafka로 비동기 전송합니다.
@@ -42,17 +42,17 @@ public class LikeKafkaProducerAdapter implements SendLikeEventPort {
     
     private void sendProjectLikeEvent(Long targetId, boolean previouslyLiked) {
         if (previouslyLiked) {
-            sendKafkaEvent(TOPIC_PROJECT_LIKE_DECREASE, targetId, "프로젝트 좋아요 취소", "projectId");
+            sendKafkaEvent(topicProjectLikeDecrease, targetId, "프로젝트 좋아요 취소", "projectId");
         } else {
-            sendKafkaEvent(TOPIC_PROJECT_LIKE_INCREASE, targetId, "프로젝트 좋아요", "projectId");
+            sendKafkaEvent(topicProjectLikeIncrease, targetId, "프로젝트 좋아요", "projectId");
         }
     }
     
     private void sendCommentLikeEvent(Long targetId, boolean previouslyLiked) {
         if (previouslyLiked) {
-            sendKafkaEvent(TOPIC_COMMENT_LIKE_DECREASE, targetId, "댓글 좋아요 취소", "commentId");
+            sendKafkaEvent(topicCommentLikeDecrease, targetId, "댓글 좋아요 취소", "commentId");
         } else {
-            sendKafkaEvent(TOPIC_COMMENT_LIKE_INCREASE, targetId, "댓글 좋아요", "commentId");
+            sendKafkaEvent(topicCommentLikeIncrease, targetId, "댓글 좋아요", "commentId");
         }
     }
     

@@ -21,7 +21,7 @@ public class EmailCodeRedisAdapter implements ManageEmailCodePort {
     private final StringRedisTemplate redisTemplate;
 
     @Value("${aws.ses.expire-minutes:5}")
-    private long EXPIRE_MINUTES;
+    private long expireMinutes;
     
     // 에러 메시지 상수 정의
     private static final String REDIS_CONNECTION_FAILURE_MESSAGE = "레디스 서버 연결에 실패했습니다.";
@@ -53,7 +53,7 @@ public class EmailCodeRedisAdapter implements ManageEmailCodePort {
     public void saveCode(String email, String code, EmailVerificationType verificationType) {
         String emailKey = getEmailKey(email, verificationType);
         try {
-            redisTemplate.opsForValue().set(emailKey, code, EXPIRE_MINUTES, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set(emailKey, code, expireMinutes, TimeUnit.MINUTES);
             LoggerFactory.redis().logSaveOrUpdate(emailKey, "해당 인증 코드를 저장하였습니다. email=" + email);
         } catch (RedisConnectionFailureException e) {
             LoggerFactory.redis().logError(emailKey, REDIS_CONNECTION_FAILURE_MESSAGE, e);
