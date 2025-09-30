@@ -137,24 +137,23 @@ public class UserCommandService implements
     )
     @Transactional
     public void modifyUserInfoWithUserIdLock(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
-        // 회원 정보 수정 요청 정보 유효성 검사 (닉네임 중복 검사 제외)
-        validateModifyUserInfoWithoutNickname(
-                requestDto.authorLevelId(),
-                requestDto.occupationId(),
-                requestDto.visitSourceId(),
-                requestDto.topicIds(),
-                profileImageFile
-        );
-        userCommandPort.modifyUserInfo(userId, requestDto);
-
-        // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
-        modifyProfileImageFile(profileImageFile, userId, MODIFY_USER_INFO_USE_CASE);
-
-        LoggerFactory.service().logSuccess(MODIFY_USER_INFO_USE_CASE, USER_INFO_MODIFY_SUCCESS_MESSAGE + userId, startTime);
+        executeModifyUserInfo(userId, profileImageFile, requestDto, startTime);
     }
 
     @Transactional
     public void modifyUserInfoWithoutLock(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
+        executeModifyUserInfo(userId, profileImageFile, requestDto, startTime);
+    }
+
+    /**
+     * 회원 정보 수정 로직을 실행합니다.
+     *
+     * @param userId 사용자 ID
+     * @param profileImageFile 프로필 이미지 파일 (선택사항)
+     * @param requestDto 회원 정보 수정 요청 DTO
+     * @param startTime 작업 시작 시간
+     */
+    private void executeModifyUserInfo(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
         // 회원 정보 수정 요청 정보 유효성 검사 (닉네임 중복 검사 제외)
         validateModifyUserInfoWithoutNickname(
                 requestDto.authorLevelId(),
