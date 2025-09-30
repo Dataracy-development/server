@@ -16,6 +16,13 @@ public class UpdateDataDownloadEsAdapter implements UpdateDataDownloadPort {
 
     private final ElasticsearchClient client;
     private static final String INDEX = "data_index";
+    private static final String INCREASE_DOWNLOAD_SCRIPT = """
+            if (ctx._source.downloadCount == null) {
+                ctx._source.downloadCount = 1;
+            } else {
+                ctx._source.downloadCount += 1;
+            }
+            """;
 
     @Override
     public void increaseDownloadCount(Long dataId) {
@@ -25,13 +32,7 @@ public class UpdateDataDownloadEsAdapter implements UpdateDataDownloadPort {
                             .id(String.valueOf(dataId))
                             .script(s -> s.inline(i -> i
                                     .lang("painless")
-                                    .source("""
-                                    if (ctx._source.downloadCount == null) {
-                                        ctx._source.downloadCount = 1;
-                                    } else {
-                                        ctx._source.downloadCount += 1;
-                                    }
-                                    """)))
+                                    .source(INCREASE_DOWNLOAD_SCRIPT)))
                             .upsert(DataSearchDocument.builder()
                                     .id(dataId)
                                     .downloadCount(1)
