@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -68,10 +68,12 @@ class UserTest {
                 .provider(ProviderType.GOOGLE)
                 .build();
 
-        // when & then
-        assertThatThrownBy(() -> user.validatePasswordChangable())
-                .isInstanceOf(UserException.class)
-                .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE);
+        // when
+        UserException exception = catchThrowableOfType(user::validatePasswordChangable, UserException.class);
+        
+        // then
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE);
     }
 
     @Test
@@ -82,10 +84,12 @@ class UserTest {
                 .provider(ProviderType.KAKAO)
                 .build();
 
-        // when & then
-        assertThatThrownBy(() -> user.validatePasswordChangable())
-                .isInstanceOf(UserException.class)
-                .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO);
+        // when
+        UserException exception = catchThrowableOfType(user::validatePasswordChangable, UserException.class);
+        
+        // then
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO);
     }
 
     @Test
@@ -97,7 +101,7 @@ class UserTest {
                 .build();
 
         // when & then
-        assertThatCode(() -> user.validatePasswordChangable()).doesNotThrowAnyException();
+        assertThatCode(user::validatePasswordChangable).doesNotThrowAnyException();
     }
 
     @Test

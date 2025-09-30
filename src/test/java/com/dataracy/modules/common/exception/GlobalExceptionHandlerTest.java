@@ -54,7 +54,7 @@ class GlobalExceptionHandlerTest {
                  mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
                 
                 var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                mockedLoggerFactory.when(com.dataracy.modules.common.logging.support.LoggerFactory::common)
                         .thenReturn(mockLogger);
 
                 // when
@@ -85,7 +85,7 @@ class GlobalExceptionHandlerTest {
                  mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
                 
                 var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                mockedLoggerFactory.when(com.dataracy.modules.common.logging.support.LoggerFactory::common)
                         .thenReturn(mockLogger);
 
                 // when
@@ -117,7 +117,7 @@ class GlobalExceptionHandlerTest {
                  mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
                 
                 var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                mockedLoggerFactory.when(com.dataracy.modules.common.logging.support.LoggerFactory::common)
                         .thenReturn(mockLogger);
 
                 // when
@@ -148,7 +148,7 @@ class GlobalExceptionHandlerTest {
                  mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
                 
                 var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                mockedLoggerFactory.when(com.dataracy.modules.common.logging.support.LoggerFactory::common)
                         .thenReturn(mockLogger);
 
                 // when
@@ -185,7 +185,7 @@ class GlobalExceptionHandlerTest {
                  mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
                 
                 var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                mockedLoggerFactory.when(com.dataracy.modules.common.logging.support.LoggerFactory::common)
                         .thenReturn(mockLogger);
 
                 // when
@@ -210,7 +210,7 @@ class GlobalExceptionHandlerTest {
                  mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
                 
                 var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                mockedLoggerFactory.when(com.dataracy.modules.common.logging.support.LoggerFactory::common)
                         .thenReturn(mockLogger);
 
                 // when
@@ -235,7 +235,7 @@ class GlobalExceptionHandlerTest {
                  mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
                 
                 var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                mockedLoggerFactory.when(com.dataracy.modules.common.logging.support.LoggerFactory::common)
                         .thenReturn(mockLogger);
 
                 // when
@@ -267,7 +267,7 @@ class GlobalExceptionHandlerTest {
                  mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class)) {
                 
                 var mockLogger = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-                mockedLoggerFactory.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.common())
+                mockedLoggerFactory.when(com.dataracy.modules.common.logging.support.LoggerFactory::common)
                         .thenReturn(mockLogger);
 
                 // when

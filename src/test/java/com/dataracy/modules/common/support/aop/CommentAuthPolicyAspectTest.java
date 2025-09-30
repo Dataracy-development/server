@@ -85,8 +85,10 @@ class CommentAuthPolicyAspectTest {
         when(findUserIdByCommentIdUseCase.findUserIdByCommentId(commentId)).thenReturn(ownerId);
         mockLoggerFactory();
 
-        // when & then
+        // when
         CommentException exception = catchThrowableOfType(() -> commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId), CommentException.class);
+        
+        // then
         assertThat(exception).isNotNull();
         assertThat(exception.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_MATCH_CREATOR);
 
@@ -106,14 +108,15 @@ class CommentAuthPolicyAspectTest {
         when(findUserIdByCommentIdUseCase.findUserIdByCommentId(commentId)).thenReturn(ownerId);
         
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-        loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
+        loggerFactoryMock.when(LoggerFactory::common).thenReturn(loggerCommon);
         doNothing().when(loggerCommon).logWarning(anyString(), anyString());
 
         // when
         CommentException exception = catchThrowableOfType(() -> commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId), CommentException.class);
+        
+        // then
         assertThat(exception).isNotNull();
-
-        // then - 로깅 검증
+        // 로깅 검증
         verify(loggerCommon).logWarning("Comment", "댓글 작성자만 수정 및 삭제 할 수 있습니다.");
     }
 
@@ -147,8 +150,10 @@ class CommentAuthPolicyAspectTest {
         when(findUserIdByCommentIdUseCase.findUserIdByCommentId(commentId)).thenReturn(ownerId);
         mockLoggerFactory();
 
-        // when & then
+        // when
         NullPointerException exception = catchThrowableOfType(() -> commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId), NullPointerException.class);
+        
+        // then
         assertThat(exception).isNotNull();
 
         // verify
@@ -157,7 +162,7 @@ class CommentAuthPolicyAspectTest {
 
     private void mockLoggerFactory() {
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-        loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
+        loggerFactoryMock.when(LoggerFactory::common).thenReturn(loggerCommon);
         doNothing().when(loggerCommon).logWarning(anyString(), anyString());
     }
 }

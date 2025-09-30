@@ -111,8 +111,10 @@ class ProjectAuthPolicyAspectTest {
         when(findUserIdUseCase.findUserIdByProjectId(projectId)).thenReturn(ownerId);
         mockLoggerFactory();
 
-        // when & then
+        // when
         ProjectException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), ProjectException.class);
+        
+        // then
         assertThat(exception).isNotNull();
         assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_MATCH_CREATOR);
 
@@ -133,8 +135,10 @@ class ProjectAuthPolicyAspectTest {
         when(findUserIdIncludingDeletedUseCase.findUserIdIncludingDeleted(projectId)).thenReturn(ownerId);
         mockLoggerFactory();
 
-        // when & then
+        // when
         ProjectException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), ProjectException.class);
+        
+        // then
         assertThat(exception).isNotNull();
         assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_MATCH_CREATOR);
 
@@ -155,14 +159,15 @@ class ProjectAuthPolicyAspectTest {
         when(findUserIdUseCase.findUserIdByProjectId(projectId)).thenReturn(ownerId);
         
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-        loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
+        loggerFactoryMock.when(LoggerFactory::common).thenReturn(loggerCommon);
         doNothing().when(loggerCommon).logWarning(anyString(), anyString());
 
         // when
         ProjectException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), ProjectException.class);
+        
+        // then
         assertThat(exception).isNotNull();
-
-        // then - 로깅 검증
+        // 로깅 검증
         verify(loggerCommon).logWarning("Project", "프로젝트 작성자만 수정 및 삭제할 수 있습니다.");
     }
 
@@ -179,14 +184,15 @@ class ProjectAuthPolicyAspectTest {
         when(findUserIdIncludingDeletedUseCase.findUserIdIncludingDeleted(projectId)).thenReturn(ownerId);
         
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-        loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
+        loggerFactoryMock.when(LoggerFactory::common).thenReturn(loggerCommon);
         doNothing().when(loggerCommon).logWarning(anyString(), anyString());
 
         // when
         ProjectException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), ProjectException.class);
+        
+        // then
         assertThat(exception).isNotNull();
-
-        // then - 로깅 검증
+        // 로깅 검증
         verify(loggerCommon).logWarning("Project", "프로젝트 작성자만 복원할 수 있습니다.");
     }
 
@@ -222,8 +228,10 @@ class ProjectAuthPolicyAspectTest {
         when(findUserIdUseCase.findUserIdByProjectId(projectId)).thenReturn(ownerId);
         mockLoggerFactory();
 
-        // when & then
+        // when
         NullPointerException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), NullPointerException.class);
+        
+        // then
         assertThat(exception).isNotNull();
 
         // verify
@@ -232,7 +240,7 @@ class ProjectAuthPolicyAspectTest {
 
     private void mockLoggerFactory() {
         var loggerCommon = mock(com.dataracy.modules.common.logging.CommonLogger.class);
-        loggerFactoryMock.when(() -> LoggerFactory.common()).thenReturn(loggerCommon);
+        loggerFactoryMock.when(LoggerFactory::common).thenReturn(loggerCommon);
         doNothing().when(loggerCommon).logWarning(anyString(), anyString());
     }
 }
