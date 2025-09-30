@@ -68,9 +68,9 @@ public class ReadDataQueryDslAdapter implements
                         DataFilterPredicate.dataIdEq(dataId)
                 )
                 .fetchOne();
-        Optional<Data> data = Optional.ofNullable(entity).map(DataEntityMapper::toDomain);
+        Optional<Data> result = Optional.ofNullable(entity).map(DataEntityMapper::toDomain);
         LoggerFactory.query().logQueryEnd(DATA_ENTITY, "[findDataById] 아이디를 통해 데이터셋 조회 완료. dataId=" + dataId, startTime);
-        return data;
+        return result;
     }
 
     /**
@@ -90,9 +90,9 @@ public class ReadDataQueryDslAdapter implements
                         DataFilterPredicate.dataIdEq(dataId)
                 )
                 .fetchOne();
-        Optional<Data> data = Optional.ofNullable(entity).map(DataEntityMapper::toDomain);
+        Optional<Data> result = Optional.ofNullable(entity).map(DataEntityMapper::toDomain);
         LoggerFactory.query().logQueryEnd(DATA_ENTITY, "[findDataWithMetadataById] 아이디를 통해 삭제된 데이터셋을 포함한 데이터셋 조회 완료. dataId=" + dataId, startTime);
-        return data;
+        return result;
     }
 
     /**
