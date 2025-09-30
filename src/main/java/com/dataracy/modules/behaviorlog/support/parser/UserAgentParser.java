@@ -15,6 +15,13 @@ public class UserAgentParser {
             .build();
 
     /**
+     * Utility 클래스이므로 인스턴스화를 방지합니다.
+     */
+    private UserAgentParser() {
+        throw new UnsupportedOperationException("Utility class cannot be instantiated");
+    }
+
+    /**
      * 주어진 User-Agent 문자열에서 운영체제 이름을 추출합니다.
      *
      * @param userAgent 분석할 User-Agent 문자열
