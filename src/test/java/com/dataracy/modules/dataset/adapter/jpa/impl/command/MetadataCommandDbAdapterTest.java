@@ -44,10 +44,11 @@ class MetadataCommandDbAdapterTest {
         // given
         given(dataRepo.findById(99L))
                 .willReturn(Optional.empty());
+        DataMetadata meta = DataMetadata.of(1L, 5, 6, "json");
 
         // when & then
         DataException ex = catchThrowableOfType(
-                () -> adapter.saveMetadata(99L, DataMetadata.of(1L, 5, 6, "json")),
+                () -> adapter.saveMetadata(99L, meta),
                 DataException.class
         );
 

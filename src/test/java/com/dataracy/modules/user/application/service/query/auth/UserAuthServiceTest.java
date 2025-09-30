@@ -133,10 +133,11 @@ class UserAuthServiceTest {
     void handleExistingUserThrowsNotFoundWhenUserMissing() {
         // given
         given(userQueryPort.findUserByProviderId("kakao-123")).willReturn(Optional.empty());
+        OAuthUserInfo userInfo = kakaoUserInfo();
 
         // when
         UserException ex = catchThrowableOfType(
-                () -> service.handleExistingUser(kakaoUserInfo()),
+                () -> service.handleExistingUser(userInfo),
                 UserException.class
         );
 

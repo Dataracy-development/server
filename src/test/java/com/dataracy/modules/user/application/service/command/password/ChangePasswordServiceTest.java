@@ -88,10 +88,11 @@ class ChangePasswordServiceTest {
     void changePassword_userNotFound() {
         // given
         given(userQueryPort.findUserById(99L)).willReturn(Optional.empty());
+        ChangePasswordRequest req = new ChangePasswordRequest("pw","pw");
 
         // when
         UserException ex = catchThrowableOfType(
-                () -> service.changePassword(99L, new ChangePasswordRequest("pw","pw")),
+                () -> service.changePassword(99L, req),
                 UserException.class
         );
 
@@ -106,10 +107,11 @@ class ChangePasswordServiceTest {
         // given
         User kakaoUser = localUser(ProviderType.KAKAO);
         given(userQueryPort.findUserById(10L)).willReturn(Optional.of(kakaoUser));
+        ChangePasswordRequest req = new ChangePasswordRequest("pw","pw");
 
         // when
         UserException ex = catchThrowableOfType(
-                () -> service.changePassword(10L, new ChangePasswordRequest("pw","pw")),
+                () -> service.changePassword(10L, req),
                 UserException.class
         );
 
