@@ -36,6 +36,9 @@ spring:
       long:
         concurrency: 3
         poll-timeout: 5000 # 운영 환경: 5초 (배치 효율성 최적화)
+    producer:
+      string:
+        observation-enabled: true # Micrometer 메트릭 수집 활성화
 
 swagger:
   title: Dataracy
