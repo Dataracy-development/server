@@ -116,18 +116,17 @@ public class ProjectReadController implements ProjectReadApi {
      */
     @Override
     public ResponseEntity<SuccessResponse<List<PopularProjectWebResponse>>> getPopularProjects(int size) {
-        System.out.println("🔥 컨트롤러: 인기 프로젝트 API 호출 시작 - size=" + size);
-        Instant startTime = LoggerFactory.api().logRequest("[GetPopularProjects] 인기 프로젝트 목록 조회 API 요청 시작");
+        Instant startTime = LoggerFactory.api().logRequest("[GetPopularProjects] 인기 프로젝트 목록 조회 API 요청 시작 size=" + size);
         List<PopularProjectWebResponse> webResponse;
 
         try {
-            System.out.println("🔥 컨트롤러: UseCase 호출 시작");
+            LoggerFactory.api().logInfo("[GetPopularProjects] UseCase 호출 시작");
             List<PopularProjectResponse> responseDto = getPopularProjectsUseCase.getPopularProjects(size);
-            System.out.println("🔥 컨트롤러: UseCase 호출 완료 - count=" + responseDto.size());
+            LoggerFactory.api().logInfo("[GetPopularProjects] UseCase 호출 완료 count=" + responseDto.size());
             webResponse = responseDto.stream()
                     .map(projectReadWebMapper::toWebDto)
                     .toList();
-            System.out.println("🔥 컨트롤러: 매핑 완료");
+            LoggerFactory.api().logInfo("[GetPopularProjects] 매핑 완료");
         } finally {
             LoggerFactory.api().logResponse("[GetPopularProjects] 인기 프로젝트 목록 조회 API 응답 완료", startTime);
         }
