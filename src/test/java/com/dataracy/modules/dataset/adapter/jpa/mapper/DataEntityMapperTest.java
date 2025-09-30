@@ -1,59 +1,156 @@
 package com.dataracy.modules.dataset.adapter.jpa.mapper;
 
 import com.dataracy.modules.dataset.adapter.jpa.entity.DataEntity;
+import com.dataracy.modules.dataset.adapter.jpa.entity.DataMetadataEntity;
 import com.dataracy.modules.dataset.domain.model.Data;
+import com.dataracy.modules.dataset.domain.model.DataMetadata;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("DataEntityMapper 테스트")
 class DataEntityMapperTest {
 
     @Test
-    @DisplayName("toDomain - entity가 null이면 null 반환")
-    void toDomainShouldReturnNullWhenEntityIsNull() {
-        // given
-        DataEntity entity = null;
-
-        // when
-        Data result = DataEntityMapper.toDomain(entity);
-
-        // then
-        assertThat(result).isNull();
-    }
-
-    @Test
-    @DisplayName("toDomain - entity → domain 매핑 성공")
-    void toDomainShouldMapCorrectly() {
-        // given
+    @DisplayName("Entity를 Domain으로 변환 성공")
+    void toDomain_ShouldConvertEntityToDomain() {
+        // Given
+        DataMetadataEntity metadataEntity = DataMetadataEntity.of(1000, 10, "{\"preview\": \"data\"}");
         DataEntity entity = DataEntity.builder()
                 .id(1L)
-                .title("title")
-                .userId(99L)
-                .description("desc")
-                .analysisGuide("guide")
-                .downloadCount(3)
+                .title("Test Data")
+                .topicId(1L)
+                .userId(1L)
+                .dataSourceId(1L)
+                .dataTypeId(1L)
+                .startDate(LocalDate.of(2023, 1, 1))
+                .endDate(LocalDate.of(2023, 12, 31))
+                .description("Test description")
+                .analysisGuide("Test guide")
+                .dataFileUrl("file.csv")
+                .dataThumbnailUrl("thumb.jpg")
+                .downloadCount(100)
+                .sizeBytes(1024L)
+                .metadata(metadataEntity)
                 .build();
 
-        // when
-        Data result = DataEntityMapper.toDomain(entity);
+        // When
+        Data domain = DataEntityMapper.toDomain(entity);
 
-        // then
-        assertThat(result)
-                .extracting("id", "title", "userId", "description", "analysisGuide", "downloadCount")
-                .containsExactly(1L, "title", 99L, "desc", "guide", 3);
+        // Then
+        assertThat(domain).isNotNull();
+        assertThat(domain.getId()).isEqualTo(1L);
+        assertThat(domain.getTitle()).isEqualTo("Test Data");
+        assertThat(domain.getTopicId()).isEqualTo(1L);
+        assertThat(domain.getUserId()).isEqualTo(1L);
+        assertThat(domain.getDataSourceId()).isEqualTo(1L);
+        assertThat(domain.getDataTypeId()).isEqualTo(1L);
+        assertThat(domain.getStartDate()).isEqualTo(LocalDate.of(2023, 1, 1));
+        assertThat(domain.getEndDate()).isEqualTo(LocalDate.of(2023, 12, 31));
+        assertThat(domain.getDescription()).isEqualTo("Test description");
+        assertThat(domain.getAnalysisGuide()).isEqualTo("Test guide");
+        assertThat(domain.getDataFileUrl()).isEqualTo("file.csv");
+        assertThat(domain.getDataThumbnailUrl()).isEqualTo("thumb.jpg");
+        assertThat(domain.getDownloadCount()).isEqualTo(100);
+        assertThat(domain.getSizeBytes()).isEqualTo(1024L);
+        assertThat(domain.getMetadata()).isNotNull();
     }
 
     @Test
-    @DisplayName("toEntity - domain이 null이면 null 반환")
-    void toEntityShouldReturnNullWhenDomainIsNull() {
-        // given
-        Data data = null;
+    @DisplayName("Entity가 null일 때 Domain 변환 시 null 반환")
+    void toDomain_WithNullEntity_ShouldReturnNull() {
+        // When
+        Data domain = DataEntityMapper.toDomain(null);
 
-        // when
-        DataEntity result = DataEntityMapper.toEntity(data);
+        // Then
+        assertThat(domain).isNull();
+    }
 
-        // then
-        assertThat(result).isNull();
+    @Test
+    @DisplayName("Entity에 메타데이터가 null일 때 Domain 변환 성공")
+    void toDomain_WithNullMetadata_ShouldConvertSuccessfully() {
+        // Given
+        DataEntity entity = DataEntity.builder()
+                .id(1L)
+                .title("Test Data")
+                .topicId(1L)
+                .userId(1L)
+                .dataSourceId(1L)
+                .dataTypeId(1L)
+                .startDate(LocalDate.of(2023, 1, 1))
+                .endDate(LocalDate.of(2023, 12, 31))
+                .description("Test description")
+                .analysisGuide("Test guide")
+                .dataFileUrl("file.csv")
+                .dataThumbnailUrl("thumb.jpg")
+                .downloadCount(100)
+                .sizeBytes(1024L)
+                .metadata(null)
+                .build();
+
+        // When
+        Data domain = DataEntityMapper.toDomain(entity);
+
+        // Then
+        assertThat(domain).isNotNull();
+        assertThat(domain.getMetadata()).isNull();
+    }
+
+    @Test
+    @DisplayName("Domain을 Entity로 변환 성공")
+    void toEntity_ShouldConvertDomainToEntity() {
+        // Given
+        DataMetadata metadata = DataMetadata.of(1L, 1000, 10, "{\"preview\": \"data\"}");
+        Data domain = Data.builder()
+                .id(1L)
+                .title("Test Data")
+                .topicId(1L)
+                .userId(1L)
+                .dataSourceId(1L)
+                .dataTypeId(1L)
+                .startDate(LocalDate.of(2023, 1, 1))
+                .endDate(LocalDate.of(2023, 12, 31))
+                .description("Test description")
+                .analysisGuide("Test guide")
+                .dataFileUrl("file.csv")
+                .dataThumbnailUrl("thumb.jpg")
+                .downloadCount(100)
+                .sizeBytes(1024L)
+                .metadata(metadata)
+                .build();
+
+        // When
+        DataEntity entity = DataEntityMapper.toEntity(domain);
+
+        // Then
+        assertThat(entity).isNotNull();
+        assertThat(entity.getTitle()).isEqualTo("Test Data");
+        assertThat(entity.getTopicId()).isEqualTo(1L);
+        assertThat(entity.getUserId()).isEqualTo(1L);
+        assertThat(entity.getDataSourceId()).isEqualTo(1L);
+        assertThat(entity.getDataTypeId()).isEqualTo(1L);
+        assertThat(entity.getStartDate()).isEqualTo(LocalDate.of(2023, 1, 1));
+        assertThat(entity.getEndDate()).isEqualTo(LocalDate.of(2023, 12, 31));
+        assertThat(entity.getDescription()).isEqualTo("Test description");
+        assertThat(entity.getAnalysisGuide()).isEqualTo("Test guide");
+        assertThat(entity.getDataFileUrl()).isEqualTo("file.csv");
+        assertThat(entity.getDataThumbnailUrl()).isEqualTo("thumb.jpg");
+        assertThat(entity.getDownloadCount()).isEqualTo(100);
+        assertThat(entity.getSizeBytes()).isEqualTo(1024L);
+        assertThat(entity.getMetadata()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Domain이 null일 때 Entity 변환 시 null 반환")
+    void toEntity_WithNullDomain_ShouldReturnNull() {
+        // When
+        DataEntity entity = DataEntityMapper.toEntity(null);
+
+        // Then
+        assertThat(entity).isNull();
     }
 }

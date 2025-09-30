@@ -47,6 +47,13 @@ public class DataCommandService implements
     private final DataUploadEventPort dataUploadEventPort;
 
     private final CheckDataExistsByIdPort checkDataExistsByIdPort;
+
+    // Use Case 상수 정의
+    private static final String UPLOAD_DATA_USE_CASE = "UploadDataUseCase";
+    private static final String MODIFY_DATA_USE_CASE = "ModifyDataUseCase";
+    
+    // 메시지 상수 정의
+    private static final String DATA_NOT_FOUND_MESSAGE = "해당 데이터셋이 존재하지 않습니다. dataId=";
     private final FindDataPort findDataPort;
 
     private final FileCommandUseCase fileCommandUseCase;
@@ -57,7 +64,7 @@ public class DataCommandService implements
     /**
      * 데이터셋 메타데이터와 첨부 파일(데이터 파일, 썸네일)의 유효성을 검증하고 저장한 뒤 업로드 이벤트를 발행합니다.
      *
-     * <p>요청한 메타데이터를 저장하고(트랜잭션 내), 파일을 스토리지에 업로드하여 저장된 데이터셋의 파일 URL을 갱신합니다. 데이터 파일이 존재하면 업로드 완료 이벤트를 발행합니다.</p>
+     * 요청한 메타데이터를 저장하고(트랜잭션 내), 파일을 스토리지에 업로드하여 저장된 데이터셋의 파일 URL을 갱신합니다. 데이터 파일이 존재하면 업로드 완료 이벤트를 발행합니다.
      *
      * @param userId 업로드를 요청한 사용자 ID
      * @param dataFile 업로드할 데이터셋 파일(없을 수 있음)
@@ -68,7 +75,7 @@ public class DataCommandService implements
     @Override
     @Transactional
     public UploadDataResponse uploadData(Long userId, MultipartFile dataFile, MultipartFile thumbnailFile, UploadDataRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("UploadDataUseCase", "데이터셋 업로드 서비스 시작 title=" + requestDto.title());
+        Instant startTime = LoggerFactory.service().logStart(UPLOAD_DATA_USE_CASE, "데이터셋 업로드 서비스 시작 title=" + requestDto.title());
 
         // 유효성 검사
         validateDataRequest(
@@ -79,7 +86,7 @@ public class DataCommandService implements
                 requestDto.topicId(),
                 requestDto.dataSourceId(),
                 requestDto.dataTypeId(),
-                "UploadDataUseCase"
+                UPLOAD_DATA_USE_CASE
         );
 
         // 데이터셋 저장
@@ -90,8 +97,8 @@ public class DataCommandService implements
         Data saveData = createDataPort.saveData(data);
 
         // 데이터셋 파일
-        dataFileUpload(dataFile, saveData.getId(), "UploadDataUseCase");
-        thumbnailFileUpload(thumbnailFile, saveData.getId(), "UploadDataUseCase");
+        dataFileUpload(dataFile, saveData.getId(), UPLOAD_DATA_USE_CASE);
+        thumbnailFileUpload(thumbnailFile, saveData.getId(), UPLOAD_DATA_USE_CASE);
 
         Data updatedFileUrlData = findDataPort.findDataById(saveData.getId()).get();
 
@@ -100,9 +107,10 @@ public class DataCommandService implements
             dataUploadEventPort.sendUploadEvent(updatedFileUrlData.getId(), updatedFileUrlData.getDataFileUrl(), dataFile.getOriginalFilename());
         }
 
-        LoggerFactory.service().logSuccess("UploadDataUseCase", "데이터셋 업로드 서비스 종료 title=" + requestDto.title(), startTime);
+        LoggerFactory.service().logSuccess(UPLOAD_DATA_USE_CASE, "데이터셋 업로드 서비스 종료 title=" + requestDto.title(), startTime);
         return new UploadDataResponse(saveData.getId());
     }
+
 
     /**
      * 데이터셋의 메타데이터와 파일(데이터셋 파일, 썸네일 파일)을 수정합니다.
@@ -120,10 +128,10 @@ public class DataCommandService implements
     @Override
     @Transactional
     public void modifyData(Long dataId, MultipartFile dataFile, MultipartFile thumbnailFile, ModifyDataRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("ModifyDataUseCase", "데이터셋 수정 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart(MODIFY_DATA_USE_CASE, "데이터셋 수정 서비스 시작 dataId=" + dataId);
 
         if (!checkDataExistsByIdPort.existsDataById(dataId)) {
-            LoggerFactory.service().logWarning("ModifyDataUseCase", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+            LoggerFactory.service().logWarning(MODIFY_DATA_USE_CASE, DATA_NOT_FOUND_MESSAGE + dataId);
             throw new DataException(DataErrorStatus.NOT_FOUND_DATA);
         }
 
@@ -136,18 +144,18 @@ public class DataCommandService implements
                 requestDto.topicId(),
                 requestDto.dataSourceId(),
                 requestDto.dataTypeId(),
-                "ModifyDataUseCase"
+                MODIFY_DATA_USE_CASE
         );
 
         updateDataPort.modifyData(dataId, requestDto);
 
         // 데이터셋 파일
-        dataFileUpload(dataFile, dataId, "ModifyDataUseCase");
-        thumbnailFileUpload(thumbnailFile, dataId, "ModifyDataUseCase");
+        dataFileUpload(dataFile, dataId, MODIFY_DATA_USE_CASE);
+        thumbnailFileUpload(thumbnailFile, dataId, MODIFY_DATA_USE_CASE);
 
         Data savedData = findDataPort.findDataById(dataId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("ModifyDataUseCase", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                    LoggerFactory.service().logWarning(MODIFY_DATA_USE_CASE, DATA_NOT_FOUND_MESSAGE + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
 
@@ -156,7 +164,7 @@ public class DataCommandService implements
             dataUploadEventPort.sendUploadEvent(savedData.getId(), savedData.getDataFileUrl(), dataFile.getOriginalFilename());
         }
 
-        LoggerFactory.service().logSuccess("ModifyDataUseCase", "데이터셋 수정 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess(MODIFY_DATA_USE_CASE, "데이터셋 수정 서비스 종료 dataId=" + dataId, startTime);
     }
 
     /**

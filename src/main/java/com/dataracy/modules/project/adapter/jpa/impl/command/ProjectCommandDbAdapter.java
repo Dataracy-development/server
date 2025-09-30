@@ -29,6 +29,12 @@ public class ProjectCommandDbAdapter implements
         DeleteProjectDataPort
 {
     private final ProjectJpaRepository projectJpaRepository;
+
+    // Entity 및 메시지 상수 정의
+    private static final String PROJECT_ENTITY = "ProjectEntity";
+    private static final String PROJECT_DATA_ENTITY = "ProjectDataEntity";
+    private static final String PROJECT_NOT_FOUND_MESSAGE = "해당 프로젝트가 존재하지 않습니다. projectId=";
+    private static final String PARENT_PROJECT_NOT_FOUND_MESSAGE = "부모 프로젝트가 존재하지 않습니다. parentProjectId=";
     private final ProjectDataJpaRepository projectDataJpaRepository;
 
     /**
@@ -43,10 +49,10 @@ public class ProjectCommandDbAdapter implements
         try {
             ProjectEntity projectEntity = projectJpaRepository.save(ProjectEntityMapper.toEntity(project));
             Project savedProject = ProjectEntityMapper.toMinimal(projectEntity);
-            LoggerFactory.db().logSave("ProjectEntity", String.valueOf(savedProject.getId()), "프로젝트 저장이 완료되었습니다.");
+            LoggerFactory.db().logSave(PROJECT_ENTITY, String.valueOf(savedProject.getId()), "프로젝트 저장이 완료되었습니다.");
             return savedProject;
         } catch (Exception e) {
-            LoggerFactory.db().logError("ProjectEntity", "프로젝트 저장에 실패했습니다.", e);
+            LoggerFactory.db().logError(PROJECT_ENTITY, "프로젝트 저장에 실패했습니다.", e);
             throw new ProjectException(ProjectErrorStatus.FAIL_SAVE_PROJECT);
         }
     }
@@ -63,12 +69,12 @@ public class ProjectCommandDbAdapter implements
     public void updateThumbnailFile(Long projectId, String thumbnailUrl) {
         ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+                    LoggerFactory.db().logWarning(PROJECT_ENTITY, PROJECT_NOT_FOUND_MESSAGE + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
         projectEntity.updateThumbnailUrl(thumbnailUrl);
         projectJpaRepository.save(projectEntity);
-        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 썸네일 이미지 파일 업데이트가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(PROJECT_ENTITY, String.valueOf(projectId), "프로젝트 썸네일 이미지 파일 업데이트가 완료되었습니다.");
     }
 
     /**
@@ -87,7 +93,7 @@ public class ProjectCommandDbAdapter implements
     public void modifyProject(Long projectId, ModifyProjectRequest requestDto, Set<Long> toAdd) {
         ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+                    LoggerFactory.db().logWarning(PROJECT_ENTITY, PROJECT_NOT_FOUND_MESSAGE + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
 
@@ -95,7 +101,7 @@ public class ProjectCommandDbAdapter implements
         if (requestDto.parentProjectId() != null) {
             parentProject = projectJpaRepository.findById(requestDto.parentProjectId())
                     .orElseThrow(() -> {
-                        LoggerFactory.db().logWarning("ProjectEntity", "부모 프로젝트가 존재하지 않습니다. parentProjectId=" + requestDto.parentProjectId());
+                        LoggerFactory.db().logWarning(PROJECT_ENTITY, PARENT_PROJECT_NOT_FOUND_MESSAGE + requestDto.parentProjectId());
                         return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                     });
         }
@@ -109,7 +115,7 @@ public class ProjectCommandDbAdapter implements
         }
 
         projectJpaRepository.save(projectEntity);
-        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 수정이 완료되었습니다.");
+        LoggerFactory.db().logUpdate(PROJECT_ENTITY, String.valueOf(projectId), "프로젝트 수정이 완료되었습니다.");
     }
 
     /**
@@ -121,6 +127,6 @@ public class ProjectCommandDbAdapter implements
     @Override
     public void deleteByProjectIdAndDataIdIn(Long projectId, Set<Long> dataIds) {
         projectDataJpaRepository.deleteByProjectIdAndDataIdIn(projectId, dataIds);
-        LoggerFactory.db().logDelete("ProjectDataEntity", "projectId=" + projectId, "프로젝트-데이터 연결 " + dataIds.size() + "개 삭제");
+        LoggerFactory.db().logDelete(PROJECT_DATA_ENTITY, "projectId=" + projectId, "프로젝트-데이터 연결 " + dataIds.size() + "개 삭제");
     }
 }

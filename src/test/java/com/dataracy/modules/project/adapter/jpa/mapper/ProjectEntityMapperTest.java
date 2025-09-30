@@ -149,4 +149,42 @@ class ProjectEntityMapperTest {
                 .extracting(ProjectDataEntity::getDataId)
                 .containsExactlyInAnyOrder(111L, 222L);
     }
+
+    @Test
+    @DisplayName("toEntity → null 입력 처리")
+    void toEntity_null_입력() {
+        ProjectEntity result = ProjectEntityMapper.toEntity(null);
+        assertThat(result).isNull();
+    }
+
+    @Test
+    @DisplayName("toEntity → dataIds가 null인 경우")
+    void toEntity_dataIds_null() {
+        Project domain = Project.of(
+                10L,
+                "p-title",
+                20L,
+                30L,
+                40L,
+                50L,
+                60L,
+                true,
+                null, // parentProjectId null
+                "p-content",
+                "thumb",
+                null, // dataIds null
+                LocalDateTime.now(),
+                5L,
+                6L,
+                7L,
+                false,
+                List.of()
+        );
+
+        ProjectEntity entity = ProjectEntityMapper.toEntity(domain);
+
+        assertThat(entity.getTitle()).isEqualTo("p-title");
+        assertThat(entity.getParentProject()).isNull();
+        assertThat(entity.getProjectDataEntities()).isEmpty();
+    }
 }

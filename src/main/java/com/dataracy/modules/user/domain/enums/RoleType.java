@@ -4,18 +4,20 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
 @Getter
-@RequiredArgsConstructor
 public enum RoleType {
     ROLE_USER("ROLE_USER"),
     ROLE_ADMIN("ROLE_ADMIN"),
     ROLE_ANONYMOUS("ROLE_ANONYMOUS");
 
     private final String value;
+    
+    RoleType(String value) {
+        this.value = value;
+    }
 
     /**
      * 주어진 문자열을 기반으로 일치하는 RoleType 열거형 상수를 반환합니다.

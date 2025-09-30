@@ -39,9 +39,9 @@ public class ProjectSearchController implements ProjectSearchApi {
     /**
      * 키워드로 실시간 프로젝트를 검색하여 최대 지정한 개수만큼의 결과를 반환합니다.
      *
-     * <p>검색 결과는 웹 레이어 DTO(RealTimeProjectWebResponse)로 매핑되어
+     * 검색 결과는 웹 레이어 DTO(RealTimeProjectWebResponse)로 매핑되어
      * ProjectSuccessStatus.FIND_REAL_TIME_PROJECTS 상태를 가진 SuccessResponse로 래핑되고,
-     * HTTP 200 OK 응답으로 반환됩니다. 발생한 예외는 호출자에게 전파됩니다.</p>
+     * HTTP 200 OK 응답으로 반환됩니다. 발생한 예외는 호출자에게 전파됩니다.
      *
      * @param keyword 검색에 사용할 키워드
      * @param size 반환할 최대 결과 수
@@ -68,9 +68,9 @@ public class ProjectSearchController implements ProjectSearchApi {
     /**
          * 주어진 프로젝트 ID를 기준으로 유사한 프로젝트 목록을 조회하여 HTTP 200 OK로 반환합니다.
          *
-         * <p>조회 결과는 {@code ProjectSuccessStatus.FIND_SIMILAR_PROJECTS} 상태와 함께
+         * 조회 결과는 {@code ProjectSuccessStatus.FIND_SIMILAR_PROJECTS} 상태와 함께
          * {@code SuccessResponse<List<SimilarProjectWebResponse>>} 형태로 래핑됩니다. 메서드는 내부에서 요청/응답 로그를 남기며,
-         * 처리 중 발생한 예외는 호출자에게 그대로 전파됩니다.</p>
+         * 처리 중 발생한 예외는 호출자에게 그대로 전파됩니다.
          *
          * @param projectId 유사 프로젝트를 찾을 기준이 되는 프로젝트의 ID
          * @param size 반환할 유사 프로젝트의 최대 개수

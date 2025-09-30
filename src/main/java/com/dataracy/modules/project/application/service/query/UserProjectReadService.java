@@ -28,11 +28,15 @@ public class UserProjectReadService implements FindUserProjectsUseCase {
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
 
+    // Use Case 상수 정의
+    private static final String FIND_USER_PROJECTS_USE_CASE = "FindUserProjectsUseCase";
+    private static final String FIND_LIKE_PROJECTS_USE_CASE = "FindLikeProjectsUseCase";
+
     /**
      * 지정된 사용자가 작성한 프로젝트들을 페이지 단위로 조회하여 각 프로젝트의 주제 및 저자 레벨 라벨을 포함한 응답 DTO 페이지를 반환합니다.
      *
-     * <p>데이터는 저장소에서 페이징으로 조회한 Project 엔티티를 기반으로 하며, 조회된 프로젝트들의 topicId와 authorLevelId를 모아서
-     * 각각의 라벨을 조회한 뒤 UserProjectResponse로 매핑합니다.</p>
+     * 데이터는 저장소에서 페이징으로 조회한 Project 엔티티를 기반으로 하며, 조회된 프로젝트들의 topicId와 authorLevelId를 모아서
+     * 각각의 라벨을 조회한 뒤 UserProjectResponse로 매핑합니다.
      *
      * @param userId   조회 대상 사용자 식별자
      * @param pageable 페이지 및 정렬 정보를 담은 객체
@@ -41,7 +45,7 @@ public class UserProjectReadService implements FindUserProjectsUseCase {
     @Override
     @Transactional(readOnly = true)
     public Page<UserProjectResponse> findUserProjects(Long userId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("FindUserProjects", "해당 회원이 작성한 프로젝트 목록 조회 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_USER_PROJECTS_USE_CASE, "해당 회원이 작성한 프로젝트 목록 조회 서비스 시작 userId=" + userId);
 
         Page<Project> savedProjects = findUserProjectsPort.findUserProjects(userId, pageable);
 
@@ -57,7 +61,7 @@ public class UserProjectReadService implements FindUserProjectsUseCase {
                 authorLevelLabelMap.get(project.getAuthorLevelId())
         ));
 
-        LoggerFactory.service().logSuccess("FindUserProjects", "해당 회원이 작성한 프로젝트 목록 조회 서비스 종료 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(FIND_USER_PROJECTS_USE_CASE, "해당 회원이 작성한 프로젝트 목록 조회 서비스 종료 userId=" + userId, startTime);
         return findUserProjectsResponse;
     }
 
@@ -72,7 +76,7 @@ public class UserProjectReadService implements FindUserProjectsUseCase {
      */
     @Override
     public Page<UserProjectResponse> findLikeProjects(Long userId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("FindLikeProjects", "해당 회원이 좋아요한 프로젝트 목록 조회 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_LIKE_PROJECTS_USE_CASE, "해당 회원이 좋아요한 프로젝트 목록 조회 서비스 시작 userId=" + userId);
 
         Page<Project> savedProjects = findUserProjectsPort.findLikeProjects(userId, pageable);
 
@@ -88,7 +92,7 @@ public class UserProjectReadService implements FindUserProjectsUseCase {
                 authorLevelLabelMap.get(project.getAuthorLevelId())
         ));
 
-        LoggerFactory.service().logSuccess("FindLikeProjects", "해당 회원이 좋아요한 프로젝트 목록 조회 서비스 종료 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(FIND_LIKE_PROJECTS_USE_CASE, "해당 회원이 좋아요한 프로젝트 목록 조회 서비스 종료 userId=" + userId, startTime);
         return findLikeProjectsResponse;
     }
 }

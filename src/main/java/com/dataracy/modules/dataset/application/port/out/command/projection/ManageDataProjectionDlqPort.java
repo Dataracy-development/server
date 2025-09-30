@@ -4,8 +4,8 @@ public interface ManageDataProjectionDlqPort {
     /**
  * 데이터 프로젝션 처리 실패 항목을 DLQ(Dead Letter Queue)로 저장한다.
  *
- * <p>프로젝션 갱신 중 오류가 발생한 데이터의 식별자, 다운로드 증분(delta),
- * 삭제 플래그, 및 마지막 오류 메시지를 기록하기 위해 사용된다.</p>
+ * 프로젝션 갱신 중 오류가 발생한 데이터의 식별자, 다운로드 증분(delta),
+ * 삭제 플래그, 및 마지막 오류 메시지를 기록하기 위해 사용된다.
  *
  * @param dataId       오류가 발생한 대상 데이터의 식별자
  * @param deltaDownload 적용되려던 다운로드 증분 값 (없을 수 있음)

@@ -30,9 +30,9 @@ public class ProjectLabelMapService implements FindProjectLabelMapUseCase {
     /**
      * 프로젝트 컬렉션에서 관련 ID들을 추출해 사용자명, 사용자 썸네일 및 각 레이블로 매핑한 결과를 반환합니다.
      *
-     * <p>각 Project에서 userId, topicId, analysisPurposeId, dataSourceId, authorLevelId를 수집한 뒤,
+     * 각 Project에서 userId, topicId, analysisPurposeId, dataSourceId, authorLevelId를 수집한 뒤,
      * 해당 ID들을 관련 UseCase에 위임하여 사용자명, 사용자 썸네일, 토픽 레이블, 분석 목적 레이블,
-     * 데이터 소스 레이블 및 저자 레벨 레이블을 조회해 ProjectLabelMapResponse로 합칩니다.</p>
+     * 데이터 소스 레이블 및 저자 레벨 레이블을 조회해 ProjectLabelMapResponse로 합칩니다.
      *
      * @param savedProjects 매핑 대상인 Project 객체들의 컬렉션
      * @return 사용자명, 사용자 썸네일, 토픽/분석 목적/데이터 소스/저자 레벨에 대한 ID→레이블 매핑을 포함한 ProjectLabelMapResponse

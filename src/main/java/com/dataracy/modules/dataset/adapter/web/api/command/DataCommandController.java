@@ -40,8 +40,8 @@ public class DataCommandController implements DataCommandApi {
     /**
      * 데이터 파일과 썸네일을 업로드하여 새로운 데이터셋을 생성하고 생성 결과를 반환합니다.
      *
-     * <p>데이터 업로드를 수행하고 결과를 웹 응답 DTO인 {@code UploadDataWebResponse}로 매핑하여
-     * {@code SuccessResponse.of(DataSuccessStatus.CREATED_DATASET, payload)} 형태로 HTTP 201(Created) 응답을 반환합니다.</p>
+     * 데이터 업로드를 수행하고 결과를 웹 응답 DTO인 {@code UploadDataWebResponse}로 매핑하여
+     * {@code SuccessResponse.of(DataSuccessStatus.CREATED_DATASET, payload)} 형태로 HTTP 201(Created) 응답을 반환합니다.
      *
      * @param userId 업로드를 요청한 사용자 ID
      * @param dataFile 업로드할 데이터 파일(MultipartFile)

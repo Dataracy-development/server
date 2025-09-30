@@ -7,40 +7,62 @@ import com.dataracy.modules.reference.application.dto.response.singleview.DataTy
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("DataTypeWebMapper 테스트")
 class DataTypeWebMapperTest {
+
     private final DataTypeWebMapper mapper = new DataTypeWebMapper();
 
     @Test
-    @DisplayName("toWebDto(single): 성공 - 필드 매핑")
-    void toWebDtoSingleSuccess() {
-        // given
-        DataTypeResponse src = new DataTypeResponse(1L, "v", "l");
+    @DisplayName("단일 DataTypeResponse를 DataTypeWebResponse로 변환 성공")
+    void toWebDto_ShouldConvertSingleResponse() {
+        // Given
+        DataTypeResponse response = new DataTypeResponse(1L, "type1", "Type 1");
 
-        // when
-        DataTypeWebResponse result = mapper.toWebDto(src);
+        // When
+        DataTypeWebResponse webResponse = mapper.toWebDto(response);
 
-        // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.value()).isEqualTo("v");
-        assertThat(result.label()).isEqualTo("l");
+        // Then
+        assertThat(webResponse).isNotNull();
+        assertThat(webResponse.id()).isEqualTo(1L);
+        assertThat(webResponse.value()).isEqualTo("type1");
+        assertThat(webResponse.label()).isEqualTo("Type 1");
     }
 
     @Test
-    @DisplayName("toWebDto(all): 성공 - 리스트 매핑, null/빈 처리")
-    void toWebDtoAllSuccessAndNullsafe() {
-        // given
-        AllDataTypesResponse src = new AllDataTypesResponse(java.util.List.of(new DataTypeResponse(1L,"v1","l1"), new DataTypeResponse(2L,"v2","l2")));
+    @DisplayName("전체 DataTypesResponse를 AllDataTypesWebResponse로 변환 성공")
+    void toWebDto_ShouldConvertAllResponse() {
+        // Given
+        DataTypeResponse response1 = new DataTypeResponse(1L, "type1", "Type 1");
+        DataTypeResponse response2 = new DataTypeResponse(2L, "type2", "Type 2");
+        AllDataTypesResponse allResponse = new AllDataTypesResponse(List.of(response1, response2));
 
-        // when
-        AllDataTypesWebResponse result = mapper.toWebDto(src);
-        AllDataTypesWebResponse nullSafe1 = mapper.toWebDto((AllDataTypesResponse) null);
-        AllDataTypesWebResponse nullSafe2 = mapper.toWebDto(new AllDataTypesResponse(null));
+        // When
+        AllDataTypesWebResponse webResponse = mapper.toWebDto(allResponse);
 
-        // then
-        assertThat(result.dataTypes()).hasSize(2);
-        assertThat(nullSafe1.dataTypes()).isEmpty();
-        assertThat(nullSafe2.dataTypes()).isEmpty();
+        // Then
+        assertThat(webResponse).isNotNull();
+        assertThat(webResponse.dataTypes()).hasSize(2);
+        assertThat(webResponse.dataTypes().get(0).id()).isEqualTo(1L);
+        assertThat(webResponse.dataTypes().get(0).value()).isEqualTo("type1");
+        assertThat(webResponse.dataTypes().get(1).id()).isEqualTo(2L);
+        assertThat(webResponse.dataTypes().get(1).value()).isEqualTo("type2");
+    }
+
+    @Test
+    @DisplayName("빈 리스트로 AllDataTypesResponse 변환 성공")
+    void toWebDto_ShouldConvertEmptyResponse() {
+        // Given
+        AllDataTypesResponse allResponse = new AllDataTypesResponse(List.of());
+
+        // When
+        AllDataTypesWebResponse webResponse = mapper.toWebDto(allResponse);
+
+        // Then
+        assertThat(webResponse).isNotNull();
+        assertThat(webResponse.dataTypes()).isEmpty();
     }
 }

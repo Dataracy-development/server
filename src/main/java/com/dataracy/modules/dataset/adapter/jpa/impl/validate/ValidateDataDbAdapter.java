@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 public class ValidateDataDbAdapter implements CheckDataExistsByIdPort {
     private final DataJpaRepository dataJpaRepository;
 
+    // Entity 상수 정의
+    private static final String DATA_ENTITY = "DataEntity";
+
     /**
      * 주어진 ID에 해당하는 데이터가 저장소에 존재하는지 반환합니다.
      *
@@ -20,7 +23,7 @@ public class ValidateDataDbAdapter implements CheckDataExistsByIdPort {
     @Override
     public boolean existsDataById(Long dataId) {
         boolean isExist = dataJpaRepository.existsById(dataId);
-        LoggerFactory.db().logExist("DataEntity", "주어진 ID의 데이터가 저장소에 존재 확인이 완료되었습니다. dataId=" + dataId + ", exists=" + isExist);
+        LoggerFactory.db().logExist(DATA_ENTITY, "주어진 ID의 데이터가 저장소에 존재 확인이 완료되었습니다. dataId=" + dataId + ", exists=" + isExist);
         return isExist;
     }
 }

@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -28,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = LikeController.class)
+@WebMvcTest(controllers = LikeController.class, includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {com.dataracy.modules.common.util.CookieUtil.class, com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver.class}))
 class LikeControllerTest {
 
     @Autowired
@@ -43,15 +45,17 @@ class LikeControllerTest {
     @MockBean
     private LikeTargetUseCase likeTargetUseCase;
 
-    // 공통 모킹
     @MockBean
-    private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+    private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
 
     @MockBean
     private JwtValidateUseCase jwtValidateUseCase;
 
     @MockBean
-    private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
+    private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+
+    @MockBean
+    private com.dataracy.modules.security.config.SecurityPathConfig securityPathConfig;
 
     @BeforeEach
     void setupResolver() throws Exception {

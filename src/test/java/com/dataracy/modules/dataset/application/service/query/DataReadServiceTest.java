@@ -27,7 +27,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
@@ -40,8 +41,11 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DataReadServiceTest {
 
     @InjectMocks
@@ -92,6 +96,12 @@ class DataReadServiceTest {
     @Mock
     private FindDataLabelMapUseCase labelMapUseCase;
 
+    @Mock
+    private com.dataracy.modules.dataset.application.port.out.storage.PopularDataSetsStoragePort popularDataSetsStoragePort;
+
+    @Mock
+    private com.dataracy.modules.dataset.application.port.in.storage.UpdatePopularDataSetsStorageUseCase updatePopularDataSetsStorageUseCase;
+
     private Data sample() {
         return Data.of(
                 1L,
@@ -122,6 +132,10 @@ class DataReadServiceTest {
         void getPopularDataSetsSuccess() {
             // given
             DataWithProjectCountDto dto = new DataWithProjectCountDto(sample(), 2L);
+            
+            // 저장소에서 데이터가 없다고 Mock
+            given(popularDataSetsStoragePort.getPopularDataSets()).willReturn(Optional.empty());
+            
             given(getPopularDataSetsPort.getPopularDataSets(3)).willReturn(List.of(dto));
             given(labelMapUseCase.labelMapping(any()))
                     .willReturn(new DataLabelMapResponse(

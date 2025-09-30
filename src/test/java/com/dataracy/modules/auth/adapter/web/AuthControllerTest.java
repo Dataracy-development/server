@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -28,7 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = AuthController.class)
+@WebMvcTest(controllers = AuthController.class, includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = com.dataracy.modules.common.util.CookieUtil.class))
 class AuthControllerTest {
 
     @Autowired
@@ -52,6 +54,9 @@ class AuthControllerTest {
     @MockBean
     private JwtValidateUseCase jwtValidateUseCase;
 
+    @MockBean
+    private com.dataracy.modules.security.config.SecurityPathConfig securityPathConfig;
+
     @Test
     @DisplayName("자체 로그인 성공 시 RefreshToken 쿠키 발급")
     void loginSuccess() throws Exception {
@@ -65,7 +70,7 @@ class AuthControllerTest {
 
         given(authWebMapper.toApplicationDto(any(SelfLoginWebRequest.class)))
                 .willReturn(appReq);
-        given(selfLoginUseCase.login(appReq))
+        given(selfLoginUseCase.loginWithRateLimit(any(SelfLoginRequest.class), any(String.class)))
                 .willReturn(refreshResponse);
 
         // when & then
@@ -95,6 +100,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.code").value(AuthSuccessStatus.OK_RE_ISSUE_TOKEN.getCode()))
                 .andExpect(jsonPath("$.message").value(AuthSuccessStatus.OK_RE_ISSUE_TOKEN.getMessage()))
                 .andExpect(cookie().exists("accessToken"))
-                .andExpect(cookie().exists("refreshToken"));
+                .andExpect(cookie().exists("refreshToken"))
+                .andExpect(cookie().exists("accessTokenExpiration"));
     }
 }

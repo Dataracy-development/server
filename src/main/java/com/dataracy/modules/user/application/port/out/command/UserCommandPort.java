@@ -43,7 +43,7 @@ void updateProfileImageFile(Long userId, String profileImageFileUrl);
     /**
  * 지정한 사용자를 탈퇴 처리한다.
  *
- * <p>구현체에 따라 계정 비활성화 또는 삭제 등 탈퇴에 필요한 모든 변경을 수행한다.
+ * 구현체에 따라 계정 비활성화 또는 삭제 등 탈퇴에 필요한 모든 변경을 수행한다.
  *
  * @param userId 탈퇴 처리할 사용자의 식별자
  */

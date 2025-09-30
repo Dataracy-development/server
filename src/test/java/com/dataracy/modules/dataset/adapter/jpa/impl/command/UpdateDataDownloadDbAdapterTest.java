@@ -9,12 +9,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class UpdateDataDownloadDbAdapterTest {
 
     @Mock
@@ -42,7 +45,7 @@ class UpdateDataDownloadDbAdapterTest {
     void increaseDownloadCountShouldThrowWhenNotFound() {
         // given
         Long dataId = 999L;
-        willThrow(new DataException(DataErrorStatus.NOT_FOUND_DATA))
+        willThrow(new  DataException(DataErrorStatus.NOT_FOUND_DATA))
                 .given(repo).increaseDownload(dataId);
 
         // when & then

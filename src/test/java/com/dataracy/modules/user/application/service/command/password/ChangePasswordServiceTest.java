@@ -24,9 +24,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-
+import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class ChangePasswordServiceTest {
 
@@ -130,8 +128,8 @@ class ChangePasswordServiceTest {
         ChangePasswordRequest req = new ChangePasswordRequest("pw1", "pw2");
 
         // when & then
-        assertThatThrownBy(() -> service.changePassword(10L, req))
-                .isInstanceOf(UserException.class);
+        UserException exception = catchThrowableOfType(() -> service.changePassword(10L, req), UserException.class);
+        assertThat(exception).isNotNull();
         then(userQueryPort).shouldHaveNoInteractions();
         then(userCommandPort).shouldHaveNoInteractions();
     }
@@ -224,8 +222,8 @@ class ChangePasswordServiceTest {
             given(manageResetTokenUseCase.isValidResetToken("token")).willReturn(true);
 
             // when & then
-            assertThatThrownBy(() -> service.resetPassword(req))
-                    .isInstanceOf(UserException.class);
+            UserException exception = catchThrowableOfType(() -> service.resetPassword(req), UserException.class);
+            assertThat(exception).isNotNull();
             then(userCommandPort).shouldHaveNoInteractions();
         }
     }

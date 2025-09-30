@@ -18,7 +18,8 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 class EmailCodeRedisAdapterTest {
 
     StringRedisTemplate redisTemplate;
@@ -58,7 +59,7 @@ class EmailCodeRedisAdapterTest {
         @DisplayName("Redis 연결 실패 시 CommonException(REDIS_CONNECTION_FAILURE)")
         void connectionFailure() {
             // given
-            willThrow(new RedisConnectionFailureException("fail"))
+            willThrow(new  RedisConnectionFailureException("fail"))
                     .given(valueOps).set(anyString(), anyString(), anyLong(), any());
 
             // when
@@ -76,7 +77,7 @@ class EmailCodeRedisAdapterTest {
         @DisplayName("DataAccessException 시 CommonException(DATA_ACCESS_EXCEPTION)")
         void dataAccess() {
             // given
-            willThrow(mock(DataAccessException.class))
+            willThrow(new DataAccessException("Data access failed") {})
                     .given(valueOps).set(anyString(), anyString(), anyLong(), any());
 
             // when
@@ -114,7 +115,7 @@ class EmailCodeRedisAdapterTest {
         @DisplayName("Redis 연결 실패 시 CommonException(REDIS_CONNECTION_FAILURE)")
         void connectionFailure() {
             // given
-            given(redisTemplate.opsForValue()).willThrow(new RedisConnectionFailureException("down"));
+            given(redisTemplate.opsForValue()).willThrow(new  RedisConnectionFailureException("down"));
 
             // when
             CommonException ex = catchThrowableOfType(
@@ -131,7 +132,7 @@ class EmailCodeRedisAdapterTest {
         @DisplayName("DataAccessException 시 CommonException(DATA_ACCESS_EXCEPTION)")
         void dataAccess() {
             // given
-            given(redisTemplate.opsForValue()).willThrow(mock(DataAccessException.class));
+            given(redisTemplate.opsForValue()).willThrow(new DataAccessException("Data access failed") {});
 
             // when
             CommonException ex = catchThrowableOfType(
@@ -166,7 +167,7 @@ class EmailCodeRedisAdapterTest {
         @DisplayName("Redis 연결 실패 시 CommonException(REDIS_CONNECTION_FAILURE)")
         void connectionFailure() {
             // given
-            willThrow(new RedisConnectionFailureException("down"))
+            willThrow(new  RedisConnectionFailureException("down"))
                     .given(redisTemplate).delete(anyString());
 
             // when
@@ -184,7 +185,7 @@ class EmailCodeRedisAdapterTest {
         @DisplayName("DataAccessException 시 CommonException(DATA_ACCESS_EXCEPTION)")
         void dataAccess() {
             // given
-            willThrow(mock(DataAccessException.class))
+            willThrow(new DataAccessException("Data access failed") {})
                     .given(redisTemplate).delete(anyString());
 
             // when

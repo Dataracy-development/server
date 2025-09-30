@@ -32,7 +32,7 @@ public class CommentCommandController implements CommentCommandApi {
 
     /**
      * 프로젝트에 새 댓글을 등록하고 생성된 댓글 정보를 반환합니다.
-     * <p>
+     * 
      * 요청 바디로 전달된 댓글 데이터를 사용해 지정된 프로젝트에 댓글을 생성하고,
      * 생성된 댓글의 정보를 담은 SuccessResponse를 HTTP 201 Created 상태로 반환합니다.
      *

@@ -18,6 +18,9 @@ public class FileCommandService implements FileCommandUseCase {
     private final FileStoragePort fileStoragePort;
     private final ThumbnailGenerator thumbnailGenerator;
 
+    // Use Case 상수 정의
+    private static final String FILE_COMMAND_USE_CASE = "FileCommandUseCase";
+
     /**
      * 지정된 디렉터리에 파일을 업로드하고 업로드된 파일의 URL을 반환합니다.
      *
@@ -27,9 +30,9 @@ public class FileCommandService implements FileCommandUseCase {
      */
     @Override
     public String uploadFile(String directory, MultipartFile file) {
-        Instant startTime = LoggerFactory.service().logStart("FileCommandUseCase", "파일 업로드 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FILE_COMMAND_USE_CASE, "파일 업로드 서비스 시작");
         String url = fileStoragePort.upload(directory, file);
-        LoggerFactory.service().logSuccess("FileCommandUseCase", "파일 업로드 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(FILE_COMMAND_USE_CASE, "파일 업로드 서비스 종료", startTime);
         return url;
     }
 
@@ -40,9 +43,9 @@ public class FileCommandService implements FileCommandUseCase {
      */
     @Override
     public void deleteFile(String fileUrl) {
-        Instant startTime = LoggerFactory.service().logStart("FileCommandUseCase", "파일 삭제 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FILE_COMMAND_USE_CASE, "파일 삭제 서비스 시작");
         fileStoragePort.delete(fileUrl);
-        LoggerFactory.service().logSuccess("FileCommandUseCase", "파일 삭제 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(FILE_COMMAND_USE_CASE, "파일 삭제 서비스 종료", startTime);
     }
 
     /**
@@ -55,10 +58,10 @@ public class FileCommandService implements FileCommandUseCase {
      */
     @Override
     public String replaceFile(String directory, MultipartFile newFile, String oldFileUrl) {
-        Instant startTime = LoggerFactory.service().logStart("FileCommandUseCase", "파일 교체 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FILE_COMMAND_USE_CASE, "파일 교체 서비스 시작");
         String newUrl = uploadFile(directory, newFile);
         deleteFile(oldFileUrl);
-        LoggerFactory.service().logSuccess("FileCommandUseCase", "파일 교체 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(FILE_COMMAND_USE_CASE, "파일 교체 서비스 종료", startTime);
         return newUrl;
     }
 
@@ -73,11 +76,11 @@ public class FileCommandService implements FileCommandUseCase {
      * @return 업로드된 썸네일 파일의 URL
      */
     public String createThumbnail(MultipartFile original, String directory, String fileName, int width, int height) {
-        Instant startTime = LoggerFactory.service().logStart("FileCommandUseCase", "썸네일 이미지 생성 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FILE_COMMAND_USE_CASE, "썸네일 이미지 생성 서비스 시작");
         ByteArrayOutputStream baos = thumbnailGenerator.createThumbnail(original, width, height);
         MultipartFile thumb = convertToMultipartFile(baos, fileName, original.getContentType());
         String thumbUrl = fileStoragePort.upload(directory, thumb);
-        LoggerFactory.service().logSuccess("FileCommandUseCase", "썸네일 이미지 생성 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(FILE_COMMAND_USE_CASE, "썸네일 이미지 생성 서비스 종료", startTime);
         return thumbUrl;
     }
 

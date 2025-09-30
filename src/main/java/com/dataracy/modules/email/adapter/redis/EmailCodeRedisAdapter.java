@@ -22,6 +22,10 @@ public class EmailCodeRedisAdapter implements ManageEmailCodePort {
 
     @Value("${aws.ses.expire-minutes:5}")
     private long EXPIRE_MINUTES;
+    
+    // 에러 메시지 상수 정의
+    private static final String REDIS_CONNECTION_FAILURE_MESSAGE = "레디스 서버 연결에 실패했습니다.";
+    private static final String DATA_ACCESS_FAILURE_MESSAGE = "네트워크 오류로 데이터 접근에 실패했습니다.";
 
     /**
      * 이메일 인증키 생성
@@ -52,10 +56,10 @@ public class EmailCodeRedisAdapter implements ManageEmailCodePort {
             redisTemplate.opsForValue().set(emailKey, code, EXPIRE_MINUTES, TimeUnit.MINUTES);
             LoggerFactory.redis().logSaveOrUpdate(emailKey, "해당 인증 코드를 저장하였습니다. email=" + email);
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError(emailKey, "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(emailKey, REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError(emailKey, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(emailKey, DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -78,10 +82,10 @@ public class EmailCodeRedisAdapter implements ManageEmailCodePort {
             LoggerFactory.redis().logQueryEnd(emailKey, "이메일 인증 코드 조회 종료. email=" + email, startTime);
             return verificationCode;
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError(emailKey, "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(emailKey, REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError(emailKey, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(emailKey, DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -99,10 +103,10 @@ public class EmailCodeRedisAdapter implements ManageEmailCodePort {
             redisTemplate.delete(emailKey);
             LoggerFactory.redis().logDelete(emailKey, "이메일 인증 코드 삭제. email=" + email);
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError(emailKey, "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(emailKey, REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError(emailKey, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(emailKey, DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }

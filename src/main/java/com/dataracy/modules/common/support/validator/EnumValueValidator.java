@@ -20,16 +20,17 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
      * @param annotation Enum 유효성 애노테이션
      */
     @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void initialize(ValidEnumValue annotation) {
         this.required = annotation.required();
         this.validValues = new LinkedHashSet<>();
 
-        Class<? extends Enum<?>> enumClass = annotation.enumClass();
+        Class<? extends Enum> enumClass = annotation.enumClass();
         try {
             Field valueField = enumClass.getDeclaredField("value");
             valueField.setAccessible(true);
 
-            for (Enum<?> constant : enumClass.getEnumConstants()) {
+            for (Enum constant : enumClass.getEnumConstants()) {
                 Object val = valueField.get(constant);
                 if (val instanceof String stringValue) {
                     validValues.add(stringValue);

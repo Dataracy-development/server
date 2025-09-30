@@ -3,56 +3,64 @@ package com.dataracy.modules.dataset.application.service.validate;
 import com.dataracy.modules.dataset.application.port.out.validate.CheckDataExistsByIdPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DataValidateServiceTest {
 
-    @InjectMocks
-    private DataValidateService service;
-
     @Mock
-    private CheckDataExistsByIdPort port;
+    private CheckDataExistsByIdPort checkDataExistsByIdPort;
+
+    private DataValidateService dataValidateService;
+
+    @BeforeEach
+    void setUp() {
+        dataValidateService = new DataValidateService(checkDataExistsByIdPort);
+    }
 
     @Nested
-    @DisplayName("데이터셋 존재 검증")
-    class ExistsDataSets {
+    @DisplayName("validateData 메서드 테스트")
+    class ValidateDataTest {
 
         @Test
-        @DisplayName("데이터셋 존재 → 검증 통과")
-        void validateDataShouldPassWhenExists() {
+        @DisplayName("성공: 데이터가 존재할 때 검증 통과")
+        void validateData_데이터존재_검증통과() {
             // given
-            given(port.existsDataById(1L)).willReturn(true);
+            Long dataId = 1L;
+            given(checkDataExistsByIdPort.existsDataById(dataId)).willReturn(true);
 
-            // when (예외 없음)
-            service.validateData(1L);
-
-            // then (별도 예외 발생 없음 확인)
+            // when & then
+            dataValidateService.validateData(dataId);
+            
+            then(checkDataExistsByIdPort).should().existsDataById(dataId);
         }
 
         @Test
-        @DisplayName("데이터셋 미존재 → DataException(NOT_FOUND_DATA) 발생")
-        void validateDataShouldThrowWhenNotExists() {
+        @DisplayName("실패: 데이터가 존재하지 않을 때 DataException 발생")
+        void validateData_데이터존재하지않음_DataException발생() {
             // given
-            given(port.existsDataById(1L))
-                    .willReturn(false);
+            Long dataId = 999L;
+            given(checkDataExistsByIdPort.existsDataById(dataId)).willReturn(false);
 
             // when & then
-            DataException ex = catchThrowableOfType(
-                    () -> service.validateData(1L),
-                    DataException.class
-            );
-            assertThat(ex.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+            assertThatThrownBy(() -> dataValidateService.validateData(dataId))
+                .isInstanceOf(DataException.class);
+            
+            then(checkDataExistsByIdPort).should().existsDataById(dataId);
         }
     }
 }

@@ -23,6 +23,10 @@ public class CommentCommandDbAdapter implements
 {
     private final CommentJpaRepository commentJpaRepository;
 
+    // Entity 및 메시지 상수 정의
+    private static final String COMMENT_ENTITY = "CommentEntity";
+    private static final String COMMENT_NOT_FOUND_MESSAGE = "해당 댓글이 존재하지 않습니다. commentId=";
+
     /**
      * 댓글 도메인 객체를 데이터베이스에 저장하고, 저장된 댓글 도메인 객체를 반환합니다.
      *
@@ -33,7 +37,7 @@ public class CommentCommandDbAdapter implements
     public Comment uploadComment(Comment comment) {
         CommentEntity commentEntity = CommentEntityMapper.toEntity(comment);
         Comment savedComment = CommentEntityMapper.toDomain(commentJpaRepository.save(commentEntity));
-        LoggerFactory.db().logSave("CommentEntity", String.valueOf(savedComment.getId()), "댓글 작성이 완료되었습니다.");
+        LoggerFactory.db().logSave(COMMENT_ENTITY, String.valueOf(savedComment.getId()), "댓글 작성이 완료되었습니다.");
         return savedComment;
     }
 
@@ -50,16 +54,16 @@ public class CommentCommandDbAdapter implements
     public void modifyComment(Long projectId, Long commentId, ModifyCommentRequest requestDto) {
         CommentEntity comment = commentJpaRepository.findById(commentId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("CommentEntity", "해당 댓글이 존재하지 않습니다. commentId=" + commentId);
+                    LoggerFactory.db().logWarning(COMMENT_ENTITY, COMMENT_NOT_FOUND_MESSAGE + commentId);
                     return new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT);
                 });
         if (!comment.getProjectId().equals(projectId)) {
-            LoggerFactory.db().logWarning("CommentEntity", "해당 프로젝트에 작성된 댓글이 아닙니다. projectId=" + projectId + ", commentId=" + commentId);
+            LoggerFactory.db().logWarning(COMMENT_ENTITY, "해당 프로젝트에 작성된 댓글이 아닙니다. projectId=" + projectId + ", commentId=" + commentId);
             throw new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT);
         }
         comment.modifyContent(requestDto.content());
         commentJpaRepository.save(comment);
-        LoggerFactory.db().logUpdate("CommentEntity", String.valueOf(commentId), "댓글 업데이트가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(COMMENT_ENTITY, String.valueOf(commentId), "댓글 업데이트가 완료되었습니다.");
     }
 
     /**
@@ -74,14 +78,14 @@ public class CommentCommandDbAdapter implements
     public void deleteComment(Long projectId, Long commentId) {
         CommentEntity comment = commentJpaRepository.findById(commentId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("CommentEntity", "해당 댓글이 존재하지 않습니다. commentId=" + commentId);
+                    LoggerFactory.db().logWarning(COMMENT_ENTITY, COMMENT_NOT_FOUND_MESSAGE + commentId);
                     return new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT);
                 });
         if (!comment.getProjectId().equals(projectId)) {
-            LoggerFactory.db().logWarning("CommentEntity", "해당 프로젝트에 작성된 댓글이 아닙니다. projectId=" + projectId + ", commentId=" + commentId);
+            LoggerFactory.db().logWarning(COMMENT_ENTITY, "해당 프로젝트에 작성된 댓글이 아닙니다. projectId=" + projectId + ", commentId=" + commentId);
             throw new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT);
         }
         commentJpaRepository.delete(comment);
-        LoggerFactory.db().logDelete("CommentEntity", String.valueOf(commentId), "댓글 삭제가 완료되었습니다.");
+        LoggerFactory.db().logDelete(COMMENT_ENTITY, String.valueOf(commentId), "댓글 삭제가 완료되었습니다.");
     }
 }

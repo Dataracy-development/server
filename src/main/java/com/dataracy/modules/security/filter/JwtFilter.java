@@ -5,6 +5,7 @@ import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.exception.BusinessException;
 import com.dataracy.modules.common.util.ExtractHeaderUtil;
+import com.dataracy.modules.security.config.SecurityPathConfig;
 import com.dataracy.modules.security.principal.CustomUserDetails;
 import com.dataracy.modules.security.principal.UserAuthentication;
 import com.dataracy.modules.user.domain.enums.RoleType;
@@ -25,6 +26,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtValidateUseCase jwtValidateUseCase;
+    private final SecurityPathConfig securityPathConfig;
 
     /**
      * HTTP 요청에서 JWT 토큰을 추출하고 검증하여 인증 정보를 설정합니다.
@@ -67,8 +69,6 @@ public class JwtFilter extends OncePerRequestFilter {
     /**
      * 현재 HTTP 요청이 JWT 인증 필터를 우회해야 하는지 여부를 반환합니다.
      *
-     * 사전에 정의된 경로나 조건(예: Swagger, API 문서, 정적 리소스, 헬스 체크, 로그인, OAuth2, 루트, 에러, 웹훅, 공개 API, 회원가입, 인증, 비밀번호 재설정, 닉네임 중복 확인, 프로젝트 및 데이터셋 GET 요청, 파일 관련 경로 등)에 해당하는 경우 true를 반환하여 JWT 인증을 적용하지 않습니다.
-     *
      * @param request 현재 HTTP 요청 객체
      * @return 필터 예외 대상 경로일 경우 true, 그렇지 않으면 false
      */
@@ -77,33 +77,16 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         String method = request.getMethod();
 
-        // Swagger, static, auth 등 공개 API만 예외 처리
-        if (path.startsWith("/swagger") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
-                || path.startsWith("/swagger-resources") || path.startsWith("/webjars") || path.startsWith("/.well-known")
-                || path.equals("/swagger-ui.html") || path.equals("/favicon.ico")
-                || path.startsWith("/health") || path.startsWith("/actuator")
-                || path.startsWith("/static") || path.equals("/webhook")
-                || path.equals("/api/v1/base") || path.equals("/api/v1/onboarding")
-                || path.startsWith("/login") || path.startsWith("/oauth2")
-                || path.equals("/") || path.startsWith("/error")
-                || path.startsWith("/api/v1/references")
-                || path.startsWith("/api/v1/email")
-                || path.startsWith("/api/v1/signup")
-                || path.startsWith("/api/v1/auth")
-                || path.startsWith("/api/v1/users")
-                || path.equals("/api/v1/password/reset")
-                || path.equals("/api/v1/nickname/check")
-                || path.startsWith("/api/v1/files")) {
+        // 1. 기본 예외 경로 확인
+        if (securityPathConfig.isJwtExcludedPath(path)) {
             return true;
         }
 
-        // 프로젝트/데이터셋 GET 중 공개 API만 예외 처리 (popular, detail 등)
-        if (method.equals("GET")) {
-            if (path.startsWith("/api/v1/projects/") && !path.startsWith("/api/v1/projects/me") && !path.startsWith("/api/v1/projects/like")) {
-                return true; // 프로젝트 공개 조회
-            }
-            if (path.startsWith("/api/v1/datasets/") && !path.startsWith("/api/v1/datasets/me")) {
-                return true; // 데이터셋 공개 조회
+        // 2. GET 메서드의 공개 API 확인
+        if ("GET".equals(method)) {
+            if (securityPathConfig.isPublicProjectPath(path) || 
+                securityPathConfig.isPublicDatasetPath(path)) {
+                return true;
             }
         }
 

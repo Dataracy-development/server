@@ -16,7 +16,7 @@ public class OtherUserReadWebMapper {
     /**
      * 다른 사용자 정보 응답 애플리케이션 DTO를 웹 응답 DTO로 변환한다.
      *
-     * <p>입력된 {@code GetOtherUserInfoResponse}에서 id, nickname, authorLevelLabel, occupationLabel,
+     * 입력된 {@code GetOtherUserInfoResponse}에서 id, nickname, authorLevelLabel, occupationLabel,
      * profileImageUrl, introductionText 필드를 복사하고, 포함된 프로젝트 목록과 데이터셋 목록은
      * 이 매퍼의 대응되는 {@code toWebDto} 오버로드를 통해 각각 변환하여 {@code GetOtherUserInfoWebResponse}를 생성한다.
      *

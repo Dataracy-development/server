@@ -24,14 +24,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class SelfLoginServiceTest {
 
     @Mock
@@ -105,7 +108,7 @@ class SelfLoginServiceTest {
             SelfLoginRequest request = new SelfLoginRequest("bad@email.com", "wrong");
 
             given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("bad@email.com", "wrong"))
-                    .willThrow(new UserException(UserErrorStatus.BAD_REQUEST_LOGIN));
+                    .willThrow(new  UserException(UserErrorStatus.BAD_REQUEST_LOGIN));
 
             // when & then
             UserException ex = catchThrowableOfType(() -> service.login(request), UserException.class);
@@ -122,7 +125,7 @@ class SelfLoginServiceTest {
             given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "password123@"))
                     .willReturn(userInfo);
             given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
-                    .willThrow(new AuthException(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN));
+                    .willThrow(new  AuthException(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN));
 
             // when & then
             AuthException ex = catchThrowableOfType(() -> service.login(request), AuthException.class);
@@ -140,7 +143,7 @@ class SelfLoginServiceTest {
                     .willReturn(userInfo);
             given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
                     .willReturn("issued-refresh");
-            willThrow(new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE))
+            willThrow(new  CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE))
                     .given(manageRefreshTokenPort).saveRefreshToken("1", "issued-refresh");
 
             // when & then
@@ -159,7 +162,7 @@ class SelfLoginServiceTest {
                     .willReturn(userInfo);
             given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
                     .willReturn("issued-refresh");
-            willThrow(new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION))
+            willThrow(new  CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION))
                     .given(manageRefreshTokenPort).saveRefreshToken("1", "issued-refresh");
 
             // when & then

@@ -21,6 +21,13 @@ public class MetadataCommandDbAdapter implements CreateMetadataPort {
     private final DataMetadataJpaRepository dataMetadataJpaRepository;
     private final DataJpaRepository dataJpaRepository;
 
+    // Entity 상수 정의
+    private static final String DATA_ENTITY = "DataEntity";
+    private static final String METADATA_ENTITY = "MetaDataEntity";
+    
+    // 메시지 상수 정의
+    private static final String DATA_NOT_FOUND_MESSAGE = "해당 데이터셋이 존재하지 않습니다. dataId=";
+
     /**
      * 지정된 데이터 ID에 해당하는 데이터 엔티티에 메타데이터를 생성하거나 갱신하여 저장합니다.
      *
@@ -35,7 +42,7 @@ public class MetadataCommandDbAdapter implements CreateMetadataPort {
         try {
             DataEntity dataEntity = dataJpaRepository.findById(dataId)
                     .orElseThrow(() -> {
-                        LoggerFactory.db().logWarning("DataEntity", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                        LoggerFactory.db().logWarning(DATA_ENTITY, DATA_NOT_FOUND_MESSAGE + dataId);
                         return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                     });
 
@@ -51,13 +58,13 @@ public class MetadataCommandDbAdapter implements CreateMetadataPort {
                 newEntity.updateData(dataEntity);
                 metadataEntity = dataMetadataJpaRepository.save(newEntity);
             }
-            LoggerFactory.db().logSave("MetaDataEntity", String.valueOf(metadataEntity.getId()), "메타데이터 저장이 완료되었습니다.");
+            LoggerFactory.db().logSave(METADATA_ENTITY, String.valueOf(metadataEntity.getId()), "메타데이터 저장이 완료되었습니다.");
         } catch (DataException de) {
             // NOT_FOUND_DATA 등 기존 상태 유지
             throw de;
         } catch (Exception e) {
             // 원인 보존
-            LoggerFactory.db().logError("MetaDataEntity", "메타데이터 저장 중 오류가 발생하였습니다.", e);
+            LoggerFactory.db().logError(METADATA_ENTITY, "메타데이터 저장 중 오류가 발생하였습니다.", e);
             throw new DataException(DataErrorStatus.FAIL_UPLOAD_DATA);
         }
     }

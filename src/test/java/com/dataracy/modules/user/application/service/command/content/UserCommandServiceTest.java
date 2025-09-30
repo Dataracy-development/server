@@ -13,6 +13,7 @@ import com.dataracy.modules.reference.application.port.in.visitsource.ValidateVi
 import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
 import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,12 +30,16 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserCommandServiceTest {
 
     @Mock
     private UserCommandPort userCommandPort;
+
+    @Mock
+    private com.dataracy.modules.user.application.port.out.query.UserQueryPort userQueryPort;
 
     @Mock
     private DuplicateNicknameUseCase duplicateNicknameUseCase;
@@ -69,6 +74,12 @@ class UserCommandServiceTest {
     @Captor
     private ArgumentCaptor<String> stringCaptor;
 
+    @BeforeEach
+    void setUp() {
+        // Self-injection 설정 (Spring AOP 프록시를 통한 @DistributedLock 작동을 위함)
+        service.setSelf(service);
+    }
+
     @Nested
     @DisplayName("modifyUserInfo")
     class ModifyUserInfo {
@@ -85,10 +96,13 @@ class UserCommandServiceTest {
                 ModifyUserInfoRequest req = new ModifyUserInfoRequest(
                         "닉네임", 2L, 3L, List.of(10L, 20L), 4L, "자기소개"
                 );
-                given(profileImageFile.isEmpty()).willReturn(true);
+                MultipartFile nullImageFile = null;
+                
+                // Mock 설정
+                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
 
                 // when
-                service.modifyUserInfo(userId, profileImageFile, req);
+                service.modifyUserInfo(userId, nullImageFile, req);
 
                 // then
                 then(duplicateNicknameUseCase).should().validateDuplicatedNickname("닉네임");
@@ -113,6 +127,9 @@ class UserCommandServiceTest {
                 given(profileImageFile.getOriginalFilename()).willReturn("profile.png");
                 given(fileCommandUseCase.uploadFile(anyString(), eq(profileImageFile)))
                         .willReturn("https://s3.bucket/profile.png");
+                
+                // Mock 설정
+                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
 
                 // when
                 service.modifyUserInfo(userId, profileImageFile, req);
@@ -138,8 +155,11 @@ class UserCommandServiceTest {
                 ModifyUserInfoRequest req = new ModifyUserInfoRequest(
                         "중복닉", 2L, null, List.of(10L), 5L, "소개"
                 );
+                
+                // Mock 설정
+                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
 
-                willThrow(new IllegalArgumentException("닉네임 중복"))
+                willThrow(new  IllegalArgumentException("닉네임 중복"))
                         .given(duplicateNicknameUseCase).validateDuplicatedNickname("중복닉");
 
                 // when
@@ -150,7 +170,7 @@ class UserCommandServiceTest {
 
                 // then
                 assertThat(ex).isNotNull();
-                assertThat(ex.getMessage()).contains("닉네임 중복");
+                assertThat(ex.getMessage()).isEqualTo("닉네임 중복");
             }
 
             @Test
@@ -161,8 +181,11 @@ class UserCommandServiceTest {
                 ModifyUserInfoRequest req = new ModifyUserInfoRequest(
                         "닉네임", 2L, null, List.of(20L), null,"소개"
                 );
+                
+                // Mock 설정
+                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
 
-                willThrow(new IllegalArgumentException("잘못된 이미지"))
+                willThrow(new  IllegalArgumentException("잘못된 이미지"))
                         .given(profileImageFile).getOriginalFilename();
 
                 // when
@@ -173,7 +196,7 @@ class UserCommandServiceTest {
 
                 // then
                 assertThat(ex).isNotNull();
-                assertThat(ex.getMessage()).contains("잘못된 이미지");
+                assertThat(ex.getMessage()).isEqualTo("잘못된 이미지");
             }
         }
     }
