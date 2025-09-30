@@ -22,7 +22,6 @@ import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfo
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import com.dataracy.modules.dataset.application.port.out.storage.PopularDataSetsStoragePort;
 import com.dataracy.modules.dataset.application.port.in.storage.UpdatePopularDataSetsStorageUseCase;
-import com.dataracy.modules.dataset.domain.model.DataMetadata;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

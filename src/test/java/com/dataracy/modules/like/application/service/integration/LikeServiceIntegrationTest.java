@@ -3,7 +3,6 @@ package com.dataracy.modules.like.application.service.integration;
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;
 import com.dataracy.modules.like.application.port.in.command.LikeTargetUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
-import com.dataracy.modules.like.domain.model.Like;
 import com.dataracy.modules.common.test.support.TestDataBuilder;
 import com.dataracy.modules.user.adapter.jpa.entity.UserEntity;
 import com.dataracy.modules.user.adapter.jpa.repository.UserJpaRepository;

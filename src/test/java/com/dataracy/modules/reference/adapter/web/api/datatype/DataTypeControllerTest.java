@@ -6,7 +6,6 @@ import com.dataracy.modules.reference.adapter.web.mapper.DataTypeWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllDataTypesWebResponse;
 import com.dataracy.modules.reference.adapter.web.response.singleview.DataTypeWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllDataTypesResponse;
-import com.dataracy.modules.reference.application.dto.response.singleview.DataTypeResponse;
 import com.dataracy.modules.reference.application.port.in.datatype.FindAllDataTypesUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;

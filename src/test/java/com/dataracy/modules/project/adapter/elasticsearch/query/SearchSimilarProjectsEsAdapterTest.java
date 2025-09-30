@@ -4,7 +4,6 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.dataracy.modules.common.logging.ElasticLogger;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
-import com.dataracy.modules.project.application.dto.response.search.SimilarProjectResponse;
 import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.model.Project;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,15 +15,11 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.util.List;
 import java.util.function.Function;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;

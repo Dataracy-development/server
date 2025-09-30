@@ -1,12 +1,9 @@
 package com.dataracy.modules.common.util;
 
-import com.dataracy.modules.common.exception.CommonException;
-import com.dataracy.modules.common.status.CommonErrorStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("FileUtil 테스트")

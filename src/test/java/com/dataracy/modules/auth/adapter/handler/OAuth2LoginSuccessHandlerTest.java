@@ -14,10 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -27,9 +25,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -217,7 +212,7 @@ class OAuth2LoginSuccessHandlerTest {
 
     @Test
     @DisplayName("onAuthenticationSuccess - null OAuthUserInfo로도 처리한다")
-    void onAuthenticationSuccess_WhenNullOAuthUserInfo_HandlesCorrectly() throws IOException {
+    void onAuthenticationSuccess_WhenNullOAuthUserInfo_HandlesCorrectly()  {
         // given
         String provider = "google";
         Map<String, Object> attributes = new HashMap<>();
@@ -235,7 +230,7 @@ class OAuth2LoginSuccessHandlerTest {
 
     @Test
     @DisplayName("onAuthenticationSuccess - null 속성으로도 처리한다")
-    void onAuthenticationSuccess_WhenNullAttributes_HandlesCorrectly() throws IOException {
+    void onAuthenticationSuccess_WhenNullAttributes_HandlesCorrectly()  {
         // given
         String provider = "google";
 
@@ -251,7 +246,7 @@ class OAuth2LoginSuccessHandlerTest {
 
     @Test
     @DisplayName("onAuthenticationSuccess - null 제공자로도 처리한다")
-    void onAuthenticationSuccess_WhenNullProvider_HandlesCorrectly() throws IOException {
+    void onAuthenticationSuccess_WhenNullProvider_HandlesCorrectly()  {
         // given
         Map<String, Object> attributes = new HashMap<>();
 

@@ -22,8 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.BDDMockito.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DataEsProjectionWorkerTest {

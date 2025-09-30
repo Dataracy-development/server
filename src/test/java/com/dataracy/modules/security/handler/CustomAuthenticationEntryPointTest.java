@@ -1,7 +1,6 @@
 package com.dataracy.modules.security.handler;
 
 import com.dataracy.modules.common.dto.response.ErrorResponse;
-import com.dataracy.modules.common.exception.BusinessException;
 import com.dataracy.modules.common.status.BaseErrorCode;
 import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.security.exception.SecurityException;
@@ -21,10 +20,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CustomAuthenticationEntryPointTest {

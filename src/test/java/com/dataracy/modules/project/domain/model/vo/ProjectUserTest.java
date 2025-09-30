@@ -1,6 +1,5 @@
 package com.dataracy.modules.project.domain.model.vo;
 
-import org.junit.jupiter.api.Disabled;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.domain.exception.ProjectException;
@@ -20,9 +19,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
 class ProjectUserTest {

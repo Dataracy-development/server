@@ -2,7 +2,6 @@ package com.dataracy.modules.project.adapter.web.api.read;
 
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
-import com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver;
 import com.dataracy.modules.common.util.ExtractHeaderUtil;
 import com.dataracy.modules.project.adapter.web.mapper.read.ProjectReadWebMapper;
 import com.dataracy.modules.project.adapter.web.response.read.ProjectDetailWebResponse;
@@ -18,7 +17,6 @@ import com.dataracy.modules.project.application.port.in.query.read.FindContinued
 import com.dataracy.modules.project.application.port.in.query.read.FindConnectedProjectsUseCase;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;

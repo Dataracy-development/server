@@ -3,7 +3,6 @@ package com.dataracy.modules.auth.adapter.oauth;
 import com.dataracy.modules.auth.application.dto.response.OAuthUserInfo;
 import com.dataracy.modules.auth.application.port.out.oauth.OAuthUserInfoPort;
 import com.dataracy.modules.auth.domain.exception.AuthException;
-import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

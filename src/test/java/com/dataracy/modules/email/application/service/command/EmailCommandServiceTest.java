@@ -4,8 +4,6 @@ import com.dataracy.modules.email.application.port.out.code.ManageEmailCodePort;
 import com.dataracy.modules.email.application.port.out.command.SendEmailPort;
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 import com.dataracy.modules.email.domain.exception.EmailException;
-import com.dataracy.modules.email.domain.model.EmailContent;
-import com.dataracy.modules.email.domain.status.EmailErrorStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,7 +17,6 @@ import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 

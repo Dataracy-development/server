@@ -6,17 +6,14 @@ import com.dataracy.modules.common.support.lock.LockAcquisitionException;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import com.dataracy.modules.security.exception.SecurityException;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import java.util.HashSet;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;

@@ -4,7 +4,6 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.dataracy.modules.common.exception.EsUpdateException;
 import com.dataracy.modules.common.logging.ElasticLogger;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.project.adapter.elasticsearch.document.ProjectDeletedUpdate;
 import com.dataracy.modules.project.application.dto.document.ProjectSearchDocument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

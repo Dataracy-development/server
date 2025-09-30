@@ -6,7 +6,6 @@ import com.dataracy.modules.reference.adapter.web.mapper.TopicWebMapper;
 import com.dataracy.modules.reference.adapter.web.response.allview.AllTopicsWebResponse;
 import com.dataracy.modules.reference.adapter.web.response.singleview.TopicWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllTopicsResponse;
-import com.dataracy.modules.reference.application.dto.response.singleview.TopicResponse;
 import com.dataracy.modules.reference.application.port.in.topic.FindAllTopicsUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;

@@ -10,10 +10,6 @@ import com.dataracy.modules.comment.domain.model.Comment;
 import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
 import com.dataracy.modules.like.application.port.in.query.FindTargetIdsUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
-import com.dataracy.modules.reference.application.port.in.authorlevel.GetAuthorLevelLabelFromIdUseCase;
-import com.dataracy.modules.user.application.port.in.query.extractor.FindUserAuthorLevelIdsUseCase;
-import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
-import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -37,8 +33,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)

@@ -7,7 +7,6 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.application.dto.document.DataSearchDocument;
 import com.dataracy.modules.dataset.application.dto.response.read.RecentMinimalDataResponse;
 import com.dataracy.modules.dataset.domain.exception.DataException;
-import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,6 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SearchRealTimeDataSetsEsAdapterTest {

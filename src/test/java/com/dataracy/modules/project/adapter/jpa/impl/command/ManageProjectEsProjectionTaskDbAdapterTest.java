@@ -2,7 +2,6 @@ package com.dataracy.modules.project.adapter.jpa.impl.command;
 
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectEsProjectionTaskEntity;
 import com.dataracy.modules.project.adapter.jpa.repository.ProjectEsProjectionTaskRepository;
-import com.dataracy.modules.project.application.port.out.command.projection.ManageProjectProjectionTaskPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,11 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**

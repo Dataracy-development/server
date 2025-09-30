@@ -151,7 +151,7 @@ class MemoryRateLimitAdapterTest {
 
     @Test
     @DisplayName("isAllowed - 윈도우 시간이 지나면 카운터가 리셋된다")
-    void isAllowed_WhenWindowExpires_ResetsCounter() throws InterruptedException {
+    void isAllowed_WhenWindowExpires_ResetsCounter() {
         // given
         String key = "192.168.1.1";
         int maxRequests = 1;

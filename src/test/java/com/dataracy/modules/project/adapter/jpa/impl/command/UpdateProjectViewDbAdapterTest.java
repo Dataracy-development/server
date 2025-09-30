@@ -1,7 +1,6 @@
 package com.dataracy.modules.project.adapter.jpa.impl.command;
 
 import com.dataracy.modules.project.adapter.jpa.repository.ProjectJpaRepository;
-import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectViewPort;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,6 @@ import org.springframework.test.util.ReflectionTestUtils;import org.springframew
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.*;

@@ -2,7 +2,6 @@ package com.dataracy.modules.dataset.application.service.validate;
 
 import com.dataracy.modules.dataset.application.port.out.validate.CheckDataExistsByIdPort;
 import com.dataracy.modules.dataset.domain.exception.DataException;
-import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 

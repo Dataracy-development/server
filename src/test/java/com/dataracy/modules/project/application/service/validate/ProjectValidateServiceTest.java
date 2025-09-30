@@ -2,7 +2,6 @@ package com.dataracy.modules.project.application.service.validate;
 
 import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByIdPort;
 import com.dataracy.modules.project.domain.exception.ProjectException;
-import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

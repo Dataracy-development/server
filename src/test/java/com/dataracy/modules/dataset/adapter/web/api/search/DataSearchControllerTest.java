@@ -2,7 +2,6 @@ package com.dataracy.modules.dataset.adapter.web.api.search;
 
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
-import com.dataracy.modules.dataset.adapter.web.api.search.DataSearchController;
 import com.dataracy.modules.dataset.adapter.web.mapper.search.DataFilterWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.search.DataSearchWebMapper;
 import com.dataracy.modules.dataset.adapter.web.request.search.FilteringDataWebRequest;

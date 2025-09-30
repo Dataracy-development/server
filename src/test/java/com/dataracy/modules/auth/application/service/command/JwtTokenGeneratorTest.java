@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -50,7 +49,7 @@ class JwtTokenGeneratorTest {
 
     @Test
     @DisplayName("generateRegisterToken - 레지스터 토큰을 성공적으로 생성한다")
-    void generateRegisterToken_Success() throws Exception {
+    void generateRegisterToken_Success()  {
         // given
         String provider = "google";
         String providerId = "123456";
@@ -72,7 +71,7 @@ class JwtTokenGeneratorTest {
 
     @Test
     @DisplayName("generateRegisterToken - 토큰 생성 실패 시 AuthException을 던진다")
-    void generateRegisterToken_Failure() throws Exception {
+    void generateRegisterToken_Failure()  {
         // given
         String provider = "google";
         String providerId = "123456";
@@ -91,7 +90,7 @@ class JwtTokenGeneratorTest {
 
     @Test
     @DisplayName("generateResetPasswordToken - 패스워드 재설정 토큰을 성공적으로 생성한다")
-    void generateResetPasswordToken_Success() throws Exception {
+    void generateResetPasswordToken_Success()  {
         // given
         String email = "test@example.com";
         String expectedToken = "reset_token_123";
@@ -111,7 +110,7 @@ class JwtTokenGeneratorTest {
 
     @Test
     @DisplayName("generateResetPasswordToken - 토큰 생성 실패 시 AuthException을 던진다")
-    void generateResetPasswordToken_Failure() throws Exception {
+    void generateResetPasswordToken_Failure()  {
         // given
         String email = "test@example.com";
         
@@ -128,7 +127,7 @@ class JwtTokenGeneratorTest {
 
     @Test
     @DisplayName("generateAccessToken - 액세스 토큰을 성공적으로 생성한다")
-    void generateAccessToken_Success() throws Exception {
+    void generateAccessToken_Success()  {
         // given
         Long userId = 1L;
         RoleType role = RoleType.ROLE_USER;
@@ -149,7 +148,7 @@ class JwtTokenGeneratorTest {
 
     @Test
     @DisplayName("generateAccessToken - 토큰 생성 실패 시 AuthException을 던진다")
-    void generateAccessToken_Failure() throws Exception {
+    void generateAccessToken_Failure()  {
         // given
         Long userId = 1L;
         RoleType role = RoleType.ROLE_USER;
@@ -167,7 +166,7 @@ class JwtTokenGeneratorTest {
 
     @Test
     @DisplayName("generateRefreshToken - 리프레시 토큰을 성공적으로 생성한다")
-    void generateRefreshToken_Success() throws Exception {
+    void generateRefreshToken_Success()  {
         // given
         Long userId = 1L;
         RoleType role = RoleType.ROLE_USER;
@@ -188,7 +187,7 @@ class JwtTokenGeneratorTest {
 
     @Test
     @DisplayName("generateRefreshToken - 토큰 생성 실패 시 AuthException을 던진다")
-    void generateRefreshToken_Failure() throws Exception {
+    void generateRefreshToken_Failure()  {
         // given
         Long userId = 1L;
         RoleType role = RoleType.ROLE_USER;
@@ -206,7 +205,7 @@ class JwtTokenGeneratorTest {
 
     @Test
     @DisplayName("getErrorStatus - 알 수 없는 토큰 타입에 대해 기본 에러 상태를 반환한다")
-    void getErrorStatus_UnknownTokenType() throws Exception {
+    void getErrorStatus_UnknownTokenType()  {
         // given
         // getErrorStatus는 private 메서드이므로 간접적으로 테스트
         when(jwtGeneratorPort.generateAccessToken(any(), any()))

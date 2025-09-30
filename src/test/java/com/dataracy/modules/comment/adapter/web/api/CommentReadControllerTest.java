@@ -1,6 +1,5 @@
 package com.dataracy.modules.comment.adapter.web.api;
 
-import com.dataracy.modules.comment.adapter.web.api.read.CommentReadController;
 import com.dataracy.modules.comment.adapter.web.mapper.read.ReadCommentWebMapper;
 import com.dataracy.modules.comment.adapter.web.response.read.FindCommentWebResponse;
 import com.dataracy.modules.comment.adapter.web.response.read.FindReplyCommentWebResponse;
@@ -10,21 +9,17 @@ import com.dataracy.modules.comment.application.port.in.query.read.FindCommentLi
 import com.dataracy.modules.comment.application.port.in.query.read.FindReplyCommentListUseCase;
 import com.dataracy.modules.comment.domain.status.CommentSuccessStatus;
 import com.dataracy.modules.common.util.ExtractHeaderUtil;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
 import java.util.List;
