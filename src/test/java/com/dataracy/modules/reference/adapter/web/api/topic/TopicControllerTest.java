@@ -7,7 +7,6 @@ import com.dataracy.modules.reference.adapter.web.response.allview.AllTopicsWebR
 import com.dataracy.modules.reference.adapter.web.response.singleview.TopicWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllTopicsResponse;
 import com.dataracy.modules.reference.application.port.in.topic.FindAllTopicsUseCase;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,6 @@ class TopicControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private FindAllTopicsUseCase findAllTopicsUseCase;

@@ -39,8 +39,8 @@ class CommentKafkaConsumerAdapterTest {
             increaseLikeCountUseCase,
             decreaseLikeCountUseCase
         );
-        ReflectionTestUtils.setField(adapter, "COMMENT_LIKE_INCREASE_TOPIC", "comment-like-increase-topic");
-        ReflectionTestUtils.setField(adapter, "COMMENT_LIKE_DECREASE_TOPIC", "comment-like-decrease-topic");
+        ReflectionTestUtils.setField(adapter, "commentLikeIncreaseTopic", "comment-like-increase-topic");
+        ReflectionTestUtils.setField(adapter, "commentLikeDecreaseTopic", "comment-like-decrease-topic");
     }
 
     @Test

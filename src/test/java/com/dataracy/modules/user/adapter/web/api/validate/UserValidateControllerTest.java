@@ -2,7 +2,6 @@ package com.dataracy.modules.user.adapter.web.api.validate;
 
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
-import com.dataracy.modules.user.adapter.web.api.validate.UserValidateController;
 import com.dataracy.modules.user.adapter.web.mapper.validate.UserValidationWebMapper;
 import com.dataracy.modules.user.adapter.web.request.validate.DuplicateNicknameWebRequest;
 import com.dataracy.modules.user.application.dto.request.validate.DuplicateNicknameRequest;
@@ -24,8 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

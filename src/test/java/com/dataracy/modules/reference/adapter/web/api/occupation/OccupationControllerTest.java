@@ -7,7 +7,6 @@ import com.dataracy.modules.reference.adapter.web.response.allview.AllOccupation
 import com.dataracy.modules.reference.adapter.web.response.singleview.OccupationWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllOccupationsResponse;
 import com.dataracy.modules.reference.application.port.in.occupation.FindAllOccupationsUseCase;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,6 @@ class OccupationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private FindAllOccupationsUseCase findAllOccupationsUseCase;

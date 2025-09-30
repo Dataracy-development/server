@@ -7,7 +7,6 @@ import com.dataracy.modules.reference.adapter.web.response.allview.AllDataTypesW
 import com.dataracy.modules.reference.adapter.web.response.singleview.DataTypeWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllDataTypesResponse;
 import com.dataracy.modules.reference.application.port.in.datatype.FindAllDataTypesUseCase;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,6 @@ class DataTypeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private FindAllDataTypesUseCase findAllDataTypesUseCase;

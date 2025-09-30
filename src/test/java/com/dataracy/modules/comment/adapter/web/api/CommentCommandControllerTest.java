@@ -71,7 +71,7 @@ class CommentCommandControllerTest {
     private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
 
     @BeforeEach
-    void setupResolver() throws Exception {
+    void setupResolver() {
         // 모든 @CurrentUserId Long 파라미터 → userId=1L 주입
         given(currentUserIdArgumentResolver.supportsParameter(any())).willReturn(true);
         given(currentUserIdArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);

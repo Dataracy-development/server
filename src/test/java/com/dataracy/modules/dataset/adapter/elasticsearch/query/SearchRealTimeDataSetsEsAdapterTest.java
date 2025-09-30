@@ -54,16 +54,6 @@ class SearchRealTimeDataSetsEsAdapterTest {
         int size = 10;
         Instant startTime = Instant.now();
         
-        DataSearchDocument mockDoc = DataSearchDocument.builder()
-            .id(123L)
-            .title("Test Dataset")
-            .userId(456L)
-            .username("testuser")
-            .userProfileImageUrl("http://example.com/profile.jpg")
-            .dataThumbnailUrl("http://example.com/thumb.jpg")
-            .createdAt(java.time.LocalDateTime.of(2024, 1, 1, 0, 0, 0))
-            .build();
-        
         SearchResponse<DataSearchDocument> mockResponse = mock(SearchResponse.class);
         given(mockResponse.hits()).willReturn(mock());
         given(mockResponse.hits().hits()).willReturn(List.of());

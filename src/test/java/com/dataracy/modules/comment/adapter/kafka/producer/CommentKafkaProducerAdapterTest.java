@@ -36,8 +36,8 @@ class CommentKafkaProducerAdapterTest {
     @BeforeEach
     void setUp() {
         adapter = new CommentKafkaProducerAdapter(kafkaTemplate);
-        ReflectionTestUtils.setField(adapter, "TOPIC_UPLOAD", "comment-uploaded-topic");
-        ReflectionTestUtils.setField(adapter, "TOPIC_DELETE", "comment-deleted-topic");
+        ReflectionTestUtils.setField(adapter, "topicUpload", "comment-uploaded-topic");
+        ReflectionTestUtils.setField(adapter, "topicDelete", "comment-deleted-topic");
     }
 
     @Test

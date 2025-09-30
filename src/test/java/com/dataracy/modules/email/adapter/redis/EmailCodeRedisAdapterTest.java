@@ -30,7 +30,7 @@ class EmailCodeRedisAdapterTest {
         valueOps = mock(ValueOperations.class);
         given(redisTemplate.opsForValue()).willReturn(valueOps);
         adapter = new EmailCodeRedisAdapter(redisTemplate);
-        ReflectionTestUtils.setField(adapter, "EXPIRE_MINUTES", 5L);
+        ReflectionTestUtils.setField(adapter, "expireMinutes", 5L);
     }
 
     @Nested

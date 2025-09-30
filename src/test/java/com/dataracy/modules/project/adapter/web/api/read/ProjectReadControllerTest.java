@@ -16,7 +16,6 @@ import com.dataracy.modules.project.application.port.in.query.read.FindUserProje
 import com.dataracy.modules.project.application.port.in.query.read.FindContinuedProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.read.FindConnectedProjectsUseCase;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,9 +44,6 @@ class ProjectReadControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private ProjectReadWebMapper projectReadWebMapper;
@@ -134,7 +129,6 @@ class ProjectReadControllerTest {
     @DisplayName("getPopularProjects API: 성공 - 200 OK와 JSON 응답 검증")
     void getPopularProjectsSuccess() throws Exception {
         // given
-        Pageable pageable = PageRequest.of(0, 10);
         PopularProjectResponse project1 = new PopularProjectResponse(
                 1L, "Popular Project 1", "Content 1", 1L, "User 1", "profile1.jpg",
                 "thumb1.jpg", "AI", "Research", "Public", "Expert", 10L, 5L, 100L

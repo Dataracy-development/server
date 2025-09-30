@@ -16,7 +16,6 @@ import com.dataracy.modules.project.application.port.in.query.search.SearchRealT
 import com.dataracy.modules.project.application.port.in.query.search.SearchSimilarProjectsUseCase;
 import com.dataracy.modules.project.application.port.in.query.search.SearchFilteredProjectsUseCase;
 import com.dataracy.modules.project.domain.status.ProjectSuccessStatus;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ import java.util.List;
 
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,9 +43,6 @@ class ProjectSearchControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private ProjectSearchWebMapper projectSearchWebMapper;
@@ -95,7 +90,6 @@ class ProjectSearchControllerTest {
         RealTimeProjectWebResponse webResponse2 = new RealTimeProjectWebResponse(
                 2L, "AI Project 2", 2L, "User 2", "profile2.jpg", "thumb2.jpg"
         );
-        List<RealTimeProjectWebResponse> webResponseList = List.of(webResponse1, webResponse2);
 
         given(searchRealTimeProjectsUseCase.searchByKeyword(keyword, size)).willReturn(responseList);
         given(projectSearchWebMapper.toWebDto(response1)).willReturn(webResponse1);
@@ -142,7 +136,6 @@ class ProjectSearchControllerTest {
                 3L, "Similar Project 2", "Content 2", 2L, "User 2", "profile2.jpg", "thumb2.jpg",
                 "AI", "Research", "Public", "Expert", 20L, 10L, 200L
         );
-        List<SimilarProjectWebResponse> webResponseList = List.of(webResponse1, webResponse2);
 
         given(searchSimilarProjectsUseCase.searchSimilarProjects(projectId, size)).willReturn(responseList);
         given(projectSearchWebMapper.toWebDto(response1)).willReturn(webResponse1);
@@ -167,9 +160,6 @@ class ProjectSearchControllerTest {
     @DisplayName("searchFilteredProjects API: 성공 - 200 OK와 JSON 응답 검증")
     void searchFilteredProjectsSuccess() throws Exception {
         // given
-        FilteringProjectWebRequest webRequest = new FilteringProjectWebRequest(
-                "AI", "Research", 1L, 2L, 3L, 4L
-        );
         FilteringProjectRequest requestDto = new FilteringProjectRequest(
                 "AI", "Research", 1L, 2L, 3L, 4L
         );
@@ -193,7 +183,6 @@ class ProjectSearchControllerTest {
                 2L, "Filtered Project 2", "Content 2", 2L, "User 2", "profile2.jpg", "thumb2.jpg",
                 "DATA", "Research", "Public", "Expert", 20L, 10L, 200L, LocalDateTime.now(), List.of()
         );
-        Page<FilteredProjectWebResponse> webResponsePage = new PageImpl<>(List.of(webResponse1, webResponse2), pageable, 2);
 
         given(projectFilterWebMapper.toApplicationDto(any(FilteringProjectWebRequest.class))).willReturn(requestDto);
         given(searchFilteredProjectsUseCase.searchByFilters(any(FilteringProjectRequest.class), any(Pageable.class))).willReturn(responsePage);

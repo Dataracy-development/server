@@ -22,7 +22,7 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
      * @param annotation Enum 유효성 애노테이션
      */
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("rawtypes")
     public void initialize(ValidEnumValue annotation) {
         this.required = annotation.required();
         this.validValues = new LinkedHashSet<>();

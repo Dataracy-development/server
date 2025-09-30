@@ -23,7 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -58,7 +57,7 @@ class LikeControllerTest {
     private com.dataracy.modules.security.config.SecurityPathConfig securityPathConfig;
 
     @BeforeEach
-    void setupResolver() throws Exception {
+    void setupResolver() {
         // 모든 @CurrentUserId Long 파라미터 → userId=1L 주입
         given(currentUserIdArgumentResolver.supportsParameter(any())).willReturn(true);
         given(currentUserIdArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
@@ -76,7 +75,7 @@ class LikeControllerTest {
         TargetLikeRequest dto = new TargetLikeRequest(7L, "PROJECT", false);
 
         given(likeWebMapper.toApplicationDto(any())).willReturn(dto);
-        given(likeTargetUseCase.likeTarget(eq(1L), eq(dto))).willReturn(TargetType.PROJECT);
+        given(likeTargetUseCase.likeTarget(1L, dto)).willReturn(TargetType.PROJECT);
 
         // when & then
         mockMvc.perform(post("/api/v1/likes")
@@ -95,7 +94,7 @@ class LikeControllerTest {
         TargetLikeRequest dto = new TargetLikeRequest(77L, "COMMENT", true);
 
         given(likeWebMapper.toApplicationDto(any())).willReturn(dto);
-        given(likeTargetUseCase.likeTarget(eq(1L), eq(dto))).willReturn(TargetType.COMMENT);
+        given(likeTargetUseCase.likeTarget(1L, dto)).willReturn(TargetType.COMMENT);
 
         // when & then
         mockMvc.perform(post("/api/v1/likes")

@@ -19,11 +19,9 @@ public class ValidateProjectQueryDslAdapter implements
 {
     private final JPAQueryFactory queryFactory;
 
-    // Entity 및 메시지 상수 정의
+    // Entity 상수 정의
     private static final String PROJECT_ENTITY = "ProjectEntity";
     private static final String PROJECT_DATA_ENTITY = "ProjectDataEntity";
-    private static final String PROJECT_NOT_FOUND_MESSAGE = "해당 프로젝트가 존재하지 않습니다. projectId=";
-    private static final String PROJECT_DATA_NOT_FOUND_MESSAGE = "해당 프로젝트 데이터가 존재하지 않습니다. projectDataId=";
 
     private static final QProjectEntity project = QProjectEntity.projectEntity;
     private static final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;

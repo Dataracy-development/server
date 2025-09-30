@@ -4,7 +4,6 @@ import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
 import com.dataracy.modules.dataset.adapter.web.mapper.search.DataFilterWebMapper;
 import com.dataracy.modules.dataset.adapter.web.mapper.search.DataSearchWebMapper;
-import com.dataracy.modules.dataset.adapter.web.request.search.FilteringDataWebRequest;
 import com.dataracy.modules.dataset.adapter.web.response.read.RecentMinimalDataWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.search.FilteredDataWebResponse;
 import com.dataracy.modules.dataset.adapter.web.response.search.SimilarDataWebResponse;
@@ -16,7 +15,6 @@ import com.dataracy.modules.dataset.application.port.in.query.search.SearchFilte
 import com.dataracy.modules.dataset.application.port.in.query.search.SearchRealTimeDataSetsUseCase;
 import com.dataracy.modules.dataset.application.port.in.query.search.SearchSimilarDataSetsUseCase;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,9 +44,6 @@ class DataSearchControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private DataSearchWebMapper dataSearchWebMapper;
@@ -95,7 +89,7 @@ class DataSearchControllerTest {
                 5, 3, LocalDateTime.of(2025, 8, 4, 10, 30)
         );
 
-        given(searchSimilarDataSetsUseCase.searchSimilarDataSets(eq(dataId), eq(size)))
+        given(searchSimilarDataSetsUseCase.searchSimilarDataSets(dataId, size))
                 .willReturn(List.of(dto));
         given(dataSearchWebMapper.toWebDto(dto))
                 .willReturn(webRes);
@@ -136,7 +130,7 @@ class DataSearchControllerTest {
         
         // Page.map()이 제대로 작동하지 않을 수 있으므로 수동으로 Page 생성
         Page<FilteredDataResponse> responsePage = new PageImpl<>(List.of(dto), PageRequest.of(0, 5), 1);
-        given(searchFilteredDataSetsUseCase.searchFilteredDataSets(eq(reqDto), any(Pageable.class)))
+        given(searchFilteredDataSetsUseCase.searchFilteredDataSets(any(), any(Pageable.class)))
                 .willReturn(responsePage);
         given(dataFilterWebMapper.toWebDto(dto))
                 .willReturn(webRes);

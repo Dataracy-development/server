@@ -33,7 +33,6 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(controllers = com.dataracy.modules.user.adapter.web.api.command.UseCommandController.class, includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {CookieUtil.class, com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver.class, com.dataracy.modules.common.config.web.MultipartJackson2HttpMessageConverter.class, com.dataracy.modules.common.config.web.WebMvcConfig.class}))
@@ -67,7 +66,7 @@ class UserCommandControllerTest {
     private com.dataracy.modules.common.config.web.MultipartJackson2HttpMessageConverter multipartJackson2HttpMessageConverter;
 
     @BeforeEach
-    void setupResolver() throws Exception {
+    void setupResolver() {
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new com.dataracy.modules.user.adapter.web.api.command.UseCommandController(
                         userCommandWebMapper,

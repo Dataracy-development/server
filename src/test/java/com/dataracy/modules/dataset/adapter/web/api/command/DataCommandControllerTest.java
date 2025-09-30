@@ -80,7 +80,7 @@ class DataCommandControllerTest {
     private com.dataracy.modules.security.config.SecurityPathConfig securityPathConfig;
 
     @BeforeEach
-    void setupResolver() throws Exception {
+    void setupResolver() {
         // 모든 @CurrentUserId → userId=1L
         given(currentUserIdArgumentResolver.supportsParameter(any()))
                 .willReturn(true);

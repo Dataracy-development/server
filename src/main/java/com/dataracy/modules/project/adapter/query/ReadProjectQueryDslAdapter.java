@@ -43,9 +43,8 @@ public class ReadProjectQueryDslAdapter implements
 {
     private final JPAQueryFactory queryFactory;
 
-    // Entity 및 메시지 상수 정의
+    // Entity 상수 정의
     private static final String PROJECT_ENTITY = "ProjectEntity";
-    private static final String PROJECT_NOT_FOUND_MESSAGE = "해당하는 프로젝트 리소스가 존재하지 않습니다. projectId=";
 
     private static final QProjectEntity project = QProjectEntity.projectEntity;
     private static final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;

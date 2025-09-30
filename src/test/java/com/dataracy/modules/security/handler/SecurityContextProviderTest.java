@@ -2,13 +2,11 @@ package com.dataracy.modules.security.handler;
 
 import com.dataracy.modules.auth.domain.model.AnonymousUser;
 import com.dataracy.modules.security.principal.CustomUserDetails;
-import com.dataracy.modules.security.principal.UserAuthentication;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -8,9 +8,7 @@ import com.dataracy.modules.user.application.dto.response.read.GetUserInfoRespon
 import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfoUseCase;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
-import com.dataracy.modules.security.handler.SecurityContextProvider;
 import com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,9 +36,6 @@ class UserReadControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
     private UserReadWebMapper userReadWebMapper;
 
@@ -60,7 +55,7 @@ class UserReadControllerTest {
     private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
 
     @BeforeEach
-    void setupResolver() throws Exception {
+    void setupResolver() {
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new com.dataracy.modules.user.adapter.web.api.read.UserReadController(
                         userReadWebMapper,

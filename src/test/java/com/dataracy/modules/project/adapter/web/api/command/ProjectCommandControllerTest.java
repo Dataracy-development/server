@@ -75,7 +75,7 @@ class ProjectCommandControllerTest {
     private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
 
     @BeforeEach
-    void setupResolver() throws Exception {
+    void setupResolver() {
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new com.dataracy.modules.project.adapter.web.api.command.ProjectCommandController(
                         projectCommandWebMapper,

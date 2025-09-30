@@ -11,7 +11,6 @@ import com.dataracy.modules.user.application.dto.response.read.GetOtherUserDataR
 import com.dataracy.modules.user.application.dto.response.read.GetOtherUserProjectResponse;
 import com.dataracy.modules.user.application.port.in.query.extractor.GetOtherUserInfoUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +39,6 @@ class OtherUserReadControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private OtherUserReadWebMapper otherUserReadWebMapper;

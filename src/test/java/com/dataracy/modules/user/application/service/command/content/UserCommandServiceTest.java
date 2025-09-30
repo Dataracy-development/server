@@ -1,7 +1,6 @@
 package com.dataracy.modules.user.application.service.command.content;
 
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
-import com.dataracy.modules.auth.application.port.in.token.BlackListTokenUseCase;
 import com.dataracy.modules.auth.application.port.in.token.ManageRefreshTokenUseCase;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
@@ -30,8 +29,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserCommandServiceTest {
 

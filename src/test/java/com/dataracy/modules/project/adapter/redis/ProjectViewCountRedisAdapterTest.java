@@ -1,7 +1,6 @@
 package com.dataracy.modules.project.adapter.redis;
 
 import com.dataracy.modules.common.exception.CommonException;
-import com.dataracy.modules.common.status.CommonErrorStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,17 +18,14 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import java.time.Duration;
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,9 +59,9 @@ class ProjectViewCountRedisAdapterTest {
             String targetType = "project";
             
             given(valueOperations.setIfAbsent(
-                eq("viewDedup:project:1:user123"), 
-                eq("1"), 
-                eq(Duration.ofMinutes(5))
+                "viewDedup:project:1:user123", 
+                "1", 
+                Duration.ofMinutes(5)
             )).willReturn(true);
 
             // when
@@ -73,9 +69,9 @@ class ProjectViewCountRedisAdapterTest {
 
             // then
             then(valueOperations).should().setIfAbsent(
-                eq("viewDedup:project:1:user123"), 
-                eq("1"), 
-                eq(Duration.ofMinutes(5))
+                "viewDedup:project:1:user123", 
+                "1", 
+                Duration.ofMinutes(5)
             );
             then(valueOperations).should().increment("viewCount:project:1");
         }
@@ -89,9 +85,9 @@ class ProjectViewCountRedisAdapterTest {
             String targetType = "project";
             
             given(valueOperations.setIfAbsent(
-                eq("viewDedup:project:1:user123"), 
-                eq("1"), 
-                eq(Duration.ofMinutes(5))
+                "viewDedup:project:1:user123", 
+                "1", 
+                Duration.ofMinutes(5)
             )).willReturn(false);
 
             // when
@@ -99,9 +95,9 @@ class ProjectViewCountRedisAdapterTest {
 
             // then
             then(valueOperations).should().setIfAbsent(
-                eq("viewDedup:project:1:user123"), 
-                eq("1"), 
-                eq(Duration.ofMinutes(5))
+                "viewDedup:project:1:user123", 
+                "1", 
+                Duration.ofMinutes(5)
             );
             // increment는 호출되지 않아야 함
         }
@@ -232,7 +228,7 @@ class ProjectViewCountRedisAdapterTest {
             Long projectId = 1L;
             String targetType = "project";
             
-            given(redisTemplate.execute(any(), eq(false))).willReturn(150L);
+            given(redisTemplate.execute(any(), any(Boolean.class))).willReturn(150L);
 
             // when
             Long result = adapter.popViewCount(projectId, targetType);
@@ -248,7 +244,7 @@ class ProjectViewCountRedisAdapterTest {
             Long projectId = 1L;
             String targetType = "project";
             
-            given(redisTemplate.execute(any(), eq(false))).willReturn(0L);
+            given(redisTemplate.execute(any(), any(Boolean.class))).willReturn(0L);
 
             // when
             Long result = adapter.popViewCount(projectId, targetType);

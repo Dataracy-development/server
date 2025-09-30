@@ -18,8 +18,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class PopularProjectsBatchServiceTest {
@@ -89,10 +87,10 @@ class PopularProjectsBatchServiceTest {
             given(getPopularProjectsPort.getPopularProjects(20)).willReturn(savedProjects);
             given(findProjectLabelMapUseCase.labelMapping(savedProjects)).willReturn(labelResponse);
             given(popularProjectDtoMapper.toResponseDto(
-                    eq(project1), eq("user1"), eq("profile1.png"), eq("topic1"), eq("purpose1"), eq("source1"), eq("level1")
+                    project1, "user1", "profile1.png", "topic1", "purpose1", "source1", "level1"
             )).willReturn(response1);
             given(popularProjectDtoMapper.toResponseDto(
-                    eq(project2), eq("user2"), eq("profile2.png"), eq("topic2"), eq("purpose2"), eq("source2"), eq("level2")
+                    project2, "user2", "profile2.png", "topic2", "purpose2", "source2", "level2"
             )).willReturn(response2);
 
             // when
@@ -149,7 +147,7 @@ class PopularProjectsBatchServiceTest {
             given(getPopularProjectsPort.getPopularProjects(size)).willReturn(savedProjects);
             given(findProjectLabelMapUseCase.labelMapping(savedProjects)).willReturn(labelResponse);
             given(popularProjectDtoMapper.toResponseDto(
-                    eq(project), eq("user1"), eq("profile1.png"), eq("topic1"), eq("purpose1"), eq("source1"), eq("level1")
+                    project, "user1", "profile1.png", "topic1", "purpose1", "source1", "level1"
             )).willReturn(response);
 
             // when
@@ -209,7 +207,7 @@ class PopularProjectsBatchServiceTest {
             given(getPopularProjectsPort.getPopularProjects(size)).willReturn(savedProjects);
             given(findProjectLabelMapUseCase.labelMapping(savedProjects)).willReturn(labelResponse);
             given(popularProjectDtoMapper.toResponseDto(
-                    eq(project), eq("user1"), eq("profile1.png"), eq("topic1"), eq("purpose1"), eq("source1"), eq("level1")
+                    project, "user1", "profile1.png", "topic1", "purpose1", "source1", "level1"
             )).willReturn(response);
 
             // when

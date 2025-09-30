@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 /**
  * ManageProjectEsProjectionTaskDbAdapter 테스트

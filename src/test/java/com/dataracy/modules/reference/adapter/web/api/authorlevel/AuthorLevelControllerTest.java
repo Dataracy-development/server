@@ -7,7 +7,6 @@ import com.dataracy.modules.reference.adapter.web.response.allview.AllAuthorLeve
 import com.dataracy.modules.reference.adapter.web.response.singleview.AuthorLevelWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllAuthorLevelsResponse;
 import com.dataracy.modules.reference.application.port.in.authorlevel.FindAllAuthorLevelsUseCase;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,6 @@ class AuthorLevelControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private FindAllAuthorLevelsUseCase findAllAuthorLevelsUseCase;

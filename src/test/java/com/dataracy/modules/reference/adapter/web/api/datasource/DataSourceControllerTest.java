@@ -7,7 +7,6 @@ import com.dataracy.modules.reference.adapter.web.response.allview.AllDataSource
 import com.dataracy.modules.reference.adapter.web.response.singleview.DataSourceWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
 import com.dataracy.modules.reference.application.port.in.datasource.FindAllDataSourcesUseCase;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,6 @@ class DataSourceControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private FindAllDataSourcesUseCase findAllDataSourcesUseCase;

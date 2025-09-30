@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -107,8 +106,8 @@ class OAuth2LoginSuccessHandlerTest {
         verify(selectSocialProviderPort).extract(provider, attributes);
         verify(isNewUserUseCase).isNewUser(oAuthUserInfo);
         verify(handleUserUseCase).handleNewUser(oAuthUserInfo);
-        verify(cookieUtil).setCookie(eq(request), eq(response), eq("registerToken"), 
-                eq("register.token.here"), eq(1800));
+        verify(cookieUtil).setCookie(request, response, "registerToken", 
+                "register.token.here", 1800);
         // 리다이렉트는 Spring Security의 DefaultRedirectStrategy에서 처리되므로 검증 생략
     }
 
@@ -149,8 +148,8 @@ class OAuth2LoginSuccessHandlerTest {
         verify(selectSocialProviderPort).extract(provider, attributes);
         verify(isNewUserUseCase).isNewUser(oAuthUserInfo);
         verify(handleUserUseCase).handleExistingUser(oAuthUserInfo);
-        verify(cookieUtil).setCookie(eq(request), eq(response), eq("refreshToken"), 
-                eq("refresh.token.here"), eq(604800));
+        verify(cookieUtil).setCookie(request, response, "refreshToken", 
+                "refresh.token.here", 604800);
         // 리다이렉트는 Spring Security의 DefaultRedirectStrategy에서 처리되므로 검증 생략
     }
 
@@ -178,8 +177,8 @@ class OAuth2LoginSuccessHandlerTest {
         oAuth2LoginSuccessHandler.onAuthenticationSuccess(request, response, authentication);
 
         // then
-        verify(cookieUtil).setCookie(eq(request), eq(response), eq("registerToken"), 
-                eq("register.token.here"), eq(Integer.MAX_VALUE));
+        verify(cookieUtil).setCookie(request, response, "registerToken", 
+                "register.token.here", Integer.MAX_VALUE);
     }
 
     @Test
@@ -206,8 +205,8 @@ class OAuth2LoginSuccessHandlerTest {
         oAuth2LoginSuccessHandler.onAuthenticationSuccess(request, response, authentication);
 
         // then
-        verify(cookieUtil).setCookie(eq(request), eq(response), eq("refreshToken"), 
-                eq("refresh.token.here"), eq(Integer.MAX_VALUE));
+        verify(cookieUtil).setCookie(request, response, "refreshToken", 
+                "refresh.token.here", Integer.MAX_VALUE);
     }
 
     @Test

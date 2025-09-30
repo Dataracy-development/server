@@ -37,10 +37,10 @@ class LikeKafkaProducerAdapterTest {
     @BeforeEach
     void setUp() {
         adapter = new LikeKafkaProducerAdapter(kafkaTemplate);
-        ReflectionTestUtils.setField(adapter, "TOPIC_PROJECT_LIKE_INCREASE", "project-like-increase-topic");
-        ReflectionTestUtils.setField(adapter, "TOPIC_PROJECT_LIKE_DECREASE", "project-like-decrease-topic");
-        ReflectionTestUtils.setField(adapter, "TOPIC_COMMENT_LIKE_INCREASE", "comment-like-increase-topic");
-        ReflectionTestUtils.setField(adapter, "TOPIC_COMMENT_LIKE_DECREASE", "comment-like-decrease-topic");
+        ReflectionTestUtils.setField(adapter, "topicProjectLikeIncrease", "project-like-increase-topic");
+        ReflectionTestUtils.setField(adapter, "topicProjectLikeDecrease", "project-like-decrease-topic");
+        ReflectionTestUtils.setField(adapter, "topicCommentLikeIncrease", "comment-like-increase-topic");
+        ReflectionTestUtils.setField(adapter, "topicCommentLikeDecrease", "comment-like-decrease-topic");
     }
 
     @Test

@@ -15,8 +15,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserMultiQueryDbAdapterTest {
 
