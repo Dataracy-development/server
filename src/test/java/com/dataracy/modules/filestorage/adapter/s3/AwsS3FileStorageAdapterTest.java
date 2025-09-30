@@ -2,13 +2,15 @@ package com.dataracy.modules.filestorage.adapter.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.dataracy.modules.filestorage.config.FileStorageProperties;
 import com.dataracy.modules.filestorage.domain.exception.S3UploadException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.multipart.MultipartFile;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.test.util.ReflectionTestUtils;import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -16,12 +18,17 @@ import java.net.URL;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AwsS3FileStorageAdapterTest {
 
     @Mock
     private AmazonS3 amazonS3;
+
+    @Mock
+    private FileStorageProperties fileStorageProperties;
 
     @Mock
     private MultipartFile file;
@@ -35,6 +42,23 @@ class AwsS3FileStorageAdapterTest {
     @BeforeEach
     void init() {
         ReflectionTestUtils.setField(adapter, "bucket", "my-bucket");
+        
+        // FileStorageProperties 모킹 설정 (기본값으로 설정)
+        FileStorageProperties.FileSize fileSize = new FileStorageProperties.FileSize();
+        fileSize.setMultipartThreshold(20 * 1024 * 1024L); // 20MB
+        fileSize.setStreamingThreshold(5 * 1024 * 1024L);   // 5MB
+        
+        FileStorageProperties.Multipart multipart = new FileStorageProperties.Multipart();
+        multipart.setChunkSize(5 * 1024 * 1024L); // 5MB
+        
+        FileStorageProperties.Buffer buffer = new FileStorageProperties.Buffer();
+        buffer.setDefaultSize(8192);     // 8KB
+        buffer.setStreamingSize(16384);  // 16KB
+        
+        // lenient()를 사용하여 불필요한 스터빙 경고 방지
+        doReturn(fileSize).when(fileStorageProperties).getFileSize();
+        doReturn(multipart).when(fileStorageProperties).getMultipart();
+        doReturn(buffer).when(fileStorageProperties).getBuffer();
     }
 
     @Nested

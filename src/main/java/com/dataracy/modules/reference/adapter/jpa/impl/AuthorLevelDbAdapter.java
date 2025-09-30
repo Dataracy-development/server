@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 public class AuthorLevelDbAdapter implements AuthorLevelPort {
     private final AuthorLevelJpaRepository authorLevelJpaRepository;
 
+    // Entity 상수 정의
+    private static final String AUTHOR_LEVEL_ENTITY = "AuthorLevelEntity";
+
     /**
      * 모든 작성자 유형(AuthorLevel) 도메인 객체 목록을 조회한다.
      *
@@ -27,12 +30,12 @@ public class AuthorLevelDbAdapter implements AuthorLevelPort {
      */
     @Override
     public List<AuthorLevel> findAllAuthorLevels() {
-        Instant startTime = LoggerFactory.db().logQueryStart("AuthorLevelEntity", "[findAll] 작성자 유형 목록 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(AUTHOR_LEVEL_ENTITY, "[findAll] 작성자 유형 목록 조회 시작");
         List<AuthorLevelEntity> authorLevelEntities = authorLevelJpaRepository.findAll();
         List<AuthorLevel> authorLevels = authorLevelEntities.stream()
                 .map(AuthorLevelEntityMapper::toDomain)
                 .toList();
-        LoggerFactory.db().logQueryEnd("AuthorLevelEntity", "[findAll] 작성자 유형 목록 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(AUTHOR_LEVEL_ENTITY, "[findAll] 작성자 유형 목록 조회 종료", startTime);
         return authorLevels;
     }
 
@@ -44,13 +47,13 @@ public class AuthorLevelDbAdapter implements AuthorLevelPort {
      */
     @Override
     public Optional<AuthorLevel> findAuthorLevelById(Long authorLevelId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("AuthorLevelEntity", "[findById] 작성자 유형 목록 조회 시작 authorLevelId=" + authorLevelId);
+        Instant startTime = LoggerFactory.db().logQueryStart(AUTHOR_LEVEL_ENTITY, "[findById] 작성자 유형 목록 조회 시작 authorLevelId=" + authorLevelId);
         if (authorLevelId == null) {
             return Optional.empty();
         }
         Optional<AuthorLevel> authorLevel = authorLevelJpaRepository.findById(authorLevelId)
                 .map(AuthorLevelEntityMapper::toDomain);
-        LoggerFactory.db().logQueryEnd("AuthorLevelEntity", "[findById] 작성자 유형 목록 조회 종료 authorLevelId=" + authorLevelId, startTime);
+        LoggerFactory.db().logQueryEnd(AUTHOR_LEVEL_ENTITY, "[findById] 작성자 유형 목록 조회 종료 authorLevelId=" + authorLevelId, startTime);
         return authorLevel;
     }
 
@@ -66,7 +69,7 @@ public class AuthorLevelDbAdapter implements AuthorLevelPort {
             return false;
         }
         boolean isExists = authorLevelJpaRepository.existsById(authorLevelId);
-        LoggerFactory.db().logExist("AuthorLevelEntity", "[existsById] 작성자 유형 존재 유무 확인 authorLevelId=" + authorLevelId + ", isExists=" + isExists);
+        LoggerFactory.db().logExist(AUTHOR_LEVEL_ENTITY, "[existsById] 작성자 유형 존재 유무 확인 authorLevelId=" + authorLevelId + ", isExists=" + isExists);
         return isExists;
     }
 
@@ -78,12 +81,12 @@ public class AuthorLevelDbAdapter implements AuthorLevelPort {
      */
     @Override
     public Optional<String> getLabelById(Long authorLevelId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("AuthorLevelEntity", "[findLabelById] 작성자 유형 라벨 조회 시작 authorLevelId=" + authorLevelId);
+        Instant startTime = LoggerFactory.db().logQueryStart(AUTHOR_LEVEL_ENTITY, "[findLabelById] 작성자 유형 라벨 조회 시작 authorLevelId=" + authorLevelId);
         if (authorLevelId == null) {
             return Optional.empty();
         }
         Optional<String> label = authorLevelJpaRepository.findLabelById(authorLevelId);
-        LoggerFactory.db().logQueryEnd("AuthorLevelEntity", "[findLabelById] 작성자 유형 라벨 조회 종료 authorLevelId=" + authorLevelId + ", label=" + label, startTime);
+        LoggerFactory.db().logQueryEnd(AUTHOR_LEVEL_ENTITY, "[findLabelById] 작성자 유형 라벨 조회 종료 authorLevelId=" + authorLevelId + ", label=" + label, startTime);
         return label;
     }
 
@@ -95,11 +98,11 @@ public class AuthorLevelDbAdapter implements AuthorLevelPort {
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> authorLevelIds) {
-        Instant startTime = LoggerFactory.db().logQueryStart("AuthorLevelEntity", "[findAllById] 작성자 유형 라벨 목록 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(AUTHOR_LEVEL_ENTITY, "[findAllById] 작성자 유형 라벨 목록 조회 시작");
         Map<Long, String> labels = authorLevelJpaRepository.findAllById(authorLevelIds)
                 .stream()
                 .collect(Collectors.toMap(AuthorLevelEntity::getId, AuthorLevelEntity::getLabel));
-        LoggerFactory.db().logQueryEnd("AuthorLevelEntity", "[findAllById] 작성자 유형 라벨 목록 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(AUTHOR_LEVEL_ENTITY, "[findAllById] 작성자 유형 라벨 목록 조회 종료", startTime);
         return labels;
     }
 }

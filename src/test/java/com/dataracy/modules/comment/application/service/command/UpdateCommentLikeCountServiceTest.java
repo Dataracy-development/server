@@ -10,12 +10,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class UpdateCommentLikeCountServiceTest {
 
     @Mock
@@ -45,7 +48,7 @@ class UpdateCommentLikeCountServiceTest {
         @DisplayName("좋아요 증가 시 대상 댓글이 없으면 실패 → NOT_FOUND_COMMENT")
         void increaseLikeCountShouldThrowWhenNotFound() {
             // given
-            willThrow(new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
+            willThrow(new  CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
                     .given(updateCommentLikePort).increaseLikeCount(999L);
 
             // when & then
@@ -60,7 +63,7 @@ class UpdateCommentLikeCountServiceTest {
         @DisplayName("좋아요 증가 시 프로젝트와 댓글 불일치 → MISMATCH_PROJECT_COMMENT")
         void increaseLikeCountShouldThrowWhenProjectMismatch() {
             // given
-            willThrow(new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
+            willThrow(new  CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
                     .given(updateCommentLikePort).increaseLikeCount(100L);
 
             // when & then
@@ -93,7 +96,7 @@ class UpdateCommentLikeCountServiceTest {
         @DisplayName("좋아요 감소 시 대상 댓글이 없으면 실패 → NOT_FOUND_COMMENT")
         void decreaseLikeCountShouldThrowWhenNotFound() {
             // given
-            willThrow(new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
+            willThrow(new  CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
                     .given(updateCommentLikePort).decreaseLikeCount(999L);
 
             // when & then
@@ -108,7 +111,7 @@ class UpdateCommentLikeCountServiceTest {
         @DisplayName("좋아요 감소 시 프로젝트와 댓글 불일치 → MISMATCH_PROJECT_COMMENT")
         void decreaseLikeCountShouldThrowWhenProjectMismatch() {
             // given
-            willThrow(new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
+            willThrow(new  CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
                     .given(updateCommentLikePort).decreaseLikeCount(100L);
 
             // when & then

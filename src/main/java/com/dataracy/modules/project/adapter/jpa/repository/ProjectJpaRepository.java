@@ -28,6 +28,7 @@ public interface ProjectJpaRepository extends JpaRepository<ProjectEntity, Long>
     @Query("UPDATE ProjectEntity p SET p.viewCount = p.viewCount + :count WHERE p.id = :projectId")
     void increaseViewCount(@Param("projectId") Long projectId, @Param("count") Long count);
 
+
     /**
      * 지정된 프로젝트의 댓글 수를 1 증가시킵니다.
      *
@@ -80,4 +81,5 @@ public interface ProjectJpaRepository extends JpaRepository<ProjectEntity, Long>
     WHERE p.id = :projectId
     """)
     void decreaseLikeCount(@Param("projectId") Long projectId);
+
 }

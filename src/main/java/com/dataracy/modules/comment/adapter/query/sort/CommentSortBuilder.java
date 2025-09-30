@@ -16,7 +16,8 @@ public final class CommentSortBuilder {
      *
      * @return 댓글의 생성일을 기준으로 내림차순 정렬하는 OrderSpecifier 배열
      */
-    public static OrderSpecifier<?>[] createdAtDesc() {
+    @SuppressWarnings("rawtypes")
+    public static OrderSpecifier[] createdAtDesc() {
         return new OrderSpecifier[]{comment.createdAt.desc()};
     }
 }

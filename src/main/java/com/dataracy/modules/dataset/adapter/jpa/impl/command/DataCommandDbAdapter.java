@@ -25,6 +25,10 @@ public class DataCommandDbAdapter implements
 {
     private final DataJpaRepository dataJpaRepository;
 
+    // Entity 및 메시지 상수 정의
+    private static final String DATA_ENTITY = "DataEntity";
+    private static final String DATA_NOT_FOUND_MESSAGE = "해당 데이터셋이 존재하지 않습니다. dataId=";
+
     /**
      * 데이터셋 도메인 객체를 데이터베이스에 저장하고 저장된 결과를 반환합니다.
      *
@@ -35,7 +39,7 @@ public class DataCommandDbAdapter implements
     public Data saveData(Data data) {
         DataEntity dataEntity = DataEntityMapper.toEntity(data);
         Data savedData = DataEntityMapper.toDomain(dataJpaRepository.save(dataEntity));
-        LoggerFactory.db().logSave("DataEntity", String.valueOf(savedData.getId()), "데이터셋 파일 업로드가 완료되었습니다.");
+        LoggerFactory.db().logSave(DATA_ENTITY, String.valueOf(savedData.getId()), "데이터셋 파일 업로드가 완료되었습니다.");
         return savedData;
     }
 
@@ -53,12 +57,12 @@ public class DataCommandDbAdapter implements
     public void updateDataFile(Long dataId, String dataFileUrl, Long dataFileSize) {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("DataEntity", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                    LoggerFactory.db().logWarning(DATA_ENTITY, DATA_NOT_FOUND_MESSAGE + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
         dataEntity.updateDataFile(dataFileUrl, dataFileSize);
         dataJpaRepository.save(dataEntity);
-        LoggerFactory.db().logUpdate("DataEntity", String.valueOf(dataId), "데이터셋 파일 업데이트가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(DATA_ENTITY, String.valueOf(dataId), "데이터셋 파일 업데이트가 완료되었습니다.");
     }
 
     /**
@@ -72,12 +76,12 @@ public class DataCommandDbAdapter implements
     public void updateThumbnailFile(Long dataId, String thumbnailFileUrl) {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("DataEntity", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                    LoggerFactory.db().logWarning(DATA_ENTITY, DATA_NOT_FOUND_MESSAGE + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
         dataEntity.updateDataThumbnailFile(thumbnailFileUrl);
         dataJpaRepository.save(dataEntity);
-        LoggerFactory.db().logUpdate("DataEntity", String.valueOf(dataId), "데이터셋 썸네일 이미지 파일 업데이트가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(DATA_ENTITY, String.valueOf(dataId), "데이터셋 썸네일 이미지 파일 업데이트가 완료되었습니다.");
     }
 
     /**
@@ -91,11 +95,11 @@ public class DataCommandDbAdapter implements
     public void modifyData(Long dataId, ModifyDataRequest requestDto) {
         DataEntity dataEntity = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("DataEntity", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                    LoggerFactory.db().logWarning(DATA_ENTITY, DATA_NOT_FOUND_MESSAGE + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
         dataEntity.modify(requestDto);
         dataJpaRepository.save(dataEntity);
-        LoggerFactory.db().logUpdate("DataEntity", String.valueOf(dataId), "데이터셋 업데이트가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(DATA_ENTITY, String.valueOf(dataId), "데이터셋 업데이트가 완료되었습니다.");
     }
 }

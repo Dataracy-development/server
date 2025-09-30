@@ -39,9 +39,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,7 +50,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProjectReadServiceTest {
 
@@ -120,6 +120,12 @@ class ProjectReadServiceTest {
 
     @Mock
     private ValidateTargetLikeUseCase validateTargetLikeUseCase;
+
+    @Mock
+    private com.dataracy.modules.project.application.port.out.storage.PopularProjectsStoragePort popularProjectsStoragePort;
+
+    @Mock
+    private com.dataracy.modules.project.application.port.in.storage.UpdatePopularProjectsStorageUseCase updatePopularProjectsStorageUseCase;
 
     @InjectMocks
     private ProjectReadService service;
@@ -248,6 +254,10 @@ class ProjectReadServiceTest {
     void getPopularProjectsSuccess() {
         // given
         Project p = Project.builder().id(1L).userId(100L).topicId(10L).analysisPurposeId(20L).dataSourceId(30L).authorLevelId(40L).build();
+        
+        // 저장소에서 데이터가 없다고 Mock
+        given(popularProjectsStoragePort.getPopularProjects()).willReturn(Optional.empty());
+        
         given(getPopularProjectsPort.getPopularProjects(3)).willReturn(List.of(p));
         ProjectLabelMapResponse labelMap = new ProjectLabelMapResponse(
                 Map.of(100L, "userC"),

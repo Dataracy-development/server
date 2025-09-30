@@ -33,6 +33,14 @@ public class CommentCommandService implements
     private final UpdateCommentPort updateCommentPort;
     private final DeleteCommentPort deleteCommentPort;
 
+    // Use Case 상수 정의
+    private static final String UPLOAD_COMMENT_USE_CASE = "UploadCommentUseCase";
+    private static final String MODIFY_COMMENT_USE_CASE = "ModifyCommentUseCase";
+    private static final String DELETE_COMMENT_USE_CASE = "DeleteCommentUseCase";
+    
+    // 메시지 상수 정의
+    private static final String PARENT_COMMENT_NOT_FOUND_MESSAGE = "답글 작성에 대하여 해당 부모 댓글이 존재하지 않습니다. commentId=";
+
     private final SendCommentEventPort sendCommentEventPort;
 
     /**
@@ -52,18 +60,18 @@ public class CommentCommandService implements
     @Override
     @Transactional
     public UploadCommentResponse uploadComment(Long projectId, Long userId, UploadCommentRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("UploadCommentUseCase", "댓글 작성 서비스 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.service().logStart(UPLOAD_COMMENT_USE_CASE, "댓글 작성 서비스 시작 projectId=" + projectId);
 
         Long parentId = requestDto.parentCommentId();
 
         if (parentId != null) {
             Comment parent = readCommentPort.findCommentById(parentId)
                     .orElseThrow(() -> {
-                        LoggerFactory.service().logWarning("UploadCommentUseCase", "답글 작성에 대하여 해당 부모 댓글이 존재하지 않습니다. commentId=" + parentId);
+                        LoggerFactory.service().logWarning(UPLOAD_COMMENT_USE_CASE, PARENT_COMMENT_NOT_FOUND_MESSAGE + parentId);
                         return new CommentException(CommentErrorStatus.NOT_FOUND_PARENT_COMMENT);
                     });
             if (parent.getParentCommentId() != null) {
-                LoggerFactory.service().logWarning("UploadCommentUseCase", "답글에 대하여 다시 답글을 작성할 순 없습니다. commentId=" + parent.getParentCommentId());
+                LoggerFactory.service().logWarning(UPLOAD_COMMENT_USE_CASE, "답글에 대하여 다시 답글을 작성할 순 없습니다. commentId=" + parent.getParentCommentId());
                 throw new CommentException(CommentErrorStatus.FORBIDDEN_REPLY_COMMENT);
             }
         }
@@ -81,7 +89,7 @@ public class CommentCommandService implements
         Comment savedComment = uploadCommentPort.uploadComment(comment);
         sendCommentEventPort.sendCommentUploadedEvent(savedComment.getProjectId());
 
-        LoggerFactory.service().logSuccess("UploadCommentUseCase", "댓글 작성 서비스 종료 projectId=" + projectId, startTime);
+        LoggerFactory.service().logSuccess(UPLOAD_COMMENT_USE_CASE, "댓글 작성 서비스 종료 projectId=" + projectId, startTime);
         return new UploadCommentResponse(savedComment.getId());
     }
 
@@ -95,9 +103,9 @@ public class CommentCommandService implements
     @Override
     @Transactional
     public void modifyComment(Long projectId, Long commentId, ModifyCommentRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("ModifyCommentUseCase", "댓글 수정 서비스 시작 projectId=" + projectId + ", commentId=" + commentId);
+        Instant startTime = LoggerFactory.service().logStart(MODIFY_COMMENT_USE_CASE, "댓글 수정 서비스 시작 projectId=" + projectId + ", commentId=" + commentId);
         updateCommentPort.modifyComment(projectId, commentId, requestDto);
-        LoggerFactory.service().logSuccess("ModifyCommentUseCase", "댓글 수정 서비스 종료 projectId=" + projectId + ", commentId=" + commentId, startTime);
+        LoggerFactory.service().logSuccess(MODIFY_COMMENT_USE_CASE, "댓글 수정 서비스 종료 projectId=" + projectId + ", commentId=" + commentId, startTime);
     }
 
     /**
@@ -109,9 +117,9 @@ public class CommentCommandService implements
     @Override
     @Transactional
     public void deleteComment(Long projectId, Long commentId) {
-        Instant startTime = LoggerFactory.service().logStart("DeleteCommentUseCase", "댓글 삭제 서비스 시작 projectId=" + projectId + ", commentId=" + commentId);
+        Instant startTime = LoggerFactory.service().logStart(DELETE_COMMENT_USE_CASE, "댓글 삭제 서비스 시작 projectId=" + projectId + ", commentId=" + commentId);
         deleteCommentPort.deleteComment(projectId, commentId);
         sendCommentEventPort.sendCommentDeletedEvent(projectId);
-        LoggerFactory.service().logSuccess("DeleteCommentUseCase", "댓글 삭제 서비스 종료 projectId=" + projectId + ", commentId=" + commentId, startTime);
+        LoggerFactory.service().logSuccess(DELETE_COMMENT_USE_CASE, "댓글 삭제 서비스 종료 projectId=" + projectId + ", commentId=" + commentId, startTime);
     }
 }

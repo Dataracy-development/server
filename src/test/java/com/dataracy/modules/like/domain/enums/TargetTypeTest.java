@@ -1,63 +1,99 @@
 package com.dataracy.modules.like.domain.enums;
 
 import com.dataracy.modules.like.domain.exception.LikeException;
+import com.dataracy.modules.like.domain.status.LikeErrorStatus;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TargetTypeTest {
 
-    @Nested
-    @DisplayName("유효한 문자열 매핑")
-    class ValidMappings {
+    @Test
+    @DisplayName("of - PROJECT 문자열로 PROJECT enum을 반환한다")
+    void of_WhenProjectString_ReturnsProjectEnum() {
+        // when
+        TargetType result = TargetType.of("PROJECT");
 
-        @Test
-        @DisplayName("PROJECT → 대소문자 무시하고 매핑된다")
-        void shouldMapProjectCaseInsensitively() {
-            // when
-            TargetType upper = TargetType.of("PROJECT");
-            TargetType lower = TargetType.of("project");
-            TargetType mixed = TargetType.of("PrOjEcT");
-
-            // then
-            assertThat(upper).isEqualTo(TargetType.PROJECT);
-            assertThat(lower).isEqualTo(TargetType.PROJECT);
-            assertThat(mixed).isEqualTo(TargetType.PROJECT);
-        }
-
-        @Test
-        @DisplayName("COMMENT → 대소문자 무시하고 매핑된다")
-        void shouldMapCommentCaseInsensitively() {
-            // when
-            TargetType upper = TargetType.of("COMMENT");
-            TargetType lower = TargetType.of("comment");
-            TargetType mixed = TargetType.of("CoMmEnT");
-
-            // then
-            assertThat(upper).isEqualTo(TargetType.COMMENT);
-            assertThat(lower).isEqualTo(TargetType.COMMENT);
-            assertThat(mixed).isEqualTo(TargetType.COMMENT);
-        }
+        // then
+        assertThat(result).isEqualTo(TargetType.PROJECT);
     }
 
-    @Nested
-    @DisplayName("잘못된 문자열 처리")
-    class InvalidMappings {
+    @Test
+    @DisplayName("of - project 소문자로 PROJECT enum을 반환한다")
+    void of_WhenProjectLowerCase_ReturnsProjectEnum() {
+        // when
+        TargetType result = TargetType.of("project");
 
-        @Test
-        @DisplayName("정의되지 않은 값이면 LikeException 발생")
-        void shouldThrowLikeExceptionForInvalidValue() {
-            // when
-            LikeException ex = catchThrowableOfType(
-                    () -> TargetType.of("POST"),
-                    LikeException.class
-            );
+        // then
+        assertThat(result).isEqualTo(TargetType.PROJECT);
+    }
 
-            // then
-            assertThat(ex).isNotNull();
-        }
+    @Test
+    @DisplayName("of - COMMENT 문자열로 COMMENT enum을 반환한다")
+    void of_WhenCommentString_ReturnsCommentEnum() {
+        // when
+        TargetType result = TargetType.of("COMMENT");
+
+        // then
+        assertThat(result).isEqualTo(TargetType.COMMENT);
+    }
+
+    @Test
+    @DisplayName("of - comment 소문자로 COMMENT enum을 반환한다")
+    void of_WhenCommentLowerCase_ReturnsCommentEnum() {
+        // when
+        TargetType result = TargetType.of("comment");
+
+        // then
+        assertThat(result).isEqualTo(TargetType.COMMENT);
+    }
+
+    @Test
+    @DisplayName("of - 유효하지 않은 문자열로 LikeException이 발생한다")
+    void of_WhenInvalidString_ThrowsLikeException() {
+        // when & then
+        assertThatThrownBy(() -> TargetType.of("INVALID"))
+                .isInstanceOf(LikeException.class)
+                .hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE);
+    }
+
+    @Test
+    @DisplayName("of - null로 LikeException이 발생한다")
+    void of_WhenNull_ThrowsLikeException() {
+        // when & then
+        assertThatThrownBy(() -> TargetType.of(null))
+                .isInstanceOf(LikeException.class)
+                .hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE);
+    }
+
+    @Test
+    @DisplayName("of - 빈 문자열로 LikeException이 발생한다")
+    void of_WhenEmptyString_ThrowsLikeException() {
+        // when & then
+        assertThatThrownBy(() -> TargetType.of(""))
+                .isInstanceOf(LikeException.class)
+                .hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE);
+    }
+
+    @Test
+    @DisplayName("getValue - PROJECT의 value를 반환한다")
+    void getValue_WhenProject_ReturnsProjectValue() {
+        // when
+        String result = TargetType.PROJECT.getValue();
+
+        // then
+        assertThat(result).isEqualTo("PROJECT");
+    }
+
+    @Test
+    @DisplayName("getValue - COMMENT의 value를 반환한다")
+    void getValue_WhenComment_ReturnsCommentValue() {
+        // when
+        String result = TargetType.COMMENT.getValue();
+
+        // then
+        assertThat(result).isEqualTo("COMMENT");
     }
 }

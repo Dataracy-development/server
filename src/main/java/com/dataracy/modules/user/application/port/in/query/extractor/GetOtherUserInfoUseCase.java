@@ -17,7 +17,7 @@ GetOtherUserInfoResponse getOtherUserInfo(Long userId);
     /**
  * 다른 사용자의 공개 프로젝트 목록을 페이지 단위로 조회한다.
  *
- * <p>주어진 사용자 ID의 사용자가 소유하거나 관련된 프로젝트들을 지정한 페이징 조건에 따라 반환한다.</p>
+ * 주어진 사용자 ID의 사용자가 소유하거나 관련된 프로젝트들을 지정한 페이징 조건에 따라 반환한다.
  *
  * @param userId   조회 대상 다른 사용자의 식별자
  * @param pageable 페이지 번호·크기·정렬 등 페이징 정보

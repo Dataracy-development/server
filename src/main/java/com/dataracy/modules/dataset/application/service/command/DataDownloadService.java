@@ -23,11 +23,17 @@ public class DataDownloadService implements DownloadDataFileUseCase {
 
     private final DownloadFileUseCase downloadFileUseCase;
 
+    // Use Case 상수 정의
+    private static final String DOWNLOAD_DATA_FILE_USE_CASE = "DownloadDataFileUseCase";
+    
+    // 메시지 상수 정의
+    private static final String DATA_NOT_FOUND_MESSAGE = "해당 데이터셋이 존재하지 않습니다. dataId=";
+
     /**
      * DataDownloadService의 인스턴스를 생성합니다.
      *
-     * <p>데이터 파일 URL 조회 포트, 다운로드 카운트 갱신 포트, 데이터 프로젝션 작업 관리 포트,
-     * 및 파일 다운로드 유스케이스를 주입하여 클래스가 다운로드 URL 생성과 관련된 작업을 수행할 수 있게 합니다.</p>
+     * 데이터 파일 URL 조회 포트, 다운로드 카운트 갱신 포트, 데이터 프로젝션 작업 관리 포트,
+     * 및 파일 다운로드 유스케이스를 주입하여 클래스가 다운로드 URL 생성과 관련된 작업을 수행할 수 있게 합니다.
      */
     public DataDownloadService(
             FindDownloadDataFileUrlPort findDownloadDataFileUrlPort,
@@ -52,10 +58,10 @@ public class DataDownloadService implements DownloadDataFileUseCase {
     @Override
     @Transactional
     public GetDataPreSignedUrlResponse downloadDataFile(Long dataId, int expirationSeconds) {
-        Instant startTime = LoggerFactory.service().logStart("DownloadDataFileUseCase", "데이터셋 파일 다운로드 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart(DOWNLOAD_DATA_FILE_USE_CASE, "데이터셋 파일 다운로드 서비스 시작 dataId=" + dataId);
         String s3Url = findDownloadDataFileUrlPort.findDownloadedDataFileUrl(dataId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("DownloadDataFileUseCase", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                    LoggerFactory.service().logWarning(DOWNLOAD_DATA_FILE_USE_CASE, DATA_NOT_FOUND_MESSAGE + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
 
@@ -64,7 +70,7 @@ public class DataDownloadService implements DownloadDataFileUseCase {
             String preSignedUrl = downloadFileUseCase.generatePreSignedUrl(s3Url, expirationSeconds).preSignedUrl();
             getDataPresignedUrlResponse = new GetDataPreSignedUrlResponse(preSignedUrl);
         } catch (Exception e) {
-            LoggerFactory.service().logException("DownloadDataFileUseCase", "Pre-signed URL 생성 실패 dataId=" + dataId, e);
+            LoggerFactory.service().logException(DOWNLOAD_DATA_FILE_USE_CASE, "Pre-signed URL 생성 실패 dataId=" + dataId, e);
             throw new DataException(DataErrorStatus.DOWNLOAD_URL_GENERATION_FAILED);
         }
 
@@ -73,7 +79,7 @@ public class DataDownloadService implements DownloadDataFileUseCase {
         // 큐 적재
         manageDataProjectionTaskPort.enqueueDownloadDelta(dataId, +1);
 
-        LoggerFactory.service().logSuccess("DownloadDataFileUseCase", "데이터셋 파일 다운로드 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess(DOWNLOAD_DATA_FILE_USE_CASE, "데이터셋 파일 다운로드 서비스 종료 dataId=" + dataId, startTime);
         return getDataPresignedUrlResponse;
     }
 }

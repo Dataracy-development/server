@@ -14,8 +14,8 @@ public class ManageProjectEsProjectionDlqDbAdapter implements ManageProjectProje
     /**
      * 프로젝트 관련 ES 프로젝션의 DLQ(Dead Letter Queue) 항목을 DB에 저장한다.
      *
-     * <p>주어진 프로젝트 ID와 변경량(delta) 정보, 삭제 플래그 및 마지막 에러 메시지를 포함하는
-     * ProjectEsProjectionDlqEntity를 생성하여 저장소에 영구화한다.</p>
+     * 주어진 프로젝트 ID와 변경량(delta) 정보, 삭제 플래그 및 마지막 에러 메시지를 포함하는
+     * ProjectEsProjectionDlqEntity를 생성하여 저장소에 영구화한다.
      *
      * @param projectId   대상 프로젝트의 식별자
      * @param deltaComment 댓글 변경량(없을 경우 null)

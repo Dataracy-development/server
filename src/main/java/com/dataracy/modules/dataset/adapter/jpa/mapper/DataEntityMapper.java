@@ -49,12 +49,12 @@ public final class DataEntityMapper {
     /**
      * Data 도메인 객체를 JPA 엔티티인 DataEntity로 변환합니다.
      *
-     * <p>입력값이 null이면 null을 반환합니다. 도메인 객체의 대부분 필드를 엔티티에 매핑하며,
+     * 입력값이 null이면 null을 반환합니다. 도메인 객체의 대부분 필드를 엔티티에 매핑하며,
      * 중첩된 메타데이터는 DataMetadataEntityMapper를 사용해 변환합니다. 이 변환은
      * title, topicId, userId, dataSourceId, dataTypeId, 날짜 범위, 설명, 분석 가이드,
-     * 파일/섬네일 URL, downloadCount 및 sizeBytes 등을 포함합니다.</p>
+     * 파일/섬네일 URL, downloadCount 및 sizeBytes 등을 포함합니다.
      *
-     * <p>주의: 이 메서드는 엔티티의 id나 createdAt 같은 생성/식별 관련 필드를 설정하지 않습니다.</p>
+     * 주의: 이 메서드는 엔티티의 id나 createdAt 같은 생성/식별 관련 필드를 설정하지 않습니다.
      *
      * @param data 변환할 Data 도메인 객체 (null 허용)
      * @return 변환된 DataEntity, 입력이 null이면 null

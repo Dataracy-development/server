@@ -14,10 +14,15 @@ import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class UserCommandDbAdapter implements UserCommandPort {
     private final UserJpaRepository userJpaRepository;
+
+    // Entity 상수 정의
+    private static final String USER_ENTITY = "UserEntity";
     private final UserTopicJpaRepository userTopicJpaRepository;
 
     /**
@@ -29,7 +34,7 @@ public class UserCommandDbAdapter implements UserCommandPort {
     @Override
     public User saveUser(User user) {
         UserEntity savedUser = userJpaRepository.save(UserEntityMapper.toEntity(user));
-        LoggerFactory.db().logSave("UserEntity", String.valueOf(savedUser.getId()), "DB에 유저를 저장하였습니다.");
+        LoggerFactory.db().logSave(USER_ENTITY, String.valueOf(savedUser.getId()), "DB에 유저를 저장하였습니다.");
         return UserEntityMapper.toDomain(savedUser);
     }
 
@@ -46,11 +51,11 @@ public class UserCommandDbAdapter implements UserCommandPort {
     public void changePassword(Long userId, String encodePassword) {
         UserEntity userEntity = userJpaRepository.findById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("UserEntity", "[비밀번호 변경] 사용자를 찾을 수 없습니다. userId=" + userId);
+                    LoggerFactory.db().logWarning(USER_ENTITY, "[비밀번호 변경] 사용자를 찾을 수 없습니다. userId=" + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
         userEntity.changePassword(encodePassword);
-        LoggerFactory.db().logUpdate("UserEntity", String.valueOf(userEntity.getId()), "새 비밀번호를 변경하였습니다.");
+        LoggerFactory.db().logUpdate(USER_ENTITY, String.valueOf(userEntity.getId()), "새 비밀번호를 변경하였습니다.");
     }
 
     /**
@@ -69,7 +74,7 @@ public class UserCommandDbAdapter implements UserCommandPort {
     public void modifyUserInfo(Long userId, ModifyUserInfoRequest requestDto) {
         UserEntity userEntity = userJpaRepository.findById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("UserEntity", "[회원 정보 수정] 사용자를 찾을 수 없습니다. userId=" + userId);
+                    LoggerFactory.db().logWarning(USER_ENTITY, "[회원 정보 수정] 사용자를 찾을 수 없습니다. userId=" + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
         userEntity.modifyUserInfo(requestDto);
@@ -77,12 +82,17 @@ public class UserCommandDbAdapter implements UserCommandPort {
         // 기존 관심 주제 전부 삭제 (쿼리 직접)
         userTopicJpaRepository.deleteAllByUserId(userId);
 
-        // 새 관심 주제 추가
-        for (Long topicId : requestDto.topicIds()) {
-            UserTopicEntity topicEntity = UserTopicEntity.of(userEntity, topicId);
-            userEntity.addUserTopic(topicEntity);
-            userTopicJpaRepository.save(topicEntity);
-        }
+        // 새 관심 주제 추가 (배치 처리로 N+1 문제 해결)
+        List<UserTopicEntity> topicEntities = requestDto.topicIds().stream()
+                .map(topicId -> {
+                    UserTopicEntity topicEntity = UserTopicEntity.of(userEntity, topicId);
+                    userEntity.addUserTopic(topicEntity);
+                    return topicEntity;
+                })
+                .toList();
+        
+        // 배치로 한 번에 저장 (N+1 문제 해결)
+        userTopicJpaRepository.saveAll(topicEntities);
         userJpaRepository.save(userEntity);
     }
 
@@ -97,7 +107,7 @@ public class UserCommandDbAdapter implements UserCommandPort {
     public void updateProfileImageFile(Long userId, String profileImageFileUrl) {
         UserEntity userEntity = userJpaRepository.findById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("UserEntity", "[회원 정보 수정] 사용자를 찾을 수 없습니다. userId=" + userId);
+                    LoggerFactory.db().logWarning(USER_ENTITY, "[회원 정보 수정] 사용자를 찾을 수 없습니다. userId=" + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
         userEntity.modifyProfileImageUrl(profileImageFileUrl);
@@ -112,6 +122,6 @@ public class UserCommandDbAdapter implements UserCommandPort {
     @Override
     public void withdrawalUser(Long userId) {
         userJpaRepository.withdrawalUser(userId);
-        LoggerFactory.db().logUpdate("UserEntity", String.valueOf(userId), "해당 사용자를 탈퇴 처리한다.");
+        LoggerFactory.db().logUpdate(USER_ENTITY, String.valueOf(userId), "해당 사용자를 탈퇴 처리한다.");
     }
 }

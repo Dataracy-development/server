@@ -36,7 +36,7 @@ public class ProjectCommandController implements ProjectCommandApi {
     /**
          * 새 프로젝트를 생성한다.
          *
-         * <p>사용자 ID, 썸네일 이미지 및 업로드 정보를 받아 프로젝트를 생성하고 생성된 프로젝트 정보(웹 DTO)를 반환한다.</p>
+         * 사용자 ID, 썸네일 이미지 및 업로드 정보를 받아 프로젝트를 생성하고 생성된 프로젝트 정보(웹 DTO)를 반환한다.
          *
          * @param userId 업로드를 요청한 사용자의 식별자
          * @param thumbnailFile 프로젝트의 썸네일 이미지 파일

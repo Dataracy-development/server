@@ -13,7 +13,8 @@ public final class ProjectPopularOrderBuilder {
      *
      * @return 프로젝트 인기 점수 기준 내림차순 정렬 OrderSpecifier
      */
-    public static OrderSpecifier<?> popularOrder() {
+    @SuppressWarnings("rawtypes")
+    public static OrderSpecifier popularOrder() {
         QProjectEntity project = QProjectEntity.projectEntity;
 
         return project.likeCount.multiply(2)

@@ -17,6 +17,10 @@ import org.springframework.stereotype.Repository;
 public class LikeCommandAdapter implements LikeCommandPort {
     private final LikeJpaRepository likeJpaRepository;
 
+    // Entity 및 메시지 상수 정의
+    private static final String LIKE_ENTITY = "LikeEntity";
+    private static final String LIKE_NOT_FOUND_MESSAGE = "해당 타겟 좋아요 리소스가 존재하지 않습니다. targetType=";
+
     /**
      * Like 도메인 객체를 JPA 엔티티로 변환하여 데이터베이스에 저장합니다.
      *
@@ -26,7 +30,7 @@ public class LikeCommandAdapter implements LikeCommandPort {
     public void save(Like like) {
         LikeEntity entity = LikeEntityMapper.toEntity(like);
         LikeEntity savedLike = likeJpaRepository.save(entity);
-        LoggerFactory.db().logSave("LikeEntity", String.valueOf(savedLike.getId()), "타겟 좋아요가 완료되었습니다. likeId=" + savedLike.getId());
+        LoggerFactory.db().logSave(LIKE_ENTITY, String.valueOf(savedLike.getId()), "타겟 좋아요가 완료되었습니다. likeId=" + savedLike.getId());
     }
 
     /**
@@ -42,10 +46,10 @@ public class LikeCommandAdapter implements LikeCommandPort {
     public void cancelLike(Long userId, Long targetId, TargetType targetType) {
         LikeEntity entity = likeJpaRepository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("LikeEntity", "해당 타겟 좋아요 리소스가 존재하지 않습니다. targetType=" + targetType + ", targetId=" + targetId);
+                    LoggerFactory.db().logWarning(LIKE_ENTITY, LIKE_NOT_FOUND_MESSAGE + targetType + ", targetId=" + targetId);
                     return new LikeException(LikeErrorStatus.NOT_FOUND_TARGET_LIKE);
                 });
         likeJpaRepository.delete(entity);
-        LoggerFactory.db().logDelete("LikeEntity", String.valueOf(entity.getId()), "타겟 좋아요 취소가 완료되었습니다.");
+        LoggerFactory.db().logDelete(LIKE_ENTITY, String.valueOf(entity.getId()), "타겟 좋아요 취소가 완료되었습니다.");
     }
 }

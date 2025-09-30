@@ -17,6 +17,9 @@ public class UserDuplicateValidator {
     private final ValidateUserExistsPort userExistencePort;
     private final UserQueryPort userQueryPort;
 
+    // Use Case 상수 정의
+    private static final String DUPLICATE_NICKNAME_USE_CASE = "DuplicateNicknameUseCase";
+
     /**
      * 주어진 닉네임이 이미 등록되어 있는지 검사하고, 중복일 경우 예외를 발생시킵니다.
      *
@@ -25,7 +28,7 @@ public class UserDuplicateValidator {
      */
     public void duplicateNickname(String nickname) {
         if (userExistencePort.existsByNickname(nickname)) {
-            LoggerFactory.service().logWarning("DuplicateNickname", "[닉네임 중복 검증] 닉네임: " + nickname + "은 중복된 값입니다.");
+            LoggerFactory.service().logWarning(DUPLICATE_NICKNAME_USE_CASE, "[닉네임 중복 검증] 닉네임: " + nickname + "은 중복된 값입니다.");
             throw new UserException(UserErrorStatus.DUPLICATED_NICKNAME);
         }
     }

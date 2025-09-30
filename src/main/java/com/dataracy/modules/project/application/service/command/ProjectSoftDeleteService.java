@@ -19,6 +19,10 @@ public class ProjectSoftDeleteService implements
     private final SoftDeleteProjectPort softDeleteProjectDbPort;
     private final ManageProjectProjectionTaskPort manageProjectProjectionTaskPort;
 
+    // Use Case 상수 정의
+    private static final String DELETE_PROJECT_USE_CASE = "DeleteProjectUseCase";
+    private static final String RESTORE_PROJECT_USE_CASE = "RestoreProjectUseCase";
+
     /**
      * ProjectSoftDeleteService의 생성자입니다.
      *
@@ -35,14 +39,14 @@ public class ProjectSoftDeleteService implements
     /**
          * 지정한 프로젝트를 소프트 삭제(데이터베이스에서 is_deleted=true)하고, 프로젝션(예: Elasticsearch)에서의 삭제 상태 반영 작업을 비동기로 등록합니다.
          *
-         * <p>데이터베이스 변경은 트랜잭션 안에서 수행되며, 프로젝션 반영 작업은 큐에 등록되어 별도 워커가 비동기로 처리합니다.</p>
+         * 데이터베이스 변경은 트랜잭션 안에서 수행되며, 프로젝션 반영 작업은 큐에 등록되어 별도 워커가 비동기로 처리합니다.
          *
          * @param projectId 소프트 삭제할 프로젝트의 식별자
          */
     @Override
     @Transactional
     public void deleteProject(Long projectId) {
-        Instant startTime = LoggerFactory.service().logStart("DeleteProjectUseCase", "프로젝트 소프트 delete 삭제 서비스 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.service().logStart(DELETE_PROJECT_USE_CASE, "프로젝트 소프트 delete 삭제 서비스 시작 projectId=" + projectId);
 
         // DB만 확정 (프로젝트 is_deleted = true)
         softDeleteProjectDbPort.deleteProject(projectId);
@@ -50,7 +54,7 @@ public class ProjectSoftDeleteService implements
         // ES 작업을 큐에 적재 → 워커가 비동기로 isDeleted=true 설정
         manageProjectProjectionTaskPort.enqueueSetDeleted(projectId, true);
 
-        LoggerFactory.service().logSuccess("DeleteProjectUseCase", "프로젝트 소프트 delete 삭제 서비스 종료 projectId=" + projectId, startTime);
+        LoggerFactory.service().logSuccess(DELETE_PROJECT_USE_CASE, "프로젝트 소프트 delete 삭제 서비스 종료 projectId=" + projectId, startTime);
     }
 
     /**
@@ -64,7 +68,7 @@ public class ProjectSoftDeleteService implements
     @Override
     @Transactional
     public void restoreProject(Long projectId) {
-        Instant startTime = LoggerFactory.service().logStart("RestoreProjectUseCase", "프로젝트 소프트 delete 복원 서비스 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.service().logStart(RESTORE_PROJECT_USE_CASE, "프로젝트 소프트 delete 복원 서비스 시작 projectId=" + projectId);
 
         // DB만 확정 (프로젝트 is_deleted = false)
         softDeleteProjectDbPort.restoreProject(projectId);
@@ -72,6 +76,6 @@ public class ProjectSoftDeleteService implements
         // ES 작업 큐 → isDeleted=false
         manageProjectProjectionTaskPort.enqueueSetDeleted(projectId, false);
 
-        LoggerFactory.service().logSuccess("RestoreProjectUseCase", "프로젝트 소프트 delete 복원 서비스 종료 projectId=" + projectId, startTime);
+        LoggerFactory.service().logSuccess(RESTORE_PROJECT_USE_CASE, "프로젝트 소프트 delete 복원 서비스 종료 projectId=" + projectId, startTime);
     }
 }

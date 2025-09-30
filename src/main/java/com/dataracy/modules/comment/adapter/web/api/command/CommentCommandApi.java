@@ -25,9 +25,9 @@ public interface CommentCommandApi {
     /**
      * 지정한 프로젝트에 피드백 댓글을 생성합니다.
      *
-     * <p>요청한 인증된 사용자(현재 로그인한 사용자)를 작성자로 하여 댓글을 추가합니다.
+     * 요청한 인증된 사용자(현재 로그인한 사용자)를 작성자로 하여 댓글을 추가합니다.
      * 요청 본문에는 댓글 내용(content)과 선택적 부모 댓글 ID(parentCommentId)를 포함할 수 있으며,
-     * parentCommentId가 있으면 해당 댓글에 대한 답글로 처리됩니다.</p>
+     * parentCommentId가 있으면 해당 댓글에 대한 답글로 처리됩니다.
      *
      * @param projectId 댓글을 추가할 프로젝트의 ID (1 이상)
      * @param webRequest 댓글 내용 및 선택적 부모 댓글 ID를 포함한 요청 본문

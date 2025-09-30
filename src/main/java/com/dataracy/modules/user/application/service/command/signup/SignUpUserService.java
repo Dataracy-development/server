@@ -41,6 +41,10 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
     private final DuplicateEmailUseCase duplicateEmailUseCase;
 
+    // Use Case 상수 정의
+    private static final String SELF_SIGN_UP_USE_CASE = "SelfSignUpUseCase";
+    private static final String OAUTH_SIGN_UP_USE_CASE = "OAuthSignUpUseCase";
+
     private final JwtGenerateUseCase jwtGenerateUseCase;
     private final JwtValidateUseCase jwtValidateUseCase;
 
@@ -70,7 +74,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     )
     @Transactional
     public RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("SelfSignUpUseCase", "자체 회원가입 서비스 시작 nickname=" + requestDto.nickname());
+        Instant startTime = LoggerFactory.service().logStart(SELF_SIGN_UP_USE_CASE, "자체 회원가입 서비스 시작 nickname=" + requestDto.nickname());
 
         // 자체 회원 가입 요청 정보 유효성 검사
         validateSignUpInfo(
@@ -104,7 +108,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
                 jwtValidateUseCase.getRefreshTokenExpirationTime()
         );
 
-        LoggerFactory.service().logSuccess("SelfSignUpUseCase", "자체 회원가입 서비스 성공 nickname=" + requestDto.nickname(), startTime);
+        LoggerFactory.service().logSuccess(SELF_SIGN_UP_USE_CASE, "자체 회원가입 서비스 성공 nickname=" + requestDto.nickname(), startTime);
         return refreshTokenResponse;
     }
 
@@ -129,7 +133,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     )
     @Transactional
     public RefreshTokenResponse signUpOAuth(String registerToken, OnboardingRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("OAuthSignUpUseCase", "소셜 회원가입 서비스 시작 nickname=" + requestDto.nickname());
+        Instant startTime = LoggerFactory.service().logStart(OAUTH_SIGN_UP_USE_CASE, "소셜 회원가입 서비스 시작 nickname=" + requestDto.nickname());
 
         // 레지스터 토큰 유효성 체크 및 정보 조회
         jwtValidateUseCase.validateToken(registerToken);
@@ -164,7 +168,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
                 jwtValidateUseCase.getRefreshTokenExpirationTime()
         );
 
-        LoggerFactory.service().logSuccess("OAuthSignUpUseCase", "소셜 회원가입 서비스 성공 nickname=" + requestDto.nickname(), startTime);
+        LoggerFactory.service().logSuccess(OAUTH_SIGN_UP_USE_CASE, "소셜 회원가입 서비스 성공 nickname=" + requestDto.nickname(), startTime);
         return refreshTokenResponse;
     }
 

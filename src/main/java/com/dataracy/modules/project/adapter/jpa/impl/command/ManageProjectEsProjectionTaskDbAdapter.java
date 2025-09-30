@@ -6,6 +6,9 @@ import com.dataracy.modules.project.application.port.out.command.projection.Mana
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
+
 @Component
 @RequiredArgsConstructor
 public class ManageProjectEsProjectionTaskDbAdapter implements ManageProjectProjectionTaskPort {
@@ -85,5 +88,26 @@ public class ManageProjectEsProjectionTaskDbAdapter implements ManageProjectProj
     @Override
     public void delete(Long projectEsProjectionTaskId) {
         repo.deleteImmediate(projectEsProjectionTaskId);
+    }
+
+    /**
+     * 여러 프로젝트의 조회수 변경을 배치로 프로젝션 큐에 등록합니다.
+     *
+     * @param viewCountUpdates 프로젝트 ID와 조회수 변경량의 맵
+     */
+    @Override
+    public void enqueueViewDeltaBatch(Map<Long, Long> viewCountUpdates) {
+        if (viewCountUpdates.isEmpty()) {
+            return;
+        }
+
+        List<ProjectEsProjectionTaskEntity> tasks = viewCountUpdates.entrySet().stream()
+                .map(entry -> ProjectEsProjectionTaskEntity.builder()
+                        .projectId(entry.getKey())
+                        .deltaView(entry.getValue())
+                        .build())
+                .toList();
+
+        repo.saveAll(tasks);
     }
 }

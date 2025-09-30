@@ -18,6 +18,10 @@ public class DataExtractService implements
 {
     private final ExtractDataOwnerPort extractDataOwnerPort;
 
+    // Use Case 상수 정의
+    private static final String FIND_USER_ID_USE_CASE = "FindUserIdUseCase";
+    private static final String FIND_USER_ID_INCLUDING_DELETED_USE_CASE = "FindUserIdIncludingDeletedUseCase";
+
     /**
      * 주어진 데이터 ID에 해당하는 데이터셋 소유자의 사용자 ID를 반환합니다.
      *
@@ -27,9 +31,9 @@ public class DataExtractService implements
     @Override
     @Transactional(readOnly = true)
     public Long findUserIdByDataId(Long dataId) {
-        Instant startTime = LoggerFactory.service().logStart("FindUserIdUseCase", "아이디를 통한 데이터셋 작성자 ID 조회 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_USER_ID_USE_CASE, "아이디를 통한 데이터셋 작성자 ID 조회 서비스 시작 dataId=" + dataId);
         Long userId = extractDataOwnerPort.findUserIdByDataId(dataId);
-        LoggerFactory.service().logSuccess("FindUserIdUseCase", "아이디를 통한 데이터셋 작성자 ID 조회 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess(FIND_USER_ID_USE_CASE, "아이디를 통한 데이터셋 작성자 ID 조회 서비스 종료 dataId=" + dataId, startTime);
         return userId;
     }
 
@@ -42,9 +46,9 @@ public class DataExtractService implements
     @Override
     @Transactional(readOnly = true)
     public Long findUserIdIncludingDeleted(Long dataId) {
-        Instant startTime = LoggerFactory.service().logStart("FindUserIdIncludingDeletedUseCase", "삭제된 데이터셋을 포함하여 아이디를 통한 데이터셋 작성자 ID 조회 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_USER_ID_INCLUDING_DELETED_USE_CASE, "삭제된 데이터셋을 포함하여 아이디를 통한 데이터셋 작성자 ID 조회 서비스 시작 dataId=" + dataId);
         Long userId = extractDataOwnerPort.findUserIdIncludingDeleted(dataId);
-        LoggerFactory.service().logSuccess("FindUserIdIncludingDeletedUseCase", "삭제된 데이터셋을 포함하여 아이디를 통한 데이터셋 작성자 ID 조회 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess(FIND_USER_ID_INCLUDING_DELETED_USE_CASE, "삭제된 데이터셋을 포함하여 아이디를 통한 데이터셋 작성자 ID 조회 서비스 종료 dataId=" + dataId, startTime);
         return userId;
     }
 }

@@ -3,11 +3,9 @@ package com.dataracy.modules.filestorage.adapter.s3;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
-import com.amazonaws.services.s3.transfer.TransferManager;
-import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
-import com.amazonaws.services.s3.transfer.Upload;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
+import com.dataracy.modules.filestorage.config.FileStorageProperties;
 import com.dataracy.modules.filestorage.domain.exception.S3UploadException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AwsS3FileStorageAdapter implements FileStoragePort {
     private final AmazonS3 amazonS3;
+    private final FileStorageProperties fileStorageProperties;
 
     @Value("${cloud.aws.s3.bucket:}")
     private String bucket;
@@ -67,17 +66,19 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
         metadata.setContentType(file.getContentType());
 
         try {
-            // 🎉 AFTER: 멀티파트 업로드로 완전 해결
-            // 최종 개선: 모든 파일 크기에 대해 최적화된 처리 방식 적용
+            // 설정값을 사용한 파일 크기별 처리 방식 적용
+            long multipartThreshold = fileStorageProperties.getFileSize().getMultipartThreshold();
+            long streamingThreshold = fileStorageProperties.getFileSize().getStreamingThreshold();
             
-            if (file.getSize() > 20 * 1024 * 1024) { // 20MB 이상 - 멀티파트 업로드
+            if (file.getSize() > multipartThreshold) { // 멀티파트 업로드
                 return uploadMultipart(key, file, metadata);
-            } else if (file.getSize() > 5 * 1024 * 1024) { // 5-20MB - 스트리밍 + 최적화
+            } else if (file.getSize() > streamingThreshold) { // 스트리밍 업로드
                 return uploadStreaming(key, file, metadata);
             } else {
-                // 5MB 이하 - 직접 업로드 (가장 효율적)
+                // 직접 업로드 (가장 효율적)
+                int bufferSize = fileStorageProperties.getBuffer().getDefaultSize();
                 try (InputStream inputStream = file.getInputStream();
-                     BufferedInputStream bufferedStream = new BufferedInputStream(inputStream, 8192)) {
+                     BufferedInputStream bufferedStream = new BufferedInputStream(inputStream, bufferSize)) {
                     amazonS3.putObject(new PutObjectRequest(bucket, key, bufferedStream, metadata));
                 }
             }
@@ -91,12 +92,12 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
     }
 
     /**
-     * 대용량 파일을 위한 멀티파트 업로드 처리
+     * 대용량 파일을 위한 메모리 효율적인 멀티파트 업로드 처리
      * 
-     * 실제 AWS S3 멀티파트 업로드 API를 사용하여:
+     * 스트리밍 방식으로 메모리 사용량을 최소화하여:
      * - 청크 단위로 파일을 나누어 업로드
+     * - 메모리 누수 방지 및 대용량 파일 처리
      * - 네트워크 오류 시 부분 재시도 가능
-     * - 메모리 효율적인 대용량 파일 처리
      */
     private String uploadMultipart(String key, MultipartFile file, ObjectMetadata metadata) {
         String uploadId = null;
@@ -109,27 +110,26 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
             InitiateMultipartUploadResult initResult = amazonS3.initiateMultipartUpload(initRequest);
             uploadId = initResult.getUploadId();
             
-            // 2. 파일을 5MB 청크로 나누어 업로드
+            // 2. 설정값을 사용한 청크 크기로 스트리밍 업로드
             long fileSize = file.getSize();
-            long partSize = 5 * 1024 * 1024; // 5MB
+            long partSize = fileStorageProperties.getMultipart().getChunkSize();
+            int bufferSize = fileStorageProperties.getBuffer().getDefaultSize();
             long bytePosition = 0;
             int partNumber = 1;
             
-            try (InputStream inputStream = file.getInputStream()) {
+            try (InputStream inputStream = file.getInputStream();
+                 BufferedInputStream bufferedStream = new BufferedInputStream(inputStream, bufferSize)) {
+                
                 while (bytePosition < fileSize) {
                     long currentPartSize = Math.min(partSize, fileSize - bytePosition);
                     
-                    // 현재 파트의 데이터 읽기
-                    byte[] partData = new byte[(int) currentPartSize];
-                    inputStream.read(partData);
-                    
-                    // 파트 업로드
+                    // 스트리밍 방식으로 파트 업로드 (메모리 효율적)
                     UploadPartRequest uploadPartRequest = new UploadPartRequest()
                             .withBucketName(bucket)
                             .withKey(key)
                             .withUploadId(uploadId)
                             .withPartNumber(partNumber)
-                            .withInputStream(new ByteArrayInputStream(partData))
+                            .withInputStream(bufferedStream)
                             .withPartSize(currentPartSize);
                     
                     UploadPartResult uploadPartResult = amazonS3.uploadPart(uploadPartRequest);
@@ -170,8 +170,10 @@ public class AwsS3FileStorageAdapter implements FileStoragePort {
      * 중간 크기 파일을 위한 최적화된 스트리밍 업로드
      */
     private String uploadStreaming(String key, MultipartFile file, ObjectMetadata metadata) {
+        int bufferSize = fileStorageProperties.getBuffer().getStreamingSize();
+        
         try (InputStream inputStream = file.getInputStream();
-             BufferedInputStream bufferedStream = new BufferedInputStream(inputStream, 16384)) {
+             BufferedInputStream bufferedStream = new BufferedInputStream(inputStream, bufferSize)) {
             
             amazonS3.putObject(new PutObjectRequest(bucket, key, bufferedStream, metadata));
             

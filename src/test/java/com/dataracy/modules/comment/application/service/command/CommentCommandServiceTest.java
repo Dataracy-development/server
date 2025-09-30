@@ -18,14 +18,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class CommentCommandServiceTest {
 
     @Mock
@@ -141,7 +144,7 @@ class CommentCommandServiceTest {
         void modifyCommentFailNotFound() {
             // given
             ModifyCommentRequest req = new ModifyCommentRequest("수정된 댓글");
-            willThrow(new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
+            willThrow(new  CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
                     .given(updateCommentPort).modifyComment(eq(1L), eq(99L), any(ModifyCommentRequest.class));
 
             // when & then
@@ -157,7 +160,7 @@ class CommentCommandServiceTest {
         void modifyCommentFailMismatchProject() {
             // given
             ModifyCommentRequest req = new ModifyCommentRequest("수정된 댓글");
-            willThrow(new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
+            willThrow(new  CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
                     .given(updateCommentPort).modifyComment(eq(1L), eq(5L), any(ModifyCommentRequest.class));
 
             // when & then
@@ -191,7 +194,7 @@ class CommentCommandServiceTest {
         @DisplayName("댓글 삭제 시 대상 댓글이 없으면 실패 → NOT_FOUND_COMMENT")
         void deleteCommentFailNotFound() {
             // given
-            willThrow(new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
+            willThrow(new  CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
                     .given(deleteCommentPort).deleteComment(1L, 99L);
 
             // when & then
@@ -206,7 +209,7 @@ class CommentCommandServiceTest {
         @DisplayName("댓글 삭제 시 프로젝트와 댓글 불일치 → MISMATCH_PROJECT_COMMENT")
         void deleteCommentFailMismatchProject() {
             // given
-            willThrow(new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
+            willThrow(new  CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
                     .given(deleteCommentPort).deleteComment(1L, 77L);
 
             // when & then

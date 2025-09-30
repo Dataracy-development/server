@@ -16,6 +16,10 @@ import java.util.Set;
 public class SoftDeleteProjectDbAdapter implements SoftDeleteProjectPort {
     private final ProjectJpaRepository projectJpaRepository;
 
+    // Entity 및 메시지 상수 정의
+    private static final String PROJECT_ENTITY = "ProjectEntity";
+    private static final String PROJECT_NOT_FOUND_MESSAGE = "해당 프로젝트가 존재하지 않습니다. projectId=";
+
     /**
      * 프로젝트를 논리적으로 삭제하고 모든 자식 프로젝트의 부모 프로젝트 참조를 제거합니다.
      *
@@ -25,7 +29,7 @@ public class SoftDeleteProjectDbAdapter implements SoftDeleteProjectPort {
     public void deleteProject(Long projectId) {
         ProjectEntity project = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+                    LoggerFactory.db().logWarning(PROJECT_ENTITY, PROJECT_NOT_FOUND_MESSAGE + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
         Set<ProjectEntity> childProjects = project.getChildProjects();
@@ -34,7 +38,7 @@ public class SoftDeleteProjectDbAdapter implements SoftDeleteProjectPort {
 
         project.delete();
         projectJpaRepository.save(project);
-        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 소프트 delete를 true로 탈퇴 유저 처리가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(PROJECT_ENTITY, String.valueOf(projectId), "프로젝트 소프트 delete를 true로 탈퇴 유저 처리가 완료되었습니다.");
     }
 
     /**
@@ -47,11 +51,11 @@ public class SoftDeleteProjectDbAdapter implements SoftDeleteProjectPort {
     public void restoreProject(Long projectId) {
         ProjectEntity project = projectJpaRepository.findIncludingDeleted(projectId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+                    LoggerFactory.db().logWarning(PROJECT_ENTITY, PROJECT_NOT_FOUND_MESSAGE + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
         project.restore();
         projectJpaRepository.save(project);
-        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 소프트 delete를 false로 탈퇴 유저 복구 처리가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(PROJECT_ENTITY, String.valueOf(projectId), "프로젝트 소프트 delete를 false로 탈퇴 유저 복구 처리가 완료되었습니다.");
     }
 }

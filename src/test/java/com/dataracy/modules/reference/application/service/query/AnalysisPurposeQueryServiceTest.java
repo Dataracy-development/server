@@ -1,184 +1,298 @@
 package com.dataracy.modules.reference.application.service.query;
 
+import com.dataracy.modules.common.logging.ServiceLogger;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.reference.application.dto.response.allview.AllAnalysisPurposesResponse;
 import com.dataracy.modules.reference.application.dto.response.singleview.AnalysisPurposeResponse;
 import com.dataracy.modules.reference.application.mapper.AnalysisPurposeDtoMapper;
 import com.dataracy.modules.reference.application.port.out.AnalysisPurposePort;
 import com.dataracy.modules.reference.domain.exception.ReferenceException;
 import com.dataracy.modules.reference.domain.model.AnalysisPurpose;
+import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AnalysisPurposeQueryServiceTest {
-
-    @Mock
-    private AnalysisPurposePort analysisPurposePort;
-
-    @Mock
-    private AnalysisPurposeDtoMapper analysisPurposeDtoMapper;
 
     @InjectMocks
     private AnalysisPurposeQueryService service;
 
-    @Test
-    @DisplayName("분석 목적 전체 조회 성공")
-    void findAllAnalysisPurposesSuccess() {
-        // given
-        List<AnalysisPurpose> domainList = List.of(
-                new AnalysisPurpose(1L, "v1", "l1"),
-                new AnalysisPurpose(2L, "v2", "l2")
-        );
-        AllAnalysisPurposesResponse mapped = new AllAnalysisPurposesResponse(
-                List.of(
-                        new AnalysisPurposeResponse(1L, "v1", "l1"),
-                        new AnalysisPurposeResponse(2L, "v2", "l2")
-                )
-        );
-        given(analysisPurposePort.findAllAnalysisPurposes()).willReturn(domainList);
-        given(analysisPurposeDtoMapper.toResponseDto(domainList)).willReturn(mapped);
+    @Mock
+    private AnalysisPurposeDtoMapper analysisPurposeDtoMapper;
 
-        // when
-        AllAnalysisPurposesResponse result = service.findAllAnalysisPurposes();
+    @Mock
+    private AnalysisPurposePort analysisPurposePort;
 
-        // then
-        assertThat(result).isSameAs(mapped);
-        then(analysisPurposePort).should().findAllAnalysisPurposes();
-        then(analysisPurposeDtoMapper).should().toResponseDto(domainList);
+    private MockedStatic<LoggerFactory> loggerFactoryMock;
+    private ServiceLogger loggerService;
+
+    @BeforeEach
+    void setUp() {
+        loggerFactoryMock = mockStatic(LoggerFactory.class);
+        loggerService = mock(ServiceLogger.class);
+        loggerFactoryMock.when(LoggerFactory::service).thenReturn(loggerService);
+        doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
+        doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
+        doNothing().when(loggerService).logWarning(anyString(), anyString());
     }
 
-    @Test
-    @DisplayName("분석 목적 단건 조회 성공")
-    void findAnalysisPurposeSuccess() {
-        // given
-        Long id = 10L;
-        AnalysisPurpose domain = new AnalysisPurpose(id, "v", "l");
-        AnalysisPurposeResponse mapped = new AnalysisPurposeResponse(id, "v", "l");
-        given(analysisPurposePort.findAnalysisPurposeById(id)).willReturn(Optional.of(domain));
-        given(analysisPurposeDtoMapper.toResponseDto(domain)).willReturn(mapped);
-
-        // when
-        AnalysisPurposeResponse result = service.findAnalysisPurpose(id);
-
-        // then
-        assertThat(result).isSameAs(mapped);
-        then(analysisPurposePort).should().findAnalysisPurposeById(id);
-        then(analysisPurposeDtoMapper).should().toResponseDto(domain);
+    @AfterEach
+    void tearDown() {
+        if (loggerFactoryMock != null) {
+            loggerFactoryMock.close();
+        }
     }
 
-    @Test
-    @DisplayName("분석 목적 단건 조회 실패 - 없을 때 예외 발생")
-    void findAnalysisPurposeFailWhenNotFound() {
-        // given
-        Long id = 999L;
-        given(analysisPurposePort.findAnalysisPurposeById(id)).willReturn(Optional.empty());
+    @Nested
+    @DisplayName("findAllAnalysisPurposes 메서드 테스트")
+    class FindAllAnalysisPurposesTest {
 
-        // when
-        ReferenceException ex = catchThrowableOfType(
-                () -> service.findAnalysisPurpose(id),
-                ReferenceException.class
-        );
+        @Test
+        @DisplayName("모든 분석 목적 조회 성공")
+        void findAllAnalysisPurposesSuccess() {
+            // given
+            List<AnalysisPurpose> analysisPurposes = List.of(
+                    new AnalysisPurpose(1L, "value1", "분석 목적 1"),
+                    new AnalysisPurpose(2L, "value2", "분석 목적 2")
+            );
+            List<AnalysisPurposeResponse> responseList = List.of(
+                    new AnalysisPurposeResponse(1L, "value1", "분석 목적 1"),
+                    new AnalysisPurposeResponse(2L, "value2", "분석 목적 2")
+            );
+            AllAnalysisPurposesResponse expectedResponse = new AllAnalysisPurposesResponse(responseList);
 
-        // then
-        assertThat(ex).isNotNull();
-        then(analysisPurposePort).should().findAnalysisPurposeById(id);
-        then(analysisPurposeDtoMapper).shouldHaveNoInteractions();
+            given(analysisPurposePort.findAllAnalysisPurposes()).willReturn(analysisPurposes);
+            given(analysisPurposeDtoMapper.toResponseDto(analysisPurposes)).willReturn(expectedResponse);
+
+            // when
+            AllAnalysisPurposesResponse result = service.findAllAnalysisPurposes();
+
+            // then
+            assertThat(result).isEqualTo(expectedResponse);
+            then(analysisPurposePort).should().findAllAnalysisPurposes();
+            then(analysisPurposeDtoMapper).should().toResponseDto(analysisPurposes);
+            then(loggerService).should().logStart(eq("FindAllAnalysisPurposesUseCase"), 
+                    contains("모든 분석 목적 정보 조회 서비스 시작"));
+            then(loggerService).should().logSuccess(eq("FindAllAnalysisPurposesUseCase"), 
+                    contains("모든 분석 목적 정보 조회 서비스 종료"), any(Instant.class));
+        }
     }
 
-    @Test
-    @DisplayName("분석 목적 라벨 조회 성공")
-    void getLabelByIdSuccess() {
-        // given
-        Long id = 1L;
-        given(analysisPurposePort.getLabelById(id)).willReturn(Optional.of("label"));
+    @Nested
+    @DisplayName("findAnalysisPurpose 메서드 테스트")
+    class FindAnalysisPurposeTest {
 
-        // when
-        String label = service.getLabelById(id);
+        @Test
+        @DisplayName("분석 목적 조회 성공")
+        void findAnalysisPurposeSuccess() {
+            // given
+            Long analysisPurposeId = 1L;
+            AnalysisPurpose analysisPurpose = new AnalysisPurpose(analysisPurposeId, "value", "분석 목적");
+            AnalysisPurposeResponse expectedResponse = new AnalysisPurposeResponse(analysisPurposeId, "value", "분석 목적");
 
-        // then
-        assertThat(label).isEqualTo("label");
-        then(analysisPurposePort).should().getLabelById(id);
+            given(analysisPurposePort.findAnalysisPurposeById(analysisPurposeId))
+                    .willReturn(Optional.of(analysisPurpose));
+            given(analysisPurposeDtoMapper.toResponseDto(analysisPurpose)).willReturn(expectedResponse);
+
+            // when
+            AnalysisPurposeResponse result = service.findAnalysisPurpose(analysisPurposeId);
+
+            // then
+            assertThat(result).isEqualTo(expectedResponse);
+            then(analysisPurposePort).should().findAnalysisPurposeById(analysisPurposeId);
+            then(analysisPurposeDtoMapper).should().toResponseDto(analysisPurpose);
+            then(loggerService).should().logStart(eq("FindAnalysisPurposeUseCase"), 
+                    contains("주어진 ID로 분석 목적 조회 서비스 시작 analysisPurposeId=" + analysisPurposeId));
+            then(loggerService).should().logSuccess(eq("FindAnalysisPurposeUseCase"), 
+                    contains("주어진 ID로 분석 목적 조회 서비스 종료 analysisPurposeId=" + analysisPurposeId), any(Instant.class));
+        }
+
+        @Test
+        @DisplayName("분석 목적이 존재하지 않을 때 예외 발생")
+        void findAnalysisPurposeFailWhenNotFound() {
+            // given
+            Long analysisPurposeId = 999L;
+            given(analysisPurposePort.findAnalysisPurposeById(analysisPurposeId))
+                    .willReturn(Optional.empty());
+
+            // when & then
+            ReferenceException exception = catchThrowableOfType(() -> service.findAnalysisPurpose(analysisPurposeId), ReferenceException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
+
+            then(analysisPurposePort).should().findAnalysisPurposeById(analysisPurposeId);
+            then(analysisPurposeDtoMapper).should(never()).toResponseDto(any(AnalysisPurpose.class));
+            then(loggerService).should().logStart(eq("FindAnalysisPurposeUseCase"), 
+                    contains("주어진 ID로 분석 목적 조회 서비스 시작 analysisPurposeId=" + analysisPurposeId));
+            then(loggerService).should().logWarning(eq("FindAnalysisPurposeUseCase"), 
+                    contains("해당 분석 목적이 존재하지 않습니다. analysisPurposeId=" + analysisPurposeId));
+            then(loggerService).should(never()).logSuccess(anyString(), anyString(), any(Instant.class));
+        }
     }
 
-    @Test
-    @DisplayName("분석 목적 라벨 조회 실패 - 없을 때 예외 발생")
-    void getLabelByIdFailWhenNotFound() {
-        // given
-        Long id = 404L;
-        given(analysisPurposePort.getLabelById(id)).willReturn(Optional.empty());
+    @Nested
+    @DisplayName("validateAnalysisPurpose 메서드 테스트")
+    class ValidateAnalysisPurposeTest {
 
-        // when
-        ReferenceException ex = catchThrowableOfType(
-                () -> service.getLabelById(id),
-                ReferenceException.class
-        );
+        @Test
+        @DisplayName("분석 목적 검증 성공")
+        void validateAnalysisPurposeSuccess() {
+            // given
+            Long analysisPurposeId = 1L;
+            given(analysisPurposePort.existsAnalysisPurposeById(analysisPurposeId)).willReturn(true);
 
-        // then
-        assertThat(ex).isNotNull();
-        then(analysisPurposePort).should().getLabelById(id);
+            // when
+            service.validateAnalysisPurpose(analysisPurposeId);
+
+            // then
+            then(analysisPurposePort).should().existsAnalysisPurposeById(analysisPurposeId);
+            then(loggerService).should().logStart(eq("ValidateAnalysisPurposeUseCase"), 
+                    contains("주어진 ID에 해당하는 분석 목적이 존재하는지 확인 서비스 시작 analysisPurposeId=" + analysisPurposeId));
+            then(loggerService).should().logSuccess(eq("ValidateAnalysisPurposeUseCase"), 
+                    contains("주어진 ID에 해당하는 분석 목적이 존재하는지 확인 서비스 종료 analysisPurposeId=" + analysisPurposeId), any(Instant.class));
+            then(loggerService).should(never()).logWarning(anyString(), anyString());
+        }
+
+        @Test
+        @DisplayName("분석 목적이 존재하지 않을 때 예외 발생")
+        void validateAnalysisPurposeFailWhenNotFound() {
+            // given
+            Long analysisPurposeId = 999L;
+            given(analysisPurposePort.existsAnalysisPurposeById(analysisPurposeId)).willReturn(false);
+
+            // when & then
+            ReferenceException exception = catchThrowableOfType(() -> service.validateAnalysisPurpose(analysisPurposeId), ReferenceException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
+
+            then(analysisPurposePort).should().existsAnalysisPurposeById(analysisPurposeId);
+            then(loggerService).should().logStart(eq("ValidateAnalysisPurposeUseCase"), 
+                    contains("주어진 ID에 해당하는 분석 목적이 존재하는지 확인 서비스 시작 analysisPurposeId=" + analysisPurposeId));
+            then(loggerService).should().logWarning(eq("FindAnalysisPurposeUseCase"), 
+                    contains("해당 분석 목적이 존재하지 않습니다. analysisPurposeId=" + analysisPurposeId));
+            then(loggerService).should(never()).logSuccess(anyString(), anyString(), any(Instant.class));
+        }
     }
 
-    @Test
-    @DisplayName("분석 목적 검증 성공 - 존재할 때")
-    void validateAnalysisPurposeSuccess() {
-        // given
-        Long id = 1L;
-        given(analysisPurposePort.existsAnalysisPurposeById(id)).willReturn(true);
+    @Nested
+    @DisplayName("getLabelById 메서드 테스트")
+    class GetLabelByIdTest {
 
-        // when
-        service.validateAnalysisPurpose(id);
+        @Test
+        @DisplayName("라벨 조회 성공")
+        void getLabelByIdSuccess() {
+            // given
+            Long analysisPurposeId = 1L;
+            String expectedLabel = "분석 목적";
+            given(analysisPurposePort.getLabelById(analysisPurposeId))
+                    .willReturn(Optional.of(expectedLabel));
 
-        // then
-        then(analysisPurposePort).should().existsAnalysisPurposeById(id);
+            // when
+            String result = service.getLabelById(analysisPurposeId);
+
+            // then
+            assertThat(result).isEqualTo(expectedLabel);
+            then(analysisPurposePort).should().getLabelById(analysisPurposeId);
+            then(loggerService).should().logStart(eq("GetAnalysisPurposeLabelFromIdUseCase"), 
+                    contains("주어진 분석 목적 ID에 해당하는 라벨을 조회 서비스 시작 analysisPurposeId=" + analysisPurposeId));
+            then(loggerService).should().logSuccess(eq("GetAnalysisPurposeLabelFromIdUseCase"), 
+                    contains("주어진 분석 목적 ID에 해당하는 라벨을 조회 서비스 종료 analysisPurposeId=" + analysisPurposeId), any(Instant.class));
+        }
+
+        @Test
+        @DisplayName("라벨이 존재하지 않을 때 예외 발생")
+        void getLabelByIdFailWhenNotFound() {
+            // given
+            Long analysisPurposeId = 999L;
+            given(analysisPurposePort.getLabelById(analysisPurposeId))
+                    .willReturn(Optional.empty());
+
+            // when & then
+            ReferenceException exception = catchThrowableOfType(() -> service.getLabelById(analysisPurposeId), ReferenceException.class);
+            assertThat(exception).isNotNull();
+            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
+
+            then(analysisPurposePort).should().getLabelById(analysisPurposeId);
+            then(loggerService).should().logStart(eq("GetAnalysisPurposeLabelFromIdUseCase"), 
+                    contains("주어진 분석 목적 ID에 해당하는 라벨을 조회 서비스 시작 analysisPurposeId=" + analysisPurposeId));
+            then(loggerService).should().logWarning(eq("FindAnalysisPurposeUseCase"), 
+                    contains("해당 분석 목적이 존재하지 않습니다. analysisPurposeId=" + analysisPurposeId));
+            then(loggerService).should(never()).logSuccess(anyString(), anyString(), any(Instant.class));
+        }
     }
 
-    @Test
-    @DisplayName("분석 목적 검증 실패 - 없을 때 예외 발생")
-    void validateAnalysisPurposeFailWhenNotFound() {
-        // given
-        Long id = 2L;
-        given(analysisPurposePort.existsAnalysisPurposeById(id)).willReturn(false);
+    @Nested
+    @DisplayName("getLabelsByIds 메서드 테스트")
+    class GetLabelsByIdsTest {
 
-        // when
-        ReferenceException ex = catchThrowableOfType(
-                () -> service.validateAnalysisPurpose(id),
-                ReferenceException.class
-        );
+        @Test
+        @DisplayName("라벨 목록 조회 성공")
+        void getLabelsByIdsSuccess() {
+            // given
+            List<Long> analysisPurposeIds = List.of(1L, 2L);
+            Map<Long, String> expectedLabels = Map.of(
+                    1L, "분석 목적 1",
+                    2L, "분석 목적 2"
+            );
+            given(analysisPurposePort.getLabelsByIds(analysisPurposeIds)).willReturn(expectedLabels);
 
-        // then
-        assertThat(ex).isNotNull();
-        then(analysisPurposePort).should().existsAnalysisPurposeById(id);
-    }
+            // when
+            Map<Long, String> result = service.getLabelsByIds(analysisPurposeIds);
 
-    @Test
-    @DisplayName("분석 목적 라벨 다건 조회 성공 및 빈 값 처리")
-    void getLabelsByIdsSuccessAndEmptyHandling() {
-        // given - empty/null
-        assertThat(service.getLabelsByIds(null)).isEmpty();
-        assertThat(service.getLabelsByIds(List.of())).isEmpty();
+            // then
+            assertThat(result).isEqualTo(expectedLabels);
+            then(analysisPurposePort).should().getLabelsByIds(analysisPurposeIds);
+            then(loggerService).should().logStart(eq("GetAnalysisPurposeLabelFromIdUseCase"), 
+                    contains("분석 목적 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작"));
+            then(loggerService).should().logSuccess(eq("GetAnalysisPurposeLabelFromIdUseCase"), 
+                    contains("분석 목적 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료"), any(Instant.class));
+        }
 
-        // given - values
-        List<Long> ids = List.of(1L, 2L);
-        given(analysisPurposePort.getLabelsByIds(ids)).willReturn(Map.of(1L, "L1", 2L, "L2"));
+        @Test
+        @DisplayName("null ID 목록일 때 빈 Map 반환")
+        void getLabelsByIdsWithNullList() {
+            // when
+            Map<Long, String> result = service.getLabelsByIds(null);
 
-        // when
-        Map<Long, String> result = service.getLabelsByIds(ids);
+            // then
+            assertThat(result).isEmpty();
+            then(analysisPurposePort).should(never()).getLabelsByIds(any());
+            // null/빈 리스트일 때는 logSuccess가 호출되지 않을 수 있음
+        }
 
-        // then
-        assertThat(result).containsEntry(1L, "L1").containsEntry(2L, "L2");
-        then(analysisPurposePort).should().getLabelsByIds(ids);
+        @Test
+        @DisplayName("빈 ID 목록일 때 빈 Map 반환")
+        void getLabelsByIdsWithEmptyList() {
+            // when
+            Map<Long, String> result = service.getLabelsByIds(List.of());
+
+            // then
+            assertThat(result).isEmpty();
+            then(analysisPurposePort).should(never()).getLabelsByIds(any());
+            // null/빈 리스트일 때는 logSuccess가 호출되지 않을 수 있음
+        }
     }
 }

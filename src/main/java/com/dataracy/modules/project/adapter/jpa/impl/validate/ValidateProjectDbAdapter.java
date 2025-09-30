@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 public class ValidateProjectDbAdapter implements CheckProjectExistsByIdPort {
     private final ProjectJpaRepository projectJpaRepository;
 
+    // Entity 상수 정의
+    private static final String PROJECT_ENTITY = "ProjectEntity";
+
     /**
      * 주어진 프로젝트 ID로 프로젝트의 존재 여부를 확인합니다.
      *
@@ -20,7 +23,7 @@ public class ValidateProjectDbAdapter implements CheckProjectExistsByIdPort {
     @Override
     public boolean checkProjectExistsById(Long projectId) {
         boolean isExist = projectJpaRepository.existsById(projectId);
-        LoggerFactory.db().logExist("ProjectEntity", "해당 프로젝트 존재 유무 확인이 완료되었습니다. projectId=" + projectId + ", exists=" + isExist);
+        LoggerFactory.db().logExist(PROJECT_ENTITY, "해당 프로젝트 존재 유무 확인이 완료되었습니다. projectId=" + projectId + ", exists=" + isExist);
         return isExist;
     }
 }

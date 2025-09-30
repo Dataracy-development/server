@@ -60,11 +60,11 @@ public final class ProjectEntityMapper {
     /**
      * ProjectEntity를 Project 도메인 객체로 변환합니다.
      *
-     * <p>
+     * 
      * 입력 엔티티가 null이면 null을 반환합니다. includeParent가 true이면 부모 프로젝트의 ID를 parentProjectId로 설정하고,
      * includeData가 true이면 연관된 데이터 ID 목록을 포함하며, includeChildren이 true이면 자식 프로젝트들을 최소 정보 형태로
      * 최대 childrenCount개까지 포함합니다. includeChildren이 false이면 자식 목록은 비어있습니다.
-     * </p>
+     * 
      *
      * @param entity 변환할 ProjectEntity 객체 (null일 수 있음)
      * @param includeParent 부모 프로젝트 ID를 포함할지 여부

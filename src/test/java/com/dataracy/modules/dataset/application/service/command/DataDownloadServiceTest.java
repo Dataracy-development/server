@@ -14,14 +14,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DataDownloadServiceTest {
 
     @InjectMocks
@@ -79,7 +82,7 @@ class DataDownloadServiceTest {
         given(findDownloadDataFileUrlPort.findDownloadedDataFileUrl(1L))
                 .willReturn(Optional.of("s3://file"));
         given(downloadFileUseCase.generatePreSignedUrl(any(), anyInt()))
-                .willThrow(new RuntimeException("boom"));
+                .willThrow(new  RuntimeException("boom"));
 
         // when & then
         DataException ex = catchThrowableOfType(

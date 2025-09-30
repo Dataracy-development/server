@@ -15,6 +15,7 @@ import com.dataracy.modules.project.application.dto.response.support.ProjectWith
 import com.dataracy.modules.project.application.port.out.query.read.*;
 import com.dataracy.modules.project.domain.enums.ProjectSortType;
 import com.dataracy.modules.project.domain.model.Project;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,10 @@ public class ReadProjectQueryDslAdapter implements
 {
     private final JPAQueryFactory queryFactory;
 
+    // Entity 및 메시지 상수 정의
+    private static final String PROJECT_ENTITY = "ProjectEntity";
+    private static final String PROJECT_NOT_FOUND_MESSAGE = "해당하는 프로젝트 리소스가 존재하지 않습니다. projectId=";
+
     private final QProjectEntity project = QProjectEntity.projectEntity;
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
     private final QLikeEntity like = QLikeEntity.likeEntity;
@@ -54,7 +59,7 @@ public class ReadProjectQueryDslAdapter implements
      */
     @Override
     public Optional<Project> findProjectById(Long projectId) {
-        Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[findProjectById] 아이디를 통해 삭제되지 않은 프로젝트를 조회 시작. projectId=" + projectId);
+        Instant startTime = LoggerFactory.query().logQueryStart(PROJECT_ENTITY, "[findProjectById] 아이디를 통해 삭제되지 않은 프로젝트를 조회 시작. projectId=" + projectId);
         ProjectEntity entity = queryFactory
                 .selectFrom(project)
                 .where(
@@ -63,7 +68,7 @@ public class ReadProjectQueryDslAdapter implements
                 )
                 .fetchOne();
         Optional<Project> savedProject = Optional.ofNullable(ProjectEntityMapper.toMinimal(entity));
-        LoggerFactory.query().logQueryEnd("ProjectEntity", "[findProjectById] 아이디를 통해 삭제되지 않은 프로젝트를 조회 완료. projectId=" + projectId, startTime);
+        LoggerFactory.query().logQueryEnd(PROJECT_ENTITY, "[findProjectById] 아이디를 통해 삭제되지 않은 프로젝트를 조회 완료. projectId=" + projectId, startTime);
         return savedProject;
     }
 
@@ -73,42 +78,50 @@ public class ReadProjectQueryDslAdapter implements
          * 상세:
          * - 프로젝트가 존재하지 않으면 Optional.empty()를 반환합니다.
          * - 존재하면 프로젝트(부모 프로젝트 정보 포함)와 그에 연결된 데이터셋 ID 목록을 ProjectWithDataIdsResponse로 감싸 반환합니다.
+         * - 성능 최적화: 하나의 쿼리로 프로젝트와 연결된 데이터 ID를 함께 조회하여 N+1 문제 해결
          *
          * @param projectId 조회할 프로젝트의 ID
          * @return 프로젝트(부모 포함)과 연결된 데이터셋 ID 목록을 포함한 Optional. 프로젝트가 없으면 Optional.empty()
          */
     @Override
     public Optional<ProjectWithDataIdsResponse> findProjectWithDataById(Long projectId) {
-        Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 시작. projectId=" + projectId);
-        ProjectEntity entity = queryFactory
-                .selectFrom(project)
+        Instant startTime = LoggerFactory.query().logQueryStart(PROJECT_ENTITY, "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 시작. projectId=" + projectId);
+        
+        // 최적화: 하나의 쿼리로 프로젝트와 연결된 데이터 ID를 함께 조회
+        List<Tuple> results = queryFactory
+                .select(project, projectData.dataId)
+                .from(project)
                 .leftJoin(project.parentProject)
+                .leftJoin(projectData).on(
+                        projectData.project.id.eq(project.id)
+                        .and(ProjectDataFilterPredicate.notDeleted())
+                )
                 .where(
                         ProjectFilterPredicate.projectIdEq(projectId),
                         ProjectFilterPredicate.notDeleted()
                 )
-                .fetchOne();
+                .fetch();
 
-        if (entity == null) {
-            LoggerFactory.query().logQueryEnd("ProjectEntity", "[findProjectWithDataById] 해당하는 프로젝트 리소스가 존재하지 않습니다. projectId=" + projectId, startTime);
+        if (results.isEmpty()) {
+            LoggerFactory.query().logQueryEnd(PROJECT_ENTITY, "[findProjectWithDataById] 해당하는 프로젝트 리소스가 존재하지 않습니다. projectId=" + projectId, startTime);
             return Optional.empty();
         }
 
-        // 연결된 dataId 목록
-        List<Long> dataIds = queryFactory
-                .select(projectData.dataId)
-                .from(projectData)
-                .where(
-                        projectData.project.id.eq(projectId),
-                        ProjectDataFilterPredicate.notDeleted()
-                )
-                .fetch();
+        // 첫 번째 결과에서 프로젝트 엔티티 추출 (모든 결과는 같은 프로젝트)
+        ProjectEntity entity = results.get(0).get(project);
+        
+        // 연결된 dataId 목록 추출 (null 제외)
+        List<Long> dataIds = results.stream()
+                .map(tuple -> tuple.get(projectData.dataId))
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
 
         Optional<ProjectWithDataIdsResponse> projectWithDataIdsResponse = Optional.of(new ProjectWithDataIdsResponse(
                 ProjectEntityMapper.toWithParent(entity),
                 dataIds
         ));
-        LoggerFactory.query().logQueryEnd("ProjectEntity", "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 완료. projectId=" + projectId, startTime);
+        LoggerFactory.query().logQueryEnd(PROJECT_ENTITY, "[findProjectWithDataById] 아이디를 통해 삭제되지 않은 프로젝트를 연결된 데이터셋과 함께 조회 완료. projectId=" + projectId, startTime);
         return projectWithDataIdsResponse;
     }
 
@@ -121,7 +134,7 @@ public class ReadProjectQueryDslAdapter implements
      */
     @Override
     public Page<Project> findContinuedProjects(Long projectId, Pageable pageable) {
-        Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[findContinuedProjects] 이어가기 프로젝트 목록 조회 시작. projectId=" + projectId);
+        Instant startTime = LoggerFactory.query().logQueryStart(PROJECT_ENTITY, "[findContinuedProjects] 이어가기 프로젝트 목록 조회 시작. projectId=" + projectId);
         List<ProjectEntity> entities = queryFactory
                 .selectFrom(project)
                 .orderBy(ProjectSortBuilder.fromSortOption(ProjectSortType.LATEST))
@@ -148,16 +161,16 @@ public class ReadProjectQueryDslAdapter implements
                         .fetchOne()
         ).orElse(0L);
 
-        LoggerFactory.query().logQueryEnd("ProjectEntity", "[findContinuedProjects] 이어가기 프로젝트 목록 조회 완료. projectId=" + projectId, startTime);
+        LoggerFactory.query().logQueryEnd(PROJECT_ENTITY, "[findContinuedProjects] 이어가기 프로젝트 목록 조회 완료. projectId=" + projectId, startTime);
         return new PageImpl<>(contents, pageable, total);
     }
 
     /**
      * 지정된 데이터 ID와 연결된 프로젝트들을 페이징하여 조회합니다.
      *
-     * <p>프로젝트는 연결된 ProjectData 엔티티를 기준으로 프로젝트 생성일(createdAt) 내림차순으로 정렬되어 반환됩니다.
+     * 프로젝트는 연결된 ProjectData 엔티티를 기준으로 프로젝트 생성일(createdAt) 내림차순으로 정렬되어 반환됩니다.
      * 조회는 soft-delete(삭제 플래그가 설정되지 않은) 된 연결만 대상으로 하며, 결과 콘텐츠는 최소 정보(minimal) 형태로 매핑됩니다.
-     * 총건수는 해당 데이터와 연결된 서로 다른 프로젝트 수(distinct)를 기준으로 계산됩니다.</p>
+     * 총건수는 해당 데이터와 연결된 서로 다른 프로젝트 수(distinct)를 기준으로 계산됩니다.
      *
      * @param dataId 조회할 데이터(데이터셋)의 ID
      * @param pageable 페이지 번호·크기 및 정렬 정보를 포함한 페이징 파라미터
@@ -165,7 +178,7 @@ public class ReadProjectQueryDslAdapter implements
      */
     @Override
     public Page<Project> findConnectedProjectsAssociatedWithDataset(Long dataId, Pageable pageable) {
-        Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[findConnectedProjectsAssociatedWithDataset] 데이터셋과 연결된 프로젝트 목록 조회 시작. dataId=" + dataId);
+        Instant startTime = LoggerFactory.query().logQueryStart(PROJECT_ENTITY, "[findConnectedProjectsAssociatedWithDataset] 데이터셋과 연결된 프로젝트 목록 조회 시작. dataId=" + dataId);
 
         // 먼저 id 목록 조회 (페이징 포함)
         List<Long> projectIds = queryFactory
@@ -209,7 +222,7 @@ public class ReadProjectQueryDslAdapter implements
                         .fetchOne()
         ).orElse(0L);
 
-        LoggerFactory.query().logQueryEnd("ProjectEntity", "[findConnectedProjectsAssociatedWithDataset] 데이터셋과 연결된 프로젝트 목록 조회 완료. dataId=" + dataId, startTime);
+        LoggerFactory.query().logQueryEnd(PROJECT_ENTITY, "[findConnectedProjectsAssociatedWithDataset] 데이터셋과 연결된 프로젝트 목록 조회 완료. dataId=" + dataId, startTime);
         return new PageImpl<>(contents, pageable, total);
     }
 
@@ -223,7 +236,7 @@ public class ReadProjectQueryDslAdapter implements
      */
     @Override
     public List<Project> getPopularProjects(int size) {
-        Instant startTime = LoggerFactory.query().logQueryStart("ProjectEntity", "[getPopularProjects] 인기있는 프로젝트 목록 조회 시작.");
+        Instant startTime = LoggerFactory.query().logQueryStart(PROJECT_ENTITY, "[getPopularProjects] 인기있는 프로젝트 목록 조회 시작.");
         List<Project> popularProjects =  queryFactory
                 .selectFrom(project)
                 .where(
@@ -236,14 +249,14 @@ public class ReadProjectQueryDslAdapter implements
                 .map(ProjectEntityMapper::toMinimal)
                 .toList();
 
-        LoggerFactory.query().logQueryEnd("ProjectEntity", "[getPopularProjects] 인기있는 프로젝트 목록 조회 완료.", startTime);
+        LoggerFactory.query().logQueryEnd(PROJECT_ENTITY, "[getPopularProjects] 인기있는 프로젝트 목록 조회 완료.", startTime);
         return popularProjects;
     }
 
     /**
      * 특정 사용자가 작성한 비삭제 프로젝트들을 페이지 단위로 조회한다.
      *
-     * <p>작성일 기준 최신순으로 정렬된 프로젝트들의 최소 정보(minimal)를 반환하며,
+     * 작성일 기준 최신순으로 정렬된 프로젝트들의 최소 정보(minimal)를 반환하며,
      * 전달된 Pageable이 null이면 기본 페이지(PageRequest.of(0, 5))를 사용한다.
      * 결과의 total은 해당 사용자에 대한 비삭제 프로젝트 총 개수를 반영한다.
      *
@@ -259,7 +272,7 @@ public class ReadProjectQueryDslAdapter implements
                 : pageable;
 
         Instant startTime = LoggerFactory.query().logQueryStart(
-                "ProjectEntity",
+                PROJECT_ENTITY,
                 "[findUserProjects] 해당 회원이 작성한 프로젝트 목록 조회 시작. userId=" + userId
         );
 
@@ -290,7 +303,7 @@ public class ReadProjectQueryDslAdapter implements
         ).orElse(0L);
 
         LoggerFactory.query().logQueryEnd(
-                "ProjectEntity",
+                PROJECT_ENTITY,
                 "[findUserProjects] 해당 회원이 작성한 프로젝트 목록 조회 완료. userId=" + userId,
                 startTime
         );
@@ -311,7 +324,7 @@ public class ReadProjectQueryDslAdapter implements
     @Override
     public Page<Project> findLikeProjects(Long userId, Pageable pageable) {
         Instant startTime = LoggerFactory.query().logQueryStart(
-                "ProjectEntity",
+                PROJECT_ENTITY,
                 "[findLikeProjects] 해당 회원이 좋아요한 프로젝트 목록 조회 시작. userId=" + userId
         );
 
@@ -354,7 +367,7 @@ public class ReadProjectQueryDslAdapter implements
                 .toList();
 
         LoggerFactory.query().logQueryEnd(
-                "ProjectEntity",
+                PROJECT_ENTITY,
                 "[findLikeProjects] 해당 회원이 좋아요한 프로젝트 목록 조회 완료. userId=" + userId,
                 startTime
         );

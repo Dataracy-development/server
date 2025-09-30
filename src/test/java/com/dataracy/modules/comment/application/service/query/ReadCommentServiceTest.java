@@ -24,7 +24,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,8 +37,11 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ReadCommentServiceTest {
 
     @Mock
@@ -47,16 +51,7 @@ class ReadCommentServiceTest {
     private FindCommentDtoMapper mapper = new FindCommentDtoMapper();
 
     @Mock
-    private FindUsernameUseCase findUsernameUseCase;
-
-    @Mock
-    private FindUserThumbnailUseCase findUserThumbnailUseCase;
-
-    @Mock
-    private FindUserAuthorLevelIdsUseCase findUserAuthorLevelIdsUseCase;
-
-    @Mock
-    private GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
+    private com.dataracy.modules.comment.application.port.in.query.extractor.FindCommentUserInfoUseCase findCommentUserInfoUseCase;
 
     @Mock
     private FindTargetIdsUseCase findTargetIdsUseCase;
@@ -91,14 +86,13 @@ class ReadCommentServiceTest {
 
             given(readCommentPort.findComments(any(), any(Pageable.class)))
                     .willReturn(page);
-            given(findUsernameUseCase.findUsernamesByIds(any()))
-                    .willReturn(Map.of(1L, "유저1"));
-            given(findUserThumbnailUseCase.findUserThumbnailsByIds(any()))
-                    .willReturn(Map.of(1L, "thumb.png"));
-            given(findUserAuthorLevelIdsUseCase.findUserAuthorLevelIds(any()))
-                    .willReturn(Map.of(1L, "10"));
-            given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(any()))
-                    .willReturn(Map.of(10L, "등급"));
+            given(findCommentUserInfoUseCase.findCommentUserInfoBatch(any()))
+                    .willReturn(new com.dataracy.modules.comment.application.dto.response.support.CommentLabelResponse(
+                            Map.of(1L, "유저1"),
+                            Map.of(1L, "thumb.png"),
+                            Map.of(1L, "10"),
+                            Map.of(10L, "등급")
+                    ));
             given(findTargetIdsUseCase.findLikedTargetIds(any(), any(), eq(TargetType.COMMENT)))
                     .willReturn(List.of());
 
@@ -121,8 +115,8 @@ class ReadCommentServiceTest {
                     new PageImpl<>(List.of(new FindCommentWithReplyCountResponse(comment, 0L)));
 
             given(readCommentPort.findComments(1L, pageable)).willReturn(page);
-            willThrow(new UserException(UserErrorStatus.NOT_FOUND_USER))
-                    .given(findUsernameUseCase).findUsernamesByIds(any());
+            willThrow(new  UserException(UserErrorStatus.NOT_FOUND_USER))
+                    .given(findCommentUserInfoUseCase).findCommentUserInfoBatch(any());
 
             // when & then
             UserException ex = catchThrowableOfType(
@@ -154,14 +148,13 @@ class ReadCommentServiceTest {
 
             given(readCommentPort.findReplyComments(any(), any(), any(Pageable.class)))
                     .willReturn(page);
-            given(findUsernameUseCase.findUsernamesByIds(any()))
-                    .willReturn(Map.of(1L, "유저1"));
-            given(findUserThumbnailUseCase.findUserThumbnailsByIds(any()))
-                    .willReturn(Map.of(1L, "thumb.png"));
-            given(findUserAuthorLevelIdsUseCase.findUserAuthorLevelIds(any()))
-                    .willReturn(Map.of(1L, "10"));
-            given(getAuthorLevelLabelFromIdUseCase.getLabelsByIds(any()))
-                    .willReturn(Map.of(10L, "등급"));
+            given(findCommentUserInfoUseCase.findCommentUserInfoBatch(any()))
+                    .willReturn(new com.dataracy.modules.comment.application.dto.response.support.CommentLabelResponse(
+                            Map.of(1L, "유저1"),
+                            Map.of(1L, "thumb.png"),
+                            Map.of(1L, "10"),
+                            Map.of(10L, "등급")
+                    ));
             given(findTargetIdsUseCase.findLikedTargetIds(any(), any(), eq(TargetType.COMMENT)))
                     .willReturn(List.of());
 
@@ -184,7 +177,7 @@ class ReadCommentServiceTest {
         void findReplyCommentsShouldThrowWhenPortThrows() {
             // given
             Pageable pageable = PageRequest.of(0, 5);
-            willThrow(new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
+            willThrow(new  CommentException(CommentErrorStatus.NOT_FOUND_COMMENT))
                     .given(readCommentPort).findReplyComments(1L, 10L, pageable);
 
             // when & then
@@ -205,7 +198,7 @@ class ReadCommentServiceTest {
 
             given(readCommentPort.findReplyComments(1L, 10L, pageable))
                     .willReturn(page);
-            willThrow(new RuntimeException("Like Service Down"))
+            willThrow(new  RuntimeException("Like Service Down"))
                     .given(findTargetIdsUseCase).findLikedTargetIds(1L, List.of(20L), TargetType.COMMENT);
 
             // when & then

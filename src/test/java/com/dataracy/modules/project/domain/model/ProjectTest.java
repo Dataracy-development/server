@@ -6,46 +6,168 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Project 도메인 모델 테스트
+ */
 class ProjectTest {
 
     @Test
-    @DisplayName("updateThumbnailUrl - 썸네일 변경 반영")
-    void updateThumbnailUrlSuccess() {
-        // given
-        Project project = Project.builder().id(1L).title("t").thumbnailUrl("old.png").build();
-
+    @DisplayName("기본 생성자로 Project 인스턴스 생성")
+    void createProjectWithDefaultConstructor() {
         // when
-        project.updateThumbnailUrl("new.png");
+        Project project = new Project();
 
         // then
-        assertThat(project.getThumbnailUrl()).isEqualTo("new.png");
+        assertThat(project).isNotNull();
     }
 
     @Test
-    @DisplayName("of() - 모든 값 반영 확인")
-    void ofSuccess() {
+    @DisplayName("updateThumbnailUrl() 호출 시 썸네일 URL이 변경된다")
+    void updateThumbnailUrlShouldUpdateUrl() {
+        // given
+        Project project = Project.of(
+                1L, "테스트 프로젝트", 1L, 1L, 1L, 1L, 1L, false, 1L,
+                "프로젝트 내용", "oldThumbnail.jpg", List.of(1L, 2L),
+                LocalDateTime.now(), 0L, 0L, 0L, false, List.of()
+        );
+
+        // when
+        project.updateThumbnailUrl("newThumbnail.jpg");
+
+        // then
+        assertThat(project.getThumbnailUrl()).isEqualTo("newThumbnail.jpg");
+    }
+
+    @Test
+    @DisplayName("updateThumbnailUrl() 호출 시 null로 변경 가능하다")
+    void updateThumbnailUrlShouldAcceptNull() {
+        // given
+        Project project = Project.of(
+                1L, "테스트 프로젝트", 1L, 1L, 1L, 1L, 1L, false, 1L,
+                "프로젝트 내용", "oldThumbnail.jpg", List.of(1L, 2L),
+                LocalDateTime.now(), 0L, 0L, 0L, false, List.of()
+        );
+
+        // when
+        project.updateThumbnailUrl(null);
+
+        // then
+        assertThat(project.getThumbnailUrl()).isNull();
+    }
+
+    @Test
+    @DisplayName("Project.of() 정적 팩토리 메서드로 인스턴스 생성")
+    void createProjectWithOfMethod() {
         // given
         LocalDateTime now = LocalDateTime.now();
+        List<Long> dataIds = List.of(1L, 2L, 3L);
+        List<Project> childProjects = List.of();
 
         // when
         Project project = Project.of(
-                1L, "title", 10L, 99L,
-                20L, 30L, 40L,
-                true, 2L,
-                "content", "thumb.png",
-                List.of(100L, 200L),
-                now,
-                5L, 6L, 7L,
-                false,
-                List.of()
+                1L, "테스트 프로젝트", 1L, 1L, 1L, 1L, 1L, false, 1L,
+                "프로젝트 내용", "thumbnail.jpg", dataIds,
+                now, 5L, 10L, 100L, false, childProjects
         );
 
         // then
+        assertThat(project).isNotNull();
         assertThat(project.getId()).isEqualTo(1L);
-        assertThat(project.getDataIds()).containsExactly(100L, 200L);
-        assertThat(project.getLikeCount()).isEqualTo(6L);
+        assertThat(project.getTitle()).isEqualTo("테스트 프로젝트");
+        assertThat(project.getTopicId()).isEqualTo(1L);
+        assertThat(project.getUserId()).isEqualTo(1L);
+        assertThat(project.getAnalysisPurposeId()).isEqualTo(1L);
+        assertThat(project.getDataSourceId()).isEqualTo(1L);
+        assertThat(project.getAuthorLevelId()).isEqualTo(1L);
+        assertThat(project.getIsContinue()).isFalse();
+        assertThat(project.getParentProjectId()).isEqualTo(1L);
+        assertThat(project.getContent()).isEqualTo("프로젝트 내용");
+        assertThat(project.getThumbnailUrl()).isEqualTo("thumbnail.jpg");
+        assertThat(project.getDataIds()).isEqualTo(dataIds);
+        assertThat(project.getCommentCount()).isEqualTo(5L);
+        assertThat(project.getLikeCount()).isEqualTo(10L);
+        assertThat(project.getViewCount()).isEqualTo(100L);
         assertThat(project.getIsDeleted()).isFalse();
+        assertThat(project.getCreatedAt()).isEqualTo(now);
+        assertThat(project.getChildProjects()).isEqualTo(childProjects);
+    }
+
+    @Test
+    @DisplayName("Project 빌더 패턴으로 인스턴스 생성")
+    void createProjectWithBuilder() {
+        // when
+        Project project = Project.builder()
+                .id(1L)
+                .title("빌더 테스트 프로젝트")
+                .topicId(2L)
+                .userId(3L)
+                .analysisPurposeId(4L)
+                .dataSourceId(5L)
+                .authorLevelId(6L)
+                .isContinue(true)
+                .parentProjectId(7L)
+                .content("빌더로 생성한 프로젝트")
+                .thumbnailUrl("builderThumbnail.jpg")
+                .dataIds(List.of(10L, 20L))
+                .commentCount(15L)
+                .likeCount(25L)
+                .viewCount(150L)
+                .isDeleted(false)
+                .createdAt(LocalDateTime.now())
+                .childProjects(List.of())
+                .build();
+
+        // then
+        assertThat(project).isNotNull();
+        assertThat(project.getId()).isEqualTo(1L);
+        assertThat(project.getTitle()).isEqualTo("빌더 테스트 프로젝트");
+        assertThat(project.getTopicId()).isEqualTo(2L);
+        assertThat(project.getUserId()).isEqualTo(3L);
+        assertThat(project.getAnalysisPurposeId()).isEqualTo(4L);
+        assertThat(project.getDataSourceId()).isEqualTo(5L);
+        assertThat(project.getAuthorLevelId()).isEqualTo(6L);
+        assertThat(project.getIsContinue()).isTrue();
+        assertThat(project.getParentProjectId()).isEqualTo(7L);
+        assertThat(project.getContent()).isEqualTo("빌더로 생성한 프로젝트");
+        assertThat(project.getThumbnailUrl()).isEqualTo("builderThumbnail.jpg");
+        assertThat(project.getDataIds()).isEqualTo(List.of(10L, 20L));
+        assertThat(project.getCommentCount()).isEqualTo(15L);
+        assertThat(project.getLikeCount()).isEqualTo(25L);
+        assertThat(project.getViewCount()).isEqualTo(150L);
+        assertThat(project.getIsDeleted()).isFalse();
+        assertThat(project.getCreatedAt()).isNotNull();
+        assertThat(project.getChildProjects()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("null 데이터 ID 리스트로 Project 생성")
+    void createProjectWithNullDataIds() {
+        // when
+        Project project = Project.of(
+                1L, "테스트 프로젝트", 1L, 1L, 1L, 1L, 1L, false, 1L,
+                "프로젝트 내용", "thumbnail.jpg", null,
+                LocalDateTime.now(), 0L, 0L, 0L, false, List.of()
+        );
+
+        // then
+        assertThat(project).isNotNull();
+        assertThat(project.getDataIds()).isNull();
+    }
+
+    @Test
+    @DisplayName("빈 데이터 ID 리스트로 Project 생성")
+    void createProjectWithEmptyDataIds() {
+        // when
+        Project project = Project.of(
+                1L, "테스트 프로젝트", 1L, 1L, 1L, 1L, 1L, false, 1L,
+                "프로젝트 내용", "thumbnail.jpg", List.of(),
+                LocalDateTime.now(), 0L, 0L, 0L, false, List.of()
+        );
+
+        // then
+        assertThat(project).isNotNull();
+        assertThat(project.getDataIds()).isEmpty();
     }
 }

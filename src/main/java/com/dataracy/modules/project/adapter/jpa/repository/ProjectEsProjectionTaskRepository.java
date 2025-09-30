@@ -43,8 +43,8 @@ public interface ProjectEsProjectionTaskRepository extends JpaRepository<Project
     /**
      * 지정한 ID를 가진 ProjectEsProjectionTaskEntity를 즉시 삭제합니다.
      *
-     * <p>삭제 쿼리를 직접 실행하며, 실행 후 영속성 컨텍스트를 플러시하고(clearAutomatically=false가 아님) 자동으로 초기화합니다.
-     * 일치하는 엔티티가 없으면 아무것도 삭제되지 않습니다.</p>
+     * 삭제 쿼리를 직접 실행하며, 실행 후 영속성 컨텍스트를 플러시하고(clearAutomatically=false가 아님) 자동으로 초기화합니다.
+     * 일치하는 엔티티가 없으면 아무것도 삭제되지 않습니다.
      *
      * @param id 삭제할 엔티티의 식별자
      */

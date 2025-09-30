@@ -31,6 +31,16 @@ public class DataSourceQueryService implements
     private final DataSourceDtoMapper dataSourceDtoMapper;
     private final DataSourcePort dataSourcePort;
 
+    // Use Case 상수 정의
+    private static final String FIND_ALL_DATA_SOURCES_USE_CASE = "FindAllDataSourcesUseCase";
+    private static final String FIND_DATA_SOURCE_USE_CASE = "FindDataSourceUseCase";
+    private static final String VALIDATE_DATA_SOURCE_USE_CASE = "ValidateDataSourceUseCase";
+    private static final String GET_DATA_SOURCE_LABEL_FROM_ID_USE_CASE = "GetDataSourceLabelFromIdUseCase";
+    
+    // 메시지 상수 정의
+    private static final String DATA_SOURCE_NOT_FOUND_MESSAGE = "해당 데이터 출처가 존재하지 않습니다. dataSourceId=";
+    private static final String DATA_SOURCE_NOT_FOUND_MESSAGE_2 = "해당 데이터 소스가 존재하지 않습니다. dataSourceId=";
+
     /**
      * 모든 데이터 소스의 전체 목록을 조회하여 DTO로 반환한다.
      *
@@ -39,10 +49,10 @@ public class DataSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AllDataSourcesResponse findAllDataSources() {
-        Instant startTime = LoggerFactory.service().logStart("FindAllDataSourcesUseCase", "모든 데이터 출처 정보 조회 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FIND_ALL_DATA_SOURCES_USE_CASE, "모든 데이터 출처 정보 조회 서비스 시작");
         List<DataSource> dataSources = dataSourcePort.findAllDataSources();
         AllDataSourcesResponse allDataSourcesResponse = dataSourceDtoMapper.toResponseDto(dataSources);
-        LoggerFactory.service().logSuccess("FindAllDataSourcesUseCase", "모든 데이터 출처 정보 조회 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(FIND_ALL_DATA_SOURCES_USE_CASE, "모든 데이터 출처 정보 조회 서비스 종료", startTime);
         return allDataSourcesResponse;
     }
 
@@ -57,14 +67,14 @@ public class DataSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public DataSourceResponse findDataSource(Long dataSourceId) {
-        Instant startTime = LoggerFactory.service().logStart("FindDataSourceUseCase", "주어진 ID로 데이터 출처 조회 서비스 시작 dataSourceId=" + dataSourceId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_DATA_SOURCE_USE_CASE, "주어진 ID로 데이터 출처 조회 서비스 시작 dataSourceId=" + dataSourceId);
         DataSource dataSource = dataSourcePort.findDataSourceById(dataSourceId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindDataSourceUseCase", "해당 데이터 출처가 존재하지 않습니다. dataSourceId=" + dataSourceId);
+                    LoggerFactory.service().logWarning(FIND_DATA_SOURCE_USE_CASE, DATA_SOURCE_NOT_FOUND_MESSAGE + dataSourceId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE);
                 });
         DataSourceResponse dataSourceResponse = dataSourceDtoMapper.toResponseDto(dataSource);
-        LoggerFactory.service().logSuccess("FindDataSourceUseCase", "주어진 ID로 데이터 출처 조회 서비스 종료 dataSourceId=" + dataSourceId, startTime);
+        LoggerFactory.service().logSuccess(FIND_DATA_SOURCE_USE_CASE, "주어진 ID로 데이터 출처 조회 서비스 종료 dataSourceId=" + dataSourceId, startTime);
         return dataSourceResponse;
     }
 
@@ -78,13 +88,13 @@ public class DataSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public void validateDataSource(Long dataSourceId) {
-        Instant startTime = LoggerFactory.service().logStart("ValidateDataSourceUseCase", "주어진 ID에 해당하는 데이터 소스가 존재하는지 확인 서비스 시작 dataSourceId=" + dataSourceId);
+        Instant startTime = LoggerFactory.service().logStart(VALIDATE_DATA_SOURCE_USE_CASE, "주어진 ID에 해당하는 데이터 소스가 존재하는지 확인 서비스 시작 dataSourceId=" + dataSourceId);
         Boolean isExist = dataSourcePort.existsDataSourceById(dataSourceId);
         if (!isExist) {
-            LoggerFactory.service().logWarning("ValidateDataSourceUseCase", "해당 데이터 소스가 존재하지 않습니다. dataSourceId=" + dataSourceId);
+            LoggerFactory.service().logWarning(VALIDATE_DATA_SOURCE_USE_CASE, DATA_SOURCE_NOT_FOUND_MESSAGE_2 + dataSourceId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE);
         }
-        LoggerFactory.service().logSuccess("ValidateDataSourceUseCase", "주어진 ID에 해당하는 데이터 소스가 존재하는지 확인 서비스 종료 dataSourceId=" + dataSourceId, startTime);
+        LoggerFactory.service().logSuccess(VALIDATE_DATA_SOURCE_USE_CASE, "주어진 ID에 해당하는 데이터 소스가 존재하는지 확인 서비스 종료 dataSourceId=" + dataSourceId, startTime);
     }
 
     /**
@@ -98,13 +108,13 @@ public class DataSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long dataSourceId) {
-        Instant startTime = LoggerFactory.service().logStart("GetDataSourceLabelFromIdUseCase", "주어진 데이터 소스 ID에 해당하는 라벨을 조회 서비스 시작 dataSourceId=" + dataSourceId);
+        Instant startTime = LoggerFactory.service().logStart(GET_DATA_SOURCE_LABEL_FROM_ID_USE_CASE, "주어진 데이터 소스 ID에 해당하는 라벨을 조회 서비스 시작 dataSourceId=" + dataSourceId);
         String label = dataSourcePort.getLabelById(dataSourceId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetDataSourceLabelFromIdUseCase", "해당 데이터 소스가 존재하지 않습니다. dataSourceId=" + dataSourceId);
+                    LoggerFactory.service().logWarning(GET_DATA_SOURCE_LABEL_FROM_ID_USE_CASE, DATA_SOURCE_NOT_FOUND_MESSAGE_2 + dataSourceId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE);
                 });
-        LoggerFactory.service().logSuccess("GetDataSourceLabelFromIdUseCase", "주어진 데이터 소스 ID에 해당하는 라벨을 조회 서비스 종료 dataSourceId=" + dataSourceId, startTime);
+        LoggerFactory.service().logSuccess(GET_DATA_SOURCE_LABEL_FROM_ID_USE_CASE, "주어진 데이터 소스 ID에 해당하는 라벨을 조회 서비스 종료 dataSourceId=" + dataSourceId, startTime);
         return label;
     }
 
@@ -117,12 +127,12 @@ public class DataSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> dataSourceIds) {
-        Instant startTime = LoggerFactory.service().logStart("GetDataSourceLabelFromIdUseCase", "데이터 소스 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(GET_DATA_SOURCE_LABEL_FROM_ID_USE_CASE, "데이터 소스 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
         if (dataSourceIds == null || dataSourceIds.isEmpty()) {
             return Map.of();
         }
         Map<Long, String> labels = dataSourcePort.getLabelsByIds(dataSourceIds);
-        LoggerFactory.service().logSuccess("GetDataSourceLabelFromIdUseCase", "데이터 소스 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(GET_DATA_SOURCE_LABEL_FROM_ID_USE_CASE, "데이터 소스 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
         return labels;
     }
 }

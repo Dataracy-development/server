@@ -36,8 +36,8 @@ public class ProjectFilterWebMapper {
     /**
      * 애플리케이션 계층의 FilteredProjectResponse를 웹 계층의 FilteredProjectWebResponse로 변환합니다.
      *
-     * <p>응답의 기본 필드(id, title, content 등)와 생성자 정보(creatorId, creatorName)를 그대로 매핑하며,
-     * 하위 프로젝트 목록은 ChildProjectWebMapper를 통해 ChildProjectWebResponse 목록으로 변환하여 포함합니다.</p>
+     * 응답의 기본 필드(id, title, content 등)와 생성자 정보(creatorId, creatorName)를 그대로 매핑하며,
+     * 하위 프로젝트 목록은 ChildProjectWebMapper를 통해 ChildProjectWebResponse 목록으로 변환하여 포함합니다.
      *
      * @param responseDto 변환할 애플리케이션 계층의 필터링된 프로젝트 응답 DTO
      * @return 웹 계층에서 사용하는 필터링된 프로젝트 응답 DTO

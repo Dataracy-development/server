@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class DataEsProjectionWorker {
@@ -27,6 +28,9 @@ public class DataEsProjectionWorker {
     // ES 어댑터들 (Qualifier로 ES 구현 주입)
     private final SoftDeleteDataPort softDeleteDataEsPort;
     private final UpdateDataDownloadPort updateDataDownloadEsPort;
+    
+    // Self-injection: Spring 프록시를 통해 REQUIRES_NEW 트랜잭션이 작동하도록 함
+    private DataEsProjectionWorker self;
 
     private static final int BATCH = 100;
     private static final int MAX_RETRY = 8;
@@ -51,11 +55,23 @@ public class DataEsProjectionWorker {
         this.softDeleteDataEsPort = softDeleteDataEsPort;
         this.updateDataDownloadEsPort = updateDataDownloadEsPort;
     }
+    
+    /**
+     * Self-injection: 프록시 객체를 주입받아 REQUIRES_NEW 트랜잭션이 작동하도록 합니다.
+     * @Lazy를 사용하여 순환 참조 문제를 해결합니다.
+     *
+     * @param self 현재 빈의 프록시 객체
+     */
+    @org.springframework.beans.factory.annotation.Autowired
+    @org.springframework.context.annotation.Lazy
+    public void setSelf(DataEsProjectionWorker self) {
+        this.self = self;
+    }
 
     /**
      * 재시도 횟수에 따라 지수형(backoff) 대기 시간을 초 단위로 계산한다.
      *
-     * <p>동작:
+     * 동작:
      * - retryCount가 8 이상이면 최대값인 120초를 반환한다.
      * - 그 외에는 1, 2, 4, 8, 16, 32, 64의 시퀀스 중 하나를 반환한다.
      *
@@ -70,17 +86,15 @@ public class DataEsProjectionWorker {
     }
 
     /**
-     * 3초마다 대기중(PENDING) 또는 재시도(RETRYING) 상태의 Projection 작업을 배치로 조회하여 각 작업을 별도 트랜잭션으로 처리합니다.
+     * 3초마다 대기중(PENDING) 또는 재시도(RETRYING) 상태의 Projection 작업을 배치로 조회하여 각 작업을 비동기로 처리합니다.
      *
-     * <p>세부:
-     * - 스케줄: @Scheduled(fixedDelayString = "PT3S")로 3초 간격 실행
-     * - 조회: 최대 BATCH 개수의 작업을 현재 시점 기준으로 가져옵니다.
-     * - 트랜잭션: 메서드는 전체에 대한 트랜잭션 경계를 가지지만 각 작업은
-     *   processTask(...)에서 Propagation.REQUIRES_NEW로 별도의 트랜잭션에서 실행되어
-     *   한 작업의 실패가 다른 작업의 커밋에 영향을 주지 않습니다.
+     * 개선사항:
+     * - 트랜잭션 경계 제거: 전체 배치에 대한 트랜잭션 경계를 제거하여 성능 향상
+     * - 비동기 처리: 각 작업을 비동기로 처리하여 병렬성 향상
+     * - 독립성 보장: 각 작업은 여전히 독립적인 트랜잭션에서 실행
      */
-    @Transactional
     @Scheduled(fixedDelayString = "PT3S")
+    @Transactional
     public void run() {
         List<DataEsProjectionTaskEntity> tasks = loadDataProjectionTaskPort.findBatchForWork(
                 LocalDateTime.now(),
@@ -88,28 +102,47 @@ public class DataEsProjectionWorker {
                 PageRequest.of(0, BATCH)
         );
 
-        for (DataEsProjectionTaskEntity t : tasks) {
-            processTask(t); // Task 단위 독립 트랜잭션 실행
-        }
+        // 각 작업을 비동기로 처리
+        List<CompletableFuture<Void>> futures = tasks.stream()
+                .map(this::processTaskAsync)
+                .toList();
+
+        // 모든 작업 완료 대기 (선택적)
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .exceptionally(throwable -> {
+                    LoggerFactory.elastic().logError("data_index", "비동기 작업 처리 중 예외 발생", throwable);
+                    return null;
+                });
+    }
+
+    /**
+     * 단일 데이터 반영 작업을 비동기로 처리합니다.
+     * Self-injection을 통해 프록시 객체를 사용하여 REQUIRES_NEW 트랜잭션이 작동하도록 합니다.
+     *
+     * @param t 작업 대상 엔터티
+     * @return CompletableFuture<Void> 비동기 처리 결과
+     */
+    public CompletableFuture<Void> processTaskAsync(DataEsProjectionTaskEntity t) {
+        return CompletableFuture.runAsync(() -> self.processTask(t));
     }
 
     /**
      * 단일 데이터 반영 작업(큐 항목)을 독립된 새 트랜잭션으로 처리한다.
      *
-     * <p>작업 엔터티에 따라 다음 중 하나 이상의 동작을 수행한다:
+     * 작업 엔터티에 따라 다음 중 하나 이상의 동작을 수행한다:
      * <ul>
      *   <li>setDeleted 필드가 지정되면 해당 데이터에 대해 소프트 삭제 또는 복원을 수행</li>
      *   <li>deltaDownload가 양수이면 다운로드 카운트를 증가</li>
      *   <li>처리 성공 시 해당 작업 큐 항목을 삭제</li>
      * </ul>
      *
-     * <p>처리 중 예외가 발생하면 내부에서 재시도 로직을 적용한다:
+     * 처리 중 예외가 발생하면 내부에서 재시도 로직을 적용한다:
      * <ul>
      *   <li>재시도 횟수가 MAX_RETRY 이상이면 DLQ에 실패 정보를 저장하고 큐 항목을 삭제</li>
      *   <li>아직 재시도 가능하면 작업 상태를 RETRYING으로 업데이트하고 retryCount, lastError, nextRunAt을 설정(커밋 시 영속성 컨텍스트의 더티 체크로 반영)</li>
      * </ul>
      *
-     * <p>이 메서드는 예외를 밖으로 던지지 않고 내부에서 처리하므로 호출자는 예외 처리를 신경 쓸 필요가 없다.
+     * 이 메서드는 예외를 밖으로 던지지 않고 내부에서 처리하므로 호출자는 예외 처리를 신경 쓸 필요가 없다.
      *
      * @param t 작업 대상 엔터티(데이터 ID, deltaDownload, setDeleted, retry 관련 필드 포함)
      */

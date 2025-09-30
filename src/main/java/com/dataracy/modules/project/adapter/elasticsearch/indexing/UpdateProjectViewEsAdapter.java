@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component("updateProjectViewEsAdapter")
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
      * @param projectId viewCount를 증가시킬 프로젝트의 ID
      * @param increment viewCount에 더할 값
      */
+    @Override
     public void increaseViewCount(Long projectId, Long increment) {
         try {
             client.update(u -> u
@@ -55,5 +57,31 @@ public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
             LoggerFactory.elastic().logError(INDEX, "프로젝트 viewCount 증분 업데이트 실패 - projectId=" + projectId, e);
             throw new EsUpdateException("ES update failed: projectId=" + projectId, e);
         }
+    }
+
+    /**
+     * 여러 프로젝트의 조회수를 배치로 증가시킵니다.
+     *
+     * @param viewCountUpdates 프로젝트 ID와 증가시킬 조회수 값의 맵
+     */
+    @Override
+    public void increaseViewCountBatch(Map<Long, Long> viewCountUpdates) {
+        if (viewCountUpdates.isEmpty()) {
+            return;
+        }
+
+        // ES에서는 개별 처리 (배치 업데이트는 복잡하므로 개별 처리로 구현)
+        for (Map.Entry<Long, Long> entry : viewCountUpdates.entrySet()) {
+            try {
+                increaseViewCount(entry.getKey(), entry.getValue());
+            } catch (Exception e) {
+                LoggerFactory.elastic().logError(INDEX, 
+                    "배치 처리 중 개별 프로젝트 업데이트 실패 - projectId=" + entry.getKey(), e);
+                // 개별 실패가 전체에 영향을 주지 않도록 계속 진행
+            }
+        }
+        
+        LoggerFactory.elastic().logUpdate(INDEX, "배치 처리", 
+            "프로젝트 viewCount 배치 업데이트 완료. 처리된 프로젝트 수: " + viewCountUpdates.size());
     }
 }

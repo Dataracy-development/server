@@ -4,43 +4,113 @@ import com.dataracy.modules.reference.adapter.web.response.allview.AllDataSource
 import com.dataracy.modules.reference.adapter.web.response.singleview.DataSourceWebResponse;
 import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
 import com.dataracy.modules.reference.application.dto.response.singleview.DataSourceResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DataSourceWebMapperTest {
-    private final DataSourceWebMapper mapper = new DataSourceWebMapper();
 
-    @Test
-    @DisplayName("toWebDto(single): 성공 - 필드 매핑")
-    void toWebDtoSingleSuccess() {
-        // given
-        DataSourceResponse src = new DataSourceResponse(1L, "v", "l");
+    private DataSourceWebMapper dataSourceWebMapper;
 
-        // when
-        DataSourceWebResponse result = mapper.toWebDto(src);
-
-        // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.value()).isEqualTo("v");
-        assertThat(result.label()).isEqualTo("l");
+    @BeforeEach
+    void setUp() {
+        dataSourceWebMapper = new DataSourceWebMapper();
     }
 
     @Test
-    @DisplayName("toWebDto(all): 성공 - 리스트 매핑, null/빈 처리")
-    void toWebDtoAllSuccessAndNullsafe() {
+    @DisplayName("toWebDto - DataSourceResponse를 DataSourceWebResponse로 변환한다")
+    void toWebDto_WhenDataSourceResponse_ConvertsToDataSourceWebResponse() {
         // given
-        AllDataSourcesResponse src = new AllDataSourcesResponse(java.util.List.of(new DataSourceResponse(1L,"v1","l1"), new DataSourceResponse(2L,"v2","l2")));
+        DataSourceResponse dataSourceResponse = new DataSourceResponse(1L, "GOV", "정부기관");
 
         // when
-        AllDataSourcesWebResponse result = mapper.toWebDto(src);
-        AllDataSourcesWebResponse nullSafe1 = mapper.toWebDto((AllDataSourcesResponse) null);
-        AllDataSourcesWebResponse nullSafe2 = mapper.toWebDto(new AllDataSourcesResponse(null));
+        DataSourceWebResponse result = dataSourceWebMapper.toWebDto(dataSourceResponse);
 
         // then
-        assertThat(result.dataSources()).hasSize(2);
-        assertThat(nullSafe1.dataSources()).isEmpty();
-        assertThat(nullSafe2.dataSources()).isEmpty();
+        assertThat(result.id()).isEqualTo(1L);
+        assertThat(result.value()).isEqualTo("GOV");
+        assertThat(result.label()).isEqualTo("정부기관");
+    }
+
+    @Test
+    @DisplayName("toWebDto - AllDataSourcesResponse를 AllDataSourcesWebResponse로 변환한다")
+    void toWebDto_WhenAllDataSourcesResponse_ConvertsToAllDataSourcesWebResponse() {
+        // given
+        List<DataSourceResponse> dataSources = List.of(
+                new DataSourceResponse(1L, "GOV", "정부기관"),
+                new DataSourceResponse(2L, "CORP", "기업"),
+                new DataSourceResponse(3L, "ACAD", "학술기관")
+        );
+        AllDataSourcesResponse allDataSourcesResponse = new AllDataSourcesResponse(dataSources);
+
+        // when
+        AllDataSourcesWebResponse result = dataSourceWebMapper.toWebDto(allDataSourcesResponse);
+
+        // then
+        assertThat(result.dataSources()).hasSize(3);
+        assertThat(result.dataSources().get(0).id()).isEqualTo(1L);
+        assertThat(result.dataSources().get(0).value()).isEqualTo("GOV");
+        assertThat(result.dataSources().get(0).label()).isEqualTo("정부기관");
+        assertThat(result.dataSources().get(1).id()).isEqualTo(2L);
+        assertThat(result.dataSources().get(1).value()).isEqualTo("CORP");
+        assertThat(result.dataSources().get(1).label()).isEqualTo("기업");
+        assertThat(result.dataSources().get(2).id()).isEqualTo(3L);
+        assertThat(result.dataSources().get(2).value()).isEqualTo("ACAD");
+        assertThat(result.dataSources().get(2).label()).isEqualTo("학술기관");
+    }
+
+    @Test
+    @DisplayName("toWebDto - AllDataSourcesResponse가 null인 경우 빈 리스트를 반환한다")
+    void toWebDto_WhenAllDataSourcesResponseIsNull_ReturnsEmptyList() {
+        // when
+        AllDataSourcesWebResponse result = dataSourceWebMapper.toWebDto((AllDataSourcesResponse) null);
+
+        // then
+        assertThat(result.dataSources()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("toWebDto - AllDataSourcesResponse의 dataSources가 null인 경우 빈 리스트를 반환한다")
+    void toWebDto_WhenDataSourcesIsNull_ReturnsEmptyList() {
+        // given
+        AllDataSourcesResponse allDataSourcesResponse = new AllDataSourcesResponse(null);
+
+        // when
+        AllDataSourcesWebResponse result = dataSourceWebMapper.toWebDto(allDataSourcesResponse);
+
+        // then
+        assertThat(result.dataSources()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("toWebDto - AllDataSourcesResponse의 dataSources가 빈 리스트인 경우 빈 리스트를 반환한다")
+    void toWebDto_WhenDataSourcesIsEmpty_ReturnsEmptyList() {
+        // given
+        AllDataSourcesResponse allDataSourcesResponse = new AllDataSourcesResponse(List.of());
+
+        // when
+        AllDataSourcesWebResponse result = dataSourceWebMapper.toWebDto(allDataSourcesResponse);
+
+        // then
+        assertThat(result.dataSources()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("toWebDto - DataSourceResponse의 모든 필드가 null인 경우에도 변환한다")
+    void toWebDto_WhenDataSourceResponseFieldsAreNull_ConvertsToDataSourceWebResponse() {
+        // given
+        DataSourceResponse dataSourceResponse = new DataSourceResponse(null, null, null);
+
+        // when
+        DataSourceWebResponse result = dataSourceWebMapper.toWebDto(dataSourceResponse);
+
+        // then
+        assertThat(result.id()).isNull();
+        assertThat(result.value()).isNull();
+        assertThat(result.label()).isNull();
     }
 }

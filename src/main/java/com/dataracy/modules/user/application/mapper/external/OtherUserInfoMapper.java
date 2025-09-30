@@ -12,8 +12,8 @@ public class OtherUserInfoMapper {
     /**
      * 내부의 UserProjectResponse를 외부 API용 GetOtherUserProjectResponse로 변환한다.
      *
-     * <p>다음 필드를 1:1 매핑하여 새 응답 DTO를 생성한다: id, title, content, projectThumbnailUrl,
-     * topicLabel, authorLevelLabel, commentCount, likeCount, viewCount, createdAt.</p>
+     * 다음 필드를 1:1 매핑하여 새 응답 DTO를 생성한다: id, title, content, projectThumbnailUrl,
+     * topicLabel, authorLevelLabel, commentCount, likeCount, viewCount, createdAt.
      *
      * @param source 변환할 내부 표현의 UserProjectResponse
      * @return 외부 API에 반환할 GetOtherUserProjectResponse 인스턴스

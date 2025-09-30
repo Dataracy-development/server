@@ -31,6 +31,15 @@ public class VisitSourceQueryService implements
     private final VisitSourceDtoMapper visitSourceDtoMapper;
     private final VisitSourcePort visitSourcePort;
 
+    // Use Case 상수 정의
+    private static final String FIND_ALL_VISIT_SOURCES_USE_CASE = "FindAllVisitSourcesUseCase";
+    private static final String FIND_VISIT_SOURCE_USE_CASE = "FindVisitSourceUseCase";
+    private static final String VALIDATE_VISIT_SOURCE_USE_CASE = "ValidateVisitSourceUseCase";
+    private static final String GET_VISIT_SOURCE_LABEL_FROM_ID_USE_CASE = "GetVisitSourceLabelFromIdUseCase";
+    
+    // 메시지 상수 정의
+    private static final String VISIT_SOURCE_NOT_FOUND_MESSAGE = "해당 방문 경로가 존재하지 않습니다. visitSourceId=";
+
     /**
      * 모든 방문 소스(VisitSource)의 전체 목록을 조회하여 응답 DTO로 반환한다.
      *
@@ -39,10 +48,10 @@ public class VisitSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AllVisitSourcesResponse findAllVisitSources() {
-        Instant startTime = LoggerFactory.service().logStart("FindAllVisitSourcesUseCase", "모든 방문 경로 정보 조회 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FIND_ALL_VISIT_SOURCES_USE_CASE, "모든 방문 경로 정보 조회 서비스 시작");
         List<VisitSource> visitSources = visitSourcePort.findAllVisitSources();
         AllVisitSourcesResponse allVisitSourcesResponse = visitSourceDtoMapper.toResponseDto(visitSources);
-        LoggerFactory.service().logSuccess("FindAllVisitSourcesUseCase", "모든 방문 경로 정보 조회 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(FIND_ALL_VISIT_SOURCES_USE_CASE, "모든 방문 경로 정보 조회 서비스 종료", startTime);
         return allVisitSourcesResponse;
     }
 
@@ -57,14 +66,14 @@ public class VisitSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public VisitSourceResponse findVisitSource(Long visitSourceId) {
-        Instant startTime = LoggerFactory.service().logStart("FindVisitSourceUseCase", "주어진 ID로 방문 경로 조회 서비스 시작 visitSourceId=" + visitSourceId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_VISIT_SOURCE_USE_CASE, "주어진 ID로 방문 경로 조회 서비스 시작 visitSourceId=" + visitSourceId);
         VisitSource visitSource = visitSourcePort.findVisitSourceById(visitSourceId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindVisitSourceUseCase", "해당 방문 경로가 존재하지 않습니다. visitSourceId=" + visitSourceId);
+                    LoggerFactory.service().logWarning(FIND_VISIT_SOURCE_USE_CASE, VISIT_SOURCE_NOT_FOUND_MESSAGE + visitSourceId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE);
                 });
         VisitSourceResponse visitSourceResponse = visitSourceDtoMapper.toResponseDto(visitSource);
-        LoggerFactory.service().logSuccess("FindVisitSourceUseCase", "주어진 ID로 방문 경로 조회 서비스 종료 visitSourceId=" + visitSourceId, startTime);
+        LoggerFactory.service().logSuccess(FIND_VISIT_SOURCE_USE_CASE, "주어진 ID로 방문 경로 조회 서비스 종료 visitSourceId=" + visitSourceId, startTime);
         return visitSourceResponse;
     }
 
@@ -78,13 +87,13 @@ public class VisitSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public void validateVisitSource(Long visitSourceId) {
-        Instant startTime = LoggerFactory.service().logStart("ValidateVisitSourceUseCase", "주어진 ID에 해당하는 방문 경로가 존재하는지 확인 서비스 시작 visitSourceId=" + visitSourceId);
+        Instant startTime = LoggerFactory.service().logStart(VALIDATE_VISIT_SOURCE_USE_CASE, "주어진 ID에 해당하는 방문 경로가 존재하는지 확인 서비스 시작 visitSourceId=" + visitSourceId);
         Boolean isExist = visitSourcePort.existsVisitSourceById(visitSourceId);
         if (!isExist) {
-            LoggerFactory.service().logWarning("ValidateVisitSourceUseCase", "해당 방문 경로가 존재하지 않습니다. visitSourceId=" + visitSourceId);
+            LoggerFactory.service().logWarning(VALIDATE_VISIT_SOURCE_USE_CASE, VISIT_SOURCE_NOT_FOUND_MESSAGE + visitSourceId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE);
         }
-        LoggerFactory.service().logSuccess("ValidateVisitSourceUseCase", "주어진 ID에 해당하는 방문 경로가 존재하는지 확인 서비스 종료 visitSourceId=" + visitSourceId, startTime);
+        LoggerFactory.service().logSuccess(VALIDATE_VISIT_SOURCE_USE_CASE, "주어진 ID에 해당하는 방문 경로가 존재하는지 확인 서비스 종료 visitSourceId=" + visitSourceId, startTime);
     }
 
     /**
@@ -98,13 +107,13 @@ public class VisitSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long visitSourceId) {
-        Instant startTime = LoggerFactory.service().logStart("GetVisitSourceLabelFromIdUseCase", "주어진 방문 경로 ID에 해당하는 라벨을 조회 서비스 시작 visitSourceId=" + visitSourceId);
+        Instant startTime = LoggerFactory.service().logStart(GET_VISIT_SOURCE_LABEL_FROM_ID_USE_CASE, "주어진 방문 경로 ID에 해당하는 라벨을 조회 서비스 시작 visitSourceId=" + visitSourceId);
         String label = visitSourcePort.getLabelById(visitSourceId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetVisitSourceLabelFromIdUseCase", "해당 방문 경로가 존재하지 않습니다. visitSourceId=" + visitSourceId);
+                    LoggerFactory.service().logWarning(GET_VISIT_SOURCE_LABEL_FROM_ID_USE_CASE, VISIT_SOURCE_NOT_FOUND_MESSAGE + visitSourceId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE);
                 });
-        LoggerFactory.service().logSuccess("GetVisitSourceLabelFromIdUseCase", "주어진 방문 경로 ID에 해당하는 라벨을 조회 서비스 종료 visitSourceId=" + visitSourceId, startTime);
+        LoggerFactory.service().logSuccess(GET_VISIT_SOURCE_LABEL_FROM_ID_USE_CASE, "주어진 방문 경로 ID에 해당하는 라벨을 조회 서비스 종료 visitSourceId=" + visitSourceId, startTime);
         return label;
     }
 
@@ -118,12 +127,12 @@ public class VisitSourceQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> visitSourceIds) {
-        Instant startTime = LoggerFactory.service().logStart("GetVisitSourceLabelFromIdUseCase", "방문 경로 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(GET_VISIT_SOURCE_LABEL_FROM_ID_USE_CASE, "방문 경로 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
         if (visitSourceIds == null || visitSourceIds.isEmpty()) {
             return Map.of();
         }
         Map<Long, String> labels = visitSourcePort.getLabelsByIds(visitSourceIds);
-        LoggerFactory.service().logSuccess("GetVisitSourceLabelFromIdUseCase", "방문 경로 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(GET_VISIT_SOURCE_LABEL_FROM_ID_USE_CASE, "방문 경로 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
         return labels;
     }
 }
