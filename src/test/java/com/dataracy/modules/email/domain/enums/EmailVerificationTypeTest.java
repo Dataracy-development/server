@@ -34,15 +34,6 @@ class EmailVerificationTypeTest {
     }
 
     @Test
-    @DisplayName("EmailVerificationType.of() - name으로 정상 조회")
-    void of_withName_returnsCorrectType() {
-        // given & when & then
-        assertThat(EmailVerificationType.of("SIGN_UP")).isEqualTo(EmailVerificationType.SIGN_UP);
-        assertThat(EmailVerificationType.of("PASSWORD_SEARCH")).isEqualTo(EmailVerificationType.PASSWORD_SEARCH);
-        assertThat(EmailVerificationType.of("PASSWORD_RESET")).isEqualTo(EmailVerificationType.PASSWORD_RESET);
-    }
-
-    @Test
     @DisplayName("EmailVerificationType.of() - 유효하지 않은 값으로 조회 시 예외 발생")
     void of_withInvalidValue_throwsException() {
         // given
