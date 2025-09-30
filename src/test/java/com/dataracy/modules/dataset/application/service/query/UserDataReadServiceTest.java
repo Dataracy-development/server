@@ -31,7 +31,7 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class UserDataReadServiceTest {
+class UserDataReadServiceTest {
     @InjectMocks
     private UserDataReadService service;
 
