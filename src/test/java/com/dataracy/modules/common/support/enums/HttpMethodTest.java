@@ -56,7 +56,7 @@ class HttpMethodTest {
     @DisplayName("HttpMethod ordinal() 메서드 테스트")
     void httpMethod_ShouldHaveCorrectOrdinals() {
         // Given & When & Then
-        assertThat(HttpMethod.GET.ordinal()).isEqualTo(0);
+        assertThat(HttpMethod.GET.ordinal()).isZero();
         assertThat(HttpMethod.POST.ordinal()).isEqualTo(1);
         assertThat(HttpMethod.PUT.ordinal()).isEqualTo(2);
         assertThat(HttpMethod.DELETE.ordinal()).isEqualTo(3);

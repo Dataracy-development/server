@@ -237,7 +237,7 @@ class ProjectQueryDslAdapterIntegrationTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isEqualTo(0);
+            assertThat(result.getTotalElements()).isZero();
         }
 
         @Test
@@ -268,7 +268,7 @@ class ProjectQueryDslAdapterIntegrationTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isEqualTo(0);
+            assertThat(result.getTotalElements()).isZero();
         }
 
         @Test
@@ -296,7 +296,7 @@ class ProjectQueryDslAdapterIntegrationTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isEqualTo(0);
+            assertThat(result.getTotalElements()).isZero();
         }
 
         @Test
@@ -349,7 +349,7 @@ class ProjectQueryDslAdapterIntegrationTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isEqualTo(0);
+            assertThat(result.getTotalElements()).isZero();
         }
     }
 

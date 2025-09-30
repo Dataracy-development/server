@@ -17,7 +17,7 @@ class DataEsProjectionDlqEntityTest {
                 .build();
 
         // then
-        assertThat(entity.getDeltaDownload()).isEqualTo(0);
+        assertThat(entity.getDeltaDownload()).isZero();
         assertThat(entity.getSetDeleted()).isFalse();
         assertThat(entity.getDataId()).isEqualTo(100L);
         assertThat(entity.getLastError()).isEqualTo("error message");

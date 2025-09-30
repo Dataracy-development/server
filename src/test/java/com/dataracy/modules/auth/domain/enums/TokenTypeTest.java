@@ -44,7 +44,7 @@ class TokenTypeTest {
     @DisplayName("TokenType ordinal() 메서드 테스트")
     void tokenType_ShouldHaveCorrectOrdinals() {
         // Given & When & Then
-        assertThat(TokenType.REGISTER.ordinal()).isEqualTo(0);
+        assertThat(TokenType.REGISTER.ordinal()).isZero();
         assertThat(TokenType.ACCESS.ordinal()).isEqualTo(1);
         assertThat(TokenType.REFRESH.ordinal()).isEqualTo(2);
         assertThat(TokenType.RESET_PASSWORD.ordinal()).isEqualTo(3);

@@ -159,7 +159,7 @@ class ProjectViewCountRedisAdapterTest {
             Long result = adapter.getViewCount(projectId, targetType);
 
             // then
-            assertThat(result).isEqualTo(0L);
+            assertThat(result).isZero();
         }
 
         @Test
@@ -254,7 +254,7 @@ class ProjectViewCountRedisAdapterTest {
             Long result = adapter.popViewCount(projectId, targetType);
 
             // then
-            assertThat(result).isEqualTo(0L);
+            assertThat(result).isZero();
         }
     }
 }

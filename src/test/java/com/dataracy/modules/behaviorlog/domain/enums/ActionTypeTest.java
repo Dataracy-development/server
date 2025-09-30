@@ -41,7 +41,7 @@ class ActionTypeTest {
     @DisplayName("ActionType ordinal() 메서드 테스트")
     void actionType_ShouldHaveCorrectOrdinals() {
         // Given & When & Then
-        assertThat(ActionType.CLICK.ordinal()).isEqualTo(0);
+        assertThat(ActionType.CLICK.ordinal()).isZero();
         assertThat(ActionType.NAVIGATION.ordinal()).isEqualTo(1);
         assertThat(ActionType.OTHER.ordinal()).isEqualTo(2);
     }

@@ -330,8 +330,8 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
             // then
             assertThat(result).isEmpty();
-            assertThat(result.getTotalElements()).isEqualTo(0);
-            assertThat(result.getTotalPages()).isEqualTo(0);
+            assertThat(result.getTotalElements()).isZero();
+            assertThat(result.getTotalPages()).isZero();
         }
     }
 }

@@ -179,7 +179,7 @@ class DataTest {
         assertThat(data.getAnalysisGuide()).isEmpty();
         assertThat(data.getDataFileUrl()).isEmpty();
         assertThat(data.getDataThumbnailUrl()).isEmpty();
-        assertThat(data.getDownloadCount()).isEqualTo(0);
-        assertThat(data.getSizeBytes()).isEqualTo(0L);
+        assertThat(data.getDownloadCount()).isZero();
+        assertThat(data.getSizeBytes()).isZero();
     }
 }

@@ -38,7 +38,7 @@ class LogTypeTest {
     @DisplayName("LogType ordinal() 메서드 테스트")
     void logType_ShouldHaveCorrectOrdinals() {
         // Given & When & Then
-        assertThat(LogType.ACTION.ordinal()).isEqualTo(0);
+        assertThat(LogType.ACTION.ordinal()).isZero();
         assertThat(LogType.ERROR.ordinal()).isEqualTo(1);
     }
 

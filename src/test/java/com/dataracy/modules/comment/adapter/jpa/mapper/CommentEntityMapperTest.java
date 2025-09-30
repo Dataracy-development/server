@@ -94,6 +94,6 @@ class CommentEntityMapperTest {
         // then
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isNull();
-        assertThat(entity.getLikeCount()).isEqualTo(0L); // default
+        assertThat(entity.getLikeCount()).isZero(); // default
     }
 }

@@ -38,7 +38,7 @@ class DataEsProjectionTypeTest {
     @DisplayName("DataEsProjectionType ordinal() 메서드 테스트")
     void dataEsProjectionType_ShouldHaveCorrectOrdinals() {
         // Given & When & Then
-        assertThat(DataEsProjectionType.PENDING.ordinal()).isEqualTo(0);
+        assertThat(DataEsProjectionType.PENDING.ordinal()).isZero();
         assertThat(DataEsProjectionType.RETRYING.ordinal()).isEqualTo(1);
     }
 

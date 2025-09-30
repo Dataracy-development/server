@@ -137,7 +137,7 @@ class UserProjectReadServiceTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isEqualTo(0);
+            assertThat(result.getTotalElements()).isZero();
 
             // 로깅 검증
             then(loggerService).should().logStart(eq("FindUserProjectsUseCase"),
@@ -214,7 +214,7 @@ class UserProjectReadServiceTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isEqualTo(0);
+            assertThat(result.getTotalElements()).isZero();
 
             // 로깅 검증
             then(loggerService).should().logStart(eq("FindLikeProjectsUseCase"),

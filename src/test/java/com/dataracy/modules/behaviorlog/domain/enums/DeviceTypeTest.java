@@ -44,7 +44,7 @@ class DeviceTypeTest {
     @DisplayName("DeviceType ordinal() 메서드 테스트")
     void deviceType_ShouldHaveCorrectOrdinals() {
         // Given & When & Then
-        assertThat(DeviceType.PC.ordinal()).isEqualTo(0);
+        assertThat(DeviceType.PC.ordinal()).isZero();
         assertThat(DeviceType.MOBILE.ordinal()).isEqualTo(1);
         assertThat(DeviceType.TABLET.ordinal()).isEqualTo(2);
         assertThat(DeviceType.UNKNOWN.ordinal()).isEqualTo(3);

@@ -252,7 +252,7 @@ class DataSearchServiceTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isEqualTo(0);
+            assertThat(result.getTotalElements()).isZero();
 
             // 포트 호출 검증
             then(searchFilteredDataSetsPort).should().searchByFilters(request, pageable, DataSortType.LATEST);

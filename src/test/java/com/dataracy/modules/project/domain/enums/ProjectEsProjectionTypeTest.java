@@ -38,7 +38,7 @@ class ProjectEsProjectionTypeTest {
     @DisplayName("ProjectEsProjectionType ordinal() 메서드 테스트")
     void projectEsProjectionType_ShouldHaveCorrectOrdinals() {
         // Given & When & Then
-        assertThat(ProjectEsProjectionType.PENDING.ordinal()).isEqualTo(0);
+        assertThat(ProjectEsProjectionType.PENDING.ordinal()).isZero();
         assertThat(ProjectEsProjectionType.RETRYING.ordinal()).isEqualTo(1);
     }
 
