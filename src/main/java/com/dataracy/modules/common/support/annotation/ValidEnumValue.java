@@ -18,6 +18,7 @@ public @interface ValidEnumValue {
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 
-    Class<? extends Enum<?>> enumClass();
+    @SuppressWarnings("rawtypes")
+    Class<? extends Enum> enumClass();
     boolean required() default false;
 }

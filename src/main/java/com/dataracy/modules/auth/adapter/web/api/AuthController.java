@@ -27,6 +27,9 @@ public class AuthController implements AuthApi {
     private final SelfLoginUseCase selfLoginUseCase;
     private final ReIssueTokenUseCase reIssueTokenUseCase;
     private final CookieUtil cookieUtil;
+    
+    // 쿠키 이름 상수
+    private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
 
 /**
      * 자체 로그인 요청을 처리하고, 인증에 성공하면 리프레시 토큰을 HTTP 쿠키에 저장한다.
@@ -51,7 +54,7 @@ public class AuthController implements AuthApi {
             // 리프레시 토큰 쿠키 저장
             long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
             int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
-            cookieUtil.setCookie(request, response, "refreshToken", responseDto.refreshToken(), maxAge);
+            cookieUtil.setCookie(request, response, REFRESH_TOKEN_COOKIE_NAME, responseDto.refreshToken(), maxAge);
         } finally {
             LoggerFactory.api().logResponse("[Login] 기본 로그인 API 응답 완료", startTime);
         }
@@ -85,7 +88,7 @@ public class AuthController implements AuthApi {
             // 리프레시 토큰 쿠키 저장
             long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
             int maxAge = expirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) expirationSeconds;
-            cookieUtil.setCookie(request, response, "refreshToken", responseDto.refreshToken(), maxAge);
+            cookieUtil.setCookie(request, response, REFRESH_TOKEN_COOKIE_NAME, responseDto.refreshToken(), maxAge);
         } finally {
             LoggerFactory.api().logResponse("[Login] 로그인 API 응답 완료", startTime);
         }
@@ -154,6 +157,6 @@ public class AuthController implements AuthApi {
 
         long refreshTokenExpirationSeconds = responseDto.refreshTokenExpiration() / 1000;
         int refreshTokenMaxAge = refreshTokenExpirationSeconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) refreshTokenExpirationSeconds;
-        cookieUtil.setCookie(request, response, "refreshToken", responseDto.refreshToken(), refreshTokenMaxAge);
+        cookieUtil.setCookie(request, response, REFRESH_TOKEN_COOKIE_NAME, responseDto.refreshToken(), refreshTokenMaxAge);
     }
 }

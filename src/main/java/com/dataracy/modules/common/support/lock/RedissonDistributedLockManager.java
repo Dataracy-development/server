@@ -60,52 +60,72 @@ public class RedissonDistributedLockManager {
                 LoggerFactory.lock().logInfo("tryLock 결과 - key={} acquired={}", key, acquired);
 
                 if (acquired) {
-                    try {
-                        T result = action.get();
-                        LoggerFactory.lock().logSuccess(key, "락 기반 작업 성공", startTime);
-                        return result;
-                    } finally {
-                        releaseLock(key, lock);
-                    }
+                    return executeAction(key, lock, action, startTime);
                 }
 
                 attempts++;
                 LoggerFactory.lock().logFail(key, attempts);
-                
-                // 지수 백오프: 100ms, 200ms, 400ms, 800ms...
-                long backoffMs = Math.min(100L * (1L << (attempts - 1)), 5000L); // 최대 5초
-                try {
-                    Thread.sleep(backoffMs);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new LockAcquisitionException("백오프 대기 중 인터럽트 발생", e);
-                }
+                performBackoff(attempts);
 
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                LoggerFactory.lock().logException(key, "인터럽트 발생", e);
-                throw new LockAcquisitionException("스레드 인터럽트로 인해 락 획득 실패", e);
-
+                handleInterruptedException(key, e);
             } catch (BusinessException | CommonException e) {
-                LoggerFactory.lock().logWarning(key, "비즈니스/공통 예외 발생 - message=" + e.getMessage());
-                throw e;
-
+                handleBusinessOrCommonException(key, e);
             } catch (RuntimeException e) {
-                Throwable cause = e.getCause();
-                if (cause instanceof BusinessException || cause instanceof CommonException) {
-                    throw (RuntimeException) cause;
-                }
-                LoggerFactory.lock().logException(key, "Runtime 예외 발생", e);
-                throw new LockAcquisitionException("분산 락 실행 중 런타임 예외 발생", e);
-
+                handleRuntimeException(key, e);
             } catch (Exception e) {
-                LoggerFactory.lock().logException(key, "시스템 예외 발생", e);
-                throw new LockAcquisitionException("분산 락 실행 중 시스템 예외 발생", e);
+                handleGeneralException(key, e);
             }
         }
 
         LoggerFactory.lock().logRetryExceeded(key);
         throw new LockAcquisitionException("다른 사용자가 해당 자원에 접근 중입니다. 잠시 후 다시 시도해주세요.");
+    }
+    
+    private <T> T executeAction(String key, RLock lock, Supplier<T> action, Instant startTime) {
+        try {
+            T result = action.get();
+            LoggerFactory.lock().logSuccess(key, "락 기반 작업 성공", startTime);
+            return result;
+        } finally {
+            releaseLock(key, lock);
+        }
+    }
+    
+    private void performBackoff(int attempts) {
+        // 지수 백오프: 100ms, 200ms, 400ms, 800ms...
+        long backoffMs = Math.min(100L * (1L << (attempts - 1)), 5000L); // 최대 5초
+        try {
+            Thread.sleep(backoffMs);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new LockAcquisitionException("백오프 대기 중 인터럽트 발생", e);
+        }
+    }
+    
+    private void handleInterruptedException(String key, InterruptedException e) {
+        Thread.currentThread().interrupt();
+        LoggerFactory.lock().logException(key, "인터럽트 발생", e);
+        throw new LockAcquisitionException("스레드 인터럽트로 인해 락 획득 실패", e);
+    }
+    
+    private void handleBusinessOrCommonException(String key, RuntimeException e) {
+        LoggerFactory.lock().logWarning(key, "비즈니스/공통 예외 발생 - message=" + e.getMessage());
+        throw e;
+    }
+    
+    private void handleRuntimeException(String key, RuntimeException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof BusinessException || cause instanceof CommonException) {
+            throw (RuntimeException) cause;
+        }
+        LoggerFactory.lock().logException(key, "Runtime 예외 발생", e);
+        throw new LockAcquisitionException("분산 락 실행 중 런타임 예외 발생", e);
+    }
+    
+    private void handleGeneralException(String key, Exception e) {
+        LoggerFactory.lock().logException(key, "시스템 예외 발생", e);
+        throw new LockAcquisitionException("분산 락 실행 중 시스템 예외 발생", e);
     }
 
     /**

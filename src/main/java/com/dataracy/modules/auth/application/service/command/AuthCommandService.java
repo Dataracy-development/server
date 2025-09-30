@@ -132,11 +132,11 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     public RefreshTokenResponse loginWithRateLimit(SelfLoginRequest requestDto, String clientIp) {
         Instant startTime = LoggerFactory.service().logStart(SELF_LOGIN_USE_CASE, "레이트 리미팅 적용 로그인 서비스 시작 email=" + requestDto.email());
 
-        // 1. 사용자 인증
-        UserInfo userInfo = authenticateUser(requestDto);
-        
-        // 2. 레이트 리미팅 검증
+        // 1. 레이트 리미팅 검증 (인증 전에 먼저 체크하여 brute-force 공격 방지)
         validateRateLimit(requestDto.email(), clientIp);
+        
+        // 2. 사용자 인증
+        UserInfo userInfo = authenticateUser(requestDto);
         
         // 3. 토큰 발급 및 반환
         RefreshTokenResponse response = generateRefreshTokenResponse(userInfo);
@@ -153,7 +153,10 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     }
 
     /**
-     * 레이트 리미팅 검증 및 카운터 증가
+     * 레이트 리미팅 검증
+     * 
+     * 주의: RedisRateLimitAdapter의 isAllowed 메서드는 내부에서 카운트를 증가시키므로
+     * 별도로 incrementRequestCount를 호출할 필요가 없습니다.
      */
     private void validateRateLimit(String email, String clientIp) {
         if (clientIp == null) return;
@@ -170,9 +173,9 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
             throw new AuthException(AuthErrorStatus.RATE_LIMIT_EXCEEDED);
         }
 
-        rateLimitPort.incrementRequestCount(rateLimitKey, 1);
+        // incrementRequestCount 호출 제거 - isAllowed에서 이미 카운트 증가
         LoggerFactory.service().logInfo(SELF_LOGIN_USE_CASE, 
-            String.format("레이트 리미팅 카운터 증가 - 사용자: %s, IP: %s", email, clientIp));
+            String.format("레이트 리미팅 통과 - 사용자: %s, IP: %s", email, clientIp));
     }
 
     /**

@@ -59,6 +59,15 @@ public class UserCommandService implements
 
     private final JwtValidateUseCase jwtValidateUseCase;
     private final ManageRefreshTokenUseCase manageRefreshTokenUseCase;
+    
+    // Self-injection: Spring 프록시를 통해 @Transactional과 @DistributedLock이 작동하도록 함
+    private UserCommandService self;
+    
+    @org.springframework.beans.factory.annotation.Autowired
+    @org.springframework.context.annotation.Lazy
+    public void setSelf(UserCommandService self) {
+        this.self = self;
+    }
 
     /**
      * 회원의 정보를 수정하고(필수 유효성 검사 수행) 필요 시 프로필 이미지를 업로드하여 갱신한다.
@@ -86,10 +95,10 @@ public class UserCommandService implements
         // 닉네임 변경 여부에 따라 다른 분산락 적용
         if (requestDto.nickname().equals(savedNickname)) {
             // 닉네임이 변경되지 않은 경우 - userId 기반 분산락 (동시성 문제 방지)
-            modifyUserInfoWithUserIdLock(userId, profileImageFile, requestDto, startTime);
+            self.modifyUserInfoWithUserIdLock(userId, profileImageFile, requestDto, startTime);
         } else {
             // 닉네임이 변경된 경우 - 닉네임 기반 분산락 (중복 방지)
-            modifyUserInfoWithNicknameLock(userId, savedNickname, profileImageFile, requestDto, startTime);
+            self.modifyUserInfoWithNicknameLock(userId, savedNickname, profileImageFile, requestDto, startTime);
         }
     }
 
