@@ -28,6 +28,9 @@ public class DataEsProjectionWorker {
     // ES 어댑터들 (Qualifier로 ES 구현 주입)
     private final SoftDeleteDataPort softDeleteDataEsPort;
     private final UpdateDataDownloadPort updateDataDownloadEsPort;
+    
+    // Self-injection: Spring 프록시를 통해 REQUIRES_NEW 트랜잭션이 작동하도록 함
+    private DataEsProjectionWorker self;
 
     private static final int BATCH = 100;
     private static final int MAX_RETRY = 8;
@@ -51,6 +54,18 @@ public class DataEsProjectionWorker {
         this.manageDataProjectionDlqPort = manageDataProjectionDlqPort;
         this.softDeleteDataEsPort = softDeleteDataEsPort;
         this.updateDataDownloadEsPort = updateDataDownloadEsPort;
+    }
+    
+    /**
+     * Self-injection: 프록시 객체를 주입받아 REQUIRES_NEW 트랜잭션이 작동하도록 합니다.
+     * @Lazy를 사용하여 순환 참조 문제를 해결합니다.
+     *
+     * @param self 현재 빈의 프록시 객체
+     */
+    @org.springframework.beans.factory.annotation.Autowired
+    @org.springframework.context.annotation.Lazy
+    public void setSelf(DataEsProjectionWorker self) {
+        this.self = self;
     }
 
     /**
@@ -102,12 +117,13 @@ public class DataEsProjectionWorker {
 
     /**
      * 단일 데이터 반영 작업을 비동기로 처리합니다.
+     * Self-injection을 통해 프록시 객체를 사용하여 REQUIRES_NEW 트랜잭션이 작동하도록 합니다.
      *
      * @param t 작업 대상 엔터티
      * @return CompletableFuture<Void> 비동기 처리 결과
      */
     public CompletableFuture<Void> processTaskAsync(DataEsProjectionTaskEntity t) {
-        return CompletableFuture.runAsync(() -> processTask(t));
+        return CompletableFuture.runAsync(() -> self.processTask(t));
     }
 
     /**

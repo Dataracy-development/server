@@ -30,6 +30,9 @@ public class ProjectEsProjectionWorker {
     private final UpdateProjectCommentPort updateProjectCommentEsPort;
     private final UpdateProjectLikePort updateProjectLikeEsPort;
     private final UpdateProjectViewPort updateProjectViewEsPort;
+    
+    // Self-injection: Spring 프록시를 통해 REQUIRES_NEW 트랜잭션이 작동하도록 함
+    private ProjectEsProjectionWorker self;
 
     private static final int BATCH = 100;
     private static final int MAX_RETRY = 8;
@@ -57,6 +60,18 @@ public class ProjectEsProjectionWorker {
         this.updateProjectLikeEsPort = updateProjectLikeEsPort;
         this.updateProjectViewEsPort = updateProjectViewEsPort;
     }
+    
+    /**
+     * Self-injection: 프록시 객체를 주입받아 REQUIRES_NEW 트랜잭션이 작동하도록 합니다.
+     * @Lazy를 사용하여 순환 참조 문제를 해결합니다.
+     *
+     * @param self 현재 빈의 프록시 객체
+     */
+    @org.springframework.beans.factory.annotation.Autowired
+    @org.springframework.context.annotation.Lazy
+    public void setSelf(ProjectEsProjectionWorker self) {
+        this.self = self;
+    }
 
     /**
      * 재시도 횟수에 따른 백오프 간격(초)을 계산한다.
@@ -79,6 +94,7 @@ public class ProjectEsProjectionWorker {
     /**
      * 3초마다 Projection Task를 가져와 개별 Task 단위로 처리
      * 각 Task는 REQUIRES_NEW 트랜잭션으로 실행 → 실패해도 나머지 성공 건은 커밋 유지
+     * Self-injection을 통해 프록시 객체를 사용하여 REQUIRES_NEW 트랜잭션이 작동하도록 합니다.
      */
     @Transactional
     @Scheduled(fixedDelayString = "PT3S")
@@ -89,7 +105,7 @@ public class ProjectEsProjectionWorker {
                         PageRequest.of(0, BATCH));
 
         for (ProjectEsProjectionTaskEntity t : tasks) {
-            processTask(t);
+            self.processTask(t);
         }
     }
 

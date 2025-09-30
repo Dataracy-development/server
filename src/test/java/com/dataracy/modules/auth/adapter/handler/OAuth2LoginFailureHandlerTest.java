@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -123,39 +125,12 @@ class OAuth2LoginFailureHandlerTest {
                 .doesNotThrowAnyException();
     }
 
-    @Test
-    @DisplayName("onAuthenticationFailure - IOException이 발생하는 경우를 처리한다")
-    void onAuthenticationFailure_WhenIOExceptionOccurs_HandlesCorrectly() throws ServletException, IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {"IOException", "ServletException", "RuntimeException"})
+    @DisplayName("onAuthenticationFailure - 예외 발생 케이스를 처리한다")
+    void onAuthenticationFailure_WhenExceptionOccurs_HandlesCorrectly(String exceptionType) throws ServletException, IOException {
         // given
-        // IOException은 실제로 발생하지 않으므로 Mock 설정 제거
-
-        // when
-        oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception);
-
-        // then
-        thenCode(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception))
-                .doesNotThrowAnyException();
-    }
-
-    @Test
-    @DisplayName("onAuthenticationFailure - ServletException이 발생하는 경우를 처리한다")
-    void onAuthenticationFailure_WhenServletExceptionOccurs_HandlesCorrectly() throws ServletException, IOException {
-        // given
-        // ServletException은 실제로 발생하지 않으므로 Mock 설정 제거
-
-        // when
-        oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception);
-
-        // then
-        thenCode(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception))
-                .doesNotThrowAnyException();
-    }
-
-    @Test
-    @DisplayName("onAuthenticationFailure - RuntimeException이 발생하는 경우를 처리한다")
-    void onAuthenticationFailure_WhenRuntimeExceptionOccurs_HandlesCorrectly() throws ServletException, IOException {
-        // given
-        // RuntimeException은 실제로 발생하지 않으므로 Mock 설정 제거
+        // 실제로는 예외가 발생하지 않으므로 Mock 설정 제거
 
         // when
         oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception);

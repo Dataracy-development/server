@@ -37,42 +37,61 @@ public class RedisRateLimitAdapter implements RateLimitPort {
         }
         
         String redisKey = "rate_limit:" + key;
-        String countStr = redisTemplate.opsForValue().get(redisKey);
         
-        int currentCount = 0;
-        if (countStr != null) {
-            try {
-                currentCount = Integer.parseInt(countStr);
-            } catch (NumberFormatException e) {
+        try {
+            // 먼저 카운트를 증가시키고 결과를 확인 (원자적 연산)
+            Long count = redisTemplate.opsForValue().increment(redisKey, 1);
+            
+            if (count == null) {
+                // Redis 장애 시 안전하게 차단 (보수적 접근)
                 LoggerFactory.redis().logWarning(REDIS_RATE_LIMIT_ADAPTER, 
-                    String.format("Redis에서 잘못된 카운트 값: %s, IP: %s", countStr, key));
+                    String.format("Redis increment 결과가 null - IP: %s, 안전을 위해 차단", key));
+                return false;
             }
+            
+            // 첫 번째 요청인 경우에만 TTL 설정
+            if (count == 1) {
+                redisTemplate.expire(redisKey, windowMinutes, TimeUnit.MINUTES);
+            }
+            
+            boolean allowed = count <= maxRequests;
+            
+            if (allowed) {
+                LoggerFactory.redis().logInfo(REDIS_RATE_LIMIT_ADAPTER, 
+                    String.format("요청 허용 - IP: %s, 현재 카운트: %d/%d", key, count, maxRequests));
+            } else {
+                LoggerFactory.redis().logWarning(REDIS_RATE_LIMIT_ADAPTER, 
+                    String.format("요청 차단 - IP: %s, 현재 카운트: %d/%d", key, count, maxRequests));
+            }
+            
+            return allowed;
+            
+        } catch (Exception e) {
+            // Redis 장애 시 안전을 위해 차단
+            LoggerFactory.redis().logError(REDIS_RATE_LIMIT_ADAPTER, 
+                String.format("Redis 카운트 확인 실패 - IP: %s, 안전을 위해 차단", key), e);
+            return false;
         }
-        
-        boolean allowed = currentCount < maxRequests;
-        
-        if (allowed) {
-            LoggerFactory.redis().logInfo(REDIS_RATE_LIMIT_ADAPTER, 
-                String.format("요청 허용 - IP: %s, 현재 카운트: %d/%d", key, currentCount, maxRequests));
-        } else {
-            LoggerFactory.redis().logWarning(REDIS_RATE_LIMIT_ADAPTER, 
-                String.format("요청 차단 - IP: %s, 현재 카운트: %d/%d", key, currentCount, maxRequests));
-        }
-        
-        return allowed;
     }
     
     @Override
     public void incrementRequestCount(String key, int incrementBy) {
+        // isAllowed에서 이미 increment를 수행하므로 이 메서드는 더 이상 사용되지 않음
+        // 하지만 인터페이스 구현을 위해 유지
         if (key == null || key.trim().isEmpty()) {
-            return; // IP가 없으면 카운트하지 않음
+            return;
         }
         
         String redisKey = "rate_limit:" + key;
         
         try {
-            // Redis에서 원자적 증가 연산 수행
             Long count = redisTemplate.opsForValue().increment(redisKey, incrementBy);
+            
+            if (count == null) {
+                LoggerFactory.redis().logWarning(REDIS_RATE_LIMIT_ADAPTER, 
+                    String.format("Redis increment 결과가 null - IP: %s", key));
+                return;
+            }
             
             // 첫 번째 요청인 경우에만 TTL 설정
             if (count == incrementBy) {

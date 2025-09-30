@@ -53,58 +53,57 @@ public class LikeCommandService implements LikeTargetUseCase {
         Instant startTime = LoggerFactory.service().logStart(LIKE_TARGET_USE_CASE, requestDto.targetType() + " 좋아요 서비스 시작 targetId=" + requestDto.targetId());
         TargetType targetType = TargetType.of(requestDto.targetType());
 
-        if (targetType.equals(TargetType.PROJECT)) {
-            validateProjectUseCase.validateProject(requestDto.targetId());
-        } else if (targetType.equals(TargetType.COMMENT)) {
-            validateCommentUseCase.validateComment(requestDto.targetId());
-        }
+        validateTarget(targetType, requestDto.targetId());
 
-        if (requestDto.previouslyLiked()){
-            try {
-                likeCommandPort.cancelLike(userId, requestDto.targetId(), targetType);
-                switch (targetType) {
-                    case PROJECT -> sendLikeEventPort.sendLikeEvent(TargetType.PROJECT, requestDto.targetId(), true);
-                    case COMMENT -> sendLikeEventPort.sendLikeEvent(TargetType.COMMENT, requestDto.targetId(), true);
-                };
-            } catch (Exception e) {
-                switch (targetType) {
-                    case PROJECT -> {
-                        LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, "프로젝트 좋아요 취소 실패. targetId=" + requestDto.targetId());
-                        throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_PROJECT);
-                    }
-                    case COMMENT -> {
-                        LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, "댓글 좋아요 취소 실패. targetId=" + requestDto.targetId());
-                        throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_COMMENT);
-                    }
-                };
-            }
+        if (requestDto.previouslyLiked()) {
+            processCancelLike(userId, requestDto.targetId(), targetType);
         } else {
-            Like like = Like.of(
-                    null,
-                    requestDto.targetId(),
-                    targetType,
-                    userId
-            );
-            try {
-                likeCommandPort.save(like);
-                switch (targetType) {
-                    case PROJECT -> sendLikeEventPort.sendLikeEvent(TargetType.PROJECT, requestDto.targetId(), false);
-                    case COMMENT -> sendLikeEventPort.sendLikeEvent(TargetType.COMMENT, requestDto.targetId(), false);
-                };
-            } catch (Exception e) {
-                switch (targetType) {
-                    case PROJECT -> {
-                        LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, "프로젝트 좋아요 실패. targetId=" + requestDto.targetId());
-                        throw new LikeException(LikeErrorStatus.FAIL_LIKE_PROJECT);
-                    }
-                    case COMMENT -> {
-                        LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, "댓글 좋아요 실패. targetId=" + requestDto.targetId());
-                        throw new LikeException(LikeErrorStatus.FAIL_LIKE_COMMENT);
-                    }
-                };
-            }
+            processAddLike(userId, requestDto.targetId(), targetType);
         }
+        
         LoggerFactory.service().logSuccess(LIKE_TARGET_USE_CASE, requestDto.targetType() + " 좋아요 서비스 종료 targetId=" + requestDto.targetId(), startTime);
         return targetType;
+    }
+    
+    private void validateTarget(TargetType targetType, Long targetId) {
+        if (targetType.equals(TargetType.PROJECT)) {
+            validateProjectUseCase.validateProject(targetId);
+        } else if (targetType.equals(TargetType.COMMENT)) {
+            validateCommentUseCase.validateComment(targetId);
+        }
+    }
+    
+    private void processCancelLike(Long userId, Long targetId, TargetType targetType) {
+        try {
+            likeCommandPort.cancelLike(userId, targetId, targetType);
+            sendLikeEventPort.sendLikeEvent(targetType, targetId, true);
+        } catch (Exception e) {
+            handleLikeError(targetType, targetId, true);
+        }
+    }
+    
+    private void processAddLike(Long userId, Long targetId, TargetType targetType) {
+        Like like = Like.of(null, targetId, targetType, userId);
+        try {
+            likeCommandPort.save(like);
+            sendLikeEventPort.sendLikeEvent(targetType, targetId, false);
+        } catch (Exception e) {
+            handleLikeError(targetType, targetId, false);
+        }
+    }
+    
+    private void handleLikeError(TargetType targetType, Long targetId, boolean isCancelling) {
+        switch (targetType) {
+            case PROJECT -> {
+                String message = isCancelling ? "프로젝트 좋아요 취소 실패. targetId=" : "프로젝트 좋아요 실패. targetId=";
+                LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, message + targetId);
+                throw new LikeException(isCancelling ? LikeErrorStatus.FAIL_UNLIKE_PROJECT : LikeErrorStatus.FAIL_LIKE_PROJECT);
+            }
+            case COMMENT -> {
+                String message = isCancelling ? "댓글 좋아요 취소 실패. targetId=" : "댓글 좋아요 실패. targetId=";
+                LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, message + targetId);
+                throw new LikeException(isCancelling ? LikeErrorStatus.FAIL_UNLIKE_COMMENT : LikeErrorStatus.FAIL_LIKE_COMMENT);
+            }
+        }
     }
 }

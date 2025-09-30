@@ -22,6 +22,8 @@ public class RefreshTokenRedisAdapter implements ManageRefreshTokenPort {
     
     // 메시지 상수 정의
     private static final String REFRESH_TOKEN_NOT_FOUND_MESSAGE = "레디스에 해당 리프레시 토큰이 존재하지 않습니다.";
+    private static final String REDIS_CONNECTION_FAILURE_MESSAGE = "레디스 서버 연결에 실패했습니다.";
+    private static final String DATA_ACCESS_FAILURE_MESSAGE = "네트워크 오류로 데이터 접근에 실패했습니다.";
 
     /**
      * 리프레시 토큰 키 설정
@@ -52,10 +54,10 @@ public class RefreshTokenRedisAdapter implements ManageRefreshTokenPort {
             );
             LoggerFactory.redis().logSaveOrUpdate(userId, "리프레시 토큰 레디스 저장에 성공했습니다.");
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError(userId, "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(userId, REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError(userId, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(userId, DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -79,10 +81,10 @@ public class RefreshTokenRedisAdapter implements ManageRefreshTokenPort {
             LoggerFactory.redis().logQueryEnd(userId, "레디스에서 인증된 해당 유저의 리프레시 토큰을 찾아 반환 성공", startTime);
             return token;
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError(userId, "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(userId, REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError(userId, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(userId, DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -99,10 +101,10 @@ public class RefreshTokenRedisAdapter implements ManageRefreshTokenPort {
             redisTemplate.delete(getRefreshTokenKey(userId));
             LoggerFactory.redis().logDelete(userId, "해당 유저의 레디스에 저장된 리프레시 토큰을 삭제한다.");
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError(userId, "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(userId, REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError(userId, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(userId, DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }

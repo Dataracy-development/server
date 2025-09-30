@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public class CustomException extends RuntimeException {
-    private final BaseErrorCode errorCode;
+    private static final long serialVersionUID = 1L;
+    
+    private final transient BaseErrorCode errorCode;
 
     public HttpStatus getHttpStatus() {
         return errorCode.getHttpStatus();
