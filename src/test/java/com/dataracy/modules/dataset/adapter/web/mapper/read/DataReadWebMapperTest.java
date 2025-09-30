@@ -35,7 +35,7 @@ class DataReadWebMapperTest {
         assertThat(result.title()).isEqualTo("title");
         assertThat(result.creatorId()).isEqualTo(1L);
         assertThat(result.creatorName()).isEqualTo("userA");
-        assertThat(result.downloadCount()).isEqualTo(100L);
+        assertThat(result.downloadCount()).isEqualTo(100);
         assertThat(result.previewJson()).contains("col");
     }
 

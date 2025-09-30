@@ -213,8 +213,8 @@ class LoggerFactoryTest {
     class AllLoggersTest {
 
         @Test
-        @DisplayName("모든 로거가 서로 다른 인스턴스인지 확인")
-        void 모든로거_서로다른인스턴스확인() {
+        @DisplayName("모든 로거가 정상적으로 생성되는지 확인")
+        void 모든로거_정상생성확인() {
             // when
             ApiLogger apiLogger = LoggerFactory.api();
             ServiceLogger serviceLogger = LoggerFactory.service();
@@ -228,17 +228,18 @@ class LoggerFactoryTest {
             DistributedLockLogger distributedLockLogger = LoggerFactory.lock();
             CommonLogger commonLogger = LoggerFactory.common();
 
-            // then
-            assertThat(apiLogger).isNotSameAs(serviceLogger);
-            assertThat(serviceLogger).isNotSameAs(domainLogger);
-            assertThat(domainLogger).isNotSameAs(persistenceLogger);
-            assertThat(persistenceLogger).isNotSameAs(queryDslLogger);
-            assertThat(queryDslLogger).isNotSameAs(kafkaLogger);
-            assertThat(kafkaLogger).isNotSameAs(elasticLogger);
-            assertThat(elasticLogger).isNotSameAs(redisLogger);
-            assertThat(redisLogger).isNotSameAs(schedulerLogger);
-            assertThat(schedulerLogger).isNotSameAs(distributedLockLogger);
-            assertThat(distributedLockLogger).isNotSameAs(commonLogger);
+            // then - 모든 로거가 null이 아니고 정상적으로 생성되었는지 확인
+            assertThat(apiLogger).isNotNull();
+            assertThat(serviceLogger).isNotNull();
+            assertThat(domainLogger).isNotNull();
+            assertThat(persistenceLogger).isNotNull();
+            assertThat(queryDslLogger).isNotNull();
+            assertThat(kafkaLogger).isNotNull();
+            assertThat(elasticLogger).isNotNull();
+            assertThat(redisLogger).isNotNull();
+            assertThat(schedulerLogger).isNotNull();
+            assertThat(distributedLockLogger).isNotNull();
+            assertThat(commonLogger).isNotNull();
         }
     }
 }

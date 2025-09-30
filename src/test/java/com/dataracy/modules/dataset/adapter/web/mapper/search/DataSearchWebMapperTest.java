@@ -35,7 +35,7 @@ class DataSearchWebMapperTest {
         assertThat(result.title()).isEqualTo("title");
         assertThat(result.creatorId()).isEqualTo(1L);
         assertThat(result.creatorName()).isEqualTo("userA");
-        assertThat(result.downloadCount()).isEqualTo(10L);
+        assertThat(result.downloadCount()).isEqualTo(10);
     }
 
     @Test
