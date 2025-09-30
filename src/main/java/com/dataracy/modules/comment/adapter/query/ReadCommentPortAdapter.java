@@ -50,9 +50,9 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
                 )
                 .fetchOne();
 
-        Optional<Comment> comment = Optional.ofNullable(CommentEntityMapper.toDomain(entity));
+        Optional<Comment> result = Optional.ofNullable(CommentEntityMapper.toDomain(entity));
         LoggerFactory.query().logQueryEnd(COMMENT_ENTITY, "[findCommentById] 주어진 ID에 해당하는 댓글 조회 종료. commentId=" + commentId, startTime);
-        return comment;
+        return result;
     }
 
     /**
