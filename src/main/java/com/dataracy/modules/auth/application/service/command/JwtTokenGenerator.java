@@ -89,9 +89,10 @@ public class JwtTokenGenerator {
 
     /**
      * 토큰 생성 함수 인터페이스
+     * RuntimeException을 사용하여 JWT 생성 실패를 표현한다.
      */
     @FunctionalInterface
     private interface TokenGenerationFunction {
-        String generate() throws Exception;
+        String generate();
     }
 }
