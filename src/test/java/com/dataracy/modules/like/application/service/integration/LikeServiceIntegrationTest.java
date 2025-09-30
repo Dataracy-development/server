@@ -2,7 +2,6 @@ package com.dataracy.modules.like.application.service.integration;
 
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;
 import com.dataracy.modules.like.application.port.in.command.LikeTargetUseCase;
-// import com.dataracy.modules.like.application.port.in.query.LikeQueryUseCase;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.like.domain.model.Like;
 import com.dataracy.modules.common.test.support.TestDataBuilder;
@@ -37,9 +36,6 @@ class LikeServiceIntegrationTest {
 
     @Autowired
     private LikeTargetUseCase likeTargetUseCase;
-
-    // @Autowired
-    // private LikeQueryUseCase likeQueryUseCase;
 
     @Autowired
     private UserJpaRepository userJpaRepository;
@@ -111,30 +107,6 @@ class LikeServiceIntegrationTest {
                 testUser.getId(), testProject.getId(), TargetType.PROJECT);
         assertThat(remainingLikes).isEmpty();
     }
-
-    // @Test
-    // @DisplayName("사용자별 좋아요 목록 조회 → 실제 데이터 반환")
-    // void getUserLikes_ShouldReturnActualData() {
-    //     // given - 여러 좋아요 생성
-    //     Project project2 = TestDataBuilder.project()
-    //             .userId(testUser.getId())
-    //             .title("두 번째 프로젝트")
-    //             .build();
-    //     project2 = projectJpaRepository.save(project2);
-
-    //     likeTargetUseCase.likeTarget(testUser.getId(), 
-    //             new TargetLikeRequest(testProject.getId(), "PROJECT", false));
-    //     likeTargetUseCase.likeTarget(testUser.getId(), 
-    //             new TargetLikeRequest(project2.getId(), "PROJECT", false));
-
-    //     // when
-    //     var userLikes = likeQueryUseCase.getUserLikes(testUser.getId(), TargetType.PROJECT);
-
-    //     // then
-    //     assertThat(userLikes).hasSize(2);
-    //     assertThat(userLikes).extracting("targetId")
-    //             .containsExactlyInAnyOrder(testProject.getId(), project2.getId());
-    // }
 
     @Test
     @DisplayName("트랜잭션 롤백 테스트 → 예외 발생 시 데이터 변경사항 롤백")

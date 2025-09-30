@@ -116,8 +116,6 @@ public class KafkaDataUploadConsumerConfig {
         factory.setCommonErrorHandler(dataUploadErrorHandler);
         factory.setConcurrency(concurrency);
 
-        // 참고: 1건 단위 커밋이 필요하면 setAckMode(ContainerProperties.AckMode.RECORD) 사용 가능
-
         return factory;
     }
 }

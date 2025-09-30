@@ -3,17 +3,12 @@ package com.dataracy.modules.common.test.support;
 import com.dataracy.modules.like.domain.enums.TargetType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.enums.ProviderType;
-// import com.dataracy.modules.user.domain.enums.AuthorLevelType;
-// import com.dataracy.modules.user.domain.enums.OccupationType;
-// import com.dataracy.modules.user.domain.enums.DomainTopicType;
-// import com.dataracy.modules.user.domain.enums.VisitSourceType;
 import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.adapter.jpa.entity.UserEntity;
 import com.dataracy.modules.like.domain.model.Like;
 import com.dataracy.modules.project.domain.model.Project;
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectEntity;
 import com.dataracy.modules.comment.domain.model.Comment;
-// import com.dataracy.modules.dataset.domain.model.Dataset;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -71,13 +66,6 @@ public class TestDataBuilder {
     public static CommentBuilder comment() {
         return new CommentBuilder();
     }
-
-    // /**
-    //  * Dataset 테스트 데이터 빌더
-    //  */
-    // public static DatasetBuilder dataset() {
-    //     return new DatasetBuilder();
-    // }
 
     /**
      * UserEntity 빌더 클래스
@@ -198,10 +186,6 @@ public class TestDataBuilder {
         private String password = "password123!";
         private RoleType role = RoleType.ROLE_USER;
         private ProviderType provider = ProviderType.LOCAL;
-        // private AuthorLevelType authorLevel = AuthorLevelType.초심자;
-        // private OccupationType occupation = OccupationType.학생;
-        // private DomainTopicType domainTopic = DomainTopicType.프론트엔드;
-        // private VisitSourceType visitSource = VisitSourceType.검색엔진;
         private String providerId = "provider123";
 
         public UserBuilder id(Long id) {
@@ -234,26 +218,6 @@ public class TestDataBuilder {
             return this;
         }
 
-        // public UserBuilder authorLevel(AuthorLevelType authorLevel) {
-        //     this.authorLevel = authorLevel;
-        //     return this;
-        // }
-
-        // public UserBuilder occupation(OccupationType occupation) {
-        //     this.occupation = occupation;
-        //     return this;
-        // }
-
-        // public UserBuilder domainTopic(DomainTopicType domainTopic) {
-        //     this.domainTopic = domainTopic;
-        //     return this;
-        // }
-
-        // public UserBuilder visitSource(VisitSourceType visitSource) {
-        //     this.visitSource = visitSource;
-        //     return this;
-        // }
-
         public UserBuilder providerId(String providerId) {
             this.providerId = providerId;
             return this;
@@ -268,10 +232,6 @@ public class TestDataBuilder {
                     .password(password)
                     .role(role)
                     .provider(provider)
-                    // .authorLevel(authorLevel)
-                    // .occupation(occupation)
-                    // .domainTopic(domainTopic)
-                    // .visitSource(visitSource)
                     .providerId(providerId)
                     .build();
         }
@@ -519,13 +479,6 @@ public class TestDataBuilder {
                     .build();
         }
     }
-
-    // /**
-    //  * Dataset 빌더 클래스
-    //  */
-    // public static class DatasetBuilder {
-    //     // Dataset 관련 빌더 구현
-    // }
 
     /**
      * 랜덤 데이터 생성 유틸리티

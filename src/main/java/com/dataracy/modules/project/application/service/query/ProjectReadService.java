@@ -261,30 +261,6 @@ public class ProjectReadService implements
         return connectedProjectsResponses;
     }
 
-    //    @Override
-//    @Transactional(readOnly = true)
-//    public List<ProjectPopularSearchResponse> getPopularProjects(int size) {
-//        List<Project> savedProjects = projectQueryRepositoryPort.findPopularProjects(size);
-//        List<ProjectPopularSearchResponse> responseDto = savedProjects.stream()
-//                .map(project -> {
-//                    String username = findUsernameUseCase.findUsernameById(project.getUserId());
-//                    String topicLabel = getTopicLabelFromIdUseCase.getLabelById(project.getTopicId());
-//                    String analysisPurposeLabel = getAnalysisPurposeLabelFromIdUseCase.getLabelById(project.getAnalysisPurposeId());
-//                    String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(project.getDataSourceId());
-//                    String authorLevelLabel = getAuthorLevelLabelFromIdUseCase.getLabelById(project.getAuthorLevelId());
-//
-//                    return popularProjectsDtoMapper.toResponseDto(
-//                            project,
-//                            username,
-//                            topicLabel,
-//                            analysisPurposeLabel,
-//                            dataSourceLabel,
-//                            authorLevelLabel
-//                    );
-//                })
-//                .toList();
-//        return responseDto;
-
     /**
      * 지정한 개수만큼 인기 프로젝트를 조회하고, 각 프로젝트에 사용자명과 주제, 분석 목적, 데이터 소스, 저자 레벨 등 라벨 정보를 포함한 응답 리스트를 반환합니다.
      * 
