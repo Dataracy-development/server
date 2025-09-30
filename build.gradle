@@ -175,8 +175,21 @@ tasks.named('test') {
 	finalizedBy jacocoTestReport
 	
 	// CI 환경에서는 통합 테스트 제외 (외부 서버 의존성)
-	if (System.getenv("CI") == "true") {
+	def isCI = System.getenv("CI") == "true"
+	if (isCI) {
+		println "[CI MODE] Excluding integration tests: **/integration/**"
 		exclude '**/integration/**'
+		exclude '**/*IntegrationTest.class'
+		exclude '**/*IntegrationTest*.class'
+	} else {
+		println "[LOCAL MODE] Running all tests including integration tests"
+	}
+	
+	// 테스트 실행 전 로그
+	doFirst {
+		println "========================================="
+		println "Running tests with CI=${isCI}"
+		println "========================================="
 	}
 }
 
