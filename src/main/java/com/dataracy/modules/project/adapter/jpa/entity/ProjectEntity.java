@@ -7,7 +7,7 @@ import com.dataracy.modules.project.domain.exception.ProjectException;
 import com.dataracy.modules.project.domain.status.ProjectErrorStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -23,7 +23,7 @@ import java.util.Set;
 @Table(
         name = "project"
 )
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 public class ProjectEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

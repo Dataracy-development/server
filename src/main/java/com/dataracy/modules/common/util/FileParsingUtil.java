@@ -85,10 +85,10 @@ public class FileParsingUtil {
         Charset charset = detectEncoding(originalInputStream);
         originalInputStream.reset();
 
-        CSVFormat format = CSVFormat.Builder.create()
+        CSVFormat format = CSVFormat.DEFAULT.builder()
                 .setHeader()
                 .setSkipHeaderRecord(true)
-                .build();
+                .get();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(originalInputStream, charset));
              CSVParser parser = format.parse(reader)) {

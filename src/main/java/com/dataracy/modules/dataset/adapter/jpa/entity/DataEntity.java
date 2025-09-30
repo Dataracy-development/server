@@ -7,7 +7,7 @@ import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 
@@ -22,7 +22,7 @@ import java.time.LocalDate;
 @Table(
         name = "data"
 )
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 public class DataEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -76,7 +76,7 @@ public class DataEntity extends BaseTimeEntity {
      * 엔티티를 논리적으로 삭제 처리합니다.
      *
      * 이 메서드는 isDeleted 플래그를 true로 설정하여 데이터가 삭제된 것으로 표시합니다.
-     * 실제 데이터베이스에서 삭제되지는 않으며, @Where 절에 의해 쿼리 결과에서 제외됩니다.
+     * 실제 데이터베이스에서 삭제되지는 않으며, @SQLRestriction에 의해 쿼리 결과에서 제외됩니다.
      */
     public void delete() {
         this.isDeleted = true;

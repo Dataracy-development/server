@@ -6,13 +6,13 @@ import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
