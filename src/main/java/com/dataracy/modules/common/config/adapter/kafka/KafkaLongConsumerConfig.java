@@ -28,6 +28,10 @@ public class KafkaLongConsumerConfig extends AbstractKafkaConsumerConfig<Long> {
     @Value("${spring.kafka.listener.long.concurrency:1}")
     private Integer concurrency;
 
+    // 폴링 타임아웃 (밀리초, 기본값 3000ms)
+    @Value("${spring.kafka.listener.long.poll-timeout:3000}")
+    private Long pollTimeout;
+
     @PostConstruct
     public void validate() {
         validateBootstrap();
@@ -100,8 +104,8 @@ public class KafkaLongConsumerConfig extends AbstractKafkaConsumerConfig<Long> {
         // 1건 처리 성공 시마다 즉시 커밋(정합성 강화)
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
 
-        // 필요 시 폴 세션/인터벌 등 추가 튜닝 가능
-        // factory.getContainerProperties().setPollTimeout(1500);
+        // 폴링 타임아웃 설정 (application.yml에서 조정 가능)
+        factory.getContainerProperties().setPollTimeout(pollTimeout);
 
         return factory;
     }
