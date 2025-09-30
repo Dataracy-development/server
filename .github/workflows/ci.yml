@@ -1,8 +1,6 @@
-name: CI/CD Pipeline
+name: CI Pipeline
 
 on:
-  push:
-    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
@@ -57,7 +55,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Run tests
+      - name: Run tests (exclude integration tests)
         run: ./gradlew test --continue
         env:
           CI: true
