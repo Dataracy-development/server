@@ -26,6 +26,13 @@ public class FileParsingUtil {
     private static final int SHEET_INDEX = 0;
 
     /**
+     * Utility 클래스이므로 인스턴스화를 방지합니다.
+     */
+    private FileParsingUtil() {
+        throw new UnsupportedOperationException("Utility class cannot be instantiated");
+    }
+
+    /**
      * 입력 스트림과 파일명을 기반으로 파일 형식을 자동 감지하여(CSV, XLSX, JSON) 행 수, 열 수, 미리보기 데이터를 추출합니다.
      *
      * @param inputStream 파일 데이터가 포함된 입력 스트림
@@ -90,13 +97,13 @@ public class FileParsingUtil {
             int rowCount = 0;
             int colCount = parser.getHeaderMap().size();
 
-            for (CSVRecord record : parser) {
+            for (CSVRecord csvRecord : parser) {
                 rowCount++;
 
                 if (preview.size() < PREVIEW_LIMIT) {
                     Map<String, String> row = new LinkedHashMap<>();
                     for (String header : parser.getHeaderMap().keySet()) {
-                        row.put(header, record.get(header));
+                        row.put(header, csvRecord.get(header));
                     }
                     preview.add(row);
                 }
