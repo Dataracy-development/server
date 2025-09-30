@@ -38,6 +38,9 @@ public enum CommonErrorStatus implements BaseErrorCode {
     // Redis Errors
     REDIS_CONNECTION_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS-001", "레디스 연결에 실패했습니다."),
     DATA_ACCESS_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS-002", "네트워크 오류로 데이터 접근에 실패했습니다."),
+
+    // Kafka Errors
+    KAFKA_SEND_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "KAFKA-001", "Kafka 이벤트 발송에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;

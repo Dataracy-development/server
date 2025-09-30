@@ -1,7 +1,9 @@
 package com.dataracy.modules.comment.adapter.kafka.producer;
 
 import com.dataracy.modules.comment.application.port.out.command.event.SendCommentEventPort;
+import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -22,10 +24,10 @@ public class CommentKafkaProducerAdapter implements SendCommentEventPort {
          * 주어진 프로젝트 ID로 댓글 작성 이벤트를 비동기적으로 Kafka에 발행합니다.
          *
          * 이 메서드는 토픽 {@code TOPIC_UPLOAD}에 키는 {@code String.valueOf(projectId)}, 값은 {@code projectId}로 메시지를 전송합니다.
-         * 전송 완료 시 콜백에서 실패하면 {@link RuntimeException}을 던지고, 성공하면 생산 로그를 남깁니다.
+         * 전송 완료 시 콜백에서 실패하면 {@link CommonException}을 던지고, 성공하면 생산 로그를 남깁니다.
          *
          * @param projectId 댓글이 작성된 프로젝트의 ID
-         * @throws RuntimeException 전송 완료 콜백에서 예외가 발생한 경우 해당 예외를 래핑하여 던집니다.
+         * @throws CommonException 전송 완료 콜백에서 예외가 발생한 경우 Kafka 전송 실패 예외를 던집니다.
          */
     @Override
     public void sendCommentUploadedEvent(Long projectId) {
@@ -33,7 +35,7 @@ public class CommentKafkaProducerAdapter implements SendCommentEventPort {
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
                         LoggerFactory.kafka().logError(TOPIC_UPLOAD, "댓글 작성 이벤트 발송 처리 실패: projectId=" + projectId, ex);
-                        throw new RuntimeException(ex);
+                        throw new CommonException(CommonErrorStatus.KAFKA_SEND_FAILURE);
                     } else {
                         LoggerFactory.kafka().logProduce(TOPIC_UPLOAD, "댓글 작성 이벤트 발송됨: projectId=" + projectId);
                     }
@@ -44,9 +46,10 @@ public class CommentKafkaProducerAdapter implements SendCommentEventPort {
      * 프로젝트 ID를 기반으로 댓글 삭제 이벤트를 Kafka 삭제 토픽에 비동기 발행합니다.
      *
      * 비동기적으로 TOPIC_DELETE 토픽에 메시지를 전송하며, Kafka 메시지의 키는 projectId의 문자열, 값은 projectId(Long)입니다.
-     * 전송 완료 시 콜백에서 실패가 발생하면 로그 기록 후 RuntimeException으로 재발생시켜 호출자에게 전파합니다; 성공 시에는 생산 로그를 남깁니다.
+     * 전송 완료 시 콜백에서 실패가 발생하면 로그 기록 후 CommonException으로 재발생시켜 호출자에게 전파합니다; 성공 시에는 생산 로그를 남깁니다.
      *
      * @param projectId 댓글이 삭제된 프로젝트의 ID
+     * @throws CommonException 전송 완료 콜백에서 예외가 발생한 경우 Kafka 전송 실패 예외를 던집니다.
      */
     @Override
     public void sendCommentDeletedEvent(Long projectId) {
@@ -54,7 +57,7 @@ public class CommentKafkaProducerAdapter implements SendCommentEventPort {
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
                         LoggerFactory.kafka().logError(TOPIC_DELETE, "댓글 삭제 이벤트 발송 처리 실패: projectId=" + projectId, ex);
-                        throw new RuntimeException(ex);
+                        throw new CommonException(CommonErrorStatus.KAFKA_SEND_FAILURE);
                     } else {
                         LoggerFactory.kafka().logProduce(TOPIC_DELETE, "댓글 삭제 이벤트 발송됨: projectId=" + projectId);
                     }
