@@ -1,7 +1,9 @@
 package com.dataracy.modules.common.support.lock;
 
 import com.dataracy.modules.common.exception.BusinessException;
+import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import io.lettuce.core.dynamic.support.ParameterNameDiscoverer;
 import io.lettuce.core.dynamic.support.StandardReflectionParameterNameDiscoverer;
 import jakarta.annotation.PostConstruct;
@@ -67,15 +69,18 @@ public class DistributedLockAspect {
                         try {
                             return proceedSafely(joinPoint);
                         } catch (Throwable e) {
-                            throw new RuntimeException(e);
+                            throw new CommonException(CommonErrorStatus.DISTRIBUTED_LOCK_EXECUTION_FAILURE);
                         }
                     });
         } catch (BusinessException e) {
             LoggerFactory.lock().logWarn("[AOP] 비즈니스 예외 - key: {} message: {}", key, e.getMessage());
             throw e;
+        } catch (CommonException e) {
+            LoggerFactory.lock().logError("[AOP] 공통 예외 - key: {} message: {}", key, e.getMessage());
+            throw e;
         } catch (Throwable e) {
             LoggerFactory.lock().logError("[AOP] 락 내부 로직 예외 - key: {}", key, e);
-            throw new RuntimeException(e);
+            throw new CommonException(CommonErrorStatus.DISTRIBUTED_LOCK_EXECUTION_FAILURE);
         }
     }
 

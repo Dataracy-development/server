@@ -41,6 +41,9 @@ public enum CommonErrorStatus implements BaseErrorCode {
 
     // Kafka Errors
     KAFKA_SEND_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "KAFKA-001", "Kafka 이벤트 발송에 실패했습니다."),
+
+    // Distributed Lock Errors
+    DISTRIBUTED_LOCK_EXECUTION_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "LOCK-001", "분산 락 실행 중 오류가 발생했습니다."),
     ;
 
     private final HttpStatus httpStatus;
