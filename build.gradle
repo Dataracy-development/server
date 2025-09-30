@@ -173,6 +173,11 @@ tasks.named('compileJava') {
 tasks.named('test') {
 	useJUnitPlatform()
 	finalizedBy jacocoTestReport
+	
+	// CI 환경에서는 통합 테스트 제외 (외부 서버 의존성)
+	if (System.getenv("CI") == "true") {
+		exclude '**/integration/**'
+	}
 }
 
 jacocoTestReport {
