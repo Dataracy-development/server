@@ -5,6 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -113,11 +116,12 @@ class BlackListRedisAdapterTest {
             then(redisTemplate).should().hasKey(expectedKey);
         }
 
-        @Test
-        @DisplayName("토큰이 블랙리스트에 없을 때 false 반환")
-        void isBlacklisted_토큰이블랙리스트에없음_false반환() {
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = {"valid-token", "test-token"})
+        @DisplayName("블랙리스트에 없는 토큰은 false 반환 (null, 빈 문자열, 일반 토큰 모두 포함)")
+        void isBlacklisted_블랙리스트에없음_false반환(String token) {
             // given
-            String token = "valid-token";
             String expectedKey = "blacklist:" + token;
             given(redisTemplate.hasKey(expectedKey)).willReturn(false);
 
@@ -136,38 +140,6 @@ class BlackListRedisAdapterTest {
             String token = "test-token";
             String expectedKey = "blacklist:" + token;
             given(redisTemplate.hasKey(expectedKey)).willReturn(null);
-
-            // when
-            boolean result = adapter.isBlacklisted(token);
-
-            // then
-            assertThat(result).isFalse();
-            then(redisTemplate).should().hasKey(expectedKey);
-        }
-
-        @Test
-        @DisplayName("빈 문자열 토큰일 때도 정상 처리")
-        void isBlacklisted_빈문자열토큰_정상처리() {
-            // given
-            String token = "";
-            String expectedKey = "blacklist:" + token;
-            given(redisTemplate.hasKey(expectedKey)).willReturn(false);
-
-            // when
-            boolean result = adapter.isBlacklisted(token);
-
-            // then
-            assertThat(result).isFalse();
-            then(redisTemplate).should().hasKey(expectedKey);
-        }
-
-        @Test
-        @DisplayName("null 토큰일 때도 정상 처리")
-        void isBlacklisted_null토큰_정상처리() {
-            // given
-            String token = null;
-            String expectedKey = "blacklist:" + token;
-            given(redisTemplate.hasKey(expectedKey)).willReturn(false);
 
             // when
             boolean result = adapter.isBlacklisted(token);

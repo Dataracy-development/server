@@ -2,6 +2,8 @@ package com.dataracy.modules.common.util;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,12 +23,22 @@ class WebRequestUtilTest {
         assertThat(request).isNull();
     }
 
-    @Test
-    @DisplayName("isLogExceptRequest - Swagger UI 경로는 로그 예외 처리")
-    void isLogExceptRequest_ShouldReturnTrueForSwaggerPaths() {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "/swagger-ui.html",                          // Swagger UI
+            "/v3/api-docs",                              // API 문서
+            "/swagger-resources/configuration/ui",      // Swagger 리소스
+            "/static/css/style.css",                    // 정적 리소스
+            "/error",                                    // 에러 페이지
+            "/favicon.ico",                              // favicon
+            "/.well-known/security.txt",                // Well-known
+            "/webjars/bootstrap/5.1.3/css/bootstrap.min.css"  // Webjars
+    })
+    @DisplayName("isLogExceptRequest - 로그 예외 경로는 true를 반환한다")
+    void isLogExceptRequest_ShouldReturnTrueForExcludedPaths(String uri) {
         // Given
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/swagger-ui.html");
+        request.setRequestURI(uri);
 
         // When
         boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
@@ -35,82 +47,17 @@ class WebRequestUtilTest {
         assertThat(isExcluded).isTrue();
     }
 
-    @Test
-    @DisplayName("isLogExceptRequest - API 문서 경로는 로그 예외 처리")
-    void isLogExceptRequest_ShouldReturnTrueForApiDocsPaths() {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "/api/v1/users",     // 일반 API 경로
+            "",                  // 빈 URI
+            "/"                  // 루트 경로
+    })
+    @DisplayName("isLogExceptRequest - 일반 경로는 false를 반환한다")
+    void isLogExceptRequest_ShouldReturnFalseForNormalPaths(String uri) {
         // Given
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/v3/api-docs");
-
-        // When
-        boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
-
-        // Then
-        assertThat(isExcluded).isTrue();
-    }
-
-    @Test
-    @DisplayName("isLogExceptRequest - Swagger 리소스 경로는 로그 예외 처리")
-    void isLogExceptRequest_ShouldReturnTrueForSwaggerResourcePaths() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/swagger-resources/configuration/ui");
-
-        // When
-        boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
-
-        // Then
-        assertThat(isExcluded).isTrue();
-    }
-
-    @Test
-    @DisplayName("isLogExceptRequest - 정적 리소스 경로는 로그 예외 처리")
-    void isLogExceptRequest_ShouldReturnTrueForStaticResourcePaths() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/static/css/style.css");
-
-        // When
-        boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
-
-        // Then
-        assertThat(isExcluded).isTrue();
-    }
-
-    @Test
-    @DisplayName("isLogExceptRequest - 에러 페이지 경로는 로그 예외 처리")
-    void isLogExceptRequest_ShouldReturnTrueForErrorPaths() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/error");
-
-        // When
-        boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
-
-        // Then
-        assertThat(isExcluded).isTrue();
-    }
-
-    @Test
-    @DisplayName("isLogExceptRequest - favicon.ico는 로그 예외 처리")
-    void isLogExceptRequest_ShouldReturnTrueForFavicon() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/favicon.ico");
-
-        // When
-        boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
-
-        // Then
-        assertThat(isExcluded).isTrue();
-    }
-
-    @Test
-    @DisplayName("isLogExceptRequest - 일반 API 경로는 로그 예외 처리하지 않음")
-    void isLogExceptRequest_ShouldReturnFalseForNormalApiPaths() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/api/v1/users");
+        request.setRequestURI(uri);
 
         // When
         boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
@@ -120,68 +67,12 @@ class WebRequestUtilTest {
     }
 
     @Test
-    @DisplayName("isLogExceptRequest - null 요청 처리")
+    @DisplayName("isLogExceptRequest - null 요청은 false를 반환한다")
     void isLogExceptRequest_ShouldReturnFalseForNullRequest() {
         // Given & When
         boolean isExcluded = WebRequestUtil.isLogExceptRequest(null);
 
         // Then
         assertThat(isExcluded).isFalse();
-    }
-
-    @Test
-    @DisplayName("isLogExceptRequest - 빈 URI 처리")
-    void isLogExceptRequest_ShouldReturnFalseForEmptyUri() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("");
-
-        // When
-        boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
-
-        // Then
-        assertThat(isExcluded).isFalse();
-    }
-
-    @Test
-    @DisplayName("isLogExceptRequest - 루트 경로는 로그 예외 처리하지 않음")
-    void isLogExceptRequest_ShouldReturnFalseForRootPath() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/");
-
-        // When
-        boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
-
-        // Then
-        assertThat(isExcluded).isFalse();
-    }
-
-    @Test
-    @DisplayName("isLogExceptRequest - Well-known 경로는 로그 예외 처리")
-    void isLogExceptRequest_ShouldReturnTrueForWellKnownPaths() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/.well-known/security.txt");
-
-        // When
-        boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
-
-        // Then
-        assertThat(isExcluded).isTrue();
-    }
-
-    @Test
-    @DisplayName("isLogExceptRequest - Webjars 경로는 로그 예외 처리")
-    void isLogExceptRequest_ShouldReturnTrueForWebjarsPaths() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/webjars/bootstrap/5.1.3/css/bootstrap.min.css");
-
-        // When
-        boolean isExcluded = WebRequestUtil.isLogExceptRequest(request);
-
-        // Then
-        assertThat(isExcluded).isTrue();
     }
 }

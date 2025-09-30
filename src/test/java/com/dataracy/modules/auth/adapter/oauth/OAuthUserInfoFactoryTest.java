@@ -8,12 +8,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -89,79 +92,36 @@ class OAuthUserInfoFactoryTest {
         assertThat(result).isEqualTo(expectedUserInfo);
     }
 
-    @Test
-    @DisplayName("extract - 지원하지 않는 제공자로 호출하면 예외가 발생한다")
-    void extract_WhenUnsupportedProvider_ThrowsException() {
-        // given
-        String provider = "unsupported";
-        Map<String, Object> attributes = new HashMap<>();
+    /**
+     * 예외 케이스 테스트 데이터를 제공합니다.
+     */
+    static Stream<TestCase> provideInvalidCases() {
+        return Stream.of(
+                new TestCase("unsupported", new HashMap<>(), "지원하지 않는 제공자"),
+                new TestCase(null, new HashMap<>(), "null 제공자"),
+                new TestCase("", new HashMap<>(), "빈 제공자"),
+                new TestCase("google", null, "null 속성"),
+                new TestCase("facebook", new HashMap<>(), "빈 속성 맵")
+        );
+    }
 
-        when(googleAdapter.extract(provider, attributes)).thenReturn(null);
-        when(kakaoAdapter.extract(provider, attributes)).thenReturn(null);
+    @ParameterizedTest
+    @MethodSource("provideInvalidCases")
+    @DisplayName("extract - 유효하지 않은 입력으로 호출하면 예외가 발생한다")
+    void extract_WhenInvalidInput_ThrowsException(TestCase testCase) {
+        // given
+        when(googleAdapter.extract(any(), any())).thenReturn(null);
+        when(kakaoAdapter.extract(any(), any())).thenReturn(null);
 
         // when & then
-        assertThatThrownBy(() -> oAuthUserInfoFactory.extract(provider, attributes))
+        assertThatThrownBy(() -> oAuthUserInfoFactory.extract(testCase.provider, testCase.attributes))
                 .isInstanceOf(AuthException.class);
     }
 
-    @Test
-    @DisplayName("extract - null 제공자로 호출하면 예외가 발생한다")
-    void extract_WhenNullProvider_ThrowsException() {
-        // given
-        String provider = null;
-        Map<String, Object> attributes = new HashMap<>();
-
-        when(googleAdapter.extract(provider, attributes)).thenReturn(null);
-        when(kakaoAdapter.extract(provider, attributes)).thenReturn(null);
-
-        // when & then
-        assertThatThrownBy(() -> oAuthUserInfoFactory.extract(provider, attributes))
-                .isInstanceOf(AuthException.class);
-    }
-
-    @Test
-    @DisplayName("extract - 빈 제공자로 호출하면 예외가 발생한다")
-    void extract_WhenEmptyProvider_ThrowsException() {
-        // given
-        String provider = "";
-        Map<String, Object> attributes = new HashMap<>();
-
-        when(googleAdapter.extract(provider, attributes)).thenReturn(null);
-        when(kakaoAdapter.extract(provider, attributes)).thenReturn(null);
-
-        // when & then
-        assertThatThrownBy(() -> oAuthUserInfoFactory.extract(provider, attributes))
-                .isInstanceOf(AuthException.class);
-    }
-
-    @Test
-    @DisplayName("extract - null 속성으로 호출하면 예외가 발생한다")
-    void extract_WhenNullAttributes_ThrowsException() {
-        // given
-        String provider = "google";
-        Map<String, Object> attributes = null;
-
-        when(googleAdapter.extract(provider, attributes)).thenReturn(null);
-        when(kakaoAdapter.extract(provider, attributes)).thenReturn(null);
-
-        // when & then
-        assertThatThrownBy(() -> oAuthUserInfoFactory.extract(provider, attributes))
-                .isInstanceOf(AuthException.class);
-    }
-
-    @Test
-    @DisplayName("extract - 빈 속성 맵으로 호출하면 예외가 발생한다")
-    void extract_WhenEmptyAttributes_ThrowsException() {
-        // given
-        String provider = "facebook";
-        Map<String, Object> attributes = new HashMap<>();
-
-        when(googleAdapter.extract(provider, attributes)).thenReturn(null);
-        when(kakaoAdapter.extract(provider, attributes)).thenReturn(null);
-
-        // when & then
-        assertThatThrownBy(() -> oAuthUserInfoFactory.extract(provider, attributes))
-                .isInstanceOf(AuthException.class);
+    /**
+     * 테스트 케이스 레코드
+     */
+    record TestCase(String provider, Map<String, Object> attributes, String description) {
     }
 
     @Test
@@ -185,20 +145,5 @@ class OAuthUserInfoFactoryTest {
 
         // then
         assertThat(result).isEqualTo(expectedUserInfo);
-    }
-
-    @Test
-    @DisplayName("extract - 모든 어댑터에서 null을 반환하면 예외가 발생한다")
-    void extract_WhenAllAdaptersReturnNull_ThrowsException() {
-        // given
-        String provider = "unknown";
-        Map<String, Object> attributes = new HashMap<>();
-
-        when(googleAdapter.extract(provider, attributes)).thenReturn(null);
-        when(kakaoAdapter.extract(provider, attributes)).thenReturn(null);
-
-        // when & then
-        assertThatThrownBy(() -> oAuthUserInfoFactory.extract(provider, attributes))
-                .isInstanceOf(AuthException.class);
     }
 }

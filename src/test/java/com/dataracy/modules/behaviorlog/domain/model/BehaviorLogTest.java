@@ -6,6 +6,8 @@ import com.dataracy.modules.behaviorlog.domain.enums.LogType;
 import com.dataracy.modules.common.support.enums.HttpMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,77 +59,20 @@ class BehaviorLogTest {
         assertThat(result).isTrue();
     }
 
-    @Test
-    @DisplayName("isValid - userId가 null인 경우 false를 반환한다")
-    void isValid_WhenUserIdIsNull_ReturnsFalse() {
+    @ParameterizedTest
+    @CsvSource({
+            ",",           // 둘 다 null
+            "'',",         // userId 빈 문자열, anonymousId null
+            "'   ',",      // userId 공백, anonymousId null
+            ",''"          // userId null, anonymousId 빈 문자열
+            ,",'   '"      // userId null, anonymousId 공백
+    })
+    @DisplayName("isValid - userId와 anonymousId가 모두 유효하지 않으면 false를 반환한다")
+    void isValid_WhenBothIdsAreInvalid_ReturnsFalse(String userId, String anonymousId) {
         // given
         BehaviorLog behaviorLog = BehaviorLog.builder()
-                .userId(null)
-                .anonymousId(null)
-                .build();
-
-        // when
-        boolean result = behaviorLog.isValid();
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    @DisplayName("isValid - userId가 빈 문자열인 경우 false를 반환한다")
-    void isValid_WhenUserIdIsEmpty_ReturnsFalse() {
-        // given
-        BehaviorLog behaviorLog = BehaviorLog.builder()
-                .userId("")
-                .anonymousId(null)
-                .build();
-
-        // when
-        boolean result = behaviorLog.isValid();
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    @DisplayName("isValid - userId가 공백 문자열인 경우 false를 반환한다")
-    void isValid_WhenUserIdIsBlank_ReturnsFalse() {
-        // given
-        BehaviorLog behaviorLog = BehaviorLog.builder()
-                .userId("   ")
-                .anonymousId(null)
-                .build();
-
-        // when
-        boolean result = behaviorLog.isValid();
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    @DisplayName("isValid - anonymousId가 빈 문자열인 경우 false를 반환한다")
-    void isValid_WhenAnonymousIdIsEmpty_ReturnsFalse() {
-        // given
-        BehaviorLog behaviorLog = BehaviorLog.builder()
-                .userId(null)
-                .anonymousId("")
-                .build();
-
-        // when
-        boolean result = behaviorLog.isValid();
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    @DisplayName("isValid - anonymousId가 공백 문자열인 경우 false를 반환한다")
-    void isValid_WhenAnonymousIdIsBlank_ReturnsFalse() {
-        // given
-        BehaviorLog behaviorLog = BehaviorLog.builder()
-                .userId(null)
-                .anonymousId("   ")
+                .userId(userId)
+                .anonymousId(anonymousId)
                 .build();
 
         // when

@@ -5,6 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -107,43 +110,12 @@ class RedisRateLimitAdapterTest {
             then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
         }
 
-        @Test
-        @DisplayName("key가 null일 때 true 반환")
-        void isAllowed_key가null_true반환() {
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = {"   ", "\t"})
+        @DisplayName("key가 null이거나 빈 문자열 또는 공백일 때 true 반환하고 Redis 호출 안 함")
+        void isAllowed_key가유효하지않음_true반환(String key) {
             // given
-            String key = null;
-            int maxRequests = 5;
-            int windowMinutes = 1;
-
-            // when
-            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
-
-            // then
-            assertThat(result).isTrue();
-            then(valueOperations).should(never()).increment(anyString(), anyLong());
-        }
-
-        @Test
-        @DisplayName("key가 빈 문자열일 때 true 반환")
-        void isAllowed_key가빈문자열_true반환() {
-            // given
-            String key = "";
-            int maxRequests = 5;
-            int windowMinutes = 1;
-
-            // when
-            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
-
-            // then
-            assertThat(result).isTrue();
-            then(valueOperations).should(never()).increment(anyString(), anyLong());
-        }
-
-        @Test
-        @DisplayName("key가 공백만 있을 때 true 반환")
-        void isAllowed_key가공백_true반환() {
-            // given
-            String key = "   ";
             int maxRequests = 5;
             int windowMinutes = 1;
 
@@ -231,41 +203,12 @@ class RedisRateLimitAdapterTest {
             then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
         }
 
-        @Test
-        @DisplayName("key가 null일 때 아무것도 하지 않음")
-        void incrementRequestCount_key가null_아무것도하지않음() {
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = {"   ", "\t"})
+        @DisplayName("key가 null이거나 빈 문자열 또는 공백일 때 아무것도 하지 않음")
+        void incrementRequestCount_key가유효하지않음_아무것도하지않음(String key) {
             // given
-            String key = null;
-            int incrementBy = 1;
-
-            // when
-            adapter.incrementRequestCount(key, incrementBy);
-
-            // then
-            then(valueOperations).should(never()).increment(anyString(), anyInt());
-            then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
-        }
-
-        @Test
-        @DisplayName("key가 빈 문자열일 때 아무것도 하지 않음")
-        void incrementRequestCount_key가빈문자열_아무것도하지않음() {
-            // given
-            String key = "";
-            int incrementBy = 1;
-
-            // when
-            adapter.incrementRequestCount(key, incrementBy);
-
-            // then
-            then(valueOperations).should(never()).increment(anyString(), anyInt());
-            then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
-        }
-
-        @Test
-        @DisplayName("key가 공백만 있을 때 아무것도 하지 않음")
-        void incrementRequestCount_key가공백_아무것도하지않음() {
-            // given
-            String key = "   ";
             int incrementBy = 1;
 
             // when

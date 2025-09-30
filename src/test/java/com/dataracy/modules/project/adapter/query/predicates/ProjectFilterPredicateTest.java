@@ -3,6 +3,9 @@ package com.dataracy.modules.project.adapter.query.predicates;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity.projectEntity;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,31 +61,13 @@ class ProjectFilterPredicateTest {
         assertThat(result.toString()).contains("projectEntity.title");
     }
 
-    @Test
-    @DisplayName("keywordContains - 키워드가 null인 경우 null을 반환한다")
-    void keywordContains_WhenKeywordIsNull_ReturnsNull() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   ", "\t"})
+    @DisplayName("keywordContains - 키워드가 null, 빈 문자열, 공백인 경우 null을 반환한다")
+    void keywordContains_WhenKeywordIsInvalid_ReturnsNull(String keyword) {
         // when
-        BooleanExpression result = ProjectFilterPredicate.keywordContains(null);
-
-        // then
-        assertThat(result).isNull();
-    }
-
-    @Test
-    @DisplayName("keywordContains - 키워드가 빈 문자열인 경우 null을 반환한다")
-    void keywordContains_WhenKeywordIsEmpty_ReturnsNull() {
-        // when
-        BooleanExpression result = ProjectFilterPredicate.keywordContains("");
-
-        // then
-        assertThat(result).isNull();
-    }
-
-    @Test
-    @DisplayName("keywordContains - 키워드가 공백만 있는 경우 null을 반환한다")
-    void keywordContains_WhenKeywordIsBlank_ReturnsNull() {
-        // when
-        BooleanExpression result = ProjectFilterPredicate.keywordContains("   ");
+        BooleanExpression result = ProjectFilterPredicate.keywordContains(keyword);
 
         // then
         assertThat(result).isNull();

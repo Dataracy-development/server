@@ -2,6 +2,8 @@ package com.dataracy.modules.common.util;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Optional;
@@ -39,26 +41,20 @@ class ExtractHeaderUtilTest {
         assertThat(token).isEmpty();
     }
 
-    @Test
-    @DisplayName("extractAccessToken - Bearer가 아닌 형식의 헤더")
-    void extractAccessToken_ShouldReturnEmptyWhenNotBearer() {
+    @ParameterizedTest
+    @CsvSource({
+            "Basic dXNlcjpwYXNz",      // Bearer가 아닌 형식
+            "Bearervalid-token",        // Bearer 뒤에 공백 없음
+            "''",                       // 빈 문자열
+            "bearer valid-token"        // 대소문자 구분
+    })
+    @DisplayName("extractAccessToken - 유효하지 않은 Authorization 헤더는 empty를 반환한다")
+    void extractAccessToken_ShouldReturnEmptyWhenInvalidHeader(String authHeader) {
         // Given
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Basic dXNlcjpwYXNz");
-
-        // When
-        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
-
-        // Then
-        assertThat(token).isEmpty();
-    }
-
-    @Test
-    @DisplayName("extractAccessToken - Bearer 뒤에 공백이 없는 경우")
-    void extractAccessToken_ShouldReturnEmptyWhenNoSpaceAfterBearer() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearervalid-token");
+        if (!authHeader.isEmpty()) {
+            request.addHeader("Authorization", authHeader);
+        }
 
         // When
         Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
@@ -97,20 +93,6 @@ class ExtractHeaderUtilTest {
     }
 
     @Test
-    @DisplayName("extractAccessToken - 빈 문자열 헤더 처리")
-    void extractAccessToken_ShouldHandleEmptyHeader() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "");
-
-        // When
-        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
-
-        // Then
-        assertThat(token).isEmpty();
-    }
-
-    @Test
     @DisplayName("extractAccessToken - 공백이 포함된 토큰 처리")
     void extractAccessToken_ShouldHandleTokenWithSpaces() {
         // Given
@@ -123,19 +105,5 @@ class ExtractHeaderUtilTest {
         // Then
         assertThat(token).isPresent();
         assertThat(token.get()).isEqualTo("token with spaces");
-    }
-
-    @Test
-    @DisplayName("extractAccessToken - 대소문자 구분 테스트")
-    void extractAccessToken_ShouldBeCaseSensitive() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "bearer valid-token");
-
-        // When
-        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
-
-        // Then
-        assertThat(token).isEmpty();
     }
 }

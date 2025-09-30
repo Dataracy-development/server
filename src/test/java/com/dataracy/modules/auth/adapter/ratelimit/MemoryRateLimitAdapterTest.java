@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -58,41 +61,12 @@ class MemoryRateLimitAdapterTest {
         assertThat(thirdRequest).isFalse();
     }
 
-    @Test
-    @DisplayName("isAllowed - null 키는 항상 허용된다")
-    void isAllowed_WhenNullKey_ReturnsTrue() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   ", "\t", "\n"})
+    @DisplayName("isAllowed - null이거나 빈 문자열 또는 공백 키는 항상 허용된다")
+    void isAllowed_WhenInvalidKey_ReturnsTrue(String key) {
         // given
-        String key = null;
-        int maxRequests = 5;
-        int windowMinutes = 1;
-
-        // when
-        boolean result = memoryRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
-
-        // then
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    @DisplayName("isAllowed - 빈 문자열 키는 항상 허용된다")
-    void isAllowed_WhenEmptyKey_ReturnsTrue() {
-        // given
-        String key = "";
-        int maxRequests = 5;
-        int windowMinutes = 1;
-
-        // when
-        boolean result = memoryRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
-
-        // then
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    @DisplayName("isAllowed - 공백 문자열 키는 항상 허용된다")
-    void isAllowed_WhenWhitespaceKey_ReturnsTrue() {
-        // given
-        String key = "   ";
         int maxRequests = 5;
         int windowMinutes = 1;
 
@@ -226,28 +200,13 @@ class MemoryRateLimitAdapterTest {
         assertThat(result).isFalse();
     }
 
-    @Test
-    @DisplayName("isAllowed - 0 windowMinutes는 항상 허용한다")
-    void isAllowed_WhenZeroWindowMinutes_AlwaysAllows() {
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1, -10})
+    @DisplayName("isAllowed - windowMinutes가 0 이하이면 항상 허용한다")
+    void isAllowed_WhenInvalidWindowMinutes_AlwaysAllows(int windowMinutes) {
         // given
         String key = "192.168.1.1";
         int maxRequests = 5;
-        int windowMinutes = 0;
-
-        // when
-        boolean result = memoryRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
-
-        // then
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    @DisplayName("isAllowed - 음수 windowMinutes는 항상 허용한다")
-    void isAllowed_WhenNegativeWindowMinutes_AlwaysAllows() {
-        // given
-        String key = "192.168.1.1";
-        int maxRequests = 5;
-        int windowMinutes = -1;
 
         // when
         boolean result = memoryRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
