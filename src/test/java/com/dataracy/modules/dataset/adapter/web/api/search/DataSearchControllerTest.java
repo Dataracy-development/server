@@ -116,8 +116,6 @@ class DataSearchControllerTest {
     @DisplayName("필터링 검색 성공 시 200 반환 및 페이징 결과 확인")
     void searchFilteredDataSetsShouldReturnOk() throws Exception {
         // given
-        FilteringDataWebRequest webReq =
-                new FilteringDataWebRequest(null, null, null, null, null, null);
         FilteringDataRequest reqDto =
                 new FilteringDataRequest(null, null, null, null, null, null);
 

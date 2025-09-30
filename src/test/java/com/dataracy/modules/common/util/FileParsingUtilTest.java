@@ -155,10 +155,4 @@ class FileParsingUtilTest {
         assertThat(charset).isNotNull();
         assertThat(charset.name()).isIn("UTF-8", "UTF8");
     }
-
-    private byte[] createSimpleXlsxContent() {
-        // 실제 XLSX 파일은 복잡한 구조를 가지므로, 테스트용으로 간단한 바이트 배열을 반환
-        // 실제 구현에서는 Apache POI를 사용하여 XLSX 파일을 생성해야 함
-        return new byte[]{0x50, 0x4B, 0x03, 0x04, 0x14, 0x00, 0x00, 0x00, 0x08, 0x00};
-    }
 }

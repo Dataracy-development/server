@@ -98,7 +98,6 @@ class BehaviorLogRedisMergeAdapterTest {
             // given
             String anonymousId = "anonymous-123";
             Long userId = null;
-            String expectedKey = "behaviorlog:anonymous:" + anonymousId;
 
             // when & then
             NullPointerException exception = catchThrowableOfType(() -> adapter.merge(anonymousId, userId), NullPointerException.class);

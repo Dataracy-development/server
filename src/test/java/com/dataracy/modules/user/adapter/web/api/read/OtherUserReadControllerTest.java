@@ -116,7 +116,6 @@ class OtherUserReadControllerTest {
         GetOtherUserDataWebResponse webData1 = new GetOtherUserDataWebResponse(
                 1L, "Data 1", "AI", "CSV", LocalDate.now(), LocalDate.now(), "thumb1.jpg", 10, 1024L, 100, 5, LocalDateTime.now(), 2L
         );
-        Page<GetOtherUserDataWebResponse> webResponsePage = new PageImpl<>(List.of(webData1), pageable, 1);
 
         given(getOtherUserInfoUseCase.getOtherExtraDataSets(userId, pageable)).willReturn(responsePage);
         given(otherUserReadWebMapper.toWebDto(data1)).willReturn(webData1);
@@ -157,7 +156,6 @@ class OtherUserReadControllerTest {
         GetOtherUserProjectWebResponse webProject2 = new GetOtherUserProjectWebResponse(
                 2L, "Project 2", "Content 2", "DATA", "Expert", "test2.jpg", 20L, 10L, 200L, LocalDateTime.now()
         );
-        Page<GetOtherUserProjectWebResponse> webResponsePage = new PageImpl<>(List.of(webProject1, webProject2), pageable, 2);
 
         given(getOtherUserInfoUseCase.getOtherExtraProjects(userId, pageable)).willReturn(responsePage);
         given(otherUserReadWebMapper.toWebDto(project1)).willReturn(webProject1);

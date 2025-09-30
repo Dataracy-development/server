@@ -245,7 +245,6 @@ public class TestDataBuilder {
         private Long targetId = 100L;
         private TargetType targetType = TargetType.PROJECT;
         private Long userId = 1L;
-        private LocalDateTime createdAt = LocalDateTime.now();
 
         public LikeBuilder id(Long id) {
             this.id = id;
@@ -264,11 +263,6 @@ public class TestDataBuilder {
 
         public LikeBuilder userId(Long userId) {
             this.userId = userId;
-            return this;
-        }
-
-        public LikeBuilder createdAt(LocalDateTime createdAt) {
-            this.createdAt = createdAt;
             return this;
         }
 
@@ -392,7 +386,6 @@ public class TestDataBuilder {
     public static class ProjectBuilder {
         private Long id = 1L;
         private String title = "테스트 프로젝트";
-        private String description = "테스트 프로젝트 설명";
         private Long userId = 1L;
 
         public ProjectBuilder id(Long id) {
@@ -405,16 +398,10 @@ public class TestDataBuilder {
             return this;
         }
 
-        public ProjectBuilder description(String description) {
-            this.description = description;
-            return this;
-        }
-
         public ProjectBuilder userId(Long userId) {
             this.userId = userId;
             return this;
         }
-
 
         public Project build() {
             return Project.builder()

@@ -132,25 +132,6 @@ class ProjectQueryDslAdapterIntegrationTest {
         entityManager.flush();
     }
 
-    private ProjectEntity createProjectEntity(String title, Long userId, boolean isDeleted) {
-        return createProjectEntity(title, userId, isDeleted, null);
-    }
-
-    private ProjectEntity createProjectEntity(String title, Long userId, boolean isDeleted, ProjectEntity parentProject) {
-        return ProjectEntity.of(
-                title,
-                1L, // topicId
-                userId,
-                1L, // analysisPurposeId
-                1L, // dataSourceId
-                1L, // authorLevelId
-                false, // isContinue
-                parentProject,
-                "테스트 내용",
-                "https://example.com/thumbnail.jpg"
-        );
-    }
-
     @Nested
     @DisplayName("ReadProjectQueryDslAdapter 테스트")
     class ReadProjectQueryDslAdapterTest {

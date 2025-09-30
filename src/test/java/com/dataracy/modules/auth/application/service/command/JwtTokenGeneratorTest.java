@@ -208,16 +208,13 @@ class JwtTokenGeneratorTest {
     @DisplayName("getErrorStatus - 알 수 없는 토큰 타입에 대해 기본 에러 상태를 반환한다")
     void getErrorStatus_UnknownTokenType() throws Exception {
         // given
-        String unknownTokenType = "unknown";
-        
-        // when & then
         // getErrorStatus는 private 메서드이므로 간접적으로 테스트
-        // 알 수 없는 토큰 타입으로 토큰 생성 시도
         when(jwtGeneratorPort.generateAccessToken(any(), any()))
                 .thenThrow(new RuntimeException("Token generation failed"));
         
         mockLoggerFactory();
 
+        // when & then
         AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateAccessToken(1L, RoleType.ROLE_USER), AuthException.class);
         assertThat(exception).isNotNull();
         assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN);

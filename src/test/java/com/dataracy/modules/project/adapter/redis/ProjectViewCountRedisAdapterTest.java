@@ -187,7 +187,6 @@ class ProjectViewCountRedisAdapterTest {
         void getAllViewCountKeys_성공() {
             // given
             String targetType = "project";
-            Set<String> expectedKeys = Set.of("viewCount:project:1", "viewCount:project:2");
             
             Cursor<String> cursor = mock(Cursor.class);
             given(cursor.hasNext()).willReturn(true, true, false);

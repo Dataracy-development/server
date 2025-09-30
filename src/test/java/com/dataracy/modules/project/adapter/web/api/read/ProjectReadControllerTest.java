@@ -142,13 +142,11 @@ class ProjectReadControllerTest {
                 1L, "Popular Project 1", "Content 1", 1L, "User 1", "profile1.jpg",
                 "thumb1.jpg", "AI", "Research", "Public", "Expert", 10L, 5L, 100L
         );
-        Page<PopularProjectResponse> responsePage = new PageImpl<>(List.of(project1), pageable, 1);
 
         PopularProjectWebResponse webProject1 = new PopularProjectWebResponse(
                 1L, "Popular Project 1", "Content 1", 1L, "User 1", "profile1.jpg",
                 "thumb1.jpg", "AI", "Research", "Public", "Expert", 10L, 5L, 100L
         );
-        Page<PopularProjectWebResponse> webResponsePage = new PageImpl<>(List.of(webProject1), pageable, 1);
 
         given(getPopularProjectsUseCase.getPopularProjects(10)).willReturn(List.of(project1));
         given(projectReadWebMapper.toWebDto(project1)).willReturn(webProject1);
@@ -172,7 +170,6 @@ class ProjectReadControllerTest {
     @DisplayName("getUserProjects API: 성공 - 200 OK와 JSON 응답 검증")
     void getUserProjectsSuccess() throws Exception {
         // given
-        Long userId = 1L;
         Pageable pageable = PageRequest.of(0, 5); // 요청과 일치하도록 수정
         UserProjectResponse project1 = new UserProjectResponse(
                 1L, "User Project 1", "Content 1", "thumb1.jpg", "AI", "Expert",
@@ -184,7 +181,6 @@ class ProjectReadControllerTest {
                 1L, "User Project 1", "Content 1", "thumb1.jpg", "AI", "Expert",
                 10L, 5L, 100L, LocalDateTime.now()
         );
-        Page<UserProjectWebResponse> webResponsePage = new PageImpl<>(List.of(webProject1), pageable, 1);
 
         given(findUserProjectsUseCase.findUserProjects(any(), any(Pageable.class))).willReturn(responsePage);
         // Page는 map() 메서드로 처리되므로 개별 항목을 매핑
