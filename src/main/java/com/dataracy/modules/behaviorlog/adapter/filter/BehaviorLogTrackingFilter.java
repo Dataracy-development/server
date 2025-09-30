@@ -129,7 +129,7 @@ public class BehaviorLogTrackingFilter extends OncePerRequestFilter {
                 .ip(MDC.get(MdcKey.IP))
                 .action(action)
                 .dbLatency(dbLatency)
-                .externalLatency(0) // TODO: 외부 호출 추적 시 채워넣기
+                .externalLatency(0) // 외부 API 호출 시간 추적 미구현 (향후 확장 예정)
                 .referrer(referrer)
                 .deviceType(DeviceType.resolve(userAgent))
                 .logType(LogType.ACTION)
