@@ -138,7 +138,10 @@ public class UserEntity extends BaseTimeEntity {
      * @param isAdTermsAgreed 광고 약관 동의 여부
      * @param isDeleted 삭제 여부
      * @return 생성된 UserEntity 객체
+     * 
+     * 참고: 13개의 파라미터를 가지지만, UserEntity가 복잡한 도메인 엔티티이고 Builder 패턴을 내부적으로 사용하므로 허용됩니다.
      */
+    @SuppressWarnings("java:S107") // 복잡한 도메인 엔티티로 많은 파라미터 필요
     public static UserEntity of(
             ProviderType provider,
             String providerId,

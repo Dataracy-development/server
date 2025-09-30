@@ -125,6 +125,9 @@ public class DataReadDtoMapper {
      * Data 도메인과 작성자·라벨 정보를 결합해 상세 조회용 DataDetailResponse를 생성합니다.
      *
      * 상세 응답에 필요한 필드(작성자 표시명·프로필·소개, 각종 라벨, 기간·설명·미리보기 등)를 Data 객체와 전달된 문자열들을 이용해 조합해 반환합니다.
+     * 
+     * 참고: 이 메서드는 9개의 파라미터를 가지지만, 데이터 상세 조회 DTO가 복잡한 화면 정보를 포함하고
+     * Mapper 레이어에서 도메인 객체와 여러 라벨 정보를 조합하는 역할을 수행하므로 허용됩니다.
      *
      * @param data 도메인 엔티티
      * @param username 화면에 표시할 작성자명(표시명)
@@ -137,6 +140,7 @@ public class DataReadDtoMapper {
      * @param dataTypeLabel 데이터 타입 표시용 라벨
      * @return 해당 데이터의 상세 정보를 담은 {@link DataDetailResponse}
      */
+    @SuppressWarnings("java:S107") // Mapper 메서드로 여러 라벨 정보 조합 필요
     public DataDetailResponse toResponseDto(
             Data data,
             String username,

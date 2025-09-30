@@ -34,7 +34,10 @@ public class FilteredProjectDtoMapper {
      * @param childUsernames 자식 프로젝트의 userId -> username 매핑(없을 경우 "익명 유저" 사용)
      * @param childUserProfileImageUrls 자식 프로젝트의 userId -> profileImageUrl 매핑(없을 경우 컴포넌트의 기본 이미지 사용)
      * @return 변환된 FilteredProjectResponse DTO
+     * 
+     * 참고: 9개의 파라미터를 가지지만, Mapper 레이어에서 프로젝트와 하위 프로젝트 정보를 조합하여 필터링된 검색 DTO를 생성하므로 허용됩니다.
      */
+    @SuppressWarnings("java:S107") // Mapper 메서드로 여러 정보 조합 필요
     public FilteredProjectResponse toResponseDto(
             Project project,
             String username,

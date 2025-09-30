@@ -68,7 +68,10 @@ public class Project {
      * @param isDeleted 삭제 여부
      * @param childProjects 하위 프로젝트 목록
      * @return 지정된 모든 속성 값이 반영된 Project 객체
+     * 
+     * 참고: 16개의 파라미터를 가지지만, Project가 복잡한 도메인 모델이고 Builder 패턴을 내부적으로 사용하므로 허용됩니다.
      */
+    @SuppressWarnings("java:S107") // 복잡한 도메인 모델로 많은 파라미터 필요
     public static Project of(
             Long id,
             String title,

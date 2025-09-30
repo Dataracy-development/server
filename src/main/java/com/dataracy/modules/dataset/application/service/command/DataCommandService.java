@@ -170,9 +170,12 @@ public class DataCommandService implements
     /**
      * 데이터셋 파일, 썸네일 파일, 날짜, 주제/데이터소스/데이터타입 ID의 유효성을 검증합니다.
      * 시작일이 종료일보다 늦을 경우 예외를 발생시키며, 파일 형식 및 각 ID의 존재 여부를 확인합니다.
+     * 
+     * 참고: 8개의 파라미터를 가지지만, 데이터 업로드/수정 시 필요한 모든 검증을 수행하는 통합 검증 메서드입니다.
      *
      * @throws DataException 시작일이 종료일보다 늦거나 유효하지 않은 값이 입력된 경우 발생합니다.
      */
+    @SuppressWarnings("java:S107") // 통합 검증 메서드로 여러 파라미터 필요
     private void validateDataRequest(
             MultipartFile dataFile,
             MultipartFile thumbnailFile,
