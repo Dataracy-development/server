@@ -16,6 +16,13 @@ public class LoggerFactory {
     private static final CommonLogger COMMON_LOGGER = new CommonLogger();
 
     /**
+     * Utility 클래스이므로 인스턴스화를 방지합니다.
+     */
+    private LoggerFactory() {
+        throw new UnsupportedOperationException("Utility class cannot be instantiated");
+    }
+
+    /**
      * API 로깅을 위한 싱글톤 ApiLogger 인스턴스를 반환합니다.
      *
      * @return API 로그 기록에 사용되는 ApiLogger 인스턴스
