@@ -5,7 +5,6 @@ import com.dataracy.modules.user.application.dto.request.validate.DuplicateNickn
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -16,6 +15,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static org.assertj.core.api.BDDAssertions.thenCode;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -27,9 +27,6 @@ public class LockTest {
     @Autowired
     private UserValidateController userController; // 실제 컨트롤러 (nickname 체크가 있는 컨트롤러)
 
-    @Autowired
-    private RedissonClient redissonClient; // 실 사용 Redisson 클라이언트
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
@@ -40,6 +37,7 @@ public class LockTest {
 
     @Test
     void testNicknameLock_concurrentAccess() throws Exception {
+        // given
         int threadCount = 5;
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -47,6 +45,7 @@ public class LockTest {
         // 테스트용 닉네임 DTO JSON 생성
         String json = objectMapper.writeValueAsString(new DuplicateNicknameRequest("주니22"));
 
+        // when
         for (int i = 0; i < threadCount; i++) {
             executor.submit(() -> {
                 try {
@@ -63,7 +62,10 @@ public class LockTest {
             });
         }
 
-        latch.await(); // 모든 스레드 종료까지 대기
-        executor.shutdown();
+        // then
+        thenCode(() -> {
+            latch.await(); // 모든 스레드 종료까지 대기
+            executor.shutdown();
+        }).doesNotThrowAnyException();
     }
 }

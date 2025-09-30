@@ -14,8 +14,10 @@ import org.springframework.security.core.AuthenticationException;
 
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.BDDAssertions.thenCode;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.atLeastOnce;
 
 @ExtendWith(MockitoExtension.class)
 class OAuth2LoginFailureHandlerTest {
@@ -43,15 +45,15 @@ class OAuth2LoginFailureHandlerTest {
     void onAuthenticationFailure_WhenAuthenticationFails_LogsErrorAndCallsSuper() throws ServletException, IOException {
         // given
         String errorMessage = "Authentication failed";
-        when(exception.getMessage()).thenReturn(errorMessage);
+        given(exception.getMessage()).willReturn(errorMessage);
 
         // when
         oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception);
 
         // then
-        // 로깅이 발생했는지 확인 (실제로는 LoggerFactory를 통해 로깅됨)
-        // super.onAuthenticationFailure가 호출되었는지 확인
-        // Mockito로는 super 메서드 호출을 직접 검증하기 어려우므로 예외가 발생하지 않는지만 확인
+        thenCode(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception))
+                .doesNotThrowAnyException();
+        then(exception).should(atLeastOnce()).getMessage();
     }
 
     @Test
@@ -60,9 +62,12 @@ class OAuth2LoginFailureHandlerTest {
         // given
         AuthenticationException nullException = null;
 
-        // when & then
-        // NullPointerException이 발생할 수 있지만, 실제로는 로깅에서 처리됨
+        // when
         oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, nullException);
+
+        // then
+        thenCode(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, nullException))
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -71,8 +76,12 @@ class OAuth2LoginFailureHandlerTest {
         // given
         HttpServletRequest nullRequest = null;
 
-        // when & then
+        // when
         oAuth2LoginFailureHandler.onAuthenticationFailure(nullRequest, response, exception);
+
+        // then
+        thenCode(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(nullRequest, response, exception))
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -82,7 +91,7 @@ class OAuth2LoginFailureHandlerTest {
         HttpServletResponse nullResponse = null;
 
         // when & then
-        assertThatThrownBy(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, nullResponse, exception))
+        thenThrownBy(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, nullResponse, exception))
                 .isInstanceOf(NullPointerException.class);
     }
 
@@ -90,26 +99,28 @@ class OAuth2LoginFailureHandlerTest {
     @DisplayName("onAuthenticationFailure - 예외 메시지가 null인 경우도 처리한다")
     void onAuthenticationFailure_WhenExceptionMessageIsNull_HandlesCorrectly() throws ServletException, IOException {
         // given
-        when(exception.getMessage()).thenReturn(null);
+        given(exception.getMessage()).willReturn(null);
 
         // when
         oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception);
 
         // then
-        // 예외가 발생하지 않아야 함
+        thenCode(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception))
+                .doesNotThrowAnyException();
     }
 
     @Test
     @DisplayName("onAuthenticationFailure - 예외 메시지가 빈 문자열인 경우도 처리한다")
     void onAuthenticationFailure_WhenExceptionMessageIsEmpty_HandlesCorrectly() throws ServletException, IOException {
         // given
-        when(exception.getMessage()).thenReturn("");
+        given(exception.getMessage()).willReturn("");
 
         // when
         oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception);
 
         // then
-        // 예외가 발생하지 않아야 함
+        thenCode(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception))
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -118,9 +129,12 @@ class OAuth2LoginFailureHandlerTest {
         // given
         // IOException은 실제로 발생하지 않으므로 Mock 설정 제거
 
-        // when & then
-        // IOException이 발생할 수 있지만, 핸들러에서 처리됨
+        // when
         oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception);
+
+        // then
+        thenCode(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception))
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -129,9 +143,12 @@ class OAuth2LoginFailureHandlerTest {
         // given
         // ServletException은 실제로 발생하지 않으므로 Mock 설정 제거
 
-        // when & then
-        // ServletException이 발생할 수 있지만, 핸들러에서 처리됨
+        // when
         oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception);
+
+        // then
+        thenCode(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception))
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -140,8 +157,11 @@ class OAuth2LoginFailureHandlerTest {
         // given
         // RuntimeException은 실제로 발생하지 않으므로 Mock 설정 제거
 
-        // when & then
-        // RuntimeException이 발생할 수 있지만, 핸들러에서 처리됨
+        // when
         oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception);
+
+        // then
+        thenCode(() -> oAuth2LoginFailureHandler.onAuthenticationFailure(request, response, exception))
+                .doesNotThrowAnyException();
     }
 }
