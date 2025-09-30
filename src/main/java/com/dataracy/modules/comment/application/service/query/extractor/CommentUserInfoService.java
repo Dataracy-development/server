@@ -27,6 +27,9 @@ public class CommentUserInfoService implements FindCommentUserInfoUseCase {
     private final FindUserAuthorLevelIdsUseCase findUserAuthorLevelIdsUseCase;
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
 
+    // Use Case 상수 정의
+    private static final String FIND_COMMENT_USER_INFO_USE_CASE = "FindCommentUserInfoUseCase";
+
     /**
      * 주어진 사용자 ID 목록에 대해 댓글 표시에 필요한 사용자 정보를 배치로 조회합니다.
      * 
@@ -38,11 +41,11 @@ public class CommentUserInfoService implements FindCommentUserInfoUseCase {
     @Override
     @Transactional(readOnly = true)
     public CommentLabelResponse findCommentUserInfoBatch(List<Long> userIds) {
-        Instant startTime = LoggerFactory.service().logStart("FindCommentUserInfoUseCase", 
+        Instant startTime = LoggerFactory.service().logStart(FIND_COMMENT_USER_INFO_USE_CASE, 
                 "댓글 사용자 정보 배치 조회 시작 userIds=" + userIds.size());
         
         if (userIds.isEmpty()) {
-            LoggerFactory.service().logSuccess("FindCommentUserInfoUseCase", 
+            LoggerFactory.service().logSuccess(FIND_COMMENT_USER_INFO_USE_CASE, 
                     "댓글 사용자 정보 배치 조회 완료 (빈 목록)", startTime);
             return new CommentLabelResponse(Map.of(), Map.of(), Map.of(), Map.of());
         }
@@ -70,7 +73,7 @@ public class CommentUserInfoService implements FindCommentUserInfoUseCase {
                 userAuthorLevelLabelMap
         );
 
-        LoggerFactory.service().logSuccess("FindCommentUserInfoUseCase", 
+        LoggerFactory.service().logSuccess(FIND_COMMENT_USER_INFO_USE_CASE, 
                 "댓글 사용자 정보 배치 조회 완료 userIds=" + distinctUserIds.size(), startTime);
         return result;
     }

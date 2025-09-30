@@ -40,6 +40,15 @@ public class UserProfileService implements
     private final GetOccupationLabelFromIdUseCase getOccupationLabelFromIdUseCase;
     private final GetVisitSourceLabelFromIdUseCase getVisitSourceLabelFromIdUseCase;
 
+    // Use Case 상수 정의
+    private static final String FIND_USERNAME_USE_CASE = "FindUsernameUseCase";
+    private static final String FIND_USER_THUMBNAIL_USE_CASE = "FindUserThumbnailUseCase";
+    private static final String FIND_USER_AUTHOR_LEVEL_IDS_USE_CASE = "FindUserAuthorLevelIdsUseCase";
+    private static final String GET_USER_INFO_USE_CASE = "GetUserInfoUseCase";
+    
+    // 메시지 상수 정의
+    private static final String USER_NOT_FOUND_MESSAGE = "유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=";
+
     /**
      * 주어진 사용자 ID로 해당 사용자의 닉네임을 반환합니다.
      *
@@ -50,13 +59,13 @@ public class UserProfileService implements
     @Override
     @Transactional(readOnly = true)
     public String findUsernameById(Long userId) {
-        Instant startTime = LoggerFactory.service().logStart("FindUsernameUseCase", "아이디를 통한 유저명을 찾는 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_USERNAME_USE_CASE, "아이디를 통한 유저명을 찾는 서비스 시작 userId=" + userId);
         User user = userQueryPort.findUserById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindUsernameUseCase", "[유저명 조회] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    LoggerFactory.service().logWarning(FIND_USERNAME_USE_CASE, "[유저명 조회] " + USER_NOT_FOUND_MESSAGE + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
-        LoggerFactory.service().logSuccess("FindUsernameUseCase", "아이디를 통한 유저명을 찾는 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(FIND_USERNAME_USE_CASE, "아이디를 통한 유저명을 찾는 서비스 성공 userId=" + userId, startTime);
         return user.getNickname();
     }
 
@@ -74,9 +83,9 @@ public class UserProfileService implements
         if (userIds == null || userIds.isEmpty()) {
             return Map.of();
         }
-        Instant startTime = LoggerFactory.service().logStart("FindUsernameUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 닉네임을 반환 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FIND_USERNAME_USE_CASE, "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 닉네임을 반환 서비스 시작");
         Map<Long, String> usernames = userMultiQueryPort.findUsernamesByIds(userIds);
-        LoggerFactory.service().logSuccess("FindUsernameUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 닉네임을 반환 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess(FIND_USERNAME_USE_CASE, "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 닉네임을 반환 서비스 성공", startTime);
         return usernames;
     }
 
@@ -90,13 +99,13 @@ public class UserProfileService implements
     @Override
     @Transactional(readOnly = true)
     public String findUserThumbnailById(Long userId) {
-        Instant startTime = LoggerFactory.service().logStart("FindUserThumbnailUseCase", "아이디를 통한 유저 프로필 이미지 URL을 찾는 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_USER_THUMBNAIL_USE_CASE, "아이디를 통한 유저 프로필 이미지 URL을 찾는 서비스 시작 userId=" + userId);
         User user = userQueryPort.findUserById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindUserThumbnailUseCase", "[유저 프로필 이미지 조회] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    LoggerFactory.service().logWarning(FIND_USER_THUMBNAIL_USE_CASE, "[유저 프로필 이미지 조회] " + USER_NOT_FOUND_MESSAGE + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
-        LoggerFactory.service().logSuccess("FindUserThumbnailUseCase", "아이디를 통한 유저 프로필 이미지 URL을 찾는 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(FIND_USER_THUMBNAIL_USE_CASE, "아이디를 통한 유저 프로필 이미지 URL을 찾는 서비스 성공 userId=" + userId, startTime);
         return user.getProfileImageUrl();
     }
 
@@ -112,9 +121,9 @@ public class UserProfileService implements
         if (userIds == null || userIds.isEmpty()) {
             return Map.of();
         }
-        Instant startTime = LoggerFactory.service().logStart("FindUserThumbnailUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 프로필 이미지를 반환 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FIND_USER_THUMBNAIL_USE_CASE, "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 프로필 이미지를 반환 서비스 시작");
         Map<Long, String> userThumbnails = userMultiQueryPort.findUserThumbnailsByIds(userIds);
-        LoggerFactory.service().logSuccess("FindUserThumbnailUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 프로필 이미지를 반환 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess(FIND_USER_THUMBNAIL_USE_CASE, "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 프로필 이미지를 반환 서비스 성공", startTime);
         return userThumbnails;
     }
 
@@ -130,9 +139,9 @@ public class UserProfileService implements
         if (userIds == null || userIds.isEmpty()) {
             return Map.of();
         }
-        Instant startTime = LoggerFactory.service().logStart("FindUserAuthorLevelIdsUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 작성자 유형을 반환하는 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FIND_USER_AUTHOR_LEVEL_IDS_USE_CASE, "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 작성자 유형을 반환하는 서비스 시작");
         Map<Long, String> userAuthorLevelIds = userMultiQueryPort.findUserAuthorLevelIds(userIds);
-        LoggerFactory.service().logSuccess("FindUserAuthorLevelIdsUseCase", "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 작성자 유형을 반환하는 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess(FIND_USER_AUTHOR_LEVEL_IDS_USE_CASE, "주어진 사용자 ID 목록에 대해 각 ID에 해당하는 작성자 유형을 반환하는 서비스 성공", startTime);
         return userAuthorLevelIds;
     }
 
@@ -148,16 +157,16 @@ public class UserProfileService implements
     @Override
     @Transactional(readOnly = true)
     public UserInfo extractUserInfo(Long userId) {
-        Instant startTime = LoggerFactory.service().logStart("GetUserInfoUseCase", "주어진 사용자 ID에 대한 유저 정보 추출 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(GET_USER_INFO_USE_CASE, "주어진 사용자 ID에 대한 유저 정보 추출 서비스 시작 userId=" + userId);
 
         User user = userQueryPort.findUserById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetUserInfoUseCase", "[유저 정보 추출] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    LoggerFactory.service().logWarning(GET_USER_INFO_USE_CASE, "[유저 정보 추출] " + USER_NOT_FOUND_MESSAGE + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 
         UserInfo userInfo = user.toUserInfo();
-        LoggerFactory.service().logSuccess("GetUserInfoUseCase", "주어진 사용자 ID에 대한 유저 정보 추출 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(GET_USER_INFO_USE_CASE, "주어진 사용자 ID에 대한 유저 정보 추출 서비스 성공 userId=" + userId, startTime);
         return userInfo;
     }
 
@@ -174,11 +183,11 @@ public class UserProfileService implements
     @Override
     @Transactional(readOnly = true)
     public GetUserInfoResponse getUserInfo(Long userId) {
-        Instant startTime = LoggerFactory.service().logStart("GetUserInfoUseCase", "주어진 사용자 ID에 대한 유저 정보 조회 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(GET_USER_INFO_USE_CASE, "주어진 사용자 ID에 대한 유저 정보 조회 서비스 시작 userId=" + userId);
 
         User user = userQueryPort.findUserById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetUserInfoUseCase", "[유저 정보 조회] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    LoggerFactory.service().logWarning(GET_USER_INFO_USE_CASE, "[유저 정보 조회] " + USER_NOT_FOUND_MESSAGE + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 
@@ -207,7 +216,7 @@ public class UserProfileService implements
                 user.getIntroductionText()
         );
 
-        LoggerFactory.service().logSuccess("GetUserInfoUseCase", "주어진 사용자 ID에 대한 유저 정보 조회 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(GET_USER_INFO_USE_CASE, "주어진 사용자 ID에 대한 유저 정보 조회 서비스 성공 userId=" + userId, startTime);
         return getUserInfoResponse;
     }
 }

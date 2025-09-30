@@ -76,6 +76,15 @@ public class ProjectReadService implements
     private final FindConnectedProjectsPort findConnectedProjectsPort;
     private final GetPopularProjectsPort getPopularProjectsPort;
 
+    // Use Case 상수 정의
+    private static final String GET_PROJECT_DETAIL_USE_CASE = "GetProjectDetailUseCase";
+    private static final String FIND_CONTINUED_PROJECTS_USE_CASE = "FindContinuedProjectsUseCase";
+    private static final String FIND_CONNECTED_PROJECTS_USE_CASE = "FindConnectedProjectsUseCase";
+    private static final String GET_POPULAR_PROJECTS_USE_CASE = "GetPopularProjectsUseCase";
+    
+    // 메시지 상수 정의
+    private static final String PROJECT_NOT_FOUND_MESSAGE = "해당 프로젝트가 존재하지 않습니다. projectId=";
+
     private final GetUserInfoUseCase getUserInfoUseCase;
     private final FindUsernameUseCase findUsernameUseCase;
     private final FindUserThumbnailUseCase findUserThumbnailUseCase;
@@ -113,12 +122,12 @@ public class ProjectReadService implements
     @Override
     @Transactional(readOnly = true)
     public ProjectDetailResponse getProjectDetail(Long projectId, Long userId, String viewerId) {
-        Instant startTime = LoggerFactory.service().logStart("GetProjectDetailUseCase", "프로젝트 세부정보 조회 서비스 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.service().logStart(GET_PROJECT_DETAIL_USE_CASE, "프로젝트 세부정보 조회 서비스 시작 projectId=" + projectId);
 
         // 프로젝트 세부정보 조회
         ProjectWithDataIdsResponse projectWithDataIdsResponse = findProjectPort.findProjectWithDataById(projectId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetProjectDetailUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+                    LoggerFactory.service().logWarning(GET_PROJECT_DETAIL_USE_CASE, PROJECT_NOT_FOUND_MESSAGE + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
 
@@ -148,7 +157,7 @@ public class ProjectReadService implements
                 ? null
                 : findProjectPort.findProjectById(project.getParentProjectId())
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetProjectDetailUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + project.getParentProjectId());
+                    LoggerFactory.service().logWarning(GET_PROJECT_DETAIL_USE_CASE, PROJECT_NOT_FOUND_MESSAGE + project.getParentProjectId());
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
         ParentProjectResponse parentProjectResponse = parentProject == null
@@ -179,7 +188,7 @@ public class ProjectReadService implements
                 parentProjectResponse
         );
 
-        LoggerFactory.service().logSuccess("GetProjectDetailUseCase", "프로젝트 세부정보 조회 서비스 종료 projectId=" + projectId, startTime);
+        LoggerFactory.service().logSuccess(GET_PROJECT_DETAIL_USE_CASE, "프로젝트 세부정보 조회 서비스 종료 projectId=" + projectId, startTime);
         return projectDetailResponse;
     }
 
@@ -195,7 +204,7 @@ public class ProjectReadService implements
     @Override
     @Transactional(readOnly = true)
     public Page<ContinuedProjectResponse> findContinuedProjects(Long projectId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("FindContinuedProjectsUseCase", "이어가기 프로젝트 목록 조회 서비스 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_CONTINUED_PROJECTS_USE_CASE, "이어가기 프로젝트 목록 조회 서비스 시작 projectId=" + projectId);
 
         Page<Project> savedProjects = findContinuedProjectsPort.findContinuedProjects(projectId, pageable);
 
@@ -216,7 +225,7 @@ public class ProjectReadService implements
                 authorLevelLabelMap.get(project.getAuthorLevelId())
         ));
 
-        LoggerFactory.service().logSuccess("FindContinuedProjectsUseCase", "이어가기 프로젝트 목록 조회 서비스 종료 projectId=" + projectId, startTime);
+        LoggerFactory.service().logSuccess(FIND_CONTINUED_PROJECTS_USE_CASE, "이어가기 프로젝트 목록 조회 서비스 종료 projectId=" + projectId, startTime);
         return findContinuedProjectsResponse;
     }
 
@@ -230,7 +239,7 @@ public class ProjectReadService implements
     @Override
     @Transactional(readOnly = true)
     public Page<ConnectedProjectResponse> findConnectedProjects(Long dataId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("FindConnectedProjectsUseCase", "데이터셋과 연결된 프로젝트 목록 조회 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_CONNECTED_PROJECTS_USE_CASE, "데이터셋과 연결된 프로젝트 목록 조회 서비스 시작 dataId=" + dataId);
 
         Page<Project> savedProjects = findConnectedProjectsPort.findConnectedProjectsAssociatedWithDataset(dataId, pageable);
 
@@ -248,7 +257,7 @@ public class ProjectReadService implements
                 topicLabelMap.get(project.getTopicId())
         ));
 
-        LoggerFactory.service().logSuccess("FindConnectedProjectsUseCase", "데이터셋과 연결된 프로젝트 목록 조회 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess(FIND_CONNECTED_PROJECTS_USE_CASE, "데이터셋과 연결된 프로젝트 목록 조회 서비스 종료 dataId=" + dataId, startTime);
         return connectedProjectsResponses;
     }
 
@@ -287,25 +296,25 @@ public class ProjectReadService implements
     @Override
     @Transactional(readOnly = true)
     public List<PopularProjectResponse> getPopularProjects(int size) {
-        Instant startTime = LoggerFactory.service().logStart("GetPopularProjectsUseCase", "인기 프로젝트 목록 조회 서비스 시작 size=" + size);
+        Instant startTime = LoggerFactory.service().logStart(GET_POPULAR_PROJECTS_USE_CASE, "인기 프로젝트 목록 조회 서비스 시작 size=" + size);
 
         // 저장소에서 먼저 조회
-        LoggerFactory.service().logInfo("GetPopularProjectsUseCase", "저장소에서 캐시 조회 시작");
+        LoggerFactory.service().logInfo(GET_POPULAR_PROJECTS_USE_CASE, "저장소에서 캐시 조회 시작");
         var cachedResult = popularProjectsStoragePort.getPopularProjects();
-        LoggerFactory.service().logInfo("GetPopularProjectsUseCase", "저장소 캐시 조회 결과: " + (cachedResult.isPresent() ? "데이터 존재" : "데이터 없음"));
+        LoggerFactory.service().logInfo(GET_POPULAR_PROJECTS_USE_CASE, "저장소 캐시 조회 결과: " + (cachedResult.isPresent() ? "데이터 존재" : "데이터 없음"));
         if (cachedResult.isPresent()) {
             List<PopularProjectResponse> cachedData = cachedResult.get();
             List<PopularProjectResponse> result = cachedData.stream()
                     .limit(size)
                     .toList();
             
-            LoggerFactory.service().logSuccess("GetPopularProjectsUseCase", 
+            LoggerFactory.service().logSuccess(GET_POPULAR_PROJECTS_USE_CASE, 
                 "인기 프로젝트 저장소 조회 성공 size=" + size + " cachedCount=" + cachedData.size(), startTime);
             return result;
         }
 
         // 저장소에 데이터가 없으면 DB에서 조회 (기존 로직)
-        LoggerFactory.service().logInfo("GetPopularProjectsUseCase", "저장소에 데이터가 없어 DB에서 조회합니다. size=" + size);
+        LoggerFactory.service().logInfo(GET_POPULAR_PROJECTS_USE_CASE, "저장소에 데이터가 없어 DB에서 조회합니다. size=" + size);
         
         List<Project> savedProjects = getPopularProjectsPort.getPopularProjects(size);
         ProjectLabelMapResponse labelResponse = findProjectLabelMapUseCase.labelMapping(savedProjects);
@@ -325,7 +334,7 @@ public class ProjectReadService implements
         // 캐시 워밍업 (비동기) - 데이터셋과 동일한 방식
         updatePopularProjectsStorageUseCase.warmUpCacheIfNeeded(Math.max(size, 20));
 
-        LoggerFactory.service().logSuccess("GetPopularProjectsUseCase", "인기 프로젝트 DB 조회 서비스 종료 size=" + size, startTime);
+        LoggerFactory.service().logSuccess(GET_POPULAR_PROJECTS_USE_CASE, "인기 프로젝트 DB 조회 서비스 종료 size=" + size, startTime);
         return popularProjectResponses;
     }
 }

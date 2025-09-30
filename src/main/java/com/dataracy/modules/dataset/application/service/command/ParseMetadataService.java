@@ -44,6 +44,12 @@ public class ParseMetadataService implements ParseMetadataUseCase {
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
 
+    // Use Case 상수 정의
+    private static final String PARSE_METADATA_USE_CASE = "ParseMetadataUseCase";
+    
+    // 메시지 상수 정의
+    private static final String DATA_NOT_FOUND_MESSAGE = "해당 데이터셋이 존재하지 않습니다. dataId=";
+
     /**
      * 파일을 다운로드하여 메타데이터를 추출하고, 해당 데이터셋에 저장한 뒤 검색 색인에 반영합니다.
      *
@@ -56,7 +62,7 @@ public class ParseMetadataService implements ParseMetadataUseCase {
     @Override
     @Transactional
     public void parseAndSaveMetadata(ParseMetadataRequest request) {
-        Instant startTime = LoggerFactory.service().logStart("ParseMetadataUseCase", "데이터셋 파일을 파싱하고 내용 저장 서비스 시작 dataId=" + request.dataId());
+        Instant startTime = LoggerFactory.service().logStart(PARSE_METADATA_USE_CASE, "데이터셋 파일을 파싱하고 내용 저장 서비스 시작 dataId=" + request.dataId());
         try (InputStream inputStream = fileStoragePort.download(request.fileUrl())) {
             ParsedMetadataResponse response = FileParsingUtil.parse(inputStream, request.originalFilename());
             DataMetadata metadata = DataMetadata.of(
@@ -71,7 +77,7 @@ public class ParseMetadataService implements ParseMetadataUseCase {
             // 색인을 위한 데이터 조회
             Data data = findDataPort.findDataById(request.dataId())
                     .orElseThrow(() -> {
-                        LoggerFactory.service().logWarning("ParseMetadataUseCase", "해당 데이터셋이 존재하지 않습니다. dataId=" + request.dataId());
+                        LoggerFactory.service().logWarning(PARSE_METADATA_USE_CASE, DATA_NOT_FOUND_MESSAGE + request.dataId());
                         return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                     });
             String topicLabel = getTopicLabelFromIdUseCase.getLabelById(data.getTopicId());
@@ -85,12 +91,12 @@ public class ParseMetadataService implements ParseMetadataUseCase {
             DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);
             indexDataPort.index(document);
         } catch (IOException e) {
-            LoggerFactory.service().logException("ParseMetadataUseCase", "파일 다운로드 또는 파싱 실패", e);
+            LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "파일 다운로드 또는 파싱 실패", e);
         } catch (DataException e) {
-            LoggerFactory.service().logException("ParseMetadataUseCase", "데이터 조회 실패", e);
+            LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "데이터 조회 실패", e);
         } catch (Exception e) {
-            LoggerFactory.service().logException("ParseMetadataUseCase", "예상치 못한 오류 발생", e);
+            LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "예상치 못한 오류 발생", e);
         }
-        LoggerFactory.service().logSuccess("ParseMetadataUseCase", "데이터셋 파일을 파싱하고 내용 저장 서비스 종료. dataId=" + request.dataId(), startTime);
+        LoggerFactory.service().logSuccess(PARSE_METADATA_USE_CASE, "데이터셋 파일을 파싱하고 내용 저장 서비스 종료. dataId=" + request.dataId(), startTime);
     }
 }

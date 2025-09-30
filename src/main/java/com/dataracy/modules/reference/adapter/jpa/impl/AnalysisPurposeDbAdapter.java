@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 public class AnalysisPurposeDbAdapter implements AnalysisPurposePort {
     private final AnalysisPurposeJpaRepository analysisPurposeJpaRepository;
 
+    // Entity 상수 정의
+    private static final String ANALYSIS_PURPOSE_ENTITY = "AnalysisPurposeEntity";
+
     /**
      * 데이터베이스에 저장된 모든 분석 목적(AnalysisPurpose) 도메인 객체의 목록을 반환한다.
      *
@@ -27,13 +30,13 @@ public class AnalysisPurposeDbAdapter implements AnalysisPurposePort {
      */
     @Override
     public List<AnalysisPurpose> findAllAnalysisPurposes() {
-        Instant startTime = LoggerFactory.db().logQueryStart("AnalysisPurposeEntity", "[findAll] 분석 목적 목록 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(ANALYSIS_PURPOSE_ENTITY, "[findAll] 분석 목적 목록 조회 시작");
 
         List<AnalysisPurposeEntity> analysisPurposeEntities = analysisPurposeJpaRepository.findAll();
         List<AnalysisPurpose> analysisPurposes = analysisPurposeEntities.stream()
                 .map(AnalysisPurposeEntityMapper::toDomain)
                 .toList();
-        LoggerFactory.db().logQueryEnd("AnalysisPurposeEntity", "[findAll] 분석 목적 목록 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(ANALYSIS_PURPOSE_ENTITY, "[findAll] 분석 목적 목록 조회 종료", startTime);
         return analysisPurposes;
     }
 
@@ -45,13 +48,13 @@ public class AnalysisPurposeDbAdapter implements AnalysisPurposePort {
      */
     @Override
     public Optional<AnalysisPurpose> findAnalysisPurposeById(Long analysisPurposeId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("AnalysisPurposeEntity", "[findById] 분석 목적 조회 시작 analysisPurposeId=" + analysisPurposeId);
+        Instant startTime = LoggerFactory.db().logQueryStart(ANALYSIS_PURPOSE_ENTITY, "[findById] 분석 목적 조회 시작 analysisPurposeId=" + analysisPurposeId);
         if (analysisPurposeId == null) {
             return Optional.empty();
         }
         Optional<AnalysisPurpose> analysisPurpose = analysisPurposeJpaRepository.findById(analysisPurposeId)
                 .map(AnalysisPurposeEntityMapper::toDomain);
-        LoggerFactory.db().logQueryEnd("AnalysisPurposeEntity", "[findById] 분석 목적 조회 종료 analysisPurposeId=" + analysisPurposeId, startTime);
+        LoggerFactory.db().logQueryEnd(ANALYSIS_PURPOSE_ENTITY, "[findById] 분석 목적 조회 종료 analysisPurposeId=" + analysisPurposeId, startTime);
         return analysisPurpose;
     }
 
@@ -67,7 +70,7 @@ public class AnalysisPurposeDbAdapter implements AnalysisPurposePort {
             return false;
         }
         boolean isExists = analysisPurposeJpaRepository.existsById(analysisPurposeId);
-        LoggerFactory.db().logExist("AnalysisPurposeEntity", "[existsById] 분석 목적 존재 유무 확인 analysisPurposeId=" + analysisPurposeId + ", isExists=" + isExists);
+        LoggerFactory.db().logExist(ANALYSIS_PURPOSE_ENTITY, "[existsById] 분석 목적 존재 유무 확인 analysisPurposeId=" + analysisPurposeId + ", isExists=" + isExists);
         return isExists;
     }
 
@@ -79,12 +82,12 @@ public class AnalysisPurposeDbAdapter implements AnalysisPurposePort {
      */
     @Override
     public Optional<String> getLabelById(Long analysisPurposeId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("AnalysisPurposeEntity", "[findLabelById] 분석 목적 라벨 조회 시작 analysisPurposeId=" + analysisPurposeId);
+        Instant startTime = LoggerFactory.db().logQueryStart(ANALYSIS_PURPOSE_ENTITY, "[findLabelById] 분석 목적 라벨 조회 시작 analysisPurposeId=" + analysisPurposeId);
         if (analysisPurposeId == null) {
             return Optional.empty();
         }
         Optional<String> label = analysisPurposeJpaRepository.findLabelById(analysisPurposeId);
-        LoggerFactory.db().logQueryEnd("AnalysisPurposeEntity", "[findLabelById] 분석 목적 라벨 조회 종료 analysisPurposeId=" + analysisPurposeId + ", label=" + label, startTime);
+        LoggerFactory.db().logQueryEnd(ANALYSIS_PURPOSE_ENTITY, "[findLabelById] 분석 목적 라벨 조회 종료 analysisPurposeId=" + analysisPurposeId + ", label=" + label, startTime);
         return label;
     }
 
@@ -96,11 +99,11 @@ public class AnalysisPurposeDbAdapter implements AnalysisPurposePort {
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> analysisPurposeIds) {
-        Instant startTime = LoggerFactory.db().logQueryStart("AnalysisPurposeEntity", "[findAllById] 분석 목적 라벨 목록 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(ANALYSIS_PURPOSE_ENTITY, "[findAllById] 분석 목적 라벨 목록 조회 시작");
         Map<Long, String> labels = analysisPurposeJpaRepository.findAllById(analysisPurposeIds)
                 .stream()
                 .collect(Collectors.toMap(AnalysisPurposeEntity::getId, AnalysisPurposeEntity::getLabel));
-        LoggerFactory.db().logQueryEnd("AnalysisPurposeEntity", "[findAllById] 분석 목적 라벨 목록 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(ANALYSIS_PURPOSE_ENTITY, "[findAllById] 분석 목적 라벨 목록 조회 종료", startTime);
         return labels;
     }
 }

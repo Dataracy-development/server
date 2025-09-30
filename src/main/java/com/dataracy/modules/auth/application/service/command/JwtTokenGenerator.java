@@ -18,22 +18,25 @@ import java.time.Instant;
 public class JwtTokenGenerator {
     private final JwtGeneratorPort jwtGeneratorPort;
 
+    // Use Case 상수 정의
+    private static final String JWT_GENERATE_USE_CASE = "JwtGenerateUseCase";
+
     /**
      * 공통 토큰 생성 로직
      */
     private String generateTokenWithLogging(String tokenType, String identifier, TokenGenerationFunction generator) {
         try {
-            Instant startTime = LoggerFactory.service().logStart("JwtGenerateUseCase", 
+            Instant startTime = LoggerFactory.service().logStart(JWT_GENERATE_USE_CASE, 
                 String.format("%s 토큰 발급 서비스 시작 %s", tokenType, identifier));
             
             String token = generator.generate();
             
-            LoggerFactory.service().logSuccess("JwtGenerateUseCase", 
+            LoggerFactory.service().logSuccess(JWT_GENERATE_USE_CASE, 
                 String.format("%s 토큰 발급 서비스 성공 %s", tokenType, identifier), startTime);
             
             return token;
         } catch (Exception e) {
-            LoggerFactory.service().logException("JwtGenerateUseCase", 
+            LoggerFactory.service().logException(JWT_GENERATE_USE_CASE, 
                 String.format("[토큰 발급] %s 토큰 발급에 실패했습니다. %s", tokenType, identifier), e);
             throw new AuthException(getErrorStatus(tokenType));
         }

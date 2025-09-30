@@ -46,6 +46,14 @@ public class ProjectSearchService implements
     private final SearchSimilarProjectsPort searchSimilarProjectsPort;
     private final SearchFilteredProjectsPort searchFilteredProjectsPort;
 
+    // Use Case 상수 정의
+    private static final String SEARCH_REAL_TIME_PROJECTS_USE_CASE = "SearchRealTimeProjectsUseCase";
+    private static final String SEARCH_SIMILAR_PROJECTS_USE_CASE = "SearchSimilarProjectsUseCase";
+    private static final String SEARCH_FILTERED_PROJECTS_USE_CASE = "SearchFilteredProjectsUseCase";
+    
+    // 메시지 상수 정의
+    private static final String PROJECT_NOT_FOUND_MESSAGE = "해당 프로젝트가 존재하지 않습니다. projectId=";
+
     private final FindUsernameUseCase findUsernameUseCase;
     private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final FindProjectLabelMapUseCase findProjectLabelMapUseCase;
@@ -62,12 +70,12 @@ public class ProjectSearchService implements
     @Override
     @Transactional(readOnly = true)
     public List<RealTimeProjectResponse> searchByKeyword(String keyword, int size) {
-        Instant startTime = LoggerFactory.service().logStart("SearchRealTimeProjectsUseCase", "자동완성을 위한 실시간 프로젝트 목록 조회 서비스 시작 keyword=" + keyword);
+        Instant startTime = LoggerFactory.service().logStart(SEARCH_REAL_TIME_PROJECTS_USE_CASE, "자동완성을 위한 실시간 프로젝트 목록 조회 서비스 시작 keyword=" + keyword);
         if (keyword == null || keyword.trim().isEmpty()) {
             return List.of();
         }
         List<RealTimeProjectResponse> realTimeProjectResponses = searchRealTimeProjectsPort.searchByKeyword(keyword, size);
-        LoggerFactory.service().logSuccess("SearchRealTimeProjectsUseCase", "자동완성을 위한 실시간 프로젝트 목록 조회 서비스 종료 keyword=" + keyword, startTime);
+        LoggerFactory.service().logSuccess(SEARCH_REAL_TIME_PROJECTS_USE_CASE, "자동완성을 위한 실시간 프로젝트 목록 조회 서비스 종료 keyword=" + keyword, startTime);
         return realTimeProjectResponses;
     }
 
@@ -82,14 +90,14 @@ public class ProjectSearchService implements
     @Override
     @Transactional(readOnly = true)
     public List<SimilarProjectResponse> searchSimilarProjects(Long projectId, int size) {
-        Instant startTime = LoggerFactory.service().logStart("SearchSimilarProjectsUseCase", "유사 프로젝트 목록 조회 서비스 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.service().logStart(SEARCH_SIMILAR_PROJECTS_USE_CASE, "유사 프로젝트 목록 조회 서비스 시작 projectId=" + projectId);
         Project project = findProjectPort.findProjectById(projectId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("SearchSimilarProjectsUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+                    LoggerFactory.service().logWarning(SEARCH_SIMILAR_PROJECTS_USE_CASE, PROJECT_NOT_FOUND_MESSAGE + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
         List<SimilarProjectResponse> similarProjectResponses = searchSimilarProjectsPort.searchSimilarProjects(project, size);
-        LoggerFactory.service().logSuccess("SearchSimilarProjectsUseCase", "유사 프로젝트 목록 조회 서비스 종료 projectId=" + projectId, startTime);
+        LoggerFactory.service().logSuccess(SEARCH_SIMILAR_PROJECTS_USE_CASE, "유사 프로젝트 목록 조회 서비스 종료 projectId=" + projectId, startTime);
         return similarProjectResponses;
     }
 
@@ -103,7 +111,7 @@ public class ProjectSearchService implements
     @Override
     @Transactional(readOnly = true)
     public Page<FilteredProjectResponse> searchByFilters(FilteringProjectRequest request, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("SearchFilteredProjectsUseCase", "필터링된 프로젝트 목록 조회 서비스 시작 keyword=" + request.keyword());
+        Instant startTime = LoggerFactory.service().logStart(SEARCH_FILTERED_PROJECTS_USE_CASE, "필터링된 프로젝트 목록 조회 서비스 시작 keyword=" + request.keyword());
 
         ProjectSortType sortType = (request.sortType() != null && !request.sortType().isEmpty())
                 ? ProjectSortType.of(request.sortType())
@@ -136,7 +144,7 @@ public class ProjectSearchService implements
             );
         });
 
-        LoggerFactory.service().logSuccess("SearchFilteredProjectsUseCase", "필터링된 프로젝트 목록 조회 서비스 종료 keyword=" + request.keyword(), startTime);
+        LoggerFactory.service().logSuccess(SEARCH_FILTERED_PROJECTS_USE_CASE, "필터링된 프로젝트 목록 조회 서비스 종료 keyword=" + request.keyword(), startTime);
         return filteredProjectResponses;
     }
 }

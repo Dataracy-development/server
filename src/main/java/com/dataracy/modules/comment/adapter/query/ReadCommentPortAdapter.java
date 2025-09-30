@@ -28,6 +28,9 @@ import java.util.stream.Collectors;
 public class ReadCommentPortAdapter implements ReadCommentPort {
     private final JPAQueryFactory queryFactory;
 
+    // Entity 상수 정의
+    private static final String COMMENT_ENTITY = "CommentEntity";
+
     private final QCommentEntity comment = QCommentEntity.commentEntity;
 
     /**
@@ -38,7 +41,7 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
      */
     @Override
     public Optional<Comment> findCommentById(Long commentId) {
-        Instant startTime = LoggerFactory.query().logQueryStart("CommentEntity", "[findCommentById] 주어진 ID에 해당하는 댓글 조회 시작. commentId=" + commentId);
+        Instant startTime = LoggerFactory.query().logQueryStart(COMMENT_ENTITY, "[findCommentById] 주어진 ID에 해당하는 댓글 조회 시작. commentId=" + commentId);
 
         CommentEntity entity = queryFactory
                 .selectFrom(comment)
@@ -48,7 +51,7 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
                 .fetchOne();
 
         Optional<Comment> comment = Optional.ofNullable(CommentEntityMapper.toDomain(entity));
-        LoggerFactory.query().logQueryEnd("CommentEntity", "[findCommentById] 주어진 ID에 해당하는 댓글 조회 종료. commentId=" + commentId, startTime);
+        LoggerFactory.query().logQueryEnd(COMMENT_ENTITY, "[findCommentById] 주어진 ID에 해당하는 댓글 조회 종료. commentId=" + commentId, startTime);
         return comment;
     }
 
@@ -61,7 +64,7 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
      */
     @Override
     public Page<FindCommentWithReplyCountResponse> findComments(Long projectId, Pageable pageable) {
-        Instant startTime = LoggerFactory.query().logQueryStart("CommentEntity", "[findComments] 댓글당 답글 수를 포함한 댓글 목록 조회 시작. projectId=" + projectId);
+        Instant startTime = LoggerFactory.query().logQueryStart(COMMENT_ENTITY, "[findComments] 댓글당 답글 수를 포함한 댓글 목록 조회 시작. projectId=" + projectId);
         int queryCount = 0;
 
         // 1단계: 루트 댓글 조회 (1개 쿼리)
@@ -103,7 +106,7 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
         ).orElse(0L);
         queryCount++; // 카운트 쿼리
 
-        LoggerFactory.query().logQueryEnd("CommentEntity", "[findComments] 댓글당 답글 수를 포함한 댓글 목록 조회 종료. projectId=" + projectId + ", queryCount=" + queryCount, startTime);
+        LoggerFactory.query().logQueryEnd(COMMENT_ENTITY, "[findComments] 댓글당 답글 수를 포함한 댓글 목록 조회 종료. projectId=" + projectId + ", queryCount=" + queryCount, startTime);
         return new PageImpl<>(contents, pageable, total);
     }
 
@@ -117,7 +120,7 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
      */
     @Override
     public Page<Comment> findReplyComments(Long projectId, Long commentId, Pageable pageable) {
-        Instant startTime = LoggerFactory.query().logQueryStart("CommentEntity", "[findReplyComments] 해당 댓글에 대한 답글 목록 조회 시작. projectId=" + projectId + ", commentId=" + commentId);
+        Instant startTime = LoggerFactory.query().logQueryStart(COMMENT_ENTITY, "[findReplyComments] 해당 댓글에 대한 답글 목록 조회 시작. projectId=" + projectId + ", commentId=" + commentId);
 
         List<CommentEntity> entities = queryFactory
                 .selectFrom(comment)
@@ -146,7 +149,7 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
                         .fetchOne()
         ).orElse(0L);
 
-        LoggerFactory.query().logQueryEnd("CommentEntity", "[findReplyComments] 해당 댓글에 대한 답글 목록 조회 종료. projectId=" + projectId + ", commentId=" + commentId, startTime);
+        LoggerFactory.query().logQueryEnd(COMMENT_ENTITY, "[findReplyComments] 해당 댓글에 대한 답글 목록 조회 종료. projectId=" + projectId + ", commentId=" + commentId, startTime);
         return new PageImpl<>(contents, pageable, total);
     }
 

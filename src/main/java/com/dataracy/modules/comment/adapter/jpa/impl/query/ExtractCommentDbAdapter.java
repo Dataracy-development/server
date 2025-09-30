@@ -14,6 +14,9 @@ import java.util.Optional;
 public class ExtractCommentDbAdapter implements ExtractCommentPort {
     private final CommentJpaRepository commentJpaRepository;
 
+    // Entity 상수 정의
+    private static final String COMMENT_ENTITY = "CommentEntity";
+
     /**
      * 주어진 댓글 ID에 해당하는 사용자 ID를 Optional로 반환합니다.
      *
@@ -22,9 +25,9 @@ public class ExtractCommentDbAdapter implements ExtractCommentPort {
      */
     @Override
     public Optional<Long> findUserIdByCommentId(Long commentId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("CommentEntity", "[findUserIdById] 주어진 댓글 ID에 연결된 사용자 ID 조회 시작 commentId=" + commentId);
+        Instant startTime = LoggerFactory.db().logQueryStart(COMMENT_ENTITY, "[findUserIdById] 주어진 댓글 ID에 연결된 사용자 ID 조회 시작 commentId=" + commentId);
         Optional<Long> userId = commentJpaRepository.findUserIdById(commentId);
-        LoggerFactory.db().logQueryEnd("CommentEntity", "[findUserIdById] 주어진 댓글 ID에 연결된 사용자 ID 조회 종료 commentId=" + commentId, startTime);
+        LoggerFactory.db().logQueryEnd(COMMENT_ENTITY, "[findUserIdById] 주어진 댓글 ID에 연결된 사용자 ID 조회 종료 commentId=" + commentId, startTime);
         return userId;
     }
 }

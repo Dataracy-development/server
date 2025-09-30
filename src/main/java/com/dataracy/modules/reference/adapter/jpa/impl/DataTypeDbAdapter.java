@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 public class DataTypeDbAdapter implements DataTypePort {
     private final DataTypeJpaRepository dataTypeJpaRepository;
 
+    // Entity 상수 정의
+    private static final String DATA_TYPE_ENTITY = "DataTypeEntity";
+
     /**
      * 모든 데이터 유형을 조회하여 도메인 객체 리스트로 반환합니다.
      *
@@ -27,12 +30,12 @@ public class DataTypeDbAdapter implements DataTypePort {
      */
     @Override
     public List<DataType> findAllDataTypes() {
-        Instant startTime = LoggerFactory.db().logQueryStart("DataTypeEntity", "[findAll] 데이터 유형 목록 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(DATA_TYPE_ENTITY, "[findAll] 데이터 유형 목록 조회 시작");
         List<DataTypeEntity> dataTypeEntities = dataTypeJpaRepository.findAll();
         List<DataType> dataTypes = dataTypeEntities.stream()
                 .map(DataTypeEntityMapper::toDomain)
                 .toList();
-        LoggerFactory.db().logQueryEnd("DataTypeEntity", "[findAll] 데이터 유형 목록 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(DATA_TYPE_ENTITY, "[findAll] 데이터 유형 목록 조회 종료", startTime);
         return dataTypes;
     }
 
@@ -45,13 +48,13 @@ public class DataTypeDbAdapter implements DataTypePort {
      */
     @Override
     public Optional<DataType> findDataTypeById(Long dataTypeId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("DataTypeEntity", "[findById] 데이터 유형 목록 조회 시작 dataTypeId=" + dataTypeId);
+        Instant startTime = LoggerFactory.db().logQueryStart(DATA_TYPE_ENTITY, "[findById] 데이터 유형 목록 조회 시작 dataTypeId=" + dataTypeId);
         if (dataTypeId == null) {
             return Optional.empty();
         }
         Optional<DataType> dataType = dataTypeJpaRepository.findById(dataTypeId)
                 .map(DataTypeEntityMapper::toDomain);
-        LoggerFactory.db().logQueryEnd("DataTypeEntity", "[findById] 데이터 유형 목록 조회 종료 dataTypeId=" + dataTypeId, startTime);
+        LoggerFactory.db().logQueryEnd(DATA_TYPE_ENTITY, "[findById] 데이터 유형 목록 조회 종료 dataTypeId=" + dataTypeId, startTime);
         return dataType;
     }
 
@@ -67,7 +70,7 @@ public class DataTypeDbAdapter implements DataTypePort {
             return false;
         }
         boolean isExists = dataTypeJpaRepository.existsById(dataTypeId);
-        LoggerFactory.db().logExist("DataTypeEntity", "[existsById] 데이터 유형 존재 유무 확인 dataTypeId=" + dataTypeId + ", isExists=" + isExists);
+        LoggerFactory.db().logExist(DATA_TYPE_ENTITY, "[existsById] 데이터 유형 존재 유무 확인 dataTypeId=" + dataTypeId + ", isExists=" + isExists);
         return isExists;
     }
 
@@ -79,12 +82,12 @@ public class DataTypeDbAdapter implements DataTypePort {
      */
     @Override
     public Optional<String> getLabelById(Long dataTypeId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("DataTypeEntity", "[findLabelById] 데이터 유형 라벨 조회 시작 dataTypeId=" + dataTypeId);
+        Instant startTime = LoggerFactory.db().logQueryStart(DATA_TYPE_ENTITY, "[findLabelById] 데이터 유형 라벨 조회 시작 dataTypeId=" + dataTypeId);
         if (dataTypeId == null) {
             return Optional.empty();
         }
         Optional<String> label = dataTypeJpaRepository.findLabelById(dataTypeId);
-        LoggerFactory.db().logQueryEnd("DataTypeEntity", "[findLabelById] 데이터 유형 라벨 조회 종료 dataTypeId=" + dataTypeId + ", label=" + label, startTime);
+        LoggerFactory.db().logQueryEnd(DATA_TYPE_ENTITY, "[findLabelById] 데이터 유형 라벨 조회 종료 dataTypeId=" + dataTypeId + ", label=" + label, startTime);
         return label;
     }
 
@@ -96,11 +99,11 @@ public class DataTypeDbAdapter implements DataTypePort {
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> dataTypeIds) {
-        Instant startTime = LoggerFactory.db().logQueryStart("DataTypeEntity", "[findAllById] 데이터 유형 라벨 목록 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(DATA_TYPE_ENTITY, "[findAllById] 데이터 유형 라벨 목록 조회 시작");
         Map<Long, String> labels = dataTypeJpaRepository.findAllById(dataTypeIds)
                 .stream()
                 .collect(Collectors.toMap(DataTypeEntity::getId, DataTypeEntity::getLabel));
-        LoggerFactory.db().logQueryEnd("DataTypeEntity", "[findAllById] 데이터 유형 라벨 목록 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(DATA_TYPE_ENTITY, "[findAllById] 데이터 유형 라벨 목록 조회 종료", startTime);
         return labels;
     }
 }

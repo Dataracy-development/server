@@ -21,6 +21,9 @@ public class LikeQueryDslAdapter implements
 {
     private final JPAQueryFactory queryFactory;
 
+    // Entity 상수 정의
+    private static final String LIKE_ENTITY = "LikeEntity";
+
     private final QLikeEntity like = QLikeEntity.likeEntity;
 
     /**
@@ -33,7 +36,7 @@ public class LikeQueryDslAdapter implements
      */
     @Override
     public boolean isLikedTarget(Long userId, Long targetId, TargetType targetType) {
-        Instant startTime = LoggerFactory.query().logQueryStart("LikeEntity", "[isLikedTarget] 사용자가 해당 타겟을 좋아요 했는지 여부 반환 시작. targetType=" + targetType + ", targetId=" + targetId);
+        Instant startTime = LoggerFactory.query().logQueryStart(LIKE_ENTITY, "[isLikedTarget] 사용자가 해당 타겟을 좋아요 했는지 여부 반환 시작. targetType=" + targetType + ", targetId=" + targetId);
         Integer result = queryFactory
                 .selectOne()
                 .from(like)
@@ -43,7 +46,7 @@ public class LikeQueryDslAdapter implements
                         LikeFilterPredicate.targetTypeEq(targetType)
                 )
                 .fetchFirst();
-        LoggerFactory.query().logQueryEnd("LikeEntity", "[isLikedTarget] 사용자가 해당 타겟을 좋아요 했는지 여부 반환 완료. targetType=" + targetType + ", targetId=" + targetId, startTime);
+        LoggerFactory.query().logQueryEnd(LIKE_ENTITY, "[isLikedTarget] 사용자가 해당 타겟을 좋아요 했는지 여부 반환 완료. targetType=" + targetType + ", targetId=" + targetId, startTime);
         return result != null;
     }
 
@@ -57,7 +60,7 @@ public class LikeQueryDslAdapter implements
      */
     @Override
     public List<Long> findLikedTargetIds(Long userId, List<Long> targetIds, TargetType targetType) {
-        Instant startTime = LoggerFactory.query().logQueryStart("LikeEntity", "[findLikedTargetIds] 사용자가 좋아요를 누른 타겟 ID 목록 반환 시작. targetType=" + targetType);
+        Instant startTime = LoggerFactory.query().logQueryStart(LIKE_ENTITY, "[findLikedTargetIds] 사용자가 좋아요를 누른 타겟 ID 목록 반환 시작. targetType=" + targetType);
         if (userId == null || targetIds == null || targetIds.isEmpty()) {
             return List.of();
         }
@@ -70,7 +73,7 @@ public class LikeQueryDslAdapter implements
                         LikeFilterPredicate.targetTypeEq(targetType)
                 )
                 .fetch();
-        LoggerFactory.query().logQueryEnd("LikeEntity", "[findLikedTargetIds] 사용자가 좋아요를 누른 타겟 ID 목록 반환 완료. targetType=" + targetType, startTime);
+        LoggerFactory.query().logQueryEnd(LIKE_ENTITY, "[findLikedTargetIds] 사용자가 좋아요를 누른 타겟 ID 목록 반환 완료. targetType=" + targetType, startTime);
         return likedTargetIds;
     }
 }

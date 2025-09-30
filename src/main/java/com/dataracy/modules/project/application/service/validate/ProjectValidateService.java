@@ -16,6 +16,12 @@ import java.time.Instant;
 public class ProjectValidateService implements ValidateProjectUseCase {
     private final CheckProjectExistsByIdPort checkProjectExistsByIdPort;
 
+    // Use Case 상수 정의
+    private static final String VALIDATE_PROJECT_USE_CASE = "ValidateProjectUseCase";
+    
+    // 메시지 상수 정의
+    private static final String PROJECT_NOT_FOUND_MESSAGE = "해당 프로젝트가 존재하지 않습니다. projectId=";
+
     /**
      * 주어진 프로젝트 ID에 해당하는 프로젝트의 존재 여부를 검증합니다.
      *
@@ -27,13 +33,13 @@ public class ProjectValidateService implements ValidateProjectUseCase {
     @Override
     @Transactional(readOnly = true)
     public void validateProject(Long projectId) {
-        Instant startTime = LoggerFactory.service().logStart("ValidateProjectUseCase", "프로젝트 존재 유효성 검사 서비스 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.service().logStart(VALIDATE_PROJECT_USE_CASE, "프로젝트 존재 유효성 검사 서비스 시작 projectId=" + projectId);
 
         boolean isValidate = checkProjectExistsByIdPort.checkProjectExistsById(projectId);
         if (!isValidate) {
-            LoggerFactory.service().logWarning("ValidateProjectUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+            LoggerFactory.service().logWarning(VALIDATE_PROJECT_USE_CASE, PROJECT_NOT_FOUND_MESSAGE + projectId);
             throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
         }
-        LoggerFactory.service().logSuccess("ValidateProjectUseCase", "프로젝트 존재 유효성 검사 서비스 종료 projectId=" + projectId, startTime);
+        LoggerFactory.service().logSuccess(VALIDATE_PROJECT_USE_CASE, "프로젝트 존재 유효성 검사 서비스 종료 projectId=" + projectId, startTime);
     }
 }

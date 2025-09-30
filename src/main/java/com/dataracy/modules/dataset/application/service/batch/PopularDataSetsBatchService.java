@@ -29,6 +29,9 @@ public class PopularDataSetsBatchService implements UpdatePopularDataSetsStorage
 
     private final PopularDataSetsStoragePort popularDataSetsStoragePort;
     private final GetPopularDataSetsPort getPopularDataSetsPort;
+
+    // Service 상수 정의
+    private static final String POPULAR_DATASETS_BATCH_SERVICE = "PopularDataSetsBatchService";
     
     /**
      * 매 5분마다 인기 데이터셋 목록을 계산하고 캐시에 저장합니다.
@@ -37,7 +40,7 @@ public class PopularDataSetsBatchService implements UpdatePopularDataSetsStorage
      */
     @Scheduled(fixedRate = 300000) // 5분 = 300,000ms
     public void updatePopularDataSetsCache() {
-        LoggerFactory.scheduler().logStart("PopularDataSetsBatchService");
+        LoggerFactory.scheduler().logStart(POPULAR_DATASETS_BATCH_SERVICE);
         
         try {
             // Port Out을 통해 데이터베이스에서 인기 데이터셋 조회 (최대 20개)
@@ -68,7 +71,7 @@ public class PopularDataSetsBatchService implements UpdatePopularDataSetsStorage
             LoggerFactory.scheduler().logComplete("PopularDataSetsBatchService - count=" + popularDataSets.size());
                 
         } catch (Exception e) {
-            LoggerFactory.scheduler().logError("PopularDataSetsBatchService", e);
+            LoggerFactory.scheduler().logError(POPULAR_DATASETS_BATCH_SERVICE, e);
         }
     }
     

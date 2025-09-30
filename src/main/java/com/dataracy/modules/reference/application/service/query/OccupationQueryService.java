@@ -31,6 +31,13 @@ public class OccupationQueryService implements
     private final OccupationDtoMapper occupationDtoMapper;
     private final OccupationPort occupationPort;
 
+    // Use Case 상수 정의
+    private static final String FIND_ALL_OCCUPATIONS_USE_CASE = "FindAllOccupationsUseCase";
+    private static final String FIND_OCCUPATION_USE_CASE = "FindOccupationUseCase";
+    private static final String VALIDATE_OCCUPATION_USE_CASE = "ValidateOccupationUseCase";
+    private static final String GET_OCCUPATION_LABEL_FROM_ID_USE_CASE = "GetOccupationLabelFromIdUseCase";
+    private static final String OCCUPATION_NOT_FOUND_MESSAGE = "해당 직업이 존재하지 않습니다. occupationId=";
+
     /**
      * 모든 직업 정보를 조회하여 AllOccupationsResponse DTO로 반환한다.
      *
@@ -39,10 +46,10 @@ public class OccupationQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AllOccupationsResponse findAllOccupations() {
-        Instant startTime = LoggerFactory.service().logStart("FindAllOccupationsUseCase", "모든 직업 정보 조회 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FIND_ALL_OCCUPATIONS_USE_CASE, "모든 직업 정보 조회 서비스 시작");
         List<Occupation> occupations = occupationPort.findAllOccupations();
         AllOccupationsResponse allOccupationsResponse = occupationDtoMapper.toResponseDto(occupations);
-        LoggerFactory.service().logSuccess("FindAllOccupationsUseCase", "모든 직업 정보 조회 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(FIND_ALL_OCCUPATIONS_USE_CASE, "모든 직업 정보 조회 서비스 종료", startTime);
         return allOccupationsResponse;
     }
 
@@ -56,14 +63,14 @@ public class OccupationQueryService implements
     @Override
     @Transactional(readOnly = true)
     public OccupationResponse findOccupation(Long occupationId) {
-        Instant startTime = LoggerFactory.service().logStart("FindOccupationUseCase", "주어진 ID로 직업 조회 서비스 시작 occupationId=" + occupationId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_OCCUPATION_USE_CASE, "주어진 ID로 직업 조회 서비스 시작 occupationId=" + occupationId);
         Occupation occupation = occupationPort.findOccupationById(occupationId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindOccupationUseCase", "해당 직업이 존재하지 않습니다. occupationId=" + occupationId);
+                    LoggerFactory.service().logWarning(FIND_OCCUPATION_USE_CASE, OCCUPATION_NOT_FOUND_MESSAGE + occupationId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION);
                 });
         OccupationResponse occupationResponse = occupationDtoMapper.toResponseDto(occupation);
-        LoggerFactory.service().logSuccess("FindOccupationUseCase", "주어진 ID로 직업 조회 서비스 종료 occupationId=" + occupationId, startTime);
+        LoggerFactory.service().logSuccess(FIND_OCCUPATION_USE_CASE, "주어진 ID로 직업 조회 서비스 종료 occupationId=" + occupationId, startTime);
         return occupationResponse;
     }
 
@@ -77,13 +84,13 @@ public class OccupationQueryService implements
     @Override
     @Transactional(readOnly = true)
     public void validateOccupation(Long occupationId) {
-        Instant startTime = LoggerFactory.service().logStart("ValidateOccupationUseCase", "주어진 ID에 해당하는 직업이 존재하는지 확인 서비스 시작 occupationId=" + occupationId);
+        Instant startTime = LoggerFactory.service().logStart(VALIDATE_OCCUPATION_USE_CASE, "주어진 ID에 해당하는 직업이 존재하는지 확인 서비스 시작 occupationId=" + occupationId);
         Boolean isExist = occupationPort.existsOccupationById(occupationId);
         if (!isExist) {
-            LoggerFactory.service().logWarning("ValidateOccupationUseCase", "해당 직업이 존재하지 않습니다. occupationId=" + occupationId);
+            LoggerFactory.service().logWarning(VALIDATE_OCCUPATION_USE_CASE, OCCUPATION_NOT_FOUND_MESSAGE + occupationId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION);
         }
-        LoggerFactory.service().logSuccess("ValidateOccupationUseCase", "주어진 ID에 해당하는 직업이 존재하는지 확인 서비스 종료 occupationId=" + occupationId, startTime);
+        LoggerFactory.service().logSuccess(VALIDATE_OCCUPATION_USE_CASE, "주어진 ID에 해당하는 직업이 존재하는지 확인 서비스 종료 occupationId=" + occupationId, startTime);
     }
 
     /**
@@ -96,13 +103,13 @@ public class OccupationQueryService implements
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long occupationId) {
-        Instant startTime = LoggerFactory.service().logStart("GetOccupationLabelFromIdUseCase", "주어진 직업 ID에 해당하는 라벨을 조회 서비스 시작 occupationId=" + occupationId);
+        Instant startTime = LoggerFactory.service().logStart(GET_OCCUPATION_LABEL_FROM_ID_USE_CASE, "주어진 직업 ID에 해당하는 라벨을 조회 서비스 시작 occupationId=" + occupationId);
         String label = occupationPort.getLabelById(occupationId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetOccupationLabelFromIdUseCase", "해당 직업이 존재하지 않습니다. occupationId=" + occupationId);
+                    LoggerFactory.service().logWarning(GET_OCCUPATION_LABEL_FROM_ID_USE_CASE, OCCUPATION_NOT_FOUND_MESSAGE + occupationId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION);
                 });
-        LoggerFactory.service().logSuccess("GetOccupationLabelFromIdUseCase", "주어진 직업 ID에 해당하는 라벨을 조회 서비스 종료 occupationId=" + occupationId, startTime);
+        LoggerFactory.service().logSuccess(GET_OCCUPATION_LABEL_FROM_ID_USE_CASE, "주어진 직업 ID에 해당하는 라벨을 조회 서비스 종료 occupationId=" + occupationId, startTime);
         return label;
     }
 
@@ -115,12 +122,12 @@ public class OccupationQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> occupationIds) {
-        Instant startTime = LoggerFactory.service().logStart("GetOccupationLabelFromIdUseCase", "직업 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(GET_OCCUPATION_LABEL_FROM_ID_USE_CASE, "직업 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
         if (occupationIds == null || occupationIds.isEmpty()) {
             return Map.of();
         }
         Map<Long, String> labels = occupationPort.getLabelsByIds(occupationIds);
-        LoggerFactory.service().logSuccess("GetOccupationLabelFromIdUseCase", "직업 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(GET_OCCUPATION_LABEL_FROM_ID_USE_CASE, "직업 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
         return labels;
     }
 }

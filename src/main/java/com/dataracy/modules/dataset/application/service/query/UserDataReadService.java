@@ -26,6 +26,9 @@ public class UserDataReadService implements FindUserDataSetsUseCase {
 
     private final FindUserDataSetsPort findUserDataSetsPort;
 
+    // Use Case 상수 정의
+    private static final String FIND_USER_DATA_SETS_USE_CASE = "FindUserDataSetsUseCase";
+
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
 
@@ -44,7 +47,7 @@ public class UserDataReadService implements FindUserDataSetsUseCase {
     @Override
     @Transactional(readOnly = true)
     public Page<UserDataResponse> findUserDataSets(Long userId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("FindUserDataSetsUseCase", "해당 회원이 업로드한 데이터셋 목록 조회 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_USER_DATA_SETS_USE_CASE, "해당 회원이 업로드한 데이터셋 목록 조회 서비스 시작 userId=" + userId);
 
         Page<DataWithProjectCountDto> savedDataSets = findUserDataSetsPort.findUserDataSets(userId, pageable);
 
@@ -68,7 +71,7 @@ public class UserDataReadService implements FindUserDataSetsUseCase {
             );
         });
 
-        LoggerFactory.service().logSuccess("FindUserDataSetsUseCase", "해당 회원이 업로드한 데이터셋 목록 조회 서비스 종료 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(FIND_USER_DATA_SETS_USE_CASE, "해당 회원이 업로드한 데이터셋 목록 조회 서비스 종료 userId=" + userId, startTime);
         return userDataResponses;
     }
 }

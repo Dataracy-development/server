@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 public class UpdateCommentLikeDbAdapter implements UpdateCommentLikePort {
     private final CommentJpaRepository commentJpaRepository;
 
+    // Entity 상수 정의
+    private static final String COMMENT_ENTITY = "CommentEntity";
+
     /**
      * 주어진 댓글 ID에 해당하는 댓글의 좋아요 수를 1 증가시킵니다.
      *
@@ -19,7 +22,7 @@ public class UpdateCommentLikeDbAdapter implements UpdateCommentLikePort {
     @Override
     public void increaseLikeCount(Long commentId) {
         commentJpaRepository.increaseLikeCount(commentId);
-        LoggerFactory.db().logUpdate("CommentEntity", String.valueOf(commentId), "댓글 좋아요가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(COMMENT_ENTITY, String.valueOf(commentId), "댓글 좋아요가 완료되었습니다.");
     }
 
     /**
@@ -30,6 +33,6 @@ public class UpdateCommentLikeDbAdapter implements UpdateCommentLikePort {
     @Override
     public void decreaseLikeCount(Long commentId) {
         commentJpaRepository.decreaseLikeCount(commentId);
-        LoggerFactory.db().logUpdate("CommentEntity", String.valueOf(commentId), "댓글 좋아요 취소가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(COMMENT_ENTITY, String.valueOf(commentId), "댓글 좋아요 취소가 완료되었습니다.");
     }
 }

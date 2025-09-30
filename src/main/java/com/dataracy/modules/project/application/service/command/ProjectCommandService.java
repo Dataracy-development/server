@@ -64,6 +64,15 @@ public class ProjectCommandService implements
     private final FindUserThumbnailUseCase findUserThumbnailUseCase;
     private final FileCommandUseCase fileCommandUseCase;
 
+    // Use Case 상수 정의
+    private static final String UPLOAD_PROJECT_USE_CASE = "UploadProjectUseCase";
+    private static final String MODIFY_PROJECT_USE_CASE = "ModifyProjectUseCase";
+    private static final String UPLOAD_PROJECT_REQUEST_USE_CASE = "UploadProjectRequest";
+    
+    // 메시지 상수 정의
+    private static final String PARENT_PROJECT_NOT_FOUND_MESSAGE = "해당 부모 프로젝트가 존재하지 않습니다. parentProjectId=";
+    private static final String PROJECT_NOT_FOUND_MESSAGE = "해당 프로젝트가 존재하지 않습니다. projectId=";
+
     private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
     private final GetAnalysisPurposeLabelFromIdUseCase getAnalysisPurposeLabelFromIdUseCase;
     private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
@@ -84,7 +93,7 @@ public class ProjectCommandService implements
     @Override
     @Transactional
     public UploadProjectResponse uploadProject(Long userId, MultipartFile thumbnailFile, UploadProjectRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("UploadProjectUseCase", "프로젝트 업로드 서비스 시작 title=" + requestDto.title());
+        Instant startTime = LoggerFactory.service().logStart(UPLOAD_PROJECT_USE_CASE, "프로젝트 업로드 서비스 시작 title=" + requestDto.title());
 
         // 요청 DTO의 유효성을 검사한다.
         ValidatedProjectInfo validatedProjectInfo = getValidatedProjectInfo(
@@ -98,7 +107,7 @@ public class ProjectCommandService implements
 
         // 부모 프로젝트 유효성 체크
         if (requestDto.parentProjectId() != null && !checkProjectExistsByIdPort.checkProjectExistsById(requestDto.parentProjectId())) {
-                LoggerFactory.service().logWarning("UploadProjectUseCase", "해당 부모 프로젝트가 존재하지 않습니다. parentProjectId=" + requestDto.parentProjectId());
+                LoggerFactory.service().logWarning(UPLOAD_PROJECT_USE_CASE, PARENT_PROJECT_NOT_FOUND_MESSAGE + requestDto.parentProjectId());
                 throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
         }
 
@@ -126,7 +135,7 @@ public class ProjectCommandService implements
                 userProfileImageUrl
         ));
 
-        LoggerFactory.service().logSuccess("UploadProjectUseCase", "프로젝트 업로드 서비스 종료 title=" + requestDto.title(), startTime);
+        LoggerFactory.service().logSuccess(UPLOAD_PROJECT_USE_CASE, "프로젝트 업로드 서비스 종료 title=" + requestDto.title(), startTime);
         return new UploadProjectResponse(savedProject.getId());
     }
 
@@ -146,7 +155,7 @@ public class ProjectCommandService implements
     @Override
     @Transactional
     public void modifyProject(Long projectId, MultipartFile thumbnailFile, ModifyProjectRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("ModifyProjectUseCase", "프로젝트 수정 서비스 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.service().logStart(MODIFY_PROJECT_USE_CASE, "프로젝트 수정 서비스 시작 projectId=" + projectId);
 
         // 해당 id가 존재하는지 내부 유효성 검사 및 라벨 값 반환 (elasticsearch 저장을 위해 유효성 검사 뿐만 아니라 label도 반환한다.)
         ValidatedProjectInfo validatedProjectInfo = getValidatedProjectInfo(
@@ -158,7 +167,7 @@ public class ProjectCommandService implements
                 requestDto.dataIds()
         );
         if (requestDto.parentProjectId() != null && !checkProjectExistsByIdPort.checkProjectExistsById(requestDto.parentProjectId())) {
-            LoggerFactory.service().logWarning("ModifyProjectUseCase", "해당 부모 프로젝트가 존재하지 않습니다. parentProjectId=" + requestDto.parentProjectId());
+            LoggerFactory.service().logWarning(MODIFY_PROJECT_USE_CASE, PARENT_PROJECT_NOT_FOUND_MESSAGE + requestDto.parentProjectId());
             throw new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
         }
 
@@ -188,7 +197,7 @@ public class ProjectCommandService implements
         // 수정된 프로젝트 도메인 다시 조회
         Project updatedProject = findProjectPort.findProjectById(projectId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("ModifyProjectUseCase", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+                    LoggerFactory.service().logWarning(MODIFY_PROJECT_USE_CASE, PROJECT_NOT_FOUND_MESSAGE + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
 
@@ -204,7 +213,7 @@ public class ProjectCommandService implements
                 username,
                 userProfileImageUrl
         ));
-        LoggerFactory.service().logSuccess("ModifyProjectUseCase", "프로젝트 수정 서비스 종료 projectId=" + projectId, startTime);
+        LoggerFactory.service().logSuccess(MODIFY_PROJECT_USE_CASE, "프로젝트 수정 서비스 종료 projectId=" + projectId, startTime);
     }
 
     /**
@@ -222,7 +231,7 @@ public class ProjectCommandService implements
                 String fileUrl = fileCommandUseCase.uploadFile(key, file);
                 updateProjectFilePort.updateThumbnailFile(projectId, fileUrl);
             } catch (Exception e) {
-                LoggerFactory.service().logException("UploadProjectRequest", "프로젝트 파일 업로드 실패. projectId=" + projectId, e);
+                LoggerFactory.service().logException(UPLOAD_PROJECT_REQUEST_USE_CASE, "프로젝트 파일 업로드 실패. projectId=" + projectId, e);
                 throw new RuntimeException("파일 업로드 실패", e);
             }
         }

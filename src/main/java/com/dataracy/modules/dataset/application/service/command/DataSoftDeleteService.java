@@ -12,12 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 
 @Service
-public class DataSoftDeleteUseCase implements
+public class DataSoftDeleteService implements
         DeleteDataUseCase,
         RestoreDataUseCase
 {
     private final SoftDeleteDataPort softDeleteDataDbPort;
     private final ManageDataProjectionTaskPort manageDataProjectionTaskPort;
+    
+    // Use Case 상수 정의
+    private static final String DELETE_DATA_USE_CASE = "DeleteDataUseCase";
+    private static final String RESTORE_DATA_USE_CASE = "RestoreDataUseCase";
 
     /**
      * Soft delete 및 복원 유스케이스용 서비스 인스턴스를 생성합니다.
@@ -25,7 +29,7 @@ public class DataSoftDeleteUseCase implements
      * 이 생성자는 데이터베이스 소프트 삭제/복원 포트와 데이터 프로젝션 업데이트 작업을 관리하는 포트를 주입받아
      * 해당 유스케이스가 DB 변경과 외부 프로젝션(예: Elasticsearch) 동기화를 수행할 수 있도록 초기화합니다.
      */
-    public DataSoftDeleteUseCase(
+    public DataSoftDeleteService(
             @Qualifier("softDeleteDataDbAdapter") SoftDeleteDataPort softDeleteDataDbPort,
             ManageDataProjectionTaskPort manageDataProjectionTaskPort
     ) {
@@ -44,14 +48,14 @@ public class DataSoftDeleteUseCase implements
     @Override
     @Transactional
     public void deleteData(Long dataId) {
-        Instant startTime = LoggerFactory.service().logStart("DeleteDataUseCase", "데이터셋 Soft Delete 삭제 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart(DELETE_DATA_USE_CASE, "데이터셋 Soft Delete 삭제 서비스 시작 dataId=" + dataId);
 
         // DB만 확정
         softDeleteDataDbPort.deleteData(dataId);
         // ES 작업 큐
         manageDataProjectionTaskPort.enqueueSetDeleted(dataId, true);
 
-        LoggerFactory.service().logSuccess("DeleteDataUseCase", "데이터셋 Soft Delete 삭제 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess(DELETE_DATA_USE_CASE, "데이터셋 Soft Delete 삭제 서비스 종료 dataId=" + dataId, startTime);
     }
 
     /**
@@ -64,11 +68,11 @@ public class DataSoftDeleteUseCase implements
     @Override
     @Transactional
     public void restoreData(Long dataId) {
-        Instant startTime = LoggerFactory.service().logStart("RestoreDataUseCase", "데이터셋 복원 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart(RESTORE_DATA_USE_CASE, "데이터셋 복원 서비스 시작 dataId=" + dataId);
 
         softDeleteDataDbPort.restoreData(dataId);
         manageDataProjectionTaskPort.enqueueSetDeleted(dataId, false);
 
-        LoggerFactory.service().logSuccess("RestoreDataUseCase", "데이터셋 복원 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess(RESTORE_DATA_USE_CASE, "데이터셋 복원 서비스 종료 dataId=" + dataId, startTime);
     }
 }

@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 public class UpdateProjectCommentDbAdapter implements UpdateProjectCommentPort {
     private final ProjectJpaRepository projectJpaRepository;
 
+    // Entity 상수 정의
+    private static final String PROJECT_ENTITY = "ProjectEntity";
+
     /**
      * 지정된 프로젝트의 댓글 수를 1 증가시킵니다.
      *
@@ -19,7 +22,7 @@ public class UpdateProjectCommentDbAdapter implements UpdateProjectCommentPort {
     @Override
     public void increaseCommentCount(Long projectId) {
         projectJpaRepository.increaseCommentCount(projectId);
-        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 DB 댓글 1증가가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(PROJECT_ENTITY, String.valueOf(projectId), "프로젝트 DB 댓글 1증가가 완료되었습니다.");
     }
 
     /**
@@ -30,6 +33,6 @@ public class UpdateProjectCommentDbAdapter implements UpdateProjectCommentPort {
     @Override
     public void decreaseCommentCount(Long projectId) {
         projectJpaRepository.decreaseCommentCount(projectId);
-        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 DB 댓글 1감소가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(PROJECT_ENTITY, String.valueOf(projectId), "프로젝트 DB 댓글 1감소가 완료되었습니다.");
     }
 }

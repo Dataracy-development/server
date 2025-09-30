@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 public class DataSourceDbAdapter implements DataSourcePort {
     private final DataSourceJpaRepository dataSourceJpaRepository;
 
+    // Entity 상수 정의
+    private static final String DATA_SOURCE_ENTITY = "DataSourceEntity";
+
     /**
      * 모든 데이터 소스 엔티티를 조회하여 도메인 객체 리스트로 반환합니다.
      *
@@ -27,14 +30,14 @@ public class DataSourceDbAdapter implements DataSourcePort {
      */
     @Override
     public List<DataSource> findAllDataSources() {
-        Instant startTime = LoggerFactory.db().logQueryStart("DataSourceEntity", "[findAll] 데이터 출처 목록 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(DATA_SOURCE_ENTITY, "[findAll] 데이터 출처 목록 조회 시작");
 
         List<DataSourceEntity> dataSourceEntities = dataSourceJpaRepository.findAll();
         List<DataSource> dataSources = dataSourceEntities.stream()
                 .map(DataSourceEntityMapper::toDomain)
                 .toList();
 
-        LoggerFactory.db().logQueryEnd("DataSourceEntity", "[findAll] 데이터 출처 목록 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(DATA_SOURCE_ENTITY, "[findAll] 데이터 출처 목록 조회 종료", startTime);
         return dataSources;
     }
 
@@ -46,7 +49,7 @@ public class DataSourceDbAdapter implements DataSourcePort {
      */
     @Override
     public Optional<DataSource> findDataSourceById(Long dataSourceId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("DataSourceEntity", "[findById] 데이터 출처 목록 조회 시작 dataSourceId=" + dataSourceId);
+        Instant startTime = LoggerFactory.db().logQueryStart(DATA_SOURCE_ENTITY, "[findById] 데이터 출처 목록 조회 시작 dataSourceId=" + dataSourceId);
 
         if (dataSourceId == null) {
             return Optional.empty();
@@ -54,7 +57,7 @@ public class DataSourceDbAdapter implements DataSourcePort {
         Optional<DataSource> dataSource = dataSourceJpaRepository.findById(dataSourceId)
                 .map(DataSourceEntityMapper::toDomain);
 
-        LoggerFactory.db().logQueryEnd("DataSourceEntity", "[findById] 데이터 출처 목록 조회 종료 dataSourceId=" + dataSourceId, startTime);
+        LoggerFactory.db().logQueryEnd(DATA_SOURCE_ENTITY, "[findById] 데이터 출처 목록 조회 종료 dataSourceId=" + dataSourceId, startTime);
         return dataSource;
     }
 
@@ -70,7 +73,7 @@ public class DataSourceDbAdapter implements DataSourcePort {
             return false;
         }
         boolean isExists = dataSourceJpaRepository.existsById(dataSourceId);
-        LoggerFactory.db().logExist("DataSourceEntity", "[existsById] 데이터 출처 존재 유무 확인 dataSourceId=" + dataSourceId + ", isExists=" + isExists);
+        LoggerFactory.db().logExist(DATA_SOURCE_ENTITY, "[existsById] 데이터 출처 존재 유무 확인 dataSourceId=" + dataSourceId + ", isExists=" + isExists);
         return isExists;
     }
 
@@ -82,12 +85,12 @@ public class DataSourceDbAdapter implements DataSourcePort {
      */
     @Override
     public Optional<String> getLabelById(Long dataSourceId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("DataSourceEntity", "[findLabelById] 데이터 출처 라벨 조회 시작 dataSourceId=" + dataSourceId);
+        Instant startTime = LoggerFactory.db().logQueryStart(DATA_SOURCE_ENTITY, "[findLabelById] 데이터 출처 라벨 조회 시작 dataSourceId=" + dataSourceId);
         if (dataSourceId == null) {
             return Optional.empty();
         }
         Optional<String> label = dataSourceJpaRepository.findLabelById(dataSourceId);
-        LoggerFactory.db().logQueryEnd("DataSourceEntity", "[findLabelById] 데이터 출처 라벨 조회 종료 dataSourceId=" + dataSourceId + ", label=" + label, startTime);
+        LoggerFactory.db().logQueryEnd(DATA_SOURCE_ENTITY, "[findLabelById] 데이터 출처 라벨 조회 종료 dataSourceId=" + dataSourceId + ", label=" + label, startTime);
         return label;
     }
 
@@ -99,11 +102,11 @@ public class DataSourceDbAdapter implements DataSourcePort {
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> dataSourceIds) {
-        Instant startTime = LoggerFactory.db().logQueryStart("DataSourceEntity", "[findAllById] 데이터 출처 라벨 목록 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(DATA_SOURCE_ENTITY, "[findAllById] 데이터 출처 라벨 목록 조회 시작");
         Map<Long, String> labels = dataSourceJpaRepository.findAllById(dataSourceIds)
                 .stream()
                 .collect(Collectors.toMap(DataSourceEntity::getId, DataSourceEntity::getLabel));
-        LoggerFactory.db().logQueryEnd("DataSourceEntity", "[findAllById] 데이터 출처 라벨 목록 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(DATA_SOURCE_ENTITY, "[findAllById] 데이터 출처 라벨 목록 조회 종료", startTime);
         return labels;
     }
 }

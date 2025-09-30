@@ -21,6 +21,12 @@ public class ConfirmPasswordService implements ConfirmPasswordUseCase {
 
     private final UserQueryPort userQueryPort;
 
+    // Use Case 상수 정의
+    private static final String CONFIRM_PASSWORD_USE_CASE = "ConfirmPasswordUseCase";
+    
+    // 메시지 상수 정의
+    private static final String USER_NOT_FOUND_MESSAGE = "유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=";
+
     /**
      * 주어진 사용자 ID와 비밀번호로 해당 사용자의 비밀번호가 일치하는지 확인한다.
      * 사용자가 존재하지 않거나 비밀번호가 일치하지 않을 경우 UserException이 발생한다.
@@ -32,20 +38,20 @@ public class ConfirmPasswordService implements ConfirmPasswordUseCase {
     @Override
     @Transactional(readOnly = true)
     public void confirmPassword(Long userId, ConfirmPasswordRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("ConfirmPasswordUseCase", "유저의 비밀번호가 일치하는지 확인하는 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(CONFIRM_PASSWORD_USE_CASE, "유저의 비밀번호가 일치하는지 확인하는 서비스 시작");
 
         User user = userQueryPort.findUserById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("ConfirmPasswordUseCase", "[비밀번호 확인] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    LoggerFactory.service().logWarning(CONFIRM_PASSWORD_USE_CASE, "[비밀번호 확인] " + USER_NOT_FOUND_MESSAGE + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 
         boolean isMatched = user.isPasswordMatch(passwordEncoder, requestDto.password());
         if (!isMatched) {
-            LoggerFactory.service().logWarning("ConfirmPasswordUseCase", "[비밀번호 확인]제공받은 비밀번호와 실제 비밀번호가 일치하지 않습니다.");
+            LoggerFactory.service().logWarning(CONFIRM_PASSWORD_USE_CASE, "[비밀번호 확인]제공받은 비밀번호와 실제 비밀번호가 일치하지 않습니다.");
             throw new UserException(UserErrorStatus.FAIL_CONFIRM_PASSWORD);
         }
 
-        LoggerFactory.service().logSuccess("ConfirmPasswordUseCase", "유저의 비밀번호가 일치하는지 확인하는 서비스 성공", startTime);
+        LoggerFactory.service().logSuccess(CONFIRM_PASSWORD_USE_CASE, "유저의 비밀번호가 일치하는지 확인하는 서비스 성공", startTime);
     }
 }

@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 public class UpdateProjectLikeDbAdapter implements UpdateProjectLikePort {
     private final ProjectJpaRepository projectJpaRepository;
 
+    // Entity 상수 정의
+    private static final String PROJECT_ENTITY = "ProjectEntity";
+
     /**
      * 지정된 프로젝트의 좋아요 수를 1 증가시킵니다.
      *
@@ -19,7 +22,7 @@ public class UpdateProjectLikeDbAdapter implements UpdateProjectLikePort {
     @Override
     public void increaseLikeCount(Long projectId) {
         projectJpaRepository.increaseLikeCount(projectId);
-        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 DB 좋아요 1증가가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(PROJECT_ENTITY, String.valueOf(projectId), "프로젝트 DB 좋아요 1증가가 완료되었습니다.");
     }
 
     /**
@@ -30,6 +33,6 @@ public class UpdateProjectLikeDbAdapter implements UpdateProjectLikePort {
     @Override
     public void decreaseLikeCount(Long projectId) {
         projectJpaRepository.decreaseLikeCount(projectId);
-        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 DB 좋아요 1감소가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(PROJECT_ENTITY, String.valueOf(projectId), "프로젝트 DB 좋아요 1감소가 완료되었습니다.");
     }
 }

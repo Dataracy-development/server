@@ -16,6 +16,12 @@ import java.time.Instant;
 public class ExtractCommentService implements FindUserIdByCommentIdUseCase {
     private final ExtractCommentPort extractCommentPort;
 
+    // Use Case 상수 정의
+    private static final String FIND_USER_ID_BY_COMMENT_ID_USE_CASE = "FindUserIdByCommentIdUseCase";
+    
+    // 메시지 상수 정의
+    private static final String COMMENT_NOT_FOUND_MESSAGE = "해당 댓글이 존재하지 않습니다. commentId=";
+
     /**
      * 주어진 댓글 ID로 해당 댓글 작성자의 사용자 ID를 반환합니다.
      * 댓글이 존재하지 않으면 CommentException이 발생합니다.
@@ -27,13 +33,13 @@ public class ExtractCommentService implements FindUserIdByCommentIdUseCase {
     @Override
     @Transactional(readOnly = true)
     public Long findUserIdByCommentId(Long commentId) {
-        Instant startTime = LoggerFactory.service().logStart("FindUserIdByCommentIdUseCase", "댓글 ID에 해당하는 사용자의 ID 반환 서비스 시작 commentId=" + commentId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_USER_ID_BY_COMMENT_ID_USE_CASE, "댓글 ID에 해당하는 사용자의 ID 반환 서비스 시작 commentId=" + commentId);
         Long userId = extractCommentPort.findUserIdByCommentId(commentId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindUserIdByCommentIdUseCase", "해당 댓글이 존재하지 않습니다. commentId=" + commentId);
+                    LoggerFactory.service().logWarning(FIND_USER_ID_BY_COMMENT_ID_USE_CASE, COMMENT_NOT_FOUND_MESSAGE + commentId);
                     return new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT);
                 });
-        LoggerFactory.service().logSuccess("FindUserIdByCommentIdUseCase", "댓글 ID에 해당하는 사용자의 ID 반환 서비스 종료 commentId=" + commentId, startTime);
+        LoggerFactory.service().logSuccess(FIND_USER_ID_BY_COMMENT_ID_USE_CASE, "댓글 ID에 해당하는 사용자의 ID 반환 서비스 종료 commentId=" + commentId, startTime);
         return userId;
     }
 }

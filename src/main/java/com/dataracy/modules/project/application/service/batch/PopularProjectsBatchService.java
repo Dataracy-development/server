@@ -26,6 +26,9 @@ public class PopularProjectsBatchService implements UpdatePopularProjectsStorage
     private final FindProjectLabelMapUseCase findProjectLabelMapUseCase;
     private final PopularProjectsStoragePort popularProjectsStoragePort;
     private final GetPopularProjectsPort getPopularProjectsPort;
+
+    // Service 상수 정의
+    private static final String POPULAR_PROJECTS_BATCH_SERVICE = "PopularProjectsBatchService";
     
     /**
      * 매 5분마다 인기 프로젝트 목록을 계산하고 캐시에 저장합니다.
@@ -34,7 +37,7 @@ public class PopularProjectsBatchService implements UpdatePopularProjectsStorage
      */
     @Scheduled(fixedRate = 300000) // 5분 = 300,000ms
     public void updatePopularProjectsCache() {
-        LoggerFactory.scheduler().logStart("PopularProjectsBatchService");
+        LoggerFactory.scheduler().logStart(POPULAR_PROJECTS_BATCH_SERVICE);
         
         try {
             // Port Out을 통해 데이터베이스에서 인기 프로젝트 조회 (최대 20개)
@@ -62,7 +65,7 @@ public class PopularProjectsBatchService implements UpdatePopularProjectsStorage
             LoggerFactory.scheduler().logComplete("PopularProjectsBatchService - count=" + popularProjects.size());
                 
         } catch (Exception e) {
-            LoggerFactory.scheduler().logError("PopularProjectsBatchService", e);
+            LoggerFactory.scheduler().logError(POPULAR_PROJECTS_BATCH_SERVICE, e);
         }
     }
     
