@@ -51,9 +51,10 @@ public class SendEmailSendGridAdapter implements SendEmailPort {
         mail.setFrom(from);
         mail.setSubject(subject);
         mail.addContent(content);
-        mail.addPersonalization(new Personalization() {{
-            addTo(to);
-        }});
+        
+        Personalization personalization = new Personalization();
+        personalization.addTo(to);
+        mail.addPersonalization(personalization);
 
         Request request = new Request();
         try {
