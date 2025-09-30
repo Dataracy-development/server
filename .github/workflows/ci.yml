@@ -60,6 +60,7 @@ jobs:
       - name: Run tests
         run: ./gradlew test --continue
         env:
+          CI: true
           SPRING_PROFILES_ACTIVE: test
           MYSQL_URL: jdbc:mysql://localhost:3306/dataracy_test
           MYSQL_USERNAME: root
@@ -67,6 +68,7 @@ jobs:
           REDIS_HOST: localhost
           REDIS_PORT: 6379
           ELASTICSEARCH_URL: http://localhost:9200
+          KAFKA_BOOTSTRAP_SERVERS: localhost:9092
 
       - name: Generate test report
         run: ./gradlew jacocoTestReport
