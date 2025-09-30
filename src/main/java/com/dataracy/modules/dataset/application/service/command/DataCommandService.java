@@ -54,6 +54,7 @@ public class DataCommandService implements
     
     // 메시지 상수 정의
     private static final String DATA_NOT_FOUND_MESSAGE = "해당 데이터셋이 존재하지 않습니다. dataId=";
+    private static final String DATA_NOT_FOUND_AFTER_FILE_UPLOAD_MESSAGE = "파일 업로드 후 데이터를 찾을 수 없습니다. dataId=";
     private final FindDataPort findDataPort;
 
     private final FileCommandUseCase fileCommandUseCase;
@@ -100,7 +101,11 @@ public class DataCommandService implements
         dataFileUpload(dataFile, saveData.getId(), UPLOAD_DATA_USE_CASE);
         thumbnailFileUpload(thumbnailFile, saveData.getId(), UPLOAD_DATA_USE_CASE);
 
-        Data updatedFileUrlData = findDataPort.findDataById(saveData.getId()).get();
+        Data updatedFileUrlData = findDataPort.findDataById(saveData.getId())
+                .orElseThrow(() -> {
+                    LoggerFactory.service().logWarning(UPLOAD_DATA_USE_CASE, DATA_NOT_FOUND_AFTER_FILE_UPLOAD_MESSAGE + saveData.getId());
+                    return new DataException(DataErrorStatus.NOT_FOUND_DATA);
+                });
 
         // 데이터셋 파일 파싱 후 통계 저장
         if (dataFile != null && !dataFile.isEmpty()) {
