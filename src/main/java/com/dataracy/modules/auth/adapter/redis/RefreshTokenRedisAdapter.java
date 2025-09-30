@@ -19,6 +19,9 @@ import java.util.concurrent.TimeUnit;
 public class RefreshTokenRedisAdapter implements ManageRefreshTokenPort {
     private final StringRedisTemplate redisTemplate;
     private final JwtProperties jwtProperties;
+    
+    // 메시지 상수 정의
+    private static final String REFRESH_TOKEN_NOT_FOUND_MESSAGE = "레디스에 해당 리프레시 토큰이 존재하지 않습니다.";
 
     /**
      * 리프레시 토큰 키 설정
@@ -71,7 +74,7 @@ public class RefreshTokenRedisAdapter implements ManageRefreshTokenPort {
             String refreshTokenKey = getRefreshTokenKey(userId);
             String token = redisTemplate.opsForValue().get(refreshTokenKey);
             if (token == null) {
-                LoggerFactory.redis().logWarning(userId, "레디스에 해당 리프레시 토큰이 존재하지 않습니다.");
+                LoggerFactory.redis().logWarning(userId, REFRESH_TOKEN_NOT_FOUND_MESSAGE);
             }
             LoggerFactory.redis().logQueryEnd(userId, "레디스에서 인증된 해당 유저의 리프레시 토큰을 찾아 반환 성공", startTime);
             return token;

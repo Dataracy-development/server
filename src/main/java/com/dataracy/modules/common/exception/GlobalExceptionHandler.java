@@ -30,6 +30,24 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    
+    // Exception 상수 정의
+    private static final String COMMON_EXCEPTION = "CommonException";
+    private static final String LOCK_EXCEPTION = "LockException";
+    private static final String SECURITY_EXCEPTION = "SecurityException";
+    private static final String ILLEGAL_ARGUMENT_EXCEPTION = "IllegalArgumentException";
+    private static final String NULL_POINTER_EXCEPTION = "NullPointerException";
+    private static final String NUMBER_FORMAT_EXCEPTION = "NumberFormatException";
+    private static final String INDEX_OUT_OF_BOUNDS_EXCEPTION = "IndexOutOfBoundsException";
+    private static final String CONSTRAINT_VIOLATION_EXCEPTION = "ConstraintViolationException";
+    private static final String MISSING_REQUEST_HEADER_EXCEPTION = "MissingRequestHeaderException";
+    private static final String DATA_INTEGRITY_VIOLATION_EXCEPTION = "DataIntegrityViolationException";
+    private static final String MISSING_SERVLET_REQUEST_PARAMETER_EXCEPTION = "MissingServletRequestParameterException";
+    private static final String VALIDATION_EXCEPTION = "ValidationException";
+    private static final String NO_HANDLER_FOUND_EXCEPTION = "NoHandlerFoundException";
+    private static final String HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION = "HttpRequestMethodNotSupportedException";
+    private static final String HTTP_MEDIA_TYPE_NOT_SUPPORTED_EXCEPTION = "HttpMediaTypeNotSupportedException";
+    private static final String HTTP_MESSAGE_NOT_READABLE_EXCEPTION = "HttpMessageNotReadableException";
     /**
      * 비즈니스 예외를 처리하여 해당 HTTP 상태 코드와 표준화된 에러 응답을 반환합니다.
      *
@@ -51,7 +69,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(CommonException.class)
     public ResponseEntity<ErrorResponse> handleCommonException(CommonException e) {
-        LoggerFactory.common().logError("CommonException", "공통 글로벌 예외입니다.", e);
+        LoggerFactory.common().logError(COMMON_EXCEPTION, "공통 글로벌 예외입니다.", e);
         return ResponseEntity
                 .status(e.getHttpStatus())
                 .body(ErrorResponse.of(e.getErrorCode()));
@@ -64,7 +82,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(LockAcquisitionException.class)
     public ResponseEntity<ErrorResponse> handleLockError(LockAcquisitionException e) {
-        LoggerFactory.common().logError("LockException", "동시성 락 예외입니다.", e);
+        LoggerFactory.common().logError(LOCK_EXCEPTION, "동시성 락 예외입니다.", e);
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(ErrorResponse.of(CommonErrorStatus.CONFLICT, e.getMessage()));
@@ -77,7 +95,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<ErrorResponse> handleSecurityException(SecurityException e) {
-        LoggerFactory.common().logError("SecurityException", "인증 예외입니다.", e);
+        LoggerFactory.common().logError(SECURITY_EXCEPTION, "인증 예외입니다.", e);
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ErrorResponse.of(CommonErrorStatus.UNAUTHORIZED, e.getMessage()));
@@ -91,7 +109,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
-        LoggerFactory.common().logError("IllegalArgumentException", "잘못된 인자가 전달되었습니다.", e);
+        LoggerFactory.common().logError(ILLEGAL_ARGUMENT_EXCEPTION, "잘못된 인자가 전달되었습니다.", e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, e.getMessage()));
@@ -104,7 +122,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorResponse> handleNullPointerException(NullPointerException e) {
-        LoggerFactory.common().logError("NullPointerException", "요청을 처리하는 중에 Null 값이 참조되었습니다.", e);
+        LoggerFactory.common().logError(NULL_POINTER_EXCEPTION, "요청을 처리하는 중에 Null 값이 참조되었습니다.", e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.of(CommonErrorStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
@@ -117,7 +135,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(NumberFormatException.class)
     public ResponseEntity<ErrorResponse> handleNumberFormatException(NumberFormatException e) {
-        LoggerFactory.common().logError("NumberFormatException", "숫자 형식이 잘못되었습니다.", e);
+        LoggerFactory.common().logError(NUMBER_FORMAT_EXCEPTION, "숫자 형식이 잘못되었습니다.", e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, e.getMessage()));
@@ -130,7 +148,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(IndexOutOfBoundsException.class)
     public ResponseEntity<ErrorResponse> handleIndexOutOfBoundsException(IndexOutOfBoundsException e) {
-        LoggerFactory.common().logError("IndexOutOfBoundsException", "인덱스가 범위를 벗어났습니다.", e);
+        LoggerFactory.common().logError(INDEX_OUT_OF_BOUNDS_EXCEPTION, "인덱스가 범위를 벗어났습니다.", e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, e.getMessage()));
@@ -143,7 +161,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleValidationParameterException(ConstraintViolationException e) {
-        LoggerFactory.common().logError("ConstraintViolationException", "잘못된 쿼리 값입니다.", e);
+        LoggerFactory.common().logError(CONSTRAINT_VIOLATION_EXCEPTION, "잘못된 쿼리 값입니다.", e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, e.getMessage()));
@@ -158,7 +176,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(MissingRequestHeaderException.class)
     public ResponseEntity<ErrorResponse> handleMissingRequestHeaderException(MissingRequestHeaderException e) {
-        LoggerFactory.common().logError("MissingRequestHeaderException", "필수 헤더 '" + e.getHeaderName() + "'가 없습니다.", e);
+        LoggerFactory.common().logError(MISSING_REQUEST_HEADER_EXCEPTION, "필수 헤더 '" + e.getHeaderName() + "'가 없습니다.", e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, e.getMessage()));
@@ -172,7 +190,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-        LoggerFactory.common().logError("DataIntegrityViolationException", "데이터 무결성 제약 조건을 위반했습니다", e);
+        LoggerFactory.common().logError(DATA_INTEGRITY_VIOLATION_EXCEPTION, "데이터 무결성 제약 조건을 위반했습니다", e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, e.getMessage()));
@@ -189,7 +207,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                           HttpHeaders headers,
                                                                           HttpStatusCode status,
                                                                           WebRequest request) {
-        LoggerFactory.common().logError("MissingServletRequestParameterException", "필수 파라미터 '" + e.getParameterName() + "'가 없습니다.", e);
+        LoggerFactory.common().logError(MISSING_SERVLET_REQUEST_PARAMETER_EXCEPTION, "필수 파라미터 '" + e.getParameterName() + "'가 없습니다.", e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, e.getMessage()));
@@ -209,7 +227,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             MethodArgumentNotValidException e, HttpHeaders headers,
             HttpStatusCode status, WebRequest request) {
         String combinedErrors = extractFieldErrors(e.getBindingResult().getFieldErrors());
-        LoggerFactory.common().logError("ValidationException", "필드의 유효성 검증에 실패했습니다: " + combinedErrors, e);
+        LoggerFactory.common().logError(VALIDATION_EXCEPTION, "필드의 유효성 검증에 실패했습니다: " + combinedErrors, e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, combinedErrors));
@@ -227,7 +245,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                    HttpHeaders headers,
                                                                    HttpStatusCode status,
                                                                    WebRequest request) {
-        LoggerFactory.common().logError("NoHandlerFoundException", "해당 경로에 대한 핸들러를 찾을 수 없습니다: " + e.getRequestURL(), e);
+        LoggerFactory.common().logError(NO_HANDLER_FOUND_EXCEPTION, "해당 경로에 대한 핸들러를 찾을 수 없습니다: " + e.getRequestURL(), e);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ErrorResponse.of(CommonErrorStatus.NOT_FOUND_HANDLER, e.getMessage()));
@@ -247,7 +265,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                          HttpHeaders headers,
                                                                          HttpStatusCode status,
                                                                          WebRequest request) {
-        LoggerFactory.common().logError("HttpRequestMethodNotSupportedException", "지원하지 않는 HTTP 메소드 요청입니다: " + e.getMethod(), e);
+        LoggerFactory.common().logError(HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION, "지원하지 않는 HTTP 메소드 요청입니다: " + e.getMethod(), e);
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
                 .body(ErrorResponse.of(CommonErrorStatus.METHOD_NOT_ALLOWED, e.getMessage()));
@@ -263,7 +281,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                      HttpHeaders headers,
                                                                      HttpStatusCode status,
                                                                      WebRequest request) {
-        LoggerFactory.common().logError("HttpMediaTypeNotSupportedException", "지원하지 않는 미디어 타입입니다: " + e.getContentType(), e);
+        LoggerFactory.common().logError(HTTP_MEDIA_TYPE_NOT_SUPPORTED_EXCEPTION, "지원하지 않는 미디어 타입입니다: " + e.getContentType(), e);
         return ResponseEntity
                 .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                 .body(ErrorResponse.of(CommonErrorStatus.UNSUPPORTED_MEDIA_TYPE, e.getMessage()));
@@ -280,7 +298,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                HttpHeaders headers,
                                                                HttpStatusCode status,
                                                                WebRequest request) {
-        LoggerFactory.common().logError("HttpMessageNotReadableException", "요청 본문을 읽을 수 없습니다. 올바른 JSON 형식이어야 합니다.", e);
+        LoggerFactory.common().logError(HTTP_MESSAGE_NOT_READABLE_EXCEPTION, "요청 본문을 읽을 수 없습니다. 올바른 JSON 형식이어야 합니다.", e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(CommonErrorStatus.BAD_REQUEST, e.getMessage()));

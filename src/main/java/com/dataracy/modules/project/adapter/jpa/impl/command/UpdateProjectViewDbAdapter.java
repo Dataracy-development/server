@@ -19,6 +19,9 @@ public class UpdateProjectViewDbAdapter implements UpdateProjectViewPort {
     @PersistenceContext
     private EntityManager entityManager;
 
+    // Entity 상수 정의
+    private static final String PROJECT_ENTITY = "ProjectEntity";
+
     /**
      * 지정된 프로젝트의 조회수를 특정 수치만큼 증가시킵니다.
      *
@@ -28,7 +31,7 @@ public class UpdateProjectViewDbAdapter implements UpdateProjectViewPort {
     @Override
     public void increaseViewCount(Long projectId, Long count) {
         projectJpaRepository.increaseViewCount(projectId, count);
-        LoggerFactory.db().logUpdate("ProjectEntity", String.valueOf(projectId), "프로젝트 DB 조회수 " + count + "증가가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(PROJECT_ENTITY, String.valueOf(projectId), "프로젝트 DB 조회수 " + count + "증가가 완료되었습니다.");
     }
 
     /**
@@ -55,7 +58,7 @@ public class UpdateProjectViewDbAdapter implements UpdateProjectViewPort {
 
         int updatedCount = entityManager.createNativeQuery(query).executeUpdate();
 
-        LoggerFactory.db().logUpdate("ProjectEntity", "진짜 배치 처리",
+        LoggerFactory.db().logUpdate(PROJECT_ENTITY, "진짜 배치 처리",
             "프로젝트 DB 조회수 배치 증가 완료. 처리된 프로젝트 수: " + updatedCount + 
             ", 쿼리 수: 1개 (배치)");
     }

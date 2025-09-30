@@ -17,6 +17,9 @@ import java.util.Optional;
 public class UserQueryDbAdapter implements UserQueryPort {
     private final UserJpaRepository userJpaRepository;
 
+    // Entity 상수 정의
+    private static final String USER_ENTITY = "UserEntity";
+
     /**
      * 주어진 사용자 ID로 사용자를 조회하여 Optional<User>로 반환합니다.
      *
@@ -25,9 +28,9 @@ public class UserQueryDbAdapter implements UserQueryPort {
      */
     @Override
     public Optional<User> findUserById(Long userId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", "[findById] 유저 아이디로 유저 조회 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.db().logQueryStart(USER_ENTITY, "[findById] 유저 아이디로 유저 조회 시작 userId=" + userId);
         Optional<UserEntity> userEntity = userJpaRepository.findById(userId);
-        LoggerFactory.db().logQueryEnd("UserEntity", "[findById] 유저 아이디로 유저 조회 종료 userId=" + userId, startTime);
+        LoggerFactory.db().logQueryEnd(USER_ENTITY, "[findById] 유저 아이디로 유저 조회 종료 userId=" + userId, startTime);
         return userEntity.map(UserEntityMapper::toDomain);
     }
 
@@ -39,9 +42,9 @@ public class UserQueryDbAdapter implements UserQueryPort {
      */
     @Override
     public Optional<User> findUserByProviderId(String providerId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", "[findByProviderId] 소셜 제공자 아이디로 유저 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(USER_ENTITY, "[findByProviderId] 소셜 제공자 아이디로 유저 조회 시작");
         Optional<UserEntity> userEntity = userJpaRepository.findByProviderId(providerId);
-        LoggerFactory.db().logQueryEnd("UserEntity", "[findByProviderId] 소셜 제공자 아이디로 유저 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(USER_ENTITY, "[findByProviderId] 소셜 제공자 아이디로 유저 조회 종료", startTime);
         return userEntity.map(UserEntityMapper::toDomain);
     }
 
@@ -53,17 +56,17 @@ public class UserQueryDbAdapter implements UserQueryPort {
      */
     @Override
     public Optional<User> findUserByEmail(String email) {
-        Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", "[findByEmail] 이메일로 유저 조회 시작 email=" + email);
+        Instant startTime = LoggerFactory.db().logQueryStart(USER_ENTITY, "[findByEmail] 이메일로 유저 조회 시작 email=" + email);
         Optional<UserEntity> userEntity = userJpaRepository.findByEmail(email);
-        LoggerFactory.db().logQueryEnd("UserEntity", "[findByEmail] 이메일로 유저 조회 종료 email=" + email, startTime);
+        LoggerFactory.db().logQueryEnd(USER_ENTITY, "[findByEmail] 이메일로 유저 조회 종료 email=" + email, startTime);
         return userEntity.map(UserEntityMapper::toDomain);
     }
 
     @Override
     public Optional<String> findNicknameById(Long userId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", "[findNicknameById] 유저 아이디로 닉네임 조회 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.db().logQueryStart(USER_ENTITY, "[findNicknameById] 유저 아이디로 닉네임 조회 시작 userId=" + userId);
         Optional<String> nickname = userJpaRepository.findNicknameById(userId);
-        LoggerFactory.db().logQueryEnd("UserEntity", "[findNicknameById] 유저 아이디로 닉네임 조회 종료 userId=" + userId, startTime);
+        LoggerFactory.db().logQueryEnd(USER_ENTITY, "[findNicknameById] 유저 아이디로 닉네임 조회 종료 userId=" + userId, startTime);
         return nickname;
     }
 }

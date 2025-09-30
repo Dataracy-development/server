@@ -20,6 +20,9 @@ public class EmailCommandService implements SendEmailUseCase {
     private final SendEmailPort sendEmailPort;
     private final ManageEmailCodePort manageEmailCodePort;
 
+    // Use Case 상수 정의
+    private static final String SEND_EMAIL_USE_CASE = "SendEmailUseCase";
+
     /**
      * EmailCommandService를 생성하고 필요한 포트 의존성(sendEmailPort, manageEmailCodePort)을 주입합니다.
      *
@@ -45,7 +48,7 @@ public class EmailCommandService implements SendEmailUseCase {
      */
     @Override
     public void sendEmailVerificationCode(String email, EmailVerificationType type) {
-        Instant startTime = LoggerFactory.service().logStart("SendEmailUseCase", "이메일 인증 코드 전송 서비스 시작 email=" + email);
+        Instant startTime = LoggerFactory.service().logStart(SEND_EMAIL_USE_CASE, "이메일 인증 코드 전송 서비스 시작 email=" + email);
 
         // 인증 코드 생성
         String code = generateCode();
@@ -56,13 +59,13 @@ public class EmailCommandService implements SendEmailUseCase {
         try {
             sendEmailPort.send(email, content.subject(), content.body());
         } catch (Exception e) {
-            LoggerFactory.service().logException("SendEmailUseCase", "이메일 전송 실패. email=" + email, e);
+            LoggerFactory.service().logException(SEND_EMAIL_USE_CASE, "이메일 전송 실패. email=" + email, e);
             throw new EmailException(EmailErrorStatus.FAIL_SEND_EMAIL_CODE);
         }
 
         // 레디스에 이메일 인증 코드 저장
         manageEmailCodePort.saveCode(email, code, type);
-        LoggerFactory.service().logSuccess("SendEmailUseCase", "이메일 인증 코드 전송 서비스 종료 email=" + email, startTime);
+        LoggerFactory.service().logSuccess(SEND_EMAIL_USE_CASE, "이메일 인증 코드 전송 서비스 종료 email=" + email, startTime);
     }
 
     // 6자리 숫자 형식

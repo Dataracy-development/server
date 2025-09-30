@@ -33,6 +33,10 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     private final RateLimitPort rateLimitPort;
     private final IsLoginPossibleUseCase isLoginPossibleUseCase;
 
+    // Use Case 상수 정의
+    private static final String SELF_LOGIN_USE_CASE = "SelfLoginUseCase";
+    private static final String RE_ISSUE_TOKEN_USE_CASE = "ReIssueTokenUseCase";
+
     public AuthCommandService(
             JwtProperties jwtProperties,
             JwtGeneratorPort jwtGeneratorPort,
@@ -58,7 +62,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     @Override
     @Transactional
     public RefreshTokenResponse login(SelfLoginRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("SelfLoginUseCase", "자체 로그인 서비스 시작 email=" + requestDto.email());
+        Instant startTime = LoggerFactory.service().logStart(SELF_LOGIN_USE_CASE, "자체 로그인 서비스 시작 email=" + requestDto.email());
 
         // 유저 db로부터 이메일이 일치하는 유저를 조회한다.
         UserInfo userInfo = isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo(requestDto.email(), requestDto.password());
@@ -72,7 +76,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
                 jwtProperties.getRefreshTokenExpirationTime()
         );
 
-        LoggerFactory.service().logSuccess("SelfLoginUseCase", "자체 로그인 서비스 성공 email=" + requestDto.email(), startTime);
+        LoggerFactory.service().logSuccess(SELF_LOGIN_USE_CASE, "자체 로그인 서비스 성공 email=" + requestDto.email(), startTime);
         return refreshTokenResponse;
     }
     
@@ -126,7 +130,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     @Override
     @Transactional
     public RefreshTokenResponse loginWithRateLimit(SelfLoginRequest requestDto, String clientIp) {
-        Instant startTime = LoggerFactory.service().logStart("SelfLoginUseCase", "레이트 리미팅 적용 로그인 서비스 시작 email=" + requestDto.email());
+        Instant startTime = LoggerFactory.service().logStart(SELF_LOGIN_USE_CASE, "레이트 리미팅 적용 로그인 서비스 시작 email=" + requestDto.email());
 
         // 1. 사용자 인증
         UserInfo userInfo = authenticateUser(requestDto);
@@ -137,7 +141,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
         // 3. 토큰 발급 및 반환
         RefreshTokenResponse response = generateRefreshTokenResponse(userInfo);
 
-        LoggerFactory.service().logSuccess("SelfLoginUseCase", "레이트 리미팅 적용 로그인 서비스 성공 email=" + requestDto.email(), startTime);
+        LoggerFactory.service().logSuccess(SELF_LOGIN_USE_CASE, "레이트 리미팅 적용 로그인 서비스 성공 email=" + requestDto.email(), startTime);
         return response;
     }
 
@@ -157,17 +161,17 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
         String rateLimitKey = email + ":" + clientIp;
         int maxRequests = isNormalUser(email) ? 60 : 5;
         
-        LoggerFactory.service().logInfo("SelfLoginUseCase", 
+        LoggerFactory.service().logInfo(SELF_LOGIN_USE_CASE, 
             String.format("레이트 리미팅 확인 - 사용자: %s, IP: %s, 제한: %d회/분", email, clientIp, maxRequests));
         
         if (!rateLimitPort.isAllowed(rateLimitKey, maxRequests, 1)) {
-            LoggerFactory.service().logWarning("SelfLoginUseCase", 
+            LoggerFactory.service().logWarning(SELF_LOGIN_USE_CASE, 
                 String.format("레이트 리미팅 초과 - 사용자: %s, IP: %s, 제한: %d회/분", email, clientIp, maxRequests));
             throw new AuthException(AuthErrorStatus.RATE_LIMIT_EXCEEDED);
         }
 
         rateLimitPort.incrementRequestCount(rateLimitKey, 1);
-        LoggerFactory.service().logInfo("SelfLoginUseCase", 
+        LoggerFactory.service().logInfo(SELF_LOGIN_USE_CASE, 
             String.format("레이트 리미팅 카운터 증가 - 사용자: %s, IP: %s", email, clientIp));
     }
 
@@ -203,23 +207,23 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
     @Transactional
     public ReIssueTokenResponse reIssueToken(String refreshToken) {
         try {
-            Instant startTime = LoggerFactory.service().logStart("ReIssueTokenUseCase", "토큰 재발급 서비스 시작");
+            Instant startTime = LoggerFactory.service().logStart(RE_ISSUE_TOKEN_USE_CASE, "토큰 재발급 서비스 시작");
 
             // 쿠키의 리프레시 토큰으로 유저 아이디를 반환한다.
             Long userId = jwtValidatorPort.getUserIdFromToken(refreshToken);
             if (userId == null) {
-                LoggerFactory.service().logWarning("ReIssueTokenUseCase", "[토큰 재발급] 만료된 리프레시 토큰입니다.");
+                LoggerFactory.service().logWarning(RE_ISSUE_TOKEN_USE_CASE, "[토큰 재발급] 만료된 리프레시 토큰입니다.");
                 throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
             }
 
             // 레디스의 리프레시 토큰과 입력받은 리프레시 토큰을 비교한다.
             String savedRefreshToken = manageRefreshTokenPort.getRefreshToken(userId.toString());
             if (savedRefreshToken == null) {
-                LoggerFactory.service().logWarning("ReIssueTokenUseCase", "[토큰 재발급] 저장된 리프레시 토큰이 없습니다. 만료되었을 수 있습니다.");
+                LoggerFactory.service().logWarning(RE_ISSUE_TOKEN_USE_CASE, "[토큰 재발급] 저장된 리프레시 토큰이 없습니다. 만료되었을 수 있습니다.");
                 throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
             }
             if (!savedRefreshToken.equals(refreshToken)) {
-                LoggerFactory.service().logWarning("ReIssueTokenUseCase", "[토큰 재발급] 입력된 리프레시 토큰이 레디스의 리프레시 토큰과 일치하지 않습니다.");
+                LoggerFactory.service().logWarning(RE_ISSUE_TOKEN_USE_CASE, "[토큰 재발급] 입력된 리프레시 토큰이 레디스의 리프레시 토큰과 일치하지 않습니다.");
                 throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
             }
 
@@ -237,21 +241,21 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
                     jwtProperties.getRefreshTokenExpirationTime()
             );
 
-            LoggerFactory.service().logSuccess("ReIssueTokenUseCase", "토큰 재발급 서비스 성공", startTime);
+            LoggerFactory.service().logSuccess(RE_ISSUE_TOKEN_USE_CASE, "토큰 재발급 서비스 성공", startTime);
             return reIssueTokenResponse;
         } catch (AuthException e) {
             if (e.getErrorCode() == AuthErrorStatus.EXPIRED_TOKEN) {
-                LoggerFactory.service().logWarning("ReIssueTokenUseCase", "[토큰 재발급] 만료된 리프레시 토큰입니다.");
+                LoggerFactory.service().logWarning(RE_ISSUE_TOKEN_USE_CASE, "[토큰 재발급] 만료된 리프레시 토큰입니다.");
                 throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
             } else if (e.getErrorCode() == AuthErrorStatus.INVALID_TOKEN) {
-                LoggerFactory.service().logWarning("ReIssueTokenUseCase", "[토큰 재발급] 유효하지 않은 리프레시 토큰입니다.");
+                LoggerFactory.service().logWarning(RE_ISSUE_TOKEN_USE_CASE, "[토큰 재발급] 유효하지 않은 리프레시 토큰입니다.");
                 throw new AuthException(AuthErrorStatus.INVALID_REFRESH_TOKEN);
             } else {
-                LoggerFactory.service().logWarning("ReIssueTokenUseCase", "[토큰 재발급] 인증에 실패했습니다.");
+                LoggerFactory.service().logWarning(RE_ISSUE_TOKEN_USE_CASE, "[토큰 재발급] 인증에 실패했습니다.");
                 throw e;
             }
         } catch (Exception e) {
-            LoggerFactory.service().logException("ReIssueTokenUseCase", "[토큰 재발급] 내부 서버 오류입니다.", e);
+            LoggerFactory.service().logException(RE_ISSUE_TOKEN_USE_CASE, "[토큰 재발급] 내부 서버 오류입니다.", e);
             throw e;
         }
     }

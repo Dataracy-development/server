@@ -43,6 +43,9 @@ public class ReadDataQueryDslAdapter implements
 {
     private final JPAQueryFactory queryFactory;
 
+    // Entity 상수 정의
+    private static final String DATA_ENTITY = "DataEntity";
+
     private final QDataEntity data = QDataEntity.dataEntity;
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
     private final QTopicEntity topic = QTopicEntity.topicEntity;
@@ -57,7 +60,7 @@ public class ReadDataQueryDslAdapter implements
      */
     @Override
     public Optional<Data> findDataById(Long dataId) {
-        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity", "[findDataById] 아이디를 통해 데이터셋 조회 시작. dataId=" + dataId);
+        Instant startTime = LoggerFactory.query().logQueryStart(DATA_ENTITY, "[findDataById] 아이디를 통해 데이터셋 조회 시작. dataId=" + dataId);
         DataEntity entity = queryFactory
                 .selectFrom(data)
                 .where(
@@ -66,7 +69,7 @@ public class ReadDataQueryDslAdapter implements
                 )
                 .fetchOne();
         Optional<Data> data = Optional.ofNullable(entity).map(DataEntityMapper::toDomain);
-        LoggerFactory.query().logQueryEnd("DataEntity", "[findDataById] 아이디를 통해 데이터셋 조회 완료. dataId=" + dataId, startTime);
+        LoggerFactory.query().logQueryEnd(DATA_ENTITY, "[findDataById] 아이디를 통해 데이터셋 조회 완료. dataId=" + dataId, startTime);
         return data;
     }
 
@@ -78,7 +81,7 @@ public class ReadDataQueryDslAdapter implements
      */
     @Override
     public Optional<Data> findDataWithMetadataById(Long dataId) {
-        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity", "[findDataWithMetadataById] 아이디를 통해 삭제된 데이터셋을 포함한 데이터셋 조회 시작. dataId=" + dataId);
+        Instant startTime = LoggerFactory.query().logQueryStart(DATA_ENTITY, "[findDataWithMetadataById] 아이디를 통해 삭제된 데이터셋을 포함한 데이터셋 조회 시작. dataId=" + dataId);
         DataEntity entity = queryFactory
                 .selectFrom(data)
                 .leftJoin(data.metadata).fetchJoin()
@@ -88,7 +91,7 @@ public class ReadDataQueryDslAdapter implements
                 )
                 .fetchOne();
         Optional<Data> data = Optional.ofNullable(entity).map(DataEntityMapper::toDomain);
-        LoggerFactory.query().logQueryEnd("DataEntity", "[findDataWithMetadataById] 아이디를 통해 삭제된 데이터셋을 포함한 데이터셋 조회 완료. dataId=" + dataId, startTime);
+        LoggerFactory.query().logQueryEnd(DATA_ENTITY, "[findDataWithMetadataById] 아이디를 통해 삭제된 데이터셋을 포함한 데이터셋 조회 완료. dataId=" + dataId, startTime);
         return data;
     }
 
@@ -99,7 +102,7 @@ public class ReadDataQueryDslAdapter implements
      */
     @Override
     public List<DataGroupCountResponse> getDataGroupCount() {
-        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity", "[getDataGroupCount] 토픽별 데이터셋 개수 조회 시작.");
+        Instant startTime = LoggerFactory.query().logQueryStart(DATA_ENTITY, "[getDataGroupCount] 토픽별 데이터셋 개수 조회 시작.");
 
         List<DataGroupCountResponse> dataGroupCountResponses = queryFactory
                 .select(Projections.constructor(DataGroupCountResponse.class,
@@ -115,7 +118,7 @@ public class ReadDataQueryDslAdapter implements
                 .groupBy(topic.id, topic.label)
                 .fetch();
 
-        LoggerFactory.query().logQueryEnd("DataEntity", "[getDataGroupCount] 토픽별 데이터셋 개수 조회 완료.", startTime);
+        LoggerFactory.query().logQueryEnd(DATA_ENTITY, "[getDataGroupCount] 토픽별 데이터셋 개수 조회 완료.", startTime);
         return dataGroupCountResponses;
     }
 
@@ -131,7 +134,7 @@ public class ReadDataQueryDslAdapter implements
      */
     @Override
     public Page<DataWithProjectCountDto> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
-        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity",  "[getConnectedDataSetsAssociatedWithProject] 지정된 프로젝트에 연결된 데이터셋 목록 조회 시작. projectId=" + projectId);
+        Instant startTime = LoggerFactory.query().logQueryStart(DATA_ENTITY, "[getConnectedDataSetsAssociatedWithProject] 지정된 프로젝트에 연결된 데이터셋 목록 조회 시작. projectId=" + projectId);
         int queryCount = 0;
 
         // 1단계: 연결된 데이터셋 조회 (1개 쿼리)
@@ -180,7 +183,7 @@ public class ReadDataQueryDslAdapter implements
         ).orElse(0L);
         queryCount++; // 카운트 쿼리
 
-        LoggerFactory.query().logQueryEnd("DataEntity",
+        LoggerFactory.query().logQueryEnd(DATA_ENTITY,
                 "[getConnectedDataSetsAssociatedWithProject] 지정된 프로젝트에 연결된 데이터셋 목록 조회 완료. projectId=" + projectId + ", queryCount=" + queryCount, startTime);
         return new PageImpl<>(contents, pageable, total);
     }
@@ -197,7 +200,7 @@ public class ReadDataQueryDslAdapter implements
         if (dataIds == null || dataIds.isEmpty()) return List.of();
 
         Instant startTime = LoggerFactory.query()
-                .logQueryStart("DataEntity", "[getConnectedDataSetsAssociatedWithProjectByIds] dataIds=" + dataIds);
+                .logQueryStart(DATA_ENTITY, "[getConnectedDataSetsAssociatedWithProjectByIds] dataIds=" + dataIds);
         int queryCount = 0;
 
         // 1단계: 데이터셋 조회 (1개 쿼리)
@@ -223,7 +226,7 @@ public class ReadDataQueryDslAdapter implements
                 ))
                 .toList();
 
-        LoggerFactory.query().logQueryEnd("DataEntity",
+        LoggerFactory.query().logQueryEnd(DATA_ENTITY,
                 "[getConnectedDataSetsAssociatedWithProjectByIds] 완료 dataIds=" + dataIds + ", queryCount=" + queryCount, startTime);
         return contents;
     }
@@ -236,7 +239,7 @@ public class ReadDataQueryDslAdapter implements
      */
     @Override
     public List<Data> getRecentDataSets(int size) {
-        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity", "[getRecentDataSets] 최신 데이터셋 목록 조회 시작. size=" + size);
+        Instant startTime = LoggerFactory.query().logQueryStart(DATA_ENTITY, "[getRecentDataSets] 최신 데이터셋 목록 조회 시작. size=" + size);
 
         List<DataEntity> dataEntities = queryFactory
                 .selectFrom(data)
@@ -247,7 +250,7 @@ public class ReadDataQueryDslAdapter implements
         List<Data> dataSets = dataEntities.stream()
                 .map(DataEntityMapper::toDomain)
                 .toList();
-        LoggerFactory.query().logQueryEnd("DataEntity", "[getRecentDataSets] 최신 데이터셋 목록 조회 완료. size=" + size, startTime);
+        LoggerFactory.query().logQueryEnd(DATA_ENTITY, "[getRecentDataSets] 최신 데이터셋 목록 조회 완료. size=" + size, startTime);
         return dataSets;
     }
 
@@ -262,7 +265,7 @@ public class ReadDataQueryDslAdapter implements
     @Override
     public List<DataWithProjectCountDto> getPopularDataSets(int size) {
         Instant startTime = LoggerFactory.query().logQueryStart(
-                "DataEntity", "[searchPopularDataSets] 인기있는 데이터셋 목록 조회 시작. size=" + size);
+                DATA_ENTITY, "[searchPopularDataSets] 인기있는 데이터셋 목록 조회 시작. size=" + size);
         int queryCount = 0;
 
         // 1단계: 데이터셋 조회 (다운로드 수 기준으로 먼저 정렬)
@@ -293,7 +296,7 @@ public class ReadDataQueryDslAdapter implements
                 })
                 .toList();
 
-        LoggerFactory.query().logQueryEnd("DataEntity",
+        LoggerFactory.query().logQueryEnd(DATA_ENTITY,
                 "[searchPopularDataSets] 인기있는 데이터셋 목록 조회 완료. size=" + size + ", queryCount=" + queryCount, startTime);
         return result;
     }
@@ -314,7 +317,7 @@ public class ReadDataQueryDslAdapter implements
                 ? PageRequest.of(0, 5)
                 : pageable;
 
-        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity",  "[findUserDataSets] 회원이 업로드한 데이터셋 목록 조회 시작. userId=" + userId);
+        Instant startTime = LoggerFactory.query().logQueryStart(DATA_ENTITY, "[findUserDataSets] 회원이 업로드한 데이터셋 목록 조회 시작. userId=" + userId);
         int queryCount = 0;
 
         // 1단계: 사용자 데이터셋 조회 (1개 쿼리)
@@ -357,7 +360,7 @@ public class ReadDataQueryDslAdapter implements
         ).orElse(0L);
         queryCount++; // 카운트 쿼리
 
-        LoggerFactory.query().logQueryEnd("DataEntity",
+        LoggerFactory.query().logQueryEnd(DATA_ENTITY,
                 "[findUserDataSets] 회원이 업로드한 데이터셋 목록 조회 완료. userId=" + userId + ", queryCount=" + queryCount, startTime);
         return new PageImpl<>(contents, effectivePageable, total);
     }

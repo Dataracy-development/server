@@ -32,6 +32,9 @@ public class SearchProjectQueryDslAdapter implements
 {
     private final JPAQueryFactory queryFactory;
 
+    // Entity 상수 정의
+    private static final String PROJECT_ENTITY = "ProjectEntity";
+
     private final QProjectEntity project = QProjectEntity.projectEntity;
 
     /**
@@ -51,7 +54,7 @@ public class SearchProjectQueryDslAdapter implements
     public Page<Project> searchByFilters(FilteringProjectRequest request,
                                          Pageable pageable,
                                          ProjectSortType sortType) {
-        Instant start = LoggerFactory.query().logQueryStart("ProjectEntity",
+        Instant start = LoggerFactory.query().logQueryStart(PROJECT_ENTITY,
                 "[searchByFilters] 프로젝트 필터링 조회 시작. keyword=" + request.keyword());
 
         // 루트 ID만 페이징 (컬렉션 조인/페치 금지)
@@ -65,7 +68,7 @@ public class SearchProjectQueryDslAdapter implements
                 .fetch();
 
         if (pageIds.isEmpty()) {
-            LoggerFactory.query().logQueryEnd("ProjectEntity", "[searchByFilters] 결과 0", start);
+            LoggerFactory.query().logQueryEnd(PROJECT_ENTITY, "[searchByFilters] 결과 0", start);
             return new PageImpl<>(List.of(), pageable, 0);
         }
 
@@ -97,7 +100,7 @@ public class SearchProjectQueryDslAdapter implements
                         .fetchOne()
         ).orElse(0L);
 
-        LoggerFactory.query().logQueryEnd("ProjectEntity", "[searchByFilters] 완료", start);
+        LoggerFactory.query().logQueryEnd(PROJECT_ENTITY, "[searchByFilters] 완료", start);
         return new PageImpl<>(contents, pageable, total);
     }
 

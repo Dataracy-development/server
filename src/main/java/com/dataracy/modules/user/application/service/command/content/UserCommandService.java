@@ -41,6 +41,15 @@ public class UserCommandService implements
     private final UserCommandPort userCommandPort;
     private final UserQueryPort userQueryPort;
 
+    // Use Case 상수 정의
+    private static final String MODIFY_USER_INFO_USE_CASE = "ModifyUserInfoUseCase";
+    private static final String WITHDRAW_USER_USE_CASE = "WithdrawUserUseCase";
+    private static final String LOGOUT_USER_USE_CASE = "LogoutUserUseCase";
+    private static final String USER_INFO_MODIFY_SUCCESS_MESSAGE = "회원 정보 수정 서비스 성공 userId=";
+    
+    // 메시지 상수 정의
+    private static final String USER_NOT_FOUND_MESSAGE = "아이디에 해당하는 유저가 존재하지 않습니다. userId=";
+
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
     private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
     private final ValidateOccupationUseCase validateOccupationUseCase;
@@ -65,12 +74,12 @@ public class UserCommandService implements
     @Override
     @Transactional
     public void modifyUserInfo(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("ModifyUserInfoUseCase", "회원 정보 수정 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(MODIFY_USER_INFO_USE_CASE, "회원 정보 수정 서비스 시작 userId=" + userId);
 
         // 기존 닉네임 조회
         String savedNickname = userQueryPort.findNicknameById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("ModifyUserInfoUseCase", "[회원 정보 수정] 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    LoggerFactory.service().logWarning(MODIFY_USER_INFO_USE_CASE, "[회원 정보 수정] " + USER_NOT_FOUND_MESSAGE + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 
@@ -104,9 +113,9 @@ public class UserCommandService implements
         userCommandPort.modifyUserInfo(userId, requestDto);
 
         // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
-        modifyProfileImageFile(profileImageFile, userId, "ModifyUserInfoUseCase");
+        modifyProfileImageFile(profileImageFile, userId, MODIFY_USER_INFO_USE_CASE);
 
-        LoggerFactory.service().logSuccess("ModifyUserInfoUseCase", "회원 정보 수정 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(MODIFY_USER_INFO_USE_CASE, USER_INFO_MODIFY_SUCCESS_MESSAGE + userId, startTime);
     }
 
     @DistributedLock(
@@ -128,9 +137,9 @@ public class UserCommandService implements
         userCommandPort.modifyUserInfo(userId, requestDto);
 
         // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
-        modifyProfileImageFile(profileImageFile, userId, "ModifyUserInfoUseCase");
+        modifyProfileImageFile(profileImageFile, userId, MODIFY_USER_INFO_USE_CASE);
 
-        LoggerFactory.service().logSuccess("ModifyUserInfoUseCase", "회원 정보 수정 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(MODIFY_USER_INFO_USE_CASE, USER_INFO_MODIFY_SUCCESS_MESSAGE + userId, startTime);
     }
 
     @Transactional
@@ -146,9 +155,9 @@ public class UserCommandService implements
         userCommandPort.modifyUserInfo(userId, requestDto);
 
         // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
-        modifyProfileImageFile(profileImageFile, userId, "ModifyUserInfoUseCase");
+        modifyProfileImageFile(profileImageFile, userId, MODIFY_USER_INFO_USE_CASE);
 
-        LoggerFactory.service().logSuccess("ModifyUserInfoUseCase", "회원 정보 수정 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(MODIFY_USER_INFO_USE_CASE, USER_INFO_MODIFY_SUCCESS_MESSAGE + userId, startTime);
     }
 
     /**
@@ -265,9 +274,9 @@ public class UserCommandService implements
     @Override
     @Transactional
     public void withdrawUser(Long userId) {
-        Instant startTime = LoggerFactory.service().logStart("WithdrawUserUseCase", "회원 탈퇴 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(WITHDRAW_USER_USE_CASE, "회원 탈퇴 서비스 시작 userId=" + userId);
         userCommandPort.withdrawalUser(userId);
-        LoggerFactory.service().logSuccess("WithdrawUserUseCase", "회원 탈퇴 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(WITHDRAW_USER_USE_CASE, "회원 탈퇴 서비스 성공 userId=" + userId, startTime);
     }
 
     /**
@@ -282,16 +291,16 @@ public class UserCommandService implements
     @Override
     @Transactional
     public void logout(Long userId, String refreshToken) {
-        Instant startTime = LoggerFactory.service().logStart("LogoutUserUseCase", "회원 로그아웃 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(LOGOUT_USER_USE_CASE, "회원 로그아웃 서비스 시작 userId=" + userId);
 
         // 쿠키의 리프레시 토큰으로 유저 아이디를 반환한다.
         Long refreshTokenUserId = jwtValidateUseCase.getUserIdFromToken(refreshToken);
         if (refreshTokenUserId == null) {
-            LoggerFactory.service().logWarning("LogoutUserUseCase", "[로그아웃] 만료된 리프레시 토큰입니다.");
+            LoggerFactory.service().logWarning(LOGOUT_USER_USE_CASE, "[로그아웃] 만료된 리프레시 토큰입니다.");
             throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
         }
         if (!refreshTokenUserId.equals(userId)) {
-            LoggerFactory.service().logWarning("LogoutUserUseCase", "[로그아웃] 인증 요청을 한 유저와 일치하지 않는 리프레시 토큰입니다.");
+            LoggerFactory.service().logWarning(LOGOUT_USER_USE_CASE, "[로그아웃] 인증 요청을 한 유저와 일치하지 않는 리프레시 토큰입니다.");
             throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
         }
 
@@ -302,6 +311,6 @@ public class UserCommandService implements
 
         // 추후 고보안 서비스일 경우 어세스토큰 블랙리스트 처리까지 생각
 
-        LoggerFactory.service().logSuccess("LogoutUserUseCase", "회원 로그아웃 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(LOGOUT_USER_USE_CASE, "회원 로그아웃 서비스 성공 userId=" + userId, startTime);
     }
 }

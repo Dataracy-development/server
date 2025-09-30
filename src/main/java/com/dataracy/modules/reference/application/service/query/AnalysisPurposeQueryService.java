@@ -31,6 +31,13 @@ public class AnalysisPurposeQueryService implements
     private final AnalysisPurposeDtoMapper analysisPurposeDtoMapper;
     private final AnalysisPurposePort analysisPurposePort;
 
+    // Use Case 상수 정의
+    private static final String FIND_ALL_ANALYSIS_PURPOSES_USE_CASE = "FindAllAnalysisPurposesUseCase";
+    private static final String FIND_ANALYSIS_PURPOSE_USE_CASE = "FindAnalysisPurposeUseCase";
+    private static final String VALIDATE_ANALYSIS_PURPOSE_USE_CASE = "ValidateAnalysisPurposeUseCase";
+    private static final String GET_ANALYSIS_PURPOSE_LABEL_FROM_ID_USE_CASE = "GetAnalysisPurposeLabelFromIdUseCase";
+    private static final String ANALYSIS_PURPOSE_NOT_FOUND_MESSAGE = "해당 분석 목적이 존재하지 않습니다. analysisPurposeId=";
+
     /**
      * 모든 분석 목적 정보를 조회하여 전체 목록을 응답 DTO로 반환한다.
      *
@@ -39,10 +46,10 @@ public class AnalysisPurposeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AllAnalysisPurposesResponse findAllAnalysisPurposes() {
-        Instant startTime = LoggerFactory.service().logStart("FindAllAnalysisPurposesUseCase", "모든 분석 목적 정보 조회 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FIND_ALL_ANALYSIS_PURPOSES_USE_CASE, "모든 분석 목적 정보 조회 서비스 시작");
         List<AnalysisPurpose> analysisPurposes = analysisPurposePort.findAllAnalysisPurposes();
         AllAnalysisPurposesResponse allAnalysisPurposesResponse = analysisPurposeDtoMapper.toResponseDto(analysisPurposes);
-        LoggerFactory.service().logSuccess("FindAllAnalysisPurposesUseCase", "모든 분석 목적 정보 조회 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(FIND_ALL_ANALYSIS_PURPOSES_USE_CASE, "모든 분석 목적 정보 조회 서비스 종료", startTime);
         return allAnalysisPurposesResponse;
     }
 
@@ -57,14 +64,14 @@ public class AnalysisPurposeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AnalysisPurposeResponse findAnalysisPurpose(Long analysisPurposeId) {
-        Instant startTime = LoggerFactory.service().logStart("FindAnalysisPurposeUseCase", "주어진 ID로 분석 목적 조회 서비스 시작 analysisPurposeId=" + analysisPurposeId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_ANALYSIS_PURPOSE_USE_CASE, "주어진 ID로 분석 목적 조회 서비스 시작 analysisPurposeId=" + analysisPurposeId);
         AnalysisPurpose analysisPurpose = analysisPurposePort.findAnalysisPurposeById(analysisPurposeId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindAnalysisPurposeUseCase", "해당 분석 목적이 존재하지 않습니다. analysisPurposeId=" + analysisPurposeId);
+                    LoggerFactory.service().logWarning(FIND_ANALYSIS_PURPOSE_USE_CASE, ANALYSIS_PURPOSE_NOT_FOUND_MESSAGE + analysisPurposeId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
                 });
         AnalysisPurposeResponse analysisPurposeResponse = analysisPurposeDtoMapper.toResponseDto(analysisPurpose);
-        LoggerFactory.service().logSuccess("FindAnalysisPurposeUseCase", "주어진 ID로 분석 목적 조회 서비스 종료 analysisPurposeId=" + analysisPurposeId, startTime);
+        LoggerFactory.service().logSuccess(FIND_ANALYSIS_PURPOSE_USE_CASE, "주어진 ID로 분석 목적 조회 서비스 종료 analysisPurposeId=" + analysisPurposeId, startTime);
         return analysisPurposeResponse;
     }
 
@@ -78,13 +85,13 @@ public class AnalysisPurposeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public void validateAnalysisPurpose(Long analysisPurposeId) {
-        Instant startTime = LoggerFactory.service().logStart("ValidateAnalysisPurposeUseCase", "주어진 ID에 해당하는 분석 목적이 존재하는지 확인 서비스 시작 analysisPurposeId=" + analysisPurposeId);
+        Instant startTime = LoggerFactory.service().logStart(VALIDATE_ANALYSIS_PURPOSE_USE_CASE, "주어진 ID에 해당하는 분석 목적이 존재하는지 확인 서비스 시작 analysisPurposeId=" + analysisPurposeId);
         Boolean isExist = analysisPurposePort.existsAnalysisPurposeById(analysisPurposeId);
         if (!isExist) {
-            LoggerFactory.service().logWarning("FindAnalysisPurposeUseCase", "해당 분석 목적이 존재하지 않습니다. analysisPurposeId=" + analysisPurposeId);
+            LoggerFactory.service().logWarning(FIND_ANALYSIS_PURPOSE_USE_CASE, ANALYSIS_PURPOSE_NOT_FOUND_MESSAGE + analysisPurposeId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
         }
-        LoggerFactory.service().logSuccess("ValidateAnalysisPurposeUseCase", "주어진 ID에 해당하는 분석 목적이 존재하는지 확인 서비스 종료 analysisPurposeId=" + analysisPurposeId, startTime);
+        LoggerFactory.service().logSuccess(VALIDATE_ANALYSIS_PURPOSE_USE_CASE, "주어진 ID에 해당하는 분석 목적이 존재하는지 확인 서비스 종료 analysisPurposeId=" + analysisPurposeId, startTime);
     }
 
     /**
@@ -97,13 +104,13 @@ public class AnalysisPurposeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long analysisPurposeId) {
-        Instant startTime = LoggerFactory.service().logStart("GetAnalysisPurposeLabelFromIdUseCase", "주어진 분석 목적 ID에 해당하는 라벨을 조회 서비스 시작 analysisPurposeId=" + analysisPurposeId);
+        Instant startTime = LoggerFactory.service().logStart(GET_ANALYSIS_PURPOSE_LABEL_FROM_ID_USE_CASE, "주어진 분석 목적 ID에 해당하는 라벨을 조회 서비스 시작 analysisPurposeId=" + analysisPurposeId);
         String label = analysisPurposePort.getLabelById(analysisPurposeId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindAnalysisPurposeUseCase", "해당 분석 목적이 존재하지 않습니다. analysisPurposeId=" + analysisPurposeId);
+                    LoggerFactory.service().logWarning(FIND_ANALYSIS_PURPOSE_USE_CASE, ANALYSIS_PURPOSE_NOT_FOUND_MESSAGE + analysisPurposeId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
                 });
-        LoggerFactory.service().logSuccess("GetAnalysisPurposeLabelFromIdUseCase", "주어진 분석 목적 ID에 해당하는 라벨을 조회 서비스 종료 analysisPurposeId=" + analysisPurposeId, startTime);
+        LoggerFactory.service().logSuccess(GET_ANALYSIS_PURPOSE_LABEL_FROM_ID_USE_CASE, "주어진 분석 목적 ID에 해당하는 라벨을 조회 서비스 종료 analysisPurposeId=" + analysisPurposeId, startTime);
         return label;
     }
 
@@ -116,12 +123,12 @@ public class AnalysisPurposeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> analysisPurposeIds) {
-        Instant startTime = LoggerFactory.service().logStart("GetAnalysisPurposeLabelFromIdUseCase", "분석 목적 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(GET_ANALYSIS_PURPOSE_LABEL_FROM_ID_USE_CASE, "분석 목적 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
         if (analysisPurposeIds == null || analysisPurposeIds.isEmpty()) {
             return Map.of();
         }
         Map<Long, String> labels = analysisPurposePort.getLabelsByIds(analysisPurposeIds);
-        LoggerFactory.service().logSuccess("GetAnalysisPurposeLabelFromIdUseCase", "분석 목적 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(GET_ANALYSIS_PURPOSE_LABEL_FROM_ID_USE_CASE, "분석 목적 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
         return labels;
     }
 }

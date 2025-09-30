@@ -35,6 +35,10 @@ public class ReadCommentService implements
     private final FindCommentUserInfoUseCase findCommentUserInfoUseCase;
     private final FindTargetIdsUseCase findTargetIdsUseCase;
 
+    // Use Case 상수 정의
+    private static final String FIND_COMMENT_LIST_USE_CASE = "FindCommentListUseCase";
+    private static final String FIND_REPLY_COMMENT_LIST_USE_CASE = "FindReplyCommentListUseCase";
+
     /**
      * 지정된 프로젝트의 댓글을 페이지 단위로 조회하여 댓글 DTO로 반환한다.
      *
@@ -48,7 +52,7 @@ public class ReadCommentService implements
     @Override
     @Transactional(readOnly = true)
     public Page<FindCommentResponse> findComments(Long userId, Long projectId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("FindCommentListUseCase", "프로젝트의 댓글 목록 조회 서비스 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_COMMENT_LIST_USE_CASE, "프로젝트의 댓글 목록 조회 서비스 시작 projectId=" + projectId);
 
         Page<FindCommentWithReplyCountResponse> savedComments = readCommentPort.findComments(projectId, pageable);
         List<Long> userIds = savedComments.stream()
@@ -76,7 +80,7 @@ public class ReadCommentService implements
             );
         });
 
-        LoggerFactory.service().logSuccess("FindCommentListUseCase", "프로젝트의 댓글 목록 조회 서비스 종료 projectId=" + projectId, startTime);
+        LoggerFactory.service().logSuccess(FIND_COMMENT_LIST_USE_CASE, "프로젝트의 댓글 목록 조회 서비스 종료 projectId=" + projectId, startTime);
         return findCommentResponses;
     }
 
@@ -94,7 +98,7 @@ public class ReadCommentService implements
     @Override
     @Transactional(readOnly = true)
     public Page<FindReplyCommentResponse> findReplyComments(Long userId, Long projectId, Long commentId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("FindReplyCommentListUseCase", "프로젝트의 댓글에 대한 답글 목록 조회 서비스 시작 projectId=" + projectId + ", commentId=" + commentId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_REPLY_COMMENT_LIST_USE_CASE, "프로젝트의 댓글에 대한 답글 목록 조회 서비스 시작 projectId=" + projectId + ", commentId=" + commentId);
 
         Page<Comment> savedComments = readCommentPort.findReplyComments(projectId, commentId, pageable);
 
@@ -121,7 +125,7 @@ public class ReadCommentService implements
             );
         });
 
-        LoggerFactory.service().logSuccess("FindReplyCommentListUseCase", "프로젝트의 댓글에 대한 답글 목록 조회 서비스 종료 projectId=" + projectId + ", commentId=" + commentId, startTime);
+        LoggerFactory.service().logSuccess(FIND_REPLY_COMMENT_LIST_USE_CASE, "프로젝트의 댓글에 대한 답글 목록 조회 서비스 종료 projectId=" + projectId + ", commentId=" + commentId, startTime);
         return findReplyCommentResponses;
     }
 

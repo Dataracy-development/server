@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 public class OccupationDbAdapter implements OccupationPort {
     private final OccupationJpaRepository occupationJpaRepository;
 
+    // Entity 상수 정의
+    private static final String OCCUPATION_ENTITY = "OccupationEntity";
+
     /**
      * 모든 직업(occupation) 데이터를 조회하여 도메인 객체 리스트로 반환한다.
      *
@@ -27,12 +30,12 @@ public class OccupationDbAdapter implements OccupationPort {
      */
     @Override
     public List<Occupation> findAllOccupations() {
-        Instant startTime = LoggerFactory.db().logQueryStart("OccupationEntity", "[findAll] 직업 목록 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(OCCUPATION_ENTITY, "[findAll] 직업 목록 조회 시작");
         List<OccupationEntity> occupationEntities = occupationJpaRepository.findAll();
         List<Occupation> occupations = occupationEntities.stream()
                 .map(OccupationEntityMapper::toDomain)
                 .toList();
-        LoggerFactory.db().logQueryEnd("OccupationEntity", "[findAll] 직업 목록 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(OCCUPATION_ENTITY, "[findAll] 직업 목록 조회 종료", startTime);
         return occupations;
     }
 
@@ -44,13 +47,13 @@ public class OccupationDbAdapter implements OccupationPort {
      */
     @Override
     public Optional<Occupation> findOccupationById(Long occupationId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("OccupationEntity", "[findById] 직업 목록 조회 시작 occupationId=" + occupationId);
+        Instant startTime = LoggerFactory.db().logQueryStart(OCCUPATION_ENTITY, "[findById] 직업 목록 조회 시작 occupationId=" + occupationId);
         if (occupationId == null) {
             return Optional.empty();
         }
         Optional<Occupation> occupation = occupationJpaRepository.findById(occupationId)
                 .map(OccupationEntityMapper::toDomain);
-        LoggerFactory.db().logQueryEnd("OccupationEntity", "[findById] 직업 목록 조회 종료 occupationId=" + occupationId, startTime);
+        LoggerFactory.db().logQueryEnd(OCCUPATION_ENTITY, "[findById] 직업 목록 조회 종료 occupationId=" + occupationId, startTime);
         return occupation;
     }
 
@@ -66,7 +69,7 @@ public class OccupationDbAdapter implements OccupationPort {
             return false;
         }
         boolean isExists = occupationJpaRepository.existsById(occupationId);
-        LoggerFactory.db().logExist("OccupationEntity", "[existsById] 직업 존재 유무 확인 occupationId=" + occupationId + ", isExists=" + isExists);
+        LoggerFactory.db().logExist(OCCUPATION_ENTITY, "[existsById] 직업 존재 유무 확인 occupationId=" + occupationId + ", isExists=" + isExists);
         return isExists;
     }
 
@@ -78,12 +81,12 @@ public class OccupationDbAdapter implements OccupationPort {
      */
     @Override
     public Optional<String> getLabelById(Long occupationId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("OccupationEntity", "[findLabelById] 직업 라벨 조회 시작 occupationId=" + occupationId);
+        Instant startTime = LoggerFactory.db().logQueryStart(OCCUPATION_ENTITY, "[findLabelById] 직업 라벨 조회 시작 occupationId=" + occupationId);
         if (occupationId == null) {
             return Optional.empty();
         }
         Optional<String> label = occupationJpaRepository.findLabelById(occupationId);
-        LoggerFactory.db().logQueryEnd("OccupationEntity", "[findLabelById] 직업 라벨 조회 종료 occupationId=" + occupationId + ", label=" + label, startTime);
+        LoggerFactory.db().logQueryEnd(OCCUPATION_ENTITY, "[findLabelById] 직업 라벨 조회 종료 occupationId=" + occupationId + ", label=" + label, startTime);
         return label;
     }
 
@@ -95,11 +98,11 @@ public class OccupationDbAdapter implements OccupationPort {
      */
     @Override
     public Map<Long, String> getLabelsByIds(List<Long> occupationIds) {
-        Instant startTime = LoggerFactory.db().logQueryStart("OccupationEntity", "[findAllById] 직업 라벨 목록 조회 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(OCCUPATION_ENTITY, "[findAllById] 직업 라벨 목록 조회 시작");
         Map<Long, String> labels = occupationJpaRepository.findAllById(occupationIds)
                 .stream()
                 .collect(Collectors.toMap(OccupationEntity::getId, OccupationEntity::getLabel));
-        LoggerFactory.db().logQueryEnd("OccupationEntity", "[findAllById] 직업 라벨 목록 조회 종료", startTime);
+        LoggerFactory.db().logQueryEnd(OCCUPATION_ENTITY, "[findAllById] 직업 라벨 목록 조회 종료", startTime);
         return labels;
     }
 }

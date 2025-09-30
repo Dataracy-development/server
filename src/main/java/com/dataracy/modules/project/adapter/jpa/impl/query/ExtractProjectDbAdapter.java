@@ -18,6 +18,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ExtractProjectDbAdapter implements ExtractProjectOwnerPort {
     private final ProjectJpaRepository projectJpaRepository;
+
+    // Entity 및 메시지 상수 정의
+    private static final String PROJECT_ENTITY = "ProjectEntity";
+    private static final String PROJECT_NOT_FOUND_MESSAGE = "해당 프로젝트가 존재하지 않습니다. projectId=";
     private final ProjectDataJpaRepository projectDataJpaRepository;
 
     /**
@@ -31,13 +35,13 @@ public class ExtractProjectDbAdapter implements ExtractProjectOwnerPort {
      */
     @Override
     public Long findUserIdByProjectId(Long projectId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("ProjectEntity", "[findById] 아이디를 통한 프로젝트 조회 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.db().logQueryStart(PROJECT_ENTITY, "[findById] 아이디를 통한 프로젝트 조회 시작 projectId=" + projectId);
         ProjectEntity projectEntity = projectJpaRepository.findById(projectId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+                    LoggerFactory.db().logWarning(PROJECT_ENTITY, PROJECT_NOT_FOUND_MESSAGE + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
-        LoggerFactory.db().logQueryEnd("ProjectEntity", "[findById] 아이디를 통한 프로젝트 조회 종료 projectId=" + projectId, startTime);
+        LoggerFactory.db().logQueryEnd(PROJECT_ENTITY, "[findById] 아이디를 통한 프로젝트 조회 종료 projectId=" + projectId, startTime);
         return projectEntity.getUserId();
     }
 
@@ -50,13 +54,13 @@ public class ExtractProjectDbAdapter implements ExtractProjectOwnerPort {
      */
     @Override
     public Long findUserIdIncludingDeleted(Long projectId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("ProjectEntity", "[findIncludingDeleted] 탈퇴한 유저를 포함하여 아이디를 통한 프로젝트 조회 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.db().logQueryStart(PROJECT_ENTITY, "[findIncludingDeleted] 탈퇴한 유저를 포함하여 아이디를 통한 프로젝트 조회 시작 projectId=" + projectId);
         ProjectEntity projectEntity = projectJpaRepository.findIncludingDeleted(projectId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("ProjectEntity", "해당 프로젝트가 존재하지 않습니다. projectId=" + projectId);
+                    LoggerFactory.db().logWarning(PROJECT_ENTITY, PROJECT_NOT_FOUND_MESSAGE + projectId);
                     return new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
                 });
-        LoggerFactory.db().logQueryEnd("ProjectEntity", "[findIncludingDeleted] 탈퇴한 유저를 포함하여 아이디를 통한 프로젝트 조회 종료 projectId=" + projectId, startTime);
+        LoggerFactory.db().logQueryEnd(PROJECT_ENTITY, "[findIncludingDeleted] 탈퇴한 유저를 포함하여 아이디를 통한 프로젝트 조회 종료 projectId=" + projectId, startTime);
         return projectEntity.getUserId();
     }
 
@@ -68,9 +72,9 @@ public class ExtractProjectDbAdapter implements ExtractProjectOwnerPort {
      */
     @Override
     public Set<Long> findDataIdsByProjectId(@Param("projectId") Long projectId) {
-        Instant startTime = LoggerFactory.db().logQueryStart("ProjectEntity", "[findDataIdsByProjectId] 아이디를 통하여 프로젝트와 연결된 데이터셋 목록 조회 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.db().logQueryStart(PROJECT_ENTITY, "[findDataIdsByProjectId] 아이디를 통하여 프로젝트와 연결된 데이터셋 목록 조회 시작 projectId=" + projectId);
         Set<Long> dataIds = projectDataJpaRepository.findDataIdsByProjectId(projectId);
-        LoggerFactory.db().logQueryEnd("ProjectEntity", "[findDataIdsByProjectId] 아이디를 통하여 프로젝트와 연결된 데이터셋 목록 조회 종료 projectId=" + projectId, startTime);
+        LoggerFactory.db().logQueryEnd(PROJECT_ENTITY, "[findDataIdsByProjectId] 아이디를 통하여 프로젝트와 연결된 데이터셋 목록 조회 종료 projectId=" + projectId, startTime);
         return dataIds;
     }
 }

@@ -31,6 +31,13 @@ public class DataTypeQueryService implements
     private final DataTypeDtoMapper dataTypeDtoMapper;
     private final DataTypePort dataTypePort;
 
+    // Use Case 상수 정의
+    private static final String FIND_ALL_DATA_TYPES_USE_CASE = "FindAllDataTypesUseCase";
+    private static final String FIND_DATA_TYPE_USE_CASE = "FindDataTypeUseCase";
+    private static final String VALIDATE_DATA_TYPE_USE_CASE = "ValidateDataTypeUseCase";
+    private static final String GET_DATA_TYPE_LABEL_FROM_ID_USE_CASE = "GetDataTypeLabelFromIdUseCase";
+    private static final String DATA_TYPE_NOT_FOUND_MESSAGE = "해당 데이터 유형이 존재하지 않습니다. dataTypeId=";
+
     /**
      * 모든 데이터 유형 정보를 조회하여 AllDataTypesResponse DTO로 반환한다.
      *
@@ -39,10 +46,10 @@ public class DataTypeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AllDataTypesResponse findAllDataTypes() {
-        Instant startTime = LoggerFactory.service().logStart("FindAllDataTypesUseCase", "모든 데이터 유형 정보 조회 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FIND_ALL_DATA_TYPES_USE_CASE, "모든 데이터 유형 정보 조회 서비스 시작");
         List<DataType> dataTypes = dataTypePort.findAllDataTypes();
         AllDataTypesResponse allDataTypesResponse = dataTypeDtoMapper.toResponseDto(dataTypes);
-        LoggerFactory.service().logSuccess("FindAllDataTypesUseCase", "모든 데이터 유형 정보 조회 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(FIND_ALL_DATA_TYPES_USE_CASE, "모든 데이터 유형 정보 조회 서비스 종료", startTime);
         return allDataTypesResponse;
     }
 
@@ -57,14 +64,14 @@ public class DataTypeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public DataTypeResponse findDataType(Long dataTypeId) {
-        Instant startTime = LoggerFactory.service().logStart("FindDataTypeUseCase", "주어진 ID로 데이터 유형 조회 서비스 시작 dataTypeId=" + dataTypeId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_DATA_TYPE_USE_CASE, "주어진 ID로 데이터 유형 조회 서비스 시작 dataTypeId=" + dataTypeId);
         DataType dataType = dataTypePort.findDataTypeById(dataTypeId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindDataTypeUseCase", "해당 데이터 유형이 존재하지 않습니다. dataTypeId=" + dataTypeId);
+                    LoggerFactory.service().logWarning(FIND_DATA_TYPE_USE_CASE, DATA_TYPE_NOT_FOUND_MESSAGE + dataTypeId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_TYPE);
                 });
         DataTypeResponse dataTypeResponse = dataTypeDtoMapper.toResponseDto(dataType);
-        LoggerFactory.service().logSuccess("FindDataTypeUseCase", "주어진 ID로 데이터 유형 조회 서비스 종료 dataTypeId=" + dataTypeId, startTime);
+        LoggerFactory.service().logSuccess(FIND_DATA_TYPE_USE_CASE, "주어진 ID로 데이터 유형 조회 서비스 종료 dataTypeId=" + dataTypeId, startTime);
         return dataTypeResponse;
     }
 
@@ -78,13 +85,13 @@ public class DataTypeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public void validateDataType(Long dataTypeId) {
-        Instant startTime = LoggerFactory.service().logStart("ValidateDataTypeUseCase", "주어진 ID에 해당하는 데이터 유형이 존재하는지 확인 서비스 시작 dataTypeId=" + dataTypeId);
+        Instant startTime = LoggerFactory.service().logStart(VALIDATE_DATA_TYPE_USE_CASE, "주어진 ID에 해당하는 데이터 유형이 존재하는지 확인 서비스 시작 dataTypeId=" + dataTypeId);
         Boolean isExist = dataTypePort.existsDataTypeById(dataTypeId);
         if (!isExist) {
-            LoggerFactory.service().logWarning("ValidateDataTypeUseCase", "해당 데이터 유형이 존재하지 않습니다. dataTypeId=" + dataTypeId);
+            LoggerFactory.service().logWarning(VALIDATE_DATA_TYPE_USE_CASE, DATA_TYPE_NOT_FOUND_MESSAGE + dataTypeId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_TYPE);
         }
-        LoggerFactory.service().logSuccess("ValidateDataTypeUseCase", "주어진 ID에 해당하는 데이터 유형이 존재하는지 확인 서비스 종료 dataTypeId=" + dataTypeId, startTime);
+        LoggerFactory.service().logSuccess(VALIDATE_DATA_TYPE_USE_CASE, "주어진 ID에 해당하는 데이터 유형이 존재하는지 확인 서비스 종료 dataTypeId=" + dataTypeId, startTime);
     }
 
     /**
@@ -98,13 +105,13 @@ public class DataTypeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long dataTypeId) {
-        Instant startTime = LoggerFactory.service().logStart("GetDataTypeLabelFromIdUseCase", "주어진 데이터 유형 ID에 해당하는 라벨을 조회 서비스 시작 dataTypeId=" + dataTypeId);
+        Instant startTime = LoggerFactory.service().logStart(GET_DATA_TYPE_LABEL_FROM_ID_USE_CASE, "주어진 데이터 유형 ID에 해당하는 라벨을 조회 서비스 시작 dataTypeId=" + dataTypeId);
         String label = dataTypePort.getLabelById(dataTypeId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetDataTypeLabelFromIdUseCase", "해당 데이터 유형이 존재하지 않습니다. dataTypeId=" + dataTypeId);
+                    LoggerFactory.service().logWarning(GET_DATA_TYPE_LABEL_FROM_ID_USE_CASE, DATA_TYPE_NOT_FOUND_MESSAGE + dataTypeId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_TYPE);
                 });
-        LoggerFactory.service().logSuccess("GetDataTypeLabelFromIdUseCase", "주어진 데이터 유형 ID에 해당하는 라벨을 조회 서비스 종료 dataTypeId=" + dataTypeId, startTime);
+        LoggerFactory.service().logSuccess(GET_DATA_TYPE_LABEL_FROM_ID_USE_CASE, "주어진 데이터 유형 ID에 해당하는 라벨을 조회 서비스 종료 dataTypeId=" + dataTypeId, startTime);
         return label;
     }
 
@@ -117,12 +124,12 @@ public class DataTypeQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> dataTypeIds) {
-        Instant startTime = LoggerFactory.service().logStart("GetDataTypeLabelFromIdUseCase", "데이터 유형 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(GET_DATA_TYPE_LABEL_FROM_ID_USE_CASE, "데이터 유형 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
         if (dataTypeIds == null || dataTypeIds.isEmpty()) {
             return Map.of();
         }
         Map<Long, String> labels = dataTypePort.getLabelsByIds(dataTypeIds);
-        LoggerFactory.service().logSuccess("GetDataTypeLabelFromIdUseCase", "데이터 유형 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(GET_DATA_TYPE_LABEL_FROM_ID_USE_CASE, "데이터 유형 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
         return labels;
     }
 }

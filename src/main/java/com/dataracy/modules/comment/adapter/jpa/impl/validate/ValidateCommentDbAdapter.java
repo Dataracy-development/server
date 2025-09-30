@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 public class ValidateCommentDbAdapter implements ValidateCommentPort {
     private final CommentJpaRepository commentJpaRepository;
 
+    // Entity 상수 정의
+    private static final String COMMENT_ENTITY = "CommentEntity";
+
     /**
      * 주어진 댓글 ID로 댓글의 존재 여부를 확인합니다.
      *
@@ -20,7 +23,7 @@ public class ValidateCommentDbAdapter implements ValidateCommentPort {
     @Override
     public boolean existsByCommentId(Long commentId) {
         boolean isExist = commentJpaRepository.existsById(commentId);
-        LoggerFactory.db().logExist("CommentEntity", "댓글 존재 유무 확인이 완료되었습니다. commentId=" + commentId + ", exists=" + isExist);
+        LoggerFactory.db().logExist(COMMENT_ENTITY, "댓글 존재 유무 확인이 완료되었습니다. commentId=" + commentId + ", exists=" + isExist);
         return isExist;
     }
 }

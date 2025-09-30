@@ -21,6 +21,8 @@ public class PopularProjectsRedisAdapter implements PopularProjectsStoragePort {
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
     
+    // Adapter 및 키 상수 정의
+    private static final String POPULAR_PROJECTS_REDIS_ADAPTER = "PopularProjectsRedisAdapter";
     private static final String POPULAR_PROJECTS_KEY = "popular:projects";
     private static final String POPULAR_PROJECTS_METADATA_KEY = "popular:projects:metadata";
     private static final Duration CACHE_TTL = Duration.ofMinutes(10); // 10분 캐시
@@ -92,7 +94,7 @@ public class PopularProjectsRedisAdapter implements PopularProjectsStoragePort {
             String metadata = redisTemplate.opsForValue().get(POPULAR_PROJECTS_METADATA_KEY);
             return metadata != null ? Optional.of(Long.parseLong(metadata)) : Optional.empty();
         } catch (Exception e) {
-            LoggerFactory.redis().logError("PopularProjectsRedisAdapter", "마지막 업데이트 시간 조회 실패", e);
+            LoggerFactory.redis().logError(POPULAR_PROJECTS_REDIS_ADAPTER, "마지막 업데이트 시간 조회 실패", e);
             return Optional.empty();
         }
     }

@@ -17,6 +17,9 @@ public class RedisRateLimitAdapter implements RateLimitPort {
     
     private final StringRedisTemplate redisTemplate;
     
+    // Adapter 상수 정의
+    private static final String REDIS_RATE_LIMIT_ADAPTER = "RedisRateLimitAdapter";
+    
     @Value("${rate-limit.redis.max-requests:10}")
     private int defaultMaxRequests;
     
@@ -41,7 +44,7 @@ public class RedisRateLimitAdapter implements RateLimitPort {
             try {
                 currentCount = Integer.parseInt(countStr);
             } catch (NumberFormatException e) {
-                LoggerFactory.redis().logWarning("RedisRateLimitAdapter", 
+                LoggerFactory.redis().logWarning(REDIS_RATE_LIMIT_ADAPTER, 
                     String.format("Redis에서 잘못된 카운트 값: %s, IP: %s", countStr, key));
             }
         }
@@ -49,10 +52,10 @@ public class RedisRateLimitAdapter implements RateLimitPort {
         boolean allowed = currentCount < maxRequests;
         
         if (allowed) {
-            LoggerFactory.redis().logInfo("RedisRateLimitAdapter", 
+            LoggerFactory.redis().logInfo(REDIS_RATE_LIMIT_ADAPTER, 
                 String.format("요청 허용 - IP: %s, 현재 카운트: %d/%d", key, currentCount, maxRequests));
         } else {
-            LoggerFactory.redis().logWarning("RedisRateLimitAdapter", 
+            LoggerFactory.redis().logWarning(REDIS_RATE_LIMIT_ADAPTER, 
                 String.format("요청 차단 - IP: %s, 현재 카운트: %d/%d", key, currentCount, maxRequests));
         }
         
@@ -76,11 +79,11 @@ public class RedisRateLimitAdapter implements RateLimitPort {
                 redisTemplate.expire(redisKey, defaultWindowMinutes, TimeUnit.MINUTES);
             }
             
-            LoggerFactory.redis().logInfo("RedisRateLimitAdapter", 
+            LoggerFactory.redis().logInfo(REDIS_RATE_LIMIT_ADAPTER, 
                 String.format("요청 카운트 증가 - IP: %s, 현재 카운트: %d", key, count));
                 
         } catch (Exception e) {
-            LoggerFactory.redis().logError("RedisRateLimitAdapter", 
+            LoggerFactory.redis().logError(REDIS_RATE_LIMIT_ADAPTER, 
                 String.format("Redis 카운트 증가 실패 - IP: %s, 에러: %s", key, e.getMessage()), e);
         }
     }

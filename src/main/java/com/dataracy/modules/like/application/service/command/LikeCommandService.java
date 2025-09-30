@@ -24,6 +24,9 @@ public class LikeCommandService implements LikeTargetUseCase {
     private final LikeCommandPort likeCommandPort;
     private final SendLikeEventPort sendLikeEventPort;
 
+    // Use Case 상수 정의
+    private static final String LIKE_TARGET_USE_CASE = "LikeTargetUseCase";
+
     private final ValidateProjectUseCase validateProjectUseCase;
     private final ValidateCommentUseCase validateCommentUseCase;
 
@@ -47,7 +50,7 @@ public class LikeCommandService implements LikeTargetUseCase {
     )
     @Transactional
     public TargetType likeTarget(Long userId, TargetLikeRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("LikeTargetUseCase", requestDto.targetType() + " 좋아요 서비스 시작 targetId=" + requestDto.targetId());
+        Instant startTime = LoggerFactory.service().logStart(LIKE_TARGET_USE_CASE, requestDto.targetType() + " 좋아요 서비스 시작 targetId=" + requestDto.targetId());
         TargetType targetType = TargetType.of(requestDto.targetType());
 
         if (targetType.equals(TargetType.PROJECT)) {
@@ -66,11 +69,11 @@ public class LikeCommandService implements LikeTargetUseCase {
             } catch (Exception e) {
                 switch (targetType) {
                     case PROJECT -> {
-                        LoggerFactory.service().logWarning("LikeTargetUseCase", "프로젝트 좋아요 취소 실패. targetId=" + requestDto.targetId());
+                        LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, "프로젝트 좋아요 취소 실패. targetId=" + requestDto.targetId());
                         throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_PROJECT);
                     }
                     case COMMENT -> {
-                        LoggerFactory.service().logWarning("LikeTargetUseCase", "댓글 좋아요 취소 실패. targetId=" + requestDto.targetId());
+                        LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, "댓글 좋아요 취소 실패. targetId=" + requestDto.targetId());
                         throw new LikeException(LikeErrorStatus.FAIL_UNLIKE_COMMENT);
                     }
                 };
@@ -91,17 +94,17 @@ public class LikeCommandService implements LikeTargetUseCase {
             } catch (Exception e) {
                 switch (targetType) {
                     case PROJECT -> {
-                        LoggerFactory.service().logWarning("LikeTargetUseCase", "프로젝트 좋아요 실패. targetId=" + requestDto.targetId());
+                        LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, "프로젝트 좋아요 실패. targetId=" + requestDto.targetId());
                         throw new LikeException(LikeErrorStatus.FAIL_LIKE_PROJECT);
                     }
                     case COMMENT -> {
-                        LoggerFactory.service().logWarning("LikeTargetUseCase", "댓글 좋아요 실패. targetId=" + requestDto.targetId());
+                        LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, "댓글 좋아요 실패. targetId=" + requestDto.targetId());
                         throw new LikeException(LikeErrorStatus.FAIL_LIKE_COMMENT);
                     }
                 };
             }
         }
-        LoggerFactory.service().logSuccess("LikeTargetUseCase", requestDto.targetType() + " 좋아요 서비스 종료 targetId=" + requestDto.targetId(), startTime);
+        LoggerFactory.service().logSuccess(LIKE_TARGET_USE_CASE, requestDto.targetType() + " 좋아요 서비스 종료 targetId=" + requestDto.targetId(), startTime);
         return targetType;
     }
 }

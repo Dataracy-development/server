@@ -31,6 +31,15 @@ public class TopicQueryService implements
     private final TopicDtoMapper topicDtoMapper;
     private final TopicPort topicPort;
 
+    // Use Case 상수 정의
+    private static final String FIND_ALL_TOPICS_USE_CASE = "FindAllTopicsUseCase";
+    private static final String FIND_TOPIC_USE_CASE = "FindTopicUseCase";
+    private static final String VALIDATE_TOPIC_USE_CASE = "ValidateTopicUseCase";
+    private static final String GET_TOPIC_LABEL_FROM_ID_USE_CASE = "GetTopicLabelFromIdUseCase";
+    
+    // 메시지 상수 정의
+    private static final String TOPIC_NOT_FOUND_MESSAGE = "해당 토픽이 존재하지 않습니다. topicId=";
+
     /**
      * 모든 토픽 정보를 조회하여 AllTopicsResponse DTO로 반환한다.
      *
@@ -39,10 +48,10 @@ public class TopicQueryService implements
     @Override
     @Transactional(readOnly = true)
     public AllTopicsResponse findAllTopics() {
-        Instant startTime = LoggerFactory.service().logStart("FindAllTopicsUseCase", "모든 토픽 정보 조회 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(FIND_ALL_TOPICS_USE_CASE, "모든 토픽 정보 조회 서비스 시작");
         List<Topic> topics = topicPort.findAllTopics();
         AllTopicsResponse allTopicsResponse = topicDtoMapper.toResponseDto(topics);
-        LoggerFactory.service().logSuccess("FindAllTopicsUseCase", "모든 토픽 정보 조회 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(FIND_ALL_TOPICS_USE_CASE, "모든 토픽 정보 조회 서비스 종료", startTime);
         return allTopicsResponse;
     }
 
@@ -56,14 +65,14 @@ public class TopicQueryService implements
     @Override
     @Transactional(readOnly = true)
     public TopicResponse findTopic(Long topicId) {
-        Instant startTime = LoggerFactory.service().logStart("FindTopicUseCase", "주어진 ID로 토픽 조회 서비스 시작 topicId=" + topicId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_TOPIC_USE_CASE, "주어진 ID로 토픽 조회 서비스 시작 topicId=" + topicId);
         Topic topic = topicPort.findTopicById(topicId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("FindTopicUseCase", "해당 토픽이 존재하지 않습니다. topicId=" + topicId);
+                    LoggerFactory.service().logWarning(FIND_TOPIC_USE_CASE, TOPIC_NOT_FOUND_MESSAGE + topicId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
                 });
         TopicResponse topicResponse = topicDtoMapper.toResponseDto(topic);
-        LoggerFactory.service().logSuccess("FindTopicUseCase", "주어진 ID로 토픽 조회 서비스 종료 topicId=" + topicId, startTime);
+        LoggerFactory.service().logSuccess(FIND_TOPIC_USE_CASE, "주어진 ID로 토픽 조회 서비스 종료 topicId=" + topicId, startTime);
         return topicResponse;
     }
 
@@ -77,13 +86,13 @@ public class TopicQueryService implements
     @Override
     @Transactional(readOnly = true)
     public void validateTopic(Long topicId) {
-        Instant startTime = LoggerFactory.service().logStart("ValidateTopicUseCase", "주어진 ID에 해당하는 토픽이 존재하는지 확인 서비스 시작 topicId=" + topicId);
+        Instant startTime = LoggerFactory.service().logStart(VALIDATE_TOPIC_USE_CASE, "주어진 ID에 해당하는 토픽이 존재하는지 확인 서비스 시작 topicId=" + topicId);
         Boolean isExist = topicPort.existsTopicById(topicId);
         if (!isExist) {
-            LoggerFactory.service().logWarning("ValidateTopicUseCase", "해당 토픽이 존재하지 않습니다. topicId=" + topicId);
+            LoggerFactory.service().logWarning(VALIDATE_TOPIC_USE_CASE, TOPIC_NOT_FOUND_MESSAGE + topicId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
         }
-        LoggerFactory.service().logSuccess("ValidateTopicUseCase", "주어진 ID에 해당하는 토픽이 존재하는지 확인 서비스 종료 topicId=" + topicId, startTime);
+        LoggerFactory.service().logSuccess(VALIDATE_TOPIC_USE_CASE, "주어진 ID에 해당하는 토픽이 존재하는지 확인 서비스 종료 topicId=" + topicId, startTime);
     }
 
     /**
@@ -96,13 +105,13 @@ public class TopicQueryService implements
     @Override
     @Transactional(readOnly = true)
     public String getLabelById(Long topicId) {
-        Instant startTime = LoggerFactory.service().logStart("GetTopicLabelFromIdUseCase", "주어진 토픽 ID에 해당하는 라벨을 조회 서비스 시작 topicId=" + topicId);
+        Instant startTime = LoggerFactory.service().logStart(GET_TOPIC_LABEL_FROM_ID_USE_CASE, "주어진 토픽 ID에 해당하는 라벨을 조회 서비스 시작 topicId=" + topicId);
         String label = topicPort.getLabelById(topicId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetTopicLabelFromIdUseCase", "해당 토픽이 존재하지 않습니다. topicId=" + topicId);
+                    LoggerFactory.service().logWarning(GET_TOPIC_LABEL_FROM_ID_USE_CASE, TOPIC_NOT_FOUND_MESSAGE + topicId);
                     return new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
                 });
-        LoggerFactory.service().logSuccess("GetTopicLabelFromIdUseCase", "주어진 토픽 ID에 해당하는 라벨을 조회 서비스 종료 topicId=" + topicId, startTime);
+        LoggerFactory.service().logSuccess(GET_TOPIC_LABEL_FROM_ID_USE_CASE, "주어진 토픽 ID에 해당하는 라벨을 조회 서비스 종료 topicId=" + topicId, startTime);
         return label;
     }
 
@@ -115,12 +124,12 @@ public class TopicQueryService implements
     @Override
     @Transactional(readOnly = true)
     public Map<Long, String> getLabelsByIds(List<Long> topicIds) {
-        Instant startTime = LoggerFactory.service().logStart("GetTopicLabelFromIdUseCase", "토픽 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(GET_TOPIC_LABEL_FROM_ID_USE_CASE, "토픽 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 시작");
         if (topicIds == null || topicIds.isEmpty()) {
             return Map.of();
         }
         Map<Long, String> labels = topicPort.getLabelsByIds(topicIds);
-        LoggerFactory.service().logSuccess("GetTopicLabelFromIdUseCase", "토픽 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(GET_TOPIC_LABEL_FROM_ID_USE_CASE, "토픽 ID 목록에 대해 각 ID에 해당하는 라벨을 반환 서비스 종료", startTime);
         return labels;
     }
 }
