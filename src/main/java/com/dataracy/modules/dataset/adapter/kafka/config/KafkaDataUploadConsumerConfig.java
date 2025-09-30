@@ -74,8 +74,6 @@ public class KafkaDataUploadConsumerConfig {
      *
      * @param dltTemplate DLT 발행용 템플릿(일반적으로 Json KafkaTemplate 주입)
      */
-    // import org.springframework.beans.factory.annotation.Qualifier;
-
     @Bean
     public DefaultErrorHandler dataUploadErrorHandler(
             @Qualifier("dataUploadEventKafkaTemplate")  // ← DataUploadEvent용 KafkaTemplate 빈 이름
@@ -96,8 +94,8 @@ public class KafkaDataUploadConsumerConfig {
                 IllegalArgumentException.class,
                 org.apache.kafka.common.errors.SerializationException.class,
                 org.springframework.kafka.support.serializer.DeserializationException.class
-                // org.springframework.messaging.converter.MessageConversionException.class  // (spring-messaging 쓰면 추가)
         );
+        // 참고: spring-messaging 의존성 추가 시 MessageConversionException도 추가 가능
         return handler;
     }
 
@@ -118,8 +116,7 @@ public class KafkaDataUploadConsumerConfig {
         factory.setCommonErrorHandler(dataUploadErrorHandler);
         factory.setConcurrency(concurrency);
 
-        // (선택) 1건 단위 커밋이 필요하면 RECORD로
-        // factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
+        // 참고: 1건 단위 커밋이 필요하면 setAckMode(ContainerProperties.AckMode.RECORD) 사용 가능
 
         return factory;
     }
