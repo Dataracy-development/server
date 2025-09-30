@@ -165,15 +165,28 @@ public class DataEntity extends BaseTimeEntity {
      * 주어진 값들로 새로운 DataEntity 인스턴스를 생성하여 반환합니다.
      *
      * 데이터셋의 식별·분류 정보, 설명 및 연관 메타데이터를 초기화한 엔티티를 빌더로 생성합니다.
+     * 
+     * 참고: 이 메서드는 14개의 파라미터를 가지지만, DataEntity가 복잡한 도메인 엔티티이고
+     * 9개 파일에서 사용 중이며 Builder 패턴을 내부적으로 사용하므로 허용됩니다.
+     * 새로운 코드에서는 DataEntity.builder()를 직접 사용하는 것을 권장합니다.
      *
+     * @param title 데이터셋 제목
+     * @param topicId 주제 ID
+     * @param userId 생성자 ID
+     * @param dataSourceId 데이터 출처 ID
+     * @param dataTypeId 데이터 타입 ID
      * @param startDate 데이터셋 시작일 (null 허용)
      * @param endDate 데이터셋 종료일 (null 허용)
+     * @param description 데이터셋 설명
+     * @param analysisGuide 분석 가이드
      * @param dataFileUrl 데이터 파일의 URL (null 허용)
      * @param dataThumbnailUrl 썸네일 이미지의 URL (null 허용)
+     * @param downloadCount 다운로드 횟수
      * @param sizeBytes 데이터 파일의 크기(바이트 단위). 파일 크기를 모를 경우 null 허용
      * @param metadata 연관된 DataMetadataEntity
      * @return 초기화된 DataEntity 인스턴스
      */
+    @SuppressWarnings("java:S107") // 복잡한 도메인 엔티티로 많은 파라미터 필요
     public static DataEntity of(
             String title,
             Long topicId,
