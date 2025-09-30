@@ -13,6 +13,7 @@ import com.dataracy.modules.reference.application.port.in.visitsource.ValidateVi
 import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
 import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -72,6 +73,12 @@ class UserCommandServiceTest {
 
     @Captor
     private ArgumentCaptor<String> stringCaptor;
+
+    @BeforeEach
+    void setUp() {
+        // Self-injection 설정 (Spring AOP 프록시를 통한 @DistributedLock 작동을 위함)
+        service.setSelf(service);
+    }
 
     @Nested
     @DisplayName("modifyUserInfo")

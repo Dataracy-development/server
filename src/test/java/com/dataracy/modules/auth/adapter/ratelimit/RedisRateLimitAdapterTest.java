@@ -58,14 +58,15 @@ class RedisRateLimitAdapterTest {
             int maxRequests = 5;
             int windowMinutes = 1;
             String redisKey = "rate_limit:" + key;
-            given(valueOperations.get(redisKey)).willReturn("3");
+            given(valueOperations.increment(redisKey, 1)).willReturn(3L);
 
             // when
             boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
 
             // then
             assertThat(result).isTrue();
-            then(valueOperations).should().get(redisKey);
+            then(valueOperations).should().increment(redisKey, 1);
+            then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
         }
 
         @Test
@@ -76,14 +77,15 @@ class RedisRateLimitAdapterTest {
             int maxRequests = 5;
             int windowMinutes = 1;
             String redisKey = "rate_limit:" + key;
-            given(valueOperations.get(redisKey)).willReturn("5");
+            given(valueOperations.increment(redisKey, 1)).willReturn(5L);
 
             // when
             boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
 
             // then
-            assertThat(result).isFalse();
-            then(valueOperations).should().get(redisKey);
+            assertThat(result).isTrue();
+            then(valueOperations).should().increment(redisKey, 1);
+            then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
         }
 
         @Test
@@ -94,14 +96,15 @@ class RedisRateLimitAdapterTest {
             int maxRequests = 5;
             int windowMinutes = 1;
             String redisKey = "rate_limit:" + key;
-            given(valueOperations.get(redisKey)).willReturn("7");
+            given(valueOperations.increment(redisKey, 1)).willReturn(6L);
 
             // when
             boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
 
             // then
             assertThat(result).isFalse();
-            then(valueOperations).should().get(redisKey);
+            then(valueOperations).should().increment(redisKey, 1);
+            then(redisTemplate).should(never()).expire(anyString(), anyLong(), any(TimeUnit.class));
         }
 
         @Test
@@ -117,7 +120,7 @@ class RedisRateLimitAdapterTest {
 
             // then
             assertThat(result).isTrue();
-            then(valueOperations).should(never()).get(anyString());
+            then(valueOperations).should(never()).increment(anyString(), anyLong());
         }
 
         @Test
@@ -133,7 +136,7 @@ class RedisRateLimitAdapterTest {
 
             // then
             assertThat(result).isTrue();
-            then(valueOperations).should(never()).get(anyString());
+            then(valueOperations).should(never()).increment(anyString(), anyLong());
         }
 
         @Test
@@ -149,43 +152,44 @@ class RedisRateLimitAdapterTest {
 
             // then
             assertThat(result).isTrue();
-            then(valueOperations).should(never()).get(anyString());
+            then(valueOperations).should(never()).increment(anyString(), anyLong());
         }
 
         @Test
-        @DisplayName("Redis에서 null 반환 시 첫 요청으로 처리하여 허용")
-        void isAllowed_Redis에서null반환_true반환() {
+        @DisplayName("Redis에서 null 반환 시 안전을 위해 차단")
+        void isAllowed_Redis에서null반환_false반환() {
             // given
             String key = "192.168.1.1";
             int maxRequests = 5;
             int windowMinutes = 1;
             String redisKey = "rate_limit:" + key;
-            given(valueOperations.get(redisKey)).willReturn(null);
+            given(valueOperations.increment(redisKey, 1)).willReturn(null);
+
+            // when
+            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
+
+            // then
+            assertThat(result).isFalse();
+            then(valueOperations).should().increment(redisKey, 1);
+        }
+
+        @Test
+        @DisplayName("첫 번째 요청일 때 TTL 설정")
+        void isAllowed_첫요청일때_TTL설정() {
+            // given
+            String key = "192.168.1.1";
+            int maxRequests = 5;
+            int windowMinutes = 1;
+            String redisKey = "rate_limit:" + key;
+            given(valueOperations.increment(redisKey, 1)).willReturn(1L);
 
             // when
             boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
 
             // then
             assertThat(result).isTrue();
-            then(valueOperations).should().get(redisKey);
-        }
-
-        @Test
-        @DisplayName("Redis에서 잘못된 형식 반환 시 첫 요청으로 처리하여 허용")
-        void isAllowed_Redis에서잘못된형식반환_true반환() {
-            // given
-            String key = "192.168.1.1";
-            int maxRequests = 5;
-            int windowMinutes = 1;
-            String redisKey = "rate_limit:" + key;
-            given(valueOperations.get(redisKey)).willReturn("invalid-number");
-
-            // when
-            boolean result = adapter.isAllowed(key, maxRequests, windowMinutes);
-
-            // then
-            assertThat(result).isTrue();
-            then(valueOperations).should().get(redisKey);
+            then(valueOperations).should().increment(redisKey, 1);
+            then(redisTemplate).should().expire(redisKey, windowMinutes, TimeUnit.MINUTES);
         }
     }
 

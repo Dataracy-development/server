@@ -113,10 +113,10 @@ class UserProjectReadServiceTest {
             then(getAuthorLevelLabelFromIdUseCase).should().getLabelsByIds(List.of(2L, 4L));
 
             // 로깅 검증
-            then(loggerService).should().logStart(eq("FindUserProjects"),
-                    contains("해당 회원이 작성한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
-            then(loggerService).should().logSuccess(eq("FindUserProjects"),
-                    contains("해당 회원이 작성한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
+            then(loggerService).should().logStart(eq("FindUserProjectsUseCase"),
+                    eq("해당 회원이 작성한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
+            then(loggerService).should().logSuccess(eq("FindUserProjectsUseCase"),
+                    eq("해당 회원이 작성한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
         }
 
         @Test
@@ -140,10 +140,10 @@ class UserProjectReadServiceTest {
             assertThat(result.getTotalElements()).isEqualTo(0);
 
             // 로깅 검증
-            then(loggerService).should().logStart(eq("FindUserProjects"),
-                    contains("해당 회원이 작성한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
-            then(loggerService).should().logSuccess(eq("FindUserProjects"),
-                    contains("해당 회원이 작성한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
+            then(loggerService).should().logStart(eq("FindUserProjectsUseCase"),
+                    eq("해당 회원이 작성한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
+            then(loggerService).should().logSuccess(eq("FindUserProjectsUseCase"),
+                    eq("해당 회원이 작성한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
         }
     }
 
@@ -190,10 +190,10 @@ class UserProjectReadServiceTest {
             then(getAuthorLevelLabelFromIdUseCase).should().getLabelsByIds(List.of(6L, 8L));
 
             // 로깅 검증
-            then(loggerService).should().logStart(eq("FindLikeProjects"),
-                    contains("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
-            then(loggerService).should().logSuccess(eq("FindLikeProjects"),
-                    contains("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
+            then(loggerService).should().logStart(eq("FindLikeProjectsUseCase"),
+                    eq("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
+            then(loggerService).should().logSuccess(eq("FindLikeProjectsUseCase"),
+                    eq("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
         }
 
         @Test
@@ -217,10 +217,10 @@ class UserProjectReadServiceTest {
             assertThat(result.getTotalElements()).isEqualTo(0);
 
             // 로깅 검증
-            then(loggerService).should().logStart(eq("FindLikeProjects"),
-                    contains("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
-            then(loggerService).should().logSuccess(eq("FindLikeProjects"),
-                    contains("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
+            then(loggerService).should().logStart(eq("FindLikeProjectsUseCase"),
+                    eq("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 시작 userId=" + userId));
+            then(loggerService).should().logSuccess(eq("FindLikeProjectsUseCase"),
+                    eq("해당 회원이 좋아요한 프로젝트 목록 조회 서비스 종료 userId=" + userId), any(Instant.class));
         }
     }
 
