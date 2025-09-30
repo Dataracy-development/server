@@ -24,7 +24,7 @@ public class LikeQueryDslAdapter implements
     // Entity 상수 정의
     private static final String LIKE_ENTITY = "LikeEntity";
 
-    private final QLikeEntity like = QLikeEntity.likeEntity;
+    private static final QLikeEntity like = QLikeEntity.likeEntity;
 
     /**
      * 사용자가 특정 타겟(타입 및 ID)에 대해 좋아요를 눌렀는지 여부를 확인합니다.

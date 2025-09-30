@@ -46,9 +46,9 @@ public class ReadDataQueryDslAdapter implements
     // Entity 상수 정의
     private static final String DATA_ENTITY = "DataEntity";
 
-    private final QDataEntity data = QDataEntity.dataEntity;
-    private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
-    private final QTopicEntity topic = QTopicEntity.topicEntity;
+    private static final QDataEntity data = QDataEntity.dataEntity;
+    private static final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
+    private static final QTopicEntity topic = QTopicEntity.topicEntity;
 
     /**
      * 주어진 데이터 ID로 삭제되지 않은 데이터셋을 조회하여 반환합니다.

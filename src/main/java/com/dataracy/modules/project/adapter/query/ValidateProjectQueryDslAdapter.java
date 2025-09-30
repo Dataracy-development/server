@@ -25,8 +25,8 @@ public class ValidateProjectQueryDslAdapter implements
     private static final String PROJECT_NOT_FOUND_MESSAGE = "해당 프로젝트가 존재하지 않습니다. projectId=";
     private static final String PROJECT_DATA_NOT_FOUND_MESSAGE = "해당 프로젝트 데이터가 존재하지 않습니다. projectDataId=";
 
-    private final QProjectEntity project = QProjectEntity.projectEntity;
-    private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
+    private static final QProjectEntity project = QProjectEntity.projectEntity;
+    private static final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
     /**
      * 주어진 프로젝트 ID를 부모로 하는 삭제되지 않은 자식 프로젝트가 존재하는지 확인합니다.

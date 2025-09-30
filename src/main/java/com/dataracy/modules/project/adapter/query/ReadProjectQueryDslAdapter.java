@@ -47,9 +47,9 @@ public class ReadProjectQueryDslAdapter implements
     private static final String PROJECT_ENTITY = "ProjectEntity";
     private static final String PROJECT_NOT_FOUND_MESSAGE = "해당하는 프로젝트 리소스가 존재하지 않습니다. projectId=";
 
-    private final QProjectEntity project = QProjectEntity.projectEntity;
-    private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
-    private final QLikeEntity like = QLikeEntity.likeEntity;
+    private static final QProjectEntity project = QProjectEntity.projectEntity;
+    private static final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
+    private static final QLikeEntity like = QLikeEntity.likeEntity;
 
     /**
      * 주어진 ID에 해당하며 삭제되지 않은 프로젝트를 최소 정보로 조회하여 반환합니다.

@@ -37,8 +37,8 @@ public class SearchDataQueryDslAdapter implements
     // Entity 상수 정의
     private static final String DATA_ENTITY = "DataEntity";
 
-    private final QDataEntity data = QDataEntity.dataEntity;
-    private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
+    private static final QDataEntity data = QDataEntity.dataEntity;
+    private static final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
     /**
      * 필터 조건과 정렬 기준에 따라 데이터셋 목록을 페이지 단위로 조회합니다.

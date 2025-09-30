@@ -35,7 +35,7 @@ public class SearchProjectQueryDslAdapter implements
     // Entity 상수 정의
     private static final String PROJECT_ENTITY = "ProjectEntity";
 
-    private final QProjectEntity project = QProjectEntity.projectEntity;
+    private static final QProjectEntity project = QProjectEntity.projectEntity;
 
     /**
      * 필터·정렬·페이징 조건에 따라 프로젝트를 조회하여 Page로 반환합니다.

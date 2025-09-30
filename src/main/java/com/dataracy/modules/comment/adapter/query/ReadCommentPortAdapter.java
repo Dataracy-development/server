@@ -31,7 +31,7 @@ public class ReadCommentPortAdapter implements ReadCommentPort {
     // Entity 상수 정의
     private static final String COMMENT_ENTITY = "CommentEntity";
 
-    private final QCommentEntity comment = QCommentEntity.commentEntity;
+    private static final QCommentEntity comment = QCommentEntity.commentEntity;
 
     /**
      * 주어진 ID로 댓글을 조회하여 도메인 모델로 반환합니다.
