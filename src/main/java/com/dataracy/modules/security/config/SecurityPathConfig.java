@@ -73,7 +73,7 @@ public class SecurityPathConfig {
      */
     public boolean isPublicProjectPath(String path) {
         return publicProjectPaths.stream().anyMatch(path::startsWith) &&
-               !authenticatedProjectPaths.stream().anyMatch(path::startsWith);
+               authenticatedProjectPaths.stream().noneMatch(path::startsWith);
     }
     
     /**
@@ -81,6 +81,6 @@ public class SecurityPathConfig {
      */
     public boolean isPublicDatasetPath(String path) {
         return publicDatasetPaths.stream().anyMatch(path::startsWith) &&
-               !authenticatedDatasetPaths.stream().anyMatch(path::startsWith);
+               authenticatedDatasetPaths.stream().noneMatch(path::startsWith);
     }
 }

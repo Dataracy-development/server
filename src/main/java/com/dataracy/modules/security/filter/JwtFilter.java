@@ -78,18 +78,11 @@ public class JwtFilter extends OncePerRequestFilter {
         String method = request.getMethod();
 
         // 1. 기본 예외 경로 확인
-        if (securityPathConfig.isJwtExcludedPath(path)) {
-            return true;
-        }
-
         // 2. GET 메서드의 공개 API 확인
-        if ("GET".equals(method) && 
-            (securityPathConfig.isPublicProjectPath(path) || 
-             securityPathConfig.isPublicDatasetPath(path))) {
-            return true;
-        }
-
-        return false; // 나머지는 JWT 필터 적용
+        return securityPathConfig.isJwtExcludedPath(path) ||
+               ("GET".equals(method) && 
+                (securityPathConfig.isPublicProjectPath(path) || 
+                 securityPathConfig.isPublicDatasetPath(path)));
     }
 
 
