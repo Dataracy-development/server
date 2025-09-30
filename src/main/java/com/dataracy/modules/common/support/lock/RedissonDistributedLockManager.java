@@ -54,9 +54,10 @@ public class RedissonDistributedLockManager {
         int attempts = 0;
 
         while (attempts <= retryCount) {
+            boolean acquired = false;
             try {
                 LoggerFactory.lock().logTry(key, attempts);
-                boolean acquired = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
+                acquired = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
                 LoggerFactory.lock().logInfo("tryLock 결과 - key={} acquired={}", key, acquired);
 
                 if (acquired) {
@@ -68,12 +69,24 @@ public class RedissonDistributedLockManager {
                 performBackoff(attempts);
 
             } catch (InterruptedException e) {
+                if (acquired) {
+                    releaseLock(key, lock);
+                }
                 handleInterruptedException(key, e);
             } catch (BusinessException | CommonException e) {
+                if (acquired) {
+                    releaseLock(key, lock);
+                }
                 handleBusinessOrCommonException(key, e);
             } catch (RuntimeException e) {
+                if (acquired) {
+                    releaseLock(key, lock);
+                }
                 handleRuntimeException(key, e);
             } catch (Exception e) {
+                if (acquired) {
+                    releaseLock(key, lock);
+                }
                 handleGeneralException(key, e);
             }
         }
