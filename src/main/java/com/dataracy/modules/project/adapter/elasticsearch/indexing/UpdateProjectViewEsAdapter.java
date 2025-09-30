@@ -17,6 +17,14 @@ import java.util.Map;
 public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
     private final ElasticsearchClient client;
     private static final String INDEX = "project_index";
+    
+    private static final String INCREASE_VIEW_COUNT_SCRIPT = """
+            if (ctx._source.viewCount == null) {
+                ctx._source.viewCount = params.count;
+            } else {
+                ctx._source.viewCount += params.count;
+            }
+            """;
 
     /**
      * 지정된 프로젝트의 Elasticsearch 문서에서 viewCount 필드를 주어진 값만큼 증가시킵니다.
@@ -35,13 +43,7 @@ public class UpdateProjectViewEsAdapter implements UpdateProjectViewPort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("""
-                                                if (ctx._source.viewCount == null) {
-                                                    ctx._source.viewCount = params.count;
-                                                } else {
-                                                    ctx._source.viewCount += params.count;
-                                                }
-                                            """)
+                                            .source(INCREASE_VIEW_COUNT_SCRIPT)
                                             .params("count", JsonData.of(increment))
                                     )
                             )

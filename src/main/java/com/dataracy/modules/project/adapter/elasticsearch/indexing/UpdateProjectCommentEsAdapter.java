@@ -15,6 +15,22 @@ import java.io.IOException;
 public class UpdateProjectCommentEsAdapter implements UpdateProjectCommentPort {
     private final ElasticsearchClient client;
     private static final String INDEX = "project_index";
+    
+    private static final String INCREASE_COMMENT_COUNT_SCRIPT = """
+            if (ctx._source.commentCount == null) {
+                ctx._source.commentCount = 1;
+            } else {
+                ctx._source.commentCount += 1;
+            }
+            """;
+    
+    private static final String DECREASE_COMMENT_COUNT_SCRIPT = """
+            if (ctx._source.commentCount != null && ctx._source.commentCount > 0) {
+                ctx._source.commentCount -= 1;
+            } else {
+                ctx._source.commentCount = 0;
+            }
+            """;
 
     /**
      * 지정된 프로젝트의 Elasticsearch 문서에서 commentCount 필드를 1 증가시킵니다.
@@ -32,13 +48,7 @@ public class UpdateProjectCommentEsAdapter implements UpdateProjectCommentPort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("""
-                                                    if (ctx._source.commentCount == null) {
-                                                        ctx._source.commentCount = 1;
-                                                    } else {
-                                                        ctx._source.commentCount += 1;
-                                                    }
-                                                    """)
+                                            .source(INCREASE_COMMENT_COUNT_SCRIPT)
                                     )
                             )
                             .upsert(ProjectSearchDocument.builder()
@@ -71,13 +81,7 @@ public class UpdateProjectCommentEsAdapter implements UpdateProjectCommentPort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("""
-                                            if (ctx._source.commentCount != null && ctx._source.commentCount > 0) {
-                                                ctx._source.commentCount -= 1;
-                                            } else {
-                                                ctx._source.commentCount = 0;
-                                            }
-                                            """)
+                                            .source(DECREASE_COMMENT_COUNT_SCRIPT)
                                     )
                             )
                             .upsert(ProjectSearchDocument.builder()

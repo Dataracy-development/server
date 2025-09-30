@@ -15,6 +15,22 @@ import java.io.IOException;
 public class UpdateProjectLikeEsAdapter implements UpdateProjectLikePort {
     private final ElasticsearchClient client;
     private static final String INDEX = "project_index";
+    
+    private static final String INCREASE_LIKE_COUNT_SCRIPT = """
+            if (ctx._source.likeCount == null) {
+                ctx._source.likeCount = 1;
+            } else {
+                ctx._source.likeCount += 1;
+            }
+            """;
+    
+    private static final String DECREASE_LIKE_COUNT_SCRIPT = """
+            if (ctx._source.likeCount != null && ctx._source.likeCount > 0) {
+                ctx._source.likeCount -= 1;
+            } else {
+                ctx._source.likeCount = 0;
+            }
+            """;
 
     /**
      * 지정된 프로젝트의 Elasticsearch 문서에서 likeCount 필드를 1 증가시킵니다.
@@ -30,13 +46,7 @@ public class UpdateProjectLikeEsAdapter implements UpdateProjectLikePort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("""
-                                                    if (ctx._source.likeCount == null) {
-                                                        ctx._source.likeCount = 1;
-                                                    } else {
-                                                        ctx._source.likeCount += 1;
-                                                    }
-                                                    """)
+                                            .source(INCREASE_LIKE_COUNT_SCRIPT)
                                     )
                             )
                             .upsert(ProjectSearchDocument.builder()
@@ -69,13 +79,7 @@ public class UpdateProjectLikeEsAdapter implements UpdateProjectLikePort {
                             .script(s -> s
                                     .inline(i -> i
                                             .lang("painless")
-                                            .source("""
-                                            if (ctx._source.likeCount != null && ctx._source.likeCount > 0) {
-                                                ctx._source.likeCount -= 1;
-                                            } else {
-                                                ctx._source.likeCount = 0;
-                                            }
-                                            """)
+                                            .source(DECREASE_LIKE_COUNT_SCRIPT)
                                     )
                             )
                             .upsert(ProjectSearchDocument.builder()
