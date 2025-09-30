@@ -1,6 +1,8 @@
 package com.dataracy.modules.filestorage.adapter.thumbnail;
 
+import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +38,7 @@ public class ThumbnailGenerator {
             return os;
         } catch (IOException e) {
             LoggerFactory.common().logError("썸네일 생성 실패", "썸네일 생성 중 에러가 발생하였습니다.");
-            throw new RuntimeException("썸네일 생성 실패", e);
+            throw new CommonException(CommonErrorStatus.THUMBNAIL_GENERATION_FAILURE);
         }
     }
 }

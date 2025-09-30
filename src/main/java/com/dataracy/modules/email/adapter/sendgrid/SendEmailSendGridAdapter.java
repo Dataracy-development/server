@@ -1,6 +1,8 @@
 package com.dataracy.modules.email.adapter.sendgrid;
 
+import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.email.application.port.out.command.SendEmailPort;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
@@ -63,12 +65,12 @@ public class SendEmailSendGridAdapter implements SendEmailPort {
 
             if (response.getStatusCode() >= 400) {
                 LoggerFactory.common().logError("이메일 전송 실패", "status:" + response.getStatusCode() + ", body:" + response.getBody());
-                throw new RuntimeException("SendGrid 전송 실패 - status: " + response.getStatusCode());
+                throw new CommonException(CommonErrorStatus.EMAIL_SEND_FAILURE);
             }
             LoggerFactory.common().logEnd("이메일 전송 시도 완료", "to=" + to + ", subject=" + subject + ",content=" + content);
         } catch (IOException e) {
             LoggerFactory.common().logError("SendGrid", "SendGrid 전송 중 IOException 발생");
-            throw new RuntimeException("SendGrid 전송 중 IOException 발생", e);
+            throw new CommonException(CommonErrorStatus.EMAIL_SEND_FAILURE);
         }
     }
 

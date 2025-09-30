@@ -1,5 +1,7 @@
 package com.dataracy.modules.email.adapter.sendgrid;
 
+import com.dataracy.modules.common.exception.CommonException;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -61,7 +63,7 @@ class SendEmailSendGridAdapterTest {
         }
 
         @Test
-        @DisplayName("실패: 202가 아닌 상태코드면 RuntimeException 발생")
+        @DisplayName("실패: 202가 아닌 상태코드면 CommonException 발생")
         void failNon202() throws Exception {
             // given
             Response fail = new Response();
@@ -69,35 +71,34 @@ class SendEmailSendGridAdapterTest {
             given(client.api(any(Request.class))).willReturn(fail);
 
             // when
-            RuntimeException ex = catchThrowableOfType(
+            CommonException ex = catchThrowableOfType(
                     () -> adapter.send("to@example.com", "title", "body"),
-                    RuntimeException.class
+                    CommonException.class
             );
 
             // then
             assertThat(ex)
-                    .isNotNull()
-                    .hasMessageContaining("500");
+                    .isNotNull();
+            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.EMAIL_SEND_FAILURE);
         }
 
         @Test
-        @DisplayName("실패: IOException 발생 시 RuntimeException으로 래핑된다")
+        @DisplayName("실패: IOException 발생 시 CommonException으로 래핑된다")
         void ioException() throws Exception {
             // given
             willAnswer(inv -> { throw new IOException("io"); })
                     .given(client).api(any(Request.class));
 
             // when
-            RuntimeException ex = catchThrowableOfType(
+            CommonException ex = catchThrowableOfType(
                     () -> adapter.send("to@example.com", "title", "body"),
-                    RuntimeException.class
+                    CommonException.class
             );
 
             // then
             assertThat(ex)
-                    .isNotNull()
-                    .hasCauseInstanceOf(IOException.class)
-                    .hasMessageContaining("io");
+                    .isNotNull();
+            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.EMAIL_SEND_FAILURE);
         }
     }
 

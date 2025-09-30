@@ -4,7 +4,9 @@ import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.auth.application.port.in.token.ManageRefreshTokenUseCase;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
+import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
@@ -268,7 +270,7 @@ public class UserCommandService implements
                 userCommandPort.updateProfileImageFile(userId, profileImageFileUrl);
             } catch (Exception e) {
                 LoggerFactory.service().logException(useCase, "유저 프로필 이미지 파일 업로드 실패. fileName=" + profileImageFile.getOriginalFilename(), e);
-                throw new RuntimeException("유저 프로필 이미지 파일 업로드 실패", e);
+                throw new CommonException(CommonErrorStatus.FILE_UPLOAD_FAILURE);
             }
         }
     }

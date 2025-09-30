@@ -44,6 +44,13 @@ public enum CommonErrorStatus implements BaseErrorCode {
 
     // Distributed Lock Errors
     DISTRIBUTED_LOCK_EXECUTION_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "LOCK-001", "분산 락 실행 중 오류가 발생했습니다."),
+
+    // File Upload Errors
+    FILE_UPLOAD_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "FILE-005", "파일 업로드에 실패했습니다."),
+    THUMBNAIL_GENERATION_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "FILE-006", "썸네일 생성에 실패했습니다."),
+
+    // Email Errors
+    EMAIL_SEND_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL-001", "이메일 전송에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;

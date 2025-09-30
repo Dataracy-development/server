@@ -1,6 +1,8 @@
 package com.dataracy.modules.project.application.service.command;
 
+import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.dataset.application.port.in.validate.ValidateDataUseCase;
 import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
@@ -232,7 +234,7 @@ public class ProjectCommandService implements
                 updateProjectFilePort.updateThumbnailFile(projectId, fileUrl);
             } catch (Exception e) {
                 LoggerFactory.service().logException(UPLOAD_PROJECT_REQUEST_USE_CASE, "프로젝트 파일 업로드 실패. projectId=" + projectId, e);
-                throw new RuntimeException("파일 업로드 실패", e);
+                throw new CommonException(CommonErrorStatus.FILE_UPLOAD_FAILURE);
             }
         }
     }

@@ -1,6 +1,8 @@
 package com.dataracy.modules.dataset.application.service.command;
 
+import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
@@ -225,7 +227,7 @@ public class DataCommandService implements
                 updateDataFilePort.updateDataFile(dataId, dataFileUrl, dataFile.getSize());
             } catch (Exception e) {
                 LoggerFactory.service().logException(useCase, "데이터셋 파일 업로드 실패. fileName=" + dataFile.getOriginalFilename(), e);
-                throw new RuntimeException("데이터셋 파일 업로드 실패", e);
+                throw new CommonException(CommonErrorStatus.FILE_UPLOAD_FAILURE);
             }
         }
     }
@@ -247,7 +249,7 @@ public class DataCommandService implements
                 updateThumbnailFilePort.updateThumbnailFile(dataId, thumbnailFileUrl);
             } catch (Exception e) {
                 LoggerFactory.service().logException(useCase, "데이터셋 썸네일 파일 업로드 실패. fileName=" + thumbnailFile.getOriginalFilename(), e);
-                throw new RuntimeException("썸네일 파일 업로드 실패", e); // rollback 유도
+                throw new CommonException(CommonErrorStatus.FILE_UPLOAD_FAILURE); // rollback 유도
             }
         }
     }
