@@ -13,7 +13,7 @@ import lombok.Getter;
  */
 @Getter
 public abstract class BusinessException extends CustomException {
-    public BusinessException(BaseErrorCode errorCode){
+    protected BusinessException(BaseErrorCode errorCode){
         super(errorCode);
     }
 }
