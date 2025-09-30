@@ -1264,27 +1264,176 @@ User
 
 ---
 
-## 🧪 19. 테스트 & 품질 (k6)
+## 🧪 19. 테스트 전략 & 코드 품질
 
-### 🎯 목표
+### 📊 테스트 구조
 
-- 로그인, 검색, 조회, 좋아요, 댓글 등 **핵심 API**의 지연,에러율을 수치 관리
-- 배포 전/후 **성능 회귀** 조기 감지
+| 테스트 유형     | 도구                            | 목적                      |
+| --------------- | ------------------------------- | ------------------------- |
+| **단위 테스트** | JUnit 5, Mockito, AssertJ       | 비즈니스 로직 검증        |
+| **웹 테스트**   | @WebMvcTest, MockMvc            | API 엔드포인트 검증       |
+| **통합 테스트** | @SpringBootTest, @Transactional | 데이터베이스 연동 검증    |
+| **성능 테스트** | k6, 시나리오별 부하 테스트      | 성능 회귀 감지, 보안 검증 |
 
-### 🛠 전략
+### 🏗️ 테스트 구현 패턴
 
-- 시나리오 기반 부하 (연결/피크/소진)로 현실 트래픽 근사
-- Threshold 설정 (p95/p99, 실패율, TPS) → 자동 합/불판단
-- 결과를 모니터링 지표와 같은 축으로 비교 → 원인 파악 단순화
+#### **1. 단위 테스트 (Service Layer)**
 
-### 📌 활용
+**특징**: `@ExtendWith(MockitoExtension.class)`, `@MockitoSettings(strictness = Strictness.LENIENT)`, `@Nested` 클래스 사용
 
-- 캐시 적중률, 락 충돌, 색인 지연 등 **병목 가설** 검증
-- 실험 결과를 근거로 운영 튜닝 (캐시 TTL, 정렬 전략, 파티션 전략)
+```java
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+class DataCommandServiceTest {
+    @InjectMocks private DataCommandService service;
+    @Mock private CreateDataPort createDataPort;
 
-### ✅ 효과
+    @Nested
+    @DisplayName("uploadData 메서드 테스트")
+    class UploadDataTest {
+        @Test
+        @DisplayName("데이터 업로드 성공")
+        void uploadDataSuccess() {
+            // given-when-then 패턴
+        }
+    }
+}
+```
 
-- 기능 테스트를 넘어 **성능 SLO**를 수치로 관리
+#### **2. 웹 테스트 (Controller Layer)**
+
+**특징**: `@WebMvcTest`, `@MockBean`, `MockMvc` 사용
+
+```java
+@WebMvcTest(controllers = TopicController.class)
+class TopicControllerTest {
+    @Autowired private MockMvc mockMvc;
+    @MockBean private FindAllTopicsUseCase findAllTopicsUseCase;
+
+    @Test
+    @DisplayName("findAllTopics API: 성공 - 200 OK와 JSON 응답 검증")
+    void findAllTopicsSuccess() throws Exception {
+        mockMvc.perform(get("/api/v1/references/topics"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.topics[0].id").value(1));
+    }
+}
+```
+
+#### **3. 통합 테스트 (Database Integration)**
+
+**특징**: `@SpringBootTest`, `@ActiveProfiles("test")`, `@Transactional` 사용
+
+```java
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
+class LikeServiceIntegrationTest {
+    @Autowired private LikeTargetUseCase likeTargetUseCase;
+    @Autowired private UserJpaRepository userJpaRepository;
+
+    @Test
+    @DisplayName("프로젝트 좋아요 → 데이터베이스에 저장되고 조회 가능")
+    void likeProject_ShouldBeSavedAndRetrievable() {
+        // 실제 데이터베이스 연동 테스트
+    }
+}
+```
+
+#### **4. 성능 테스트 (Performance Testing)**
+
+**특징**: k6 기반, 시나리오별 부하 테스트, 실무 트러블슈팅 스토리
+
+**구현 방식**:
+
+- **k6 스크립트**: JavaScript로 작성된 부하 테스트
+- **시나리오별 테스트**: Smoke, Load, Stress, Spike, Capacity
+- **API별 성능 기준**: 로그인(빠른 응답), 파일업로드(처리량), 캐시조회(초고속)
+- **보안 테스트**: 레이트 리미팅, 무차별 대입 공격 시뮬레이션
+
+**주요 테스트 대상**:
+
+- **인증**: 로그인 성능, 레이트 리미팅 효과 검증
+- **프로젝트**: 인기 조회, 캐시 성능, 조회수 동기화
+- **데이터셋**: 파일 업로드, 필터링, 대용량 처리
+- **댓글**: N+1 쿼리 최적화, 대용량 댓글 조회
+
+**실행 예시**:
+
+```bash
+# 로그인 성능 테스트
+k6 run --env SCENARIO=load performance-test/auth/scenarios/login.test.js
+
+# 인기 프로젝트 조회 (캐시 효과 검증)
+k6 run --env SCENARIO=stress performance-test/project/scenarios/project-popular-read.test.js
+
+# 보안 테스트 (레이트 리미팅)
+k6 run --env SCENARIO=stress performance-test/auth/scenarios/login-abuse-with-rate-limit.test.js
+```
+
+### 🛠️ 테스트 데이터 관리
+
+**TestDataBuilder 패턴**으로 일관된 테스트 데이터 생성:
+
+```java
+// 도메인 모델 생성
+User user = TestDataBuilder.user()
+    .email("test@example.com")
+    .nickname("테스트유저")
+    .role(RoleType.ROLE_USER)
+    .build();
+
+// JPA 엔티티 생성 (통합 테스트용)
+UserEntity userEntity = TestDataBuilder.userEntity()
+    .email(TestDataBuilder.RandomData.randomEmail())
+    .nickname(TestDataBuilder.RandomData.randomNickname())
+    .build();
+```
+
+### 📋 테스트 명명 규칙
+
+- **클래스**: `{ClassName}Test`, `{ClassName}IntegrationTest`
+- **메서드**: `{methodName}_{상황}_{예상결과}` 패턴
+- **@DisplayName**: 한국어로 명확한 의도 표현
+- **@Nested**: 관련 테스트 그룹화
+
+### 🎯 코드 품질 관리
+
+#### **JaCoCo 커버리지**
+
+- **현재 커버리지**: 81.7% (8.5k 라인)
+- **목표 커버리지**: 80% 이상 유지
+- **자동 검증**: `jacocoTestCoverageVerification`으로 최소 80% 강제
+
+#### **SonarQube 분석**
+
+- **정적 코드 분석**: 코드 냄새, 보안 취약점, 중복 코드 검출
+- **품질 게이트**: 신뢰성, 유지보수성, 보안 등급 관리
+- **자동 분석**: `./gradlew sonar` 명령어로 실행
+
+### 🔧 테스트 실행
+
+```bash
+# 전체 테스트 실행
+./gradlew test
+
+# 커버리지 리포트 생성
+./gradlew jacocoTestReport
+
+# SonarQube 분석 실행
+./gradlew sonar
+
+# 통합 테스트만 실행
+./gradlew test --tests "*IntegrationTest"
+```
+
+### ✅ 품질 지표
+
+- **테스트 실행 시간**: 2분 15초 (1621개 테스트)
+- **테스트 성공률**: 99.9%
+- **코드 커버리지**: 81.7%
+- **SonarQube 등급**: 신뢰성 E, 유지보수성 A, 보안 A
+- **테스트 유지보수성**: TestDataBuilder로 개선
 
 <br/>
 <br/>

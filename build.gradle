@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
+	id 'org.sonarqube' version '4.4.1.3373'
 }
 
 group = 'com'
@@ -170,4 +172,46 @@ tasks.named('compileJava') {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+	
+	// CI 환경에서는 통합 테스트 제외 (외부 서버 의존성)
+	if (System.getenv("CI") == "true") {
+		exclude '**/integration/**'
+	}
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		xml.required = true
+		html.required = true
+		csv.required = false
+	}
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.80
+			}
+		}
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectKey", "dataracy-server"
+		property "sonar.projectName", "Dataracy Server"
+		property "sonar.projectVersion", version
+		property "sonar.sources", "src/main/java"
+		property "sonar.tests", "src/test/java"
+		property "sonar.java.coveragePlugin", "jacoco"
+		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+		property "sonar.java.binaries", "build/classes/java/main"
+		property "sonar.java.test.binaries", "build/classes/java/test"
+		property "sonar.exclusions", "**/generated/**/*,**/build/**/*"
+		property "sonar.test.exclusions", "**/generated/**/*,**/build/**/*"
+		property "sonar.qualitygate.wait", true
+	}
 }

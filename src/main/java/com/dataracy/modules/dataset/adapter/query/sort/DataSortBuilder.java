@@ -15,7 +15,8 @@ public final class DataSortBuilder {
      * @param projectCountPath 프로젝트 수를 나타내는 NumberPath로, UTILIZE 정렬 옵션에서 사용됩니다.
      * @return 지정된 정렬 옵션에 따른 OrderSpecifier 배열
      */
-    public static OrderSpecifier<?>[] fromSortOption(DataSortType sort, NumberPath<Long> projectCountPath) {
+    @SuppressWarnings("rawtypes")
+    public static OrderSpecifier[] fromSortOption(DataSortType sort, NumberPath<Long> projectCountPath) {
         QDataEntity data = QDataEntity.dataEntity;
         if (sort == null) {
             return new OrderSpecifier[]{data.createdAt.desc()};

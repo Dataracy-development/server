@@ -20,12 +20,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ReIssueTokenServiceTest {
 
     @Mock
@@ -146,7 +148,7 @@ class ReIssueTokenServiceTest {
             // given
             String refreshToken = "invalid";
             given(jwtValidatorPort.getUserIdFromToken(refreshToken))
-                    .willThrow(new AuthException(AuthErrorStatus.INVALID_TOKEN));
+                    .willThrow(new  AuthException(AuthErrorStatus.INVALID_TOKEN));
 
             // when & then
             AuthException ex = catchThrowableOfType(() ->
@@ -166,7 +168,7 @@ class ReIssueTokenServiceTest {
             given(jwtValidatorPort.getUserIdFromToken(refreshToken))
                     .willReturn(userId);
             given(manageRefreshTokenPort.getRefreshToken(userId.toString()))
-                    .willThrow(new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE));
+                    .willThrow(new  CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE));
 
             // when & then
             CommonException ex = catchThrowableOfType(() ->
@@ -186,7 +188,7 @@ class ReIssueTokenServiceTest {
             given(jwtValidatorPort.getUserIdFromToken(refreshToken))
                     .willReturn(userId);
             given(manageRefreshTokenPort.getRefreshToken(userId.toString()))
-                    .willThrow(new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION));
+                    .willThrow(new  CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION));
 
             // when & then
             CommonException ex = catchThrowableOfType(() ->

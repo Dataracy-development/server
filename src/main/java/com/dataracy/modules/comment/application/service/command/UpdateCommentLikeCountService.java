@@ -18,6 +18,10 @@ public class UpdateCommentLikeCountService implements
 {
     private final UpdateCommentLikePort updateCommentLikePort;
 
+    // Use Case 상수 정의
+    private static final String DECREASE_LIKE_COUNT_USE_CASE = "DecreaseLikeCountUseCase";
+    private static final String INCREASE_LIKE_COUNT_USE_CASE = "IncreaseLikeCountUseCase";
+
     /**
      * 지정된 댓글의 좋아요 개수를 1 감소시킵니다.
      *
@@ -26,9 +30,9 @@ public class UpdateCommentLikeCountService implements
     @Override
     @Transactional
     public void decreaseLikeCount(Long commentId) {
-        Instant startTime = LoggerFactory.service().logStart("DecreaseLikeCountUseCase", "댓글 좋아요 취소 서비스 시작 commentId=" + commentId);
+        Instant startTime = LoggerFactory.service().logStart(DECREASE_LIKE_COUNT_USE_CASE, "댓글 좋아요 취소 서비스 시작 commentId=" + commentId);
         updateCommentLikePort.decreaseLikeCount(commentId);
-        LoggerFactory.service().logSuccess("DecreaseLikeCountUseCase", "댓글 좋아요 취소 서비스 종료 commentId=" + commentId, startTime);
+        LoggerFactory.service().logSuccess(DECREASE_LIKE_COUNT_USE_CASE, "댓글 좋아요 취소 서비스 종료 commentId=" + commentId, startTime);
     }
 
     /**
@@ -39,8 +43,8 @@ public class UpdateCommentLikeCountService implements
     @Override
     @Transactional
     public void increaseLikeCount(Long commentId) {
-        Instant startTime = LoggerFactory.service().logStart("IncreaseLikeCountUseCase", "댓글 좋아요 서비스 시작 commentId=" + commentId);
+        Instant startTime = LoggerFactory.service().logStart(INCREASE_LIKE_COUNT_USE_CASE, "댓글 좋아요 서비스 시작 commentId=" + commentId);
         updateCommentLikePort.increaseLikeCount(commentId);
-        LoggerFactory.service().logSuccess("IncreaseLikeCountUseCase", "댓글 좋아요 서비스 종료 commentId=" + commentId, startTime);
+        LoggerFactory.service().logSuccess(INCREASE_LIKE_COUNT_USE_CASE, "댓글 좋아요 서비스 종료 commentId=" + commentId, startTime);
     }
 }

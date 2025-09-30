@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 public class UserMultiQueryDbAdapter implements UserMultiQueryPort {
     private final UserJpaRepository userJpaRepository;
 
+    // Entity 상수 정의
+    private static final String USER_ENTITY = "UserEntity";
+
     /**
      * 주어진 사용자 ID 목록에 대해 각 사용자 ID와 해당 사용자의 닉네임을 매핑한 맵을 반환합니다.
      *
@@ -77,9 +80,9 @@ public class UserMultiQueryDbAdapter implements UserMultiQueryPort {
      * @return          조회된 UserEntity 객체들의 리스트
      */
     private List<UserEntity> findUserEntitiesWithLogging(List<Long> userIds, String operation) {
-        Instant startTime = LoggerFactory.db().logQueryStart("UserEntity", operation + " 시작");
+        Instant startTime = LoggerFactory.db().logQueryStart(USER_ENTITY, operation + " 시작");
         List<UserEntity> userEntities = userJpaRepository.findAllById(userIds);
-        LoggerFactory.db().logQueryEnd("UserEntity", operation + " 종료", startTime);
+        LoggerFactory.db().logQueryEnd(USER_ENTITY, operation + " 종료", startTime);
         return userEntities;
     }
 }

@@ -22,6 +22,9 @@ public class EmailVerifyService implements VerifyEmailUseCase {
 
     private final JwtGenerateUseCase jwtGenerateUseCase;
 
+    // Use Case 상수 정의
+    private static final String VERIFY_EMAIL_USE_CASE = "VerifyEmailUseCase";
+
     /**
      * 이메일 인증코드를 검증하고, 비밀번호 찾기 목적이면 리셋 비밀번호 토큰을 발급하여 응답합니다.
      *
@@ -36,18 +39,18 @@ public class EmailVerifyService implements VerifyEmailUseCase {
      */
     @Override
     public GetResetTokenResponse verifyCode(String email, String code, EmailVerificationType verificationType) {
-        Instant startTime = LoggerFactory.service().logStart("VerifyEmailUseCase", "이메일 인증코드 검증 서비스 시작 email=" + email);
+        Instant startTime = LoggerFactory.service().logStart(VERIFY_EMAIL_USE_CASE, "이메일 인증코드 검증 서비스 시작 email=" + email);
 
         // 레디스에서 이메일 인증 코드 조회
         String savedCode = manageEmailCodePort.verifyCode(email, code, verificationType);
         if (savedCode == null) {
-            LoggerFactory.service().logWarning("VerifyEmailUseCase", "이메일 인증코드가 만료되었습니다. email=" + email);
+            LoggerFactory.service().logWarning(VERIFY_EMAIL_USE_CASE, "이메일 인증코드가 만료되었습니다. email=" + email);
             throw new EmailException(EmailErrorStatus.EXPIRED_EMAIL_CODE);
         }
 
         // 이메일 인증코드 일치하지 않을 경우
         if (!savedCode.equals(code)) {
-            LoggerFactory.service().logWarning("VerifyEmailUseCase", "이메일 인증코드가 일치하지 않습니다. email=" + email);
+            LoggerFactory.service().logWarning(VERIFY_EMAIL_USE_CASE, "이메일 인증코드가 일치하지 않습니다. email=" + email);
             throw new EmailException(EmailErrorStatus.FAIL_VERIFY_EMAIL_CODE);
         }
 
@@ -62,7 +65,7 @@ public class EmailVerifyService implements VerifyEmailUseCase {
         }
         GetResetTokenResponse getResetTokenResponse = new GetResetTokenResponse(resetPasswordToken);
 
-        LoggerFactory.service().logSuccess("VerifyEmailUseCase", "이메일 인증코드 검증 서비스 종료 email=" + email, startTime);
+        LoggerFactory.service().logSuccess(VERIFY_EMAIL_USE_CASE, "이메일 인증코드 검증 서비스 종료 email=" + email, startTime);
         return getResetTokenResponse;
     }
 }

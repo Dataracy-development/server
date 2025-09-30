@@ -22,7 +22,6 @@ import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameU
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
 import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
 import com.dataracy.modules.user.domain.exception.UserException;
-import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,6 +41,15 @@ public class UserCommandService implements
     private final UserCommandPort userCommandPort;
     private final UserQueryPort userQueryPort;
 
+    // Use Case 상수 정의
+    private static final String MODIFY_USER_INFO_USE_CASE = "ModifyUserInfoUseCase";
+    private static final String WITHDRAW_USER_USE_CASE = "WithdrawUserUseCase";
+    private static final String LOGOUT_USER_USE_CASE = "LogoutUserUseCase";
+    private static final String USER_INFO_MODIFY_SUCCESS_MESSAGE = "회원 정보 수정 서비스 성공 userId=";
+    
+    // 메시지 상수 정의
+    private static final String USER_NOT_FOUND_MESSAGE = "아이디에 해당하는 유저가 존재하지 않습니다. userId=";
+
     private final DuplicateNicknameUseCase duplicateNicknameUseCase;
     private final ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
     private final ValidateOccupationUseCase validateOccupationUseCase;
@@ -51,13 +59,22 @@ public class UserCommandService implements
 
     private final JwtValidateUseCase jwtValidateUseCase;
     private final ManageRefreshTokenUseCase manageRefreshTokenUseCase;
+    
+    // Self-injection: Spring 프록시를 통해 @Transactional과 @DistributedLock이 작동하도록 함
+    private UserCommandService self;
+    
+    @org.springframework.beans.factory.annotation.Autowired
+    @org.springframework.context.annotation.Lazy
+    public void setSelf(UserCommandService self) {
+        this.self = self;
+    }
 
     /**
      * 회원의 정보를 수정하고(필수 유효성 검사 수행) 필요 시 프로필 이미지를 업로드하여 갱신한다.
      *
-     * <p>요청한 닉네임을 키로 분산락을 획득하여 동시성 충돌을 방지한다. 요청 데이터 유효성 검사(닉네임 중복,
+     * 요청한 닉네임을 키로 분산락을 획득하여 동시성 충돌을 방지한다. 요청 데이터 유효성 검사(닉네임 중복,
      * 저자 레벨 필수 등)와 선택적 연관 엔터티 검사(직업, 방문경로, 관심 토픽)를 수행한 뒤 사용자 정보를 갱신한다.
-     * profileImageFile이 null이 아니고 비어있지 않으면 파일을 저장소에 업로드하고 사용자 프로필 이미지 URL을 업데이트한다.</p>
+     * profileImageFile이 null이 아니고 비어있지 않으면 파일을 저장소에 업로드하고 사용자 프로필 이미지 URL을 업데이트한다.
      *
      * @param userId            수정 대상 사용자 계정의 식별자
      * @param profileImageFile  새 프로필 이미지 파일(없으면 null 또는 비어있는 파일을 전달하여 이미지를 유지)
@@ -66,32 +83,33 @@ public class UserCommandService implements
     @Override
     @Transactional
     public void modifyUserInfo(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto) {
-        Instant startTime = LoggerFactory.service().logStart("ModifyUserInfoUseCase", "회원 정보 수정 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(MODIFY_USER_INFO_USE_CASE, "회원 정보 수정 서비스 시작 userId=" + userId);
 
         // 기존 닉네임 조회
         String savedNickname = userQueryPort.findNicknameById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("ModifyUserInfoUseCase", "[회원 정보 수정] 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    LoggerFactory.service().logWarning(MODIFY_USER_INFO_USE_CASE, "[회원 정보 수정] " + USER_NOT_FOUND_MESSAGE + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 
-        // 닉네임이 변경되는 경우에만 분산락 적용
-        if (!savedNickname.equals(requestDto.nickname())) {
-            modifyUserInfoWithLock(userId, savedNickname, profileImageFile, requestDto, startTime);
+        // 닉네임 변경 여부에 따라 다른 분산락 적용
+        if (requestDto.nickname().equals(savedNickname)) {
+            // 닉네임이 변경되지 않은 경우 - userId 기반 분산락 (동시성 문제 방지)
+            self.modifyUserInfoWithUserIdLock(userId, profileImageFile, requestDto, startTime);
         } else {
-            // 닉네임이 변경되지 않는 경우 분산락 없이 처리
-            modifyUserInfoWithoutLock(userId, profileImageFile, requestDto, startTime);
+            // 닉네임이 변경된 경우 - 닉네임 기반 분산락 (중복 방지)
+            self.modifyUserInfoWithNicknameLock(userId, savedNickname, profileImageFile, requestDto, startTime);
         }
     }
 
     @DistributedLock(
-            key = "'lock:user:modify:nickname:' + #requestDto.nickname()",
+            key = "'lock:nickname:' + #requestDto.nickname()",
             waitTime = 500L,
-            leaseTime = 1500L,
-            retry = 2
+            leaseTime = 5000L,
+            retry = 3
     )
     @Transactional
-    public void modifyUserInfoWithLock(Long userId, String savedNickname, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
+    public void modifyUserInfoWithNicknameLock(Long userId, String savedNickname, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
         // 회원 정보 수정 요청 정보 유효성 검사
         validateModifyUserInfo(
                 requestDto.nickname(),
@@ -104,9 +122,33 @@ public class UserCommandService implements
         userCommandPort.modifyUserInfo(userId, requestDto);
 
         // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
-        modifyProfileImageFile(profileImageFile, userId, "ModifyUserInfoUseCase");
+        modifyProfileImageFile(profileImageFile, userId, MODIFY_USER_INFO_USE_CASE);
 
-        LoggerFactory.service().logSuccess("ModifyUserInfoUseCase", "회원 정보 수정 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(MODIFY_USER_INFO_USE_CASE, USER_INFO_MODIFY_SUCCESS_MESSAGE + userId, startTime);
+    }
+
+    @DistributedLock(
+            key = "'lock:user:modify:' + #userId",
+            waitTime = 500L,
+            leaseTime = 5000L,
+            retry = 3
+    )
+    @Transactional
+    public void modifyUserInfoWithUserIdLock(Long userId, MultipartFile profileImageFile, ModifyUserInfoRequest requestDto, Instant startTime) {
+        // 회원 정보 수정 요청 정보 유효성 검사 (닉네임 중복 검사 제외)
+        validateModifyUserInfoWithoutNickname(
+                requestDto.authorLevelId(),
+                requestDto.occupationId(),
+                requestDto.visitSourceId(),
+                requestDto.topicIds(),
+                profileImageFile
+        );
+        userCommandPort.modifyUserInfo(userId, requestDto);
+
+        // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
+        modifyProfileImageFile(profileImageFile, userId, MODIFY_USER_INFO_USE_CASE);
+
+        LoggerFactory.service().logSuccess(MODIFY_USER_INFO_USE_CASE, USER_INFO_MODIFY_SUCCESS_MESSAGE + userId, startTime);
     }
 
     @Transactional
@@ -122,9 +164,9 @@ public class UserCommandService implements
         userCommandPort.modifyUserInfo(userId, requestDto);
 
         // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
-        modifyProfileImageFile(profileImageFile, userId, "ModifyUserInfoUseCase");
+        modifyProfileImageFile(profileImageFile, userId, MODIFY_USER_INFO_USE_CASE);
 
-        LoggerFactory.service().logSuccess("ModifyUserInfoUseCase", "회원 정보 수정 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(MODIFY_USER_INFO_USE_CASE, USER_INFO_MODIFY_SUCCESS_MESSAGE + userId, startTime);
     }
 
     /**
@@ -234,22 +276,22 @@ public class UserCommandService implements
     /**
      * 지정된 사용자를 탈퇴(삭제/비활성화) 처리한다.
      *
-     * <p>데이터베이스 트랜잭션 내에서 사용자 탈퇴를 수행하며, 내부적으로 사용자 저장소를 통해 탈퇴 상태로 갱신한다.
+     * 데이터베이스 트랜잭션 내에서 사용자 탈퇴를 수행하며, 내부적으로 사용자 저장소를 통해 탈퇴 상태로 갱신한다.
      *
      * @param userId 탈퇴할 사용자의 식별자
      */
     @Override
     @Transactional
     public void withdrawUser(Long userId) {
-        Instant startTime = LoggerFactory.service().logStart("WithdrawUserUseCase", "회원 탈퇴 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(WITHDRAW_USER_USE_CASE, "회원 탈퇴 서비스 시작 userId=" + userId);
         userCommandPort.withdrawalUser(userId);
-        LoggerFactory.service().logSuccess("WithdrawUserUseCase", "회원 탈퇴 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(WITHDRAW_USER_USE_CASE, "회원 탈퇴 서비스 성공 userId=" + userId, startTime);
     }
 
     /**
      * 사용자의 로그아웃을 처리한다.
      *
-     * <p>전달된 리프레시 토큰으로 토큰에 포함된 사용자 ID를 검증한 뒤, 일치하면 해당 사용자의 리프레시 토큰을 삭제한다.</p>
+     * 전달된 리프레시 토큰으로 토큰에 포함된 사용자 ID를 검증한 뒤, 일치하면 해당 사용자의 리프레시 토큰을 삭제한다.
      *
      * @param userId       로그아웃을 요청한 사용자의 ID
      * @param refreshToken 클라이언트가 보유한 리프레시 토큰 문자열
@@ -258,16 +300,16 @@ public class UserCommandService implements
     @Override
     @Transactional
     public void logout(Long userId, String refreshToken) {
-        Instant startTime = LoggerFactory.service().logStart("LogoutUserUseCase", "회원 로그아웃 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(LOGOUT_USER_USE_CASE, "회원 로그아웃 서비스 시작 userId=" + userId);
 
         // 쿠키의 리프레시 토큰으로 유저 아이디를 반환한다.
         Long refreshTokenUserId = jwtValidateUseCase.getUserIdFromToken(refreshToken);
         if (refreshTokenUserId == null) {
-            LoggerFactory.service().logWarning("LogoutUserUseCase", "[로그아웃] 만료된 리프레시 토큰입니다.");
+            LoggerFactory.service().logWarning(LOGOUT_USER_USE_CASE, "[로그아웃] 만료된 리프레시 토큰입니다.");
             throw new AuthException(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
         }
         if (!refreshTokenUserId.equals(userId)) {
-            LoggerFactory.service().logWarning("LogoutUserUseCase", "[로그아웃] 인증 요청을 한 유저와 일치하지 않는 리프레시 토큰입니다.");
+            LoggerFactory.service().logWarning(LOGOUT_USER_USE_CASE, "[로그아웃] 인증 요청을 한 유저와 일치하지 않는 리프레시 토큰입니다.");
             throw new AuthException(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
         }
 
@@ -278,6 +320,6 @@ public class UserCommandService implements
 
         // 추후 고보안 서비스일 경우 어세스토큰 블랙리스트 처리까지 생각
 
-        LoggerFactory.service().logSuccess("LogoutUserUseCase", "회원 로그아웃 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(LOGOUT_USER_USE_CASE, "회원 로그아웃 서비스 성공 userId=" + userId, startTime);
     }
 }

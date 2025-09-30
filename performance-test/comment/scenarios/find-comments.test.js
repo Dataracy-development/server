@@ -41,7 +41,8 @@
  */
 
 import http from "k6/http";
-import { check, sleep, Rate, Trend, Counter } from "k6";
+import { check, sleep } from "k6";
+import { Rate, Trend, Counter } from "k6/metrics";
 
 // ==================== 공통 설정 ====================
 const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
@@ -180,7 +181,7 @@ function readComments() {
   const page = Math.floor(Math.random() * 10) + 1;
   const size = 20;
 
-  const url = `${BASE_URL}/api/v1/comments?targetType=${targetType}&targetId=${targetId}&page=${page}&size=${size}`;
+  const url = `${BASE_URL}/api/v1/projects/${targetId}/comments?page=${page}&size=${size}`;
   const res = http.get(url, { headers: getAuthHeaders() });
   const responseTime = Date.now() - startTime;
 

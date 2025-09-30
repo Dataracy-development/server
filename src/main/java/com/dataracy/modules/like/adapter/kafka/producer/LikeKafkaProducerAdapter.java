@@ -35,48 +35,41 @@ public class LikeKafkaProducerAdapter implements SendLikeEventPort {
     @Override
     public void sendLikeEvent(TargetType targetType, Long targetId, boolean previouslyLiked) {
         switch (targetType) {
-            case PROJECT -> {
-                if (previouslyLiked) {
-                    kafkaTemplate.send(TOPIC_PROJECT_LIKE_DECREASE, String.valueOf(targetId), targetId)
-                            .whenComplete((result, ex) -> {
-                                if (ex == null) {
-                                    LoggerFactory.kafka().logProduce(TOPIC_PROJECT_LIKE_DECREASE, "프로젝트 좋아요 취소 이벤트 발송됨: projectId=" + targetId);
-                                } else {
-                                    LoggerFactory.kafka().logError(TOPIC_PROJECT_LIKE_DECREASE, "프로젝트 좋아요 취소 이벤트 발송 처리 실패: projectId=" + targetId, ex);
-                                }
-                            });
-                } else {
-                    kafkaTemplate.send(TOPIC_PROJECT_LIKE_INCREASE, String.valueOf(targetId), targetId)
-                            .whenComplete((result, ex) -> {
-                                if (ex == null) {
-                                    LoggerFactory.kafka().logProduce(TOPIC_PROJECT_LIKE_INCREASE, "프로젝트 좋아요 이벤트 발송됨: projectId=" + targetId);
-                                } else {
-                                    LoggerFactory.kafka().logError(TOPIC_PROJECT_LIKE_INCREASE, "프로젝트 좋아요 이벤트 발송 처리 실패: projectId=" + targetId, ex);
-                                }
-                            });
-                }
-            }
-            case COMMENT -> {
-                if (previouslyLiked) {
-                    kafkaTemplate.send(TOPIC_COMMENT_LIKE_DECREASE, String.valueOf(targetId), targetId)
-                            .whenComplete((result, ex) -> {
-                                if (ex == null) {
-                                    LoggerFactory.kafka().logProduce(TOPIC_COMMENT_LIKE_DECREASE, "댓글 좋아요 취소 이벤트 발송됨: commentId=" + targetId);
-                                } else {
-                                    LoggerFactory.kafka().logError(TOPIC_COMMENT_LIKE_DECREASE, "댓글 좋아요 취소 이벤트 발송 처리 실패: commentId=" + targetId, ex);
-                                }
-                            });
-                } else {
-                    kafkaTemplate.send(TOPIC_COMMENT_LIKE_INCREASE, String.valueOf(targetId), targetId)
-                            .whenComplete((result, ex) -> {
-                                if (ex == null) {
-                                    LoggerFactory.kafka().logProduce(TOPIC_COMMENT_LIKE_INCREASE, "댓글 좋아요 이벤트 발송됨: commentId=" + targetId);
-                                } else {
-                                    LoggerFactory.kafka().logError(TOPIC_COMMENT_LIKE_INCREASE, "댓글 좋아요 이벤트 발송 처리 실패: commentId=" + targetId, ex);
-                                }
-                            });
-                }
-            }
+            case PROJECT -> sendProjectLikeEvent(targetId, previouslyLiked);
+            case COMMENT -> sendCommentLikeEvent(targetId, previouslyLiked);
+        }
+    }
+    
+    private void sendProjectLikeEvent(Long targetId, boolean previouslyLiked) {
+        if (previouslyLiked) {
+            sendKafkaEvent(TOPIC_PROJECT_LIKE_DECREASE, targetId, "프로젝트 좋아요 취소", "projectId");
+        } else {
+            sendKafkaEvent(TOPIC_PROJECT_LIKE_INCREASE, targetId, "프로젝트 좋아요", "projectId");
+        }
+    }
+    
+    private void sendCommentLikeEvent(Long targetId, boolean previouslyLiked) {
+        if (previouslyLiked) {
+            sendKafkaEvent(TOPIC_COMMENT_LIKE_DECREASE, targetId, "댓글 좋아요 취소", "commentId");
+        } else {
+            sendKafkaEvent(TOPIC_COMMENT_LIKE_INCREASE, targetId, "댓글 좋아요", "commentId");
+        }
+    }
+    
+    private void sendKafkaEvent(String topic, Long targetId, String eventDescription, String idLabel) {
+        kafkaTemplate.send(topic, String.valueOf(targetId), targetId)
+                .whenComplete((result, ex) -> 
+                    logKafkaResult(topic, targetId, eventDescription, idLabel, ex)
+                );
+    }
+    
+    private void logKafkaResult(String topic, Long targetId, String eventDescription, String idLabel, Throwable ex) {
+        if (ex == null) {
+            LoggerFactory.kafka().logProduce(topic, 
+                String.format("%s 이벤트 발송됨: %s=%d", eventDescription, idLabel, targetId));
+        } else {
+            LoggerFactory.kafka().logError(topic, 
+                String.format("%s 이벤트 발송 처리 실패: %s=%d", eventDescription, idLabel, targetId), ex);
         }
     }
 }

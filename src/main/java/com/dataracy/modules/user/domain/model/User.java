@@ -64,6 +64,9 @@ public class User {
                 LoggerFactory.domain().logRuleViolation("User Provider", "KAKAO 유저는 비밀번호 변경이 불가합니다.");
                 throw new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO);
             }
+            case LOCAL -> {
+                // LOCAL 유저는 비밀번호 변경 가능
+            }
         }
     }
 

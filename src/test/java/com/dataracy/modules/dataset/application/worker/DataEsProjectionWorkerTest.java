@@ -7,20 +7,25 @@ import com.dataracy.modules.dataset.application.port.out.command.projection.Mana
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDataDownloadPort;
 import com.dataracy.modules.dataset.application.port.out.query.projection.LoadDataProjectionTaskPort;
 import com.dataracy.modules.dataset.domain.enums.DataEsProjectionType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DataEsProjectionWorkerTest {
 
     @InjectMocks
@@ -40,6 +45,12 @@ class DataEsProjectionWorkerTest {
 
     @Mock
     private UpdateDataDownloadPort dlPort;
+
+    @BeforeEach
+    void setUp() {
+        // Self-injection 설정 (Spring AOP 프록시를 통한 @Transactional 및 @DistributedLock 작동을 위함)
+        worker.setSelf(worker);
+    }
 
     private DataEsProjectionTaskEntity task(Long id, Long dataId, boolean deleted, int delta) {
         DataEsProjectionTaskEntity e = new DataEsProjectionTaskEntity();
@@ -87,7 +98,7 @@ class DataEsProjectionWorkerTest {
         // given
         DataEsProjectionTaskEntity t = task(3L, 12L, true, 0);
         t.setRetryCount(7);
-        willThrow(new RuntimeException("fail"))
+        willThrow(new  RuntimeException("fail"))
                 .given(softDeletePort).deleteData(12L);
 
         // when
@@ -100,7 +111,7 @@ class DataEsProjectionWorkerTest {
 
     @Test
     @DisplayName("run 호출 시 LoadPort → processTask 실행 후 taskPort 삭제 확인")
-    void runShouldLoadAndProcess() {
+    void runShouldLoadAndProcess() throws InterruptedException {
         // given
         DataEsProjectionTaskEntity t = task(4L, 13L, true, 0);
         given(loadPort.findBatchForWork(any(), any(), any(PageRequest.class)))
@@ -108,8 +119,13 @@ class DataEsProjectionWorkerTest {
 
         // when
         worker.run();
+        
+        // 비동기 처리를 위해 잠시 대기
+        Thread.sleep(100);
 
         // then
+        then(loadPort).should().findBatchForWork(any(), any(), any(PageRequest.class));
+        then(softDeletePort).should().deleteData(13L);
         then(taskPort).should().delete(4L);
     }
 }

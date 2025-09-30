@@ -14,13 +14,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.BDDMockito.*;
-
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProjectEsProjectionWorkerTest {
 
@@ -83,7 +83,7 @@ class ProjectEsProjectionWorkerTest {
                 .status(ProjectEsProjectionType.PENDING)
                 .build();
 
-        willThrow(new RuntimeException("ES down"))
+        willThrow(new  RuntimeException("ES down"))
                 .given(updateProjectCommentEsPort).increaseCommentCount(200L);
 
         // when

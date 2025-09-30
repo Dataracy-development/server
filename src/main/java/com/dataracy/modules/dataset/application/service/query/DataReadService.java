@@ -22,6 +22,7 @@ import com.dataracy.modules.user.application.port.in.query.extractor.GetUserInfo
 import com.dataracy.modules.user.domain.model.vo.UserInfo;
 import com.dataracy.modules.dataset.application.port.out.storage.PopularDataSetsStoragePort;
 import com.dataracy.modules.dataset.application.port.in.storage.UpdatePopularDataSetsStorageUseCase;
+import com.dataracy.modules.dataset.domain.model.DataMetadata;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +51,16 @@ public class DataReadService implements
     private final FindDataWithMetadataPort findDataWithMetadataPort;
     private final GetDataGroupCountPort getDataGroupCountPort;
     private final FindConnectedDataSetsPort findConnectedDataSetsPort;
+
+    // Use Case 상수 정의
+    private static final String GET_POPULAR_DATA_SETS_USE_CASE = "GetPopularDataSetsUseCase";
+    private static final String GET_DATA_DETAIL_USE_CASE = "GetDataDetailUseCase";
+    private static final String GET_RECENT_MINIMAL_DATA_SETS_USE_CASE = "GetRecentMinimalDataSetsUseCase";
+    private static final String GET_DATA_GROUP_COUNT_USE_CASE = "GetDataGroupCountUseCase";
+    private static final String FIND_CONNECTED_DATA_SETS_USE_CASE = "FindConnectedDataSetsUseCase";
+    
+    // 메시지 상수 정의
+    private static final String DATA_NOT_FOUND_MESSAGE = "해당 데이터셋이 존재하지 않습니다. dataId=";
 
     private final GetUserInfoUseCase getUserInfoUseCase;
 
@@ -77,25 +89,25 @@ public class DataReadService implements
     @Override
     @Transactional(readOnly = true)
     public List<PopularDataResponse> getPopularDataSets(int size) {
-        Instant startTime = LoggerFactory.service().logStart("GetPopularDataSetsUseCase", "인기 데이터셋 목록 조회 서비스 시작 size=" + size);
+        Instant startTime = LoggerFactory.service().logStart(GET_POPULAR_DATA_SETS_USE_CASE, "인기 데이터셋 목록 조회 서비스 시작 size=" + size);
 
         // 저장소에서 먼저 조회
-        LoggerFactory.service().logInfo("GetPopularDataSetsUseCase", "저장소에서 캐시 조회 시작");
+        LoggerFactory.service().logInfo(GET_POPULAR_DATA_SETS_USE_CASE, "저장소에서 캐시 조회 시작");
         var cachedResult = popularDataSetsStoragePort.getPopularDataSets();
-        LoggerFactory.service().logInfo("GetPopularDataSetsUseCase", "저장소 캐시 조회 결과: " + (cachedResult.isPresent() ? "데이터 존재" : "데이터 없음"));
+        LoggerFactory.service().logInfo(GET_POPULAR_DATA_SETS_USE_CASE, "저장소 캐시 조회 결과: " + (cachedResult.isPresent() ? "데이터 존재" : "데이터 없음"));
         if (cachedResult.isPresent()) {
             List<PopularDataResponse> cachedData = cachedResult.get();
             List<PopularDataResponse> result = cachedData.stream()
                     .limit(size)
                     .toList();
             
-            LoggerFactory.service().logSuccess("GetPopularDataSetsUseCase", 
+            LoggerFactory.service().logSuccess(GET_POPULAR_DATA_SETS_USE_CASE, 
                 "인기 데이터셋 저장소 조회 성공 size=" + size + " cachedCount=" + cachedData.size(), startTime);
             return result;
         }
 
         // 저장소에 데이터가 없으면 DB에서 조회 (기존 로직)
-        LoggerFactory.service().logInfo("GetPopularDataSetsUseCase", "저장소에 데이터가 없어 DB에서 조회합니다. size=" + size);
+        LoggerFactory.service().logInfo(GET_POPULAR_DATA_SETS_USE_CASE, "저장소에 데이터가 없어 DB에서 조회합니다. size=" + size);
         
         List<DataWithProjectCountDto> savedDataSets = getPopularDataSetsPort.getPopularDataSets(size);
         DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets);
@@ -118,7 +130,7 @@ public class DataReadService implements
         // 캐시 워밍업 (비동기)
         updatePopularDataSetsStorageUseCase.warmUpCacheIfNeeded(Math.max(size, 20));
 
-        LoggerFactory.service().logSuccess("GetPopularDataSetsUseCase", "인기 데이터셋 DB 조회 서비스 종료 size=" + size, startTime);
+        LoggerFactory.service().logSuccess(GET_POPULAR_DATA_SETS_USE_CASE, "인기 데이터셋 DB 조회 서비스 종료 size=" + size, startTime);
         return popularDataResponses;
     }
 
@@ -133,11 +145,11 @@ public class DataReadService implements
     @Override
     @Transactional(readOnly = true)
     public DataDetailResponse getDataDetail(Long dataId) {
-        Instant startTime = LoggerFactory.service().logStart("GetDataDetailUseCase", "데이터셋 상세 정보 조회 서비스 시작 dataId=" + dataId);
+        Instant startTime = LoggerFactory.service().logStart(GET_DATA_DETAIL_USE_CASE, "데이터셋 상세 정보 조회 서비스 시작 dataId=" + dataId);
 
         Data data = findDataWithMetadataPort.findDataWithMetadataById(dataId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetDataDetailUseCase", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                    LoggerFactory.service().logWarning(GET_DATA_DETAIL_USE_CASE, DATA_NOT_FOUND_MESSAGE + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
         UserInfo userInfo = getUserInfoUseCase.extractUserInfo(data.getUserId());
@@ -158,7 +170,7 @@ public class DataReadService implements
                 getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId())
         );
 
-        LoggerFactory.service().logSuccess("GetDataDetailUseCase", "데이터셋 상세 정보 조회 서비스 종료 dataId=" + dataId, startTime);
+        LoggerFactory.service().logSuccess(GET_DATA_DETAIL_USE_CASE, "데이터셋 상세 정보 조회 서비스 종료 dataId=" + dataId, startTime);
         return dataDetailResponse;
     }
 
@@ -173,7 +185,7 @@ public class DataReadService implements
     @Override
     @Transactional(readOnly = true)
     public List<RecentMinimalDataResponse> getRecentDataSets(int size) {
-        Instant startTime = LoggerFactory.service().logStart("GetRecentMinimalDataSetsUseCase", "최신 미니 데이터셋 목록 조회 서비스 시작 size=" + size);
+        Instant startTime = LoggerFactory.service().logStart(GET_RECENT_MINIMAL_DATA_SETS_USE_CASE, "최신 미니 데이터셋 목록 조회 서비스 시작 size=" + size);
 
         List<Data> recentDataSets = getRecentDataSetsPort.getRecentDataSets(size);
         List<Long> userIds = recentDataSets.stream()
@@ -190,7 +202,7 @@ public class DataReadService implements
                 ))
                 .toList();
 
-        LoggerFactory.service().logSuccess("GetRecentMinimalDataSetsUseCase", "최신 미니 데이터셋 목록 조회 서비스 종료 size=" + size, startTime);
+        LoggerFactory.service().logSuccess(GET_RECENT_MINIMAL_DATA_SETS_USE_CASE, "최신 미니 데이터셋 목록 조회 서비스 종료 size=" + size, startTime);
         return recentMinimalDataResponses;
     }
 
@@ -202,9 +214,9 @@ public class DataReadService implements
     @Override
     @Transactional(readOnly = true)
     public List<DataGroupCountResponse> getDataGroupCountByTopicLabel() {
-        Instant startTime = LoggerFactory.service().logStart("GetDataGroupCountUseCase", "데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(GET_DATA_GROUP_COUNT_USE_CASE, "데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환 서비스 시작");
         List<DataGroupCountResponse> dataGroupCountResponses = getDataGroupCountPort.getDataGroupCount();
-        LoggerFactory.service().logSuccess("GetDataGroupCountUseCase", "데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(GET_DATA_GROUP_COUNT_USE_CASE, "데이터셋을 주제별로 그룹화하여 각 주제에 속한 데이터셋의 개수를 반환 서비스 종료", startTime);
         return dataGroupCountResponses;
     }
 
@@ -219,7 +231,7 @@ public class DataReadService implements
     @Override
     @Transactional(readOnly = true)
     public Page<ConnectedDataResponse> findConnectedDataSetsAssociatedWithProject(Long projectId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("FindConnectedDataSetsUseCase", "프로젝트와 연결된 데이터셋 목록 조회 서비스 시작 projectId=" + projectId);
+        Instant startTime = LoggerFactory.service().logStart(FIND_CONNECTED_DATA_SETS_USE_CASE, "프로젝트와 연결된 데이터셋 목록 조회 서비스 시작 projectId=" + projectId);
 
         Page<DataWithProjectCountDto> savedDataSets = findConnectedDataSetsPort.findConnectedDataSetsAssociatedWithProject(projectId, pageable);
         DataLabelMapResponse labelResponse = findDataLabelMapUseCase.labelMapping(savedDataSets.getContent());
@@ -235,7 +247,7 @@ public class DataReadService implements
             );
         });
 
-        LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "프로젝트와 연결된 데이터셋 목록 조회 서비스 종료 projectId=" + projectId, startTime);
+        LoggerFactory.service().logSuccess(FIND_CONNECTED_DATA_SETS_USE_CASE, "프로젝트와 연결된 데이터셋 목록 조회 서비스 종료 projectId=" + projectId, startTime);
         return connectedDataResponses;
     }
 
@@ -251,10 +263,10 @@ public class DataReadService implements
     @Override
     @Transactional(readOnly = true)
     public List<ConnectedDataResponse> findDataSetsByIds(List<Long> dataIds) {
-        Instant startTime = LoggerFactory.service().logStart("FindConnectedDataSetsUseCase", "아이디 목록을 통한 데이터셋 목록 조회 서비스 시작 dataIds=" + dataIds);
+        Instant startTime = LoggerFactory.service().logStart(FIND_CONNECTED_DATA_SETS_USE_CASE, "아이디 목록을 통한 데이터셋 목록 조회 서비스 시작 dataIds=" + dataIds);
 
         if (dataIds == null || dataIds.isEmpty()) {
-            LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "빈 ID 목록으로 빈 결과 반환", startTime);
+            LoggerFactory.service().logSuccess(FIND_CONNECTED_DATA_SETS_USE_CASE, "빈 ID 목록으로 빈 결과 반환", startTime);
             return List.of();
         }
         List<Long> distinctIds = dataIds.stream().distinct().toList();
@@ -275,7 +287,7 @@ public class DataReadService implements
                 })
                 .toList();
 
-        LoggerFactory.service().logSuccess("FindConnectedDataSetsUseCase", "아이디 목록을 통한 데이터셋 목록 조회 서비스 종료 dataIds=" + dataIds, startTime);
+        LoggerFactory.service().logSuccess(FIND_CONNECTED_DATA_SETS_USE_CASE, "아이디 목록을 통한 데이터셋 목록 조회 서비스 종료 dataIds=" + dataIds, startTime);
         return connectedDataResponses;
     }
 }

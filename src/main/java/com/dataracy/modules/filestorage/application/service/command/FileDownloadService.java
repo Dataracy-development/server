@@ -15,6 +15,9 @@ import java.time.Instant;
 public class FileDownloadService implements DownloadFileUseCase {
     private final FileStoragePort fileStoragePort;
 
+    // Use Case 상수 정의
+    private static final String DOWNLOAD_FILE_USE_CASE = "DownloadFileUseCase";
+
     /**
      * 지정된 S3 객체 URL과 만료 시간을 기반으로 사전 서명된 S3 URL을 생성하여 반환합니다.
      *
@@ -25,18 +28,18 @@ public class FileDownloadService implements DownloadFileUseCase {
      */
     @Override
     public GetPreSignedUrlResponse generatePreSignedUrl(String s3Url, int expirationSeconds) {
-        Instant startTime = LoggerFactory.service().logStart("DownloadFileUseCase", "서명된(pre-signed) URL을 생성 서비스 시작");
+        Instant startTime = LoggerFactory.service().logStart(DOWNLOAD_FILE_USE_CASE, "서명된(pre-signed) URL을 생성 서비스 시작");
         if (!StringUtils.hasText(s3Url)) {
-            LoggerFactory.service().logWarning("DownloadFileUseCase", "S3 URL은 비어있을 수 없습니다.");
+            LoggerFactory.service().logWarning(DOWNLOAD_FILE_USE_CASE, "S3 URL은 비어있을 수 없습니다.");
             throw new IllegalArgumentException("S3 URL은 비어있을 수 없습니다.");
         }
         if (expirationSeconds <= 0) {
-            LoggerFactory.service().logWarning("DownloadFileUseCase", "만료 시간은 0보다 커야 합니다.");
+            LoggerFactory.service().logWarning(DOWNLOAD_FILE_USE_CASE, "만료 시간은 0보다 커야 합니다.");
             throw new IllegalArgumentException("만료 시간은 0보다 커야 합니다.");
         }
         String preSignedUrl = fileStoragePort.getPreSignedUrl(s3Url, expirationSeconds);
         GetPreSignedUrlResponse getPresignedUrlResponse = new GetPreSignedUrlResponse(preSignedUrl);
-        LoggerFactory.service().logSuccess("DownloadFileUseCase", "서명된(pre-signed) URL을 생성 서비스 종료", startTime);
+        LoggerFactory.service().logSuccess(DOWNLOAD_FILE_USE_CASE, "서명된(pre-signed) URL을 생성 서비스 종료", startTime);
         return getPresignedUrlResponse;
     }
 }

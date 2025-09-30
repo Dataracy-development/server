@@ -27,6 +27,12 @@ import java.time.Instant;
 public class OtherUserProfileService implements GetOtherUserInfoUseCase {
     private final OtherUserInfoMapper otherUserInfoMapper;
 
+    // Use Case 상수 정의
+    private static final String GET_OTHER_USER_INFO_USE_CASE = "GetOtherUserInfoUseCase";
+    
+    // 메시지 상수 정의
+    private static final String USER_NOT_FOUND_MESSAGE = "유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=";
+
     private final UserQueryPort userQueryPort;
 
     private final GetAuthorLevelLabelFromIdUseCase getAuthorLevelLabelFromIdUseCase;
@@ -48,11 +54,11 @@ public class OtherUserProfileService implements GetOtherUserInfoUseCase {
     @Override
     @Transactional(readOnly = true)
     public GetOtherUserInfoResponse getOtherUserInfo(Long userId) {
-        Instant startTime = LoggerFactory.service().logStart("GetOtherUserInfoUseCase", "주어진 사용자 ID에 대한 타인 유저 정보 조회 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(GET_OTHER_USER_INFO_USE_CASE, "주어진 사용자 ID에 대한 타인 유저 정보 조회 서비스 시작 userId=" + userId);
 
         User user = userQueryPort.findUserById(userId)
                 .orElseThrow(() -> {
-                    LoggerFactory.service().logWarning("GetOtherUserInfoUseCase", "[타인 유저 정보 조회] 유저 아이디에 해당하는 유저가 존재하지 않습니다. userId=" + userId);
+                    LoggerFactory.service().logWarning(GET_OTHER_USER_INFO_USE_CASE, "[타인 유저 정보 조회] " + USER_NOT_FOUND_MESSAGE + userId);
                     return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 
@@ -75,14 +81,14 @@ public class OtherUserProfileService implements GetOtherUserInfoUseCase {
                 datasets
         );
 
-        LoggerFactory.service().logSuccess("GetOtherUserInfoUseCase", "주어진 사용자 ID에 대한 타인 정보 조회 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(GET_OTHER_USER_INFO_USE_CASE, "주어진 사용자 ID에 대한 타인 정보 조회 서비스 성공 userId=" + userId, startTime);
         return getOtherUserInfoResponse;
     }
 
     /**
      * 특정 사용자가 업로드한 프로젝트의 추가 페이지 목록을 조회한다.
      *
-     * <p>주어진 사용자 ID에 대해 페이지네이션된 프로젝트들을 조회하여 {@code GetOtherUserProjectResponse}로 매핑한 결과를 반환한다.</p>
+     * 주어진 사용자 ID에 대해 페이지네이션된 프로젝트들을 조회하여 {@code GetOtherUserProjectResponse}로 매핑한 결과를 반환한다.
      *
      * @param userId   조회할 대상 사용자의 식별자
      * @param pageable 페이지 번호·크기·정렬 정보를 포함한 페이징 파라미터
@@ -90,10 +96,10 @@ public class OtherUserProfileService implements GetOtherUserInfoUseCase {
      */
     @Override
     public Page<GetOtherUserProjectResponse> getOtherExtraProjects(Long userId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("GetOtherUserInfoUseCase", "타인이 업로드한 프로젝트 목록 추가 조회 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(GET_OTHER_USER_INFO_USE_CASE, "타인이 업로드한 프로젝트 목록 추가 조회 서비스 시작 userId=" + userId);
         Page<GetOtherUserProjectResponse> projects = findUserProjectsUseCase.findUserProjects(userId, pageable)
                 .map(otherUserInfoMapper::toOtherUserProject);
-        LoggerFactory.service().logSuccess("GetOtherUserInfoUseCase", "타인이 업로드한 프로젝트 목록 추가 조회 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(GET_OTHER_USER_INFO_USE_CASE, "타인이 업로드한 프로젝트 목록 추가 조회 서비스 성공 userId=" + userId, startTime);
         return projects;
     }
 
@@ -106,10 +112,10 @@ public class OtherUserProfileService implements GetOtherUserInfoUseCase {
      */
     @Override
     public Page<GetOtherUserDataResponse> getOtherExtraDataSets(Long userId, Pageable pageable) {
-        Instant startTime = LoggerFactory.service().logStart("GetOtherUserInfoUseCase", "타인이 업로드한 데이터셋 목록 추가 조회 서비스 시작 userId=" + userId);
+        Instant startTime = LoggerFactory.service().logStart(GET_OTHER_USER_INFO_USE_CASE, "타인이 업로드한 데이터셋 목록 추가 조회 서비스 시작 userId=" + userId);
         Page<GetOtherUserDataResponse> datasets = findUserDataSetsUseCase.findUserDataSets(userId, pageable)
                 .map(otherUserInfoMapper::toOtherUserData);
-        LoggerFactory.service().logSuccess("GetOtherUserInfoUseCase", "타인이 업로드한 데이터셋 목록 추가 조회 서비스 성공 userId=" + userId, startTime);
+        LoggerFactory.service().logSuccess(GET_OTHER_USER_INFO_USE_CASE, "타인이 업로드한 데이터셋 목록 추가 조회 서비스 성공 userId=" + userId, startTime);
         return datasets;
     }
 }

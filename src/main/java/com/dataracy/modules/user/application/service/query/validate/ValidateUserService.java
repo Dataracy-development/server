@@ -18,6 +18,11 @@ import java.time.Instant;
 public class ValidateUserService implements DuplicateNicknameUseCase, DuplicateEmailUseCase {
     private final UserDuplicateValidator userDuplicateValidator;
 
+    // Use Case 상수 정의
+    private static final String DUPLICATE_NICKNAME_USE_CASE = "DuplicateNicknameUseCase";
+    private static final String DUPLICATE_EMAIL_USE_CASE = "DuplicateEmailUseCase";
+    private static final String DUPLICATE_EMAIL_MESSAGE = "[중복 이메일 검증] 이메일 ";
+
     /**
      * 주어진 닉네임이 이미 사용 중인지 검증합니다.
      *
@@ -26,9 +31,9 @@ public class ValidateUserService implements DuplicateNicknameUseCase, DuplicateE
     @Override
     @Transactional(readOnly = true)
     public void validateDuplicatedNickname(String nickname) {
-        Instant startTime = LoggerFactory.service().logStart("DuplicateNicknameUseCase", "닉네임 중복 여부 확인 서비스 시작 nickname: " + nickname);
+        Instant startTime = LoggerFactory.service().logStart(DUPLICATE_NICKNAME_USE_CASE, "닉네임 중복 여부 확인 서비스 시작 nickname: " + nickname);
         userDuplicateValidator.duplicateNickname(nickname);
-        LoggerFactory.service().logSuccess("DuplicateNicknameUseCase", "닉네임 중복 여부 확인 서비스 성공 nickname=" + nickname, startTime);
+        LoggerFactory.service().logSuccess(DUPLICATE_NICKNAME_USE_CASE, "닉네임 중복 여부 확인 서비스 성공 nickname=" + nickname, startTime);
     }
 
     /**
@@ -48,36 +53,36 @@ public class ValidateUserService implements DuplicateNicknameUseCase, DuplicateE
     @Override
     @Transactional(readOnly = true)
     public void validateDuplicatedEmail(String email) {
-        Instant startTime = LoggerFactory.service().logStart("DuplicateEmailUseCase", "이메일 중복 여부 확인 서비스 시작 email=" + email);
+        Instant startTime = LoggerFactory.service().logStart(DUPLICATE_EMAIL_USE_CASE, "이메일 중복 여부 확인 서비스 시작 email=" + email);
         userDuplicateValidator.duplicateEmail(email)
                 .ifPresent(user -> {
                     ProviderType providerType = user.getProvider();
                     if (providerType == null) {
-                        LoggerFactory.service().logWarning("DuplicateEmailUseCase",
-                                "[중복 이메일 검증] 이메일 " + email + "은 ProviderType이 null입니다.");
+                        LoggerFactory.service().logWarning(DUPLICATE_EMAIL_USE_CASE,
+                                DUPLICATE_EMAIL_MESSAGE + email + "은 ProviderType이 null입니다.");
                         throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
                     }
                     switch (providerType) {
                         case GOOGLE -> {
-                            LoggerFactory.service().logWarning("DuplicateEmailUseCase", "[중복 이메일 검증] 이메일 " + email + "은 구글 소셜 로그인으로 가입된 계정입니다.");
+                            LoggerFactory.service().logWarning(DUPLICATE_EMAIL_USE_CASE, DUPLICATE_EMAIL_MESSAGE + email + "은 구글 소셜 로그인으로 가입된 계정입니다.");
                             throw new UserException(UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
                         }
                         case KAKAO -> {
-                            LoggerFactory.service().logWarning("DuplicateEmailUseCase", "[중복 이메일 검증] 이메일 " + email + "은 카카오 소셜 로그인으로 가입된 계정입니다.");
+                            LoggerFactory.service().logWarning(DUPLICATE_EMAIL_USE_CASE, DUPLICATE_EMAIL_MESSAGE + email + "은 카카오 소셜 로그인으로 가입된 계정입니다.");
                             throw new UserException(UserErrorStatus.DUPLICATED_KAKAO_EMAIL);
                         }
                         case LOCAL -> {
-                            LoggerFactory.service().logWarning("DuplicateEmailUseCase", "[중복 이메일 검증] 이메일 " + email + "은 자체 로그인으로 가입된 계정입니다.");
+                            LoggerFactory.service().logWarning(DUPLICATE_EMAIL_USE_CASE, DUPLICATE_EMAIL_MESSAGE + email + "은 자체 로그인으로 가입된 계정입니다.");
                             throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
                         }
                         default -> {
                             LoggerFactory.service().logWarning(
-                                    "DuplicateEmailUseCase",
-                                    "[중복 이메일 검증] 이메일 " + email + "은 알 수 없는 ProviderType(" + providerType + ")으로 가입된 계정입니다.");
+                                    DUPLICATE_EMAIL_USE_CASE,
+                                    DUPLICATE_EMAIL_MESSAGE + email + "은 알 수 없는 ProviderType(" + providerType + ")으로 가입된 계정입니다.");
                             throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
                         }
                     }
                 });
-        LoggerFactory.service().logSuccess("DuplicateEmailUseCase", "이메일 중복 여부 확인 서비스 성공 email=" + email, startTime);
+        LoggerFactory.service().logSuccess(DUPLICATE_EMAIL_USE_CASE, "이메일 중복 여부 확인 서비스 성공 email=" + email, startTime);
     }
 }

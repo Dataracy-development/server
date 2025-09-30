@@ -13,78 +13,82 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("DataCommandWebMapper 테스트")
 class DataCommandWebMapperTest {
 
     private final DataCommandWebMapper mapper = new DataCommandWebMapper();
 
     @Test
-    @DisplayName("UploadDataWebRequest → UploadDataRequest 매핑 성공")
-    void toApplicationDtoFromUploadWebRequestSuccess() {
-        // given
+    @DisplayName("UploadDataWebRequest를 UploadDataRequest로 변환 성공")
+    void toApplicationDto_ShouldConvertUploadRequest() {
+        // Given
         UploadDataWebRequest webRequest = new UploadDataWebRequest(
-                "title",
+                "Test Dataset",
                 1L,
                 2L,
                 3L,
-                LocalDate.of(2024, 1, 1),
-                LocalDate.of(2024, 12, 31),
-                "desc",
-                "guide"
+                LocalDate.of(2023, 1, 1),
+                LocalDate.of(2023, 12, 31),
+                "Test description",
+                "Test analysis guide"
         );
 
-        // when
-        UploadDataRequest result = mapper.toApplicationDto(webRequest);
+        // When
+        UploadDataRequest applicationRequest = mapper.toApplicationDto(webRequest);
 
-        // then
-        assertThat(result.title()).isEqualTo("title");
-        assertThat(result.topicId()).isEqualTo(1L);
-        assertThat(result.dataSourceId()).isEqualTo(2L);
-        assertThat(result.dataTypeId()).isEqualTo(3L);
-        assertThat(result.startDate()).isEqualTo(LocalDate.of(2024, 1, 1));
-        assertThat(result.endDate()).isEqualTo(LocalDate.of(2024, 12, 31));
-        assertThat(result.description()).isEqualTo("desc");
-        assertThat(result.analysisGuide()).isEqualTo("guide");
+        // Then
+        assertThat(applicationRequest).isNotNull();
+        assertThat(applicationRequest.title()).isEqualTo("Test Dataset");
+        assertThat(applicationRequest.topicId()).isEqualTo(1L);
+        assertThat(applicationRequest.dataSourceId()).isEqualTo(2L);
+        assertThat(applicationRequest.dataTypeId()).isEqualTo(3L);
+        assertThat(applicationRequest.startDate()).isEqualTo(LocalDate.of(2023, 1, 1));
+        assertThat(applicationRequest.endDate()).isEqualTo(LocalDate.of(2023, 12, 31));
+        assertThat(applicationRequest.description()).isEqualTo("Test description");
+        assertThat(applicationRequest.analysisGuide()).isEqualTo("Test analysis guide");
     }
 
     @Test
-    @DisplayName("UploadDataResponse → UploadDataWebResponse 매핑 성공")
-    void toWebDtoFromUploadResponseSuccess() {
-        // given
-        UploadDataResponse response = new UploadDataResponse(100L);
-
-        // when
-        UploadDataWebResponse result = mapper.toWebDto(response);
-
-        // then
-        assertThat(result.id()).isEqualTo(100L);
-    }
-
-    @Test
-    @DisplayName("ModifyDataWebRequest → ModifyDataRequest 매핑 성공")
-    void toApplicationDtoFromModifyWebRequestSuccess() {
-        // given
+    @DisplayName("ModifyDataWebRequest를 ModifyDataRequest로 변환 성공")
+    void toApplicationDto_ShouldConvertModifyRequest() {
+        // Given
         ModifyDataWebRequest webRequest = new ModifyDataWebRequest(
-                "modTitle",
-                10L,
-                20L,
-                30L,
-                LocalDate.of(2023, 5, 1),
-                LocalDate.of(2023, 10, 1),
-                "modDesc",
-                "modGuide"
+                "Modified Dataset",
+                1L,
+                2L,
+                3L,
+                LocalDate.of(2023, 6, 1),
+                LocalDate.of(2023, 12, 31),
+                "Modified description",
+                "Modified analysis guide"
         );
 
-        // when
-        ModifyDataRequest result = mapper.toApplicationDto(webRequest);
+        // When
+        ModifyDataRequest applicationRequest = mapper.toApplicationDto(webRequest);
 
-        // then
-        assertThat(result.title()).isEqualTo("modTitle");
-        assertThat(result.topicId()).isEqualTo(10L);
-        assertThat(result.dataSourceId()).isEqualTo(20L);
-        assertThat(result.dataTypeId()).isEqualTo(30L);
-        assertThat(result.startDate()).isEqualTo(LocalDate.of(2023, 5, 1));
-        assertThat(result.endDate()).isEqualTo(LocalDate.of(2023, 10, 1));
-        assertThat(result.description()).isEqualTo("modDesc");
-        assertThat(result.analysisGuide()).isEqualTo("modGuide");
+        // Then
+        assertThat(applicationRequest).isNotNull();
+        assertThat(applicationRequest.title()).isEqualTo("Modified Dataset");
+        assertThat(applicationRequest.topicId()).isEqualTo(1L);
+        assertThat(applicationRequest.dataSourceId()).isEqualTo(2L);
+        assertThat(applicationRequest.dataTypeId()).isEqualTo(3L);
+        assertThat(applicationRequest.startDate()).isEqualTo(LocalDate.of(2023, 6, 1));
+        assertThat(applicationRequest.endDate()).isEqualTo(LocalDate.of(2023, 12, 31));
+        assertThat(applicationRequest.description()).isEqualTo("Modified description");
+        assertThat(applicationRequest.analysisGuide()).isEqualTo("Modified analysis guide");
+    }
+
+    @Test
+    @DisplayName("UploadDataResponse를 UploadDataWebResponse로 변환 성공")
+    void toWebDto_ShouldConvertUploadResponse() {
+        // Given
+        UploadDataResponse applicationResponse = new UploadDataResponse(123L);
+
+        // When
+        UploadDataWebResponse webResponse = mapper.toWebDto(applicationResponse);
+
+        // Then
+        assertThat(webResponse).isNotNull();
+        assertThat(webResponse.id()).isEqualTo(123L);
     }
 }

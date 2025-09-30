@@ -12,7 +12,7 @@ public class ConnectedProjectDtoMapper {
     /**
      * Project 도메인과 추가 문자열 정보를 결합해 ConnectedProjectResponse DTO를 생성하여 반환합니다.
      *
-     * <p>Project의 식별자, 제목, 사용자 ID, 댓글/좋아요/조회수, 생성일자와 함께 전달된 username 및 topicLabel을 응답 DTO에 포함합니다.</p>
+     * Project의 식별자, 제목, 사용자 ID, 댓글/좋아요/조회수, 생성일자와 함께 전달된 username 및 topicLabel을 응답 DTO에 포함합니다.
      *
      * @param project 변환 대상 Project 도메인 객체
      * @param username 프로젝트와 연관된 사용자 이름

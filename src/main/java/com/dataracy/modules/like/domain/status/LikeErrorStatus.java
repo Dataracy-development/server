@@ -2,11 +2,9 @@ package com.dataracy.modules.like.domain.status;
 
 import com.dataracy.modules.common.status.BaseErrorCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@RequiredArgsConstructor
 public enum LikeErrorStatus implements BaseErrorCode {
     NOT_FOUND_TARGET_LIKE(HttpStatus.INTERNAL_SERVER_ERROR, "LIKE-001", "해당 좋아요 리소스를 찾을 수 없습니다."),
     FAIL_LIKE_PROJECT(HttpStatus.INTERNAL_SERVER_ERROR, "LIKE-002", "프로젝트에 대한 좋아요 처리에 실패했습니다."),
@@ -19,4 +17,10 @@ public enum LikeErrorStatus implements BaseErrorCode {
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
+    
+    LikeErrorStatus(HttpStatus httpStatus, String code, String message) {
+        this.httpStatus = httpStatus;
+        this.code = code;
+        this.message = message;
+    }
 }

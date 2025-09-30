@@ -12,9 +12,9 @@ public class FilteredDataDtoMapper {
     /**
      * Data 도메인과 제공된 라벨·메타정보를 조합해 FilteredDataResponse DTO를 생성하여 반환합니다.
      *
-     * <p>생성되는 DTO에는 데이터의 식별자, 제목, 업로더 정보(username, userProfileImageUrl), 주제·소스·유형 라벨,
+     * 생성되는 DTO에는 데이터의 식별자, 제목, 업로더 정보(username, userProfileImageUrl), 주제·소스·유형 라벨,
      * 시작/종료일, 설명, 썸네일 URL, 다운로드 수, 크기(bytes), 메타데이터(row/column), 생성일(createdAt) 및
-     * 연결된 프로젝트 수(countConnectedProjects)가 포함됩니다.</p>
+     * 연결된 프로젝트 수(countConnectedProjects)가 포함됩니다.
      *
      * @param data 변환 대상 Data 도메인 객체
      * @param username 업로더의 표시 이름(닉네임)

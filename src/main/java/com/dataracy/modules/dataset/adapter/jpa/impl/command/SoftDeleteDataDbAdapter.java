@@ -14,6 +14,10 @@ import org.springframework.stereotype.Repository;
 public class SoftDeleteDataDbAdapter implements SoftDeleteDataPort {
     private final DataJpaRepository dataJpaRepository;
 
+    // Entity 및 메시지 상수 정의
+    private static final String DATA_ENTITY = "DataEntity";
+    private static final String DATA_NOT_FOUND_MESSAGE = "해당 데이터셋이 존재하지 않습니다. dataId=";
+
     /**
      * 지정된 ID의 데이터를 논리적으로 삭제(soft delete)합니다.
      * 데이터가 존재하지 않을 경우 DataException이 발생합니다.
@@ -25,12 +29,12 @@ public class SoftDeleteDataDbAdapter implements SoftDeleteDataPort {
     public void deleteData(Long dataId) {
         DataEntity data = dataJpaRepository.findById(dataId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("DataEntity", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                    LoggerFactory.db().logWarning(DATA_ENTITY, DATA_NOT_FOUND_MESSAGE + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
         data.delete();
         dataJpaRepository.save(data);
-        LoggerFactory.db().logUpdate("DataEntity", String.valueOf(dataId), "데이터셋 soft delete 삭제가 완료되었습니다.");
+        LoggerFactory.db().logUpdate(DATA_ENTITY, String.valueOf(dataId), "데이터셋 soft delete 삭제가 완료되었습니다.");
     }
 
     /**
@@ -43,11 +47,11 @@ public class SoftDeleteDataDbAdapter implements SoftDeleteDataPort {
     public void restoreData(Long dataId) {
         DataEntity data = dataJpaRepository.findIncludingDeletedData(dataId)
                 .orElseThrow(() -> {
-                    LoggerFactory.db().logWarning("DataEntity", "해당 데이터셋이 존재하지 않습니다. dataId=" + dataId);
+                    LoggerFactory.db().logWarning(DATA_ENTITY, DATA_NOT_FOUND_MESSAGE + dataId);
                     return new DataException(DataErrorStatus.NOT_FOUND_DATA);
                 });
         data.restore();
         dataJpaRepository.save(data);
-        LoggerFactory.db().logUpdate("DataEntity", String.valueOf(dataId), "데이터셋 삭제 복원이 완료되었습니다.");
+        LoggerFactory.db().logUpdate(DATA_ENTITY, String.valueOf(dataId), "데이터셋 삭제 복원이 완료되었습니다.");
     }
 }

@@ -7,7 +7,7 @@ public interface UploadCommentUseCase {
     /**
  * 지정된 프로젝트에 사용자가 댓글을 업로드합니다.
  *
- * <p>요청된 내용으로 댓글을 생성하고 업로드 결과를 담은 응답 DTO를 반환합니다.</p>
+ * 요청된 내용으로 댓글을 생성하고 업로드 결과를 담은 응답 DTO를 반환합니다.
  *
  * @param projectId 댓글을 업로드할 프로젝트의 식별자
  * @param userId 댓글을 작성하는 사용자의 식별자

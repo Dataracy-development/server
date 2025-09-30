@@ -24,8 +24,8 @@ public class UserReadController implements UserReadApi {
     /**
          * 유저의 회원 정보를 조회하여 웹 응답 DTO로 반환한다.
          *
-         * <p>내부적으로 GetUserInfoUseCase를 호출해 도메인 응답을 얻고, UserReadWebMapper로 웹 DTO로 변환한 후
-         * HTTP 200 응답의 SuccessResponse에 담아 반환한다.</p>
+         * 내부적으로 GetUserInfoUseCase를 호출해 도메인 응답을 얻고, UserReadWebMapper로 웹 DTO로 변환한 후
+         * HTTP 200 응답의 SuccessResponse에 담아 반환한다.
          *
          * @param userId 조회할 유저의 식별자
          * @return HTTP 200 OK와 UserSuccessStatus.OK_GET_USER_INFO 상태 및 조회된 GetUserInfoWebResponse를 포함한 SuccessResponse

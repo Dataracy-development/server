@@ -34,6 +34,9 @@ public class SearchDataQueryDslAdapter implements
 {
     private final JPAQueryFactory queryFactory;
 
+    // Entity 상수 정의
+    private static final String DATA_ENTITY = "DataEntity";
+
     private final QDataEntity data = QDataEntity.dataEntity;
     private final QProjectDataEntity projectData = QProjectDataEntity.projectDataEntity;
 
@@ -49,7 +52,7 @@ public class SearchDataQueryDslAdapter implements
      */
     @Override
     public Page<DataWithProjectCountDto> searchByFilters(FilteringDataRequest request, Pageable pageable, DataSortType sortType) {
-        Instant startTime = LoggerFactory.query().logQueryStart("DataEntity", "[searchByFilters] 필터링된 데이터셋 목록 조회 시작. keyword=" + request.keyword());
+        Instant startTime = LoggerFactory.query().logQueryStart(DATA_ENTITY, "[searchByFilters] 필터링된 데이터셋 목록 조회 시작. keyword=" + request.keyword());
         int queryCount = 0;
 
         // 3단계: 배치 처리 방식 (최적화)
@@ -90,9 +93,10 @@ public class SearchDataQueryDslAdapter implements
                 .fetchOne()).orElse(0L);
         queryCount++; // 카운트 쿼리
 
-        LoggerFactory.query().logQueryEnd("DataEntity", "[searchByFilters] 필터링된 데이터셋 목록 조회 완료. keyword=" + request.keyword() + ", queryCount=" + queryCount + ", dataSize=" + contents.size(), startTime);
+        LoggerFactory.query().logQueryEnd(DATA_ENTITY, "[searchByFilters] 필터링된 데이터셋 목록 조회 완료. keyword=" + request.keyword() + ", queryCount=" + queryCount + ", dataSize=" + contents.size(), startTime);
         return new PageImpl<>(contents, pageable, total);
     }
+
 
     /**
      * 배치로 프로젝트 수를 조회합니다.

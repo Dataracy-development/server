@@ -23,6 +23,12 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
     private final StringRedisTemplate redisTemplate;
     private static final Duration TTL = Duration.ofMinutes(5);
 
+    // Redis 키 및 메시지 상수 정의
+    private static final String VIEW_COUNT_PREFIX = "viewCount:";
+    private static final String VIEW_COUNT_KEY_FORMAT = "viewCount:%s:%s";
+    private static final String REDIS_CONNECTION_FAILURE_MESSAGE = "레디스 서버 연결에 실패했습니다.";
+    private static final String DATA_ACCESS_FAILURE_MESSAGE = "네트워크 오류로 데이터 접근에 실패했습니다.";
+
     /**
      * 주어진 프로젝트와 대상 유형에 대해 뷰어가 5분 이내 최초로 조회할 때만 조회수를 1 증가시킵니다.
      *
@@ -40,15 +46,15 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
 
             Boolean wasSet = redisTemplate.opsForValue().setIfAbsent(dedupKey, "1", TTL);
             if (Boolean.TRUE.equals(wasSet)) {
-                String countKey = String.format("viewCount:%s:%s", targetType, projectId);
+                String countKey = String.format(VIEW_COUNT_KEY_FORMAT, targetType, projectId);
                 redisTemplate.opsForValue().increment(countKey);
-                LoggerFactory.redis().logSaveOrUpdate("viewCount:" + targetType + ":" + projectId, "해당 프로젝트를 조회하였습니다. projectId=" + projectId);
+                LoggerFactory.redis().logSaveOrUpdate(VIEW_COUNT_PREFIX + targetType + ":" + projectId, "해당 프로젝트를 조회하였습니다. projectId=" + projectId);
             }
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError("viewCount:" + targetType + ":" + projectId, "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(VIEW_COUNT_PREFIX + targetType + ":" + projectId, REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError("viewCount:" + targetType + ":" + projectId, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(VIEW_COUNT_PREFIX + targetType + ":" + projectId, DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -56,7 +62,7 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
     /**
          * 지정된 프로젝트와 대상 유형의 조회수를 Redis에서 가져옵니다.
          *
-         * <p>키 `viewCount:{targetType}:{projectId}`의 값을 읽어 Long으로 반환합니다. 키가 존재하지 않으면 0L을 반환합니다.</p>
+         * 키 `viewCount:{targetType}:{projectId}`의 값을 읽어 Long으로 반환합니다. 키가 존재하지 않으면 0L을 반환합니다.
          *
          * @param projectId 조회수를 조회할 프로젝트의 ID
          * @param targetType 조회 대상의 유형
@@ -67,19 +73,19 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
     @Override
     public Long getViewCount(Long projectId, String targetType) {
         try {
-            Instant startTime = LoggerFactory.redis().logQueryStart("viewCount:" + targetType + ":" + projectId, "해당 프로젝트의 조회수 조회 시작. projectId=" + projectId);
+            Instant startTime = LoggerFactory.redis().logQueryStart(VIEW_COUNT_PREFIX + targetType + ":" + projectId, "해당 프로젝트의 조회수 조회 시작. projectId=" + projectId);
 
-            String key = String.format("viewCount:%s:%s", targetType, projectId);
+            String key = String.format(VIEW_COUNT_KEY_FORMAT, targetType, projectId);
             String value = redisTemplate.opsForValue().get(key);
             Long viewCount = value != null ? Long.parseLong(value) : 0L;
 
-            LoggerFactory.redis().logQueryEnd("viewCount:" + targetType + ":" + projectId, "해당 프로젝트의 조회수 조회 종료. projectId=" + projectId, startTime);
+            LoggerFactory.redis().logQueryEnd(VIEW_COUNT_PREFIX + targetType + ":" + projectId, "해당 프로젝트의 조회수 조회 종료. projectId=" + projectId, startTime);
             return viewCount;
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError("viewCount:" + targetType + ":" + projectId, "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(VIEW_COUNT_PREFIX + targetType + ":" + projectId, REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError("viewCount:" + targetType + ":" + projectId, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(VIEW_COUNT_PREFIX + targetType + ":" + projectId, DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -94,11 +100,11 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
     @Override
     public Set<String> getAllViewCountKeys(String targetType) {
         try {
-            Instant startTime = LoggerFactory.redis().logQueryStart("viewCount:" + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType);
+            Instant startTime = LoggerFactory.redis().logQueryStart(VIEW_COUNT_PREFIX + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType);
 
             Set<String> keys = new HashSet<>();
             ScanOptions options = ScanOptions.scanOptions()
-                    .match(String.format("viewCount:%s:*", targetType))
+                    .match(String.format(VIEW_COUNT_KEY_FORMAT, targetType, "*"))
                     .build();
 
             try (Cursor<String> cursor = redisTemplate.scan(options)) {
@@ -107,13 +113,13 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
                 }
             }
 
-            LoggerFactory.redis().logQueryEnd("viewCount:" + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType, startTime);
+            LoggerFactory.redis().logQueryEnd(VIEW_COUNT_PREFIX + targetType + ":*", "지정된 타겟 타입에 해당하는 모든 조회수 Redis 키를 반환. targetType=" + targetType, startTime);
             return keys;
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError("viewCount:" + targetType + ":*", "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(VIEW_COUNT_PREFIX + targetType + ":*", REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError("viewCount:" + targetType + ":*", "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(VIEW_COUNT_PREFIX + targetType + ":*", DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -130,13 +136,13 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
     @Override
     public void clearViewCount(Long targetId, String targetType) {
         try {
-            redisTemplate.delete(String.format("viewCount:%s:%s", targetType, targetId));
-            LoggerFactory.redis().logDelete("viewCount:" + targetType + ":" + targetId, "지정된 대상 ID와 대상 타입에 해당하는 조회수 카운트 Redis 키를 삭제. targetId=" + targetId);
+            redisTemplate.delete(String.format(VIEW_COUNT_KEY_FORMAT, targetType, targetId));
+            LoggerFactory.redis().logDelete(VIEW_COUNT_PREFIX + targetType + ":" + targetId, "지정된 대상 ID와 대상 타입에 해당하는 조회수 카운트 Redis 키를 삭제. targetId=" + targetId);
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError("viewCount:" + targetType + ":" + targetId, "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(VIEW_COUNT_PREFIX + targetType + ":" + targetId, REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError("viewCount:" + targetType + ":" + targetId, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(VIEW_COUNT_PREFIX + targetType + ":" + targetId, DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
@@ -155,10 +161,10 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
      */
     @Override
     public Long popViewCount(Long projectId, String targetType) {
-        String key = String.format("viewCount:%s:%s", targetType, projectId);
+        String key = String.format(VIEW_COUNT_KEY_FORMAT, targetType, projectId);
 
         try {
-            Instant startTime = LoggerFactory.redis().logQueryStart("viewCount:" + targetType + ":" + projectId, "조회수 pop 작업 시작. projectId=" + projectId);
+            Instant startTime = LoggerFactory.redis().logQueryStart(VIEW_COUNT_PREFIX + targetType + ":" + projectId, "조회수 pop 작업 시작. projectId=" + projectId);
 
             Long viewCount = redisTemplate.execute(connection -> {
                 var keySerializer = redisTemplate.getStringSerializer();
@@ -176,13 +182,13 @@ public class ProjectViewCountRedisAdapter implements ManageProjectViewCountPort 
                 }
             }, false);
 
-            LoggerFactory.redis().logQueryEnd("viewCount:" + targetType + ":" + projectId, "조회수 pop 작업 종료. projectId=" + projectId, startTime);
+            LoggerFactory.redis().logQueryEnd(VIEW_COUNT_PREFIX + targetType + ":" + projectId, "조회수 pop 작업 종료. projectId=" + projectId, startTime);
             return viewCount;
         } catch (RedisConnectionFailureException e) {
-            LoggerFactory.redis().logError(key, "레디스 서버 연결에 실패했습니다.", e);
+            LoggerFactory.redis().logError(key, REDIS_CONNECTION_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
         } catch (DataAccessException e) {
-            LoggerFactory.redis().logError(key, "네트워크 오류로 데이터 접근에 실패했습니다.", e);
+            LoggerFactory.redis().logError(key, DATA_ACCESS_FAILURE_MESSAGE, e);
             throw new CommonException(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
         }
     }
