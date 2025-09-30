@@ -23,5 +23,5 @@ public record TargetLikeWebRequest(
 
         @Schema(description = "이전 좋아요 상태", example = "false")
         @NotNull(message = "좋아요 상태는 NULL 값이 불가합니다.")
-        Boolean previouslyLiked
+        boolean previouslyLiked
 ) {}
