@@ -88,7 +88,7 @@ public class VisitSourceQueryService implements
     @Transactional(readOnly = true)
     public void validateVisitSource(Long visitSourceId) {
         Instant startTime = LoggerFactory.service().logStart(VALIDATE_VISIT_SOURCE_USE_CASE, "주어진 ID에 해당하는 방문 경로가 존재하는지 확인 서비스 시작 visitSourceId=" + visitSourceId);
-        Boolean isExist = visitSourcePort.existsVisitSourceById(visitSourceId);
+        boolean isExist = visitSourcePort.existsVisitSourceById(visitSourceId);
         if (!isExist) {
             LoggerFactory.service().logWarning(VALIDATE_VISIT_SOURCE_USE_CASE, VISIT_SOURCE_NOT_FOUND_MESSAGE + visitSourceId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE);

@@ -87,7 +87,7 @@ public class TopicQueryService implements
     @Transactional(readOnly = true)
     public void validateTopic(Long topicId) {
         Instant startTime = LoggerFactory.service().logStart(VALIDATE_TOPIC_USE_CASE, "주어진 ID에 해당하는 토픽이 존재하는지 확인 서비스 시작 topicId=" + topicId);
-        Boolean isExist = topicPort.existsTopicById(topicId);
+        boolean isExist = topicPort.existsTopicById(topicId);
         if (!isExist) {
             LoggerFactory.service().logWarning(VALIDATE_TOPIC_USE_CASE, TOPIC_NOT_FOUND_MESSAGE + topicId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);

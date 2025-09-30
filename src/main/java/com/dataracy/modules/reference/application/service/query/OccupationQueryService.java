@@ -85,7 +85,7 @@ public class OccupationQueryService implements
     @Transactional(readOnly = true)
     public void validateOccupation(Long occupationId) {
         Instant startTime = LoggerFactory.service().logStart(VALIDATE_OCCUPATION_USE_CASE, "주어진 ID에 해당하는 직업이 존재하는지 확인 서비스 시작 occupationId=" + occupationId);
-        Boolean isExist = occupationPort.existsOccupationById(occupationId);
+        boolean isExist = occupationPort.existsOccupationById(occupationId);
         if (!isExist) {
             LoggerFactory.service().logWarning(VALIDATE_OCCUPATION_USE_CASE, OCCUPATION_NOT_FOUND_MESSAGE + occupationId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_OCCUPATION);

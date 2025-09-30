@@ -126,7 +126,7 @@ public class ProjectEsProjectionWorker {
         try {
             // 소프트 삭제/복원
             if (t.getSetDeleted() != null) {
-                if (t.getSetDeleted()) {
+                if (Boolean.TRUE.equals(t.getSetDeleted())) {
                     softDeleteProjectEsPort.deleteProject(t.getProjectId());
                 } else {
                     softDeleteProjectEsPort.restoreProject(t.getProjectId());

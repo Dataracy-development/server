@@ -86,7 +86,7 @@ public class AnalysisPurposeQueryService implements
     @Transactional(readOnly = true)
     public void validateAnalysisPurpose(Long analysisPurposeId) {
         Instant startTime = LoggerFactory.service().logStart(VALIDATE_ANALYSIS_PURPOSE_USE_CASE, "주어진 ID에 해당하는 분석 목적이 존재하는지 확인 서비스 시작 analysisPurposeId=" + analysisPurposeId);
-        Boolean isExist = analysisPurposePort.existsAnalysisPurposeById(analysisPurposeId);
+        boolean isExist = analysisPurposePort.existsAnalysisPurposeById(analysisPurposeId);
         if (!isExist) {
             LoggerFactory.service().logWarning(FIND_ANALYSIS_PURPOSE_USE_CASE, ANALYSIS_PURPOSE_NOT_FOUND_MESSAGE + analysisPurposeId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);

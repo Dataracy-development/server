@@ -85,7 +85,7 @@ public class AuthorLevelQueryService implements
     @Transactional(readOnly = true)
     public void validateAuthorLevel(Long authorLevelId) {
         Instant startTime = LoggerFactory.service().logStart(VALIDATE_AUTHOR_LEVEL_USE_CASE, "주어진 ID에 해당하는 작성자 유형이 존재하는지 확인 서비스 시작 authorLevelId=" + authorLevelId);
-        Boolean isExist = authorLevelPort.existsAuthorLevelById(authorLevelId);
+        boolean isExist = authorLevelPort.existsAuthorLevelById(authorLevelId);
         if (!isExist) {
             LoggerFactory.service().logWarning(VALIDATE_AUTHOR_LEVEL_USE_CASE, AUTHOR_LEVEL_NOT_FOUND_MESSAGE + authorLevelId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL);

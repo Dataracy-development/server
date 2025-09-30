@@ -86,7 +86,7 @@ public class DataTypeQueryService implements
     @Transactional(readOnly = true)
     public void validateDataType(Long dataTypeId) {
         Instant startTime = LoggerFactory.service().logStart(VALIDATE_DATA_TYPE_USE_CASE, "주어진 ID에 해당하는 데이터 유형이 존재하는지 확인 서비스 시작 dataTypeId=" + dataTypeId);
-        Boolean isExist = dataTypePort.existsDataTypeById(dataTypeId);
+        boolean isExist = dataTypePort.existsDataTypeById(dataTypeId);
         if (!isExist) {
             LoggerFactory.service().logWarning(VALIDATE_DATA_TYPE_USE_CASE, DATA_TYPE_NOT_FOUND_MESSAGE + dataTypeId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_TYPE);

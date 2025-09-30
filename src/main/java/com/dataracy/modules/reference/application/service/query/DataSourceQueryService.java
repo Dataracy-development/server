@@ -89,7 +89,7 @@ public class DataSourceQueryService implements
     @Transactional(readOnly = true)
     public void validateDataSource(Long dataSourceId) {
         Instant startTime = LoggerFactory.service().logStart(VALIDATE_DATA_SOURCE_USE_CASE, "주어진 ID에 해당하는 데이터 소스가 존재하는지 확인 서비스 시작 dataSourceId=" + dataSourceId);
-        Boolean isExist = dataSourcePort.existsDataSourceById(dataSourceId);
+        boolean isExist = dataSourcePort.existsDataSourceById(dataSourceId);
         if (!isExist) {
             LoggerFactory.service().logWarning(VALIDATE_DATA_SOURCE_USE_CASE, DATA_SOURCE_NOT_FOUND_MESSAGE_2 + dataSourceId);
             throw new ReferenceException(ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE);
