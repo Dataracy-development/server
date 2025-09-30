@@ -204,11 +204,11 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
                     .build();
             entityManager.persist(anotherProject);
 
-            ProjectDataEntity projectData = ProjectDataEntity.builder()
+            ProjectDataEntity anotherProjectData = ProjectDataEntity.builder()
                     .project(anotherProject)
                     .dataId(2L)
                     .build();
-            entityManager.persist(projectData);
+            entityManager.persist(anotherProjectData);
             entityManager.flush();
 
             // when
