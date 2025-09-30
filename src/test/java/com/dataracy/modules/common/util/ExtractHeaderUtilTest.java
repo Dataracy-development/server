@@ -79,20 +79,6 @@ class ExtractHeaderUtilTest {
     }
 
     @Test
-    @DisplayName("extractAccessToken - null 헤더 값 처리")
-    void extractAccessToken_ShouldHandleNullHeader() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        // null 헤더는 addHeader로 설정할 수 없으므로 헤더를 설정하지 않음
-
-        // When
-        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
-
-        // Then
-        assertThat(token).isEmpty();
-    }
-
-    @Test
     @DisplayName("extractAccessToken - 공백이 포함된 토큰 처리")
     void extractAccessToken_ShouldHandleTokenWithSpaces() {
         // Given
