@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.thenCode;
 
 class NoOpRateLimitAdapterTest {
 
@@ -128,8 +129,8 @@ class NoOpRateLimitAdapterTest {
         int incrementBy = 5;
 
         // when & then
-        // 예외가 발생하지 않아야 함
-        noOpRateLimitAdapter.incrementRequestCount(key, incrementBy);
+        thenCode(() -> noOpRateLimitAdapter.incrementRequestCount(key, incrementBy))
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -140,8 +141,8 @@ class NoOpRateLimitAdapterTest {
         int incrementBy = 5;
 
         // when & then
-        // 예외가 발생하지 않아야 함
-        noOpRateLimitAdapter.incrementRequestCount(key, incrementBy);
+        thenCode(() -> noOpRateLimitAdapter.incrementRequestCount(key, incrementBy))
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -152,8 +153,8 @@ class NoOpRateLimitAdapterTest {
         int incrementBy = 5;
 
         // when & then
-        // 예외가 발생하지 않아야 함
-        noOpRateLimitAdapter.incrementRequestCount(key, incrementBy);
+        thenCode(() -> noOpRateLimitAdapter.incrementRequestCount(key, incrementBy))
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -164,8 +165,8 @@ class NoOpRateLimitAdapterTest {
         int incrementBy = 0;
 
         // when & then
-        // 예외가 발생하지 않아야 함
-        noOpRateLimitAdapter.incrementRequestCount(key, incrementBy);
+        thenCode(() -> noOpRateLimitAdapter.incrementRequestCount(key, incrementBy))
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -176,8 +177,8 @@ class NoOpRateLimitAdapterTest {
         int incrementBy = -1;
 
         // when & then
-        // 예외가 발생하지 않아야 함
-        noOpRateLimitAdapter.incrementRequestCount(key, incrementBy);
+        thenCode(() -> noOpRateLimitAdapter.incrementRequestCount(key, incrementBy))
+                .doesNotThrowAnyException();
     }
 
     @Test
