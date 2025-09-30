@@ -4,7 +4,7 @@ import com.dataracy.modules.common.support.annotation.ValidEnumValue;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +16,8 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
 
     /**
      * enum value값을 주입받아 초기화한다.
+     * 
+     * Enum의 getValue() public 메서드를 통해 값을 추출하여 캡슐화를 준수합니다.
      *
      * @param annotation Enum 유효성 애노테이션
      */
@@ -27,19 +29,19 @@ public class EnumValueValidator implements ConstraintValidator<ValidEnumValue, O
 
         Class<? extends Enum> enumClass = annotation.enumClass();
         try {
-            Field valueField = enumClass.getDeclaredField("value");
-            valueField.setAccessible(true);
+            // public getter 메서드를 통해 접근 (캡슐화 준수)
+            Method getValueMethod = enumClass.getMethod("getValue");
 
             for (Enum constant : enumClass.getEnumConstants()) {
-                Object val = valueField.get(constant);
+                Object val = getValueMethod.invoke(constant);
                 if (val instanceof String stringValue) {
                     validValues.add(stringValue);
                 }
             }
 
             this.enumValuesString = String.join(", ", validValues);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new IllegalArgumentException("Enum 클래스에서 'value' 필드를 찾을 수 없습니다.", e);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Enum 클래스에 public getValue() 메서드가 필요합니다: " + enumClass.getSimpleName(), e);
         }
     }
 
