@@ -33,10 +33,10 @@ public final class FileUtil {
      * @param originalFilename 검증할 파일명
      * @param regex 허용되는 확장자 정규식 패턴
      * @param errorStatus 일치하지 않을 때 발생시킬 예외 상태
-     * @throws CommonException 파일 확장자가 허용되지 않은 경우
+     * @throws CommonException 파일명이 null이거나 파일 확장자가 허용되지 않은 경우
      */
     private static void checkFileType(String originalFilename, String regex, CommonErrorStatus errorStatus) {
-        if (!originalFilename.matches(regex)) {
+        if (originalFilename == null || !originalFilename.matches(regex)) {
             LoggerFactory.common().logError("파일 형식 검증", errorStatus.getMessage());
             throw new CommonException(errorStatus);
         }
