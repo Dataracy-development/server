@@ -35,12 +35,12 @@ public class FileStorageProperties {
         /**
          * 멀티파트 업로드 적용 기준 (바이트)
          */
-        private long multipartThreshold = 20 * 1024 * 1024; // 20MB
+        private long multipartThreshold = 20L * 1024 * 1024; // 20MB
         
         /**
          * 스트리밍 업로드 적용 기준 (바이트)
          */
-        private long streamingThreshold = 5 * 1024 * 1024; // 5MB
+        private long streamingThreshold = 5L * 1024 * 1024; // 5MB
     }
     
     @Getter
@@ -49,7 +49,7 @@ public class FileStorageProperties {
         /**
          * 멀티파트 청크 크기 (바이트)
          */
-        private long chunkSize = 5 * 1024 * 1024; // 5MB
+        private long chunkSize = 5L * 1024 * 1024; // 5MB
         
         /**
          * 최대 파트 수

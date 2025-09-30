@@ -53,7 +53,7 @@ public final class FileUtil {
      */
     public static void validateImageFile(MultipartFile file) {
         if (file == null || file.isEmpty()) return;
-        long maxSize = 5 * 1024 * 1024; // 5MB
+        long maxSize = 5L * 1024 * 1024; // 5MB
         checkFileSize(file, maxSize, CommonErrorStatus.OVER_MAXIMUM_IMAGE_FILE_SIZE);
         checkFileType(file.getOriginalFilename(), "(?i).+\\.(jpg|jpeg|png)$", CommonErrorStatus.BAD_REQUEST_IMAGE_FILE_TYPE);
     }
@@ -67,7 +67,7 @@ public final class FileUtil {
      */
     public static void validateGeneralFile(MultipartFile file) {
         if (file == null || file.isEmpty()) return;
-        long maxSize = 200 * 1024 * 1024; // 200MB (데이터 분석 커뮤니티 수준)
+        long maxSize = 200L * 1024 * 1024; // 200MB (데이터 분석 커뮤니티 수준)
         checkFileSize(file, maxSize, CommonErrorStatus.OVER_MAXIMUM_FILE_SIZE);
         checkFileType(file.getOriginalFilename(), "(?i).+\\.(xlsx|csv|json)$", CommonErrorStatus.BAD_REQUEST_FILE_TYPE);
     }
