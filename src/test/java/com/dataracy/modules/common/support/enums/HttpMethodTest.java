@@ -70,13 +70,13 @@ class HttpMethodTest {
     @DisplayName("HttpMethod toString() 메서드 테스트")
     void httpMethod_ShouldHaveCorrectToString() {
         // Given & When & Then
-        assertThat(HttpMethod.GET.toString()).isEqualTo("GET");
-        assertThat(HttpMethod.POST.toString()).isEqualTo("POST");
-        assertThat(HttpMethod.PUT.toString()).isEqualTo("PUT");
-        assertThat(HttpMethod.PATCH.toString()).isEqualTo("PATCH");
-        assertThat(HttpMethod.DELETE.toString()).isEqualTo("DELETE");
-        assertThat(HttpMethod.HEAD.toString()).isEqualTo("HEAD");
-        assertThat(HttpMethod.OPTIONS.toString()).isEqualTo("OPTIONS");
-        assertThat(HttpMethod.TRACE.toString()).isEqualTo("TRACE");
+        assertThat(HttpMethod.GET).hasToString("GET");
+        assertThat(HttpMethod.POST).hasToString("POST");
+        assertThat(HttpMethod.PUT).hasToString("PUT");
+        assertThat(HttpMethod.PATCH).hasToString("PATCH");
+        assertThat(HttpMethod.DELETE).hasToString("DELETE");
+        assertThat(HttpMethod.HEAD).hasToString("HEAD");
+        assertThat(HttpMethod.OPTIONS).hasToString("OPTIONS");
+        assertThat(HttpMethod.TRACE).hasToString("TRACE");
     }
 }

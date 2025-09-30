@@ -54,10 +54,10 @@ class TokenTypeTest {
     @DisplayName("TokenType toString() 메서드 테스트")
     void tokenType_ShouldHaveCorrectToString() {
         // Given & When & Then
-        assertThat(TokenType.REGISTER.toString()).isEqualTo("REGISTER");
-        assertThat(TokenType.ACCESS.toString()).isEqualTo("ACCESS");
-        assertThat(TokenType.REFRESH.toString()).isEqualTo("REFRESH");
-        assertThat(TokenType.RESET_PASSWORD.toString()).isEqualTo("RESET_PASSWORD");
+        assertThat(TokenType.REGISTER).hasToString("REGISTER");
+        assertThat(TokenType.ACCESS).hasToString("ACCESS");
+        assertThat(TokenType.REFRESH).hasToString("REFRESH");
+        assertThat(TokenType.RESET_PASSWORD).hasToString("RESET_PASSWORD");
     }
 
     @Test

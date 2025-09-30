@@ -50,9 +50,9 @@ class ActionTypeTest {
     @DisplayName("ActionType toString() 메서드 테스트")
     void actionType_ShouldHaveCorrectToString() {
         // Given & When & Then
-        assertThat(ActionType.CLICK.toString()).isEqualTo("CLICK");
-        assertThat(ActionType.NAVIGATION.toString()).isEqualTo("NAVIGATION");
-        assertThat(ActionType.OTHER.toString()).isEqualTo("OTHER");
+        assertThat(ActionType.CLICK).hasToString("CLICK");
+        assertThat(ActionType.NAVIGATION).hasToString("NAVIGATION");
+        assertThat(ActionType.OTHER).hasToString("OTHER");
     }
 
     @Test

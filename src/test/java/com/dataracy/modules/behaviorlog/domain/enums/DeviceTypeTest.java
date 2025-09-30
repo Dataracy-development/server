@@ -54,10 +54,10 @@ class DeviceTypeTest {
     @DisplayName("DeviceType toString() 메서드 테스트")
     void deviceType_ShouldHaveCorrectToString() {
         // Given & When & Then
-        assertThat(DeviceType.PC.toString()).isEqualTo("PC");
-        assertThat(DeviceType.MOBILE.toString()).isEqualTo("MOBILE");
-        assertThat(DeviceType.TABLET.toString()).isEqualTo("TABLET");
-        assertThat(DeviceType.UNKNOWN.toString()).isEqualTo("UNKNOWN");
+        assertThat(DeviceType.PC).hasToString("PC");
+        assertThat(DeviceType.MOBILE).hasToString("MOBILE");
+        assertThat(DeviceType.TABLET).hasToString("TABLET");
+        assertThat(DeviceType.UNKNOWN).hasToString("UNKNOWN");
     }
 
     @Test

@@ -46,7 +46,7 @@ class DataEsProjectionTypeTest {
     @DisplayName("DataEsProjectionType toString() 메서드 테스트")
     void dataEsProjectionType_ShouldHaveCorrectToString() {
         // Given & When & Then
-        assertThat(DataEsProjectionType.PENDING.toString()).isEqualTo("PENDING");
-        assertThat(DataEsProjectionType.RETRYING.toString()).isEqualTo("RETRYING");
+        assertThat(DataEsProjectionType.PENDING).hasToString("PENDING");
+        assertThat(DataEsProjectionType.RETRYING).hasToString("RETRYING");
     }
 }

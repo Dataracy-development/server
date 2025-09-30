@@ -46,8 +46,8 @@ class LogTypeTest {
     @DisplayName("LogType toString() 메서드 테스트")
     void logType_ShouldHaveCorrectToString() {
         // Given & When & Then
-        assertThat(LogType.ACTION.toString()).isEqualTo("ACTION");
-        assertThat(LogType.ERROR.toString()).isEqualTo("ERROR");
+        assertThat(LogType.ACTION).hasToString("ACTION");
+        assertThat(LogType.ERROR).hasToString("ERROR");
     }
 
     @Test

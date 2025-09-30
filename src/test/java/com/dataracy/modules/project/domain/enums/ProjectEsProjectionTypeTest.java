@@ -46,7 +46,7 @@ class ProjectEsProjectionTypeTest {
     @DisplayName("ProjectEsProjectionType toString() 메서드 테스트")
     void projectEsProjectionType_ShouldHaveCorrectToString() {
         // Given & When & Then
-        assertThat(ProjectEsProjectionType.PENDING.toString()).isEqualTo("PENDING");
-        assertThat(ProjectEsProjectionType.RETRYING.toString()).isEqualTo("RETRYING");
+        assertThat(ProjectEsProjectionType.PENDING).hasToString("PENDING");
+        assertThat(ProjectEsProjectionType.RETRYING).hasToString("RETRYING");
     }
 }
