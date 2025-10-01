@@ -51,48 +51,88 @@ public class RedissonDistributedLockManager {
         RLock lock = redissonClient.getLock(key);
         LoggerFactory.lock().logInfo("lock 객체 생성 완료 - key={} class={}", key, lock.getClass().getSimpleName());
 
+        return attemptLockAcquisition(key, lock, waitTime, leaseTime, retryCount, action, startTime);
+    }
+    
+    /**
+     * 락 획득을 시도하고 성공 시 작업을 실행합니다.
+     */
+    private <T> T attemptLockAcquisition(String key, RLock lock, long waitTime, long leaseTime, 
+                                       int retryCount, Supplier<T> action, Instant startTime) {
         int attempts = 0;
-
+        
         while (attempts <= retryCount) {
-            boolean acquired = false;
-            try {
-                LoggerFactory.lock().logTry(key, attempts);
-                acquired = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
-                LoggerFactory.lock().logInfo("tryLock 결과 - key={} acquired={}", key, acquired);
-
-                if (acquired) {
-                    return executeAction(key, lock, action, startTime);
-                }
-
-                attempts++;
-                LoggerFactory.lock().logFail(key, attempts);
-                performBackoff(attempts);
-
-            } catch (InterruptedException e) {
-                if (acquired) {
-                    releaseLock(key, lock);
-                }
-                handleInterruptedException(key, e);
-            } catch (BusinessException | CommonException e) {
-                if (acquired) {
-                    releaseLock(key, lock);
-                }
-                handleBusinessOrCommonException(key, e);
-            } catch (RuntimeException e) {
-                if (acquired) {
-                    releaseLock(key, lock);
-                }
-                handleRuntimeException(key, e);
-            } catch (Exception e) {
-                if (acquired) {
-                    releaseLock(key, lock);
-                }
-                handleGeneralException(key, e);
+            LockAttemptResult result = tryAcquireLock(key, lock, waitTime, leaseTime, attempts);
+            
+            if (result.isSuccess()) {
+                return executeAction(key, lock, action, startTime);
             }
+            
+            attempts++;
+            LoggerFactory.lock().logFail(key, attempts);
+            performBackoff(attempts);
         }
-
+        
         LoggerFactory.lock().logRetryExceeded(key);
         throw new LockAcquisitionException("다른 사용자가 해당 자원에 접근 중입니다. 잠시 후 다시 시도해주세요.");
+    }
+    
+    /**
+     * 락 획득 시도를 수행하고 결과를 반환합니다.
+     */
+    private LockAttemptResult tryAcquireLock(String key, RLock lock, long waitTime, long leaseTime, int attempts) {
+        boolean acquired = false;
+        try {
+            LoggerFactory.lock().logTry(key, attempts);
+            acquired = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
+            LoggerFactory.lock().logInfo("tryLock 결과 - key={} acquired={}", key, acquired);
+            
+            return new LockAttemptResult(acquired, null);
+            
+        } catch (InterruptedException e) {
+            return handleLockException(key, lock, acquired, e, this::handleInterruptedException);
+        } catch (BusinessException | CommonException e) {
+            return handleLockException(key, lock, acquired, e, this::handleBusinessOrCommonException);
+        } catch (RuntimeException e) {
+            return handleLockException(key, lock, acquired, e, this::handleRuntimeException);
+        } catch (Exception e) {
+            return handleLockException(key, lock, acquired, e, this::handleGeneralException);
+        }
+    }
+    
+    /**
+     * 락 획득 중 발생한 예외를 처리합니다.
+     */
+    private LockAttemptResult handleLockException(String key, RLock lock, boolean acquired, 
+                                                Exception e, ExceptionHandler handler) {
+        if (acquired) {
+            releaseLock(key, lock);
+        }
+        handler.handle(key, e);
+        return new LockAttemptResult(false, e);
+    }
+    
+    /**
+     * 락 획득 시도 결과를 나타내는 내부 클래스
+     */
+    private static class LockAttemptResult {
+        private final boolean success;
+        
+        public LockAttemptResult(boolean success, Exception exception) {
+            this.success = success;
+        }
+        
+        public boolean isSuccess() {
+            return success;
+        }
+    }
+    
+    /**
+     * 예외 처리 함수형 인터페이스
+     */
+    @FunctionalInterface
+    private interface ExceptionHandler {
+        void handle(String key, Exception e);
     }
     
     private <T> T executeAction(String key, RLock lock, Supplier<T> action, Instant startTime) {
@@ -116,18 +156,18 @@ public class RedissonDistributedLockManager {
         }
     }
     
-    private void handleInterruptedException(String key, InterruptedException e) {
+    private void handleInterruptedException(String key, Exception e) {
         Thread.currentThread().interrupt();
         LoggerFactory.lock().logException(key, "인터럽트 발생", e);
         throw new LockAcquisitionException("스레드 인터럽트로 인해 락 획득 실패", e);
     }
     
-    private void handleBusinessOrCommonException(String key, RuntimeException e) {
+    private void handleBusinessOrCommonException(String key, Exception e) {
         LoggerFactory.lock().logWarning(key, "비즈니스/공통 예외 발생 - message=" + e.getMessage());
-        throw e;
+        throw (RuntimeException) e;
     }
     
-    private void handleRuntimeException(String key, RuntimeException e) {
+    private void handleRuntimeException(String key, Exception e) {
         Throwable cause = e.getCause();
         if (cause instanceof BusinessException || cause instanceof CommonException) {
             throw (RuntimeException) cause;
