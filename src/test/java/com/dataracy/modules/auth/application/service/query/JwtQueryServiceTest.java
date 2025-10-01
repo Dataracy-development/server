@@ -18,7 +18,6 @@ import org.mockito.quality.Strictness;
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +40,7 @@ class JwtQueryServiceTest {
     void setUp() {
         loggerFactoryMock = mockStatic(com.dataracy.modules.common.logging.support.LoggerFactory.class);
         loggerService = mock(com.dataracy.modules.common.logging.ServiceLogger.class);
-        loggerFactoryMock.when(() -> com.dataracy.modules.common.logging.support.LoggerFactory.service()).thenReturn(loggerService);
+        loggerFactoryMock.when(com.dataracy.modules.common.logging.support.LoggerFactory::service).thenReturn(loggerService);
         doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
         doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
     }

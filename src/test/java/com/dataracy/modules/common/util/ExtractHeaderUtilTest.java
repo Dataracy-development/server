@@ -27,7 +27,7 @@ class ExtractHeaderUtilTest {
         // Then
         assertAll(
                 () -> assertThat(token).isPresent(),
-                () -> assertThat(token.get()).isEqualTo("valid-token-123")
+                () -> assertThat(token).contains("valid-token-123")
         );
     }
 
@@ -79,7 +79,7 @@ class ExtractHeaderUtilTest {
         // Then
         assertAll(
                 () -> assertThat(token).isPresent(),
-                () -> assertThat(token.get()).isEmpty()
+                () -> assertThat(token).contains("")
         );
     }
 
@@ -96,7 +96,7 @@ class ExtractHeaderUtilTest {
         // Then
         assertAll(
                 () -> assertThat(token).isPresent(),
-                () -> assertThat(token.get()).isEqualTo("token with spaces")
+                () -> assertThat(token).contains("token with spaces")
         );
     }
 }

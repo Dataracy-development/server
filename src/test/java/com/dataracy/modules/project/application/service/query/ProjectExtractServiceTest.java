@@ -33,7 +33,7 @@ class ProjectExtractServiceTest {
     void setUp() {
         loggerFactoryMock = mockStatic(LoggerFactory.class);
         loggerService = mock(com.dataracy.modules.common.logging.ServiceLogger.class);
-        loggerFactoryMock.when(() -> LoggerFactory.service()).thenReturn(loggerService);
+        loggerFactoryMock.when(LoggerFactory::service).thenReturn(loggerService);
         doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
         doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
     }

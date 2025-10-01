@@ -271,7 +271,7 @@ class ProjectUserTest {
             // when & then
             assertAll(
                     () -> assertThat(projectUser1).isEqualTo(projectUser2),
-                    () -> assertThat(projectUser1.hashCode()).isEqualTo(projectUser2.hashCode())
+                    () -> assertThat(projectUser1).hasSameHashCodeAs(projectUser2)
             );
         }
 

@@ -124,7 +124,7 @@ class CookieUtilTest {
         // Then
         assertAll(
                 () -> assertThat(result).isPresent(),
-                () -> assertThat(result.get()).isEqualTo("test-refresh-token")
+                () -> assertThat(result).contains("test-refresh-token")
         );
     }
 

@@ -156,7 +156,7 @@ class CommentTest {
         assertAll(
                 () -> assertThat(comment).isNotNull(),
                 () -> assertThat(comment.getContent()).isEqualTo(content),
-                () -> assertThat(comment.getContent().length()).isEqualTo(1000)
+                () -> assertThat(comment.getContent()).hasSize(1000)
         );
     }
 }

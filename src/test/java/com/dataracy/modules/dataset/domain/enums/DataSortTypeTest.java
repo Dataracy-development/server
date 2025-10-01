@@ -4,6 +4,8 @@ import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -11,125 +13,42 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataSortTypeTest {
 
-    @Test
-    @DisplayName("of - LATEST 문자열로 LATEST enum을 반환한다")
-    void of_WhenLatestString_ReturnsLatestEnum() {
+    @ParameterizedTest(name = "of - {0} 문자열로 {1} enum을 반환한다")
+    @CsvSource({
+            "LATEST, LATEST",
+            "latest, LATEST",
+            "OLDEST, OLDEST",
+            "oldest, OLDEST",
+            "DOWNLOAD, DOWNLOAD",
+            "download, DOWNLOAD",
+            "UTILIZE, UTILIZE",
+            "utilize, UTILIZE"
+    })
+    @DisplayName("of - 문자열로 해당 enum을 반환한다")
+    void of_WhenValidString_ReturnsCorrespondingEnum(String input, String expectedEnumName) {
         // when
-        DataSortType result = DataSortType.of("LATEST");
+        DataSortType result = DataSortType.of(input);
 
         // then
-        assertThat(result).isEqualTo(DataSortType.LATEST);
+        assertThat(result.name()).isEqualTo(expectedEnumName);
     }
 
-    @Test
-    @DisplayName("of - latest 소문자로 LATEST enum을 반환한다")
-    void of_WhenLatestLowerCase_ReturnsLatestEnum() {
-        // when
-        DataSortType result = DataSortType.of("latest");
-
-        // then
-        assertThat(result).isEqualTo(DataSortType.LATEST);
-    }
-
-    @Test
-    @DisplayName("of - OLDEST 문자열로 OLDEST enum을 반환한다")
-    void of_WhenOldestString_ReturnsOldestEnum() {
-        // when
-        DataSortType result = DataSortType.of("OLDEST");
-
-        // then
-        assertThat(result).isEqualTo(DataSortType.OLDEST);
-    }
-
-    @Test
-    @DisplayName("of - oldest 소문자로 OLDEST enum을 반환한다")
-    void of_WhenOldestLowerCase_ReturnsOldestEnum() {
-        // when
-        DataSortType result = DataSortType.of("oldest");
-
-        // then
-        assertThat(result).isEqualTo(DataSortType.OLDEST);
-    }
-
-    @Test
-    @DisplayName("of - DOWNLOAD 문자열로 DOWNLOAD enum을 반환한다")
-    void of_WhenDownloadString_ReturnsDownloadEnum() {
-        // when
-        DataSortType result = DataSortType.of("DOWNLOAD");
-
-        // then
-        assertThat(result).isEqualTo(DataSortType.DOWNLOAD);
-    }
-
-    @Test
-    @DisplayName("of - download 소문자로 DOWNLOAD enum을 반환한다")
-    void of_WhenDownloadLowerCase_ReturnsDownloadEnum() {
-        // when
-        DataSortType result = DataSortType.of("download");
-
-        // then
-        assertThat(result).isEqualTo(DataSortType.DOWNLOAD);
-    }
-
-    @Test
-    @DisplayName("of - UTILIZE 문자열로 UTILIZE enum을 반환한다")
-    void of_WhenUtilizeString_ReturnsUtilizeEnum() {
-        // when
-        DataSortType result = DataSortType.of("UTILIZE");
-
-        // then
-        assertThat(result).isEqualTo(DataSortType.UTILIZE);
-    }
-
-    @Test
-    @DisplayName("of - utilize 소문자로 UTILIZE enum을 반환한다")
-    void of_WhenUtilizeLowerCase_ReturnsUtilizeEnum() {
-        // when
-        DataSortType result = DataSortType.of("utilize");
-
-        // then
-        assertThat(result).isEqualTo(DataSortType.UTILIZE);
-    }
-
-    @Test
-    @DisplayName("of - 유효하지 않은 문자열로 DataException이 발생한다")
-    void of_WhenInvalidString_ThrowsDataException() {
+    @ParameterizedTest(name = "of - {0}로 DataException이 발생한다")
+    @CsvSource({
+            "INVALID, 'INVALID'",
+            "null, null",
+            "'', ''"
+    })
+    @DisplayName("of - 잘못된 입력으로 DataException이 발생한다")
+    void of_WhenInvalidInput_ThrowsDataException(String input, String expectedInput) {
         // when & then
         DataException exception = catchThrowableOfType(
-                () -> DataSortType.of("INVALID"),
+                () -> DataSortType.of("null".equals(input) ? null : input),
                 DataException.class
         );
         assertAll(
-                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
-                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.INVALID_DATA_SORT_TYPE)
-        );
-    }
-
-    @Test
-    @DisplayName("of - null로 DataException이 발생한다")
-    void of_WhenNull_ThrowsDataException() {
-        // when & then
-        DataException exception = catchThrowableOfType(
-                () -> DataSortType.of(null),
-                DataException.class
-        );
-        assertAll(
-                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
-                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.INVALID_DATA_SORT_TYPE)
-        );
-    }
-
-    @Test
-    @DisplayName("of - 빈 문자열로 DataException이 발생한다")
-    void of_WhenEmptyString_ThrowsDataException() {
-        // when & then
-        DataException exception = catchThrowableOfType(
-                () -> DataSortType.of(""),
-                DataException.class
-        );
-        assertAll(
-                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
-                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.INVALID_DATA_SORT_TYPE)
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception).hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.INVALID_DATA_SORT_TYPE)
         );
     }
 

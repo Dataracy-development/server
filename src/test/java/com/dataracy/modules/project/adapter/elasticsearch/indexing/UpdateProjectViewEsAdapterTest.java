@@ -28,7 +28,7 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
-class dUpdateProjectViewEsAdapterTest {
+class UpdateProjectViewEsAdapterTest {
 
     @Mock
     private ElasticsearchClient elasticsearchClient;

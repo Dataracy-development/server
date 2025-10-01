@@ -11,6 +11,7 @@ import com.dataracy.modules.project.adapter.jpa.entity.ProjectEntity;
 import com.dataracy.modules.comment.domain.model.Comment;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -480,7 +481,7 @@ public class TestDataBuilder {
         }
 
         public static Long randomId() {
-            return (long) (Math.random() * 10000) + 1;
+            return Math.abs(new Random().nextLong() % 10000) + 1;
         }
 
         public static String randomString(int length) {

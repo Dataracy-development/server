@@ -4,6 +4,8 @@ import com.dataracy.modules.like.domain.exception.LikeException;
 import com.dataracy.modules.like.domain.status.LikeErrorStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -11,80 +13,33 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TargetTypeTest {
 
-    @Test
-    @DisplayName("of - PROJECT 문자열로 PROJECT enum을 반환한다")
-    void of_WhenProjectString_ReturnsProjectEnum() {
+    @ParameterizedTest(name = "of - {0} 문자열로 {1} enum을 반환한다")
+    @CsvSource({
+            "PROJECT, PROJECT",
+            "project, PROJECT",
+            "COMMENT, COMMENT",
+            "comment, COMMENT"
+    })
+    @DisplayName("of - 문자열로 해당 enum을 반환한다")
+    void of_WhenValidString_ReturnsCorrespondingEnum(String input, String expectedEnumName) {
         // when
-        TargetType result = TargetType.of("PROJECT");
+        TargetType result = TargetType.of(input);
 
         // then
-        assertThat(result).isEqualTo(TargetType.PROJECT);
+        assertThat(result.name()).isEqualTo(expectedEnumName);
     }
 
-    @Test
-    @DisplayName("of - project 소문자로 PROJECT enum을 반환한다")
-    void of_WhenProjectLowerCase_ReturnsProjectEnum() {
-        // when
-        TargetType result = TargetType.of("project");
-
-        // then
-        assertThat(result).isEqualTo(TargetType.PROJECT);
-    }
-
-    @Test
-    @DisplayName("of - COMMENT 문자열로 COMMENT enum을 반환한다")
-    void of_WhenCommentString_ReturnsCommentEnum() {
-        // when
-        TargetType result = TargetType.of("COMMENT");
-
-        // then
-        assertThat(result).isEqualTo(TargetType.COMMENT);
-    }
-
-    @Test
-    @DisplayName("of - comment 소문자로 COMMENT enum을 반환한다")
-    void of_WhenCommentLowerCase_ReturnsCommentEnum() {
-        // when
-        TargetType result = TargetType.of("comment");
-
-        // then
-        assertThat(result).isEqualTo(TargetType.COMMENT);
-    }
-
-    @Test
-    @DisplayName("of - 유효하지 않은 문자열로 LikeException이 발생한다")
-    void of_WhenInvalidString_ThrowsLikeException() {
+    @ParameterizedTest(name = "of - {0}로 LikeException이 발생한다")
+    @CsvSource({
+            "INVALID, 'INVALID'",
+            "null, null",
+            "'', ''"
+    })
+    @DisplayName("of - 잘못된 입력으로 LikeException이 발생한다")
+    void of_WhenInvalidInput_ThrowsLikeException(String input, String expectedInput) {
         // when & then
         LikeException exception = catchThrowableOfType(
-                () -> TargetType.of("INVALID"),
-                LikeException.class
-        );
-        assertAll(
-                () -> assertThat(exception).isNotNull(),
-                () -> assertThat(exception).hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE)
-        );
-    }
-
-    @Test
-    @DisplayName("of - null로 LikeException이 발생한다")
-    void of_WhenNull_ThrowsLikeException() {
-        // when & then
-        LikeException exception = catchThrowableOfType(
-                () -> TargetType.of(null),
-                LikeException.class
-        );
-        assertAll(
-                () -> assertThat(exception).isNotNull(),
-                () -> assertThat(exception).hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE)
-        );
-    }
-
-    @Test
-    @DisplayName("of - 빈 문자열로 LikeException이 발생한다")
-    void of_WhenEmptyString_ThrowsLikeException() {
-        // when & then
-        LikeException exception = catchThrowableOfType(
-                () -> TargetType.of(""),
+                () -> TargetType.of("null".equals(input) ? null : input),
                 LikeException.class
         );
         assertAll(

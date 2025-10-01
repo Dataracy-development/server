@@ -252,7 +252,7 @@ class JwtTokenGeneratorTest {
 
     private void mockLoggerFactory() {
         com.dataracy.modules.common.logging.ServiceLogger loggerService = mock(com.dataracy.modules.common.logging.ServiceLogger.class);
-        loggerFactoryMock.when(() -> LoggerFactory.service()).thenReturn(loggerService);
+        loggerFactoryMock.when(LoggerFactory::service).thenReturn(loggerService);
         when(loggerService.logStart(anyString(), anyString())).thenReturn(Instant.now());
         doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
         doNothing().when(loggerService).logException(anyString(), anyString(), any(Exception.class));

@@ -161,7 +161,7 @@ class PopularProjectsRedisAdapterTest {
             // then
             assertAll(
                     () -> assertThat(result).isPresent(),
-                    () -> assertThat(result.get()).isEqualTo(1234567890123L)
+                    () -> assertThat(result).contains(1234567890123L)
             );
         }
 

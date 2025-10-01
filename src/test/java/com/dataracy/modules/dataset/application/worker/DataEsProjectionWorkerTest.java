@@ -117,9 +117,6 @@ class DataEsProjectionWorkerTest {
 
         // when
         worker.run();
-        
-        // 비동기 작업 완료 대기
-        Thread.sleep(100);
 
         // then
         then(loadPort).should().findBatchForWork(any(), any(), any(PageRequest.class));

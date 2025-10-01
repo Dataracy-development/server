@@ -37,9 +37,9 @@ class ProviderTypeTest {
     void providerTypeToString_ShouldReturnName() {
         // Then
         assertAll(
-                () -> assertThat(ProviderType.GOOGLE.toString()).isEqualTo("GOOGLE"),
-                () -> assertThat(ProviderType.KAKAO.toString()).isEqualTo("KAKAO"),
-                () -> assertThat(ProviderType.LOCAL.toString()).isEqualTo("LOCAL")
+                () -> assertThat(ProviderType.GOOGLE).hasToString("GOOGLE"),
+                () -> assertThat(ProviderType.KAKAO).hasToString("KAKAO"),
+                () -> assertThat(ProviderType.LOCAL).hasToString("LOCAL")
         );
     }
 }

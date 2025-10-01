@@ -87,11 +87,11 @@ class DataLabelMapServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(res.usernameMap().get(3L)).isEqualTo("u"),
-                () -> assertThat(res.userProfileUrlMap().get(3L)).isEqualTo("http://~~"),
-                () -> assertThat(res.topicLabelMap().get(2L)).isEqualTo("topic"),
-                () -> assertThat(res.dataSourceLabelMap().get(4L)).isEqualTo("ds"),
-                () -> assertThat(res.dataTypeLabelMap().get(5L)).isEqualTo("dt")
+                () -> assertThat(res.usernameMap()).containsEntry(3L, "u"),
+                () -> assertThat(res.userProfileUrlMap()).containsEntry(3L, "http://~~"),
+                () -> assertThat(res.topicLabelMap()).containsEntry(2L, "topic"),
+                () -> assertThat(res.dataSourceLabelMap()).containsEntry(4L, "ds"),
+                () -> assertThat(res.dataTypeLabelMap()).containsEntry(5L, "dt")
         );
     }
 }

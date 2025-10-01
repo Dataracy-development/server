@@ -108,7 +108,7 @@ class SecurityContextProviderTest {
 
         // when & then
         NullPointerException exception = catchThrowableOfType(
-                () -> SecurityContextProvider.isAnonymous(),
+                SecurityContextProvider::isAnonymous,
                 NullPointerException.class
         );
         assertAll(

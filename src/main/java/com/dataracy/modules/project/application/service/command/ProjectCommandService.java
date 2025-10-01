@@ -274,12 +274,11 @@ public class ProjectCommandService implements
         // 파일 유효성 검사
         FileUtil.validateImageFile(thumbnailFile);
 
-        ValidatedProjectInfo validateProjectInfo = new ValidatedProjectInfo(
+        return new ValidatedProjectInfo(
                 topicLabel,
                 analysisPurposeLabel,
                 dataSourceLabel,
                 authorLevelLabel
         );
-        return validateProjectInfo;
     }
 }

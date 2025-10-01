@@ -51,7 +51,7 @@ class UserMultiQueryDbAdapterTest {
 
         Map<Long, String> map = adapter.findUserThumbnailsByIds(List.of(1L));
 
-        assertThat(map.values()).contains("");
+        assertThat(map).containsValue("");
         then(userJpaRepository).should().findAllById(anyList());
     }
 
@@ -63,7 +63,7 @@ class UserMultiQueryDbAdapterTest {
 
         Map<Long, String> map = adapter.findUserAuthorLevelIds(List.of(1L));
 
-        assertThat(map.values()).contains("1");
+        assertThat(map).containsValue("1");
         then(userJpaRepository).should().findAllById(anyList());
     }
 }

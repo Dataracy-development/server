@@ -3,6 +3,8 @@ package com.dataracy.modules.common.util;
 import com.dataracy.modules.dataset.application.dto.response.metadata.ParsedMetadataResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,59 +17,24 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DisplayName("FileParsingUtil 테스트")
 class FileParsingUtilTest {
 
-    @Test
-    @DisplayName("parse - 유효한 CSV 파일 파싱")
-    void parse_ShouldParseValidCsvFile() throws IOException {
+    @ParameterizedTest(name = "parse - {0} 파일 파싱")
+    @CsvSource({
+            "test.csv, 'name,age,city\nJohn,25,Seoul\nJane,30,Busan', 2, 3",
+            "test.json, '[{\"name\":\"John\",\"age\":25},{\"name\":\"Jane\",\"age\":30}]', 2, 2"
+    })
+    @DisplayName("parse - 다양한 파일 형식 파싱")
+    void parse_ShouldParseValidFiles(String filename, String content, int expectedRows, int expectedColumns) throws IOException {
         // Given
-        String csvContent = "name,age,city\nJohn,25,Seoul\nJane,30,Busan";
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(csvContent.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
 
         // When
-        ParsedMetadataResponse result = FileParsingUtil.parse(inputStream, "test.csv");
+        ParsedMetadataResponse result = FileParsingUtil.parse(inputStream, filename);
 
         // Then
         assertAll(
                 () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.rowCount()).isEqualTo(2),
-                () -> assertThat(result.columnCount()).isEqualTo(3),
-                () -> assertThat(result.previewJson()).isNotNull()
-        );
-    }
-
-    @Test
-    @DisplayName("parse - 유효한 XLSX 파일 파싱")
-    void parse_ShouldParseValidXlsxFile() throws IOException {
-        // Given
-        // 실제 XLSX 파일은 복잡하므로 CSV 파일로 대체하여 테스트
-        String csvContent = "name,age\nJohn,25\nJane,30";
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(csvContent.getBytes(StandardCharsets.UTF_8));
-
-        // When
-        ParsedMetadataResponse result = FileParsingUtil.parse(inputStream, "test.csv");
-
-        // Then
-        assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.rowCount()).isEqualTo(2),
-                () -> assertThat(result.columnCount()).isEqualTo(2)
-        );
-    }
-
-    @Test
-    @DisplayName("parse - 유효한 JSON 파일 파싱")
-    void parse_ShouldParseValidJsonFile() throws IOException {
-        // Given
-        String jsonContent = "[{\"name\":\"John\",\"age\":25},{\"name\":\"Jane\",\"age\":30}]";
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
-
-        // When
-        ParsedMetadataResponse result = FileParsingUtil.parse(inputStream, "test.json");
-
-        // Then
-        assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.rowCount()).isEqualTo(2),
-                () -> assertThat(result.columnCount()).isEqualTo(2),
+                () -> assertThat(result.rowCount()).isEqualTo(expectedRows),
+                () -> assertThat(result.columnCount()).isEqualTo(expectedColumns),
                 () -> assertThat(result.previewJson()).isNotNull()
         );
     }
@@ -86,54 +53,25 @@ class FileParsingUtilTest {
         );
     }
 
-    @Test
-    @DisplayName("parse - null 파일명 처리")
-    void parse_ShouldThrowExceptionForNullFilename() {
+    @ParameterizedTest(name = "parse - {0} 처리")
+    @CsvSource({
+            "null, '파일명은 null이거나 비어있을 수 없습니다'",
+            "'', '파일명은 null이거나 비어있을 수 없습니다'",
+            "test.txt, '지원하지 않는 파일 형식'"
+    })
+    @DisplayName("parse - 잘못된 입력 처리")
+    void parse_ShouldThrowExceptionForInvalidInput(String filename, String expectedMessage) {
         // Given
         ByteArrayInputStream inputStream = new ByteArrayInputStream("test".getBytes());
 
         // When & Then
         IllegalArgumentException exception = catchThrowableOfType(
-                () -> FileParsingUtil.parse(inputStream, null),
+                () -> FileParsingUtil.parse(inputStream, "null".equals(filename) ? null : filename),
                 IllegalArgumentException.class
         );
         assertAll(
                 () -> assertThat(exception).isNotNull(),
-                () -> assertThat(exception.getMessage()).contains("파일명은 null이거나 비어있을 수 없습니다")
-        );
-    }
-
-    @Test
-    @DisplayName("parse - 빈 파일명 처리")
-    void parse_ShouldThrowExceptionForEmptyFilename() {
-        // Given
-        ByteArrayInputStream inputStream = new ByteArrayInputStream("test".getBytes());
-
-        // When & Then
-        IllegalArgumentException exception = catchThrowableOfType(
-                () -> FileParsingUtil.parse(inputStream, ""),
-                IllegalArgumentException.class
-        );
-        assertAll(
-                () -> assertThat(exception).isNotNull(),
-                () -> assertThat(exception.getMessage()).contains("파일명은 null이거나 비어있을 수 없습니다")
-        );
-    }
-
-    @Test
-    @DisplayName("parse - 지원하지 않는 파일 형식 처리")
-    void parse_ShouldThrowExceptionForUnsupportedFileType() {
-        // Given
-        ByteArrayInputStream inputStream = new ByteArrayInputStream("test".getBytes());
-
-        // When & Then
-        IllegalArgumentException exception = catchThrowableOfType(
-                () -> FileParsingUtil.parse(inputStream, "test.txt"),
-                IllegalArgumentException.class
-        );
-        assertAll(
-                () -> assertThat(exception).isNotNull(),
-                () -> assertThat(exception.getMessage()).contains("지원하지 않는 파일 형식")
+                () -> assertThat(exception.getMessage()).contains(expectedMessage)
         );
     }
 

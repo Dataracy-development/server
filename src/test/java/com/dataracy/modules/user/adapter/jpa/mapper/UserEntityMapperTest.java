@@ -99,7 +99,7 @@ class UserEntityMapperTest {
                 () -> assertThat(entity.getRole()).isEqualTo(RoleType.ROLE_USER),
                 () -> assertThat(entity.getEmail()).isEqualTo("test@example.com"),
                 () -> assertThat(entity.getNickname()).isEqualTo("testUser"),
-                () -> assertThat(entity.getUserTopicEntities().size()).isEqualTo(2)
+                () -> assertThat(entity.getUserTopicEntities()).hasSize(2)
         );
     }
 
@@ -140,7 +140,7 @@ class UserEntityMapperTest {
         // Then
         assertAll(
                 () -> assertThat(entity).isNotNull(),
-                () -> assertThat(entity.getUserTopicEntities().size()).isEqualTo(0)
+                () -> assertThat(entity.getUserTopicEntities()).isEmpty()
         );
     }
 }

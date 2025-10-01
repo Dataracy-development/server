@@ -153,7 +153,7 @@ class BehaviorLogRedisMergeAdapterTest {
 
                     () -> assertThat(result).isPresent(),
 
-                    () -> assertThat(result.get()).isEqualTo(456L)
+src/test/java/com/dataracy/modules/comment/domain/model/CommentTest.java                    () -> assertThat(result).contains(456L)
 
             );
 
