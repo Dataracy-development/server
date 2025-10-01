@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -50,9 +51,11 @@ class CommentCommandDbAdapterTest {
             Comment result = adapter.uploadComment(domain);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getProjectId()).isEqualTo(1L);
-            assertThat(result.getContent()).isEqualTo("내용");
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getProjectId()).isEqualTo(1L),
+                    () -> assertThat(result.getContent()).isEqualTo("내용")
+            );
             then(repo).should().save(any(CommentEntity.class));
         }
     }

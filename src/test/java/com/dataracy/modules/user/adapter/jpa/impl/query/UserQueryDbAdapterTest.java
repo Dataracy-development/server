@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserQueryDbAdapterTest {
@@ -39,8 +40,10 @@ class UserQueryDbAdapterTest {
 
         Optional<User> result = adapter.findUserById(1L);
 
-        assertThat(result).isPresent();
-        assertThat(result.get().getNickname()).isEqualTo("nick");
+        assertAll(
+                () -> assertThat(result).isPresent(),
+                () -> assertThat(result.get().getNickname()).isEqualTo("nick")
+        );
         then(userJpaRepository).should().findById(1L);
     }
 

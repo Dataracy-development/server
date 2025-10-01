@@ -6,7 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectSortTypeTest {
 
@@ -134,27 +135,42 @@ class ProjectSortTypeTest {
     @DisplayName("of - 유효하지 않은 문자열로 ProjectException이 발생한다")
     void of_WhenInvalidString_ThrowsProjectException() {
         // when & then
-        assertThatThrownBy(() -> ProjectSortType.of("INVALID"))
-                .isInstanceOf(ProjectException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ProjectErrorStatus.INVALID_PROJECT_SORT_TYPE);
+        ProjectException exception = catchThrowableOfType(
+                () -> ProjectSortType.of("INVALID"),
+                ProjectException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(ProjectException.class),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", ProjectErrorStatus.INVALID_PROJECT_SORT_TYPE)
+        );
     }
 
     @Test
     @DisplayName("of - null로 ProjectException이 발생한다")
     void of_WhenNull_ThrowsProjectException() {
         // when & then
-        assertThatThrownBy(() -> ProjectSortType.of(null))
-                .isInstanceOf(ProjectException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ProjectErrorStatus.INVALID_PROJECT_SORT_TYPE);
+        ProjectException exception = catchThrowableOfType(
+                () -> ProjectSortType.of(null),
+                ProjectException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(ProjectException.class),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", ProjectErrorStatus.INVALID_PROJECT_SORT_TYPE)
+        );
     }
 
     @Test
     @DisplayName("of - 빈 문자열로 ProjectException이 발생한다")
     void of_WhenEmptyString_ThrowsProjectException() {
         // when & then
-        assertThatThrownBy(() -> ProjectSortType.of(""))
-                .isInstanceOf(ProjectException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ProjectErrorStatus.INVALID_PROJECT_SORT_TYPE);
+        ProjectException exception = catchThrowableOfType(
+                () -> ProjectSortType.of(""),
+                ProjectException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(ProjectException.class),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", ProjectErrorStatus.INVALID_PROJECT_SORT_TYPE)
+        );
     }
 
     @Test

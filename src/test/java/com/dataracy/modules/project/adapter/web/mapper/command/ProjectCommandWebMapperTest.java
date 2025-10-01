@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectCommandWebMapperTest {
 
@@ -37,10 +38,12 @@ class ProjectCommandWebMapperTest {
         UploadProjectRequest appRequest = mapper.toApplicationDto(webRequest);
 
         // then
-        assertThat(appRequest.title()).isEqualTo("title");
-        assertThat(appRequest.topicId()).isEqualTo(1L);
-        assertThat(appRequest.analysisPurposeId()).isEqualTo(2L);
-        assertThat(appRequest.dataIds()).containsExactly(100L, 200L);
+        assertAll(
+                () -> assertThat(appRequest.title()).isEqualTo("title"),
+                () -> assertThat(appRequest.topicId()).isEqualTo(1L),
+                () -> assertThat(appRequest.analysisPurposeId()).isEqualTo(2L),
+                () -> assertThat(appRequest.dataIds()).containsExactly(100L, 200L)
+        );
     }
 
     @Test
@@ -76,9 +79,11 @@ class ProjectCommandWebMapperTest {
         ModifyProjectRequest appRequest = mapper.toApplicationDto(webRequest);
 
         // then
-        assertThat(appRequest.title()).isEqualTo("modified");
-        assertThat(appRequest.topicId()).isEqualTo(11L);
-        assertThat(appRequest.dataSourceId()).isEqualTo(33L);
-        assertThat(appRequest.dataIds()).containsExactly(300L, 400L);
+        assertAll(
+                () -> assertThat(appRequest.title()).isEqualTo("modified"),
+                () -> assertThat(appRequest.topicId()).isEqualTo(11L),
+                () -> assertThat(appRequest.dataSourceId()).isEqualTo(33L),
+                () -> assertThat(appRequest.dataIds()).containsExactly(300L, 400L)
+        );
     }
 }

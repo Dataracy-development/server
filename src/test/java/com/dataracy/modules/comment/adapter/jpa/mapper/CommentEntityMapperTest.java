@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class CommentEntityMapperTest {
 
@@ -24,10 +25,12 @@ class CommentEntityMapperTest {
         Comment domain = CommentEntityMapper.toDomain(entity);
 
         // then
-        assertThat(domain).isNotNull();
-        assertThat(domain.getProjectId()).isEqualTo(entity.getProjectId());
-        assertThat(domain.getUserId()).isEqualTo(entity.getUserId());
-        assertThat(domain.getContent()).isEqualTo(entity.getContent());
+        assertAll(
+                () -> assertThat(domain).isNotNull(),
+                () -> assertThat(domain.getProjectId()).isEqualTo(entity.getProjectId()),
+                () -> assertThat(domain.getUserId()).isEqualTo(entity.getUserId()),
+                () -> assertThat(domain.getContent()).isEqualTo(entity.getContent())
+        );
     }
 
     @Test
@@ -58,10 +61,12 @@ class CommentEntityMapperTest {
         CommentEntity entity = CommentEntityMapper.toEntity(domain);
 
         // then
-        assertThat(entity).isNotNull();
-        assertThat(entity.getProjectId()).isEqualTo(domain.getProjectId());
-        assertThat(entity.getUserId()).isEqualTo(domain.getUserId());
-        assertThat(entity.getContent()).isEqualTo(domain.getContent());
+        assertAll(
+                () -> assertThat(entity).isNotNull(),
+                () -> assertThat(entity.getProjectId()).isEqualTo(domain.getProjectId()),
+                () -> assertThat(entity.getUserId()).isEqualTo(domain.getUserId()),
+                () -> assertThat(entity.getContent()).isEqualTo(domain.getContent())
+        );
     }
 
     @Test
@@ -92,8 +97,10 @@ class CommentEntityMapperTest {
         CommentEntity entity = CommentEntityMapper.toEntity(domain);
 
         // then
-        assertThat(entity).isNotNull();
-        assertThat(entity.getId()).isNull();
-        assertThat(entity.getLikeCount()).isZero(); // default
+        assertAll(
+                () -> assertThat(entity).isNotNull(),
+                () -> assertThat(entity.getId()).isNull(),
+                () -> assertThat(entity.getLikeCount()).isZero() // default
+        );
     }
 }

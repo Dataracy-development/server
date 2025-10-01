@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -65,9 +66,11 @@ class LikeCommandServiceTest {
             assertThat(result).isEqualTo(TargetType.PROJECT);
             then(likeCommandPort).should().save(likeCaptor.capture());
             Like saved = likeCaptor.getValue();
-            assertThat(saved.getTargetId()).isEqualTo(targetId);
-            assertThat(saved.getTargetType()).isEqualTo(TargetType.PROJECT);
-            assertThat(saved.getUserId()).isEqualTo(userId);
+            assertAll(
+                    () -> assertThat(saved.getTargetId()).isEqualTo(targetId),
+                    () -> assertThat(saved.getTargetType()).isEqualTo(TargetType.PROJECT),
+                    () -> assertThat(saved.getUserId()).isEqualTo(userId)
+            );
 
             then(sendLikeEventPort).should().sendLikeEvent(TargetType.PROJECT, targetId, false);
         }
@@ -103,9 +106,11 @@ class LikeCommandServiceTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
-            then(likeCommandPort).shouldHaveNoInteractions();
-            then(sendLikeEventPort).shouldHaveNoInteractions();
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> then(likeCommandPort).shouldHaveNoInteractions(),
+                    () -> then(sendLikeEventPort).shouldHaveNoInteractions()
+            );
         }
 
         @Test
@@ -125,7 +130,9 @@ class LikeCommandServiceTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
+            assertAll(
+                    () -> assertThat(ex).isNotNull()
+            );
         }
     }
 }

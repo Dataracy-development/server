@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class AnalysisPurposeWebMapperTest {
     private final AnalysisPurposeWebMapper mapper = new AnalysisPurposeWebMapper();
@@ -22,9 +23,11 @@ class AnalysisPurposeWebMapperTest {
         AnalysisPurposeWebResponse result = mapper.toWebDto(src);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.value()).isEqualTo("v");
-        assertThat(result.label()).isEqualTo("l");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.value()).isEqualTo("v"),
+                () -> assertThat(result.label()).isEqualTo("l")
+        );
     }
 
     @Test
@@ -39,8 +42,10 @@ class AnalysisPurposeWebMapperTest {
         AllAnalysisPurposesWebResponse nullSafe2 = mapper.toWebDto(new AllAnalysisPurposesResponse(null));
 
         // then
-        assertThat(result.analysisPurposes()).hasSize(2);
-        assertThat(nullSafe1.analysisPurposes()).isEmpty();
-        assertThat(nullSafe2.analysisPurposes()).isEmpty();
+        assertAll(
+                () -> assertThat(result.analysisPurposes()).hasSize(2),
+                () -> assertThat(nullSafe1.analysisPurposes()).isEmpty(),
+                () -> assertThat(nullSafe2.analysisPurposes()).isEmpty()
+        );
     }
 }

@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
@@ -41,8 +42,10 @@ class FileDownloadServiceTest {
             GetPreSignedUrlResponse response = service.generatePreSignedUrl(s3Url, expirationSeconds);
 
             // then
-            assertThat(response).isNotNull();
-            assertThat(response.preSignedUrl()).isEqualTo("https://signed");
+            assertAll(
+                    () -> assertThat(response).isNotNull(),
+                    () -> assertThat(response.preSignedUrl()).isEqualTo("https://signed")
+            );
             then(fileStoragePort).should().getPreSignedUrl(s3Url, expirationSeconds);
         }
 

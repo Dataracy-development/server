@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("UserEntityMapper 테스트")
 class UserEntityMapperTest {
@@ -44,14 +45,16 @@ class UserEntityMapperTest {
         User domain = UserEntityMapper.toDomain(entity);
 
         // Then
-        assertThat(domain).isNotNull();
-        assertThat(domain.getId()).isNull(); // ID는 설정되지 않음
-        assertThat(domain.getProvider()).isEqualTo(ProviderType.GOOGLE);
-        assertThat(domain.getProviderId()).isEqualTo("google123");
-        assertThat(domain.getRole()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(domain.getEmail()).isEqualTo("test@example.com");
-        assertThat(domain.getNickname()).isEqualTo("testUser");
-        assertThat(domain.getTopicIds()).containsExactlyInAnyOrder(1L, 2L);
+        assertAll(
+                () -> assertThat(domain).isNotNull(),
+                () -> assertThat(domain.getId()).isNull(), // ID는 설정되지 않음
+                () -> assertThat(domain.getProvider()).isEqualTo(ProviderType.GOOGLE),
+                () -> assertThat(domain.getProviderId()).isEqualTo("google123"),
+                () -> assertThat(domain.getRole()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(domain.getEmail()).isEqualTo("test@example.com"),
+                () -> assertThat(domain.getNickname()).isEqualTo("testUser"),
+                () -> assertThat(domain.getTopicIds()).containsExactlyInAnyOrder(1L, 2L)
+        );
     }
 
     @Test
@@ -89,13 +92,15 @@ class UserEntityMapperTest {
         UserEntity entity = UserEntityMapper.toEntity(domain);
 
         // Then
-        assertThat(entity).isNotNull();
-        assertThat(entity.getProvider()).isEqualTo(ProviderType.GOOGLE);
-        assertThat(entity.getProviderId()).isEqualTo("google123");
-        assertThat(entity.getRole()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(entity.getEmail()).isEqualTo("test@example.com");
-        assertThat(entity.getNickname()).isEqualTo("testUser");
-        assertThat(entity.getUserTopicEntities().size()).isEqualTo(2);
+        assertAll(
+                () -> assertThat(entity).isNotNull(),
+                () -> assertThat(entity.getProvider()).isEqualTo(ProviderType.GOOGLE),
+                () -> assertThat(entity.getProviderId()).isEqualTo("google123"),
+                () -> assertThat(entity.getRole()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(entity.getEmail()).isEqualTo("test@example.com"),
+                () -> assertThat(entity.getNickname()).isEqualTo("testUser"),
+                () -> assertThat(entity.getUserTopicEntities().size()).isEqualTo(2)
+        );
     }
 
     @Test
@@ -133,7 +138,9 @@ class UserEntityMapperTest {
         UserEntity entity = UserEntityMapper.toEntity(domain);
 
         // Then
-        assertThat(entity).isNotNull();
-        assertThat(entity.getUserTopicEntities().size()).isEqualTo(0);
+        assertAll(
+                () -> assertThat(entity).isNotNull(),
+                () -> assertThat(entity.getUserTopicEntities().size()).isEqualTo(0)
+        );
     }
 }

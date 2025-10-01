@@ -6,7 +6,8 @@ import com.dataracy.modules.like.domain.model.Like;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class LikeEntityMapperTest {
 
@@ -30,9 +31,11 @@ class LikeEntityMapperTest {
         LikeEntity entity = LikeEntityMapper.toEntity(like);
 
         // then
-        assertThat(entity.getTargetId()).isEqualTo(7L);
-        assertThat(entity.getTargetType()).isEqualTo(TargetType.COMMENT);
-        assertThat(entity.getUserId()).isEqualTo(123L);
+        assertAll(
+                () -> assertThat(entity.getTargetId()).isEqualTo(7L),
+                () -> assertThat(entity.getTargetType()).isEqualTo(TargetType.COMMENT),
+                () -> assertThat(entity.getUserId()).isEqualTo(123L)
+        );
     }
 
     @Test
@@ -55,8 +58,10 @@ class LikeEntityMapperTest {
         Like like = LikeEntityMapper.toDomain(entity);
 
         // then
-        assertThat(like.getTargetId()).isEqualTo(11L);
-        assertThat(like.getTargetType()).isEqualTo(TargetType.PROJECT);
-        assertThat(like.getUserId()).isEqualTo(42L);
+        assertAll(
+                () -> assertThat(like.getTargetId()).isEqualTo(11L),
+                () -> assertThat(like.getTargetType()).isEqualTo(TargetType.PROJECT),
+                () -> assertThat(like.getUserId()).isEqualTo(42L)
+        );
     }
 }

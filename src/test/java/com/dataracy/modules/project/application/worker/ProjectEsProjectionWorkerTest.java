@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProjectEsProjectionWorkerTest {
@@ -88,10 +89,12 @@ class ProjectEsProjectionWorkerTest {
         worker.processTask(task);
 
         // then
-        assertThat(task.getStatus()).isEqualTo(ProjectEsProjectionType.RETRYING);
-        assertThat(task.getRetryCount()).isEqualTo(1);
-        assertThat(task.getLastError()).contains("ES down");
-        assertThat(task.getNextRunAt()).isAfter(LocalDateTime.now());
+        assertAll(
+                () -> assertThat(task.getStatus()).isEqualTo(ProjectEsProjectionType.RETRYING),
+                () -> assertThat(task.getRetryCount()).isEqualTo(1),
+                () -> assertThat(task.getLastError()).contains("ES down"),
+                () -> assertThat(task.getNextRunAt()).isAfter(LocalDateTime.now())
+        );
         then(manageProjectProjectionDlqPort).shouldHaveNoInteractions();
         then(manageProjectProjectionTaskPort).should(never()).delete(task.getId());
     }

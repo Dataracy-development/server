@@ -17,7 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.util.function.Function;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
@@ -54,8 +55,13 @@ class SearchSimilarProjectsEsAdapterTest {
             loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
 
             // when & then
-            assertThatThrownBy(() -> adapter.searchSimilarProjects(project, size))
-                .isInstanceOf(ProjectException.class);
+            ProjectException exception = catchThrowableOfType(
+                    () -> adapter.searchSimilarProjects(project, size),
+                    ProjectException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(ProjectException.class)
+            );
             
             then(elasticLogger).should().logError(eq("project_index"), eq("유사 프로젝트 조회 실패: projectId=123, size=10"), any(IOException.class));
         }

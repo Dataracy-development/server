@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.*;
@@ -97,8 +98,10 @@ class EmailVerifyServiceTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
-            assertThat(ex.getErrorCode().getCode()).isEqualTo("EMAIL-003");
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex.getErrorCode().getCode()).isEqualTo("EMAIL-003")
+            );
             then(manageEmailCodePort).should(never()).deleteCode(anyString(), any());
         }
 
@@ -119,8 +122,10 @@ class EmailVerifyServiceTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
-            assertThat(ex.getErrorCode().getCode()).isEqualTo("EMAIL-002");
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex.getErrorCode().getCode()).isEqualTo("EMAIL-002")
+            );
             then(manageEmailCodePort).should(never()).deleteCode(anyString(), any());
         }
     }

@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -167,8 +168,10 @@ class OccupationQueryServiceTest {
     @DisplayName("직업 라벨 다건 조회 성공 및 빈 값 처리")
     void getLabelsByIdsSuccessAndEmptyHandling() {
         // given - empty/null
-        assertThat(service.getLabelsByIds(null)).isEmpty();
-        assertThat(service.getLabelsByIds(List.of())).isEmpty();
+        assertAll(
+                () -> assertThat(service.getLabelsByIds(null)).isEmpty(),
+                () -> assertThat(service.getLabelsByIds(List.of())).isEmpty()
+        );
 
         // given - values
         List<Long> ids = List.of(1L, 2L);

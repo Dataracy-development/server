@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.*;
 
@@ -115,8 +116,10 @@ class ProjectAuthPolicyAspectTest {
         ProjectException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), ProjectException.class);
         
         // then
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_MATCH_CREATOR);
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_MATCH_CREATOR)
+        );
 
         // verify
         then(findUserIdUseCase).should().findUserIdByProjectId(projectId);
@@ -139,8 +142,10 @@ class ProjectAuthPolicyAspectTest {
         ProjectException exception = catchThrowableOfType(() -> projectAuthPolicyAspect.checkProjectEditPermission(annotation, projectId), ProjectException.class);
         
         // then
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_MATCH_CREATOR);
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_MATCH_CREATOR)
+        );
 
         // verify
         then(findUserIdIncludingDeletedUseCase).should().findUserIdIncludingDeleted(projectId);

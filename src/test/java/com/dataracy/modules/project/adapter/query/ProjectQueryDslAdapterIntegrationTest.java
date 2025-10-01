@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -143,9 +144,11 @@ class ProjectQueryDslAdapterIntegrationTest {
             Optional<Project> result = readAdapter.findProjectById(savedProject.getId());
 
             // then
-            assertThat(result).isPresent();
-            assertThat(result.get().getTitle()).isEqualTo("테스트 프로젝트");
-            assertThat(result.get().getUserId()).isEqualTo(1L);
+            assertAll(
+                    () -> assertThat(result).isPresent(),
+                    () -> assertThat(result.get().getTitle()).isEqualTo("테스트 프로젝트"),
+                    () -> assertThat(result.get().getUserId()).isEqualTo(1L)
+            );
         }
 
         @Test
@@ -175,9 +178,11 @@ class ProjectQueryDslAdapterIntegrationTest {
             Optional<ProjectWithDataIdsResponse> result = readAdapter.findProjectWithDataById(savedProject.getId());
 
             // then
-            assertThat(result).isPresent();
-            assertThat(result.get().project().getTitle()).isEqualTo("테스트 프로젝트");
-            assertThat(result.get().dataIds()).contains(1L);
+            assertAll(
+                    () -> assertThat(result).isPresent(),
+                    () -> assertThat(result.get().project().getTitle()).isEqualTo("테스트 프로젝트"),
+                    () -> assertThat(result.get().dataIds()).contains(1L)
+            );
         }
 
         @Test
@@ -190,9 +195,11 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = readAdapter.findUserProjects(1L, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트");
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트")
+            );
         }
 
         @Test
@@ -205,8 +212,10 @@ class ProjectQueryDslAdapterIntegrationTest {
             List<Project> result = readAdapter.getPopularProjects(size);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result).hasSize(3); // 삭제되지 않은 프로젝트 3개
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result).hasSize(3) // 삭제되지 않은 프로젝트 3개
+            );
         }
 
         @Test
@@ -219,10 +228,12 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = readAdapter.findContinuedProjects(parentProject.getId(), pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getTitle()).isEqualTo("자식 프로젝트");
-            assertThat(result.getTotalElements()).isEqualTo(1);
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).getTitle()).isEqualTo("자식 프로젝트"),
+                    () -> assertThat(result.getTotalElements()).isEqualTo(1)
+            );
         }
 
         @Test
@@ -235,9 +246,11 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = readAdapter.findContinuedProjects(savedProject.getId(), pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero()
+            );
         }
 
         @Test
@@ -250,10 +263,12 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = readAdapter.findConnectedProjectsAssociatedWithDataset(1L, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트");
-            assertThat(result.getTotalElements()).isEqualTo(1);
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트"),
+                    () -> assertThat(result.getTotalElements()).isEqualTo(1)
+            );
         }
 
         @Test
@@ -266,9 +281,11 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = readAdapter.findConnectedProjectsAssociatedWithDataset(999L, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero()
+            );
         }
 
         @Test
@@ -278,10 +295,12 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = readAdapter.findUserProjects(1L, null);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트");
-            assertThat(result.getPageable().getPageSize()).isEqualTo(5); // 기본 페이지 크기
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트"),
+                    () -> assertThat(result.getPageable().getPageSize()).isEqualTo(5) // 기본 페이지 크기
+            );
         }
 
         @Test
@@ -294,9 +313,11 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = readAdapter.findUserProjects(999L, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero()
+            );
         }
 
         @Test
@@ -316,9 +337,11 @@ class ProjectQueryDslAdapterIntegrationTest {
             Optional<ProjectWithDataIdsResponse> result = readAdapter.findProjectWithDataById(parentProject.getId());
 
             // then
-            assertThat(result).isPresent();
-            assertThat(result.get().project().getTitle()).isEqualTo("부모 프로젝트");
-            assertThat(result.get().dataIds()).isEmpty();
+            assertAll(
+                    () -> assertThat(result).isPresent(),
+                    () -> assertThat(result.get().project().getTitle()).isEqualTo("부모 프로젝트"),
+                    () -> assertThat(result.get().dataIds()).isEmpty()
+            );
         }
 
         @Test
@@ -331,10 +354,12 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = readAdapter.findLikeProjects(1L, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트");
-            assertThat(result.getTotalElements()).isEqualTo(1);
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트"),
+                    () -> assertThat(result.getTotalElements()).isEqualTo(1)
+            );
         }
 
         @Test
@@ -347,9 +372,11 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = readAdapter.findLikeProjects(999L, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero()
+            );
         }
     }
 
@@ -370,9 +397,11 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.MOST_LIKED);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트");
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트")
+            );
         }
 
         @Test
@@ -388,8 +417,10 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.MOST_LIKED);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(3); // 삭제되지 않은 프로젝트 3개
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(3) // 삭제되지 않은 프로젝트 3개
+            );
         }
 
         @Test
@@ -405,8 +436,10 @@ class ProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.MOST_LIKED);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).isEmpty();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).isEmpty()
+            );
         }
     }
 

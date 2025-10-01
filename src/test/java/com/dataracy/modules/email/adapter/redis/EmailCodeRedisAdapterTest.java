@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 class EmailCodeRedisAdapterTest {
 
@@ -67,8 +68,10 @@ class EmailCodeRedisAdapterTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
-            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE)
+            );
         }
 
         @Test
@@ -85,8 +88,10 @@ class EmailCodeRedisAdapterTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
-            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION)
+            );
         }
     }
 
@@ -122,8 +127,10 @@ class EmailCodeRedisAdapterTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
-            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE)
+            );
         }
 
         @Test
@@ -139,8 +146,10 @@ class EmailCodeRedisAdapterTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
-            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION)
+            );
         }
     }
 
@@ -175,8 +184,10 @@ class EmailCodeRedisAdapterTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
-            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE)
+            );
         }
 
         @Test
@@ -193,8 +204,10 @@ class EmailCodeRedisAdapterTest {
             );
 
             // then
-            assertThat(ex).isNotNull();
-            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION)
+            );
         }
     }
 }

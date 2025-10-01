@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("EmailContent 테스트")
 class EmailContentTest {
@@ -19,8 +20,10 @@ class EmailContentTest {
         EmailContent emailContent = new EmailContent(subject, content);
 
         // Then
-        assertThat(emailContent.subject()).isEqualTo(subject);
-        assertThat(emailContent.body()).isEqualTo(content);
+        assertAll(
+                () -> assertThat(emailContent.subject()).isEqualTo(subject),
+                () -> assertThat(emailContent.body()).isEqualTo(content)
+        );
     }
 
     @Test
@@ -32,9 +35,10 @@ class EmailContentTest {
         EmailContent emailContent3 = new EmailContent("다른 제목", "내용");
 
         // When & Then
-        assertThat(emailContent1).isEqualTo(emailContent2);
-        assertThat(emailContent1.hashCode()).isEqualTo(emailContent2.hashCode());
-        assertThat(emailContent1).isNotEqualTo(emailContent3);
+        assertThat(emailContent1)
+                .isEqualTo(emailContent2)
+                .hasSameHashCodeAs(emailContent2)
+                .isNotEqualTo(emailContent3);
     }
 
     @Test
@@ -47,9 +51,10 @@ class EmailContentTest {
         String toString = emailContent.toString();
 
         // Then
-        assertThat(toString).contains("EmailContent");
-        assertThat(toString).contains("인증 이메일");
-        assertThat(toString).contains("인증 코드: 123456");
+        assertThat(toString)
+                .contains("EmailContent")
+                .contains("인증 이메일")
+                .contains("인증 코드: 123456");
     }
 
     @Test
@@ -59,8 +64,10 @@ class EmailContentTest {
         EmailContent emailContent = new EmailContent(null, null);
 
         // Then
-        assertThat(emailContent.subject()).isNull();
-        assertThat(emailContent.body()).isNull();
+        assertAll(
+                () -> assertThat(emailContent.subject()).isNull(),
+                () -> assertThat(emailContent.body()).isNull()
+        );
     }
 
     @Test
@@ -72,13 +79,14 @@ class EmailContentTest {
         EmailContent notificationEmail = new EmailContent("알림", "새로운 알림이 있습니다.");
 
         // Then
-        assertThat(welcomeEmail.subject()).isEqualTo("환영합니다");
-        assertThat(passwordResetEmail.subject()).isEqualTo("비밀번호 재설정");
-        assertThat(notificationEmail.subject()).isEqualTo("알림");
-        
-        assertThat(welcomeEmail.body()).isEqualTo("회원가입을 환영합니다.");
-        assertThat(passwordResetEmail.body()).isEqualTo("비밀번호를 재설정해주세요.");
-        assertThat(notificationEmail.body()).isEqualTo("새로운 알림이 있습니다.");
+        assertAll(
+                () -> assertThat(welcomeEmail.subject()).isEqualTo("환영합니다"),
+                () -> assertThat(passwordResetEmail.subject()).isEqualTo("비밀번호 재설정"),
+                () -> assertThat(notificationEmail.subject()).isEqualTo("알림"),
+                () -> assertThat(welcomeEmail.body()).isEqualTo("회원가입을 환영합니다."),
+                () -> assertThat(passwordResetEmail.body()).isEqualTo("비밀번호를 재설정해주세요."),
+                () -> assertThat(notificationEmail.body()).isEqualTo("새로운 알림이 있습니다.")
+        );
     }
 
     @Test
@@ -88,7 +96,9 @@ class EmailContentTest {
         EmailContent emailContent = new EmailContent("", "");
 
         // Then
-        assertThat(emailContent.subject()).isEmpty();
-        assertThat(emailContent.body()).isEmpty();
+        assertAll(
+                () -> assertThat(emailContent.subject()).isEmpty(),
+                () -> assertThat(emailContent.body()).isEmpty()
+        );
     }
 }

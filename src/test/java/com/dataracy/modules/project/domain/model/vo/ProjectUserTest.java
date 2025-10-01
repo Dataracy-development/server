@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mockStatic;
@@ -63,14 +64,16 @@ class ProjectUserTest {
             );
 
             // then
-            assertThat(projectUser.userId()).isEqualTo(1L);
-            assertThat(projectUser.role()).isEqualTo(RoleType.ROLE_USER);
-            assertThat(projectUser.email()).isEqualTo("user@test.com");
-            assertThat(projectUser.nickname()).isEqualTo("testUser");
-            assertThat(projectUser.profileImageUrl()).isEqualTo("profile.jpg");
-            assertThat(projectUser.introductionText()).isEqualTo("안녕하세요");
-            assertThat(projectUser.occupationId()).isEqualTo(1L);
-            assertThat(projectUser.authorLevelId()).isEqualTo(2L);
+            assertAll(
+                    () -> assertThat(projectUser.userId()).isEqualTo(1L),
+                    () -> assertThat(projectUser.role()).isEqualTo(RoleType.ROLE_USER),
+                    () -> assertThat(projectUser.email()).isEqualTo("user@test.com"),
+                    () -> assertThat(projectUser.nickname()).isEqualTo("testUser"),
+                    () -> assertThat(projectUser.profileImageUrl()).isEqualTo("profile.jpg"),
+                    () -> assertThat(projectUser.introductionText()).isEqualTo("안녕하세요"),
+                    () -> assertThat(projectUser.occupationId()).isEqualTo(1L),
+                    () -> assertThat(projectUser.authorLevelId()).isEqualTo(2L)
+            );
         }
 
         @Test
@@ -89,14 +92,16 @@ class ProjectUserTest {
             );
 
             // then
-            assertThat(projectUser.userId()).isNull();
-            assertThat(projectUser.role()).isNull();
-            assertThat(projectUser.email()).isNull();
-            assertThat(projectUser.nickname()).isNull();
-            assertThat(projectUser.profileImageUrl()).isNull();
-            assertThat(projectUser.introductionText()).isNull();
-            assertThat(projectUser.occupationId()).isNull();
-            assertThat(projectUser.authorLevelId()).isNull();
+            assertAll(
+                    () -> assertThat(projectUser.userId()).isNull(),
+                    () -> assertThat(projectUser.role()).isNull(),
+                    () -> assertThat(projectUser.email()).isNull(),
+                    () -> assertThat(projectUser.nickname()).isNull(),
+                    () -> assertThat(projectUser.profileImageUrl()).isNull(),
+                    () -> assertThat(projectUser.introductionText()).isNull(),
+                    () -> assertThat(projectUser.occupationId()).isNull(),
+                    () -> assertThat(projectUser.authorLevelId()).isNull()
+            );
         }
 
         @Test
@@ -115,14 +120,16 @@ class ProjectUserTest {
             );
 
             // then
-            assertThat(projectUser.userId()).isEqualTo(999L);
-            assertThat(projectUser.role()).isEqualTo(RoleType.ROLE_ADMIN);
-            assertThat(projectUser.email()).isEqualTo("admin@test.com");
-            assertThat(projectUser.nickname()).isEqualTo("admin");
-            assertThat(projectUser.profileImageUrl()).isEqualTo("admin.jpg");
-            assertThat(projectUser.introductionText()).isEqualTo("관리자입니다");
-            assertThat(projectUser.occupationId()).isEqualTo(3L);
-            assertThat(projectUser.authorLevelId()).isEqualTo(4L);
+            assertAll(
+                    () -> assertThat(projectUser.userId()).isEqualTo(999L),
+                    () -> assertThat(projectUser.role()).isEqualTo(RoleType.ROLE_ADMIN),
+                    () -> assertThat(projectUser.email()).isEqualTo("admin@test.com"),
+                    () -> assertThat(projectUser.nickname()).isEqualTo("admin"),
+                    () -> assertThat(projectUser.profileImageUrl()).isEqualTo("admin.jpg"),
+                    () -> assertThat(projectUser.introductionText()).isEqualTo("관리자입니다"),
+                    () -> assertThat(projectUser.occupationId()).isEqualTo(3L),
+                    () -> assertThat(projectUser.authorLevelId()).isEqualTo(4L)
+            );
         }
     }
 
@@ -151,14 +158,16 @@ class ProjectUserTest {
             ProjectUser projectUser = ProjectUser.fromUserInfo(userInfo);
 
             // then
-            assertThat(projectUser.userId()).isEqualTo(1L);
-            assertThat(projectUser.role()).isEqualTo(RoleType.ROLE_USER);
-            assertThat(projectUser.email()).isEqualTo("user@test.com");
-            assertThat(projectUser.nickname()).isEqualTo("testUser");
-            assertThat(projectUser.profileImageUrl()).isEqualTo("profile.jpg");
-            assertThat(projectUser.introductionText()).isEqualTo("안녕하세요");
-            assertThat(projectUser.occupationId()).isEqualTo(1L);
-            assertThat(projectUser.authorLevelId()).isEqualTo(2L);
+            assertAll(
+                    () -> assertThat(projectUser.userId()).isEqualTo(1L),
+                    () -> assertThat(projectUser.role()).isEqualTo(RoleType.ROLE_USER),
+                    () -> assertThat(projectUser.email()).isEqualTo("user@test.com"),
+                    () -> assertThat(projectUser.nickname()).isEqualTo("testUser"),
+                    () -> assertThat(projectUser.profileImageUrl()).isEqualTo("profile.jpg"),
+                    () -> assertThat(projectUser.introductionText()).isEqualTo("안녕하세요"),
+                    () -> assertThat(projectUser.occupationId()).isEqualTo(1L),
+                    () -> assertThat(projectUser.authorLevelId()).isEqualTo(2L)
+            );
         }
 
         @Test
@@ -182,14 +191,16 @@ class ProjectUserTest {
             ProjectUser projectUser = ProjectUser.fromUserInfo(userInfo);
 
             // then
-            assertThat(projectUser.userId()).isNull();
-            assertThat(projectUser.role()).isNull();
-            assertThat(projectUser.email()).isNull();
-            assertThat(projectUser.nickname()).isNull();
-            assertThat(projectUser.profileImageUrl()).isNull();
-            assertThat(projectUser.introductionText()).isNull();
-            assertThat(projectUser.occupationId()).isNull();
-            assertThat(projectUser.authorLevelId()).isNull();
+            assertAll(
+                    () -> assertThat(projectUser.userId()).isNull(),
+                    () -> assertThat(projectUser.role()).isNull(),
+                    () -> assertThat(projectUser.email()).isNull(),
+                    () -> assertThat(projectUser.nickname()).isNull(),
+                    () -> assertThat(projectUser.profileImageUrl()).isNull(),
+                    () -> assertThat(projectUser.introductionText()).isNull(),
+                    () -> assertThat(projectUser.occupationId()).isNull(),
+                    () -> assertThat(projectUser.authorLevelId()).isNull()
+            );
         }
 
         @Test
@@ -197,8 +208,10 @@ class ProjectUserTest {
         void fromUserInfoWithNullThrowsExceptionAndLogs() {
             // when & then
             ProjectException exception = catchThrowableOfType(() -> ProjectUser.fromUserInfo(null), ProjectException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.FAIL_GET_USER_INFO);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.FAIL_GET_USER_INFO)
+            );
 
             // 로깅 검증
             then(domainLogger).should().logWarning("ProjectUser을 생성하기 위한 유저 정보가 주입되지 않았습니다.");
@@ -225,14 +238,16 @@ class ProjectUserTest {
             ProjectUser projectUser = ProjectUser.fromUserInfo(userInfo);
 
             // then
-            assertThat(projectUser.userId()).isEqualTo(999L);
-            assertThat(projectUser.role()).isEqualTo(RoleType.ROLE_ADMIN);
-            assertThat(projectUser.email()).isEqualTo("admin@test.com");
-            assertThat(projectUser.nickname()).isEqualTo("admin");
-            assertThat(projectUser.profileImageUrl()).isEqualTo("admin.jpg");
-            assertThat(projectUser.introductionText()).isEqualTo("관리자입니다");
-            assertThat(projectUser.occupationId()).isEqualTo(3L);
-            assertThat(projectUser.authorLevelId()).isEqualTo(4L);
+            assertAll(
+                    () -> assertThat(projectUser.userId()).isEqualTo(999L),
+                    () -> assertThat(projectUser.role()).isEqualTo(RoleType.ROLE_ADMIN),
+                    () -> assertThat(projectUser.email()).isEqualTo("admin@test.com"),
+                    () -> assertThat(projectUser.nickname()).isEqualTo("admin"),
+                    () -> assertThat(projectUser.profileImageUrl()).isEqualTo("admin.jpg"),
+                    () -> assertThat(projectUser.introductionText()).isEqualTo("관리자입니다"),
+                    () -> assertThat(projectUser.occupationId()).isEqualTo(3L),
+                    () -> assertThat(projectUser.authorLevelId()).isEqualTo(4L)
+            );
         }
     }
 
@@ -254,8 +269,10 @@ class ProjectUserTest {
             );
 
             // when & then
-            assertThat(projectUser1).isEqualTo(projectUser2);
-            assertThat(projectUser1.hashCode()).isEqualTo(projectUser2.hashCode());
+            assertAll(
+                    () -> assertThat(projectUser1).isEqualTo(projectUser2),
+                    () -> assertThat(projectUser1.hashCode()).isEqualTo(projectUser2.hashCode())
+            );
         }
 
         @Test
@@ -272,8 +289,10 @@ class ProjectUserTest {
             );
 
             // when & then
-            assertThat(projectUser1).isNotEqualTo(projectUser2);
-            assertThat(projectUser1.hashCode()).isNotEqualTo(projectUser2.hashCode());
+            assertAll(
+                    () -> assertThat(projectUser1).isNotEqualTo(projectUser2),
+                    () -> assertThat(projectUser1.hashCode()).isNotEqualTo(projectUser2.hashCode())
+            );
         }
 
         @Test
@@ -289,11 +308,13 @@ class ProjectUserTest {
             String toString = projectUser.toString();
 
             // then
-            assertThat(toString).contains("ProjectUser[");
-            assertThat(toString).contains("userId=1");
-            assertThat(toString).contains("role=ROLE_USER");
-            assertThat(toString).contains("email=user@test.com");
-            assertThat(toString).contains("nickname=testUser");
+            assertAll(
+                    () -> assertThat(toString).contains("ProjectUser["),
+                    () -> assertThat(toString).contains("userId=1"),
+                    () -> assertThat(toString).contains("role=ROLE_USER"),
+                    () -> assertThat(toString).contains("email=user@test.com"),
+                    () -> assertThat(toString).contains("nickname=testUser")
+            );
         }
     }
 }

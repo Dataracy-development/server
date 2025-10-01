@@ -16,7 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.util.function.Function;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
@@ -53,8 +54,13 @@ class SearchRealTimeProjectsEsAdapterTest {
             loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
 
             // when & then
-            assertThatThrownBy(() -> adapter.searchByKeyword(keyword, size))
-                .isInstanceOf(ProjectException.class);
+            ProjectException exception = catchThrowableOfType(
+                    () -> adapter.searchByKeyword(keyword, size),
+                    ProjectException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(ProjectException.class)
+            );
             
             then(elasticLogger).should().logError(eq("project_index"), eq("프로젝트 실시간 검색 실패: keyword=test, size=5"), any(IOException.class));
         }

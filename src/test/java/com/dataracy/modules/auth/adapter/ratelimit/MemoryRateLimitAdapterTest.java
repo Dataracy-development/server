@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith(MockitoExtension.class)
 class MemoryRateLimitAdapterTest {
@@ -56,9 +57,16 @@ class MemoryRateLimitAdapterTest {
         boolean thirdRequest = memoryRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
 
         // then
-        assertThat(firstRequest).isTrue();
-        assertThat(secondRequest).isTrue();
-        assertThat(thirdRequest).isFalse();
+        assertAll(
+
+                () -> assertThat(firstRequest).isTrue(),
+
+                () -> assertThat(secondRequest).isTrue(),
+
+                () -> assertThat(thirdRequest).isFalse()
+
+        );
+
     }
 
     @ParameterizedTest
@@ -95,10 +103,18 @@ class MemoryRateLimitAdapterTest {
         boolean key2Second = memoryRateLimitAdapter.isAllowed(key2, maxRequests, windowMinutes);
 
         // then
-        assertThat(key1First).isTrue();
-        assertThat(key2First).isTrue();
-        assertThat(key1Second).isFalse();
-        assertThat(key2Second).isFalse();
+        assertAll(
+
+                () -> assertThat(key1First).isTrue(),
+
+                () -> assertThat(key2First).isTrue(),
+
+                () -> assertThat(key1Second).isFalse(),
+
+                () -> assertThat(key2Second).isFalse()
+
+        );
+
     }
 
     @Test
@@ -163,8 +179,14 @@ class MemoryRateLimitAdapterTest {
         boolean secondRequest = memoryRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
 
         // then
-        assertThat(firstRequest).isTrue();
-        assertThat(secondRequest).isFalse();
+        assertAll(
+
+                () -> assertThat(firstRequest).isTrue(),
+
+                () -> assertThat(secondRequest).isFalse()
+
+        );
+
 
         // 윈도우 시간이 지나면 다시 허용되어야 함 (실제로는 시간이 오래 걸리므로 테스트에서는 기본 동작만 확인)
         // 실제 환경에서는 스케줄러가 1분마다 정리 작업을 수행함

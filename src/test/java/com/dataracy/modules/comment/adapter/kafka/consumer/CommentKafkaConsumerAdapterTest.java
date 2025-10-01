@@ -13,6 +13,9 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
@@ -74,8 +77,13 @@ class CommentKafkaConsumerAdapterTest {
             loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
 
             // when & then
-            org.assertj.core.api.Assertions.assertThatThrownBy(() -> adapter.consumeLikeIncrease(commentId))
-                .isSameAs(exception);
+            RuntimeException caughtException = catchThrowableOfType(
+                    () -> adapter.consumeLikeIncrease(commentId),
+                    RuntimeException.class
+            );
+            assertAll(
+                    () -> assertThat(caughtException).isSameAs(exception)
+            );
             
             then(kafkaLogger).should().logConsume("comment-like-increase-topic", "댓글 좋아요 이벤트 수신됨: commentId=456");
             then(kafkaLogger).should().logError(eq("comment-like-increase-topic"), eq("댓글 좋아요 이벤트 처리 실패: commentId=456"), any(RuntimeException.class));
@@ -113,8 +121,13 @@ class CommentKafkaConsumerAdapterTest {
             loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
 
             // when & then
-            org.assertj.core.api.Assertions.assertThatThrownBy(() -> adapter.consumeLikeDecrease(commentId))
-                .isSameAs(exception);
+            RuntimeException caughtException = catchThrowableOfType(
+                    () -> adapter.consumeLikeDecrease(commentId),
+                    RuntimeException.class
+            );
+            assertAll(
+                    () -> assertThat(caughtException).isSameAs(exception)
+            );
             
             then(kafkaLogger).should().logConsume("comment-like-decrease-topic", "댓글 좋아요 취소 이벤트 수신됨: commentId=999");
             then(kafkaLogger).should().logError(eq("comment-like-decrease-topic"), eq("댓글 좋아요 취소 이벤트 처리 실패: commentId=999"), any(RuntimeException.class));

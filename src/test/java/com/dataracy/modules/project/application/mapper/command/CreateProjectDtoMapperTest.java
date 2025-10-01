@@ -9,6 +9,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class CreateProjectDtoMapperTest {
 
@@ -37,23 +38,25 @@ class CreateProjectDtoMapperTest {
         Project project = mapper.toDomain(requestDto, userId, 123L);
 
         // then
-        assertThat(project.getId()).isNull();
-        assertThat(project.getTitle()).isEqualTo("title");
-        assertThat(project.getTopicId()).isEqualTo(1L);
-        assertThat(project.getUserId()).isEqualTo(99L);
-        assertThat(project.getAnalysisPurposeId()).isEqualTo(2L);
-        assertThat(project.getDataSourceId()).isEqualTo(3L);
-        assertThat(project.getAuthorLevelId()).isEqualTo(4L);
-        assertThat(project.getIsContinue()).isTrue();
-        assertThat(project.getParentProjectId()).isEqualTo(123L);
-        assertThat(project.getContent()).isEqualTo("content");
-        assertThat(project.getThumbnailUrl()).isEqualTo("default.png");
-        assertThat(project.getDataIds()).containsExactly(10L, 20L);
-        assertThat(project.getCommentCount()).isZero();
-        assertThat(project.getLikeCount()).isZero();
-        assertThat(project.getViewCount()).isZero();
-        assertThat(project.getIsDeleted()).isFalse();
-        assertThat(project.getChildProjects()).isEmpty();
-        assertThat(project.getCreatedAt()).isNull();
+        assertAll(
+                () -> assertThat(project.getId()).isNull(),
+                () -> assertThat(project.getTitle()).isEqualTo("title"),
+                () -> assertThat(project.getTopicId()).isEqualTo(1L),
+                () -> assertThat(project.getUserId()).isEqualTo(99L),
+                () -> assertThat(project.getAnalysisPurposeId()).isEqualTo(2L),
+                () -> assertThat(project.getDataSourceId()).isEqualTo(3L),
+                () -> assertThat(project.getAuthorLevelId()).isEqualTo(4L),
+                () -> assertThat(project.getIsContinue()).isTrue(),
+                () -> assertThat(project.getParentProjectId()).isEqualTo(123L),
+                () -> assertThat(project.getContent()).isEqualTo("content"),
+                () -> assertThat(project.getThumbnailUrl()).isEqualTo("default.png"),
+                () -> assertThat(project.getDataIds()).containsExactly(10L, 20L),
+                () -> assertThat(project.getCommentCount()).isZero(),
+                () -> assertThat(project.getLikeCount()).isZero(),
+                () -> assertThat(project.getViewCount()).isZero(),
+                () -> assertThat(project.getIsDeleted()).isFalse(),
+                () -> assertThat(project.getChildProjects()).isEmpty(),
+                () -> assertThat(project.getCreatedAt()).isNull()
+        );
     }
 }

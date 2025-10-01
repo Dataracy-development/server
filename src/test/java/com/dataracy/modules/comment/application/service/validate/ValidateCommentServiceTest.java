@@ -21,6 +21,7 @@ import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
@@ -86,8 +87,10 @@ class ValidateCommentServiceTest {
 
             // when & then
             CommentException exception = catchThrowableOfType(() -> service.validateComment(commentId), CommentException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT)
+            );
 
             then(validateCommentPort).should().existsByCommentId(commentId);
             then(loggerService).should().logStart(eq("ValidateCommentUseCase"), 
@@ -106,8 +109,10 @@ class ValidateCommentServiceTest {
 
             // when & then
             CommentException exception = catchThrowableOfType(() -> service.validateComment(commentId), CommentException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT)
+            );
 
             then(validateCommentPort).should().existsByCommentId(commentId);
             then(loggerService).should().logStart(eq("ValidateCommentUseCase"), 
@@ -126,8 +131,10 @@ class ValidateCommentServiceTest {
 
             // when & then
             RuntimeException exception = catchThrowableOfType(() -> service.validateComment(commentId), RuntimeException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getMessage()).isEqualTo("Database connection failed");
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getMessage()).isEqualTo("Database connection failed")
+            );
 
             then(validateCommentPort).should().existsByCommentId(commentId);
             then(loggerService).should().logStart(eq("ValidateCommentUseCase"), 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("CommonException 테스트")
 class CommonExceptionTest {
@@ -35,10 +36,12 @@ class CommonExceptionTest {
         CommonException exception = new CommonException(errorCode);
 
         // Then
-        assertThat(exception.getErrorCode()).isEqualTo(errorCode);
-        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        assertThat(exception.getCode()).isEqualTo("COMMON_001");
-        assertThat(exception.getMessage()).isEqualTo("공통 오류가 발생했습니다.");
+        assertAll(
+                () -> assertThat(exception.getErrorCode()).isEqualTo(errorCode),
+                () -> assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR),
+                () -> assertThat(exception.getCode()).isEqualTo("COMMON_001"),
+                () -> assertThat(exception.getMessage()).isEqualTo("공통 오류가 발생했습니다.")
+        );
     }
 
     @Test
@@ -66,7 +69,8 @@ class CommonExceptionTest {
         CommonException exception = new CommonException(errorCode);
 
         // Then
-        assertThat(exception).isInstanceOf(CustomException.class);
-        assertThat(exception).isInstanceOf(RuntimeException.class);
+        assertThat(exception)
+                .isInstanceOf(CustomException.class)
+                .isInstanceOf(RuntimeException.class);
     }
 }

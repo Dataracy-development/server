@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class UserPasswordWebMapperTest {
 
@@ -26,8 +27,10 @@ class UserPasswordWebMapperTest {
         ChangePasswordRequest dto = mapper.toApplicationDto(web);
 
         // then
-        assertThat(dto.password()).isEqualTo("pw");
-        assertThat(dto.passwordConfirm()).isEqualTo("pw");
+        assertAll(
+                () -> assertThat(dto.password()).isEqualTo("pw"),
+                () -> assertThat(dto.passwordConfirm()).isEqualTo("pw")
+        );
     }
 
     @Test
@@ -40,9 +43,11 @@ class UserPasswordWebMapperTest {
         ResetPasswordWithTokenRequest dto = mapper.toApplicationDto(web);
 
         // then
-        assertThat(dto.resetPasswordToken()).isEqualTo("token");
-        assertThat(dto.password()).isEqualTo("pw");
-        assertThat(dto.passwordConfirm()).isEqualTo("pw");
+        assertAll(
+                () -> assertThat(dto.resetPasswordToken()).isEqualTo("token"),
+                () -> assertThat(dto.password()).isEqualTo("pw"),
+                () -> assertThat(dto.passwordConfirm()).isEqualTo("pw")
+        );
     }
 
     @Test

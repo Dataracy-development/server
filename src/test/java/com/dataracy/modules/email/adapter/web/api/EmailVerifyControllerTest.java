@@ -15,6 +15,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.eq;
 import static org.mockito.BDDMockito.given;
@@ -49,9 +50,11 @@ class EmailVerifyControllerTest {
                 controller.verifyCode(req);
 
         // then
-        assertThat(res.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(res.getBody()).isNotNull();
-        assertThat(res.getBody().getData()).isNotNull();
-        assertThat(res.getBody().getData().resetToken()).isEqualTo("jwt-token");
+        assertAll(
+                () -> assertThat(res.getStatusCode().is2xxSuccessful()).isTrue(),
+                () -> assertThat(res.getBody()).isNotNull(),
+                () -> assertThat(res.getBody().getData()).isNotNull(),
+                () -> assertThat(res.getBody().getData().resetToken()).isEqualTo("jwt-token")
+        );
     }
 }

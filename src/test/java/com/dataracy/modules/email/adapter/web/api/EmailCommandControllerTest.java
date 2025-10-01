@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class EmailCommandControllerTest {
@@ -47,16 +48,19 @@ class EmailCommandControllerTest {
         ResponseEntity<SuccessResponse<Void>> response = controller.sendCode(webReq);
 
         // then
-        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+        assertAll(
+                () -> assertThat(response.getStatusCode().is2xxSuccessful()).isTrue(),
+                () -> {
+                    // 응답 메시지 상태 코드 확인
+                    EmailVerificationType type = EmailVerificationType.of(purpose);
+                    switch (type) {
+                        case SIGN_UP -> assertThat(response.getBody().getMessage()).isEqualTo(EmailSuccessStatus.OK_SEND_EMAIL_CODE_SIGN_UP.getMessage());
+                        case PASSWORD_SEARCH -> assertThat(response.getBody().getMessage()).isEqualTo(EmailSuccessStatus.OK_SEND_EMAIL_CODE_PASSWORD_SEARCH.getMessage());
+                        case PASSWORD_RESET -> assertThat(response.getBody().getMessage()).isEqualTo(EmailSuccessStatus.OK_SEND_EMAIL_CODE_PASSWORD_RESET.getMessage());
+                    }
+                }
+        );
         then(useCase).should().sendEmailVerificationCode("user@example.com", EmailVerificationType.of(purpose));
-
-        // 응답 메시지 상태 코드 확인
-        EmailVerificationType type = EmailVerificationType.of(purpose);
-        switch (type) {
-            case SIGN_UP -> assertThat(response.getBody().getMessage()).isEqualTo(EmailSuccessStatus.OK_SEND_EMAIL_CODE_SIGN_UP.getMessage());
-            case PASSWORD_SEARCH -> assertThat(response.getBody().getMessage()).isEqualTo(EmailSuccessStatus.OK_SEND_EMAIL_CODE_PASSWORD_SEARCH.getMessage());
-            case PASSWORD_RESET -> assertThat(response.getBody().getMessage()).isEqualTo(EmailSuccessStatus.OK_SEND_EMAIL_CODE_PASSWORD_RESET.getMessage());
-        }
     }
 
     @Test

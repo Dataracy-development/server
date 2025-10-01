@@ -29,6 +29,7 @@ import org.mockito.quality.Strictness;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
@@ -94,8 +95,14 @@ class SelfLoginServiceTest {
             RefreshTokenResponse res = service.login(request);
 
             // then
-            assertThat(res.refreshToken()).isEqualTo("issued-refresh");
-            assertThat(res.refreshTokenExpiration()).isEqualTo(1209600000L);
+            assertAll(
+
+                    () -> assertThat(res.refreshToken()).isEqualTo("issued-refresh"),
+
+                    () -> assertThat(res.refreshTokenExpiration()).isEqualTo(1209600000L)
+
+            );
+
             then(manageRefreshTokenPort).should().saveRefreshToken("1", "issued-refresh");
         }
 

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ParentProjectWebMapperTest {
 
@@ -27,14 +28,16 @@ class ParentProjectWebMapperTest {
         ParentProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(1L);
-        assertThat(webResponse.title()).isEqualTo("parent-title");
-        assertThat(webResponse.content()).isEqualTo("parent-content");
-        assertThat(webResponse.creatorName()).isEqualTo("tester");
-        assertThat(webResponse.commentCount()).isEqualTo(5L);
-        assertThat(webResponse.likeCount()).isEqualTo(6L);
-        assertThat(webResponse.viewCount()).isEqualTo(7L);
-        assertThat(webResponse.createdAt()).isEqualTo(createdAt);
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(1L),
+                () -> assertThat(webResponse.title()).isEqualTo("parent-title"),
+                () -> assertThat(webResponse.content()).isEqualTo("parent-content"),
+                () -> assertThat(webResponse.creatorName()).isEqualTo("tester"),
+                () -> assertThat(webResponse.commentCount()).isEqualTo(5L),
+                () -> assertThat(webResponse.likeCount()).isEqualTo(6L),
+                () -> assertThat(webResponse.viewCount()).isEqualTo(7L),
+                () -> assertThat(webResponse.createdAt()).isEqualTo(createdAt)
+        );
     }
 
     @Test

@@ -25,6 +25,7 @@ import org.mockito.quality.Strictness;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -75,8 +76,14 @@ class AuthCommandServiceTest {
             RefreshTokenResponse result = service.login(request);
 
             // then
-            assertThat(result.refreshToken()).isEqualTo(refreshToken);
-            assertThat(result.refreshTokenExpiration()).isEqualTo(7 * 24 * 60 * 60 * 1000L);
+            assertAll(
+
+                    () -> assertThat(result.refreshToken()).isEqualTo(refreshToken),
+
+                    () -> assertThat(result.refreshTokenExpiration()).isEqualTo(7 * 24 * 60 * 60 * 1000L)
+
+            );
+
         }
     }
 
@@ -118,8 +125,14 @@ class AuthCommandServiceTest {
 
             // when & then
             AuthException exception = catchThrowableOfType(() -> service.loginWithRateLimit(request, clientIp), AuthException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.RATE_LIMIT_EXCEEDED);
+            assertAll(
+
+                    () -> assertThat(exception).isNotNull(),
+
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.RATE_LIMIT_EXCEEDED)
+
+            );
+
         }
     }
 
@@ -147,10 +160,18 @@ class AuthCommandServiceTest {
             ReIssueTokenResponse result = service.reIssueToken(refreshToken);
 
             // then
-            assertThat(result.accessToken()).isEqualTo(newAccessToken);
-            assertThat(result.refreshToken()).isEqualTo(newRefreshToken);
-            assertThat(result.accessTokenExpiration()).isEqualTo(30 * 60 * 1000L);
-            assertThat(result.refreshTokenExpiration()).isEqualTo(7 * 24 * 60 * 60 * 1000L);
+            assertAll(
+
+                    () -> assertThat(result.accessToken()).isEqualTo(newAccessToken),
+
+                    () -> assertThat(result.refreshToken()).isEqualTo(newRefreshToken),
+
+                    () -> assertThat(result.accessTokenExpiration()).isEqualTo(30 * 60 * 1000L),
+
+                    () -> assertThat(result.refreshTokenExpiration()).isEqualTo(7 * 24 * 60 * 60 * 1000L)
+
+            );
+
         }
 
         @Test
@@ -163,8 +184,14 @@ class AuthCommandServiceTest {
 
             // when & then
             AuthException exception = catchThrowableOfType(() -> service.reIssueToken(refreshToken), AuthException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
+            assertAll(
+
+                    () -> assertThat(exception).isNotNull(),
+
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN)
+
+            );
+
         }
 
         @Test
@@ -178,8 +205,14 @@ class AuthCommandServiceTest {
 
             // when & then
             AuthException exception = catchThrowableOfType(() -> service.reIssueToken(refreshToken), AuthException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
+            assertAll(
+
+                    () -> assertThat(exception).isNotNull(),
+
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN)
+
+            );
+
         }
     }
 }

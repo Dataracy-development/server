@@ -3,7 +3,8 @@ package com.dataracy.modules.project.domain.model.vo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ValidatedProjectInfoTest {
 
@@ -14,9 +15,11 @@ class ValidatedProjectInfoTest {
         ValidatedProjectInfo info = new ValidatedProjectInfo("t", "ap", "ds", "al");
 
         // then
-        assertThat(info.topicLabel()).isEqualTo("t");
-        assertThat(info.analysisPurposeLabel()).isEqualTo("ap");
-        assertThat(info.dataSourceLabel()).isEqualTo("ds");
-        assertThat(info.authorLevelLabel()).isEqualTo("al");
+        assertAll(
+                () -> assertThat(info.topicLabel()).isEqualTo("t"),
+                () -> assertThat(info.analysisPurposeLabel()).isEqualTo("ap"),
+                () -> assertThat(info.dataSourceLabel()).isEqualTo("ds"),
+                () -> assertThat(info.authorLevelLabel()).isEqualTo("al")
+        );
     }
 }

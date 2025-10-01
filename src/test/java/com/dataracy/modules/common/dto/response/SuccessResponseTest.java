@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class SuccessResponseTest {
 
@@ -21,10 +22,12 @@ class SuccessResponseTest {
         SuccessResponse<String> result = SuccessResponse.of(successCode, data);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(200);
-        assertThat(result.getCode()).isEqualTo("COMMON-200");
-        assertThat(result.getMessage()).isEqualTo("성공입니다.");
-        assertThat(result.getData()).isEqualTo("test data");
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(200),
+                () -> assertThat(result.getCode()).isEqualTo("COMMON-200"),
+                () -> assertThat(result.getMessage()).isEqualTo("성공입니다."),
+                () -> assertThat(result.getData()).isEqualTo("test data")
+        );
     }
 
     @Test
@@ -37,10 +40,12 @@ class SuccessResponseTest {
         SuccessResponse<Void> result = SuccessResponse.of(successCode);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(201);
-        assertThat(result.getCode()).isEqualTo("COMMON-201");
-        assertThat(result.getMessage()).isEqualTo("생성에 성공했습니다.");
-        assertThat(result.getData()).isNull();
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(201),
+                () -> assertThat(result.getCode()).isEqualTo("COMMON-201"),
+                () -> assertThat(result.getMessage()).isEqualTo("생성에 성공했습니다."),
+                () -> assertThat(result.getData()).isNull()
+        );
     }
 
     @Test
@@ -54,10 +59,12 @@ class SuccessResponseTest {
         SuccessResponse<Long> result = SuccessResponse.of(successCode, userId);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(201);
-        assertThat(result.getCode()).isEqualTo("201");
-        assertThat(result.getMessage()).isEqualTo("회원가입에 성공했습니다");
-        assertThat(result.getData()).isEqualTo(1L);
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(201),
+                () -> assertThat(result.getCode()).isEqualTo("201"),
+                () -> assertThat(result.getMessage()).isEqualTo("회원가입에 성공했습니다"),
+                () -> assertThat(result.getData()).isEqualTo(1L)
+        );
     }
 
     @Test
@@ -71,10 +78,12 @@ class SuccessResponseTest {
         SuccessResponse<String> result = SuccessResponse.of(successCode, data);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(204);
-        assertThat(result.getCode()).isEqualTo("COMMON-204");
-        assertThat(result.getMessage()).isEqualTo("성공입니다.");
-        assertThat(result.getData()).isNull();
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(204),
+                () -> assertThat(result.getCode()).isEqualTo("COMMON-204"),
+                () -> assertThat(result.getMessage()).isEqualTo("성공입니다."),
+                () -> assertThat(result.getData()).isNull()
+        );
     }
 
     @Test
@@ -88,10 +97,12 @@ class SuccessResponseTest {
         SuccessResponse<UserInfo> result = SuccessResponse.of(successCode, data);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(200);
-        assertThat(result.getCode()).isEqualTo("200");
-        assertThat(result.getMessage()).isEqualTo("유저 정보 조회가 완료되었습니다.");
-        assertThat(result.getData()).isEqualTo(data);
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(200),
+                () -> assertThat(result.getCode()).isEqualTo("200"),
+                () -> assertThat(result.getMessage()).isEqualTo("유저 정보 조회가 완료되었습니다."),
+                () -> assertThat(result.getData()).isEqualTo(data)
+        );
     }
 
     // 테스트용 UserInfo 클래스

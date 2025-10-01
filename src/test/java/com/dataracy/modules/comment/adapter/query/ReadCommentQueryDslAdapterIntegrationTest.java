@@ -24,6 +24,7 @@ import jakarta.persistence.PersistenceContext;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -100,9 +101,11 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Optional<Comment> result = readCommentAdapter.findCommentById(rootComment.getId());
 
             // then
-            assertThat(result).isPresent();
-            assertThat(result.get().getContent()).isEqualTo("루트 댓글 내용");
-            assertThat(result.get().getUserId()).isEqualTo(savedUser.getId());
+            assertAll(
+                    () -> assertThat(result).isPresent(),
+                    () -> assertThat(result.get().getContent()).isEqualTo("루트 댓글 내용"),
+                    () -> assertThat(result.get().getUserId()).isEqualTo(savedUser.getId())
+            );
         }
 
         @Test
@@ -125,16 +128,20 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<FindCommentWithReplyCountResponse> result = readCommentAdapter.findComments(savedProject.getId(), pageable);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2); // rootComment, anotherRootComment (replyComment 제외)
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2) // rootComment, anotherRootComment (replyComment 제외)
+            );
             
             // 답글 수 확인
             FindCommentWithReplyCountResponse rootCommentResponse = result.getContent().stream()
                     .filter(response -> response.comment().getContent().equals("루트 댓글 내용"))
                     .findFirst()
                     .orElse(null);
-            assertThat(rootCommentResponse).isNotNull();
-            assertThat(rootCommentResponse.replyCount()).isEqualTo(1); // replyComment가 답글
+            assertAll(
+                    () -> assertThat(rootCommentResponse).isNotNull(),
+                    () -> assertThat(rootCommentResponse.replyCount()).isEqualTo(1) // replyComment가 답글
+            );
         }
 
         @Test
@@ -147,10 +154,12 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<FindCommentWithReplyCountResponse> result = readCommentAdapter.findComments(savedProject.getId(), pageable);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getTotalElements()).isEqualTo(2);
-            assertThat(result.getTotalPages()).isEqualTo(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getTotalElements()).isEqualTo(2),
+                    () -> assertThat(result.getTotalPages()).isEqualTo(2)
+            );
         }
 
         @Test
@@ -163,10 +172,12 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<FindCommentWithReplyCountResponse> result = readCommentAdapter.findComments(savedProject.getId(), pageable);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getTotalElements()).isEqualTo(2);
-            assertThat(result.getTotalPages()).isEqualTo(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getTotalElements()).isEqualTo(2),
+                    () -> assertThat(result.getTotalPages()).isEqualTo(2)
+            );
         }
 
         @Test
@@ -179,8 +190,10 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<FindCommentWithReplyCountResponse> result = readCommentAdapter.findComments(999L, pageable);
 
             // then
-            assertThat(result).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
+            assertAll(
+                    () -> assertThat(result).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero()
+            );
         }
 
         @Test
@@ -193,10 +206,12 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<Comment> result = readCommentAdapter.findReplyComments(savedProject.getId(), rootComment.getId(), pageable);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getContent()).isEqualTo("답글 내용");
-            assertThat(result.getTotalElements()).isEqualTo(1);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).getContent()).isEqualTo("답글 내용"),
+                    () -> assertThat(result.getTotalElements()).isEqualTo(1)
+            );
         }
 
         @Test
@@ -213,10 +228,12 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<Comment> result = readCommentAdapter.findReplyComments(savedProject.getId(), rootComment.getId(), pageable);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getTotalElements()).isEqualTo(2);
-            assertThat(result.getTotalPages()).isEqualTo(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getTotalElements()).isEqualTo(2),
+                    () -> assertThat(result.getTotalPages()).isEqualTo(2)
+            );
         }
 
         @Test
@@ -229,8 +246,10 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<Comment> result = readCommentAdapter.findReplyComments(savedProject.getId(), anotherRootComment.getId(), pageable);
 
             // then
-            assertThat(result).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
+            assertAll(
+                    () -> assertThat(result).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero()
+            );
         }
 
         @Test
@@ -243,8 +262,10 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<Comment> result = readCommentAdapter.findReplyComments(999L, rootComment.getId(), pageable);
 
             // then
-            assertThat(result).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
+            assertAll(
+                    () -> assertThat(result).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero()
+            );
         }
     }
 
@@ -268,15 +289,19 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<FindCommentWithReplyCountResponse> result = readCommentAdapter.findComments(savedProject.getId(), pageable);
 
             // then
-            assertThat(result).isNotEmpty();
+            assertAll(
+                    () -> assertThat(result).isNotEmpty()
+            );
             
             // 루트 댓글의 답글 수 확인
             FindCommentWithReplyCountResponse rootCommentResponse = result.getContent().stream()
                     .filter(response -> response.comment().getContent().equals("루트 댓글 내용"))
                     .findFirst()
                     .orElse(null);
-            assertThat(rootCommentResponse).isNotNull();
-            assertThat(rootCommentResponse.replyCount()).isEqualTo(3); // replyComment, reply2, reply3
+            assertAll(
+                    () -> assertThat(rootCommentResponse).isNotNull(),
+                    () -> assertThat(rootCommentResponse.replyCount()).isEqualTo(3) // replyComment, reply2, reply3
+            );
         }
 
         @Test
@@ -306,11 +331,13 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<FindCommentWithReplyCountResponse> result = readCommentAdapter.findComments(savedProject.getId(), pageable);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2); // 원래 프로젝트의 댓글만
-            assertThat(result.getContent().stream()
-                    .anyMatch(response -> response.comment().getContent().equals("다른 프로젝트 댓글")))
-                    .isFalse();
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2), // 원래 프로젝트의 댓글만
+                    () -> assertThat(result.getContent().stream()
+                            .anyMatch(response -> response.comment().getContent().equals("다른 프로젝트 댓글")))
+                            .isFalse()
+            );
         }
 
         @Test
@@ -340,8 +367,10 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<FindCommentWithReplyCountResponse> result = readCommentAdapter.findComments(savedProject.getId(), pageable);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(3); // rootComment, anotherRootComment, anotherUserComment
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(3) // rootComment, anotherRootComment, anotherUserComment
+            );
             
             // 다른 사용자의 댓글 확인
             boolean foundAnotherUserComment = result.getContent().stream()
@@ -363,15 +392,19 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<FindCommentWithReplyCountResponse> result = readCommentAdapter.findComments(savedProject.getId(), pageable);
 
             // then
-            assertThat(result).isNotEmpty();
+            assertAll(
+                    () -> assertThat(result).isNotEmpty()
+            );
             
             // 루트 댓글의 답글 수는 여전히 1 (replyComment만)
             FindCommentWithReplyCountResponse rootCommentResponse = result.getContent().stream()
                     .filter(response -> response.comment().getContent().equals("루트 댓글 내용"))
                     .findFirst()
                     .orElse(null);
-            assertThat(rootCommentResponse).isNotNull();
-            assertThat(rootCommentResponse.replyCount()).isEqualTo(1);
+            assertAll(
+                    () -> assertThat(rootCommentResponse).isNotNull(),
+                    () -> assertThat(rootCommentResponse.replyCount()).isEqualTo(1)
+            );
         }
 
         @Test
@@ -398,9 +431,11 @@ class ReadCommentQueryDslAdapterIntegrationTest {
             Page<FindCommentWithReplyCountResponse> result = readCommentAdapter.findComments(emptyProject.getId(), pageable);
 
             // then
-            assertThat(result).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
-            assertThat(result.getTotalPages()).isZero();
+            assertAll(
+                    () -> assertThat(result).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero(),
+                    () -> assertThat(result.getTotalPages()).isZero()
+            );
         }
     }
 }

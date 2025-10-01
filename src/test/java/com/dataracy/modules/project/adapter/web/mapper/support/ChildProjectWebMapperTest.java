@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ChildProjectWebMapperTest {
 
@@ -23,12 +24,14 @@ class ChildProjectWebMapperTest {
         ChildProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(1L);
-        assertThat(webResponse.title()).isEqualTo("child-title");
-        assertThat(webResponse.content()).isEqualTo("child-content");
-        assertThat(webResponse.creatorName()).isEqualTo("tester");
-        assertThat(webResponse.commentCount()).isEqualTo(10L);
-        assertThat(webResponse.likeCount()).isEqualTo(20L);
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(1L),
+                () -> assertThat(webResponse.title()).isEqualTo("child-title"),
+                () -> assertThat(webResponse.content()).isEqualTo("child-content"),
+                () -> assertThat(webResponse.creatorName()).isEqualTo("tester"),
+                () -> assertThat(webResponse.commentCount()).isEqualTo(10L),
+                () -> assertThat(webResponse.likeCount()).isEqualTo(20L)
+        );
     }
 }
 

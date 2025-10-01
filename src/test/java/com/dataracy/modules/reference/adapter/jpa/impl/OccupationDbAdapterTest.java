@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -39,10 +40,12 @@ class OccupationDbAdapterTest {
         List<Occupation> result = adapter.findAllOccupations();
 
         // then
-        assertThat(result).hasSize(2);
-        assertThat(result.get(0).id()).isEqualTo(1L);
-        assertThat(result.get(0).value()).isEqualTo("v1");
-        assertThat(result.get(0).label()).isEqualTo("l1");
+        assertAll(
+                () -> assertThat(result).hasSize(2),
+                () -> assertThat(result.get(0).id()).isEqualTo(1L),
+                () -> assertThat(result.get(0).value()).isEqualTo("v1"),
+                () -> assertThat(result.get(0).label()).isEqualTo("l1")
+        );
         then(occupationJpaRepository).should().findAll();
     }
 
@@ -60,9 +63,11 @@ class OccupationDbAdapterTest {
         Optional<Occupation> missing = adapter.findOccupationById(999L);
 
         // then
-        assertThat(found).isPresent();
-        assertThat(found.get().id()).isEqualTo(id);
-        assertThat(missing).isEmpty();
+        assertAll(
+                () -> assertThat(found).isPresent(),
+                () -> assertThat(found.get().id()).isEqualTo(id),
+                () -> assertThat(missing).isEmpty()
+        );
         then(occupationJpaRepository).should(times(1)).findById(id);
         then(occupationJpaRepository).should(times(1)).findById(999L);
     }
@@ -75,8 +80,10 @@ class OccupationDbAdapterTest {
         given(occupationJpaRepository.existsById(2L)).willReturn(false);
 
         // when & then
-        assertThat(adapter.existsOccupationById(1L)).isTrue();
-        assertThat(adapter.existsOccupationById(2L)).isFalse();
+        assertAll(
+                () -> assertThat(adapter.existsOccupationById(1L)).isTrue(),
+                () -> assertThat(adapter.existsOccupationById(2L)).isFalse()
+        );
         then(occupationJpaRepository).should().existsById(1L);
         then(occupationJpaRepository).should().existsById(2L);
     }
@@ -89,8 +96,10 @@ class OccupationDbAdapterTest {
         given(occupationJpaRepository.findLabelById(9L)).willReturn(Optional.empty());
 
         // when & then
-        assertThat(adapter.getLabelById(1L)).contains("L1");
-        assertThat(adapter.getLabelById(9L)).isEmpty();
+        assertAll(
+                () -> assertThat(adapter.getLabelById(1L)).contains("L1"),
+                () -> assertThat(adapter.getLabelById(9L)).isEmpty()
+        );
         then(occupationJpaRepository).should().findLabelById(1L);
         then(occupationJpaRepository).should().findLabelById(9L);
     }

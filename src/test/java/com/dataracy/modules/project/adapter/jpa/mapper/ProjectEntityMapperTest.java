@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectEntityMapperTest {
 
@@ -44,11 +45,13 @@ class ProjectEntityMapperTest {
 
             Project result = ProjectEntityMapper.toMinimal(entity);
 
-            assertThat(result.getId()).isEqualTo(1L);
-            assertThat(result.getTitle()).isEqualTo("title");
-            assertThat(result.getParentProjectId()).isNull();
-            assertThat(result.getDataIds()).isEmpty();
-            assertThat(result.getChildProjects()).isEmpty();
+            assertAll(
+                    () -> assertThat(result.getId()).isEqualTo(1L),
+                    () -> assertThat(result.getTitle()).isEqualTo("title"),
+                    () -> assertThat(result.getParentProjectId()).isNull(),
+                    () -> assertThat(result.getDataIds()).isEmpty(),
+                    () -> assertThat(result.getChildProjects()).isEmpty()
+            );
         }
 
         @Test
@@ -99,8 +102,10 @@ class ProjectEntityMapperTest {
 
         Project result = ProjectEntityMapper.toWithChildren(parent, 1);
 
-        assertThat(result.getChildProjects()).hasSize(1);
-        assertThat(result.getChildProjects().get(0).getId()).isIn(2L, 3L);
+        assertAll(
+                () -> assertThat(result.getChildProjects()).hasSize(1),
+                () -> assertThat(result.getChildProjects().get(0).getId()).isIn(2L, 3L)
+        );
     }
 
     @Test
@@ -142,12 +147,14 @@ class ProjectEntityMapperTest {
 
         ProjectEntity entity = ProjectEntityMapper.toEntity(domain);
 
-        assertThat(entity.getTitle()).isEqualTo("p-title");
-        assertThat(entity.getParentProject()).isNotNull();
-        assertThat(entity.getParentProject().getId()).isEqualTo(99L);
-        assertThat(entity.getProjectDataEntities())
-                .extracting(ProjectDataEntity::getDataId)
-                .containsExactlyInAnyOrder(111L, 222L);
+        assertAll(
+                () -> assertThat(entity.getTitle()).isEqualTo("p-title"),
+                () -> assertThat(entity.getParentProject()).isNotNull(),
+                () -> assertThat(entity.getParentProject().getId()).isEqualTo(99L),
+                () -> assertThat(entity.getProjectDataEntities())
+                        .extracting(ProjectDataEntity::getDataId)
+                        .containsExactlyInAnyOrder(111L, 222L)
+        );
     }
 
     @Test
@@ -183,8 +190,10 @@ class ProjectEntityMapperTest {
 
         ProjectEntity entity = ProjectEntityMapper.toEntity(domain);
 
-        assertThat(entity.getTitle()).isEqualTo("p-title");
-        assertThat(entity.getParentProject()).isNull();
-        assertThat(entity.getProjectDataEntities()).isEmpty();
+        assertAll(
+                () -> assertThat(entity.getTitle()).isEqualTo("p-title"),
+                () -> assertThat(entity.getParentProject()).isNull(),
+                () -> assertThat(entity.getProjectDataEntities()).isEmpty()
+        );
     }
 }

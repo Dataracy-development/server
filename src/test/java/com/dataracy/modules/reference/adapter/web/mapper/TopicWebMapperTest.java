@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TopicWebMapperTest {
 
@@ -31,9 +32,12 @@ class TopicWebMapperTest {
         TopicWebResponse result = topicWebMapper.toWebDto(topicResponse);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.value()).isEqualTo("AI");
-        assertThat(result.label()).isEqualTo("인공지능");
+
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.value()).isEqualTo("AI"),
+                () -> assertThat(result.label()).isEqualTo("인공지능")
+        );
     }
 
     @Test
@@ -51,16 +55,18 @@ class TopicWebMapperTest {
         AllTopicsWebResponse result = topicWebMapper.toWebDto(allTopicsResponse);
 
         // then
-        assertThat(result.topics()).hasSize(3);
-        assertThat(result.topics().get(0).id()).isEqualTo(1L);
-        assertThat(result.topics().get(0).value()).isEqualTo("AI");
-        assertThat(result.topics().get(0).label()).isEqualTo("인공지능");
-        assertThat(result.topics().get(1).id()).isEqualTo(2L);
-        assertThat(result.topics().get(1).value()).isEqualTo("ML");
-        assertThat(result.topics().get(1).label()).isEqualTo("머신러닝");
-        assertThat(result.topics().get(2).id()).isEqualTo(3L);
-        assertThat(result.topics().get(2).value()).isEqualTo("DL");
-        assertThat(result.topics().get(2).label()).isEqualTo("딥러닝");
+        assertAll(
+                () -> assertThat(result.topics()).hasSize(3),
+                () -> assertThat(result.topics().get(0).id()).isEqualTo(1L),
+                () -> assertThat(result.topics().get(0).value()).isEqualTo("AI"),
+                () -> assertThat(result.topics().get(0).label()).isEqualTo("인공지능"),
+                () -> assertThat(result.topics().get(1).id()).isEqualTo(2L),
+                () -> assertThat(result.topics().get(1).value()).isEqualTo("ML"),
+                () -> assertThat(result.topics().get(1).label()).isEqualTo("머신러닝"),
+                () -> assertThat(result.topics().get(2).id()).isEqualTo(3L),
+                () -> assertThat(result.topics().get(2).value()).isEqualTo("DL"),
+                () -> assertThat(result.topics().get(2).label()).isEqualTo("딥러닝")
+        );
     }
 
     @Test
@@ -109,8 +115,10 @@ class TopicWebMapperTest {
         TopicWebResponse result = topicWebMapper.toWebDto(topicResponse);
 
         // then
-        assertThat(result.id()).isNull();
-        assertThat(result.value()).isNull();
-        assertThat(result.label()).isNull();
+        assertAll(
+                () -> assertThat(result.id()).isNull(),
+                () -> assertThat(result.value()).isNull(),
+                () -> assertThat(result.label()).isNull()
+        );
     }
 }

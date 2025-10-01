@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class CommandCommentWebMapperTest {
 
@@ -31,8 +32,10 @@ class CommandCommentWebMapperTest {
             UploadCommentRequest appReq = mapper.toApplicationDto(webReq);
 
             // then
-            assertThat(appReq.content()).isEqualTo("내용");
-            assertThat(appReq.parentCommentId()).isEqualTo(1L);
+            assertAll(
+                    () -> assertThat(appReq.content()).isEqualTo("내용"),
+                    () -> assertThat(appReq.parentCommentId()).isEqualTo(1L)
+            );
         }
 
         @Test

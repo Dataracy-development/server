@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class UserTopicEntityTest {
 
@@ -37,7 +38,9 @@ class UserTopicEntityTest {
         UserTopicEntity topic = UserTopicEntity.of(user, 100L);
 
         // then
-        assertThat(topic.getUser()).isEqualTo(user);
-        assertThat(topic.getTopicId()).isEqualTo(100L);
+        assertAll(
+                () -> assertThat(topic.getUser()).isEqualTo(user),
+                () -> assertThat(topic.getTopicId()).isEqualTo(100L)
+        );
     }
 }

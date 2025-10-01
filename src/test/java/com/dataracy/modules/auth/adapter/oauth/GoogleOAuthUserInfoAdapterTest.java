@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 class GoogleOAuthUserInfoAdapterTest {
 
@@ -34,11 +35,14 @@ class GoogleOAuthUserInfoAdapterTest {
         OAuthUserInfo result = googleOAuthUserInfoAdapter.extract(provider, attributes);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.email()).isEqualTo("test@example.com");
-        assertThat(result.name()).isEqualTo("Test User");
-        assertThat(result.provider()).isEqualTo("google");
-        assertThat(result.providerId()).isEqualTo("123456789");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.email()).isEqualTo("test@example.com"),
+                () -> assertThat(result.name()).isEqualTo("Test User"),
+                () -> assertThat(result.provider()).isEqualTo("google"),
+                () -> assertThat(result.providerId()).isEqualTo("123456789")
+        );
+
     }
 
     @Test
@@ -55,11 +59,20 @@ class GoogleOAuthUserInfoAdapterTest {
         OAuthUserInfo result = googleOAuthUserInfoAdapter.extract(provider, attributes);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.email()).isNull();
-        assertThat(result.name()).isNull();
-        assertThat(result.provider()).isEqualTo("google");
-        assertThat(result.providerId()).isNull();
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.email()).isNull(),
+
+                () -> assertThat(result.name()).isNull(),
+
+                () -> assertThat(result.provider()).isEqualTo("google"),
+
+                () -> assertThat(result.providerId()).isNull()
+
+        );
+
     }
 
     @Test
@@ -76,11 +89,20 @@ class GoogleOAuthUserInfoAdapterTest {
         OAuthUserInfo result = googleOAuthUserInfoAdapter.extract(provider, attributes);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.email()).isEqualTo("test@example.com");
-        assertThat(result.name()).isNull();
-        assertThat(result.provider()).isEqualTo("google");
-        assertThat(result.providerId()).isEqualTo("123456789");
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.email()).isEqualTo("test@example.com"),
+
+                () -> assertThat(result.name()).isNull(),
+
+                () -> assertThat(result.provider()).isEqualTo("google"),
+
+                () -> assertThat(result.providerId()).isEqualTo("123456789")
+
+        );
+
     }
 
     @Test
@@ -111,11 +133,20 @@ class GoogleOAuthUserInfoAdapterTest {
         OAuthUserInfo result = googleOAuthUserInfoAdapter.extract(provider, attributes);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.email()).isNull();
-        assertThat(result.name()).isNull();
-        assertThat(result.provider()).isEqualTo("google");
-        assertThat(result.providerId()).isNull();
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.email()).isNull(),
+
+                () -> assertThat(result.name()).isNull(),
+
+                () -> assertThat(result.provider()).isEqualTo("google"),
+
+                () -> assertThat(result.providerId()).isNull()
+
+        );
+
     }
 
     @Test
@@ -127,8 +158,13 @@ class GoogleOAuthUserInfoAdapterTest {
         attributes.put("email", "test@example.com");
 
         // when & then
-        assertThatThrownBy(() -> googleOAuthUserInfoAdapter.extract(provider, attributes))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> googleOAuthUserInfoAdapter.extract(provider, attributes),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 
     @Test
@@ -139,7 +175,12 @@ class GoogleOAuthUserInfoAdapterTest {
         Map<String, Object> attributes = null;
 
         // when & then
-        assertThatThrownBy(() -> googleOAuthUserInfoAdapter.extract(provider, attributes))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> googleOAuthUserInfoAdapter.extract(provider, attributes),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 }

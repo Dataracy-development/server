@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("FileParsingUtil 테스트")
 class FileParsingUtilTest {
@@ -25,10 +26,12 @@ class FileParsingUtilTest {
         ParsedMetadataResponse result = FileParsingUtil.parse(inputStream, "test.csv");
 
         // Then
-        assertThat(result).isNotNull();
-        assertThat(result.rowCount()).isEqualTo(2);
-        assertThat(result.columnCount()).isEqualTo(3);
-        assertThat(result.previewJson()).isNotNull();
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.rowCount()).isEqualTo(2),
+                () -> assertThat(result.columnCount()).isEqualTo(3),
+                () -> assertThat(result.previewJson()).isNotNull()
+        );
     }
 
     @Test
@@ -43,9 +46,11 @@ class FileParsingUtilTest {
         ParsedMetadataResponse result = FileParsingUtil.parse(inputStream, "test.csv");
 
         // Then
-        assertThat(result).isNotNull();
-        assertThat(result.rowCount()).isEqualTo(2);
-        assertThat(result.columnCount()).isEqualTo(2);
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.rowCount()).isEqualTo(2),
+                () -> assertThat(result.columnCount()).isEqualTo(2)
+        );
     }
 
     @Test
@@ -59,19 +64,26 @@ class FileParsingUtilTest {
         ParsedMetadataResponse result = FileParsingUtil.parse(inputStream, "test.json");
 
         // Then
-        assertThat(result).isNotNull();
-        assertThat(result.rowCount()).isEqualTo(2);
-        assertThat(result.columnCount()).isEqualTo(2);
-        assertThat(result.previewJson()).isNotNull();
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.rowCount()).isEqualTo(2),
+                () -> assertThat(result.columnCount()).isEqualTo(2),
+                () -> assertThat(result.previewJson()).isNotNull()
+        );
     }
 
     @Test
     @DisplayName("parse - null 입력 스트림 처리")
     void parse_ShouldThrowExceptionForNullInputStream() {
         // Given & When & Then
-        assertThatThrownBy(() -> FileParsingUtil.parse(null, "test.csv"))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("입력 스트림은 null일 수 없습니다");
+        IllegalArgumentException exception = catchThrowableOfType(
+                () -> FileParsingUtil.parse(null, "test.csv"),
+                IllegalArgumentException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception.getMessage()).contains("입력 스트림은 null일 수 없습니다")
+        );
     }
 
     @Test
@@ -81,9 +93,14 @@ class FileParsingUtilTest {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("test".getBytes());
 
         // When & Then
-        assertThatThrownBy(() -> FileParsingUtil.parse(inputStream, null))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("파일명은 null이거나 비어있을 수 없습니다");
+        IllegalArgumentException exception = catchThrowableOfType(
+                () -> FileParsingUtil.parse(inputStream, null),
+                IllegalArgumentException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception.getMessage()).contains("파일명은 null이거나 비어있을 수 없습니다")
+        );
     }
 
     @Test
@@ -93,9 +110,14 @@ class FileParsingUtilTest {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("test".getBytes());
 
         // When & Then
-        assertThatThrownBy(() -> FileParsingUtil.parse(inputStream, ""))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("파일명은 null이거나 비어있을 수 없습니다");
+        IllegalArgumentException exception = catchThrowableOfType(
+                () -> FileParsingUtil.parse(inputStream, ""),
+                IllegalArgumentException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception.getMessage()).contains("파일명은 null이거나 비어있을 수 없습니다")
+        );
     }
 
     @Test
@@ -105,9 +127,14 @@ class FileParsingUtilTest {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("test".getBytes());
 
         // When & Then
-        assertThatThrownBy(() -> FileParsingUtil.parse(inputStream, "test.txt"))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("지원하지 않는 파일 형식");
+        IllegalArgumentException exception = catchThrowableOfType(
+                () -> FileParsingUtil.parse(inputStream, "test.txt"),
+                IllegalArgumentException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception.getMessage()).contains("지원하지 않는 파일 형식")
+        );
     }
 
     @Test
@@ -121,9 +148,11 @@ class FileParsingUtilTest {
         ParsedMetadataResponse result = FileParsingUtil.parse(inputStream, "test.CSV");
 
         // Then
-        assertThat(result).isNotNull();
-        assertThat(result.rowCount()).isEqualTo(1);
-        assertThat(result.columnCount()).isEqualTo(2);
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.rowCount()).isEqualTo(1),
+                () -> assertThat(result.columnCount()).isEqualTo(2)
+        );
     }
 
     @Test
@@ -137,9 +166,11 @@ class FileParsingUtilTest {
         var charset = FileParsingUtil.detectEncoding(inputStream);
 
         // Then
-        assertThat(charset).isNotNull();
-        // UTF-8이 감지되거나 기본값으로 설정되어야 함
-        assertThat(charset.name()).isIn("UTF-8", "UTF8");
+        assertAll(
+                () -> assertThat(charset).isNotNull(),
+                // UTF-8이 감지되거나 기본값으로 설정되어야 함
+                () -> assertThat(charset.name()).isIn("UTF-8", "UTF8")
+        );
     }
 
     @Test
@@ -152,7 +183,9 @@ class FileParsingUtilTest {
         var charset = FileParsingUtil.detectEncoding(inputStream);
 
         // Then
-        assertThat(charset).isNotNull();
-        assertThat(charset.name()).isIn("UTF-8", "UTF8");
+        assertAll(
+                () -> assertThat(charset).isNotNull(),
+                () -> assertThat(charset.name()).isIn("UTF-8", "UTF8")
+        );
     }
 }

@@ -13,7 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 
@@ -48,9 +49,11 @@ class BehaviorLogKafkaConsumerAdapterTest {
         willThrow(dbError).given(saveBehaviorLogPort).save(behaviorLog);
 
         // when & then
-        assertThatThrownBy(() -> adapter.consume(behaviorLog))
-            .isInstanceOf(RuntimeException.class)
-            .hasMessage("Database connection failed");
+        RuntimeException exception = catchThrowableOfType(() -> adapter.consume(behaviorLog), RuntimeException.class);
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(RuntimeException.class),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasMessage("Database connection failed")
+        );
         
         then(saveBehaviorLogPort).should().save(behaviorLog);
     }
@@ -64,8 +67,10 @@ class BehaviorLogKafkaConsumerAdapterTest {
         willThrow(dbError).given(saveBehaviorLogPort).save(behaviorLog);
 
         // when & then
-        assertThatThrownBy(() -> adapter.consume(behaviorLog))
-            .isSameAs(dbError);
+        RuntimeException exception = catchThrowableOfType(() -> adapter.consume(behaviorLog), RuntimeException.class);
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isSameAs(dbError)
+        );
         
         // 저장이 호출되었는지 확인
         then(saveBehaviorLogPort).should().save(behaviorLog);

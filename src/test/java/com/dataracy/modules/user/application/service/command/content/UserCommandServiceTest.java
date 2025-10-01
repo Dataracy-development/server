@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
@@ -166,8 +167,10 @@ class UserCommandServiceTest {
                 );
 
                 // then
-                assertThat(ex).isNotNull();
-                assertThat(ex.getMessage()).isEqualTo("닉네임 중복");
+                assertAll(
+                        () -> assertThat(ex).isNotNull(),
+                        () -> assertThat(ex.getMessage()).isEqualTo("닉네임 중복")
+                );
             }
 
             @Test
@@ -192,8 +195,10 @@ class UserCommandServiceTest {
                 );
 
                 // then
-                assertThat(ex).isNotNull();
-                assertThat(ex.getMessage()).isEqualTo("잘못된 이미지");
+                assertAll(
+                        () -> assertThat(ex).isNotNull(),
+                        () -> assertThat(ex.getMessage()).isEqualTo("잘못된 이미지")
+                );
             }
         }
     }

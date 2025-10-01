@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.*;
 
@@ -89,8 +90,10 @@ class CommentAuthPolicyAspectTest {
         CommentException exception = catchThrowableOfType(() -> commentAuthPolicyAspect.checkCommentEditPermission(annotation, commentId), CommentException.class);
         
         // then
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_MATCH_CREATOR);
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_MATCH_CREATOR)
+        );
 
         // verify
         then(findUserIdByCommentIdUseCase).should().findUserIdByCommentId(commentId);

@@ -18,6 +18,7 @@ import org.mockito.quality.Strictness;
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -84,8 +85,14 @@ class JwtTokenGeneratorTest {
 
         // when & then
         AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateRegisterToken(provider, providerId, email), AuthException.class);
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_REGISTER_TOKEN);
+        assertAll(
+
+                () -> assertThat(exception).isNotNull(),
+
+                () -> assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_REGISTER_TOKEN)
+
+        );
+
     }
 
     @Test
@@ -121,8 +128,14 @@ class JwtTokenGeneratorTest {
 
         // when & then
         AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateResetPasswordToken(email), AuthException.class);
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_RESET_PASSWORD_TOKEN);
+        assertAll(
+
+                () -> assertThat(exception).isNotNull(),
+
+                () -> assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_RESET_PASSWORD_TOKEN)
+
+        );
+
     }
 
     @Test
@@ -160,8 +173,14 @@ class JwtTokenGeneratorTest {
 
         // when & then
         AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateAccessToken(userId, role), AuthException.class);
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN);
+        assertAll(
+
+                () -> assertThat(exception).isNotNull(),
+
+                () -> assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN)
+
+        );
+
     }
 
     @Test
@@ -199,8 +218,14 @@ class JwtTokenGeneratorTest {
 
         // when & then
         AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateRefreshToken(userId, role), AuthException.class);
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN);
+        assertAll(
+
+                () -> assertThat(exception).isNotNull(),
+
+                () -> assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN)
+
+        );
+
     }
 
     @Test
@@ -215,8 +240,14 @@ class JwtTokenGeneratorTest {
 
         // when & then
         AuthException exception = catchThrowableOfType(() -> jwtTokenGenerator.generateAccessToken(1L, RoleType.ROLE_USER), AuthException.class);
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN);
+        assertAll(
+
+                () -> assertThat(exception).isNotNull(),
+
+                () -> assertThat(exception.getErrorCode()).isEqualTo(AuthErrorStatus.FAILED_GENERATE_ACCESS_TOKEN)
+
+        );
+
     }
 
     private void mockLoggerFactory() {

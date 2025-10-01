@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 /**
  * AnonymousUser 도메인 모델 테스트
@@ -20,8 +21,14 @@ class AnonymousUserTest {
         AnonymousUser anonymousUser = AnonymousUser.of(anonymousId);
 
         // then
-        assertThat(anonymousUser).isNotNull();
-        assertThat(anonymousUser.getAnonymousId()).isEqualTo(anonymousId);
+        assertAll(
+
+                () -> assertThat(anonymousUser).isNotNull(),
+
+                () -> assertThat(anonymousUser.getAnonymousId()).isEqualTo(anonymousId)
+
+        );
+
     }
 
     @Test
@@ -34,8 +41,14 @@ class AnonymousUserTest {
         AnonymousUser anonymousUser = AnonymousUser.of(emptyId);
 
         // then
-        assertThat(anonymousUser).isNotNull();
-        assertThat(anonymousUser.getAnonymousId()).isEqualTo(emptyId);
+        assertAll(
+
+                () -> assertThat(anonymousUser).isNotNull(),
+
+                () -> assertThat(anonymousUser.getAnonymousId()).isEqualTo(emptyId)
+
+        );
+
     }
 
     @Test
@@ -48,8 +61,14 @@ class AnonymousUserTest {
         AnonymousUser anonymousUser = AnonymousUser.of(nullId);
 
         // then
-        assertThat(anonymousUser).isNotNull();
-        assertThat(anonymousUser.getAnonymousId()).isNull();
+        assertAll(
+
+                () -> assertThat(anonymousUser).isNotNull(),
+
+                () -> assertThat(anonymousUser.getAnonymousId()).isNull()
+
+        );
+
     }
 
     @Test
@@ -62,8 +81,14 @@ class AnonymousUserTest {
         AnonymousUser anonymousUser = AnonymousUser.of(longId);
 
         // then
-        assertThat(anonymousUser).isNotNull();
-        assertThat(anonymousUser.getAnonymousId()).isEqualTo(longId);
+        assertAll(
+
+                () -> assertThat(anonymousUser).isNotNull(),
+
+                () -> assertThat(anonymousUser.getAnonymousId()).isEqualTo(longId)
+
+        );
+
     }
 
     @Test
@@ -76,7 +101,13 @@ class AnonymousUserTest {
         AnonymousUser anonymousUser = AnonymousUser.of(specialId);
 
         // then
-        assertThat(anonymousUser).isNotNull();
-        assertThat(anonymousUser.getAnonymousId()).isEqualTo(specialId);
+        assertAll(
+
+                () -> assertThat(anonymousUser).isNotNull(),
+
+                () -> assertThat(anonymousUser.getAnonymousId()).isEqualTo(specialId)
+
+        );
+
     }
 }

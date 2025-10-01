@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -165,8 +166,10 @@ class DataCommandDbAdapterTest {
             adapter.modifyData(1L, req);
 
             // then
-            assertThat(entity.getTitle()).isEqualTo("new");
-            assertThat(entity.getDescription()).isEqualTo("desc");
+            assertAll(
+                    () -> assertThat(entity.getTitle()).isEqualTo("new"),
+                    () -> assertThat(entity.getDescription()).isEqualTo("desc")
+            );
         }
 
         @Test

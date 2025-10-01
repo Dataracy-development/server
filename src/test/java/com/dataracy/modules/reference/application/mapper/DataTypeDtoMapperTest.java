@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("DataTypeDtoMapper 테스트")
 class DataTypeDtoMapperTest {
@@ -25,10 +26,12 @@ class DataTypeDtoMapperTest {
         DataTypeResponse response = mapper.toResponseDto(dataType);
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response.id()).isEqualTo(1L);
-        assertThat(response.value()).isEqualTo("csv");
-        assertThat(response.label()).isEqualTo("CSV 파일");
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.id()).isEqualTo(1L),
+                () -> assertThat(response.value()).isEqualTo("csv"),
+                () -> assertThat(response.label()).isEqualTo("CSV 파일")
+        );
     }
 
     @Test
@@ -43,12 +46,14 @@ class DataTypeDtoMapperTest {
         AllDataTypesResponse response = mapper.toResponseDto(dataTypes);
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response.dataTypes()).hasSize(2);
-        assertThat(response.dataTypes().get(0).id()).isEqualTo(1L);
-        assertThat(response.dataTypes().get(0).value()).isEqualTo("csv");
-        assertThat(response.dataTypes().get(1).id()).isEqualTo(2L);
-        assertThat(response.dataTypes().get(1).value()).isEqualTo("json");
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.dataTypes()).hasSize(2),
+                () -> assertThat(response.dataTypes().get(0).id()).isEqualTo(1L),
+                () -> assertThat(response.dataTypes().get(0).value()).isEqualTo("csv"),
+                () -> assertThat(response.dataTypes().get(1).id()).isEqualTo(2L),
+                () -> assertThat(response.dataTypes().get(1).value()).isEqualTo("json")
+        );
     }
 
     @Test
@@ -61,7 +66,9 @@ class DataTypeDtoMapperTest {
         AllDataTypesResponse response = mapper.toResponseDto(dataTypes);
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response.dataTypes()).isEmpty();
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.dataTypes()).isEmpty()
+        );
     }
 }

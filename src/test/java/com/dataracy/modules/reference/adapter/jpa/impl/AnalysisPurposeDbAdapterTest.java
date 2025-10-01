@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class AnalysisPurposeDbAdapterTest {
@@ -36,10 +37,12 @@ class AnalysisPurposeDbAdapterTest {
         List<AnalysisPurpose> result = adapter.findAllAnalysisPurposes();
 
         // then
-        assertThat(result).hasSize(2);
-        assertThat(result.get(0).id()).isEqualTo(1L);
-        assertThat(result.get(0).value()).isEqualTo("v1");
-        assertThat(result.get(0).label()).isEqualTo("l1");
+        assertAll(
+                () -> assertThat(result).hasSize(2),
+                () -> assertThat(result.get(0).id()).isEqualTo(1L),
+                () -> assertThat(result.get(0).value()).isEqualTo("v1"),
+                () -> assertThat(result.get(0).label()).isEqualTo("l1")
+        );
         then(analysisPurposeJpaRepository).should().findAll();
     }
 
@@ -57,9 +60,11 @@ class AnalysisPurposeDbAdapterTest {
         Optional<AnalysisPurpose> missing = adapter.findAnalysisPurposeById(999L);
 
         // then
-        assertThat(found).isPresent();
-        assertThat(found.get().id()).isEqualTo(id);
-        assertThat(missing).isEmpty();
+        assertAll(
+                () -> assertThat(found).isPresent(),
+                () -> assertThat(found.get().id()).isEqualTo(id),
+                () -> assertThat(missing).isEmpty()
+        );
         then(analysisPurposeJpaRepository).should(times(1)).findById(id);
         then(analysisPurposeJpaRepository).should(times(1)).findById(999L);
     }
@@ -72,8 +77,10 @@ class AnalysisPurposeDbAdapterTest {
         given(analysisPurposeJpaRepository.existsById(2L)).willReturn(false);
 
         // when & then
-        assertThat(adapter.existsAnalysisPurposeById(1L)).isTrue();
-        assertThat(adapter.existsAnalysisPurposeById(2L)).isFalse();
+        assertAll(
+                () -> assertThat(adapter.existsAnalysisPurposeById(1L)).isTrue(),
+                () -> assertThat(adapter.existsAnalysisPurposeById(2L)).isFalse()
+        );
         then(analysisPurposeJpaRepository).should().existsById(1L);
         then(analysisPurposeJpaRepository).should().existsById(2L);
     }
@@ -86,8 +93,10 @@ class AnalysisPurposeDbAdapterTest {
         given(analysisPurposeJpaRepository.findLabelById(9L)).willReturn(Optional.empty());
 
         // when & then
-        assertThat(adapter.getLabelById(1L)).contains("L1");
-        assertThat(adapter.getLabelById(9L)).isEmpty();
+        assertAll(
+                () -> assertThat(adapter.getLabelById(1L)).contains("L1"),
+                () -> assertThat(adapter.getLabelById(9L)).isEmpty()
+        );
         then(analysisPurposeJpaRepository).should().findLabelById(1L);
         then(analysisPurposeJpaRepository).should().findLabelById(9L);
     }

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("DataCommandWebMapper 테스트")
 class DataCommandWebMapperTest {
@@ -37,15 +38,17 @@ class DataCommandWebMapperTest {
         UploadDataRequest applicationRequest = mapper.toApplicationDto(webRequest);
 
         // Then
-        assertThat(applicationRequest).isNotNull();
-        assertThat(applicationRequest.title()).isEqualTo("Test Dataset");
-        assertThat(applicationRequest.topicId()).isEqualTo(1L);
-        assertThat(applicationRequest.dataSourceId()).isEqualTo(2L);
-        assertThat(applicationRequest.dataTypeId()).isEqualTo(3L);
-        assertThat(applicationRequest.startDate()).isEqualTo(LocalDate.of(2023, 1, 1));
-        assertThat(applicationRequest.endDate()).isEqualTo(LocalDate.of(2023, 12, 31));
-        assertThat(applicationRequest.description()).isEqualTo("Test description");
-        assertThat(applicationRequest.analysisGuide()).isEqualTo("Test analysis guide");
+        assertAll(
+                () -> assertThat(applicationRequest).isNotNull(),
+                () -> assertThat(applicationRequest.title()).isEqualTo("Test Dataset"),
+                () -> assertThat(applicationRequest.topicId()).isEqualTo(1L),
+                () -> assertThat(applicationRequest.dataSourceId()).isEqualTo(2L),
+                () -> assertThat(applicationRequest.dataTypeId()).isEqualTo(3L),
+                () -> assertThat(applicationRequest.startDate()).isEqualTo(LocalDate.of(2023, 1, 1)),
+                () -> assertThat(applicationRequest.endDate()).isEqualTo(LocalDate.of(2023, 12, 31)),
+                () -> assertThat(applicationRequest.description()).isEqualTo("Test description"),
+                () -> assertThat(applicationRequest.analysisGuide()).isEqualTo("Test analysis guide")
+        );
     }
 
     @Test
@@ -67,15 +70,17 @@ class DataCommandWebMapperTest {
         ModifyDataRequest applicationRequest = mapper.toApplicationDto(webRequest);
 
         // Then
-        assertThat(applicationRequest).isNotNull();
-        assertThat(applicationRequest.title()).isEqualTo("Modified Dataset");
-        assertThat(applicationRequest.topicId()).isEqualTo(1L);
-        assertThat(applicationRequest.dataSourceId()).isEqualTo(2L);
-        assertThat(applicationRequest.dataTypeId()).isEqualTo(3L);
-        assertThat(applicationRequest.startDate()).isEqualTo(LocalDate.of(2023, 6, 1));
-        assertThat(applicationRequest.endDate()).isEqualTo(LocalDate.of(2023, 12, 31));
-        assertThat(applicationRequest.description()).isEqualTo("Modified description");
-        assertThat(applicationRequest.analysisGuide()).isEqualTo("Modified analysis guide");
+        assertAll(
+                () -> assertThat(applicationRequest).isNotNull(),
+                () -> assertThat(applicationRequest.title()).isEqualTo("Modified Dataset"),
+                () -> assertThat(applicationRequest.topicId()).isEqualTo(1L),
+                () -> assertThat(applicationRequest.dataSourceId()).isEqualTo(2L),
+                () -> assertThat(applicationRequest.dataTypeId()).isEqualTo(3L),
+                () -> assertThat(applicationRequest.startDate()).isEqualTo(LocalDate.of(2023, 6, 1)),
+                () -> assertThat(applicationRequest.endDate()).isEqualTo(LocalDate.of(2023, 12, 31)),
+                () -> assertThat(applicationRequest.description()).isEqualTo("Modified description"),
+                () -> assertThat(applicationRequest.analysisGuide()).isEqualTo("Modified analysis guide")
+        );
     }
 
     @Test
@@ -88,7 +93,9 @@ class DataCommandWebMapperTest {
         UploadDataWebResponse webResponse = mapper.toWebDto(applicationResponse);
 
         // Then
-        assertThat(webResponse).isNotNull();
-        assertThat(webResponse.id()).isEqualTo(123L);
+        assertAll(
+                () -> assertThat(webResponse).isNotNull(),
+                () -> assertThat(webResponse.id()).isEqualTo(123L)
+        );
     }
 }

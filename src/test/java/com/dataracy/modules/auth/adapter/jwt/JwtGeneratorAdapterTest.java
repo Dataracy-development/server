@@ -12,7 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -130,8 +131,13 @@ class JwtGeneratorAdapterTest {
         String email = null;
 
         // when & then
-        assertThatThrownBy(() -> jwtGeneratorAdapter.generateResetPasswordToken(email))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> jwtGeneratorAdapter.generateResetPasswordToken(email),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 
     @Test
@@ -143,7 +149,12 @@ class JwtGeneratorAdapterTest {
         String email = null;
 
         // when & then
-        assertThatThrownBy(() -> jwtGeneratorAdapter.generateRegisterToken(provider, providerId, email))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> jwtGeneratorAdapter.generateRegisterToken(provider, providerId, email),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 }

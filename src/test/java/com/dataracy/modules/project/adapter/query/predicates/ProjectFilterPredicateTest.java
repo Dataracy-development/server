@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectFilterPredicateTest {
 
@@ -18,8 +19,10 @@ class ProjectFilterPredicateTest {
         BooleanExpression result = ProjectFilterPredicate.notDeleted();
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("projectEntity.isDeleted = false");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("projectEntity.isDeleted = false")
+        );
     }
 
     @Test
@@ -32,8 +35,10 @@ class ProjectFilterPredicateTest {
         BooleanExpression result = ProjectFilterPredicate.projectIdEq(projectId);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("projectEntity.id = 1");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("projectEntity.id = 1")
+        );
     }
 
     @Test
@@ -56,8 +61,10 @@ class ProjectFilterPredicateTest {
         BooleanExpression result = ProjectFilterPredicate.keywordContains(keyword);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("projectEntity.title");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("projectEntity.title")
+        );
     }
 
     @ParameterizedTest
@@ -82,8 +89,10 @@ class ProjectFilterPredicateTest {
         BooleanExpression result = ProjectFilterPredicate.topicIdEq(topicId);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("projectEntity.topicId = 1");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("projectEntity.topicId = 1")
+        );
     }
 
     @Test
@@ -106,8 +115,10 @@ class ProjectFilterPredicateTest {
         BooleanExpression result = ProjectFilterPredicate.authorLevelIdEq(authorLevelId);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("projectEntity.authorLevelId = 1");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("projectEntity.authorLevelId = 1")
+        );
     }
 
     @Test
@@ -130,8 +141,10 @@ class ProjectFilterPredicateTest {
         BooleanExpression result = ProjectFilterPredicate.dataSourceIdEq(dataSourceId);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("projectEntity.dataSourceId = 1");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("projectEntity.dataSourceId = 1")
+        );
     }
 
     @Test

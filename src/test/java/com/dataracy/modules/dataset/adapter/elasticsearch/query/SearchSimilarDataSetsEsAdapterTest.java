@@ -17,7 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.util.function.Function;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
@@ -54,8 +55,13 @@ class SearchSimilarDataSetsEsAdapterTest {
             loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
 
             // when & then
-            assertThatThrownBy(() -> adapter.searchSimilarDataSets(data, size))
-                .isInstanceOf(DataException.class);
+            DataException exception = catchThrowableOfType(
+                    () -> adapter.searchSimilarDataSets(data, size),
+                    DataException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull()
+            );
             
             then(elasticLogger).should().logError(eq("data_index"), eq("유사 데이터셋 조회 실패: dataId=123, size=10"), any(IOException.class));
         }

@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -39,10 +40,12 @@ class AuthorLevelDbAdapterTest {
         List<AuthorLevel> result = adapter.findAllAuthorLevels();
 
         // then
-        assertThat(result).hasSize(2);
-        assertThat(result.get(0).id()).isEqualTo(1L);
-        assertThat(result.get(0).value()).isEqualTo("v1");
-        assertThat(result.get(0).label()).isEqualTo("l1");
+        assertAll(
+                () -> assertThat(result).hasSize(2),
+                () -> assertThat(result.get(0).id()).isEqualTo(1L),
+                () -> assertThat(result.get(0).value()).isEqualTo("v1"),
+                () -> assertThat(result.get(0).label()).isEqualTo("l1")
+        );
         then(authorLevelJpaRepository).should().findAll();
     }
 
@@ -60,9 +63,11 @@ class AuthorLevelDbAdapterTest {
         Optional<AuthorLevel> missing = adapter.findAuthorLevelById(999L);
 
         // then
-        assertThat(found).isPresent();
-        assertThat(found.get().id()).isEqualTo(id);
-        assertThat(missing).isEmpty();
+        assertAll(
+                () -> assertThat(found).isPresent(),
+                () -> assertThat(found.get().id()).isEqualTo(id),
+                () -> assertThat(missing).isEmpty()
+        );
         then(authorLevelJpaRepository).should(times(1)).findById(id);
         then(authorLevelJpaRepository).should(times(1)).findById(999L);
     }
@@ -75,8 +80,10 @@ class AuthorLevelDbAdapterTest {
         given(authorLevelJpaRepository.existsById(2L)).willReturn(false);
 
         // when & then
-        assertThat(adapter.existsAuthorLevelById(1L)).isTrue();
-        assertThat(adapter.existsAuthorLevelById(2L)).isFalse();
+        assertAll(
+                () -> assertThat(adapter.existsAuthorLevelById(1L)).isTrue(),
+                () -> assertThat(adapter.existsAuthorLevelById(2L)).isFalse()
+        );
         then(authorLevelJpaRepository).should().existsById(1L);
         then(authorLevelJpaRepository).should().existsById(2L);
     }
@@ -89,8 +96,10 @@ class AuthorLevelDbAdapterTest {
         given(authorLevelJpaRepository.findLabelById(9L)).willReturn(Optional.empty());
 
         // when & then
-        assertThat(adapter.getLabelById(1L)).contains("L1");
-        assertThat(adapter.getLabelById(9L)).isEmpty();
+        assertAll(
+                () -> assertThat(adapter.getLabelById(1L)).contains("L1"),
+                () -> assertThat(adapter.getLabelById(9L)).isEmpty()
+        );
         then(authorLevelJpaRepository).should().findLabelById(1L);
         then(authorLevelJpaRepository).should().findLabelById(9L);
     }

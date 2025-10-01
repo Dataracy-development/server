@@ -9,6 +9,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class CreateDataDtoMapperTest {
 
@@ -34,8 +35,10 @@ class CreateDataDtoMapperTest {
         Data data = mapper.toDomain(req, 99L);
 
         // then
-        assertThat(data.getTitle()).isEqualTo("title");
-        assertThat(data.getUserId()).isEqualTo(99L);
-        assertThat(data.getDataThumbnailUrl()).isEqualTo("default.png");
+        assertAll(
+                () -> assertThat(data.getTitle()).isEqualTo("title"),
+                () -> assertThat(data.getUserId()).isEqualTo(99L),
+                () -> assertThat(data.getDataThumbnailUrl()).isEqualTo("default.png")
+        );
     }
 }

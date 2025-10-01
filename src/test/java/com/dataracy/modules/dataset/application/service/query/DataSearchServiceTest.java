@@ -42,6 +42,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -136,8 +137,10 @@ class DataSearchServiceTest {
 
             // when & then
             DataException exception = catchThrowableOfType(() -> service.searchSimilarDataSets(dataId, size), DataException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA)
+            );
 
             // 포트 호출 검증
             then(findDataPort).should().findDataById(dataId);
@@ -218,9 +221,11 @@ class DataSearchServiceTest {
             Page<FilteredDataResponse> result = service.searchFilteredDataSets(request, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(2);
-            assertThat(result.getContent()).containsExactly(response1, response2);
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(2),
+                    () -> assertThat(result.getContent()).containsExactly(response1, response2)
+            );
 
             // 포트 호출 검증
             then(searchFilteredDataSetsPort).should().searchByFilters(request, pageable, DataSortType.LATEST);
@@ -248,9 +253,11 @@ class DataSearchServiceTest {
             Page<FilteredDataResponse> result = service.searchFilteredDataSets(request, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero()
+            );
 
             // 포트 호출 검증
             then(searchFilteredDataSetsPort).should().searchByFilters(request, pageable, DataSortType.LATEST);

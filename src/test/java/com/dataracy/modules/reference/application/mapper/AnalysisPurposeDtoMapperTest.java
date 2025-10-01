@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class AnalysisPurposeDtoMapperTest {
     private final AnalysisPurposeDtoMapper mapper = new AnalysisPurposeDtoMapper();
@@ -23,9 +24,11 @@ class AnalysisPurposeDtoMapperTest {
         AnalysisPurposeResponse dto = mapper.toResponseDto(domain);
 
         // then
-        assertThat(dto.id()).isEqualTo(1L);
-        assertThat(dto.value()).isEqualTo("v");
-        assertThat(dto.label()).isEqualTo("l");
+        assertAll(
+                () -> assertThat(dto.id()).isEqualTo(1L),
+                () -> assertThat(dto.value()).isEqualTo("v"),
+                () -> assertThat(dto.label()).isEqualTo("l")
+        );
     }
 
     @Test
@@ -38,7 +41,9 @@ class AnalysisPurposeDtoMapperTest {
         AllAnalysisPurposesResponse all = mapper.toResponseDto(domains);
 
         // then
-        assertThat(all.analysisPurposes()).hasSize(2);
-        assertThat(all.analysisPurposes().get(0).id()).isEqualTo(1L);
+        assertAll(
+                () -> assertThat(all.analysisPurposes()).hasSize(2),
+                () -> assertThat(all.analysisPurposes().get(0).id()).isEqualTo(1L)
+        );
     }
 }

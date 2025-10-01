@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class UserEntityTest {
 
@@ -37,19 +38,21 @@ class UserEntityTest {
         UserEntity user = createUser();
 
         // then
-        assertThat(user.getProvider()).isEqualTo(ProviderType.LOCAL);
-        assertThat(user.getProviderId()).isEqualTo("provider-123");
-        assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(user.getEmail()).isEqualTo("user@test.com");
-        assertThat(user.getPassword()).isEqualTo("encodedPw");
-        assertThat(user.getNickname()).isEqualTo("nickname");
-        assertThat(user.getAuthorLevelId()).isEqualTo(1L);
-        assertThat(user.getOccupationId()).isEqualTo(2L);
-        assertThat(user.getVisitSourceId()).isEqualTo(3L);
-        assertThat(user.getProfileImageUrl()).isEqualTo("img.png");
-        assertThat(user.getIntroductionText()).isEqualTo("intro text");
-        assertThat(user.isAdTermsAgreed()).isTrue();
-        assertThat(user.isDeleted()).isFalse();
+        assertAll(
+                () -> assertThat(user.getProvider()).isEqualTo(ProviderType.LOCAL),
+                () -> assertThat(user.getProviderId()).isEqualTo("provider-123"),
+                () -> assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(user.getEmail()).isEqualTo("user@test.com"),
+                () -> assertThat(user.getPassword()).isEqualTo("encodedPw"),
+                () -> assertThat(user.getNickname()).isEqualTo("nickname"),
+                () -> assertThat(user.getAuthorLevelId()).isEqualTo(1L),
+                () -> assertThat(user.getOccupationId()).isEqualTo(2L),
+                () -> assertThat(user.getVisitSourceId()).isEqualTo(3L),
+                () -> assertThat(user.getProfileImageUrl()).isEqualTo("img.png"),
+                () -> assertThat(user.getIntroductionText()).isEqualTo("intro text"),
+                () -> assertThat(user.isAdTermsAgreed()).isTrue(),
+                () -> assertThat(user.isDeleted()).isFalse()
+        );
     }
 
     @Test
@@ -76,9 +79,11 @@ class UserEntityTest {
         user.addUserTopic(topicEntity);
 
         // then
-        assertThat(user.getUserTopicEntities()).contains(topicEntity);
-        assertThat(topicEntity.getUser()).isEqualTo(user);
-        assertThat(topicEntity.getTopicId()).isEqualTo(100L);
+        assertAll(
+                () -> assertThat(user.getUserTopicEntities()).contains(topicEntity),
+                () -> assertThat(topicEntity.getUser()).isEqualTo(user),
+                () -> assertThat(topicEntity.getTopicId()).isEqualTo(100L)
+        );
     }
 
     @Test
@@ -94,11 +99,13 @@ class UserEntityTest {
         user.modifyUserInfo(req);
 
         // then
-        assertThat(user.getNickname()).isEqualTo("newNick");
-        assertThat(user.getAuthorLevelId()).isEqualTo(10L);
-        assertThat(user.getOccupationId()).isEqualTo(20L);
-        assertThat(user.getVisitSourceId()).isEqualTo(30L);
-        assertThat(user.getIntroductionText()).isEqualTo("new intro");
+        assertAll(
+                () -> assertThat(user.getNickname()).isEqualTo("newNick"),
+                () -> assertThat(user.getAuthorLevelId()).isEqualTo(10L),
+                () -> assertThat(user.getOccupationId()).isEqualTo(20L),
+                () -> assertThat(user.getVisitSourceId()).isEqualTo(30L),
+                () -> assertThat(user.getIntroductionText()).isEqualTo("new intro")
+        );
     }
 
     @Test

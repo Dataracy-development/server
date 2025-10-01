@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("LoggerFactory 테스트")
 class LoggerFactoryTest {
@@ -22,9 +23,11 @@ class LoggerFactoryTest {
             ApiLogger logger2 = LoggerFactory.api();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -40,9 +43,11 @@ class LoggerFactoryTest {
             ServiceLogger logger2 = LoggerFactory.service();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -58,9 +63,11 @@ class LoggerFactoryTest {
             DomainLogger logger2 = LoggerFactory.domain();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -76,9 +83,11 @@ class LoggerFactoryTest {
             PersistenceLogger logger2 = LoggerFactory.db();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -94,9 +103,11 @@ class LoggerFactoryTest {
             QueryDslLogger logger2 = LoggerFactory.query();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -112,9 +123,11 @@ class LoggerFactoryTest {
             KafkaLogger logger2 = LoggerFactory.kafka();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -130,9 +143,11 @@ class LoggerFactoryTest {
             ElasticLogger logger2 = LoggerFactory.elastic();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -148,9 +163,11 @@ class LoggerFactoryTest {
             RedisLogger logger2 = LoggerFactory.redis();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -166,9 +183,11 @@ class LoggerFactoryTest {
             SchedulerLogger logger2 = LoggerFactory.scheduler();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -184,9 +203,11 @@ class LoggerFactoryTest {
             DistributedLockLogger logger2 = LoggerFactory.lock();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -202,9 +223,11 @@ class LoggerFactoryTest {
             CommonLogger logger2 = LoggerFactory.common();
 
             // then
-            assertThat(logger1).isNotNull();
-            assertThat(logger2).isNotNull();
-            assertThat(logger1).isSameAs(logger2);
+            assertAll(
+                    () -> assertThat(logger1).isNotNull(),
+                    () -> assertThat(logger2).isNotNull(),
+                    () -> assertThat(logger1).isSameAs(logger2)
+            );
         }
     }
 
@@ -229,17 +252,19 @@ class LoggerFactoryTest {
             CommonLogger commonLogger = LoggerFactory.common();
 
             // then - 모든 로거가 null이 아니고 정상적으로 생성되었는지 확인
-            assertThat(apiLogger).isNotNull();
-            assertThat(serviceLogger).isNotNull();
-            assertThat(domainLogger).isNotNull();
-            assertThat(persistenceLogger).isNotNull();
-            assertThat(queryDslLogger).isNotNull();
-            assertThat(kafkaLogger).isNotNull();
-            assertThat(elasticLogger).isNotNull();
-            assertThat(redisLogger).isNotNull();
-            assertThat(schedulerLogger).isNotNull();
-            assertThat(distributedLockLogger).isNotNull();
-            assertThat(commonLogger).isNotNull();
+            assertAll(
+                    () -> assertThat(apiLogger).isNotNull(),
+                    () -> assertThat(serviceLogger).isNotNull(),
+                    () -> assertThat(domainLogger).isNotNull(),
+                    () -> assertThat(persistenceLogger).isNotNull(),
+                    () -> assertThat(queryDslLogger).isNotNull(),
+                    () -> assertThat(kafkaLogger).isNotNull(),
+                    () -> assertThat(elasticLogger).isNotNull(),
+                    () -> assertThat(redisLogger).isNotNull(),
+                    () -> assertThat(schedulerLogger).isNotNull(),
+                    () -> assertThat(distributedLockLogger).isNotNull(),
+                    () -> assertThat(commonLogger).isNotNull()
+            );
         }
     }
 }

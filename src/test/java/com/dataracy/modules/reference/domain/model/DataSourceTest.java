@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("DataSource 테스트")
 class DataSourceTest {
@@ -20,9 +21,11 @@ class DataSourceTest {
         DataSource dataSource = new DataSource(id, value, label);
 
         // Then
-        assertThat(dataSource.id()).isEqualTo(id);
-        assertThat(dataSource.value()).isEqualTo(value);
-        assertThat(dataSource.label()).isEqualTo(label);
+        assertAll(
+                () -> assertThat(dataSource.id()).isEqualTo(id),
+                () -> assertThat(dataSource.value()).isEqualTo(value),
+                () -> assertThat(dataSource.label()).isEqualTo(label)
+        );
     }
 
     @Test
@@ -34,9 +37,10 @@ class DataSourceTest {
         DataSource dataSource3 = new DataSource(2L, "corporate", "기업 데이터");
 
         // When & Then
-        assertThat(dataSource1).isEqualTo(dataSource2);
-        assertThat(dataSource1.hashCode()).isEqualTo(dataSource2.hashCode());
-        assertThat(dataSource1).isNotEqualTo(dataSource3);
+        assertThat(dataSource1)
+                .isEqualTo(dataSource2)
+                .hasSameHashCodeAs(dataSource2)
+                .isNotEqualTo(dataSource3);
     }
 
     @Test
@@ -49,10 +53,11 @@ class DataSourceTest {
         String toString = dataSource.toString();
 
         // Then
-        assertThat(toString).contains("DataSource");
-        assertThat(toString).contains("1");
-        assertThat(toString).contains("research");
-        assertThat(toString).contains("연구 데이터");
+        assertThat(toString)
+                .contains("DataSource")
+                .contains("1")
+                .contains("research")
+                .contains("연구 데이터");
     }
 
     @Test
@@ -62,9 +67,11 @@ class DataSourceTest {
         DataSource dataSource = new DataSource(null, null, null);
 
         // Then
-        assertThat(dataSource.id()).isNull();
-        assertThat(dataSource.value()).isNull();
-        assertThat(dataSource.label()).isNull();
+        assertAll(
+                () -> assertThat(dataSource.id()).isNull(),
+                () -> assertThat(dataSource.value()).isNull(),
+                () -> assertThat(dataSource.label()).isNull()
+        );
     }
 
     @Test
@@ -76,12 +83,13 @@ class DataSourceTest {
         DataSource dataSource3 = new DataSource(3L, "research", "연구 데이터");
 
         // Then
-        assertThat(dataSource1.value()).isEqualTo("government");
-        assertThat(dataSource2.value()).isEqualTo("corporate");
-        assertThat(dataSource3.value()).isEqualTo("research");
-        
-        assertThat(dataSource1.label()).isEqualTo("정부 데이터");
-        assertThat(dataSource2.label()).isEqualTo("기업 데이터");
-        assertThat(dataSource3.label()).isEqualTo("연구 데이터");
+        assertAll(
+                () -> assertThat(dataSource1.value()).isEqualTo("government"),
+                () -> assertThat(dataSource2.value()).isEqualTo("corporate"),
+                () -> assertThat(dataSource3.value()).isEqualTo("research"),
+                () -> assertThat(dataSource1.label()).isEqualTo("정부 데이터"),
+                () -> assertThat(dataSource2.label()).isEqualTo("기업 데이터"),
+                () -> assertThat(dataSource3.label()).isEqualTo("연구 데이터")
+        );
     }
 }

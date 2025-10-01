@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectEntityTest {
 
@@ -37,14 +38,16 @@ class ProjectEntityTest {
         child.modify(req, newParent);
 
         // then
-        assertThat(child.getTitle()).isEqualTo("newTitle");
-        assertThat(child.getTopicId()).isEqualTo(99L);
-        assertThat(child.getAnalysisPurposeId()).isEqualTo(88L);
-        assertThat(child.getDataSourceId()).isEqualTo(77L);
-        assertThat(child.getAuthorLevelId()).isEqualTo(66L);
-        assertThat(child.getIsContinue()).isTrue();
-        assertThat(child.getParentProject()).isEqualTo(newParent);
-        assertThat(child.getContent()).isEqualTo("newContent");
+        assertAll(
+                () -> assertThat(child.getTitle()).isEqualTo("newTitle"),
+                () -> assertThat(child.getTopicId()).isEqualTo(99L),
+                () -> assertThat(child.getAnalysisPurposeId()).isEqualTo(88L),
+                () -> assertThat(child.getDataSourceId()).isEqualTo(77L),
+                () -> assertThat(child.getAuthorLevelId()).isEqualTo(66L),
+                () -> assertThat(child.getIsContinue()).isTrue(),
+                () -> assertThat(child.getParentProject()).isEqualTo(newParent),
+                () -> assertThat(child.getContent()).isEqualTo("newContent")
+        );
     }
 
     @Test
@@ -58,8 +61,10 @@ class ProjectEntityTest {
         project.addProjectData(dataEntity);
 
         // then
-        assertThat(project.getProjectDataEntities()).contains(dataEntity);
-        assertThat(dataEntity.getProject()).isEqualTo(project);
+        assertAll(
+                () -> assertThat(project.getProjectDataEntities()).contains(dataEntity),
+                () -> assertThat(dataEntity.getProject()).isEqualTo(project)
+        );
     }
 
     @Test
@@ -150,9 +155,11 @@ class ProjectEntityTest {
         ProjectEntity p = ProjectEntity.of("t", 10L, 20L, 30L, 40L, 50L, true, null, "c", "thumb");
 
         // then
-        assertThat(p.getTitle()).isEqualTo("t");
-        assertThat(p.getTopicId()).isEqualTo(10L);
-        assertThat(p.getUserId()).isEqualTo(20L);
-        assertThat(p.getThumbnailUrl()).isEqualTo("thumb");
+        assertAll(
+                () -> assertThat(p.getTitle()).isEqualTo("t"),
+                () -> assertThat(p.getTopicId()).isEqualTo(10L),
+                () -> assertThat(p.getUserId()).isEqualTo(20L),
+                () -> assertThat(p.getThumbnailUrl()).isEqualTo("thumb")
+        );
     }
 }

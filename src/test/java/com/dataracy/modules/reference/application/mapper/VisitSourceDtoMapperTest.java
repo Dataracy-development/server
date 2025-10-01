@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class VisitSourceDtoMapperTest {
     private final VisitSourceDtoMapper mapper = new VisitSourceDtoMapper();
@@ -23,9 +24,11 @@ class VisitSourceDtoMapperTest {
         VisitSourceResponse dto = mapper.toResponseDto(domain);
 
         // then
-        assertThat(dto.id()).isEqualTo(1L);
-        assertThat(dto.value()).isEqualTo("v");
-        assertThat(dto.label()).isEqualTo("l");
+        assertAll(
+                () -> assertThat(dto.id()).isEqualTo(1L),
+                () -> assertThat(dto.value()).isEqualTo("v"),
+                () -> assertThat(dto.label()).isEqualTo("l")
+        );
     }
 
     @Test
@@ -38,7 +41,9 @@ class VisitSourceDtoMapperTest {
         AllVisitSourcesResponse all = mapper.toResponseDto(domains);
 
         // then
-        assertThat(all.visitSources()).hasSize(2);
-        assertThat(all.visitSources().get(0).id()).isEqualTo(1L);
+        assertAll(
+                () -> assertThat(all.visitSources()).hasSize(2),
+                () -> assertThat(all.visitSources().get(0).id()).isEqualTo(1L)
+        );
     }
 }

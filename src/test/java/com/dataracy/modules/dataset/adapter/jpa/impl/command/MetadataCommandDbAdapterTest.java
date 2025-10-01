@@ -20,6 +20,7 @@ import org.mockito.quality.Strictness;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
@@ -75,11 +76,12 @@ class MetadataCommandDbAdapterTest {
 
         // then
         DataMetadataEntity saved = captor.getValue();
-        assertThat(saved.getRowCount()).isEqualTo(10);
-        assertThat(saved.getColumnCount()).isEqualTo(20);
-        assertThat(saved.getPreviewJson()).isEqualTo("json");
-
-        then(metadataRepo).should().save(saved);
+        assertAll(
+                () -> assertThat(saved.getRowCount()).isEqualTo(10),
+                () -> assertThat(saved.getColumnCount()).isEqualTo(20),
+                () -> assertThat(saved.getPreviewJson()).isEqualTo("json"),
+                () -> then(metadataRepo).should().save(saved)
+        );
     }
 
     @Test
@@ -103,10 +105,11 @@ class MetadataCommandDbAdapterTest {
         adapter.saveMetadata(1L, meta);
 
         // then
-        assertThat(existing.getRowCount()).isEqualTo(99);
-        assertThat(existing.getColumnCount()).isEqualTo(88);
-        assertThat(existing.getPreviewJson()).isEqualTo("new");
-
-        then(metadataRepo).should().save(existing);
+        assertAll(
+                () -> assertThat(existing.getRowCount()).isEqualTo(99),
+                () -> assertThat(existing.getColumnCount()).isEqualTo(88),
+                () -> assertThat(existing.getPreviewJson()).isEqualTo("new"),
+                () -> then(metadataRepo).should().save(existing)
+        );
     }
 }

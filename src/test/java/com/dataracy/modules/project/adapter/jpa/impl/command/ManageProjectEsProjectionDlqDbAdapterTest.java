@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class ManageProjectEsProjectionDlqDbAdapterTest {
@@ -42,11 +43,13 @@ class ManageProjectEsProjectionDlqDbAdapterTest {
         then(repo).should().save(captor.capture());
         ProjectEsProjectionDlqEntity saved = captor.getValue();
 
-        assertThat(saved.getProjectId()).isEqualTo(projectId);
-        assertThat(saved.getDeltaComment()).isEqualTo(deltaComment);
-        assertThat(saved.getDeltaLike()).isEqualTo(deltaLike);
-        assertThat(saved.getDeltaView()).isEqualTo(deltaView);
-        assertThat(saved.getSetDeleted()).isTrue();
-        assertThat(saved.getLastError()).isEqualTo("error occurred");
+        assertAll(
+                () -> assertThat(saved.getProjectId()).isEqualTo(projectId),
+                () -> assertThat(saved.getDeltaComment()).isEqualTo(deltaComment),
+                () -> assertThat(saved.getDeltaLike()).isEqualTo(deltaLike),
+                () -> assertThat(saved.getDeltaView()).isEqualTo(deltaView),
+                () -> assertThat(saved.getSetDeleted()).isTrue(),
+                () -> assertThat(saved.getLastError()).isEqualTo("error occurred")
+        );
     }
 }

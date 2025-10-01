@@ -32,6 +32,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -94,9 +95,11 @@ class ReadCommentServiceTest {
             Page<FindCommentResponse> result = service.findComments(1L, 1L, Pageable.ofSize(5));
 
             // then
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).creatorName()).isEqualTo("유저1");
-            assertThat(result.getContent().get(0).content()).isEqualTo("content");
+            assertAll(
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).creatorName()).isEqualTo("유저1"),
+                    () -> assertThat(result.getContent().get(0).content()).isEqualTo("content")
+            );
         }
 
         @Test
@@ -161,9 +164,11 @@ class ReadCommentServiceTest {
             );
 
             // then
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).content()).isEqualTo("답글");
-            assertThat(result.getContent().get(0).creatorName()).isEqualTo("유저1");
+            assertAll(
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).content()).isEqualTo("답글"),
+                    () -> assertThat(result.getContent().get(0).creatorName()).isEqualTo("유저1")
+            );
         }
 
         @Test

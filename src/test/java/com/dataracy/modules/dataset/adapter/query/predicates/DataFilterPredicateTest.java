@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataFilterPredicateTest {
 
@@ -18,8 +19,10 @@ class DataFilterPredicateTest {
         BooleanExpression result = DataFilterPredicate.notDeleted();
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("dataEntity.isDeleted = false");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("dataEntity.isDeleted = false")
+        );
     }
 
     @Test
@@ -32,8 +35,10 @@ class DataFilterPredicateTest {
         BooleanExpression result = DataFilterPredicate.dataIdEq(dataId);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("dataEntity.id = 1");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("dataEntity.id = 1")
+        );
     }
 
     @Test
@@ -56,9 +61,11 @@ class DataFilterPredicateTest {
         BooleanExpression result = DataFilterPredicate.keywordContains(keyword);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("dataEntity.title");
-        assertThat(result.toString()).contains("dataEntity.description");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("dataEntity.title"),
+                () -> assertThat(result.toString()).contains("dataEntity.description")
+        );
     }
 
     @ParameterizedTest
@@ -83,8 +90,10 @@ class DataFilterPredicateTest {
         BooleanExpression result = DataFilterPredicate.topicIdEq(topicId);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("dataEntity.topicId = 1");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("dataEntity.topicId = 1")
+        );
     }
 
     @Test
@@ -107,8 +116,10 @@ class DataFilterPredicateTest {
         BooleanExpression result = DataFilterPredicate.dataSourceIdEq(dataSourceId);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("dataEntity.dataSourceId = 1");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("dataEntity.dataSourceId = 1")
+        );
     }
 
     @Test
@@ -131,8 +142,10 @@ class DataFilterPredicateTest {
         BooleanExpression result = DataFilterPredicate.dataTypeIdEq(dataTypeId);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.toString()).contains("dataEntity.dataTypeId = 1");
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.toString()).contains("dataEntity.dataTypeId = 1")
+        );
     }
 
     @Test

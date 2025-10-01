@@ -7,7 +7,8 @@ import com.dataracy.modules.email.application.dto.response.GetResetTokenResponse
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ValidateEmailWebMapperTest {
 
@@ -22,9 +23,11 @@ class ValidateEmailWebMapperTest {
         VerifyCodeRequest dto = mapper.toApplicationDto(web);
 
         // then
-        assertThat(dto.email()).isEqualTo("user@example.com");
-        assertThat(dto.code()).isEqualTo("123456");
-        assertThat(dto.purpose()).isEqualTo("PASSWORD_RESET");
+        assertAll(
+                () -> assertThat(dto.email()).isEqualTo("user@example.com"),
+                () -> assertThat(dto.code()).isEqualTo("123456"),
+                () -> assertThat(dto.purpose()).isEqualTo("PASSWORD_RESET")
+        );
     }
 
     @Test

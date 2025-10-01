@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataSourceWebMapperTest {
 
@@ -31,9 +32,11 @@ class DataSourceWebMapperTest {
         DataSourceWebResponse result = dataSourceWebMapper.toWebDto(dataSourceResponse);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.value()).isEqualTo("GOV");
-        assertThat(result.label()).isEqualTo("정부기관");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.value()).isEqualTo("GOV"),
+                () -> assertThat(result.label()).isEqualTo("정부기관")
+        );
     }
 
     @Test
@@ -51,16 +54,18 @@ class DataSourceWebMapperTest {
         AllDataSourcesWebResponse result = dataSourceWebMapper.toWebDto(allDataSourcesResponse);
 
         // then
-        assertThat(result.dataSources()).hasSize(3);
-        assertThat(result.dataSources().get(0).id()).isEqualTo(1L);
-        assertThat(result.dataSources().get(0).value()).isEqualTo("GOV");
-        assertThat(result.dataSources().get(0).label()).isEqualTo("정부기관");
-        assertThat(result.dataSources().get(1).id()).isEqualTo(2L);
-        assertThat(result.dataSources().get(1).value()).isEqualTo("CORP");
-        assertThat(result.dataSources().get(1).label()).isEqualTo("기업");
-        assertThat(result.dataSources().get(2).id()).isEqualTo(3L);
-        assertThat(result.dataSources().get(2).value()).isEqualTo("ACAD");
-        assertThat(result.dataSources().get(2).label()).isEqualTo("학술기관");
+        assertAll(
+                () -> assertThat(result.dataSources()).hasSize(3),
+                () -> assertThat(result.dataSources().get(0).id()).isEqualTo(1L),
+                () -> assertThat(result.dataSources().get(0).value()).isEqualTo("GOV"),
+                () -> assertThat(result.dataSources().get(0).label()).isEqualTo("정부기관"),
+                () -> assertThat(result.dataSources().get(1).id()).isEqualTo(2L),
+                () -> assertThat(result.dataSources().get(1).value()).isEqualTo("CORP"),
+                () -> assertThat(result.dataSources().get(1).label()).isEqualTo("기업"),
+                () -> assertThat(result.dataSources().get(2).id()).isEqualTo(3L),
+                () -> assertThat(result.dataSources().get(2).value()).isEqualTo("ACAD"),
+                () -> assertThat(result.dataSources().get(2).label()).isEqualTo("학술기관")
+        );
     }
 
     @Test
@@ -109,8 +114,10 @@ class DataSourceWebMapperTest {
         DataSourceWebResponse result = dataSourceWebMapper.toWebDto(dataSourceResponse);
 
         // then
-        assertThat(result.id()).isNull();
-        assertThat(result.value()).isNull();
-        assertThat(result.label()).isNull();
+        assertAll(
+                () -> assertThat(result.id()).isNull(),
+                () -> assertThat(result.value()).isNull(),
+                () -> assertThat(result.label()).isNull()
+        );
     }
 }

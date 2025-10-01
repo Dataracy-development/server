@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 class DataEntityTest {
@@ -67,9 +68,11 @@ class DataEntityTest {
         entity.modify(request);
 
         // then
-        assertThat(entity.getTitle()).isEqualTo("new");
-        assertThat(entity.getTopicId()).isEqualTo(10L);
-        assertThat(entity.getDescription()).isEqualTo("newDesc");
+        assertAll(
+                () -> assertThat(entity.getTitle()).isEqualTo("new"),
+                () -> assertThat(entity.getTopicId()).isEqualTo(10L),
+                () -> assertThat(entity.getDescription()).isEqualTo("newDesc")
+        );
     }
 
     @Test
@@ -99,8 +102,10 @@ class DataEntityTest {
         entity.updateDataFile("newUrl", 200L);
 
         // then
-        assertThat(entity.getDataFileUrl()).isEqualTo("newUrl");
-        assertThat(entity.getSizeBytes()).isEqualTo(200L);
+        assertAll(
+                () -> assertThat(entity.getDataFileUrl()).isEqualTo("newUrl"),
+                () -> assertThat(entity.getSizeBytes()).isEqualTo(200L)
+        );
     }
 
     @Test
@@ -116,8 +121,10 @@ class DataEntityTest {
         entity.updateDataFile("sameUrl", 200L);
 
         // then
-        assertThat(entity.getDataFileUrl()).isEqualTo("sameUrl");
-        assertThat(entity.getSizeBytes()).isEqualTo(100L); // 변경되지 않음
+        assertAll(
+                () -> assertThat(entity.getDataFileUrl()).isEqualTo("sameUrl"),
+                () -> assertThat(entity.getSizeBytes()).isEqualTo(100L) // 변경되지 않음
+        );
     }
 
     @Test

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("DataSourceDtoMapper 테스트")
 class DataSourceDtoMapperTest {
@@ -25,10 +26,12 @@ class DataSourceDtoMapperTest {
         DataSourceResponse response = mapper.toResponseDto(dataSource);
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response.id()).isEqualTo(1L);
-        assertThat(response.value()).isEqualTo("government");
-        assertThat(response.label()).isEqualTo("정부 기관");
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.id()).isEqualTo(1L),
+                () -> assertThat(response.value()).isEqualTo("government"),
+                () -> assertThat(response.label()).isEqualTo("정부 기관")
+        );
     }
 
     @Test
@@ -43,12 +46,14 @@ class DataSourceDtoMapperTest {
         AllDataSourcesResponse response = mapper.toResponseDto(dataSources);
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response.dataSources()).hasSize(2);
-        assertThat(response.dataSources().get(0).id()).isEqualTo(1L);
-        assertThat(response.dataSources().get(0).value()).isEqualTo("government");
-        assertThat(response.dataSources().get(1).id()).isEqualTo(2L);
-        assertThat(response.dataSources().get(1).value()).isEqualTo("private");
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.dataSources()).hasSize(2),
+                () -> assertThat(response.dataSources().get(0).id()).isEqualTo(1L),
+                () -> assertThat(response.dataSources().get(0).value()).isEqualTo("government"),
+                () -> assertThat(response.dataSources().get(1).id()).isEqualTo(2L),
+                () -> assertThat(response.dataSources().get(1).value()).isEqualTo("private")
+        );
     }
 
     @Test
@@ -61,7 +66,9 @@ class DataSourceDtoMapperTest {
         AllDataSourcesResponse response = mapper.toResponseDto(dataSources);
 
         // Then
-        assertThat(response).isNotNull();
-        assertThat(response.dataSources()).isEmpty();
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.dataSources()).isEmpty()
+        );
     }
 }

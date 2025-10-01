@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class FindCommentDtoMapperTest {
 
@@ -45,12 +46,14 @@ class FindCommentDtoMapperTest {
             );
 
             // then
-            assertThat(dto.id()).isEqualTo(comment.getId());
-            assertThat(dto.creatorName()).isEqualTo("닉네임");
-            assertThat(dto.userProfileImageUrl()).isEqualTo("profile.png");
-            assertThat(dto.authorLevelLabel()).isEqualTo("실무자");
-            assertThat(dto.childCommentCount()).isEqualTo(7L);
-            assertThat(dto.isLiked()).isTrue();
+            assertAll(
+                    () -> assertThat(dto.id()).isEqualTo(comment.getId()),
+                    () -> assertThat(dto.creatorName()).isEqualTo("닉네임"),
+                    () -> assertThat(dto.userProfileImageUrl()).isEqualTo("profile.png"),
+                    () -> assertThat(dto.authorLevelLabel()).isEqualTo("실무자"),
+                    () -> assertThat(dto.childCommentCount()).isEqualTo(7L),
+                    () -> assertThat(dto.isLiked()).isTrue()
+            );
         }
 
         @Test
@@ -102,11 +105,13 @@ class FindCommentDtoMapperTest {
             );
 
             // then
-            assertThat(dto.id()).isEqualTo(reply.getId());
-            assertThat(dto.content()).isEqualTo("답글 내용");
-            assertThat(dto.creatorName()).isEqualTo("작성자");
-            assertThat(dto.authorLevelLabel()).isEqualTo("전문가");
-            assertThat(dto.isLiked()).isFalse();
+            assertAll(
+                    () -> assertThat(dto.id()).isEqualTo(reply.getId()),
+                    () -> assertThat(dto.content()).isEqualTo("답글 내용"),
+                    () -> assertThat(dto.creatorName()).isEqualTo("작성자"),
+                    () -> assertThat(dto.authorLevelLabel()).isEqualTo("전문가"),
+                    () -> assertThat(dto.isLiked()).isFalse()
+            );
         }
 
         @Test

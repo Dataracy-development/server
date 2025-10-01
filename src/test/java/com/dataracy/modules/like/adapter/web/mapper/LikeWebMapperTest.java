@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class LikeWebMapperTest {
 
@@ -20,8 +21,10 @@ class LikeWebMapperTest {
         TargetLikeRequest dto = mapper.toApplicationDto(web);
 
         // then
-        assertThat(dto.targetId()).isEqualTo(5L);
-        assertThat(dto.targetType()).isEqualTo("PROJECT");
-        assertThat(dto.previouslyLiked()).isFalse();
+        assertAll(
+                () -> assertThat(dto.targetId()).isEqualTo(5L),
+                () -> assertThat(dto.targetType()).isEqualTo("PROJECT"),
+                () -> assertThat(dto.previouslyLiked()).isFalse()
+        );
     }
 }

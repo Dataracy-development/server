@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataSearchWebMapperTest {
 
@@ -31,11 +32,13 @@ class DataSearchWebMapperTest {
         SimilarDataWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.title()).isEqualTo("title");
-        assertThat(result.creatorId()).isEqualTo(1L);
-        assertThat(result.creatorName()).isEqualTo("userA");
-        assertThat(result.downloadCount()).isEqualTo(10);
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.title()).isEqualTo("title"),
+                () -> assertThat(result.creatorId()).isEqualTo(1L),
+                () -> assertThat(result.creatorName()).isEqualTo("userA"),
+                () -> assertThat(result.downloadCount()).isEqualTo(10)
+        );
     }
 
     @Test
@@ -50,10 +53,12 @@ class DataSearchWebMapperTest {
         RecentMinimalDataWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.id()).isEqualTo(2L);
-        assertThat(result.title()).isEqualTo("recentData");
-        assertThat(result.creatorId()).isEqualTo(1L);
-        assertThat(result.creatorName()).isEqualTo("userA");
-        assertThat(result.dataThumbnailUrl()).isEqualTo("thumb.png");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(2L),
+                () -> assertThat(result.title()).isEqualTo("recentData"),
+                () -> assertThat(result.creatorId()).isEqualTo(1L),
+                () -> assertThat(result.creatorName()).isEqualTo("userA"),
+                () -> assertThat(result.dataThumbnailUrl()).isEqualTo("thumb.png")
+        );
     }
 }

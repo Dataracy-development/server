@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 
@@ -155,8 +156,10 @@ class DataReadServiceTest {
             List<PopularDataResponse> result = service.getPopularDataSets(3);
 
             // then
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).title()).isEqualTo("t");
+            assertAll(
+                    () -> assertThat(result).hasSize(1),
+                    () -> assertThat(result.get(0).title()).isEqualTo("t")
+            );
         }
     }
 
@@ -232,8 +235,10 @@ class DataReadServiceTest {
             List<RecentMinimalDataResponse> list = service.getRecentDataSets(2);
 
             // then
-            assertThat(list).hasSize(1);
-            assertThat(list.get(0).creatorName()).isEqualTo("userA");
+            assertAll(
+                    () -> assertThat(list).hasSize(1),
+                    () -> assertThat(list.get(0).creatorName()).isEqualTo("userA")
+            );
         }
 
     }

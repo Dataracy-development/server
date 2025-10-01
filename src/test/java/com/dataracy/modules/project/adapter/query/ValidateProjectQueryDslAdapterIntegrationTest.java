@@ -15,6 +15,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -258,8 +259,10 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
             boolean hasData = validateAdapter.checkProjectDataExistsByProjectId(parentProject.getId());
 
             // then
-            assertThat(hasChildren).isTrue();
-            assertThat(hasData).isTrue();
+            assertAll(
+                    () -> assertThat(hasChildren).isTrue(),
+                    () -> assertThat(hasData).isTrue()
+            );
         }
 
         @Test
@@ -285,8 +288,10 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
             boolean hasData = validateAdapter.checkProjectDataExistsByProjectId(independentProject.getId());
 
             // then
-            assertThat(hasChildren).isFalse();
-            assertThat(hasData).isFalse();
+            assertAll(
+                    () -> assertThat(hasChildren).isFalse(),
+                    () -> assertThat(hasData).isFalse()
+            );
         }
 
         @Test
@@ -318,8 +323,10 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
             boolean hasData = validateAdapter.checkProjectDataExistsByProjectId(deletedProject.getId());
 
             // then - 삭제된 프로젝트는 검증에서 제외되므로 false
-            assertThat(hasChildren).isFalse();
-            assertThat(hasData).isFalse();
+            assertAll(
+                    () -> assertThat(hasChildren).isFalse(),
+                    () -> assertThat(hasData).isFalse()
+            );
         }
     }
 }

@@ -21,6 +21,7 @@ import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -103,9 +104,11 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트");
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트")
+            );
         }
 
         @Test
@@ -120,8 +123,10 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2); // savedProject, childProject (deletedProject 제외)
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2) // savedProject, childProject (deletedProject 제외)
+            );
         }
 
         @Test
@@ -149,13 +154,14 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
             // when & then
             Page<Project> latestResult = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
-            assertThat(latestResult).isNotEmpty();
-
             Page<Project> popularResult = searchAdapter.searchByFilters(request, pageable, ProjectSortType.MOST_LIKED);
-            assertThat(popularResult).isNotEmpty();
-
             Page<Project> viewResult = searchAdapter.searchByFilters(request, pageable, ProjectSortType.MOST_VIEWED);
-            assertThat(viewResult).isNotEmpty();
+            
+            assertAll(
+                    () -> assertThat(latestResult).isNotEmpty(),
+                    () -> assertThat(popularResult).isNotEmpty(),
+                    () -> assertThat(viewResult).isNotEmpty()
+            );
         }
 
         @Test
@@ -170,10 +176,12 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getTotalElements()).isEqualTo(2);
-            assertThat(result.getTotalPages()).isEqualTo(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getTotalElements()).isEqualTo(2),
+                    () -> assertThat(result.getTotalPages()).isEqualTo(2)
+            );
         }
 
         @Test
@@ -188,10 +196,12 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getTotalElements()).isEqualTo(2);
-            assertThat(result.getTotalPages()).isEqualTo(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getTotalElements()).isEqualTo(2),
+                    () -> assertThat(result.getTotalPages()).isEqualTo(2)
+            );
         }
 
         @Test
@@ -206,8 +216,10 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2)
+            );
         }
 
         @Test
@@ -237,8 +249,10 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2)
+            );
         }
 
         @Test
@@ -253,8 +267,10 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2)
+            );
         }
 
         @Test
@@ -269,8 +285,10 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2)
+            );
         }
 
         @Test
@@ -285,9 +303,11 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트");
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).getTitle()).isEqualTo("테스트 프로젝트")
+            );
         }
     }
 
@@ -307,8 +327,10 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2)
+            );
             
             // 부모 프로젝트와 자식 프로젝트가 모두 검색되는지 확인
             List<String> titles = result.getContent().stream()
@@ -329,9 +351,11 @@ class SearchProjectQueryDslAdapterIntegrationTest {
             Page<Project> result = searchAdapter.searchByFilters(request, pageable, ProjectSortType.LATEST);
 
             // then
-            assertThat(result).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
-            assertThat(result.getTotalPages()).isZero();
+            assertAll(
+                    () -> assertThat(result).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero(),
+                    () -> assertThat(result.getTotalPages()).isZero()
+            );
         }
     }
 }

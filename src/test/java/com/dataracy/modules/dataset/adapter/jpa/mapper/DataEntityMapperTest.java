@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("DataEntityMapper 테스트")
 class DataEntityMapperTest {
@@ -41,22 +42,24 @@ class DataEntityMapperTest {
         Data domain = DataEntityMapper.toDomain(entity);
 
         // Then
-        assertThat(domain).isNotNull();
-        assertThat(domain.getId()).isEqualTo(1L);
-        assertThat(domain.getTitle()).isEqualTo("Test Data");
-        assertThat(domain.getTopicId()).isEqualTo(1L);
-        assertThat(domain.getUserId()).isEqualTo(1L);
-        assertThat(domain.getDataSourceId()).isEqualTo(1L);
-        assertThat(domain.getDataTypeId()).isEqualTo(1L);
-        assertThat(domain.getStartDate()).isEqualTo(LocalDate.of(2023, 1, 1));
-        assertThat(domain.getEndDate()).isEqualTo(LocalDate.of(2023, 12, 31));
-        assertThat(domain.getDescription()).isEqualTo("Test description");
-        assertThat(domain.getAnalysisGuide()).isEqualTo("Test guide");
-        assertThat(domain.getDataFileUrl()).isEqualTo("file.csv");
-        assertThat(domain.getDataThumbnailUrl()).isEqualTo("thumb.jpg");
-        assertThat(domain.getDownloadCount()).isEqualTo(100);
-        assertThat(domain.getSizeBytes()).isEqualTo(1024L);
-        assertThat(domain.getMetadata()).isNotNull();
+        assertAll(
+                () -> assertThat(domain).isNotNull(),
+                () -> assertThat(domain.getId()).isEqualTo(1L),
+                () -> assertThat(domain.getTitle()).isEqualTo("Test Data"),
+                () -> assertThat(domain.getTopicId()).isEqualTo(1L),
+                () -> assertThat(domain.getUserId()).isEqualTo(1L),
+                () -> assertThat(domain.getDataSourceId()).isEqualTo(1L),
+                () -> assertThat(domain.getDataTypeId()).isEqualTo(1L),
+                () -> assertThat(domain.getStartDate()).isEqualTo(LocalDate.of(2023, 1, 1)),
+                () -> assertThat(domain.getEndDate()).isEqualTo(LocalDate.of(2023, 12, 31)),
+                () -> assertThat(domain.getDescription()).isEqualTo("Test description"),
+                () -> assertThat(domain.getAnalysisGuide()).isEqualTo("Test guide"),
+                () -> assertThat(domain.getDataFileUrl()).isEqualTo("file.csv"),
+                () -> assertThat(domain.getDataThumbnailUrl()).isEqualTo("thumb.jpg"),
+                () -> assertThat(domain.getDownloadCount()).isEqualTo(100),
+                () -> assertThat(domain.getSizeBytes()).isEqualTo(1024L),
+                () -> assertThat(domain.getMetadata()).isNotNull()
+        );
     }
 
     @Test
@@ -95,8 +98,10 @@ class DataEntityMapperTest {
         Data domain = DataEntityMapper.toDomain(entity);
 
         // Then
-        assertThat(domain).isNotNull();
-        assertThat(domain.getMetadata()).isNull();
+        assertAll(
+                () -> assertThat(domain).isNotNull(),
+                () -> assertThat(domain.getMetadata()).isNull()
+        );
     }
 
     @Test
@@ -126,21 +131,23 @@ class DataEntityMapperTest {
         DataEntity entity = DataEntityMapper.toEntity(domain);
 
         // Then
-        assertThat(entity).isNotNull();
-        assertThat(entity.getTitle()).isEqualTo("Test Data");
-        assertThat(entity.getTopicId()).isEqualTo(1L);
-        assertThat(entity.getUserId()).isEqualTo(1L);
-        assertThat(entity.getDataSourceId()).isEqualTo(1L);
-        assertThat(entity.getDataTypeId()).isEqualTo(1L);
-        assertThat(entity.getStartDate()).isEqualTo(LocalDate.of(2023, 1, 1));
-        assertThat(entity.getEndDate()).isEqualTo(LocalDate.of(2023, 12, 31));
-        assertThat(entity.getDescription()).isEqualTo("Test description");
-        assertThat(entity.getAnalysisGuide()).isEqualTo("Test guide");
-        assertThat(entity.getDataFileUrl()).isEqualTo("file.csv");
-        assertThat(entity.getDataThumbnailUrl()).isEqualTo("thumb.jpg");
-        assertThat(entity.getDownloadCount()).isEqualTo(100);
-        assertThat(entity.getSizeBytes()).isEqualTo(1024L);
-        assertThat(entity.getMetadata()).isNotNull();
+        assertAll(
+                () -> assertThat(entity).isNotNull(),
+                () -> assertThat(entity.getTitle()).isEqualTo("Test Data"),
+                () -> assertThat(entity.getTopicId()).isEqualTo(1L),
+                () -> assertThat(entity.getUserId()).isEqualTo(1L),
+                () -> assertThat(entity.getDataSourceId()).isEqualTo(1L),
+                () -> assertThat(entity.getDataTypeId()).isEqualTo(1L),
+                () -> assertThat(entity.getStartDate()).isEqualTo(LocalDate.of(2023, 1, 1)),
+                () -> assertThat(entity.getEndDate()).isEqualTo(LocalDate.of(2023, 12, 31)),
+                () -> assertThat(entity.getDescription()).isEqualTo("Test description"),
+                () -> assertThat(entity.getAnalysisGuide()).isEqualTo("Test guide"),
+                () -> assertThat(entity.getDataFileUrl()).isEqualTo("file.csv"),
+                () -> assertThat(entity.getDataThumbnailUrl()).isEqualTo("thumb.jpg"),
+                () -> assertThat(entity.getDownloadCount()).isEqualTo(100),
+                () -> assertThat(entity.getSizeBytes()).isEqualTo(1024L),
+                () -> assertThat(entity.getMetadata()).isNotNull()
+        );
     }
 
     @Test

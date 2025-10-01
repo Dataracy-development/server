@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectEsProjectionTaskEntityTest {
 
@@ -19,15 +20,17 @@ class ProjectEsProjectionTaskEntityTest {
                 .build();
 
         // then
-        assertThat(entity.getProjectId()).isEqualTo(1L);
-        assertThat(entity.getDeltaComment()).isZero();
-        assertThat(entity.getDeltaLike()).isZero();
-        assertThat(entity.getDeltaView()).isZero();
-        assertThat(entity.getSetDeleted()).isFalse();
-        assertThat(entity.getStatus()).isEqualTo(ProjectEsProjectionType.PENDING);
-        assertThat(entity.getRetryCount()).isZero();
-        assertThat(entity.getNextRunAt()).isNull();
-        assertThat(entity.getLastError()).isNull();
+        assertAll(
+                () -> assertThat(entity.getProjectId()).isEqualTo(1L),
+                () -> assertThat(entity.getDeltaComment()).isZero(),
+                () -> assertThat(entity.getDeltaLike()).isZero(),
+                () -> assertThat(entity.getDeltaView()).isZero(),
+                () -> assertThat(entity.getSetDeleted()).isFalse(),
+                () -> assertThat(entity.getStatus()).isEqualTo(ProjectEsProjectionType.PENDING),
+                () -> assertThat(entity.getRetryCount()).isZero(),
+                () -> assertThat(entity.getNextRunAt()).isNull(),
+                () -> assertThat(entity.getLastError()).isNull()
+        );
     }
 
     @Test
@@ -43,8 +46,10 @@ class ProjectEsProjectionTaskEntityTest {
         entity.prePersist();
 
         // then
-        assertThat(entity.getNextRunAt()).isNotNull();
-        assertThat(entity.getNextRunAt()).isBeforeOrEqualTo(LocalDateTime.now());
+        assertAll(
+                () -> assertThat(entity.getNextRunAt()).isNotNull(),
+                () -> assertThat(entity.getNextRunAt()).isBeforeOrEqualTo(LocalDateTime.now())
+        );
     }
 
     @Test
@@ -82,15 +87,17 @@ class ProjectEsProjectionTaskEntityTest {
         entity.setLastError("error");
 
         // then
-        assertThat(entity.getProjectId()).isEqualTo(10L);
-        assertThat(entity.getDeltaComment()).isEqualTo(5);
-        assertThat(entity.getDeltaLike()).isEqualTo(7);
-        assertThat(entity.getDeltaView()).isEqualTo(20L);
-        assertThat(entity.getSetDeleted()).isTrue();
-        assertThat(entity.getStatus()).isEqualTo(ProjectEsProjectionType.PENDING);
-        assertThat(entity.getRetryCount()).isEqualTo(3);
-        assertThat(entity.getNextRunAt()).isEqualTo(LocalDateTime.of(2023, 1, 1, 0, 0));
-        assertThat(entity.getLastError()).isEqualTo("error");
+        assertAll(
+                () -> assertThat(entity.getProjectId()).isEqualTo(10L),
+                () -> assertThat(entity.getDeltaComment()).isEqualTo(5),
+                () -> assertThat(entity.getDeltaLike()).isEqualTo(7),
+                () -> assertThat(entity.getDeltaView()).isEqualTo(20L),
+                () -> assertThat(entity.getSetDeleted()).isTrue(),
+                () -> assertThat(entity.getStatus()).isEqualTo(ProjectEsProjectionType.PENDING),
+                () -> assertThat(entity.getRetryCount()).isEqualTo(3),
+                () -> assertThat(entity.getNextRunAt()).isEqualTo(LocalDateTime.of(2023, 1, 1, 0, 0)),
+                () -> assertThat(entity.getLastError()).isEqualTo("error")
+        );
     }
 
     @Test
@@ -114,15 +121,17 @@ class ProjectEsProjectionTaskEntityTest {
         );
 
         // then
-        assertThat(entity.getId()).isEqualTo(1L);
-        assertThat(entity.getProjectId()).isEqualTo(2L);
-        assertThat(entity.getDeltaComment()).isEqualTo(3);
-        assertThat(entity.getDeltaLike()).isEqualTo(4);
-        assertThat(entity.getDeltaView()).isEqualTo(5L);
-        assertThat(entity.getSetDeleted()).isTrue();
-        assertThat(entity.getStatus()).isEqualTo(ProjectEsProjectionType.PENDING);
-        assertThat(entity.getRetryCount()).isEqualTo(7);
-        assertThat(entity.getNextRunAt()).isEqualTo(now);
-        assertThat(entity.getLastError()).isEqualTo("error");
+        assertAll(
+                () -> assertThat(entity.getId()).isEqualTo(1L),
+                () -> assertThat(entity.getProjectId()).isEqualTo(2L),
+                () -> assertThat(entity.getDeltaComment()).isEqualTo(3),
+                () -> assertThat(entity.getDeltaLike()).isEqualTo(4),
+                () -> assertThat(entity.getDeltaView()).isEqualTo(5L),
+                () -> assertThat(entity.getSetDeleted()).isTrue(),
+                () -> assertThat(entity.getStatus()).isEqualTo(ProjectEsProjectionType.PENDING),
+                () -> assertThat(entity.getRetryCount()).isEqualTo(7),
+                () -> assertThat(entity.getNextRunAt()).isEqualTo(now),
+                () -> assertThat(entity.getLastError()).isEqualTo("error")
+        );
     }
 }

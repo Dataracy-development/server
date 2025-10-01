@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectEsProjectionDlqEntityTest {
 
@@ -16,11 +17,13 @@ class ProjectEsProjectionDlqEntityTest {
                 .build();
 
         // then
-        assertThat(entity.getDeltaComment()).isZero();
-        assertThat(entity.getDeltaLike()).isZero();
-        assertThat(entity.getDeltaView()).isZero();
-        assertThat(entity.getSetDeleted()).isFalse();
-        assertThat(entity.getLastError()).isNull();
+        assertAll(
+                () -> assertThat(entity.getDeltaComment()).isZero(),
+                () -> assertThat(entity.getDeltaLike()).isZero(),
+                () -> assertThat(entity.getDeltaView()).isZero(),
+                () -> assertThat(entity.getSetDeleted()).isFalse(),
+                () -> assertThat(entity.getLastError()).isNull()
+        );
     }
 
     @Test
@@ -38,13 +41,15 @@ class ProjectEsProjectionDlqEntityTest {
         );
 
         // then
-        assertThat(entity.getId()).isEqualTo(10L);
-        assertThat(entity.getProjectId()).isEqualTo(20L);
-        assertThat(entity.getDeltaComment()).isEqualTo(2);
-        assertThat(entity.getDeltaLike()).isEqualTo(3);
-        assertThat(entity.getDeltaView()).isEqualTo(5L);
-        assertThat(entity.getSetDeleted()).isTrue();
-        assertThat(entity.getLastError()).isEqualTo("error-message");
+        assertAll(
+                () -> assertThat(entity.getId()).isEqualTo(10L),
+                () -> assertThat(entity.getProjectId()).isEqualTo(20L),
+                () -> assertThat(entity.getDeltaComment()).isEqualTo(2),
+                () -> assertThat(entity.getDeltaLike()).isEqualTo(3),
+                () -> assertThat(entity.getDeltaView()).isEqualTo(5L),
+                () -> assertThat(entity.getSetDeleted()).isTrue(),
+                () -> assertThat(entity.getLastError()).isEqualTo("error-message")
+        );
     }
 
     @Test
@@ -63,10 +68,12 @@ class ProjectEsProjectionDlqEntityTest {
         entity.setLastError("new-error");
 
         // then
-        assertThat(entity.getDeltaComment()).isEqualTo(7);
-        assertThat(entity.getDeltaLike()).isEqualTo(8);
-        assertThat(entity.getDeltaView()).isEqualTo(15L);
-        assertThat(entity.getSetDeleted()).isTrue();
-        assertThat(entity.getLastError()).isEqualTo("new-error");
+        assertAll(
+                () -> assertThat(entity.getDeltaComment()).isEqualTo(7),
+                () -> assertThat(entity.getDeltaLike()).isEqualTo(8),
+                () -> assertThat(entity.getDeltaView()).isEqualTo(15L),
+                () -> assertThat(entity.getSetDeleted()).isTrue(),
+                () -> assertThat(entity.getLastError()).isEqualTo("new-error")
+        );
     }
 }

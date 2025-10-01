@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 /**
  * AuthDevWebMapper 테스트
@@ -34,9 +35,16 @@ class AuthDevWebMapperTest {
         SelfLoginRequest result = authDevWebMapper.toApplicationDto(webRequest);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.email()).isEqualTo(email);
-        assertThat(result.password()).isEqualTo(password);
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.email()).isEqualTo(email),
+
+                () -> assertThat(result.password()).isEqualTo(password)
+
+        );
+
     }
 
     @Test
@@ -51,9 +59,16 @@ class AuthDevWebMapperTest {
         RefreshTokenWebResponse result = authDevWebMapper.toWebDto(responseDto);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.refreshToken()).isEqualTo(refreshToken);
-        assertThat(result.refreshTokenExpiration()).isEqualTo(expiration);
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.refreshToken()).isEqualTo(refreshToken),
+
+                () -> assertThat(result.refreshTokenExpiration()).isEqualTo(expiration)
+
+        );
+
     }
 
     @Test
@@ -67,8 +82,14 @@ class AuthDevWebMapperTest {
         RefreshTokenRequest result = authDevWebMapper.toApplicationDto(webRequest);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.refreshToken()).isEqualTo(refreshToken);
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.refreshToken()).isEqualTo(refreshToken)
+
+        );
+
     }
 
     @Test
@@ -88,11 +109,20 @@ class AuthDevWebMapperTest {
         ReIssueTokenWebResponse result = authDevWebMapper.toWebDto(responseDto);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.accessToken()).isEqualTo(accessToken);
-        assertThat(result.refreshToken()).isEqualTo(refreshToken);
-        assertThat(result.accessTokenExpiration()).isEqualTo(accessTokenExpiration);
-        assertThat(result.refreshTokenExpiration()).isEqualTo(refreshTokenExpiration);
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.accessToken()).isEqualTo(accessToken),
+
+                () -> assertThat(result.refreshToken()).isEqualTo(refreshToken),
+
+                () -> assertThat(result.accessTokenExpiration()).isEqualTo(accessTokenExpiration),
+
+                () -> assertThat(result.refreshTokenExpiration()).isEqualTo(refreshTokenExpiration)
+
+        );
+
     }
 
 }

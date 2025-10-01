@@ -14,7 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
@@ -95,8 +96,10 @@ class EmailCommandServiceTest {
             willThrow(new RuntimeException("Network error")).given(sendEmailPort).send(anyString(), anyString(), anyString());
 
             // when & then
-            assertThatThrownBy(() -> emailCommandService.sendEmailVerificationCode(email, type))
-                .isInstanceOf(EmailException.class);
+            EmailException exception = catchThrowableOfType(() -> emailCommandService.sendEmailVerificationCode(email, type), EmailException.class);
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(EmailException.class)
+            );
 
             then(sendEmailPort).should().send(anyString(), anyString(), anyString());
             then(manageEmailCodePort).shouldHaveNoInteractions();

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectSearchWebMapperTest {
 
@@ -25,10 +26,12 @@ class ProjectSearchWebMapperTest {
         RealTimeProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(1L);
-        assertThat(webResponse.title()).isEqualTo("real-time title");
-        assertThat(webResponse.creatorName()).isEqualTo("userA");
-        assertThat(webResponse.projectThumbnailUrl()).isEqualTo("thumb.png");
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(1L),
+                () -> assertThat(webResponse.title()).isEqualTo("real-time title"),
+                () -> assertThat(webResponse.creatorName()).isEqualTo("userA"),
+                () -> assertThat(webResponse.projectThumbnailUrl()).isEqualTo("thumb.png")
+        );
     }
 
     @Test
@@ -45,17 +48,19 @@ class ProjectSearchWebMapperTest {
         SimilarProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(2L);
-        assertThat(webResponse.title()).isEqualTo("similar title");
-        assertThat(webResponse.content()).isEqualTo("some content");
-        assertThat(webResponse.creatorName()).isEqualTo("userB");
-        assertThat(webResponse.projectThumbnailUrl()).isEqualTo("thumb2.png");
-        assertThat(webResponse.topicLabel()).isEqualTo("topicLabel");
-        assertThat(webResponse.analysisPurposeLabel()).isEqualTo("analysisPurposeLabel");
-        assertThat(webResponse.dataSourceLabel()).isEqualTo("dataSourceLabel");
-        assertThat(webResponse.authorLevelLabel()).isEqualTo("authorLevelLabel");
-        assertThat(webResponse.commentCount()).isEqualTo(10L);
-        assertThat(webResponse.likeCount()).isEqualTo(20L);
-        assertThat(webResponse.viewCount()).isEqualTo(30L);
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(2L),
+                () -> assertThat(webResponse.title()).isEqualTo("similar title"),
+                () -> assertThat(webResponse.content()).isEqualTo("some content"),
+                () -> assertThat(webResponse.creatorName()).isEqualTo("userB"),
+                () -> assertThat(webResponse.projectThumbnailUrl()).isEqualTo("thumb2.png"),
+                () -> assertThat(webResponse.topicLabel()).isEqualTo("topicLabel"),
+                () -> assertThat(webResponse.analysisPurposeLabel()).isEqualTo("analysisPurposeLabel"),
+                () -> assertThat(webResponse.dataSourceLabel()).isEqualTo("dataSourceLabel"),
+                () -> assertThat(webResponse.authorLevelLabel()).isEqualTo("authorLevelLabel"),
+                () -> assertThat(webResponse.commentCount()).isEqualTo(10L),
+                () -> assertThat(webResponse.likeCount()).isEqualTo(20L),
+                () -> assertThat(webResponse.viewCount()).isEqualTo(30L)
+        );
     }
 }

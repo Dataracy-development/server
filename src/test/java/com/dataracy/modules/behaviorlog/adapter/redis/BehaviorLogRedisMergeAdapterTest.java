@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -71,8 +72,14 @@ class BehaviorLogRedisMergeAdapterTest {
 
             // when & then
             CommonException exception = catchThrowableOfType(() -> adapter.merge(anonymousId, userId), CommonException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+            assertAll(
+
+                    () -> assertThat(exception).isNotNull(),
+
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE)
+
+            );
+
         }
 
         @Test
@@ -86,8 +93,14 @@ class BehaviorLogRedisMergeAdapterTest {
 
             // when & then
             CommonException exception = catchThrowableOfType(() -> adapter.merge(anonymousId, userId), CommonException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+            assertAll(
+
+                    () -> assertThat(exception).isNotNull(),
+
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION)
+
+            );
+
         }
 
         @Test
@@ -136,8 +149,14 @@ class BehaviorLogRedisMergeAdapterTest {
             Optional<Long> result = adapter.findMergedUserId(anonymousId);
 
             // then
-            assertThat(result).isPresent();
-            assertThat(result.get()).isEqualTo(456L);
+            assertAll(
+
+                    () -> assertThat(result).isPresent(),
+
+                    () -> assertThat(result.get()).isEqualTo(456L)
+
+            );
+
             then(valueOperations).should().get(expectedKey);
         }
 
@@ -167,8 +186,14 @@ class BehaviorLogRedisMergeAdapterTest {
 
             // when & then
             CommonException exception = catchThrowableOfType(() -> adapter.findMergedUserId(anonymousId), CommonException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE);
+            assertAll(
+
+                    () -> assertThat(exception).isNotNull(),
+
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(CommonErrorStatus.REDIS_CONNECTION_FAILURE)
+
+            );
+
         }
 
         @Test
@@ -181,8 +206,14 @@ class BehaviorLogRedisMergeAdapterTest {
 
             // when & then
             CommonException exception = catchThrowableOfType(() -> adapter.findMergedUserId(anonymousId), CommonException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION);
+            assertAll(
+
+                    () -> assertThat(exception).isNotNull(),
+
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(CommonErrorStatus.DATA_ACCESS_EXCEPTION)
+
+            );
+
         }
 
         @Test

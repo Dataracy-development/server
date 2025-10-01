@@ -12,7 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -55,8 +56,13 @@ class DataValidateServiceTest {
             given(checkDataExistsByIdPort.existsDataById(dataId)).willReturn(false);
 
             // when & then
-            assertThatThrownBy(() -> dataValidateService.validateData(dataId))
-                .isInstanceOf(DataException.class);
+            DataException exception = catchThrowableOfType(
+                    () -> dataValidateService.validateData(dataId),
+                    DataException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull()
+            );
             
             then(checkDataExistsByIdPort).should().existsDataById(dataId);
         }

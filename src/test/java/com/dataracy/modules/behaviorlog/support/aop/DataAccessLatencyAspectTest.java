@@ -13,7 +13,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 
@@ -75,9 +76,11 @@ class DataAccessLatencyAspectTest {
             willThrow(expectedException).given(proceedingJoinPoint).proceed();
 
             // when & then
-            assertThatThrownBy(() -> dataAccessLatencyAspect.trackDataAccessLatency(proceedingJoinPoint))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Test exception");
+            RuntimeException exception = catchThrowableOfType(() -> dataAccessLatencyAspect.trackDataAccessLatency(proceedingJoinPoint), RuntimeException.class);
+            assertAll(
+                    () -> assertThat(exception).isInstanceOf(RuntimeException.class),
+                    () -> assertThat(exception).hasMessage("Test exception")
+            );
         }
     }
 }

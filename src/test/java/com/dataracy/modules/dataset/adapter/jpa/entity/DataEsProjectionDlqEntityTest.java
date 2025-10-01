@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataEsProjectionDlqEntityTest {
 
@@ -17,10 +18,12 @@ class DataEsProjectionDlqEntityTest {
                 .build();
 
         // then
-        assertThat(entity.getDeltaDownload()).isZero();
-        assertThat(entity.getSetDeleted()).isFalse();
-        assertThat(entity.getDataId()).isEqualTo(100L);
-        assertThat(entity.getLastError()).isEqualTo("error message");
+        assertAll(
+                () -> assertThat(entity.getDeltaDownload()).isZero(),
+                () -> assertThat(entity.getSetDeleted()).isFalse(),
+                () -> assertThat(entity.getDataId()).isEqualTo(100L),
+                () -> assertThat(entity.getLastError()).isEqualTo("error message")
+        );
     }
 
     @Test
@@ -34,10 +37,12 @@ class DataEsProjectionDlqEntityTest {
         entity.setLastError("fail reason");
 
         // then
-        assertThat(entity.getDataId()).isEqualTo(1L);
-        assertThat(entity.getDeltaDownload()).isEqualTo(5);
-        assertThat(entity.getSetDeleted()).isTrue();
-        assertThat(entity.getLastError()).isEqualTo("fail reason");
+        assertAll(
+                () -> assertThat(entity.getDataId()).isEqualTo(1L),
+                () -> assertThat(entity.getDeltaDownload()).isEqualTo(5),
+                () -> assertThat(entity.getSetDeleted()).isTrue(),
+                () -> assertThat(entity.getLastError()).isEqualTo("fail reason")
+        );
     }
 
     @Test
@@ -53,10 +58,12 @@ class DataEsProjectionDlqEntityTest {
         );
 
         // then
-        assertThat(entity.getId()).isEqualTo(10L);
-        assertThat(entity.getDataId()).isEqualTo(200L);
-        assertThat(entity.getDeltaDownload()).isEqualTo(3);
-        assertThat(entity.getSetDeleted()).isTrue();
-        assertThat(entity.getLastError()).isEqualTo("dlq error");
+        assertAll(
+                () -> assertThat(entity.getId()).isEqualTo(10L),
+                () -> assertThat(entity.getDataId()).isEqualTo(200L),
+                () -> assertThat(entity.getDeltaDownload()).isEqualTo(3),
+                () -> assertThat(entity.getSetDeleted()).isTrue(),
+                () -> assertThat(entity.getLastError()).isEqualTo("dlq error")
+        );
     }
 }

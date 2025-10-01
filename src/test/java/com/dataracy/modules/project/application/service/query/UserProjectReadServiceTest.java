@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -103,9 +104,11 @@ class UserProjectReadServiceTest {
             Page<UserProjectResponse> result = service.findUserProjects(userId, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(2);
-            assertThat(result.getContent()).containsExactly(response1, response2);
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(2),
+                    () -> assertThat(result.getContent()).containsExactly(response1, response2)
+            );
 
             // 포트 호출 검증
             then(findUserProjectsPort).should().findUserProjects(userId, pageable);
@@ -135,9 +138,11 @@ class UserProjectReadServiceTest {
             Page<UserProjectResponse> result = service.findUserProjects(userId, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero()
+            );
 
             // 로깅 검증
             then(loggerService).should().logStart(eq("FindUserProjectsUseCase"),
@@ -180,9 +185,11 @@ class UserProjectReadServiceTest {
             Page<UserProjectResponse> result = service.findLikeProjects(userId, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(2);
-            assertThat(result.getContent()).containsExactly(response1, response2);
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(2),
+                    () -> assertThat(result.getContent()).containsExactly(response1, response2)
+            );
 
             // 포트 호출 검증
             then(findUserProjectsPort).should().findLikeProjects(userId, pageable);
@@ -212,9 +219,11 @@ class UserProjectReadServiceTest {
             Page<UserProjectResponse> result = service.findLikeProjects(userId, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero()
+            );
 
             // 로깅 검증
             then(loggerService).should().logStart(eq("FindLikeProjectsUseCase"),

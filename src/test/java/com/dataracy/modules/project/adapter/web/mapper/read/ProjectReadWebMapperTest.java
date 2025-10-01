@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -85,9 +86,11 @@ class ProjectReadWebMapperTest {
         ProjectDetailWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(10L);
-        assertThat(webResponse.connectedDataSets()).containsExactly(mappedData);
-        assertThat(webResponse.parentProject()).isEqualTo(mappedParent);
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(10L),
+                () -> assertThat(webResponse.connectedDataSets()).containsExactly(mappedData),
+                () -> assertThat(webResponse.parentProject()).isEqualTo(mappedParent)
+        );
     }
 
     @Test
@@ -103,9 +106,11 @@ class ProjectReadWebMapperTest {
         ContinuedProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(11L);
-        assertThat(webResponse.title()).isEqualTo("title");
-        assertThat(webResponse.commentCount()).isEqualTo(5L);
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(11L),
+                () -> assertThat(webResponse.title()).isEqualTo("title"),
+                () -> assertThat(webResponse.commentCount()).isEqualTo(5L)
+        );
     }
 
     @Test
@@ -120,9 +125,11 @@ class ProjectReadWebMapperTest {
         ConnectedProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(22L);
-        assertThat(webResponse.title()).isEqualTo("c-title");
-        assertThat(webResponse.viewCount()).isEqualTo(5L);
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(22L),
+                () -> assertThat(webResponse.title()).isEqualTo("c-title"),
+                () -> assertThat(webResponse.viewCount()).isEqualTo(5L)
+        );
     }
 
     @Test
@@ -137,9 +144,11 @@ class ProjectReadWebMapperTest {
         ChildProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(33L);
-        assertThat(webResponse.title()).isEqualTo("child");
-        assertThat(webResponse.likeCount()).isEqualTo(2L);
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(33L),
+                () -> assertThat(webResponse.title()).isEqualTo("child"),
+                () -> assertThat(webResponse.likeCount()).isEqualTo(2L)
+        );
     }
 
     @Test
@@ -156,9 +165,11 @@ class ProjectReadWebMapperTest {
         PopularProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(44L);
-        assertThat(webResponse.title()).isEqualTo("pop-title");
-        assertThat(webResponse.commentCount()).isEqualTo(9L);
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(44L),
+                () -> assertThat(webResponse.title()).isEqualTo("pop-title"),
+                () -> assertThat(webResponse.commentCount()).isEqualTo(9L)
+        );
     }
 
     @Test
@@ -182,15 +193,17 @@ class ProjectReadWebMapperTest {
         UserProjectWebResponse result = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.title()).isEqualTo("테스트 프로젝트");
-        assertThat(result.content()).isEqualTo("내용입니다");
-        assertThat(result.projectThumbnailUrl()).isEqualTo("thumb.png");
-        assertThat(result.topicLabel()).isEqualTo("데이터 분석");
-        assertThat(result.authorLevelLabel()).isEqualTo("초급");
-        assertThat(result.commentCount()).isEqualTo(2L);
-        assertThat(result.likeCount()).isEqualTo(5L);
-        assertThat(result.viewCount()).isEqualTo(100L);
-        assertThat(result.createdAt()).isEqualTo(LocalDateTime.of(2023, 8, 30, 12, 0));
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.title()).isEqualTo("테스트 프로젝트"),
+                () -> assertThat(result.content()).isEqualTo("내용입니다"),
+                () -> assertThat(result.projectThumbnailUrl()).isEqualTo("thumb.png"),
+                () -> assertThat(result.topicLabel()).isEqualTo("데이터 분석"),
+                () -> assertThat(result.authorLevelLabel()).isEqualTo("초급"),
+                () -> assertThat(result.commentCount()).isEqualTo(2L),
+                () -> assertThat(result.likeCount()).isEqualTo(5L),
+                () -> assertThat(result.viewCount()).isEqualTo(100L),
+                () -> assertThat(result.createdAt()).isEqualTo(LocalDateTime.of(2023, 8, 30, 12, 0))
+        );
     }
 }

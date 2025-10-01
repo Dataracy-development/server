@@ -43,6 +43,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -246,8 +247,10 @@ class ProjectSearchServiceTest {
 
             // when & then
             ProjectException exception = catchThrowableOfType(() -> service.searchSimilarProjects(projectId, size), ProjectException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_FOUND_PROJECT);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_FOUND_PROJECT)
+            );
 
             // 포트 호출 검증
             then(findProjectPort).should().findProjectById(projectId);
@@ -330,9 +333,11 @@ class ProjectSearchServiceTest {
             Page<FilteredProjectResponse> result = service.searchByFilters(request, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSize(2);
-            assertThat(result.getContent()).containsExactly(response1, response2);
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSize(2),
+                    () -> assertThat(result.getContent()).containsExactly(response1, response2)
+            );
 
             // 포트 호출 검증
             then(searchFilteredProjectsPort).should().searchByFilters(request, pageable, ProjectSortType.LATEST);
@@ -361,8 +366,10 @@ class ProjectSearchServiceTest {
             Page<FilteredProjectResponse> result = service.searchByFilters(request, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).isEmpty();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).isEmpty()
+            );
 
             // 포트 호출 검증
             then(searchFilteredProjectsPort).should().searchByFilters(request, pageable, null);
@@ -391,8 +398,10 @@ class ProjectSearchServiceTest {
             Page<FilteredProjectResponse> result = service.searchByFilters(request, pageable);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).isEmpty();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).isEmpty()
+            );
 
             // 포트 호출 검증
             then(searchFilteredProjectsPort).should().searchByFilters(request, pageable, null);

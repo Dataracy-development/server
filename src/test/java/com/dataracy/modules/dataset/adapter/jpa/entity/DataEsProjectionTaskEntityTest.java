@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataEsProjectionTaskEntityTest {
 
@@ -21,8 +22,10 @@ class DataEsProjectionTaskEntityTest {
         entity.prePersist();
 
         // then
-        assertThat(entity.getNextRunAt()).isNotNull();
-        assertThat(entity.getNextRunAt()).isBeforeOrEqualTo(LocalDateTime.now());
+        assertAll(
+                () -> assertThat(entity.getNextRunAt()).isNotNull(),
+                () -> assertThat(entity.getNextRunAt()).isBeforeOrEqualTo(LocalDateTime.now())
+        );
     }
 
     @Test

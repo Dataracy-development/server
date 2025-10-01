@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class FilteredDataDtoMapperTest {
 
@@ -42,7 +43,9 @@ class FilteredDataDtoMapperTest {
         FilteredDataResponse res = mapper.toResponseDto(data, "userA", "profile.png", "topic", "src", "type", 9L);
 
         // then
-        assertThat(res.title()).isEqualTo("title");
-        assertThat(res.countConnectedProjects()).isEqualTo(9L);
+        assertAll(
+                () -> assertThat(res.title()).isEqualTo("title"),
+                () -> assertThat(res.countConnectedProjects()).isEqualTo(9L)
+        );
     }
 }

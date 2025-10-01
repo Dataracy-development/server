@@ -21,7 +21,8 @@ import java.time.Duration;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -109,14 +110,19 @@ class ProjectViewCountRedisAdapterTest {
             Long projectId = 1L;
             String viewerId = "user123";
             String targetType = "project";
-            RedisConnectionFailureException exception = new RedisConnectionFailureException("Redis connection failed");
+            RedisConnectionFailureException redisException = new RedisConnectionFailureException("Redis connection failed");
             
             given(valueOperations.setIfAbsent(anyString(), anyString(), any(Duration.class)))
-                .willThrow(exception);
+                .willThrow(redisException);
 
             // when & then
-            assertThatThrownBy(() -> adapter.increaseViewCount(projectId, viewerId, targetType))
-                .isInstanceOf(CommonException.class);
+            CommonException exception = catchThrowableOfType(
+                    () -> adapter.increaseViewCount(projectId, viewerId, targetType),
+                    CommonException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull()
+            );
         }
     }
 
@@ -164,13 +170,18 @@ class ProjectViewCountRedisAdapterTest {
             // given
             Long projectId = 1L;
             String targetType = "project";
-            DataAccessException exception = new DataAccessException("Data access failed") {};
+            DataAccessException dataException = new DataAccessException("Data access failed") {};
             
-            given(valueOperations.get(anyString())).willThrow(exception);
+            given(valueOperations.get(anyString())).willThrow(dataException);
 
             // when & then
-            assertThatThrownBy(() -> adapter.getViewCount(projectId, targetType))
-                .isInstanceOf(CommonException.class);
+            CommonException exception = catchThrowableOfType(
+                    () -> adapter.getViewCount(projectId, targetType),
+                    CommonException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull()
+            );
         }
     }
 

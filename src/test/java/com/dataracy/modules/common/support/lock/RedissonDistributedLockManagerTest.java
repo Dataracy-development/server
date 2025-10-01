@@ -19,7 +19,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -109,9 +110,14 @@ class RedissonDistributedLockManagerTest {
             Supplier<String> action = () -> "success";
 
             // when & then
-            assertThatThrownBy(() -> lockManager.execute(key, waitTime, leaseTime, retryCount, action))
-                .isInstanceOf(LockAcquisitionException.class)
-                .hasMessage("다른 사용자가 해당 자원에 접근 중입니다. 잠시 후 다시 시도해주세요.");
+            LockAcquisitionException exception = catchThrowableOfType(
+                    () -> lockManager.execute(key, waitTime, leaseTime, retryCount, action),
+                    LockAcquisitionException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(LockAcquisitionException.class),
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).hasMessage("다른 사용자가 해당 자원에 접근 중입니다. 잠시 후 다시 시도해주세요.")
+            );
         }
 
         @Test
@@ -129,9 +135,14 @@ class RedissonDistributedLockManagerTest {
             Supplier<String> action = () -> "success";
 
             // when & then
-            assertThatThrownBy(() -> lockManager.execute(key, waitTime, leaseTime, retryCount, action))
-                .isInstanceOf(LockAcquisitionException.class)
-                .hasMessage("스레드 인터럽트로 인해 락 획득 실패");
+            LockAcquisitionException exception = catchThrowableOfType(
+                    () -> lockManager.execute(key, waitTime, leaseTime, retryCount, action),
+                    LockAcquisitionException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(LockAcquisitionException.class),
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).hasMessage("스레드 인터럽트로 인해 락 획득 실패")
+            );
         }
 
         @Test
@@ -154,8 +165,13 @@ class RedissonDistributedLockManagerTest {
             };
 
             // when & then
-            assertThatThrownBy(() -> lockManager.execute(key, waitTime, leaseTime, retryCount, action))
-                .isInstanceOf(BusinessException.class);
+            BusinessException exception = catchThrowableOfType(
+                    () -> lockManager.execute(key, waitTime, leaseTime, retryCount, action),
+                    BusinessException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(BusinessException.class)
+            );
         }
 
         @Test
@@ -176,8 +192,13 @@ class RedissonDistributedLockManagerTest {
             };
 
             // when & then
-            assertThatThrownBy(() -> lockManager.execute(key, waitTime, leaseTime, retryCount, action))
-                .isInstanceOf(CommonException.class);
+            CommonException exception = catchThrowableOfType(
+                    () -> lockManager.execute(key, waitTime, leaseTime, retryCount, action),
+                    CommonException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(CommonException.class)
+            );
         }
     }
 

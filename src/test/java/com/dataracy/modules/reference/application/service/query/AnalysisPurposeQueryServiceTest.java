@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -137,8 +138,10 @@ class AnalysisPurposeQueryServiceTest {
 
             // when & then
             ReferenceException exception = catchThrowableOfType(() -> service.findAnalysisPurpose(analysisPurposeId), ReferenceException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE)
+            );
 
             then(analysisPurposePort).should().findAnalysisPurposeById(analysisPurposeId);
             then(analysisPurposeDtoMapper).should(never()).toResponseDto(any(AnalysisPurpose.class));
@@ -182,8 +185,10 @@ class AnalysisPurposeQueryServiceTest {
 
             // when & then
             ReferenceException exception = catchThrowableOfType(() -> service.validateAnalysisPurpose(analysisPurposeId), ReferenceException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE)
+            );
 
             then(analysisPurposePort).should().existsAnalysisPurposeById(analysisPurposeId);
             then(loggerService).should().logStart(eq("ValidateAnalysisPurposeUseCase"), 
@@ -229,8 +234,10 @@ class AnalysisPurposeQueryServiceTest {
 
             // when & then
             ReferenceException exception = catchThrowableOfType(() -> service.getLabelById(analysisPurposeId), ReferenceException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE)
+            );
 
             then(analysisPurposePort).should().getLabelById(analysisPurposeId);
             then(loggerService).should().logStart(eq("GetAnalysisPurposeLabelFromIdUseCase"), 

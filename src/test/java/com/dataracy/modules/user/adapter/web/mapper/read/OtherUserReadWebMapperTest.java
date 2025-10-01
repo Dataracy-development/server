@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class OtherUserReadWebMapperTest {
 
@@ -35,16 +36,18 @@ class OtherUserReadWebMapperTest {
         GetOtherUserProjectWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.title()).isEqualTo("프로젝트 제목");
-        assertThat(result.content()).isEqualTo("프로젝트 내용");
-        assertThat(result.projectThumbnailUrl()).isEqualTo("thumb.png");
-        assertThat(result.topicLabel()).isEqualTo("데이터 분석");
-        assertThat(result.authorLevelLabel()).isEqualTo("초급");
-        assertThat(result.commentCount()).isEqualTo(3L);
-        assertThat(result.likeCount()).isEqualTo(5L);
-        assertThat(result.viewCount()).isEqualTo(100L);
-        assertThat(result.createdAt()).isEqualTo(LocalDateTime.of(2023, 8, 30, 12, 0));
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.title()).isEqualTo("프로젝트 제목"),
+                () -> assertThat(result.content()).isEqualTo("프로젝트 내용"),
+                () -> assertThat(result.projectThumbnailUrl()).isEqualTo("thumb.png"),
+                () -> assertThat(result.topicLabel()).isEqualTo("데이터 분석"),
+                () -> assertThat(result.authorLevelLabel()).isEqualTo("초급"),
+                () -> assertThat(result.commentCount()).isEqualTo(3L),
+                () -> assertThat(result.likeCount()).isEqualTo(5L),
+                () -> assertThat(result.viewCount()).isEqualTo(100L),
+                () -> assertThat(result.createdAt()).isEqualTo(LocalDateTime.of(2023, 8, 30, 12, 0))
+        );
     }
 
     @Test
@@ -62,19 +65,21 @@ class OtherUserReadWebMapperTest {
         GetOtherUserDataWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.id()).isEqualTo(2L);
-        assertThat(result.title()).isEqualTo("데이터셋 제목");
-        assertThat(result.topicLabel()).isEqualTo("주제라벨");
-        assertThat(result.dataTypeLabel()).isEqualTo("타입라벨");
-        assertThat(result.startDate()).isEqualTo(LocalDate.of(2023, 1, 1));
-        assertThat(result.endDate()).isEqualTo(LocalDate.of(2023, 12, 31));
-        assertThat(result.dataThumbnailUrl()).isEqualTo("data-thumb.png");
-        assertThat(result.downloadCount()).isEqualTo(10);
-        assertThat(result.sizeBytes()).isEqualTo(2048L);
-        assertThat(result.rowCount()).isEqualTo(200);
-        assertThat(result.columnCount()).isEqualTo(20);
-        assertThat(result.createdAt()).isEqualTo(LocalDateTime.of(2023, 8, 30, 13, 0));
-        assertThat(result.countConnectedProjects()).isEqualTo(7L);
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(2L),
+                () -> assertThat(result.title()).isEqualTo("데이터셋 제목"),
+                () -> assertThat(result.topicLabel()).isEqualTo("주제라벨"),
+                () -> assertThat(result.dataTypeLabel()).isEqualTo("타입라벨"),
+                () -> assertThat(result.startDate()).isEqualTo(LocalDate.of(2023, 1, 1)),
+                () -> assertThat(result.endDate()).isEqualTo(LocalDate.of(2023, 12, 31)),
+                () -> assertThat(result.dataThumbnailUrl()).isEqualTo("data-thumb.png"),
+                () -> assertThat(result.downloadCount()).isEqualTo(10),
+                () -> assertThat(result.sizeBytes()).isEqualTo(2048L),
+                () -> assertThat(result.rowCount()).isEqualTo(200),
+                () -> assertThat(result.columnCount()).isEqualTo(20),
+                () -> assertThat(result.createdAt()).isEqualTo(LocalDateTime.of(2023, 8, 30, 13, 0)),
+                () -> assertThat(result.countConnectedProjects()).isEqualTo(7L)
+        );
     }
 
     @Test
@@ -105,20 +110,20 @@ class OtherUserReadWebMapperTest {
         GetOtherUserInfoWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.id()).isEqualTo(99L);
-        assertThat(result.nickname()).isEqualTo("다른유저");
-        assertThat(result.authorLevelLabel()).isEqualTo("중급");
-        assertThat(result.occupationLabel()).isEqualTo("데이터 분석가");
-        assertThat(result.profileImageUrl()).isEqualTo("profile.png");
-        assertThat(result.introductionText()).isEqualTo("소개합니다");
-
-        // Page 매핑 검증
-        assertThat(result.projects().getContent())
-                .extracting(GetOtherUserProjectWebResponse::title)
-                .containsExactly("Proj");
-
-        assertThat(result.datasets().getContent())
-                .extracting(GetOtherUserDataWebResponse::title)
-                .containsExactly("Data");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(99L),
+                () -> assertThat(result.nickname()).isEqualTo("다른유저"),
+                () -> assertThat(result.authorLevelLabel()).isEqualTo("중급"),
+                () -> assertThat(result.occupationLabel()).isEqualTo("데이터 분석가"),
+                () -> assertThat(result.profileImageUrl()).isEqualTo("profile.png"),
+                () -> assertThat(result.introductionText()).isEqualTo("소개합니다"),
+                // Page 매핑 검증
+                () -> assertThat(result.projects().getContent())
+                        .extracting(GetOtherUserProjectWebResponse::title)
+                        .containsExactly("Proj"),
+                () -> assertThat(result.datasets().getContent())
+                        .extracting(GetOtherUserDataWebResponse::title)
+                        .containsExactly("Data")
+        );
     }
 }

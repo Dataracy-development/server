@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class AuthorLevelWebMapperTest {
     private final AuthorLevelWebMapper mapper = new AuthorLevelWebMapper();
@@ -22,9 +23,11 @@ class AuthorLevelWebMapperTest {
         AuthorLevelWebResponse result = mapper.toWebDto(src);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.value()).isEqualTo("v");
-        assertThat(result.label()).isEqualTo("l");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.value()).isEqualTo("v"),
+                () -> assertThat(result.label()).isEqualTo("l")
+        );
     }
 
     @Test
@@ -39,8 +42,10 @@ class AuthorLevelWebMapperTest {
         AllAuthorLevelsWebResponse nullSafe2 = mapper.toWebDto(new AllAuthorLevelsResponse(null));
 
         // then
-        assertThat(result.authorLevels()).hasSize(2);
-        assertThat(nullSafe1.authorLevels()).isEmpty();
-        assertThat(nullSafe2.authorLevels()).isEmpty();
+        assertAll(
+                () -> assertThat(result.authorLevels()).hasSize(2),
+                () -> assertThat(nullSafe1.authorLevels()).isEmpty(),
+                () -> assertThat(nullSafe2.authorLevels()).isEmpty()
+        );
     }
 }

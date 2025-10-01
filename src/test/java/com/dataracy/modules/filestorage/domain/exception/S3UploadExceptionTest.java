@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("S3UploadException 테스트")
 class S3UploadExceptionTest {
@@ -18,8 +19,10 @@ class S3UploadExceptionTest {
         S3UploadException exception = new S3UploadException(message);
 
         // Then
-        assertThat(exception.getMessage()).isEqualTo(message);
-        assertThat(exception.getCause()).isNull();
+        assertAll(
+                () -> assertThat(exception.getMessage()).isEqualTo(message),
+                () -> assertThat(exception.getCause()).isNull()
+        );
     }
 
     @Test
@@ -33,8 +36,10 @@ class S3UploadExceptionTest {
         S3UploadException exception = new S3UploadException(message, cause);
 
         // Then
-        assertThat(exception.getMessage()).isEqualTo(message);
-        assertThat(exception.getCause()).isEqualTo(cause);
+        assertAll(
+                () -> assertThat(exception.getMessage()).isEqualTo(message),
+                () -> assertThat(exception.getCause()).isEqualTo(cause)
+        );
     }
 
     @Test
@@ -47,7 +52,8 @@ class S3UploadExceptionTest {
         S3UploadException exception = new S3UploadException(message);
 
         // Then
-        assertThat(exception).isInstanceOf(RuntimeException.class);
-        assertThat(exception).isInstanceOf(Exception.class);
+        assertThat(exception)
+                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(Exception.class);
     }
 }

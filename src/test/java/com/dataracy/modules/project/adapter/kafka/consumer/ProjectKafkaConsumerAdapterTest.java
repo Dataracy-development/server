@@ -15,6 +15,8 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
@@ -86,8 +88,13 @@ class ProjectKafkaConsumerAdapterTest {
             loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
 
             // when & then
-            org.assertj.core.api.Assertions.assertThatThrownBy(() -> adapter.consumeCommentUpload(projectId))
-                .isSameAs(exception);
+            RuntimeException caughtException = catchThrowableOfType(
+                    () -> adapter.consumeCommentUpload(projectId),
+                    RuntimeException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(caughtException).isSameAs(exception)
+            );
             
             then(kafkaLogger).should().logConsume("comment-uploaded-topic", "댓글 작성 이벤트 수신됨: projectId=123");
             then(kafkaLogger).should().logError(eq("comment-uploaded-topic"), eq("댓글 작성 이벤트 처리 실패: projectId=123"), any(RuntimeException.class));
@@ -163,8 +170,13 @@ class ProjectKafkaConsumerAdapterTest {
             loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
 
             // when & then
-            org.assertj.core.api.Assertions.assertThatThrownBy(() -> adapter.consumeLikeIncrease(projectId))
-                .isSameAs(exception);
+            RuntimeException caughtException = catchThrowableOfType(
+                    () -> adapter.consumeLikeIncrease(projectId),
+                    RuntimeException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(caughtException).isSameAs(exception)
+            );
             
             then(kafkaLogger).should().logConsume("project-like-increase-topic", "프로젝트 좋아요 이벤트 수신됨: projectId=789");
             then(kafkaLogger).should().logError(eq("project-like-increase-topic"), eq("프로젝트 좋아요 이벤트 처리 실패: projectId=789"), any(RuntimeException.class));

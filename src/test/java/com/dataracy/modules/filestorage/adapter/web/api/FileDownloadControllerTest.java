@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,10 +48,12 @@ class FileDownloadControllerTest {
             controller.getPreSignedUrl(s3Url, expiration);
 
         // then
-        assertThat(resp.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getMessage()).isEqualTo(CommonSuccessStatus.OK.getMessage());
-        assertThat(resp.getBody().getData().preSignedUrl()).isEqualTo("https://signed");
+        assertAll(
+                () -> assertThat(resp.getStatusCode().is2xxSuccessful()).isTrue(),
+                () -> assertThat(resp.getBody()).isNotNull(),
+                () -> assertThat(resp.getBody().getMessage()).isEqualTo(CommonSuccessStatus.OK.getMessage()),
+                () -> assertThat(resp.getBody().getData().preSignedUrl()).isEqualTo("https://signed")
+        );
         then(downloadFileUseCase).should().generatePreSignedUrl(s3Url, expiration);
         then(fileDownloadWebMapper).should().toWebDto(dto);
     }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 /**
  * Like 도메인 모델 테스트
@@ -24,11 +25,13 @@ class LikeTest {
         Like like = Like.of(id, targetId, targetType, userId);
 
         // then
-        assertThat(like).isNotNull();
-        assertThat(like.getId()).isEqualTo(id);
-        assertThat(like.getTargetId()).isEqualTo(targetId);
-        assertThat(like.getTargetType()).isEqualTo(targetType);
-        assertThat(like.getUserId()).isEqualTo(userId);
+        assertAll(
+                () -> assertThat(like).isNotNull(),
+                () -> assertThat(like.getId()).isEqualTo(id),
+                () -> assertThat(like.getTargetId()).isEqualTo(targetId),
+                () -> assertThat(like.getTargetType()).isEqualTo(targetType),
+                () -> assertThat(like.getUserId()).isEqualTo(userId)
+        );
     }
 
     @Test
@@ -49,11 +52,13 @@ class LikeTest {
                 .build();
 
         // then
-        assertThat(like).isNotNull();
-        assertThat(like.getId()).isEqualTo(id);
-        assertThat(like.getTargetId()).isEqualTo(targetId);
-        assertThat(like.getTargetType()).isEqualTo(targetType);
-        assertThat(like.getUserId()).isEqualTo(userId);
+        assertAll(
+                () -> assertThat(like).isNotNull(),
+                () -> assertThat(like.getId()).isEqualTo(id),
+                () -> assertThat(like.getTargetId()).isEqualTo(targetId),
+                () -> assertThat(like.getTargetType()).isEqualTo(targetType),
+                () -> assertThat(like.getUserId()).isEqualTo(userId)
+        );
     }
 
     @Test
@@ -69,11 +74,13 @@ class LikeTest {
         Like like = Like.of(id, targetId, targetType, userId);
 
         // then
-        assertThat(like).isNotNull();
-        assertThat(like.getId()).isNull();
-        assertThat(like.getTargetId()).isNull();
-        assertThat(like.getTargetType()).isNull();
-        assertThat(like.getUserId()).isNull();
+        assertAll(
+                () -> assertThat(like).isNotNull(),
+                () -> assertThat(like.getId()).isNull(),
+                () -> assertThat(like.getTargetId()).isNull(),
+                () -> assertThat(like.getTargetType()).isNull(),
+                () -> assertThat(like.getUserId()).isNull()
+        );
     }
 
     @Test
@@ -89,8 +96,10 @@ class LikeTest {
         Like like = Like.of(id, targetId, targetType, userId);
 
         // then
-        assertThat(like).isNotNull();
-        assertThat(like.getTargetType()).isEqualTo(TargetType.PROJECT);
+        assertAll(
+                () -> assertThat(like).isNotNull(),
+                () -> assertThat(like.getTargetType()).isEqualTo(TargetType.PROJECT)
+        );
     }
 
     @Test
@@ -106,8 +115,10 @@ class LikeTest {
         Like like = Like.of(id, targetId, targetType, userId);
 
         // then
-        assertThat(like).isNotNull();
-        assertThat(like.getTargetType()).isEqualTo(TargetType.COMMENT);
+        assertAll(
+                () -> assertThat(like).isNotNull(),
+                () -> assertThat(like.getTargetType()).isEqualTo(TargetType.COMMENT)
+        );
     }
 
     @Test
@@ -121,9 +132,11 @@ class LikeTest {
         Like commentLike = Like.of(2L, 200L, TargetType.COMMENT, userId);
 
         // then
-        assertThat(projectLike.getUserId()).isEqualTo(userId);
-        assertThat(commentLike.getUserId()).isEqualTo(userId);
-        assertThat(projectLike.getTargetType()).isEqualTo(TargetType.PROJECT);
-        assertThat(commentLike.getTargetType()).isEqualTo(TargetType.COMMENT);
+        assertAll(
+                () -> assertThat(projectLike.getUserId()).isEqualTo(userId),
+                () -> assertThat(commentLike.getUserId()).isEqualTo(userId),
+                () -> assertThat(projectLike.getTargetType()).isEqualTo(TargetType.PROJECT),
+                () -> assertThat(commentLike.getTargetType()).isEqualTo(TargetType.COMMENT)
+        );
     }
 }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("DataTypeWebMapper 테스트")
 class DataTypeWebMapperTest {
@@ -26,10 +27,12 @@ class DataTypeWebMapperTest {
         DataTypeWebResponse webResponse = mapper.toWebDto(response);
 
         // Then
-        assertThat(webResponse).isNotNull();
-        assertThat(webResponse.id()).isEqualTo(1L);
-        assertThat(webResponse.value()).isEqualTo("type1");
-        assertThat(webResponse.label()).isEqualTo("Type 1");
+        assertAll(
+                () -> assertThat(webResponse).isNotNull(),
+                () -> assertThat(webResponse.id()).isEqualTo(1L),
+                () -> assertThat(webResponse.value()).isEqualTo("type1"),
+                () -> assertThat(webResponse.label()).isEqualTo("Type 1")
+        );
     }
 
     @Test
@@ -44,12 +47,14 @@ class DataTypeWebMapperTest {
         AllDataTypesWebResponse webResponse = mapper.toWebDto(allResponse);
 
         // Then
-        assertThat(webResponse).isNotNull();
-        assertThat(webResponse.dataTypes()).hasSize(2);
-        assertThat(webResponse.dataTypes().get(0).id()).isEqualTo(1L);
-        assertThat(webResponse.dataTypes().get(0).value()).isEqualTo("type1");
-        assertThat(webResponse.dataTypes().get(1).id()).isEqualTo(2L);
-        assertThat(webResponse.dataTypes().get(1).value()).isEqualTo("type2");
+        assertAll(
+                () -> assertThat(webResponse).isNotNull(),
+                () -> assertThat(webResponse.dataTypes()).hasSize(2),
+                () -> assertThat(webResponse.dataTypes().get(0).id()).isEqualTo(1L),
+                () -> assertThat(webResponse.dataTypes().get(0).value()).isEqualTo("type1"),
+                () -> assertThat(webResponse.dataTypes().get(1).id()).isEqualTo(2L),
+                () -> assertThat(webResponse.dataTypes().get(1).value()).isEqualTo("type2")
+        );
     }
 
     @Test
@@ -62,7 +67,9 @@ class DataTypeWebMapperTest {
         AllDataTypesWebResponse webResponse = mapper.toWebDto(allResponse);
 
         // Then
-        assertThat(webResponse).isNotNull();
-        assertThat(webResponse.dataTypes()).isEmpty();
+        assertAll(
+                () -> assertThat(webResponse).isNotNull(),
+                () -> assertThat(webResponse.dataTypes()).isEmpty()
+        );
     }
 }

@@ -11,7 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -162,7 +163,12 @@ class JwtValidatorAdapterTest {
         when(claims.get("role", String.class)).thenReturn(null);
 
         // when & then
-        assertThatThrownBy(() -> jwtValidatorAdapter.getRoleFromToken(token))
-                .isInstanceOf(com.dataracy.modules.user.domain.exception.UserException.class);
+        com.dataracy.modules.user.domain.exception.UserException exception = catchThrowableOfType(
+                () -> jwtValidatorAdapter.getRoleFromToken(token),
+                com.dataracy.modules.user.domain.exception.UserException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 }

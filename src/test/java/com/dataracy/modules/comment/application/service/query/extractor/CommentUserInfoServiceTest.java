@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
@@ -77,10 +78,12 @@ class CommentUserInfoServiceTest {
             CommentLabelResponse result = commentUserInfoService.findCommentUserInfoBatch(userIds);
 
             // then
-            assertThat(result.usernameMap()).isEqualTo(usernameMap);
-            assertThat(result.userProfileUrlMap()).isEqualTo(thumbnailMap);
-            assertThat(result.userAuthorLevelIds()).isEqualTo(authorLevelIdsMap);
-            assertThat(result.userAuthorLevelLabelMap()).isEqualTo(authorLevelLabelMap);
+            assertAll(
+                    () -> assertThat(result.usernameMap()).isEqualTo(usernameMap),
+                    () -> assertThat(result.userProfileUrlMap()).isEqualTo(thumbnailMap),
+                    () -> assertThat(result.userAuthorLevelIds()).isEqualTo(authorLevelIdsMap),
+                    () -> assertThat(result.userAuthorLevelLabelMap()).isEqualTo(authorLevelLabelMap)
+            );
 
             then(findUsernameUseCase).should().findUsernamesByIds(userIds);
             then(findUserThumbnailUseCase).should().findUserThumbnailsByIds(userIds);
@@ -98,10 +101,12 @@ class CommentUserInfoServiceTest {
             CommentLabelResponse result = commentUserInfoService.findCommentUserInfoBatch(userIds);
 
             // then
-            assertThat(result.usernameMap()).isEmpty();
-            assertThat(result.userProfileUrlMap()).isEmpty();
-            assertThat(result.userAuthorLevelIds()).isEmpty();
-            assertThat(result.userAuthorLevelLabelMap()).isEmpty();
+            assertAll(
+                    () -> assertThat(result.usernameMap()).isEmpty(),
+                    () -> assertThat(result.userProfileUrlMap()).isEmpty(),
+                    () -> assertThat(result.userAuthorLevelIds()).isEmpty(),
+                    () -> assertThat(result.userAuthorLevelLabelMap()).isEmpty()
+            );
 
             // 빈 목록일 때는 다른 서비스들을 호출하지 않음
             then(findUsernameUseCase).shouldHaveNoInteractions();
@@ -146,10 +151,12 @@ class CommentUserInfoServiceTest {
             CommentLabelResponse result = commentUserInfoService.findCommentUserInfoBatch(userIds);
 
             // then
-            assertThat(result.usernameMap()).isEqualTo(usernameMap);
-            assertThat(result.userProfileUrlMap()).isEqualTo(thumbnailMap);
-            assertThat(result.userAuthorLevelIds()).isEqualTo(authorLevelIdsMap);
-            assertThat(result.userAuthorLevelLabelMap()).isEqualTo(authorLevelLabelMap);
+            assertAll(
+                    () -> assertThat(result.usernameMap()).isEqualTo(usernameMap),
+                    () -> assertThat(result.userProfileUrlMap()).isEqualTo(thumbnailMap),
+                    () -> assertThat(result.userAuthorLevelIds()).isEqualTo(authorLevelIdsMap),
+                    () -> assertThat(result.userAuthorLevelLabelMap()).isEqualTo(authorLevelLabelMap)
+            );
 
             // 중복 제거된 목록으로 호출됨
             then(findUsernameUseCase).should().findUsernamesByIds(distinctUserIds);
@@ -191,10 +198,12 @@ class CommentUserInfoServiceTest {
             CommentLabelResponse result = commentUserInfoService.findCommentUserInfoBatch(userIds);
 
             // then
-            assertThat(result.usernameMap()).isEqualTo(usernameMap);
-            assertThat(result.userProfileUrlMap()).isEqualTo(thumbnailMap);
-            assertThat(result.userAuthorLevelIds()).isEqualTo(authorLevelIdsMap);
-            assertThat(result.userAuthorLevelLabelMap()).isEqualTo(authorLevelLabelMap);
+            assertAll(
+                    () -> assertThat(result.usernameMap()).isEqualTo(usernameMap),
+                    () -> assertThat(result.userProfileUrlMap()).isEqualTo(thumbnailMap),
+                    () -> assertThat(result.userAuthorLevelIds()).isEqualTo(authorLevelIdsMap),
+                    () -> assertThat(result.userAuthorLevelLabelMap()).isEqualTo(authorLevelLabelMap)
+            );
         }
     }
 }

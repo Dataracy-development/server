@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity.projectEntity;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectSortBuilderTest {
 
@@ -17,9 +18,11 @@ class ProjectSortBuilderTest {
         OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(null);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(projectEntity.createdAt);
-        assertThat(result[0].isAscending()).isFalse();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(projectEntity.createdAt),
+                () -> assertThat(result[0].isAscending()).isFalse()
+        );
     }
 
     @Test
@@ -29,9 +32,11 @@ class ProjectSortBuilderTest {
         OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.LATEST);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(projectEntity.createdAt);
-        assertThat(result[0].isAscending()).isFalse();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(projectEntity.createdAt),
+                () -> assertThat(result[0].isAscending()).isFalse()
+        );
     }
 
     @Test
@@ -41,9 +46,11 @@ class ProjectSortBuilderTest {
         OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.OLDEST);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(projectEntity.createdAt);
-        assertThat(result[0].isAscending()).isTrue();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(projectEntity.createdAt),
+                () -> assertThat(result[0].isAscending()).isTrue()
+        );
     }
 
     @Test
@@ -53,9 +60,11 @@ class ProjectSortBuilderTest {
         OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.MOST_LIKED);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(projectEntity.likeCount);
-        assertThat(result[0].isAscending()).isFalse();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(projectEntity.likeCount),
+                () -> assertThat(result[0].isAscending()).isFalse()
+        );
     }
 
     @Test
@@ -65,9 +74,11 @@ class ProjectSortBuilderTest {
         OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.MOST_VIEWED);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(projectEntity.viewCount);
-        assertThat(result[0].isAscending()).isFalse();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(projectEntity.viewCount),
+                () -> assertThat(result[0].isAscending()).isFalse()
+        );
     }
 
     @Test
@@ -77,9 +88,11 @@ class ProjectSortBuilderTest {
         OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.MOST_COMMENTED);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(projectEntity.commentCount);
-        assertThat(result[0].isAscending()).isFalse();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(projectEntity.commentCount),
+                () -> assertThat(result[0].isAscending()).isFalse()
+        );
     }
 
     @Test
@@ -89,8 +102,10 @@ class ProjectSortBuilderTest {
         OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.LEAST_COMMENTED);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(projectEntity.commentCount);
-        assertThat(result[0].isAscending()).isTrue();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(projectEntity.commentCount),
+                () -> assertThat(result[0].isAscending()).isTrue()
+        );
     }
 }

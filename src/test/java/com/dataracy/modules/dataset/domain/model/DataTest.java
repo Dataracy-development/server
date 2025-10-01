@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 /**
  * Data 도메인 모델 테스트
@@ -42,23 +43,25 @@ class DataTest {
         );
 
         // then
-        assertThat(data).isNotNull();
-        assertThat(data.getId()).isEqualTo(1L);
-        assertThat(data.getTitle()).isEqualTo("테스트 데이터셋");
-        assertThat(data.getUserId()).isEqualTo(1L);
-        assertThat(data.getDataSourceId()).isEqualTo(1L);
-        assertThat(data.getDataTypeId()).isEqualTo(1L);
-        assertThat(data.getTopicId()).isEqualTo(1L);
-        assertThat(data.getStartDate()).isEqualTo(startDate);
-        assertThat(data.getEndDate()).isEqualTo(endDate);
-        assertThat(data.getDescription()).isEqualTo("데이터셋 설명");
-        assertThat(data.getAnalysisGuide()).isEqualTo("분석 가이드");
-        assertThat(data.getDataFileUrl()).isEqualTo("dataFile.csv");
-        assertThat(data.getDataThumbnailUrl()).isEqualTo("thumbnail.jpg");
-        assertThat(data.getDownloadCount()).isEqualTo(100);
-        assertThat(data.getSizeBytes()).isEqualTo(1024L);
-        assertThat(data.getMetadata()).isEqualTo(metadata);
-        assertThat(data.getCreatedAt()).isEqualTo(createdAt);
+        assertAll(
+                () -> assertThat(data).isNotNull(),
+                () -> assertThat(data.getId()).isEqualTo(1L),
+                () -> assertThat(data.getTitle()).isEqualTo("테스트 데이터셋"),
+                () -> assertThat(data.getUserId()).isEqualTo(1L),
+                () -> assertThat(data.getDataSourceId()).isEqualTo(1L),
+                () -> assertThat(data.getDataTypeId()).isEqualTo(1L),
+                () -> assertThat(data.getTopicId()).isEqualTo(1L),
+                () -> assertThat(data.getStartDate()).isEqualTo(startDate),
+                () -> assertThat(data.getEndDate()).isEqualTo(endDate),
+                () -> assertThat(data.getDescription()).isEqualTo("데이터셋 설명"),
+                () -> assertThat(data.getAnalysisGuide()).isEqualTo("분석 가이드"),
+                () -> assertThat(data.getDataFileUrl()).isEqualTo("dataFile.csv"),
+                () -> assertThat(data.getDataThumbnailUrl()).isEqualTo("thumbnail.jpg"),
+                () -> assertThat(data.getDownloadCount()).isEqualTo(100),
+                () -> assertThat(data.getSizeBytes()).isEqualTo(1024L),
+                () -> assertThat(data.getMetadata()).isEqualTo(metadata),
+                () -> assertThat(data.getCreatedAt()).isEqualTo(createdAt)
+        );
     }
 
     @Test
@@ -93,23 +96,25 @@ class DataTest {
                 .build();
 
         // then
-        assertThat(data).isNotNull();
-        assertThat(data.getId()).isEqualTo(2L);
-        assertThat(data.getTitle()).isEqualTo("빌더 테스트 데이터셋");
-        assertThat(data.getUserId()).isEqualTo(3L);
-        assertThat(data.getDataSourceId()).isEqualTo(4L);
-        assertThat(data.getDataTypeId()).isEqualTo(5L);
-        assertThat(data.getTopicId()).isEqualTo(6L);
-        assertThat(data.getStartDate()).isEqualTo(startDate);
-        assertThat(data.getEndDate()).isEqualTo(endDate);
-        assertThat(data.getDescription()).isEqualTo("빌더로 생성한 데이터셋");
-        assertThat(data.getAnalysisGuide()).isEqualTo("빌더 분석 가이드");
-        assertThat(data.getDataFileUrl()).isEqualTo("builderData.csv");
-        assertThat(data.getDataThumbnailUrl()).isEqualTo("builderThumbnail.jpg");
-        assertThat(data.getDownloadCount()).isEqualTo(200);
-        assertThat(data.getSizeBytes()).isEqualTo(2048L);
-        assertThat(data.getMetadata()).isEqualTo(metadata);
-        assertThat(data.getCreatedAt()).isEqualTo(createdAt);
+        assertAll(
+                () -> assertThat(data).isNotNull(),
+                () -> assertThat(data.getId()).isEqualTo(2L),
+                () -> assertThat(data.getTitle()).isEqualTo("빌더 테스트 데이터셋"),
+                () -> assertThat(data.getUserId()).isEqualTo(3L),
+                () -> assertThat(data.getDataSourceId()).isEqualTo(4L),
+                () -> assertThat(data.getDataTypeId()).isEqualTo(5L),
+                () -> assertThat(data.getTopicId()).isEqualTo(6L),
+                () -> assertThat(data.getStartDate()).isEqualTo(startDate),
+                () -> assertThat(data.getEndDate()).isEqualTo(endDate),
+                () -> assertThat(data.getDescription()).isEqualTo("빌더로 생성한 데이터셋"),
+                () -> assertThat(data.getAnalysisGuide()).isEqualTo("빌더 분석 가이드"),
+                () -> assertThat(data.getDataFileUrl()).isEqualTo("builderData.csv"),
+                () -> assertThat(data.getDataThumbnailUrl()).isEqualTo("builderThumbnail.jpg"),
+                () -> assertThat(data.getDownloadCount()).isEqualTo(200),
+                () -> assertThat(data.getSizeBytes()).isEqualTo(2048L),
+                () -> assertThat(data.getMetadata()).isEqualTo(metadata),
+                () -> assertThat(data.getCreatedAt()).isEqualTo(createdAt)
+        );
     }
 
     @Test
@@ -128,8 +133,10 @@ class DataTest {
         );
 
         // then
-        assertThat(data).isNotNull();
-        assertThat(data.getMetadata()).isNull();
+        assertAll(
+                () -> assertThat(data).isNotNull(),
+                () -> assertThat(data.getMetadata()).isNull()
+        );
     }
 
     @Test
@@ -149,9 +156,11 @@ class DataTest {
         );
 
         // then
-        assertThat(data).isNotNull();
-        assertThat(data.getStartDate()).isNull();
-        assertThat(data.getEndDate()).isNull();
+        assertAll(
+                () -> assertThat(data).isNotNull(),
+                () -> assertThat(data.getStartDate()).isNull(),
+                () -> assertThat(data.getEndDate()).isNull()
+        );
     }
 
     @Test
@@ -173,13 +182,15 @@ class DataTest {
         );
 
         // then
-        assertThat(data).isNotNull();
-        assertThat(data.getTitle()).isEmpty();
-        assertThat(data.getDescription()).isEmpty();
-        assertThat(data.getAnalysisGuide()).isEmpty();
-        assertThat(data.getDataFileUrl()).isEmpty();
-        assertThat(data.getDataThumbnailUrl()).isEmpty();
-        assertThat(data.getDownloadCount()).isZero();
-        assertThat(data.getSizeBytes()).isZero();
+        assertAll(
+                () -> assertThat(data).isNotNull(),
+                () -> assertThat(data.getTitle()).isEmpty(),
+                () -> assertThat(data.getDescription()).isEmpty(),
+                () -> assertThat(data.getAnalysisGuide()).isEmpty(),
+                () -> assertThat(data.getDataFileUrl()).isEmpty(),
+                () -> assertThat(data.getDataThumbnailUrl()).isEmpty(),
+                () -> assertThat(data.getDownloadCount()).isZero(),
+                () -> assertThat(data.getSizeBytes()).isZero()
+        );
     }
 }

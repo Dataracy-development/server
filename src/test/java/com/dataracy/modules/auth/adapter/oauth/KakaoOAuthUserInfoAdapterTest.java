@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 class KakaoOAuthUserInfoAdapterTest {
 
@@ -40,11 +41,20 @@ class KakaoOAuthUserInfoAdapterTest {
         OAuthUserInfo result = kakaoOAuthUserInfoAdapter.extract(provider, attributes);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.email()).isEqualTo("test@example.com");
-        assertThat(result.name()).isEqualTo("Test User");
-        assertThat(result.provider()).isEqualTo("kakao");
-        assertThat(result.providerId()).isEqualTo("123456789");
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.email()).isEqualTo("test@example.com"),
+
+                () -> assertThat(result.name()).isEqualTo("Test User"),
+
+                () -> assertThat(result.provider()).isEqualTo("kakao"),
+
+                () -> assertThat(result.providerId()).isEqualTo("123456789")
+
+        );
+
     }
 
     @Test
@@ -67,11 +77,20 @@ class KakaoOAuthUserInfoAdapterTest {
         OAuthUserInfo result = kakaoOAuthUserInfoAdapter.extract(provider, attributes);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.email()).isNull();
-        assertThat(result.name()).isNull();
-        assertThat(result.provider()).isEqualTo("kakao");
-        assertThat(result.providerId()).isNull();
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.email()).isNull(),
+
+                () -> assertThat(result.name()).isNull(),
+
+                () -> assertThat(result.provider()).isEqualTo("kakao"),
+
+                () -> assertThat(result.providerId()).isNull()
+
+        );
+
     }
 
     @Test
@@ -94,11 +113,20 @@ class KakaoOAuthUserInfoAdapterTest {
         OAuthUserInfo result = kakaoOAuthUserInfoAdapter.extract(provider, attributes);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.email()).isEqualTo("test@example.com");
-        assertThat(result.name()).isNull();
-        assertThat(result.provider()).isEqualTo("kakao");
-        assertThat(result.providerId()).isEqualTo("123456789");
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.email()).isEqualTo("test@example.com"),
+
+                () -> assertThat(result.name()).isNull(),
+
+                () -> assertThat(result.provider()).isEqualTo("kakao"),
+
+                () -> assertThat(result.providerId()).isEqualTo("123456789")
+
+        );
+
     }
 
     @Test
@@ -126,8 +154,13 @@ class KakaoOAuthUserInfoAdapterTest {
         Map<String, Object> attributes = new HashMap<>();
 
         // when & then
-        assertThatThrownBy(() -> kakaoOAuthUserInfoAdapter.extract(provider, attributes))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> kakaoOAuthUserInfoAdapter.extract(provider, attributes),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 
     @Test
@@ -139,8 +172,13 @@ class KakaoOAuthUserInfoAdapterTest {
         attributes.put("kakao_account", new HashMap<>());
 
         // when & then
-        assertThatThrownBy(() -> kakaoOAuthUserInfoAdapter.extract(provider, attributes))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> kakaoOAuthUserInfoAdapter.extract(provider, attributes),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 
     @Test
@@ -151,8 +189,13 @@ class KakaoOAuthUserInfoAdapterTest {
         Map<String, Object> attributes = null;
 
         // when & then
-        assertThatThrownBy(() -> kakaoOAuthUserInfoAdapter.extract(provider, attributes))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> kakaoOAuthUserInfoAdapter.extract(provider, attributes),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 
     @Test
@@ -166,8 +209,13 @@ class KakaoOAuthUserInfoAdapterTest {
         attributes.put("id", "123456789");
 
         // when & then
-        assertThatThrownBy(() -> kakaoOAuthUserInfoAdapter.extract(provider, attributes))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> kakaoOAuthUserInfoAdapter.extract(provider, attributes),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 
     @Test
@@ -184,7 +232,12 @@ class KakaoOAuthUserInfoAdapterTest {
         attributes.put("id", "123456789");
 
         // when & then
-        assertThatThrownBy(() -> kakaoOAuthUserInfoAdapter.extract(provider, attributes))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> kakaoOAuthUserInfoAdapter.extract(provider, attributes),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 }

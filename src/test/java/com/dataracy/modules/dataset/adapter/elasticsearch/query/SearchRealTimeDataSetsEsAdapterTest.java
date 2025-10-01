@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -122,8 +123,13 @@ class SearchRealTimeDataSetsEsAdapterTest {
             loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
 
             // when & then
-            assertThatThrownBy(() -> adapter.searchRealTimeDataSets(keyword, size))
-                .isInstanceOf(DataException.class);
+            DataException exception = catchThrowableOfType(
+                    () -> adapter.searchRealTimeDataSets(keyword, size),
+                    DataException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull()
+            );
             
             then(elasticLogger).should().logError(eq("data_index"), eq("데이터셋 실시간 검색 실패: keyword=test, size=10"), any(IOException.class));
         }

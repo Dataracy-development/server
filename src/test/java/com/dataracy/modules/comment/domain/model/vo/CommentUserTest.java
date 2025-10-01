@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class CommentUserTest {
 
@@ -36,9 +37,11 @@ class CommentUserTest {
         CommentUser user = CommentUser.fromUserInfo(info);
 
         // then
-        assertThat(user.userId()).isEqualTo(1L);
-        assertThat(user.role()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(user.nickname()).isEqualTo("nickname");
-        assertThat(user.authorLevelId()).isEqualTo(2L);
+        assertAll(
+                () -> assertThat(user.userId()).isEqualTo(1L),
+                () -> assertThat(user.role()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(user.nickname()).isEqualTo("nickname"),
+                () -> assertThat(user.authorLevelId()).isEqualTo(2L)
+        );
     }
 }

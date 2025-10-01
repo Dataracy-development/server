@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class UserInfoTest {
 
@@ -26,15 +27,17 @@ class UserInfoTest {
                 "intro"
         );
 
-        assertThat(info.id()).isEqualTo(100L);
-        assertThat(info.role()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(info.email()).isEqualTo("u@test.com");
-        assertThat(info.nickname()).isEqualTo("nick");
-        assertThat(info.authorLevelId()).isEqualTo(1L);
-        assertThat(info.occupationId()).isEqualTo(2L);
-        assertThat(info.topicIds()).containsExactly(10L, 20L);
-        assertThat(info.visitSourceId()).isEqualTo(3L);
-        assertThat(info.profileImageUrl()).isEqualTo("p.png");
-        assertThat(info.introductionText()).isEqualTo("intro");
+        assertAll(
+                () -> assertThat(info.id()).isEqualTo(100L),
+                () -> assertThat(info.role()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(info.email()).isEqualTo("u@test.com"),
+                () -> assertThat(info.nickname()).isEqualTo("nick"),
+                () -> assertThat(info.authorLevelId()).isEqualTo(1L),
+                () -> assertThat(info.occupationId()).isEqualTo(2L),
+                () -> assertThat(info.topicIds()).containsExactly(10L, 20L),
+                () -> assertThat(info.visitSourceId()).isEqualTo(3L),
+                () -> assertThat(info.profileImageUrl()).isEqualTo("p.png"),
+                () -> assertThat(info.introductionText()).isEqualTo("intro")
+        );
     }
 }

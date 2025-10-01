@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,12 +41,14 @@ class ProjectFilterWebMapperTest {
         FilteringProjectRequest requestDto = mapper.toApplicationDto(webRequest);
 
         // then
-        assertThat(requestDto.keyword()).isEqualTo("keyword");
-        assertThat(requestDto.sortType()).isEqualTo("LATEST");
-        assertThat(requestDto.topicId()).isEqualTo(1L);
-        assertThat(requestDto.analysisPurposeId()).isEqualTo(2L);
-        assertThat(requestDto.dataSourceId()).isEqualTo(3L);
-        assertThat(requestDto.authorLevelId()).isEqualTo(4L);
+        assertAll(
+                () -> assertThat(requestDto.keyword()).isEqualTo("keyword"),
+                () -> assertThat(requestDto.sortType()).isEqualTo("LATEST"),
+                () -> assertThat(requestDto.topicId()).isEqualTo(1L),
+                () -> assertThat(requestDto.analysisPurposeId()).isEqualTo(2L),
+                () -> assertThat(requestDto.dataSourceId()).isEqualTo(3L),
+                () -> assertThat(requestDto.authorLevelId()).isEqualTo(4L)
+        );
     }
 
     @Test
@@ -71,10 +74,12 @@ class ProjectFilterWebMapperTest {
         FilteredProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(10L);
-        assertThat(webResponse.title()).isEqualTo("title");
-        assertThat(webResponse.commentCount()).isEqualTo(11L);
-        assertThat(webResponse.childProjects()).containsExactly(mappedChild);
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(10L),
+                () -> assertThat(webResponse.title()).isEqualTo("title"),
+                () -> assertThat(webResponse.commentCount()).isEqualTo(11L),
+                () -> assertThat(webResponse.childProjects()).containsExactly(mappedChild)
+        );
     }
 }
 

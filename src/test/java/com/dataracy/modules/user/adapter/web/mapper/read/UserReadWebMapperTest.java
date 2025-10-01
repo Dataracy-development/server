@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class UserReadWebMapperTest {
 
@@ -46,20 +47,22 @@ class UserReadWebMapperTest {
         GetUserInfoWebResponse result = userReadWebMapper.toWebDto(responseDto);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.role()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(result.email()).isEqualTo("test@example.com");
-        assertThat(result.nickname()).isEqualTo("TestUser");
-        assertThat(result.authorLevelId()).isEqualTo(1L);
-        assertThat(result.authorLevelLabel()).isEqualTo("초급");
-        assertThat(result.occupationId()).isEqualTo(2L);
-        assertThat(result.occupationLabel()).isEqualTo("개발자");
-        assertThat(result.topicIds()).containsExactly(1L, 2L, 3L);
-        assertThat(result.topicLabels()).containsExactly("웹개발", "데이터분석", "AI");
-        assertThat(result.visitSourceId()).isEqualTo(1L);
-        assertThat(result.visitSourceLabel()).isEqualTo("구글");
-        assertThat(result.profileImageUrl()).isEqualTo("https://example.com/profile.jpg");
-        assertThat(result.introductionText()).isEqualTo("안녕하세요. 테스트 사용자입니다.");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.role()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(result.email()).isEqualTo("test@example.com"),
+                () -> assertThat(result.nickname()).isEqualTo("TestUser"),
+                () -> assertThat(result.authorLevelId()).isEqualTo(1L),
+                () -> assertThat(result.authorLevelLabel()).isEqualTo("초급"),
+                () -> assertThat(result.occupationId()).isEqualTo(2L),
+                () -> assertThat(result.occupationLabel()).isEqualTo("개발자"),
+                () -> assertThat(result.topicIds()).containsExactly(1L, 2L, 3L),
+                () -> assertThat(result.topicLabels()).containsExactly("웹개발", "데이터분석", "AI"),
+                () -> assertThat(result.visitSourceId()).isEqualTo(1L),
+                () -> assertThat(result.visitSourceLabel()).isEqualTo("구글"),
+                () -> assertThat(result.profileImageUrl()).isEqualTo("https://example.com/profile.jpg"),
+                () -> assertThat(result.introductionText()).isEqualTo("안녕하세요. 테스트 사용자입니다.")
+        );
     }
 
     @Test
@@ -87,20 +90,22 @@ class UserReadWebMapperTest {
         GetUserInfoWebResponse result = userReadWebMapper.toWebDto(responseDto);
 
         // then
-        assertThat(result.id()).isEqualTo(2L);
-        assertThat(result.role()).isEqualTo(RoleType.ROLE_ADMIN);
-        assertThat(result.email()).isEqualTo("admin@example.com");
-        assertThat(result.nickname()).isEqualTo("AdminUser");
-        assertThat(result.authorLevelId()).isNull();
-        assertThat(result.authorLevelLabel()).isNull();
-        assertThat(result.occupationId()).isNull();
-        assertThat(result.occupationLabel()).isNull();
-        assertThat(result.topicIds()).isNull();
-        assertThat(result.topicLabels()).isNull();
-        assertThat(result.visitSourceId()).isNull();
-        assertThat(result.visitSourceLabel()).isNull();
-        assertThat(result.profileImageUrl()).isNull();
-        assertThat(result.introductionText()).isNull();
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(2L),
+                () -> assertThat(result.role()).isEqualTo(RoleType.ROLE_ADMIN),
+                () -> assertThat(result.email()).isEqualTo("admin@example.com"),
+                () -> assertThat(result.nickname()).isEqualTo("AdminUser"),
+                () -> assertThat(result.authorLevelId()).isNull(),
+                () -> assertThat(result.authorLevelLabel()).isNull(),
+                () -> assertThat(result.occupationId()).isNull(),
+                () -> assertThat(result.occupationLabel()).isNull(),
+                () -> assertThat(result.topicIds()).isNull(),
+                () -> assertThat(result.topicLabels()).isNull(),
+                () -> assertThat(result.visitSourceId()).isNull(),
+                () -> assertThat(result.visitSourceLabel()).isNull(),
+                () -> assertThat(result.profileImageUrl()).isNull(),
+                () -> assertThat(result.introductionText()).isNull()
+        );
     }
 
     @Test
@@ -128,20 +133,22 @@ class UserReadWebMapperTest {
         GetUserInfoWebResponse result = userReadWebMapper.toWebDto(responseDto);
 
         // then
-        assertThat(result.id()).isEqualTo(3L);
-        assertThat(result.role()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(result.email()).isEqualTo("empty@example.com");
-        assertThat(result.nickname()).isEqualTo("EmptyUser");
-        assertThat(result.authorLevelId()).isEqualTo(1L);
-        assertThat(result.authorLevelLabel()).isEqualTo("중급");
-        assertThat(result.occupationId()).isEqualTo(1L);
-        assertThat(result.occupationLabel()).isEqualTo("디자이너");
-        assertThat(result.topicIds()).isEmpty();
-        assertThat(result.topicLabels()).isEmpty();
-        assertThat(result.visitSourceId()).isEqualTo(2L);
-        assertThat(result.visitSourceLabel()).isEqualTo("네이버");
-        assertThat(result.profileImageUrl()).isEqualTo("https://example.com/empty.jpg");
-        assertThat(result.introductionText()).isEmpty();
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(3L),
+                () -> assertThat(result.role()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(result.email()).isEqualTo("empty@example.com"),
+                () -> assertThat(result.nickname()).isEqualTo("EmptyUser"),
+                () -> assertThat(result.authorLevelId()).isEqualTo(1L),
+                () -> assertThat(result.authorLevelLabel()).isEqualTo("중급"),
+                () -> assertThat(result.occupationId()).isEqualTo(1L),
+                () -> assertThat(result.occupationLabel()).isEqualTo("디자이너"),
+                () -> assertThat(result.topicIds()).isEmpty(),
+                () -> assertThat(result.topicLabels()).isEmpty(),
+                () -> assertThat(result.visitSourceId()).isEqualTo(2L),
+                () -> assertThat(result.visitSourceLabel()).isEqualTo("네이버"),
+                () -> assertThat(result.profileImageUrl()).isEqualTo("https://example.com/empty.jpg"),
+                () -> assertThat(result.introductionText()).isEmpty()
+        );
     }
 
     @Test
@@ -151,7 +158,12 @@ class UserReadWebMapperTest {
         GetUserInfoResponse responseDto = null;
 
         // when & then
-        assertThatThrownBy(() -> userReadWebMapper.toWebDto(responseDto))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> userReadWebMapper.toWebDto(responseDto),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull()
+        );
     }
 }

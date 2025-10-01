@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -143,9 +144,11 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).data().getTitle()).isEqualTo("테스트 데이터");
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).data().getTitle()).isEqualTo("테스트 데이터")
+            );
         }
 
         @Test
@@ -160,8 +163,10 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2); // savedData, popularData (deletedData 제외)
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2) // savedData, popularData (deletedData 제외)
+            );
         }
 
         @Test
@@ -207,8 +212,10 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.OLDEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2)
+            );
         }
 
         @Test
@@ -223,10 +230,12 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getTotalElements()).isEqualTo(2);
-            assertThat(result.getTotalPages()).isEqualTo(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getTotalElements()).isEqualTo(2),
+                    () -> assertThat(result.getTotalPages()).isEqualTo(2)
+            );
         }
 
         @Test
@@ -241,8 +250,10 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2)
+            );
         }
 
         @Test
@@ -272,8 +283,10 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2)
+            );
         }
 
         @Test
@@ -288,8 +301,10 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2)
+            );
         }
 
         @Test
@@ -304,8 +319,10 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(2)
+            );
         }
 
         @Test
@@ -320,9 +337,11 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).data().getTitle()).isEqualTo("테스트 데이터");
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).data().getTitle()).isEqualTo("테스트 데이터")
+            );
         }
     }
 
@@ -379,8 +398,10 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(3);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(3)
+            );
             
             // 프로젝트 연결 수 확인
             List<DataWithProjectCountDto> content = result.getContent();
@@ -388,9 +409,11 @@ class SearchDataQueryDslAdapterIntegrationTest {
             boolean foundOneConnection = content.stream().anyMatch(dto -> dto.countConnectedProjects() == 1);
             boolean foundZeroConnection = content.stream().anyMatch(dto -> dto.countConnectedProjects() == 0);
             
-            assertThat(foundTwoConnections).isTrue();
-            assertThat(foundOneConnection).isTrue();
-            assertThat(foundZeroConnection).isTrue();
+            assertAll(
+                    () -> assertThat(foundTwoConnections).isTrue(),
+                    () -> assertThat(foundOneConnection).isTrue(),
+                    () -> assertThat(foundZeroConnection).isTrue()
+            );
         }
 
         @Test
@@ -405,9 +428,11 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isEmpty();
-            assertThat(result.getTotalElements()).isZero();
-            assertThat(result.getTotalPages()).isZero();
+            assertAll(
+                    () -> assertThat(result).isEmpty(),
+                    () -> assertThat(result.getTotalElements()).isZero(),
+                    () -> assertThat(result.getTotalPages()).isZero()
+            );
         }
 
         @Test
@@ -422,12 +447,16 @@ class SearchDataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1)
+            );
             
             DataWithProjectCountDto dataDto = result.getContent().get(0);
-            assertThat(dataDto.data().getTitle()).isEqualTo("테스트 데이터");
-            assertThat(dataDto.countConnectedProjects()).isEqualTo(1);
+            assertAll(
+                    () -> assertThat(dataDto.data().getTitle()).isEqualTo("테스트 데이터"),
+                    () -> assertThat(dataDto.countConnectedProjects()).isEqualTo(1)
+            );
         }
     }
 }

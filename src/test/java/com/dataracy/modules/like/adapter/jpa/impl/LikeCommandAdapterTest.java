@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -47,9 +48,11 @@ class LikeCommandAdapterTest {
         // then
         then(likeJpaRepository).should().save(entityCaptor.capture());
         LikeEntity saved = entityCaptor.getValue();
-        assertThat(saved.getTargetId()).isEqualTo(88L);
-        assertThat(saved.getTargetType()).isEqualTo(TargetType.PROJECT);
-        assertThat(saved.getUserId()).isEqualTo(100L);
+        assertAll(
+                () -> assertThat(saved.getTargetId()).isEqualTo(88L),
+                () -> assertThat(saved.getTargetType()).isEqualTo(TargetType.PROJECT),
+                () -> assertThat(saved.getUserId()).isEqualTo(100L)
+        );
     }
 
     @Test
@@ -87,7 +90,9 @@ class LikeCommandAdapterTest {
         );
 
         // then
-        assertThat(ex).isNotNull();
-        then(likeJpaRepository).should(never()).delete(any());
+        assertAll(
+                () -> assertThat(ex).isNotNull(),
+                () -> then(likeJpaRepository).should(never()).delete(any())
+        );
     }
 }

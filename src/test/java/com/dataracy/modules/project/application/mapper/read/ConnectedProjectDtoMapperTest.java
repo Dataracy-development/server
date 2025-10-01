@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ConnectedProjectDtoMapperTest {
 
@@ -49,15 +50,17 @@ class ConnectedProjectDtoMapperTest {
         ConnectedProjectResponse response = mapper.toResponseDto(project, username, userProfileImageUrl, topicLabel);
 
         // then
-        assertThat(response.id()).isEqualTo(1L);
-        assertThat(response.title()).isEqualTo("proj-title");
-        assertThat(response.creatorId()).isEqualTo(99L);
-        assertThat(response.creatorName()).isEqualTo("tester");
-        assertThat(response.topicLabel()).isEqualTo("topic-label");
-        assertThat(response.commentCount()).isEqualTo(5L);
-        assertThat(response.likeCount()).isEqualTo(6L);
-        assertThat(response.viewCount()).isEqualTo(7L);
-        assertThat(response.createdAt()).isEqualTo(createdAt);
+        assertAll(
+                () -> assertThat(response.id()).isEqualTo(1L),
+                () -> assertThat(response.title()).isEqualTo("proj-title"),
+                () -> assertThat(response.creatorId()).isEqualTo(99L),
+                () -> assertThat(response.creatorName()).isEqualTo("tester"),
+                () -> assertThat(response.topicLabel()).isEqualTo("topic-label"),
+                () -> assertThat(response.commentCount()).isEqualTo(5L),
+                () -> assertThat(response.likeCount()).isEqualTo(6L),
+                () -> assertThat(response.viewCount()).isEqualTo(7L),
+                () -> assertThat(response.createdAt()).isEqualTo(createdAt)
+        );
     }
 }
 

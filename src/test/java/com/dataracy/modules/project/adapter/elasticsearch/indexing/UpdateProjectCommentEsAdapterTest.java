@@ -16,7 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.util.function.Function;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
@@ -87,10 +88,15 @@ class UpdateProjectCommentEsAdapterTest {
             loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
 
             // when & then
-            assertThatThrownBy(() -> adapter.increaseCommentCount(projectId))
-                .isInstanceOf(EsUpdateException.class)
-                .hasMessage("ES update failed: projectId=123")
-                .hasCause(ioException);
+            EsUpdateException exception = catchThrowableOfType(
+                    () -> adapter.increaseCommentCount(projectId),
+                    EsUpdateException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(EsUpdateException.class),
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).hasMessage("ES update failed: projectId=123"),
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).hasCause(ioException)
+            );
             
             then(elasticLogger).should().logError(eq("project_index"), eq("프로젝트 commentCount 증분 업데이트 실패 - projectId=123"), any(IOException.class));
         }
@@ -108,10 +114,15 @@ class UpdateProjectCommentEsAdapterTest {
             loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
 
             // when & then
-            assertThatThrownBy(() -> adapter.decreaseCommentCount(projectId))
-                .isInstanceOf(EsUpdateException.class)
-                .hasMessage("ES update failed: projectId=456")
-                .hasCause(ioException);
+            EsUpdateException exception = catchThrowableOfType(
+                    () -> adapter.decreaseCommentCount(projectId),
+                    EsUpdateException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(EsUpdateException.class),
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).hasMessage("ES update failed: projectId=456"),
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).hasCause(ioException)
+            );
             
             then(elasticLogger).should().logError(eq("project_index"), eq("프로젝트 commentCount 감분 업데이트 실패 - projectId=456"), any(IOException.class));
         }

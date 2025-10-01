@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ParentProjectDtoMapperTest {
 
@@ -48,14 +49,16 @@ class ParentProjectDtoMapperTest {
         ParentProjectResponse response = mapper.toResponseDto(project, username, userProfileImageUrl);
 
         // then
-        assertThat(response.id()).isEqualTo(1L);
-        assertThat(response.title()).isEqualTo("parent-title");
-        assertThat(response.content()).isEqualTo("parent-content");
-        assertThat(response.creatorName()).isEqualTo("tester");
-        assertThat(response.commentCount()).isEqualTo(5L);
-        assertThat(response.likeCount()).isEqualTo(6L);
-        assertThat(response.viewCount()).isEqualTo(7L);
-        assertThat(response.createdAt()).isEqualTo(createdAt);
+        assertAll(
+                () -> assertThat(response.id()).isEqualTo(1L),
+                () -> assertThat(response.title()).isEqualTo("parent-title"),
+                () -> assertThat(response.content()).isEqualTo("parent-content"),
+                () -> assertThat(response.creatorName()).isEqualTo("tester"),
+                () -> assertThat(response.commentCount()).isEqualTo(5L),
+                () -> assertThat(response.likeCount()).isEqualTo(6L),
+                () -> assertThat(response.viewCount()).isEqualTo(7L),
+                () -> assertThat(response.createdAt()).isEqualTo(createdAt)
+        );
     }
 }
 

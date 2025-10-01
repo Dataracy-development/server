@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("UserException 테스트")
 class UserExceptionTest {
@@ -26,10 +27,12 @@ class UserExceptionTest {
 
         // then
             assertThat(userException).isNotNull();
-            assertThat(userException.getErrorCode()).isEqualTo(errorStatus);
-            assertThat(userException.getHttpStatus()).isEqualTo(errorStatus.getHttpStatus());
-            assertThat(userException.getCode()).isEqualTo(errorStatus.getCode());
-            assertThat(userException.getMessage()).isEqualTo(errorStatus.getMessage());
+            assertAll(
+                    () -> assertThat(userException.getErrorCode()).isEqualTo(errorStatus),
+                    () -> assertThat(userException.getHttpStatus()).isEqualTo(errorStatus.getHttpStatus()),
+                    () -> assertThat(userException.getCode()).isEqualTo(errorStatus.getCode()),
+                    () -> assertThat(userException.getMessage()).isEqualTo(errorStatus.getMessage())
+            );
         }
 
         @Test
@@ -49,10 +52,12 @@ class UserExceptionTest {
                 UserException userException = new UserException(errorStatus);
                 
                 assertThat(userException).isNotNull();
-                assertThat(userException.getErrorCode()).isEqualTo(errorStatus);
-                assertThat(userException.getHttpStatus()).isEqualTo(errorStatus.getHttpStatus());
-                assertThat(userException.getCode()).isEqualTo(errorStatus.getCode());
-                assertThat(userException.getMessage()).isEqualTo(errorStatus.getMessage());
+                assertAll(
+                        () -> assertThat(userException.getErrorCode()).isEqualTo(errorStatus),
+                        () -> assertThat(userException.getHttpStatus()).isEqualTo(errorStatus.getHttpStatus()),
+                        () -> assertThat(userException.getCode()).isEqualTo(errorStatus.getCode()),
+                        () -> assertThat(userException.getMessage()).isEqualTo(errorStatus.getMessage())
+                );
             }
         }
     }
@@ -71,9 +76,10 @@ class UserExceptionTest {
             UserException userException = new UserException(errorStatus);
 
             // then
-            assertThat(userException).isInstanceOf(com.dataracy.modules.common.exception.BusinessException.class);
-            assertThat(userException).isInstanceOf(com.dataracy.modules.common.exception.CustomException.class);
-            assertThat(userException).isInstanceOf(RuntimeException.class);
+            assertThat(userException)
+                    .isInstanceOf(com.dataracy.modules.common.exception.BusinessException.class)
+                    .isInstanceOf(com.dataracy.modules.common.exception.CustomException.class)
+                    .isInstanceOf(RuntimeException.class);
         }
 
         @Test
@@ -87,10 +93,12 @@ class UserExceptionTest {
 
             // then
             // BusinessException의 getter 메서드들이 정상 작동하는지 확인
-            assertThat(userException.getErrorCode()).isEqualTo(errorStatus);
-            assertThat(userException.getHttpStatus()).isEqualTo(errorStatus.getHttpStatus());
-            assertThat(userException.getCode()).isEqualTo(errorStatus.getCode());
-            assertThat(userException.getMessage()).isEqualTo(errorStatus.getMessage());
+            assertAll(
+                    () -> assertThat(userException.getErrorCode()).isEqualTo(errorStatus),
+                    () -> assertThat(userException.getHttpStatus()).isEqualTo(errorStatus.getHttpStatus()),
+                    () -> assertThat(userException.getCode()).isEqualTo(errorStatus.getCode()),
+                    () -> assertThat(userException.getMessage()).isEqualTo(errorStatus.getMessage())
+            );
         }
     }
 
@@ -123,8 +131,10 @@ class UserExceptionTest {
             UserException kakaoException = new UserException(kakaoError);
 
             // then
-            assertThat(googleException.getHttpStatus()).isEqualTo(HttpStatus.FORBIDDEN);
-            assertThat(kakaoException.getHttpStatus()).isEqualTo(HttpStatus.FORBIDDEN);
+            assertAll(
+                    () -> assertThat(googleException.getHttpStatus()).isEqualTo(HttpStatus.FORBIDDEN),
+                    () -> assertThat(kakaoException.getHttpStatus()).isEqualTo(HttpStatus.FORBIDDEN)
+            );
         }
 
         @Test
@@ -175,23 +185,20 @@ class UserExceptionTest {
         @DisplayName("성공: 각 에러 상태에 맞는 메시지를 반환한다")
         void success_returnAppropriateMessageForEachErrorStatus() {
             // given & when & then
-            assertThat(new UserException(UserErrorStatus.NOT_FOUND_USER).getMessage())
-                    .isEqualTo("해당 유저가 존재하지 않습니다.");
-            
-            assertThat(new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE).getMessage())
-                    .isEqualTo("구글 로그인으로 가입된 계정은 비밀번호를 변경할 수 없습니다");
-            
-            assertThat(new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO).getMessage())
-                    .isEqualTo("카카오 로그인으로 가입된 계정은 비밀번호를 변경할 수 없습니다");
-            
-            assertThat(new UserException(UserErrorStatus.DUPLICATED_EMAIL).getMessage())
-                    .isEqualTo("중복된 이메일은 사용할 수 없습니다");
-            
-            assertThat(new UserException(UserErrorStatus.BAD_REQUEST_LOGIN).getMessage())
-                    .isEqualTo("이메일 또는 비밀번호를 확인해주세요");
-            
-            assertThat(new UserException(UserErrorStatus.ALREADY_SIGN_UP_USER).getMessage())
-                    .isEqualTo("이미 가입된 계정입니다.");
+            assertAll(
+                    () -> assertThat(new UserException(UserErrorStatus.NOT_FOUND_USER).getMessage())
+                            .isEqualTo("해당 유저가 존재하지 않습니다."),
+                    () -> assertThat(new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE).getMessage())
+                            .isEqualTo("구글 로그인으로 가입된 계정은 비밀번호를 변경할 수 없습니다"),
+                    () -> assertThat(new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO).getMessage())
+                            .isEqualTo("카카오 로그인으로 가입된 계정은 비밀번호를 변경할 수 없습니다"),
+                    () -> assertThat(new UserException(UserErrorStatus.DUPLICATED_EMAIL).getMessage())
+                            .isEqualTo("중복된 이메일은 사용할 수 없습니다"),
+                    () -> assertThat(new UserException(UserErrorStatus.BAD_REQUEST_LOGIN).getMessage())
+                            .isEqualTo("이메일 또는 비밀번호를 확인해주세요"),
+                    () -> assertThat(new UserException(UserErrorStatus.ALREADY_SIGN_UP_USER).getMessage())
+                            .isEqualTo("이미 가입된 계정입니다.")
+            );
         }
 
         @Test
@@ -203,8 +210,10 @@ class UserExceptionTest {
             // when & then
             for (UserErrorStatus errorStatus : errorStatuses) {
                 UserException userException = new UserException(errorStatus);
-                assertThat(userException.getMessage()).isNotNull();
-                assertThat(userException.getMessage()).isNotBlank();
+                assertAll(
+                        () -> assertThat(userException.getMessage()).isNotNull(),
+                        () -> assertThat(userException.getMessage()).isNotBlank()
+                );
             }
         }
     }
@@ -217,23 +226,20 @@ class UserExceptionTest {
         @DisplayName("성공: 각 에러 상태에 맞는 코드를 반환한다")
         void success_returnAppropriateCodeForEachErrorStatus() {
             // given & when & then
-            assertThat(new UserException(UserErrorStatus.NOT_FOUND_USER).getCode())
-                    .isEqualTo("USER-002");
-            
-            assertThat(new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE).getCode())
-                    .isEqualTo("USER-019");
-            
-            assertThat(new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO).getCode())
-                    .isEqualTo("USER-018");
-            
-            assertThat(new UserException(UserErrorStatus.DUPLICATED_EMAIL).getCode())
-                    .isEqualTo("USER-005");
-            
-            assertThat(new UserException(UserErrorStatus.BAD_REQUEST_LOGIN).getCode())
-                    .isEqualTo("USER-020");
-            
-            assertThat(new UserException(UserErrorStatus.ALREADY_SIGN_UP_USER).getCode())
-                    .isEqualTo("USER-001");
+            assertAll(
+                    () -> assertThat(new UserException(UserErrorStatus.NOT_FOUND_USER).getCode())
+                            .isEqualTo("USER-002"),
+                    () -> assertThat(new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE).getCode())
+                            .isEqualTo("USER-019"),
+                    () -> assertThat(new UserException(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO).getCode())
+                            .isEqualTo("USER-018"),
+                    () -> assertThat(new UserException(UserErrorStatus.DUPLICATED_EMAIL).getCode())
+                            .isEqualTo("USER-005"),
+                    () -> assertThat(new UserException(UserErrorStatus.BAD_REQUEST_LOGIN).getCode())
+                            .isEqualTo("USER-020"),
+                    () -> assertThat(new UserException(UserErrorStatus.ALREADY_SIGN_UP_USER).getCode())
+                            .isEqualTo("USER-001")
+            );
         }
 
         @Test
@@ -245,8 +251,10 @@ class UserExceptionTest {
             // when & then
             for (UserErrorStatus errorStatus : errorStatuses) {
                 UserException userException = new UserException(errorStatus);
-                assertThat(userException.getCode()).isNotNull();
-                assertThat(userException.getCode()).isNotBlank();
+                assertAll(
+                        () -> assertThat(userException.getCode()).isNotNull(),
+                        () -> assertThat(userException.getCode()).isNotBlank()
+                );
             }
         }
     }
@@ -266,10 +274,12 @@ class UserExceptionTest {
             UserException exception2 = new UserException(errorStatus);
 
             // then
-            assertThat(exception1.getErrorCode()).isEqualTo(exception2.getErrorCode());
-            assertThat(exception1.getHttpStatus()).isEqualTo(exception2.getHttpStatus());
-            assertThat(exception1.getCode()).isEqualTo(exception2.getCode());
-            assertThat(exception1.getMessage()).isEqualTo(exception2.getMessage());
+            assertAll(
+                    () -> assertThat(exception1.getErrorCode()).isEqualTo(exception2.getErrorCode()),
+                    () -> assertThat(exception1.getHttpStatus()).isEqualTo(exception2.getHttpStatus()),
+                    () -> assertThat(exception1.getCode()).isEqualTo(exception2.getCode()),
+                    () -> assertThat(exception1.getMessage()).isEqualTo(exception2.getMessage())
+            );
         }
 
         @Test
@@ -284,10 +294,12 @@ class UserExceptionTest {
             UserException exception2 = new UserException(errorStatus2);
 
             // then
-            assertThat(exception1.getErrorCode()).isNotEqualTo(exception2.getErrorCode());
-            assertThat(exception1.getHttpStatus()).isNotEqualTo(exception2.getHttpStatus());
-            assertThat(exception1.getCode()).isNotEqualTo(exception2.getCode());
-            assertThat(exception1.getMessage()).isNotEqualTo(exception2.getMessage());
+            assertAll(
+                    () -> assertThat(exception1.getErrorCode()).isNotEqualTo(exception2.getErrorCode()),
+                    () -> assertThat(exception1.getHttpStatus()).isNotEqualTo(exception2.getHttpStatus()),
+                    () -> assertThat(exception1.getCode()).isNotEqualTo(exception2.getCode()),
+                    () -> assertThat(exception1.getMessage()).isNotEqualTo(exception2.getMessage())
+            );
         }
     }
 }

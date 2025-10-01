@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("Topic 테스트")
 class TopicTest {
@@ -20,9 +21,11 @@ class TopicTest {
         Topic topic = new Topic(id, value, label);
 
         // Then
-        assertThat(topic.id()).isEqualTo(id);
-        assertThat(topic.value()).isEqualTo(value);
-        assertThat(topic.label()).isEqualTo(label);
+        assertAll(
+                () -> assertThat(topic.id()).isEqualTo(id),
+                () -> assertThat(topic.value()).isEqualTo(value),
+                () -> assertThat(topic.label()).isEqualTo(label)
+        );
     }
 
     @Test
@@ -34,9 +37,10 @@ class TopicTest {
         Topic topic3 = new Topic(2L, "machine-learning", "머신러닝");
 
         // When & Then
-        assertThat(topic1).isEqualTo(topic2);
-        assertThat(topic1.hashCode()).isEqualTo(topic2.hashCode());
-        assertThat(topic1).isNotEqualTo(topic3);
+        assertThat(topic1)
+                .isEqualTo(topic2)
+                .hasSameHashCodeAs(topic2)
+                .isNotEqualTo(topic3);
     }
 
     @Test
@@ -49,10 +53,11 @@ class TopicTest {
         String toString = topic.toString();
 
         // Then
-        assertThat(toString).contains("Topic");
-        assertThat(toString).contains("1");
-        assertThat(toString).contains("ai");
-        assertThat(toString).contains("인공지능");
+        assertThat(toString)
+                .contains("Topic")
+                .contains("1")
+                .contains("ai")
+                .contains("인공지능");
     }
 
     @Test
@@ -62,9 +67,11 @@ class TopicTest {
         Topic topic = new Topic(null, null, null);
 
         // Then
-        assertThat(topic.id()).isNull();
-        assertThat(topic.value()).isNull();
-        assertThat(topic.label()).isNull();
+        assertAll(
+                () -> assertThat(topic.id()).isNull(),
+                () -> assertThat(topic.value()).isNull(),
+                () -> assertThat(topic.label()).isNull()
+        );
     }
 
     @Test
@@ -76,12 +83,13 @@ class TopicTest {
         Topic topic3 = new Topic(3L, "visualization", "시각화");
 
         // Then
-        assertThat(topic1.value()).isEqualTo("data-science");
-        assertThat(topic2.value()).isEqualTo("big-data");
-        assertThat(topic3.value()).isEqualTo("visualization");
-        
-        assertThat(topic1.label()).isEqualTo("데이터 사이언스");
-        assertThat(topic2.label()).isEqualTo("빅데이터");
-        assertThat(topic3.label()).isEqualTo("시각화");
+        assertAll(
+                () -> assertThat(topic1.value()).isEqualTo("data-science"),
+                () -> assertThat(topic2.value()).isEqualTo("big-data"),
+                () -> assertThat(topic3.value()).isEqualTo("visualization"),
+                () -> assertThat(topic1.label()).isEqualTo("데이터 사이언스"),
+                () -> assertThat(topic2.label()).isEqualTo("빅데이터"),
+                () -> assertThat(topic3.label()).isEqualTo("시각화")
+        );
     }
 }

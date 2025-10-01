@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -43,9 +44,11 @@ class ManageDataEsProjectionDlqDbAdapterTest {
         then(repo).should().save(captor.capture());
         DataEsProjectionDlqEntity savedEntity = captor.getValue();
 
-        assertThat(savedEntity.getDataId()).isEqualTo(dataId);
-        assertThat(savedEntity.getDeltaDownload()).isEqualTo(deltaDownload);
-        assertThat(savedEntity.getSetDeleted()).isEqualTo(setDeleted);
-        assertThat(savedEntity.getLastError()).isEqualTo(lastError);
+        assertAll(
+                () -> assertThat(savedEntity.getDataId()).isEqualTo(dataId),
+                () -> assertThat(savedEntity.getDeltaDownload()).isEqualTo(deltaDownload),
+                () -> assertThat(savedEntity.getSetDeleted()).isEqualTo(setDeleted),
+                () -> assertThat(savedEntity.getLastError()).isEqualTo(lastError)
+        );
     }
 }

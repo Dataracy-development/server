@@ -19,6 +19,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mockStatic;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith(MockitoExtension.class)
 class DataKafkaConsumerAdapterTest {
@@ -68,8 +70,13 @@ class DataKafkaConsumerAdapterTest {
             loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
 
             // when & then
-            org.assertj.core.api.Assertions.assertThatThrownBy(() -> adapter.consume(event))
-                .isSameAs(exception);
+            RuntimeException caughtException = catchThrowableOfType(
+                    () -> adapter.consume(event),
+                    RuntimeException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(caughtException).isSameAs(exception)
+            );
             
             then(kafkaLogger).should().logConsume("data-uploaded-topic", "데이터셋 업로드 이벤트 수신됨: dataId=456");
             then(kafkaLogger).should().logError(eq("data-uploaded-topic"), eq("데이터셋 업로드 이벤트 처리 실패: dataId=456"), any(RuntimeException.class));

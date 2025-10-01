@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -81,8 +82,10 @@ class UserDuplicateValidatorTest {
         Optional<User> result = validator.duplicateEmail("u@test.com");
 
         // then
-        assertThat(result).isPresent();
-        assertThat(result.get().getEmail()).isEqualTo("u@test.com");
+        assertAll(
+                () -> assertThat(result).isPresent(),
+                () -> assertThat(result.get().getEmail()).isEqualTo("u@test.com")
+        );
     }
 
     @Test

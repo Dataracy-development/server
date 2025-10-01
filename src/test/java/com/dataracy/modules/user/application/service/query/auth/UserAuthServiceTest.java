@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
@@ -105,8 +106,10 @@ class UserAuthServiceTest {
         RegisterTokenResponse res = service.handleNewUser(kakaoUserInfo());
 
         // then
-        assertThat(res.registerToken()).isEqualTo("register-token");
-        assertThat(res.registerTokenExpiration()).isEqualTo(1000L);
+        assertAll(
+                () -> assertThat(res.registerToken()).isEqualTo("register-token"),
+                () -> assertThat(res.registerTokenExpiration()).isEqualTo(1000L)
+        );
     }
 
     // -------------------- handleExistingUser --------------------
@@ -142,8 +145,10 @@ class UserAuthServiceTest {
         );
 
         // then
-        assertThat(ex).isNotNull();
-        assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.NOT_FOUND_USER);
+        assertAll(
+                () -> assertThat(ex).isNotNull(),
+                () -> assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.NOT_FOUND_USER)
+        );
         then(manageRefreshTokenUseCase).shouldHaveNoInteractions();
     }
 
@@ -177,8 +182,10 @@ class UserAuthServiceTest {
         );
 
         // then
-        assertThat(ex).isNotNull();
-        assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.BAD_REQUEST_LOGIN);
+        assertAll(
+                () -> assertThat(ex).isNotNull(),
+                () -> assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.BAD_REQUEST_LOGIN)
+        );
     }
 
     @Test
@@ -196,7 +203,9 @@ class UserAuthServiceTest {
         );
 
         // then
-        assertThat(ex).isNotNull();
-        assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.BAD_REQUEST_LOGIN);
+        assertAll(
+                () -> assertThat(ex).isNotNull(),
+                () -> assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.BAD_REQUEST_LOGIN)
+        );
     }
 }

@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -109,8 +110,10 @@ class UserProfileServiceTest {
         @Test
         @DisplayName("null/빈 리스트 → 빈 Map 반환")
         void findUsernamesByIdsEmpty() {
-            assertThat(service.findUsernamesByIds(null)).isEmpty();
-            assertThat(service.findUsernamesByIds(List.of())).isEmpty();
+        assertAll(
+                () -> assertThat(service.findUsernamesByIds(null)).isEmpty(),
+                () -> assertThat(service.findUsernamesByIds(List.of())).isEmpty()
+        );
         }
 
         @Test
@@ -135,8 +138,10 @@ class UserProfileServiceTest {
         @Test
         @DisplayName("null/빈 리스트 → 빈 Map 반환")
         void findUserThumbnailsByIdsEmpty() {
-            assertThat(service.findUserThumbnailsByIds(null)).isEmpty();
-            assertThat(service.findUserThumbnailsByIds(List.of())).isEmpty();
+        assertAll(
+                () -> assertThat(service.findUserThumbnailsByIds(null)).isEmpty(),
+                () -> assertThat(service.findUserThumbnailsByIds(List.of())).isEmpty()
+        );
         }
 
         @Test
@@ -161,8 +166,10 @@ class UserProfileServiceTest {
         @Test
         @DisplayName("null/빈 리스트 → 빈 Map 반환")
         void findUserAuthorLevelIdsEmpty() {
-            assertThat(service.findUserAuthorLevelIds(null)).isEmpty();
-            assertThat(service.findUserAuthorLevelIds(List.of())).isEmpty();
+        assertAll(
+                () -> assertThat(service.findUserAuthorLevelIds(null)).isEmpty(),
+                () -> assertThat(service.findUserAuthorLevelIds(List.of())).isEmpty()
+        );
         }
 
         @Test
@@ -191,8 +198,10 @@ class UserProfileServiceTest {
         UserInfo res = service.extractUserInfo(10L);
 
         // then
-        assertThat(res.email()).isEqualTo("u@test.com");
-        assertThat(res.nickname()).isEqualTo("nick");
+        assertAll(
+                () -> assertThat(res.email()).isEqualTo("u@test.com"),
+                () -> assertThat(res.nickname()).isEqualTo("nick")
+        );
     }
 
     @Test
@@ -225,11 +234,13 @@ class UserProfileServiceTest {
         GetUserInfoResponse res = service.getUserInfo(10L);
 
         // then
-        assertThat(res.nickname()).isEqualTo("nick");
-        assertThat(res.authorLevelLabel()).isEqualTo("Author");
-        assertThat(res.occupationLabel()).isEqualTo("Dev");
-        assertThat(res.topicLabels()).containsExactly("TopicA", "TopicB");
-        assertThat(res.visitSourceLabel()).isEqualTo("SNS");
+        assertAll(
+                () -> assertThat(res.nickname()).isEqualTo("nick"),
+                () -> assertThat(res.authorLevelLabel()).isEqualTo("Author"),
+                () -> assertThat(res.occupationLabel()).isEqualTo("Dev"),
+                () -> assertThat(res.topicLabels()).containsExactly("TopicA", "TopicB"),
+                () -> assertThat(res.visitSourceLabel()).isEqualTo("SNS")
+        );
     }
 
     @Test

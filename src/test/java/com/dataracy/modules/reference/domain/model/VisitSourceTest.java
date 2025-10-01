@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("VisitSource 테스트")
 class VisitSourceTest {
@@ -20,9 +21,11 @@ class VisitSourceTest {
         VisitSource visitSource = new VisitSource(id, value, label);
 
         // Then
-        assertThat(visitSource.id()).isEqualTo(id);
-        assertThat(visitSource.value()).isEqualTo(value);
-        assertThat(visitSource.label()).isEqualTo(label);
+        assertAll(
+                () -> assertThat(visitSource.id()).isEqualTo(id),
+                () -> assertThat(visitSource.value()).isEqualTo(value),
+                () -> assertThat(visitSource.label()).isEqualTo(label)
+        );
     }
 
     @Test
@@ -34,9 +37,10 @@ class VisitSourceTest {
         VisitSource visitSource3 = new VisitSource(2L, "naver", "네이버");
 
         // When & Then
-        assertThat(visitSource1).isEqualTo(visitSource2);
-        assertThat(visitSource1.hashCode()).isEqualTo(visitSource2.hashCode());
-        assertThat(visitSource1).isNotEqualTo(visitSource3);
+        assertThat(visitSource1)
+                .isEqualTo(visitSource2)
+                .hasSameHashCodeAs(visitSource2)
+                .isNotEqualTo(visitSource3);
     }
 
     @Test
@@ -49,10 +53,11 @@ class VisitSourceTest {
         String toString = visitSource.toString();
 
         // Then
-        assertThat(toString).contains("VisitSource");
-        assertThat(toString).contains("1");
-        assertThat(toString).contains("direct");
-        assertThat(toString).contains("직접 접속");
+        assertThat(toString)
+                .contains("VisitSource")
+                .contains("1")
+                .contains("direct")
+                .contains("직접 접속");
     }
 
     @Test
@@ -62,9 +67,11 @@ class VisitSourceTest {
         VisitSource visitSource = new VisitSource(null, null, null);
 
         // Then
-        assertThat(visitSource.id()).isNull();
-        assertThat(visitSource.value()).isNull();
-        assertThat(visitSource.label()).isNull();
+        assertAll(
+                () -> assertThat(visitSource.id()).isNull(),
+                () -> assertThat(visitSource.value()).isNull(),
+                () -> assertThat(visitSource.label()).isNull()
+        );
     }
 
     @Test
@@ -76,12 +83,13 @@ class VisitSourceTest {
         VisitSource visitSource3 = new VisitSource(3L, "direct", "직접 접속");
 
         // Then
-        assertThat(visitSource1.value()).isEqualTo("google");
-        assertThat(visitSource2.value()).isEqualTo("naver");
-        assertThat(visitSource3.value()).isEqualTo("direct");
-        
-        assertThat(visitSource1.label()).isEqualTo("구글");
-        assertThat(visitSource2.label()).isEqualTo("네이버");
-        assertThat(visitSource3.label()).isEqualTo("직접 접속");
+        assertAll(
+                () -> assertThat(visitSource1.value()).isEqualTo("google"),
+                () -> assertThat(visitSource2.value()).isEqualTo("naver"),
+                () -> assertThat(visitSource3.value()).isEqualTo("direct"),
+                () -> assertThat(visitSource1.label()).isEqualTo("구글"),
+                () -> assertThat(visitSource2.label()).isEqualTo("네이버"),
+                () -> assertThat(visitSource3.label()).isEqualTo("직접 접속")
+        );
     }
 }

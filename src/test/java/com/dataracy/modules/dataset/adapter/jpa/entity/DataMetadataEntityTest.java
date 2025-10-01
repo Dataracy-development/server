@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataMetadataEntityTest {
 
@@ -24,9 +25,11 @@ class DataMetadataEntityTest {
         entity.updateFrom(metadata);
 
         // then
-        assertThat(entity.getRowCount()).isEqualTo(5);
-        assertThat(entity.getColumnCount()).isEqualTo(6);
-        assertThat(entity.getPreviewJson()).isEqualTo("newPreview");
+        assertAll(
+                () -> assertThat(entity.getRowCount()).isEqualTo(5),
+                () -> assertThat(entity.getColumnCount()).isEqualTo(6),
+                () -> assertThat(entity.getPreviewJson()).isEqualTo("newPreview")
+        );
     }
 
     @Test
@@ -40,7 +43,9 @@ class DataMetadataEntityTest {
         metadata.updateData(data);
 
         // then
-        assertThat(metadata.getData()).isEqualTo(data);
-        assertThat(data.getMetadata()).isEqualTo(metadata);
+        assertAll(
+                () -> assertThat(metadata.getData()).isEqualTo(data),
+                () -> assertThat(data.getMetadata()).isEqualTo(metadata)
+        );
     }
 }

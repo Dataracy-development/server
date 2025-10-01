@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -39,10 +40,12 @@ class DataSourceDbAdapterTest {
         List<DataSource> result = adapter.findAllDataSources();
 
         // then
-        assertThat(result).hasSize(2);
-        assertThat(result.get(0).id()).isEqualTo(1L);
-        assertThat(result.get(0).value()).isEqualTo("v1");
-        assertThat(result.get(0).label()).isEqualTo("l1");
+        assertAll(
+                () -> assertThat(result).hasSize(2),
+                () -> assertThat(result.get(0).id()).isEqualTo(1L),
+                () -> assertThat(result.get(0).value()).isEqualTo("v1"),
+                () -> assertThat(result.get(0).label()).isEqualTo("l1")
+        );
         then(dataSourceJpaRepository).should().findAll();
     }
 
@@ -60,9 +63,11 @@ class DataSourceDbAdapterTest {
         Optional<DataSource> missing = adapter.findDataSourceById(999L);
 
         // then
-        assertThat(found).isPresent();
-        assertThat(found.get().id()).isEqualTo(id);
-        assertThat(missing).isEmpty();
+        assertAll(
+                () -> assertThat(found).isPresent(),
+                () -> assertThat(found.get().id()).isEqualTo(id),
+                () -> assertThat(missing).isEmpty()
+        );
         then(dataSourceJpaRepository).should(times(1)).findById(id);
         then(dataSourceJpaRepository).should(times(1)).findById(999L);
     }
@@ -75,8 +80,10 @@ class DataSourceDbAdapterTest {
         given(dataSourceJpaRepository.existsById(2L)).willReturn(false);
 
         // when & then
-        assertThat(adapter.existsDataSourceById(1L)).isTrue();
-        assertThat(adapter.existsDataSourceById(2L)).isFalse();
+        assertAll(
+                () -> assertThat(adapter.existsDataSourceById(1L)).isTrue(),
+                () -> assertThat(adapter.existsDataSourceById(2L)).isFalse()
+        );
         then(dataSourceJpaRepository).should().existsById(1L);
         then(dataSourceJpaRepository).should().existsById(2L);
     }
@@ -89,8 +96,10 @@ class DataSourceDbAdapterTest {
         given(dataSourceJpaRepository.findLabelById(9L)).willReturn(Optional.empty());
 
         // when & then
-        assertThat(adapter.getLabelById(1L)).contains("L1");
-        assertThat(adapter.getLabelById(9L)).isEmpty();
+        assertAll(
+                () -> assertThat(adapter.getLabelById(1L)).contains("L1"),
+                () -> assertThat(adapter.getLabelById(9L)).isEmpty()
+        );
         then(dataSourceJpaRepository).should().findLabelById(1L);
         then(dataSourceJpaRepository).should().findLabelById(9L);
     }

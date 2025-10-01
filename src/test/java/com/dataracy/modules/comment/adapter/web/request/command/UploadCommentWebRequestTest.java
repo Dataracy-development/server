@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class UploadCommentWebRequestTest {
 
@@ -30,9 +31,11 @@ class UploadCommentWebRequestTest {
         Set<ConstraintViolation<UploadCommentWebRequest>> violations = validator.validate(req);
 
         // then
-        assertThat(violations).isEmpty();
-        assertThat(req.content()).isEqualTo("댓글 내용");
-        assertThat(req.parentCommentId()).isEqualTo(1L);
+        assertAll(
+                () -> assertThat(violations).isEmpty(),
+                () -> assertThat(req.content()).isEqualTo("댓글 내용"),
+                () -> assertThat(req.parentCommentId()).isEqualTo(1L)
+        );
     }
 
     @Test
@@ -58,8 +61,10 @@ class UploadCommentWebRequestTest {
         Set<ConstraintViolation<UploadCommentWebRequest>> violations = validator.validate(req);
 
         // then
-        assertThat(violations).isEmpty();
-        assertThat(req.parentCommentId()).isNull();
+        assertAll(
+                () -> assertThat(violations).isEmpty(),
+                () -> assertThat(req.parentCommentId()).isNull()
+        );
     }
 
     @Test

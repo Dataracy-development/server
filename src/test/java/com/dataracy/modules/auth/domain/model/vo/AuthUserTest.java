@@ -6,7 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("AuthUser 테스트")
 class AuthUserTest {
@@ -24,10 +25,12 @@ class AuthUserTest {
         AuthUser authUser = new AuthUser(userId, role, email, nickname);
 
         // Then
-        assertThat(authUser.userId()).isEqualTo(userId);
-        assertThat(authUser.role()).isEqualTo(role);
-        assertThat(authUser.email()).isEqualTo(email);
-        assertThat(authUser.nickname()).isEqualTo(nickname);
+        assertAll(
+                () -> assertThat(authUser.userId()).isEqualTo(userId),
+                () -> assertThat(authUser.role()).isEqualTo(role),
+                () -> assertThat(authUser.email()).isEqualTo(email),
+                () -> assertThat(authUser.nickname()).isEqualTo(nickname)
+        );
     }
 
     @Test
@@ -51,10 +54,12 @@ class AuthUserTest {
         AuthUser authUser = AuthUser.from(userInfo);
 
         // Then
-        assertThat(authUser.userId()).isEqualTo(123L);
-        assertThat(authUser.role()).isEqualTo(RoleType.ROLE_ADMIN);
-        assertThat(authUser.email()).isEqualTo("admin@example.com");
-        assertThat(authUser.nickname()).isEqualTo("adminUser");
+        assertAll(
+                () -> assertThat(authUser.userId()).isEqualTo(123L),
+                () -> assertThat(authUser.role()).isEqualTo(RoleType.ROLE_ADMIN),
+                () -> assertThat(authUser.email()).isEqualTo("admin@example.com"),
+                () -> assertThat(authUser.nickname()).isEqualTo("adminUser")
+        );
     }
 
     @Test
@@ -64,8 +69,13 @@ class AuthUserTest {
         UserInfo userInfo = null;
 
         // When & Then
-        assertThatThrownBy(() -> AuthUser.from(userInfo))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> AuthUser.from(userInfo),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 
     @Test
@@ -77,9 +87,10 @@ class AuthUserTest {
         AuthUser authUser3 = new AuthUser(2L, RoleType.ROLE_USER, "test@example.com", "testUser");
 
         // When & Then
-        assertThat(authUser1).isEqualTo(authUser2);
-        assertThat(authUser1.hashCode()).isEqualTo(authUser2.hashCode());
-        assertThat(authUser1).isNotEqualTo(authUser3);
+        assertThat(authUser1)
+                .isEqualTo(authUser2)
+                .hasSameHashCodeAs(authUser2)
+                .isNotEqualTo(authUser3);
     }
 
     @Test
@@ -92,11 +103,12 @@ class AuthUserTest {
         String toString = authUser.toString();
 
         // Then
-        assertThat(toString).contains("AuthUser");
-        assertThat(toString).contains("1");
-        assertThat(toString).contains("ROLE_USER");
-        assertThat(toString).contains("test@example.com");
-        assertThat(toString).contains("testUser");
+        assertThat(toString)
+                .contains("AuthUser")
+                .contains("1")
+                .contains("ROLE_USER")
+                .contains("test@example.com")
+                .contains("testUser");
     }
 
     @Test
@@ -107,8 +119,15 @@ class AuthUserTest {
         AuthUser admin = new AuthUser(2L, RoleType.ROLE_ADMIN, "admin@example.com", "admin");
         AuthUser anonymous = new AuthUser(null, RoleType.ROLE_ANONYMOUS, null, "anonymous");
 
-        assertThat(user.role()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(admin.role()).isEqualTo(RoleType.ROLE_ADMIN);
-        assertThat(anonymous.role()).isEqualTo(RoleType.ROLE_ANONYMOUS);
+        assertAll(
+
+                () -> assertThat(user.role()).isEqualTo(RoleType.ROLE_USER),
+
+                () -> assertThat(admin.role()).isEqualTo(RoleType.ROLE_ADMIN),
+
+                () -> assertThat(anonymous.role()).isEqualTo(RoleType.ROLE_ANONYMOUS)
+
+        );
+
     }
 }

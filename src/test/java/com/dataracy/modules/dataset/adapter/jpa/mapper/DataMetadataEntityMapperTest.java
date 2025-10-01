@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataMetadataEntityMapperTest {
 
@@ -37,9 +38,11 @@ class DataMetadataEntityMapperTest {
         DataMetadata result = DataMetadataEntityMapper.toDomain(entity);
 
         // then
-        assertThat(result.getRowCount()).isEqualTo(5);
-        assertThat(result.getColumnCount()).isEqualTo(6);
-        assertThat(result.getPreviewJson()).isEqualTo("json");
+        assertAll(
+                () -> assertThat(result.getRowCount()).isEqualTo(5),
+                () -> assertThat(result.getColumnCount()).isEqualTo(6),
+                () -> assertThat(result.getPreviewJson()).isEqualTo("json")
+        );
     }
 
     @Test

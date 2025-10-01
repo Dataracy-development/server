@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.BDDAssertions.thenCode;
 
 class NoOpRateLimitAdapterTest {
@@ -66,9 +67,16 @@ class NoOpRateLimitAdapterTest {
         boolean thirdCall = noOpRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
 
         // then
-        assertThat(firstCall).isTrue();
-        assertThat(secondCall).isTrue();
-        assertThat(thirdCall).isTrue();
+        assertAll(
+
+                () -> assertThat(firstCall).isTrue(),
+
+                () -> assertThat(secondCall).isTrue(),
+
+                () -> assertThat(thirdCall).isTrue()
+
+        );
+
     }
 }
 

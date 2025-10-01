@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class LoadProjectEsProjectionTaskDbAdapterTest {
@@ -47,8 +48,10 @@ class LoadProjectEsProjectionTaskDbAdapterTest {
         List<ProjectEsProjectionTaskEntity> result = adapter.findBatchForWork(now, statuses, pageable);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getProjectId()).isEqualTo(100L);
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result.get(0).getProjectId()).isEqualTo(100L)
+        );
         then(repo).should().findBatchForWork(now, statuses, pageable);
     }
 

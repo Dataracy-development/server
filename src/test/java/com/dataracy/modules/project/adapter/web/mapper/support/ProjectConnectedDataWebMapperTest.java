@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectConnectedDataWebMapperTest {
 
@@ -34,18 +35,20 @@ class ProjectConnectedDataWebMapperTest {
         ProjectConnectedDataWebResponse webResponse = mapper.toWebDto(responseDto);
 
         // then
-        assertThat(webResponse.id()).isEqualTo(1L);
-        assertThat(webResponse.title()).isEqualTo("dataset-title");
-        assertThat(webResponse.topicLabel()).isEqualTo("topic-label");
-        assertThat(webResponse.dataTypeLabel()).isEqualTo("CSV");
-        assertThat(webResponse.startDate()).isEqualTo(startDate);
-        assertThat(webResponse.endDate()).isEqualTo(endDate);
-        assertThat(webResponse.dataThumbnailUrl()).isEqualTo("thumb.png");
-        assertThat(webResponse.downloadCount()).isEqualTo(3);
-        assertThat(webResponse.rowCount()).isEqualTo(55);
-        assertThat(webResponse.columnCount()).isEqualTo(100);
-        assertThat(webResponse.createdAt()).isEqualTo(createdAt);
-        assertThat(webResponse.countConnectedProjects()).isEqualTo(5L);
+        assertAll(
+                () -> assertThat(webResponse.id()).isEqualTo(1L),
+                () -> assertThat(webResponse.title()).isEqualTo("dataset-title"),
+                () -> assertThat(webResponse.topicLabel()).isEqualTo("topic-label"),
+                () -> assertThat(webResponse.dataTypeLabel()).isEqualTo("CSV"),
+                () -> assertThat(webResponse.startDate()).isEqualTo(startDate),
+                () -> assertThat(webResponse.endDate()).isEqualTo(endDate),
+                () -> assertThat(webResponse.dataThumbnailUrl()).isEqualTo("thumb.png"),
+                () -> assertThat(webResponse.downloadCount()).isEqualTo(3),
+                () -> assertThat(webResponse.rowCount()).isEqualTo(55),
+                () -> assertThat(webResponse.columnCount()).isEqualTo(100),
+                () -> assertThat(webResponse.createdAt()).isEqualTo(createdAt),
+                () -> assertThat(webResponse.countConnectedProjects()).isEqualTo(5L)
+        );
     }
 
     @Test

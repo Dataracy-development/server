@@ -16,6 +16,7 @@ import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -65,8 +66,10 @@ class LikeQueryDslAdapterIntegrationTest {
             List<Long> result = likeAdapter.findLikedTargetIds(1L, targetIds, TargetType.PROJECT);
 
             // then
-            assertThat(result).hasSize(1);
-            assertThat(result).contains(1L);
+            assertAll(
+                    () -> assertThat(result).hasSize(1),
+                    () -> assertThat(result).contains(1L)
+            );
         }
 
         @Test
@@ -193,9 +196,11 @@ class LikeQueryDslAdapterIntegrationTest {
             List<Long> likedTargets = likeAdapter.findLikedTargetIds(1L, List.of(1L, 2L), TargetType.PROJECT);
 
             // then
-            assertThat(isLiked).isTrue();
-            assertThat(likedTargets).hasSize(1);
-            assertThat(likedTargets).contains(1L);
+            assertAll(
+                    () -> assertThat(isLiked).isTrue(),
+                    () -> assertThat(likedTargets).hasSize(1),
+                    () -> assertThat(likedTargets).contains(1L)
+            );
         }
 
         @Test
@@ -206,9 +211,11 @@ class LikeQueryDslAdapterIntegrationTest {
             List<Long> likedTargets = likeAdapter.findLikedTargetIds(1L, List.of(1L, 2L), TargetType.COMMENT);
 
             // then
-            assertThat(isLiked).isTrue();
-            assertThat(likedTargets).hasSize(1);
-            assertThat(likedTargets).contains(2L);
+            assertAll(
+                    () -> assertThat(isLiked).isTrue(),
+                    () -> assertThat(likedTargets).hasSize(1),
+                    () -> assertThat(likedTargets).contains(2L)
+            );
         }
     }
 
@@ -226,9 +233,11 @@ class LikeQueryDslAdapterIntegrationTest {
             boolean user3Liked = likeAdapter.isLikedTarget(3L, 1L, TargetType.PROJECT);
 
             // then
-            assertThat(user1Liked).isTrue();
-            assertThat(user2Liked).isTrue();
-            assertThat(user3Liked).isFalse();
+            assertAll(
+                    () -> assertThat(user1Liked).isTrue(),
+                    () -> assertThat(user2Liked).isTrue(),
+                    () -> assertThat(user3Liked).isFalse()
+            );
         }
 
         @Test
@@ -240,10 +249,12 @@ class LikeQueryDslAdapterIntegrationTest {
             List<Long> commentLikes = likeAdapter.findLikedTargetIds(1L, List.of(1L, 2L, 3L), TargetType.COMMENT);
 
             // then
-            assertThat(projectLikes).hasSize(1);
-            assertThat(projectLikes).contains(1L);
-            assertThat(commentLikes).hasSize(1);
-            assertThat(commentLikes).contains(2L);
+            assertAll(
+                    () -> assertThat(projectLikes).hasSize(1),
+                    () -> assertThat(projectLikes).contains(1L),
+                    () -> assertThat(commentLikes).hasSize(1),
+                    () -> assertThat(commentLikes).contains(2L)
+            );
         }
     }
 }

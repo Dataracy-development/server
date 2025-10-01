@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("ProjectException 테스트")
 class ProjectExceptionTest {
@@ -35,10 +36,12 @@ class ProjectExceptionTest {
         ProjectException exception = new ProjectException(errorCode);
 
         // Then
-        assertThat(exception.getErrorCode()).isEqualTo(errorCode);
-        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(exception.getCode()).isEqualTo("PROJECT_001");
-        assertThat(exception.getMessage()).isEqualTo("프로젝트를 찾을 수 없습니다.");
+        assertAll(
+                () -> assertThat(exception.getErrorCode()).isEqualTo(errorCode),
+                () -> assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.NOT_FOUND),
+                () -> assertThat(exception.getCode()).isEqualTo("PROJECT_001"),
+                () -> assertThat(exception.getMessage()).isEqualTo("프로젝트를 찾을 수 없습니다.")
+        );
     }
 
     @Test
@@ -66,8 +69,9 @@ class ProjectExceptionTest {
         ProjectException exception = new ProjectException(errorCode);
 
         // Then
-        assertThat(exception).isInstanceOf(com.dataracy.modules.common.exception.BusinessException.class);
-        assertThat(exception).isInstanceOf(com.dataracy.modules.common.exception.CustomException.class);
-        assertThat(exception).isInstanceOf(RuntimeException.class);
+        assertThat(exception)
+                .isInstanceOf(com.dataracy.modules.common.exception.BusinessException.class)
+                .isInstanceOf(com.dataracy.modules.common.exception.CustomException.class)
+                .isInstanceOf(RuntimeException.class);
     }
 }

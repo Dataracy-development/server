@@ -17,7 +17,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
@@ -75,9 +78,10 @@ class SendEmailSendGridAdapterTest {
             );
 
             // then
-            assertThat(ex)
-                    .isNotNull();
-            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.EMAIL_SEND_FAILURE);
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.EMAIL_SEND_FAILURE)
+            );
         }
 
         @Test
@@ -94,9 +98,10 @@ class SendEmailSendGridAdapterTest {
             );
 
             // then
-            assertThat(ex)
-                    .isNotNull();
-            assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.EMAIL_SEND_FAILURE);
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.EMAIL_SEND_FAILURE)
+            );
         }
     }
 
@@ -117,9 +122,10 @@ class SendEmailSendGridAdapterTest {
             );
 
             // then
-            assertThat(ex)
-                    .isNotNull()
-                    .hasMessageContaining("sender");
+            assertAll(
+                    () -> assertThat(ex).isNotNull(),
+                    () -> assertThat(ex).hasMessageContaining("sender")
+            );
         }
     }
 }

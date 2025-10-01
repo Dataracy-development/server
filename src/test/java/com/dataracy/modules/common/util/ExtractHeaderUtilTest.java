@@ -9,6 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("ExtractHeaderUtil 테스트")
 class ExtractHeaderUtilTest {
@@ -24,8 +25,10 @@ class ExtractHeaderUtilTest {
         Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
         // Then
-        assertThat(token).isPresent();
-        assertThat(token.get()).isEqualTo("valid-token-123");
+        assertAll(
+                () -> assertThat(token).isPresent(),
+                () -> assertThat(token.get()).isEqualTo("valid-token-123")
+        );
     }
 
     @Test
@@ -74,8 +77,10 @@ class ExtractHeaderUtilTest {
         Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
         // Then
-        assertThat(token).isPresent();
-        assertThat(token.get()).isEmpty();
+        assertAll(
+                () -> assertThat(token).isPresent(),
+                () -> assertThat(token.get()).isEmpty()
+        );
     }
 
     @Test
@@ -89,7 +94,9 @@ class ExtractHeaderUtilTest {
         Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
         // Then
-        assertThat(token).isPresent();
-        assertThat(token.get()).isEqualTo("token with spaces");
+        assertAll(
+                () -> assertThat(token).isPresent(),
+                () -> assertThat(token.get()).isEqualTo("token with spaces")
+        );
     }
 }

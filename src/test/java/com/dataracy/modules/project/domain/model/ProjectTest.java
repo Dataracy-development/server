@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 /**
  * Project 도메인 모델 테스트
@@ -73,25 +74,27 @@ class ProjectTest {
         );
 
         // then
-        assertThat(project).isNotNull();
-        assertThat(project.getId()).isEqualTo(1L);
-        assertThat(project.getTitle()).isEqualTo("테스트 프로젝트");
-        assertThat(project.getTopicId()).isEqualTo(1L);
-        assertThat(project.getUserId()).isEqualTo(1L);
-        assertThat(project.getAnalysisPurposeId()).isEqualTo(1L);
-        assertThat(project.getDataSourceId()).isEqualTo(1L);
-        assertThat(project.getAuthorLevelId()).isEqualTo(1L);
-        assertThat(project.getIsContinue()).isFalse();
-        assertThat(project.getParentProjectId()).isEqualTo(1L);
-        assertThat(project.getContent()).isEqualTo("프로젝트 내용");
-        assertThat(project.getThumbnailUrl()).isEqualTo("thumbnail.jpg");
-        assertThat(project.getDataIds()).isEqualTo(dataIds);
-        assertThat(project.getCommentCount()).isEqualTo(5L);
-        assertThat(project.getLikeCount()).isEqualTo(10L);
-        assertThat(project.getViewCount()).isEqualTo(100L);
-        assertThat(project.getIsDeleted()).isFalse();
-        assertThat(project.getCreatedAt()).isEqualTo(now);
-        assertThat(project.getChildProjects()).isEqualTo(childProjects);
+        assertAll(
+                () -> assertThat(project).isNotNull(),
+                () -> assertThat(project.getId()).isEqualTo(1L),
+                () -> assertThat(project.getTitle()).isEqualTo("테스트 프로젝트"),
+                () -> assertThat(project.getTopicId()).isEqualTo(1L),
+                () -> assertThat(project.getUserId()).isEqualTo(1L),
+                () -> assertThat(project.getAnalysisPurposeId()).isEqualTo(1L),
+                () -> assertThat(project.getDataSourceId()).isEqualTo(1L),
+                () -> assertThat(project.getAuthorLevelId()).isEqualTo(1L),
+                () -> assertThat(project.getIsContinue()).isFalse(),
+                () -> assertThat(project.getParentProjectId()).isEqualTo(1L),
+                () -> assertThat(project.getContent()).isEqualTo("프로젝트 내용"),
+                () -> assertThat(project.getThumbnailUrl()).isEqualTo("thumbnail.jpg"),
+                () -> assertThat(project.getDataIds()).isEqualTo(dataIds),
+                () -> assertThat(project.getCommentCount()).isEqualTo(5L),
+                () -> assertThat(project.getLikeCount()).isEqualTo(10L),
+                () -> assertThat(project.getViewCount()).isEqualTo(100L),
+                () -> assertThat(project.getIsDeleted()).isFalse(),
+                () -> assertThat(project.getCreatedAt()).isEqualTo(now),
+                () -> assertThat(project.getChildProjects()).isEqualTo(childProjects)
+        );
     }
 
     @Test
@@ -120,25 +123,27 @@ class ProjectTest {
                 .build();
 
         // then
-        assertThat(project).isNotNull();
-        assertThat(project.getId()).isEqualTo(1L);
-        assertThat(project.getTitle()).isEqualTo("빌더 테스트 프로젝트");
-        assertThat(project.getTopicId()).isEqualTo(2L);
-        assertThat(project.getUserId()).isEqualTo(3L);
-        assertThat(project.getAnalysisPurposeId()).isEqualTo(4L);
-        assertThat(project.getDataSourceId()).isEqualTo(5L);
-        assertThat(project.getAuthorLevelId()).isEqualTo(6L);
-        assertThat(project.getIsContinue()).isTrue();
-        assertThat(project.getParentProjectId()).isEqualTo(7L);
-        assertThat(project.getContent()).isEqualTo("빌더로 생성한 프로젝트");
-        assertThat(project.getThumbnailUrl()).isEqualTo("builderThumbnail.jpg");
-        assertThat(project.getDataIds()).isEqualTo(List.of(10L, 20L));
-        assertThat(project.getCommentCount()).isEqualTo(15L);
-        assertThat(project.getLikeCount()).isEqualTo(25L);
-        assertThat(project.getViewCount()).isEqualTo(150L);
-        assertThat(project.getIsDeleted()).isFalse();
-        assertThat(project.getCreatedAt()).isNotNull();
-        assertThat(project.getChildProjects()).isEmpty();
+        assertAll(
+                () -> assertThat(project).isNotNull(),
+                () -> assertThat(project.getId()).isEqualTo(1L),
+                () -> assertThat(project.getTitle()).isEqualTo("빌더 테스트 프로젝트"),
+                () -> assertThat(project.getTopicId()).isEqualTo(2L),
+                () -> assertThat(project.getUserId()).isEqualTo(3L),
+                () -> assertThat(project.getAnalysisPurposeId()).isEqualTo(4L),
+                () -> assertThat(project.getDataSourceId()).isEqualTo(5L),
+                () -> assertThat(project.getAuthorLevelId()).isEqualTo(6L),
+                () -> assertThat(project.getIsContinue()).isTrue(),
+                () -> assertThat(project.getParentProjectId()).isEqualTo(7L),
+                () -> assertThat(project.getContent()).isEqualTo("빌더로 생성한 프로젝트"),
+                () -> assertThat(project.getThumbnailUrl()).isEqualTo("builderThumbnail.jpg"),
+                () -> assertThat(project.getDataIds()).isEqualTo(List.of(10L, 20L)),
+                () -> assertThat(project.getCommentCount()).isEqualTo(15L),
+                () -> assertThat(project.getLikeCount()).isEqualTo(25L),
+                () -> assertThat(project.getViewCount()).isEqualTo(150L),
+                () -> assertThat(project.getIsDeleted()).isFalse(),
+                () -> assertThat(project.getCreatedAt()).isNotNull(),
+                () -> assertThat(project.getChildProjects()).isEmpty()
+        );
     }
 
     @Test
@@ -152,8 +157,10 @@ class ProjectTest {
         );
 
         // then
-        assertThat(project).isNotNull();
-        assertThat(project.getDataIds()).isNull();
+        assertAll(
+                () -> assertThat(project).isNotNull(),
+                () -> assertThat(project.getDataIds()).isNull()
+        );
     }
 
     @Test
@@ -167,7 +174,9 @@ class ProjectTest {
         );
 
         // then
-        assertThat(project).isNotNull();
-        assertThat(project.getDataIds()).isEmpty();
+        assertAll(
+                () -> assertThat(project).isNotNull(),
+                () -> assertThat(project.getDataIds()).isEmpty()
+        );
     }
 }

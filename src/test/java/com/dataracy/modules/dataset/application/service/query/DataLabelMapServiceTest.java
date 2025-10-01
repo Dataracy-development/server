@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 
@@ -85,10 +86,12 @@ class DataLabelMapServiceTest {
         DataLabelMapResponse res = service.labelMapping(List.of(dto));
 
         // then
-        assertThat(res.usernameMap().get(3L)).isEqualTo("u");
-        assertThat(res.userProfileUrlMap().get(3L)).isEqualTo("http://~~");
-        assertThat(res.topicLabelMap().get(2L)).isEqualTo("topic");
-        assertThat(res.dataSourceLabelMap().get(4L)).isEqualTo("ds");
-        assertThat(res.dataTypeLabelMap().get(5L)).isEqualTo("dt");
+        assertAll(
+                () -> assertThat(res.usernameMap().get(3L)).isEqualTo("u"),
+                () -> assertThat(res.userProfileUrlMap().get(3L)).isEqualTo("http://~~"),
+                () -> assertThat(res.topicLabelMap().get(2L)).isEqualTo("topic"),
+                () -> assertThat(res.dataSourceLabelMap().get(4L)).isEqualTo("ds"),
+                () -> assertThat(res.dataTypeLabelMap().get(5L)).isEqualTo("dt")
+        );
     }
 }

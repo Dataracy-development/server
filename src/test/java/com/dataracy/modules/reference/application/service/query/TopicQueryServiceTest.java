@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -135,8 +136,10 @@ class TopicQueryServiceTest {
 
             // when & then
             ReferenceException exception = catchThrowableOfType(() -> service.findTopic(topicId), ReferenceException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME)
+            );
 
             then(topicPort).should().findTopicById(topicId);
             then(topicDtoMapper).should(never()).toResponseDto(any(Topic.class));
@@ -180,8 +183,10 @@ class TopicQueryServiceTest {
 
             // when & then
             ReferenceException exception = catchThrowableOfType(() -> service.validateTopic(topicId), ReferenceException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME)
+            );
 
             then(topicPort).should().existsTopicById(topicId);
             then(loggerService).should().logStart(eq("ValidateTopicUseCase"), 
@@ -225,8 +230,10 @@ class TopicQueryServiceTest {
 
             // when & then
             ReferenceException exception = catchThrowableOfType(() -> service.getLabelById(topicId), ReferenceException.class);
-            assertThat(exception).isNotNull();
-            assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME);
+            assertAll(
+                    () -> assertThat(exception).isNotNull(),
+                    () -> assertThat(exception.getErrorCode()).isEqualTo(ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME)
+            );
 
             then(topicPort).should().getLabelById(topicId);
             then(loggerService).should().logStart(eq("GetTopicLabelFromIdUseCase"), 

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity.dataEntity;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataSortBuilderTest {
 
@@ -18,9 +19,11 @@ class DataSortBuilderTest {
         OrderSpecifier<?>[] result = DataSortBuilder.fromSortOption(null, null);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(dataEntity.createdAt);
-        assertThat(result[0].isAscending()).isFalse();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(dataEntity.createdAt),
+                () -> assertThat(result[0].isAscending()).isFalse()
+        );
     }
 
     @Test
@@ -30,9 +33,11 @@ class DataSortBuilderTest {
         OrderSpecifier<?>[] result = DataSortBuilder.fromSortOption(DataSortType.LATEST, null);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(dataEntity.createdAt);
-        assertThat(result[0].isAscending()).isFalse();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(dataEntity.createdAt),
+                () -> assertThat(result[0].isAscending()).isFalse()
+        );
     }
 
     @Test
@@ -42,9 +47,11 @@ class DataSortBuilderTest {
         OrderSpecifier<?>[] result = DataSortBuilder.fromSortOption(DataSortType.OLDEST, null);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(dataEntity.createdAt);
-        assertThat(result[0].isAscending()).isTrue();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(dataEntity.createdAt),
+                () -> assertThat(result[0].isAscending()).isTrue()
+        );
     }
 
     @Test
@@ -54,9 +61,11 @@ class DataSortBuilderTest {
         OrderSpecifier<?>[] result = DataSortBuilder.fromSortOption(DataSortType.DOWNLOAD, null);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(dataEntity.downloadCount);
-        assertThat(result[0].isAscending()).isFalse();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(dataEntity.downloadCount),
+                () -> assertThat(result[0].isAscending()).isFalse()
+        );
     }
 
     @Test
@@ -69,8 +78,10 @@ class DataSortBuilderTest {
         OrderSpecifier<?>[] result = DataSortBuilder.fromSortOption(DataSortType.UTILIZE, projectCountPath);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result[0].getTarget()).isEqualTo(projectCountPath);
-        assertThat(result[0].isAscending()).isFalse();
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result[0].getTarget()).isEqualTo(projectCountPath),
+                () -> assertThat(result[0].isAscending()).isFalse()
+        );
     }
 }

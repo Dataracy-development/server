@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -80,12 +81,13 @@ class AwsS3FileStorageAdapterTest {
             then(amazonS3).should().putObject(putCaptor.capture());
 
             PutObjectRequest req = putCaptor.getValue();
-            assertThat(req.getBucketName()).isEqualTo("my-bucket");
-            assertThat(req.getKey()).isEqualTo("k");
-
             ObjectMetadata md = req.getMetadata();
-            assertThat(md.getContentLength()).isEqualTo(3L);
-            assertThat(md.getContentType()).isEqualTo("image/jpeg");
+            assertAll(
+                    () -> assertThat(req.getBucketName()).isEqualTo("my-bucket"),
+                    () -> assertThat(req.getKey()).isEqualTo("k"),
+                    () -> assertThat(md.getContentLength()).isEqualTo(3L),
+                    () -> assertThat(md.getContentType()).isEqualTo("image/jpeg")
+            );
         }
     }
 

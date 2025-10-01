@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
@@ -54,8 +55,10 @@ class SoftDeleteProjectDbAdapterTest {
             adapter.deleteProject(1L);
 
             // then
-            assertThat(parent.getIsDeleted()).isTrue(); // 소프트 삭제 확인
-            assertThat(child.getParentProject()).isNull(); // 자식 → 부모 해제 확인
+            assertAll(
+                    () -> assertThat(parent.getIsDeleted()).isTrue(), // 소프트 삭제 확인
+                    () -> assertThat(child.getParentProject()).isNull() // 자식 → 부모 해제 확인
+            );
             then(projectJpaRepository).should().saveAll(parent.getChildProjects());
             then(projectJpaRepository).should().save(parent);
         }

@@ -18,7 +18,8 @@ import org.springframework.data.redis.core.ValueOperations;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -78,13 +79,18 @@ class RefreshTokenRedisAdapterTest {
             // given
             String userId = "user456";
             String refreshToken = "refresh-token-456";
-            RedisConnectionFailureException exception = new RedisConnectionFailureException("Redis connection failed");
+            RedisConnectionFailureException redisException = new RedisConnectionFailureException("Redis connection failed");
             
-            doThrow(exception).when(valueOperations).set(anyString(), anyString(), anyLong(), any(TimeUnit.class));
+            doThrow(redisException).when(valueOperations).set(anyString(), anyString(), anyLong(), any(TimeUnit.class));
 
             // when & then
-            assertThatThrownBy(() -> adapter.saveRefreshToken(userId, refreshToken))
-                .isInstanceOf(CommonException.class);
+            CommonException exception = catchThrowableOfType(
+                    () -> adapter.saveRefreshToken(userId, refreshToken),
+                    CommonException.class
+            );
+            assertAll(
+                    () -> assertThat(exception).isNotNull()
+            );
         }
     }
 
@@ -146,13 +152,18 @@ class RefreshTokenRedisAdapterTest {
         void deleteRefreshToken_예외발생_CommonException변환() {
             // given
             String userId = "user333";
-            RedisConnectionFailureException exception = new RedisConnectionFailureException("Redis connection failed");
+            RedisConnectionFailureException redisException = new RedisConnectionFailureException("Redis connection failed");
             
-            given(redisTemplate.delete(anyString())).willThrow(exception);
+            given(redisTemplate.delete(anyString())).willThrow(redisException);
 
             // when & then
-            assertThatThrownBy(() -> adapter.deleteRefreshToken(userId))
-                .isInstanceOf(CommonException.class);
+            CommonException exception = catchThrowableOfType(
+                    () -> adapter.deleteRefreshToken(userId),
+                    CommonException.class
+            );
+            assertAll(
+                    () -> assertThat(exception).isNotNull()
+            );
         }
     }
 }

@@ -32,6 +32,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -111,14 +112,16 @@ class OtherUserProfileServiceTest {
         GetOtherUserInfoResponse result = service.getOtherUserInfo(userId);
 
         // then
-        assertThat(result.id()).isEqualTo(userId);
-        assertThat(result.nickname()).isEqualTo("닉네임");
-        assertThat(result.authorLevelLabel()).isEqualTo("중급");
-        assertThat(result.occupationLabel()).isEqualTo("데이터 분석가");
-        assertThat(result.profileImageUrl()).isEqualTo("profile.png");
-        assertThat(result.introductionText()).isEqualTo("자기소개");
-        assertThat(result.projects().getContent()).containsExactly(mappedProject);
-        assertThat(result.datasets().getContent()).containsExactly(mappedData);
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(userId),
+                () -> assertThat(result.nickname()).isEqualTo("닉네임"),
+                () -> assertThat(result.authorLevelLabel()).isEqualTo("중급"),
+                () -> assertThat(result.occupationLabel()).isEqualTo("데이터 분석가"),
+                () -> assertThat(result.profileImageUrl()).isEqualTo("profile.png"),
+                () -> assertThat(result.introductionText()).isEqualTo("자기소개"),
+                () -> assertThat(result.projects().getContent()).containsExactly(mappedProject),
+                () -> assertThat(result.datasets().getContent()).containsExactly(mappedData)
+        );
     }
 
     @Test
@@ -132,8 +135,10 @@ class OtherUserProfileServiceTest {
         Throwable ex = catchThrowable(() -> service.getOtherUserInfo(userId));
 
         // then
-        assertThat(ex).isInstanceOf(UserException.class)
-                .hasMessage(UserErrorStatus.NOT_FOUND_USER.getMessage());
+        assertAll(
+                () -> assertThat(ex).isInstanceOf(UserException.class),
+                () -> assertThat(ex).hasMessage(UserErrorStatus.NOT_FOUND_USER.getMessage())
+        );
     }
 
     @Test

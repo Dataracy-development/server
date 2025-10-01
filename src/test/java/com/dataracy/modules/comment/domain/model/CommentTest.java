@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 /**
  * Comment 도메인 모델 테스트
@@ -38,14 +39,16 @@ class CommentTest {
         Comment comment = Comment.of(id, projectId, userId, content, parentCommentId, likeCount, createdAt);
 
         // then
-        assertThat(comment).isNotNull();
-        assertThat(comment.getId()).isEqualTo(id);
-        assertThat(comment.getProjectId()).isEqualTo(projectId);
-        assertThat(comment.getUserId()).isEqualTo(userId);
-        assertThat(comment.getContent()).isEqualTo(content);
-        assertThat(comment.getParentCommentId()).isEqualTo(parentCommentId);
-        assertThat(comment.getLikeCount()).isEqualTo(likeCount);
-        assertThat(comment.getCreatedAt()).isEqualTo(createdAt);
+        assertAll(
+                () -> assertThat(comment).isNotNull(),
+                () -> assertThat(comment.getId()).isEqualTo(id),
+                () -> assertThat(comment.getProjectId()).isEqualTo(projectId),
+                () -> assertThat(comment.getUserId()).isEqualTo(userId),
+                () -> assertThat(comment.getContent()).isEqualTo(content),
+                () -> assertThat(comment.getParentCommentId()).isEqualTo(parentCommentId),
+                () -> assertThat(comment.getLikeCount()).isEqualTo(likeCount),
+                () -> assertThat(comment.getCreatedAt()).isEqualTo(createdAt)
+        );
     }
 
     @Test
@@ -72,14 +75,16 @@ class CommentTest {
                 .build();
 
         // then
-        assertThat(comment).isNotNull();
-        assertThat(comment.getId()).isEqualTo(id);
-        assertThat(comment.getProjectId()).isEqualTo(projectId);
-        assertThat(comment.getUserId()).isEqualTo(userId);
-        assertThat(comment.getContent()).isEqualTo(content);
-        assertThat(comment.getParentCommentId()).isEqualTo(parentCommentId);
-        assertThat(comment.getLikeCount()).isEqualTo(likeCount);
-        assertThat(comment.getCreatedAt()).isEqualTo(createdAt);
+        assertAll(
+                () -> assertThat(comment).isNotNull(),
+                () -> assertThat(comment.getId()).isEqualTo(id),
+                () -> assertThat(comment.getProjectId()).isEqualTo(projectId),
+                () -> assertThat(comment.getUserId()).isEqualTo(userId),
+                () -> assertThat(comment.getContent()).isEqualTo(content),
+                () -> assertThat(comment.getParentCommentId()).isEqualTo(parentCommentId),
+                () -> assertThat(comment.getLikeCount()).isEqualTo(likeCount),
+                () -> assertThat(comment.getCreatedAt()).isEqualTo(createdAt)
+        );
     }
 
     @Test
@@ -98,14 +103,16 @@ class CommentTest {
         Comment comment = Comment.of(id, projectId, userId, content, parentCommentId, likeCount, createdAt);
 
         // then
-        assertThat(comment).isNotNull();
-        assertThat(comment.getId()).isNull();
-        assertThat(comment.getProjectId()).isNull();
-        assertThat(comment.getUserId()).isNull();
-        assertThat(comment.getContent()).isNull();
-        assertThat(comment.getParentCommentId()).isNull();
-        assertThat(comment.getLikeCount()).isNull();
-        assertThat(comment.getCreatedAt()).isNull();
+        assertAll(
+                () -> assertThat(comment).isNotNull(),
+                () -> assertThat(comment.getId()).isNull(),
+                () -> assertThat(comment.getProjectId()).isNull(),
+                () -> assertThat(comment.getUserId()).isNull(),
+                () -> assertThat(comment.getContent()).isNull(),
+                () -> assertThat(comment.getParentCommentId()).isNull(),
+                () -> assertThat(comment.getLikeCount()).isNull(),
+                () -> assertThat(comment.getCreatedAt()).isNull()
+        );
     }
 
     @Test
@@ -124,8 +131,10 @@ class CommentTest {
         Comment comment = Comment.of(id, projectId, userId, content, parentCommentId, likeCount, createdAt);
 
         // then
-        assertThat(comment).isNotNull();
-        assertThat(comment.getContent()).isEqualTo("");
+        assertAll(
+                () -> assertThat(comment).isNotNull(),
+                () -> assertThat(comment.getContent()).isEmpty()
+        );
     }
 
     @Test
@@ -144,8 +153,10 @@ class CommentTest {
         Comment comment = Comment.of(id, projectId, userId, content, parentCommentId, likeCount, createdAt);
 
         // then
-        assertThat(comment).isNotNull();
-        assertThat(comment.getContent()).isEqualTo(content);
-        assertThat(comment.getContent().length()).isEqualTo(1000);
+        assertAll(
+                () -> assertThat(comment).isNotNull(),
+                () -> assertThat(comment.getContent()).isEqualTo(content),
+                () -> assertThat(comment.getContent().length()).isEqualTo(1000)
+        );
     }
 }

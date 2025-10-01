@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 /**
  * Like 서비스 통합 테스트
@@ -74,17 +75,22 @@ class LikeServiceIntegrationTest {
         TargetType result = likeTargetUseCase.likeTarget(testUser.getId(), request);
 
         // then
-        assertThat(result).isEqualTo(TargetType.PROJECT);
-        
-        // 데이터베이스에서 실제 저장 확인
-        var savedLikes = likeJpaRepository.findByUserIdAndTargetIdAndTargetType(
-                testUser.getId(), testProject.getId(), TargetType.PROJECT);
-        assertThat(savedLikes).isPresent();
-        
-        var savedLike = savedLikes.get();
-        assertThat(savedLike.getUserId()).isEqualTo(testUser.getId());
-        assertThat(savedLike.getTargetId()).isEqualTo(testProject.getId());
-        assertThat(savedLike.getTargetType()).isEqualTo(TargetType.PROJECT);
+        assertAll(
+                () -> assertThat(result).isEqualTo(TargetType.PROJECT),
+                () -> {
+                    // 데이터베이스에서 실제 저장 확인
+                    var savedLikes = likeJpaRepository.findByUserIdAndTargetIdAndTargetType(
+                            testUser.getId(), testProject.getId(), TargetType.PROJECT);
+                    assertThat(savedLikes).isPresent();
+                    
+                    var savedLike = savedLikes.get();
+                    assertAll(
+                            () -> assertThat(savedLike.getUserId()).isEqualTo(testUser.getId()),
+                            () -> assertThat(savedLike.getTargetId()).isEqualTo(testProject.getId()),
+                            () -> assertThat(savedLike.getTargetType()).isEqualTo(TargetType.PROJECT)
+                    );
+                }
+        );
     }
 
     @Test
@@ -99,12 +105,15 @@ class LikeServiceIntegrationTest {
         TargetType result = likeTargetUseCase.likeTarget(testUser.getId(), unlikeRequest);
 
         // then
-        assertThat(result).isEqualTo(TargetType.PROJECT);
-        
-        // 데이터베이스에서 삭제 확인
-        var remainingLikes = likeJpaRepository.findByUserIdAndTargetIdAndTargetType(
-                testUser.getId(), testProject.getId(), TargetType.PROJECT);
-        assertThat(remainingLikes).isEmpty();
+        assertAll(
+                () -> assertThat(result).isEqualTo(TargetType.PROJECT),
+                () -> {
+                    // 데이터베이스에서 삭제 확인
+                    var remainingLikes = likeJpaRepository.findByUserIdAndTargetIdAndTargetType(
+                            testUser.getId(), testProject.getId(), TargetType.PROJECT);
+                    assertThat(remainingLikes).isEmpty();
+                }
+        );
     }
 
     @Test
@@ -118,11 +127,14 @@ class LikeServiceIntegrationTest {
         TargetType result = likeTargetUseCase.likeTarget(testUser.getId(), request);
         
         // 정상적으로 처리되었는지 확인
-        assertThat(result).isEqualTo(TargetType.PROJECT);
-        
-        // 트랜잭션이 커밋되어 데이터가 저장되었는지 확인
-        var savedLikes = likeJpaRepository.findByUserIdAndTargetIdAndTargetType(
-                testUser.getId(), testProject.getId(), TargetType.PROJECT);
-        assertThat(savedLikes).isPresent();
+        assertAll(
+                () -> assertThat(result).isEqualTo(TargetType.PROJECT),
+                () -> {
+                    // 트랜잭션이 커밋되어 데이터가 저장되었는지 확인
+                    var savedLikes = likeJpaRepository.findByUserIdAndTargetIdAndTargetType(
+                            testUser.getId(), testProject.getId(), TargetType.PROJECT);
+                    assertThat(savedLikes).isPresent();
+                }
+        );
     }
 }

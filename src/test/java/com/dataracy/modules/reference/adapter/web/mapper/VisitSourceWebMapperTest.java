@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class VisitSourceWebMapperTest {
     private final VisitSourceWebMapper mapper = new VisitSourceWebMapper();
@@ -22,9 +23,11 @@ class VisitSourceWebMapperTest {
         VisitSourceWebResponse result = mapper.toWebDto(src);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.value()).isEqualTo("v");
-        assertThat(result.label()).isEqualTo("l");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.value()).isEqualTo("v"),
+                () -> assertThat(result.label()).isEqualTo("l")
+        );
     }
 
     @Test
@@ -39,8 +42,10 @@ class VisitSourceWebMapperTest {
         AllVisitSourcesWebResponse nullSafe2 = mapper.toWebDto(new AllVisitSourcesResponse(null));
 
         // then
-        assertThat(result.visitSources()).hasSize(2);
-        assertThat(nullSafe1.visitSources()).isEmpty();
-        assertThat(nullSafe2.visitSources()).isEmpty();
+        assertAll(
+                () -> assertThat(result.visitSources()).hasSize(2),
+                () -> assertThat(nullSafe1.visitSources()).isEmpty(),
+                () -> assertThat(nullSafe2.visitSources()).isEmpty()
+        );
     }
 }

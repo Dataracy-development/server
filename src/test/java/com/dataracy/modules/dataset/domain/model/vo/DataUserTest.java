@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataUserTest {
 
@@ -35,23 +36,30 @@ class DataUserTest {
         DataUser result = DataUser.fromUserInfo(userInfo);
 
         // then
-        assertThat(result.userId()).isEqualTo(1L);
-        assertThat(result.role()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(result.email()).isEqualTo("test@example.com");
-        assertThat(result.nickname()).isEqualTo("TestUser");
-        assertThat(result.profileImageUrl()).isEqualTo("http://example.com/profile.jpg");
-        assertThat(result.introductionText()).isEqualTo("Hello, I am a test user.");
-        assertThat(result.occupationId()).isEqualTo(2L);
-        assertThat(result.authorLevelId()).isEqualTo(1L);
+        assertAll(
+                () -> assertThat(result.userId()).isEqualTo(1L),
+                () -> assertThat(result.role()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(result.email()).isEqualTo("test@example.com"),
+                () -> assertThat(result.nickname()).isEqualTo("TestUser"),
+                () -> assertThat(result.profileImageUrl()).isEqualTo("http://example.com/profile.jpg"),
+                () -> assertThat(result.introductionText()).isEqualTo("Hello, I am a test user."),
+                () -> assertThat(result.occupationId()).isEqualTo(2L),
+                () -> assertThat(result.authorLevelId()).isEqualTo(1L)
+        );
     }
 
     @Test
     @DisplayName("fromUserInfo - UserInfo가 null인 경우 DataException이 발생한다")
     void fromUserInfo_WhenUserInfoIsNull_ThrowsDataException() {
         // when & then
-        assertThatThrownBy(() -> DataUser.fromUserInfo(null))
-                .isInstanceOf(DataException.class)
-                .hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.FAIL_GET_USER_INFO);
+        DataException exception = catchThrowableOfType(
+                () -> DataUser.fromUserInfo(null),
+                DataException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.FAIL_GET_USER_INFO)
+        );
     }
 
     @Test
@@ -75,14 +83,16 @@ class DataUserTest {
         DataUser result = DataUser.fromUserInfo(userInfo);
 
         // then
-        assertThat(result.userId()).isNull();
-        assertThat(result.role()).isNull();
-        assertThat(result.email()).isNull();
-        assertThat(result.nickname()).isNull();
-        assertThat(result.profileImageUrl()).isNull();
-        assertThat(result.introductionText()).isNull();
-        assertThat(result.occupationId()).isNull();
-        assertThat(result.authorLevelId()).isNull();
+        assertAll(
+                () -> assertThat(result.userId()).isNull(),
+                () -> assertThat(result.role()).isNull(),
+                () -> assertThat(result.email()).isNull(),
+                () -> assertThat(result.nickname()).isNull(),
+                () -> assertThat(result.profileImageUrl()).isNull(),
+                () -> assertThat(result.introductionText()).isNull(),
+                () -> assertThat(result.occupationId()).isNull(),
+                () -> assertThat(result.authorLevelId()).isNull()
+        );
     }
 
     @Test
@@ -106,13 +116,15 @@ class DataUserTest {
         DataUser result = DataUser.fromUserInfo(userInfo);
 
         // then
-        assertThat(result.userId()).isEqualTo(1L);
-        assertThat(result.role()).isEqualTo(RoleType.ROLE_ADMIN);
-        assertThat(result.email()).isEqualTo("admin@example.com");
-        assertThat(result.nickname()).isEqualTo("AdminUser");
-        assertThat(result.profileImageUrl()).isNull();
-        assertThat(result.introductionText()).isNull();
-        assertThat(result.occupationId()).isNull();
-        assertThat(result.authorLevelId()).isNull();
+        assertAll(
+                () -> assertThat(result.userId()).isEqualTo(1L),
+                () -> assertThat(result.role()).isEqualTo(RoleType.ROLE_ADMIN),
+                () -> assertThat(result.email()).isEqualTo("admin@example.com"),
+                () -> assertThat(result.nickname()).isEqualTo("AdminUser"),
+                () -> assertThat(result.profileImageUrl()).isNull(),
+                () -> assertThat(result.introductionText()).isNull(),
+                () -> assertThat(result.occupationId()).isNull(),
+                () -> assertThat(result.authorLevelId()).isNull()
+        );
     }
 }

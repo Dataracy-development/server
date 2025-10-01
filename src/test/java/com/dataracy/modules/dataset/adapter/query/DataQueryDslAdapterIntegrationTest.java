@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -135,9 +136,11 @@ class DataQueryDslAdapterIntegrationTest {
             Optional<Data> result = readAdapter.findDataById(savedData.getId());
 
             // then
-            assertThat(result).isPresent();
-            assertThat(result.get().getTitle()).isEqualTo("테스트 데이터");
-            assertThat(result.get().getDescription()).isEqualTo("테스트 설명");
+            assertAll(
+                    () -> assertThat(result).isPresent(),
+                    () -> assertThat(result.get().getTitle()).isEqualTo("테스트 데이터"),
+                    () -> assertThat(result.get().getDescription()).isEqualTo("테스트 설명")
+            );
         }
 
         @Test
@@ -177,8 +180,10 @@ class DataQueryDslAdapterIntegrationTest {
             Optional<Data> result = readAdapter.findDataWithMetadataById(savedData.getId());
 
             // then
-            assertThat(result).isPresent();
-            assertThat(result.get().getTitle()).isEqualTo("테스트 데이터");
+            assertAll(
+                    () -> assertThat(result).isPresent(),
+                    () -> assertThat(result.get().getTitle()).isEqualTo("테스트 데이터")
+            );
         }
 
         @Test
@@ -204,8 +209,10 @@ class DataQueryDslAdapterIntegrationTest {
             List<Data> result = readAdapter.getRecentDataSets(size);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result).hasSizeGreaterThanOrEqualTo(2); // savedData, popularData
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result).hasSizeGreaterThanOrEqualTo(2) // savedData, popularData
+            );
         }
 
         @Test
@@ -233,8 +240,10 @@ class DataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = readAdapter.findUserDataSets(userId, pageable);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSizeGreaterThanOrEqualTo(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSizeGreaterThanOrEqualTo(2)
+            );
         }
 
         @Test
@@ -247,9 +256,11 @@ class DataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = readAdapter.findConnectedDataSetsAssociatedWithProject(savedProject.getId(), pageable);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).data().getTitle()).isEqualTo("테스트 데이터");
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getContent().get(0).data().getTitle()).isEqualTo("테스트 데이터")
+            );
         }
 
         @Test
@@ -289,8 +300,10 @@ class DataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = readAdapter.findUserDataSets(userId, null);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.getContent()).hasSizeGreaterThanOrEqualTo(2);
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getContent()).hasSizeGreaterThanOrEqualTo(2)
+            );
         }
 
         @Test
@@ -365,8 +378,10 @@ class DataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSizeGreaterThanOrEqualTo(1);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSizeGreaterThanOrEqualTo(1)
+            );
         }
 
         @Test
@@ -379,10 +394,12 @@ class DataQueryDslAdapterIntegrationTest {
 
             // when & then - UTILIZE는 projectCountPath가 null이어서 실패할 수 있으므로 제외
             Page<DataWithProjectCountDto> latestResult = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
-            assertThat(latestResult).isNotNull();
-
             Page<DataWithProjectCountDto> downloadResult = searchAdapter.searchByFilters(request, pageable, DataSortType.DOWNLOAD);
-            assertThat(downloadResult).isNotNull();
+            
+            assertAll(
+                    () -> assertThat(latestResult).isNotNull(),
+                    () -> assertThat(downloadResult).isNotNull()
+            );
 
             Page<DataWithProjectCountDto> oldestResult = searchAdapter.searchByFilters(request, pageable, DataSortType.OLDEST);
             assertThat(oldestResult).isNotNull();
@@ -400,8 +417,10 @@ class DataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSizeGreaterThanOrEqualTo(2); // savedData, popularData
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSizeGreaterThanOrEqualTo(2) // savedData, popularData
+            );
         }
 
         @Test
@@ -416,9 +435,11 @@ class DataQueryDslAdapterIntegrationTest {
             Page<DataWithProjectCountDto> result = searchAdapter.searchByFilters(request, pageable, DataSortType.LATEST);
 
             // then
-            assertThat(result).isNotEmpty();
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getTotalElements()).isGreaterThanOrEqualTo(2);
+            assertAll(
+                    () -> assertThat(result).isNotEmpty(),
+                    () -> assertThat(result.getContent()).hasSize(1),
+                    () -> assertThat(result.getTotalElements()).isGreaterThanOrEqualTo(2)
+            );
         }
     }
 }

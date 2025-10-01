@@ -18,7 +18,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -112,8 +113,13 @@ class OAuthUserInfoFactoryTest {
         when(kakaoAdapter.extract(any(), any())).thenReturn(null);
 
         // when & then
-        assertThatThrownBy(() -> oAuthUserInfoFactory.extract(testCase.provider, testCase.attributes))
-                .isInstanceOf(AuthException.class);
+        AuthException exception = catchThrowableOfType(
+                () -> oAuthUserInfoFactory.extract(testCase.provider, testCase.attributes),
+                AuthException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 
     /**

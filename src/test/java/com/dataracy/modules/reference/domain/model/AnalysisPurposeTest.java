@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("AnalysisPurpose 테스트")
 class AnalysisPurposeTest {
@@ -20,9 +21,11 @@ class AnalysisPurposeTest {
         AnalysisPurpose analysisPurpose = new AnalysisPurpose(id, value, label);
 
         // Then
-        assertThat(analysisPurpose.id()).isEqualTo(id);
-        assertThat(analysisPurpose.value()).isEqualTo(value);
-        assertThat(analysisPurpose.label()).isEqualTo(label);
+        assertAll(
+                () -> assertThat(analysisPurpose.id()).isEqualTo(id),
+                () -> assertThat(analysisPurpose.value()).isEqualTo(value),
+                () -> assertThat(analysisPurpose.label()).isEqualTo(label)
+        );
     }
 
     @Test
@@ -34,9 +37,10 @@ class AnalysisPurposeTest {
         AnalysisPurpose analysisPurpose3 = new AnalysisPurpose(2L, "business", "비즈니스");
 
         // When & Then
-        assertThat(analysisPurpose1).isEqualTo(analysisPurpose2);
-        assertThat(analysisPurpose1.hashCode()).isEqualTo(analysisPurpose2.hashCode());
-        assertThat(analysisPurpose1).isNotEqualTo(analysisPurpose3);
+        assertThat(analysisPurpose1)
+                .isEqualTo(analysisPurpose2)
+                .hasSameHashCodeAs(analysisPurpose2)
+                .isNotEqualTo(analysisPurpose3);
     }
 
     @Test
@@ -49,10 +53,11 @@ class AnalysisPurposeTest {
         String toString = analysisPurpose.toString();
 
         // Then
-        assertThat(toString).contains("AnalysisPurpose");
-        assertThat(toString).contains("1");
-        assertThat(toString).contains("education");
-        assertThat(toString).contains("교육");
+        assertThat(toString)
+                .contains("AnalysisPurpose")
+                .contains("1")
+                .contains("education")
+                .contains("교육");
     }
 
     @Test
@@ -62,9 +67,11 @@ class AnalysisPurposeTest {
         AnalysisPurpose analysisPurpose = new AnalysisPurpose(null, null, null);
 
         // Then
-        assertThat(analysisPurpose.id()).isNull();
-        assertThat(analysisPurpose.value()).isNull();
-        assertThat(analysisPurpose.label()).isNull();
+        assertAll(
+                () -> assertThat(analysisPurpose.id()).isNull(),
+                () -> assertThat(analysisPurpose.value()).isNull(),
+                () -> assertThat(analysisPurpose.label()).isNull()
+        );
     }
 
     @Test
@@ -76,12 +83,13 @@ class AnalysisPurposeTest {
         AnalysisPurpose analysisPurpose3 = new AnalysisPurpose(3L, "education", "교육");
 
         // Then
-        assertThat(analysisPurpose1.value()).isEqualTo("research");
-        assertThat(analysisPurpose2.value()).isEqualTo("business");
-        assertThat(analysisPurpose3.value()).isEqualTo("education");
-        
-        assertThat(analysisPurpose1.label()).isEqualTo("연구");
-        assertThat(analysisPurpose2.label()).isEqualTo("비즈니스");
-        assertThat(analysisPurpose3.label()).isEqualTo("교육");
+        assertAll(
+                () -> assertThat(analysisPurpose1.value()).isEqualTo("research"),
+                () -> assertThat(analysisPurpose2.value()).isEqualTo("business"),
+                () -> assertThat(analysisPurpose3.value()).isEqualTo("education"),
+                () -> assertThat(analysisPurpose1.label()).isEqualTo("연구"),
+                () -> assertThat(analysisPurpose2.label()).isEqualTo("비즈니스"),
+                () -> assertThat(analysisPurpose3.label()).isEqualTo("교육")
+        );
     }
 }

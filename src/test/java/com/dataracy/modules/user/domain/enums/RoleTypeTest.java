@@ -6,7 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RoleTypeTest {
 
@@ -74,27 +75,42 @@ class RoleTypeTest {
     @DisplayName("of - 유효하지 않은 문자열로 UserException이 발생한다")
     void of_WhenInvalidString_ThrowsUserException() {
         // when & then
-        assertThatThrownBy(() -> RoleType.of("INVALID"))
-                .isInstanceOf(UserException.class)
-                .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.INVALID_ROLE_TYPE);
+        UserException exception = catchThrowableOfType(
+                () -> RoleType.of("INVALID"),
+                UserException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.INVALID_ROLE_TYPE)
+        );
     }
 
     @Test
     @DisplayName("of - null로 UserException이 발생한다")
     void of_WhenNull_ThrowsUserException() {
         // when & then
-        assertThatThrownBy(() -> RoleType.of(null))
-                .isInstanceOf(UserException.class)
-                .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.INVALID_ROLE_TYPE);
+        UserException exception = catchThrowableOfType(
+                () -> RoleType.of(null),
+                UserException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.INVALID_ROLE_TYPE)
+        );
     }
 
     @Test
     @DisplayName("of - 빈 문자열로 UserException이 발생한다")
     void of_WhenEmptyString_ThrowsUserException() {
         // when & then
-        assertThatThrownBy(() -> RoleType.of(""))
-                .isInstanceOf(UserException.class)
-                .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.INVALID_ROLE_TYPE);
+        UserException exception = catchThrowableOfType(
+                () -> RoleType.of(""),
+                UserException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.INVALID_ROLE_TYPE)
+        );
     }
 
     @Test

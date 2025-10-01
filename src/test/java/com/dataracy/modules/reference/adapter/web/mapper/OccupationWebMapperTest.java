@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class OccupationWebMapperTest {
     private final OccupationWebMapper mapper = new OccupationWebMapper();
@@ -22,9 +23,11 @@ class OccupationWebMapperTest {
         OccupationWebResponse result = mapper.toWebDto(src);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.value()).isEqualTo("v");
-        assertThat(result.label()).isEqualTo("l");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.value()).isEqualTo("v"),
+                () -> assertThat(result.label()).isEqualTo("l")
+        );
     }
 
     @Test
@@ -39,8 +42,10 @@ class OccupationWebMapperTest {
         AllOccupationsWebResponse nullSafe2 = mapper.toWebDto(new AllOccupationsResponse(null));
 
         // then
-        assertThat(result.occupations()).hasSize(2);
-        assertThat(nullSafe1.occupations()).isEmpty();
-        assertThat(nullSafe2.occupations()).isEmpty();
+        assertAll(
+                () -> assertThat(result.occupations()).hasSize(2),
+                () -> assertThat(nullSafe1.occupations()).isEmpty(),
+                () -> assertThat(nullSafe2.occupations()).isEmpty()
+        );
     }
 }

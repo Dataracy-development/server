@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class CommentExceptionTest {
 
@@ -15,7 +16,9 @@ class CommentExceptionTest {
         CommentException ex = new CommentException(CommentErrorStatus.NOT_FOUND_COMMENT);
 
         // then
-        assertThat(ex.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT);
-        assertThat(ex.getErrorCode().getCode()).isEqualTo("COMMENT-002");
+        assertAll(
+                () -> assertThat(ex.getErrorCode()).isEqualTo(CommentErrorStatus.NOT_FOUND_COMMENT),
+                () -> assertThat(ex.getErrorCode().getCode()).isEqualTo("COMMENT-002")
+        );
     }
 }

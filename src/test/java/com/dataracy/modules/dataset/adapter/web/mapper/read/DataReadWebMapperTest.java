@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataReadWebMapperTest {
 
@@ -31,12 +32,14 @@ class DataReadWebMapperTest {
         DataDetailWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.title()).isEqualTo("title");
-        assertThat(result.creatorId()).isEqualTo(1L);
-        assertThat(result.creatorName()).isEqualTo("userA");
-        assertThat(result.downloadCount()).isEqualTo(100);
-        assertThat(result.previewJson()).contains("col");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.title()).isEqualTo("title"),
+                () -> assertThat(result.creatorId()).isEqualTo(1L),
+                () -> assertThat(result.creatorName()).isEqualTo("userA"),
+                () -> assertThat(result.downloadCount()).isEqualTo(100),
+                () -> assertThat(result.previewJson()).contains("col")
+        );
     }
 
     @Test
@@ -49,9 +52,11 @@ class DataReadWebMapperTest {
         DataGroupCountWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.topicId()).isEqualTo(10L);
-        assertThat(result.topicLabel()).isEqualTo("topicA");
-        assertThat(result.count()).isEqualTo(5L);
+        assertAll(
+                () -> assertThat(result.topicId()).isEqualTo(10L),
+                () -> assertThat(result.topicLabel()).isEqualTo("topicA"),
+                () -> assertThat(result.count()).isEqualTo(5L)
+        );
     }
 
     @Test
@@ -70,11 +75,13 @@ class DataReadWebMapperTest {
         ConnectedDataWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.id()).isEqualTo(2L);
-        assertThat(result.title()).isEqualTo("dataset");
-        assertThat(result.creatorId()).isEqualTo(1L);
-        assertThat(result.creatorName()).isEqualTo("userA");
-        assertThat(result.countConnectedProjects()).isEqualTo(3L);
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(2L),
+                () -> assertThat(result.title()).isEqualTo("dataset"),
+                () -> assertThat(result.creatorId()).isEqualTo(1L),
+                () -> assertThat(result.creatorName()).isEqualTo("userA"),
+                () -> assertThat(result.countConnectedProjects()).isEqualTo(3L)
+        );
     }
 
     @Test
@@ -89,11 +96,13 @@ class DataReadWebMapperTest {
         RecentMinimalDataWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.id()).isEqualTo(3L);
-        assertThat(result.title()).isEqualTo("recentData");
-        assertThat(result.creatorId()).isEqualTo(1L);
-        assertThat(result.creatorName()).isEqualTo("userA");
-        assertThat(result.dataThumbnailUrl()).isEqualTo("thumb.png");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(3L),
+                () -> assertThat(result.title()).isEqualTo("recentData"),
+                () -> assertThat(result.creatorId()).isEqualTo(1L),
+                () -> assertThat(result.creatorName()).isEqualTo("userA"),
+                () -> assertThat(result.dataThumbnailUrl()).isEqualTo("thumb.png")
+        );
     }
 
     @Test
@@ -111,11 +120,13 @@ class DataReadWebMapperTest {
         PopularDataWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.id()).isEqualTo(4L);
-        assertThat(result.title()).isEqualTo("popularData");
-        assertThat(result.creatorId()).isEqualTo(1L);
-        assertThat(result.creatorName()).isEqualTo("userA");
-        assertThat(result.countConnectedProjects()).isEqualTo(7L);
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(4L),
+                () -> assertThat(result.title()).isEqualTo("popularData"),
+                () -> assertThat(result.creatorId()).isEqualTo(1L),
+                () -> assertThat(result.creatorName()).isEqualTo("userA"),
+                () -> assertThat(result.countConnectedProjects()).isEqualTo(7L)
+        );
     }
 
     @Test
@@ -133,9 +144,11 @@ class DataReadWebMapperTest {
         UserDataWebResponse result = mapper.toWebDto(dto);
 
         // then
-        assertThat(result.id()).isEqualTo(4L);
-        assertThat(result.title()).isEqualTo("userData");
-        assertThat(result.topicLabel()).isEqualTo("topicY");
-        assertThat(result.countConnectedProjects()).isEqualTo(7L);
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(4L),
+                () -> assertThat(result.title()).isEqualTo("userData"),
+                () -> assertThat(result.topicLabel()).isEqualTo("topicY"),
+                () -> assertThat(result.countConnectedProjects()).isEqualTo(7L)
+        );
     }
 }

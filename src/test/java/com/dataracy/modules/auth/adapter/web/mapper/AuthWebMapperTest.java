@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 /**
  * AuthWebMapper 테스트
@@ -27,9 +28,16 @@ class AuthWebMapperTest {
         SelfLoginRequest result = authWebMapper.toApplicationDto(webRequest);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.email()).isEqualTo(email);
-        assertThat(result.password()).isEqualTo(password);
+        assertAll(
+
+                () -> assertThat(result).isNotNull(),
+
+                () -> assertThat(result.email()).isEqualTo(email),
+
+                () -> assertThat(result.password()).isEqualTo(password)
+
+        );
+
     }
 
 }

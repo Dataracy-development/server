@@ -6,7 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataSortTypeTest {
 
@@ -94,27 +95,42 @@ class DataSortTypeTest {
     @DisplayName("of - 유효하지 않은 문자열로 DataException이 발생한다")
     void of_WhenInvalidString_ThrowsDataException() {
         // when & then
-        assertThatThrownBy(() -> DataSortType.of("INVALID"))
-                .isInstanceOf(DataException.class)
-                .hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.INVALID_DATA_SORT_TYPE);
+        DataException exception = catchThrowableOfType(
+                () -> DataSortType.of("INVALID"),
+                DataException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.INVALID_DATA_SORT_TYPE)
+        );
     }
 
     @Test
     @DisplayName("of - null로 DataException이 발생한다")
     void of_WhenNull_ThrowsDataException() {
         // when & then
-        assertThatThrownBy(() -> DataSortType.of(null))
-                .isInstanceOf(DataException.class)
-                .hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.INVALID_DATA_SORT_TYPE);
+        DataException exception = catchThrowableOfType(
+                () -> DataSortType.of(null),
+                DataException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.INVALID_DATA_SORT_TYPE)
+        );
     }
 
     @Test
     @DisplayName("of - 빈 문자열로 DataException이 발생한다")
     void of_WhenEmptyString_ThrowsDataException() {
         // when & then
-        assertThatThrownBy(() -> DataSortType.of(""))
-                .isInstanceOf(DataException.class)
-                .hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.INVALID_DATA_SORT_TYPE);
+        DataException exception = catchThrowableOfType(
+                () -> DataSortType.of(""),
+                DataException.class
+        );
+        assertAll(
+                () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
+                () -> org.assertj.core.api.Assertions.assertThat(exception).hasFieldOrPropertyWithValue("errorCode", DataErrorStatus.INVALID_DATA_SORT_TYPE)
+        );
     }
 
     @Test

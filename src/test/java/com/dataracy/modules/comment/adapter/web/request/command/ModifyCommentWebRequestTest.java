@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ModifyCommentWebRequestTest {
 
@@ -30,8 +31,10 @@ class ModifyCommentWebRequestTest {
         Set<ConstraintViolation<ModifyCommentWebRequest>> violations = validator.validate(req);
 
         // then
-        assertThat(violations).isEmpty();
-        assertThat(req.content()).isEqualTo("수정할 내용");
+        assertAll(
+                () -> assertThat(violations).isEmpty(),
+                () -> assertThat(req.content()).isEqualTo("수정할 내용")
+        );
     }
 
     @Test

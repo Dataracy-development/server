@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProjectDetailDtoMapperTest {
 
@@ -77,28 +78,30 @@ class ProjectDetailDtoMapperTest {
         );
 
         // then
-        assertThat(response.id()).isEqualTo(1L);
-        assertThat(response.title()).isEqualTo("proj-title");
-        assertThat(response.creatorId()).isEqualTo(99L);
-        assertThat(response.creatorName()).isEqualTo("tester");
-        assertThat(response.userIntroductionText()).isEqualTo("intro text");
-        assertThat(response.userProfileImageUrl()).isEqualTo("profile.png");
-        assertThat(response.authorLevelLabel()).isEqualTo("author-level");
-        assertThat(response.occupationLabel()).isEqualTo("occupation-label");
-        assertThat(response.topicLabel()).isEqualTo("topic-label");
-        assertThat(response.analysisPurposeLabel()).isEqualTo("analysis-purpose");
-        assertThat(response.dataSourceLabel()).isEqualTo("data-source");
-        assertThat(response.isContinue()).isTrue();
-        assertThat(response.parentProjectId()).isEqualTo(55L);
-        assertThat(response.content()).isEqualTo("proj-content");
-        assertThat(response.projectThumbnailUrl()).isEqualTo("thumb.png");
-        assertThat(response.createdAt()).isEqualTo(createdAt);
-        assertThat(response.commentCount()).isEqualTo(5L);
-        assertThat(response.likeCount()).isEqualTo(6L);
-        assertThat(response.viewCount()).isEqualTo(7L);
-        assertThat(response.isLiked()).isTrue();
-        assertThat(response.hasChild()).isTrue();
-        assertThat(response.connectedDataSets()).containsExactlyElementsOf(connectedDataSets);
-        assertThat(response.parentProject()).isEqualTo(parentProjectResponse);
+        assertAll(
+                () -> assertThat(response.id()).isEqualTo(1L),
+                () -> assertThat(response.title()).isEqualTo("proj-title"),
+                () -> assertThat(response.creatorId()).isEqualTo(99L),
+                () -> assertThat(response.creatorName()).isEqualTo("tester"),
+                () -> assertThat(response.userIntroductionText()).isEqualTo("intro text"),
+                () -> assertThat(response.userProfileImageUrl()).isEqualTo("profile.png"),
+                () -> assertThat(response.authorLevelLabel()).isEqualTo("author-level"),
+                () -> assertThat(response.occupationLabel()).isEqualTo("occupation-label"),
+                () -> assertThat(response.topicLabel()).isEqualTo("topic-label"),
+                () -> assertThat(response.analysisPurposeLabel()).isEqualTo("analysis-purpose"),
+                () -> assertThat(response.dataSourceLabel()).isEqualTo("data-source"),
+                () -> assertThat(response.isContinue()).isTrue(),
+                () -> assertThat(response.parentProjectId()).isEqualTo(55L),
+                () -> assertThat(response.content()).isEqualTo("proj-content"),
+                () -> assertThat(response.projectThumbnailUrl()).isEqualTo("thumb.png"),
+                () -> assertThat(response.createdAt()).isEqualTo(createdAt),
+                () -> assertThat(response.commentCount()).isEqualTo(5L),
+                () -> assertThat(response.likeCount()).isEqualTo(6L),
+                () -> assertThat(response.viewCount()).isEqualTo(7L),
+                () -> assertThat(response.isLiked()).isTrue(),
+                () -> assertThat(response.hasChild()).isTrue(),
+                () -> assertThat(response.connectedDataSets()).containsExactlyElementsOf(connectedDataSets),
+                () -> assertThat(response.parentProject()).isEqualTo(parentProjectResponse)
+        );
     }
 }

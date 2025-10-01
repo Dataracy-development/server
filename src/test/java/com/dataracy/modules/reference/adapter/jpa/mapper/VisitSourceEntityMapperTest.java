@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class VisitSourceEntityMapperTest {
 
@@ -19,9 +20,11 @@ class VisitSourceEntityMapperTest {
         VisitSource domain = VisitSourceEntityMapper.toDomain(entity);
 
         // then
-        assertThat(domain.id()).isEqualTo(1L);
-        assertThat(domain.value()).isEqualTo("v");
-        assertThat(domain.label()).isEqualTo("l");
+        assertAll(
+                () -> assertThat(domain.id()).isEqualTo(1L),
+                () -> assertThat(domain.value()).isEqualTo("v"),
+                () -> assertThat(domain.label()).isEqualTo("l")
+        );
     }
 
     @Test
@@ -34,15 +37,19 @@ class VisitSourceEntityMapperTest {
         VisitSourceEntity entity = VisitSourceEntityMapper.toEntity(domain);
 
         // then
-        assertThat(entity.getId()).isNull(); // of(value,label)로 생성되어 id는 null
-        assertThat(entity.getValue()).isEqualTo("v");
-        assertThat(entity.getLabel()).isEqualTo("l");
+        assertAll(
+                () -> assertThat(entity.getId()).isNull(), // of(value,label)로 생성되어 id는 null
+                () -> assertThat(entity.getValue()).isEqualTo("v"),
+                () -> assertThat(entity.getLabel()).isEqualTo("l")
+        );
     }
 
     @Test
     @DisplayName("null 입력 처리 - null 반환")
     void nullInputsReturnNull() {
-        assertThat(VisitSourceEntityMapper.toDomain(null)).isNull();
-        assertThat(VisitSourceEntityMapper.toEntity(null)).isNull();
+        assertAll(
+                () -> assertThat(VisitSourceEntityMapper.toDomain(null)).isNull(),
+                () -> assertThat(VisitSourceEntityMapper.toEntity(null)).isNull()
+        );
     }
 }

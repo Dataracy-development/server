@@ -6,7 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TargetTypeTest {
 
@@ -54,27 +55,42 @@ class TargetTypeTest {
     @DisplayName("of - 유효하지 않은 문자열로 LikeException이 발생한다")
     void of_WhenInvalidString_ThrowsLikeException() {
         // when & then
-        assertThatThrownBy(() -> TargetType.of("INVALID"))
-                .isInstanceOf(LikeException.class)
-                .hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE);
+        LikeException exception = catchThrowableOfType(
+                () -> TargetType.of("INVALID"),
+                LikeException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception).hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE)
+        );
     }
 
     @Test
     @DisplayName("of - null로 LikeException이 발생한다")
     void of_WhenNull_ThrowsLikeException() {
         // when & then
-        assertThatThrownBy(() -> TargetType.of(null))
-                .isInstanceOf(LikeException.class)
-                .hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE);
+        LikeException exception = catchThrowableOfType(
+                () -> TargetType.of(null),
+                LikeException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception).hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE)
+        );
     }
 
     @Test
     @DisplayName("of - 빈 문자열로 LikeException이 발생한다")
     void of_WhenEmptyString_ThrowsLikeException() {
         // when & then
-        assertThatThrownBy(() -> TargetType.of(""))
-                .isInstanceOf(LikeException.class)
-                .hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE);
+        LikeException exception = catchThrowableOfType(
+                () -> TargetType.of(""),
+                LikeException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception).hasFieldOrPropertyWithValue("errorCode", LikeErrorStatus.INVALID_TARGET_TYPE)
+        );
     }
 
     @Test

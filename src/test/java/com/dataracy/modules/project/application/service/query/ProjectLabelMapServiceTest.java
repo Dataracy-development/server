@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -95,13 +96,15 @@ class ProjectLabelMapServiceTest {
             ProjectLabelMapResponse result = service.labelMapping(testProjects);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.usernameMap()).isEqualTo(usernameMap);
-            assertThat(result.userProfileUrlMap()).isEqualTo(thumbnailMap);
-            assertThat(result.topicLabelMap()).isEqualTo(topicMap);
-            assertThat(result.analysisPurposeLabelMap()).isEqualTo(analysisPurposeMap);
-            assertThat(result.dataSourceLabelMap()).isEqualTo(dataSourceMap);
-            assertThat(result.authorLevelLabelMap()).isEqualTo(authorLevelMap);
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.usernameMap()).isEqualTo(usernameMap),
+                    () -> assertThat(result.userProfileUrlMap()).isEqualTo(thumbnailMap),
+                    () -> assertThat(result.topicLabelMap()).isEqualTo(topicMap),
+                    () -> assertThat(result.analysisPurposeLabelMap()).isEqualTo(analysisPurposeMap),
+                    () -> assertThat(result.dataSourceLabelMap()).isEqualTo(dataSourceMap),
+                    () -> assertThat(result.authorLevelLabelMap()).isEqualTo(authorLevelMap)
+            );
         }
 
         @Test
@@ -122,13 +125,15 @@ class ProjectLabelMapServiceTest {
             ProjectLabelMapResponse result = service.labelMapping(emptyProjects);
 
             // then
-            assertThat(result).isNotNull();
-            assertThat(result.usernameMap()).isEmpty();
-            assertThat(result.userProfileUrlMap()).isEmpty();
-            assertThat(result.topicLabelMap()).isEmpty();
-            assertThat(result.analysisPurposeLabelMap()).isEmpty();
-            assertThat(result.dataSourceLabelMap()).isEmpty();
-            assertThat(result.authorLevelLabelMap()).isEmpty();
+            assertAll(
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.usernameMap()).isEmpty(),
+                    () -> assertThat(result.userProfileUrlMap()).isEmpty(),
+                    () -> assertThat(result.topicLabelMap()).isEmpty(),
+                    () -> assertThat(result.analysisPurposeLabelMap()).isEmpty(),
+                    () -> assertThat(result.dataSourceLabelMap()).isEmpty(),
+                    () -> assertThat(result.authorLevelLabelMap()).isEmpty()
+            );
         }
 
     }

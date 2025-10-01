@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.given;
@@ -72,8 +73,10 @@ class UserTest {
         UserException exception = catchThrowableOfType(user::validatePasswordChangable, UserException.class);
         
         // then
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE);
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception.getErrorCode()).isEqualTo(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE)
+        );
     }
 
     @Test
@@ -88,8 +91,10 @@ class UserTest {
         UserException exception = catchThrowableOfType(user::validatePasswordChangable, UserException.class);
         
         // then
-        assertThat(exception).isNotNull();
-        assertThat(exception.getErrorCode()).isEqualTo(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO);
+        assertAll(
+                () -> assertThat(exception).isNotNull(),
+                () -> assertThat(exception.getErrorCode()).isEqualTo(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO)
+        );
     }
 
     @Test
@@ -125,16 +130,18 @@ class UserTest {
         var result = user.toUserInfo();
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.role()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(result.email()).isEqualTo("test@example.com");
-        assertThat(result.nickname()).isEqualTo("TestUser");
-        assertThat(result.authorLevelId()).isEqualTo(1L);
-        assertThat(result.occupationId()).isEqualTo(2L);
-        assertThat(result.topicIds()).isEqualTo(List.of(1L, 2L));
-        assertThat(result.visitSourceId()).isEqualTo(3L);
-        assertThat(result.profileImageUrl()).isEqualTo("http://example.com/profile.jpg");
-        assertThat(result.introductionText()).isEqualTo("Hello, I am a test user.");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.role()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(result.email()).isEqualTo("test@example.com"),
+                () -> assertThat(result.nickname()).isEqualTo("TestUser"),
+                () -> assertThat(result.authorLevelId()).isEqualTo(1L),
+                () -> assertThat(result.occupationId()).isEqualTo(2L),
+                () -> assertThat(result.topicIds()).isEqualTo(List.of(1L, 2L)),
+                () -> assertThat(result.visitSourceId()).isEqualTo(3L),
+                () -> assertThat(result.profileImageUrl()).isEqualTo("http://example.com/profile.jpg"),
+                () -> assertThat(result.introductionText()).isEqualTo("Hello, I am a test user.")
+        );
     }
 
     @Test
@@ -160,20 +167,22 @@ class UserTest {
                 .build();
 
         // then
-        assertThat(user.getId()).isEqualTo(1L);
-        assertThat(user.getProvider()).isEqualTo(ProviderType.LOCAL);
-        assertThat(user.getProviderId()).isEqualTo("local123");
-        assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(user.getEmail()).isEqualTo("test@example.com");
-        assertThat(user.getPassword()).isEqualTo("encodedPassword");
-        assertThat(user.getNickname()).isEqualTo("TestUser");
-        assertThat(user.getProfileImageUrl()).isEqualTo("http://example.com/profile.jpg");
-        assertThat(user.getIntroductionText()).isEqualTo("Hello, I am a test user.");
-        assertThat(user.isAdTermsAgreed()).isTrue();
-        assertThat(user.getAuthorLevelId()).isEqualTo(1L);
-        assertThat(user.getOccupationId()).isEqualTo(2L);
-        assertThat(user.getTopicIds()).isEqualTo(List.of(1L, 2L));
-        assertThat(user.getVisitSourceId()).isEqualTo(3L);
-        assertThat(user.isDeleted()).isFalse();
+        assertAll(
+                () -> assertThat(user.getId()).isEqualTo(1L),
+                () -> assertThat(user.getProvider()).isEqualTo(ProviderType.LOCAL),
+                () -> assertThat(user.getProviderId()).isEqualTo("local123"),
+                () -> assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(user.getEmail()).isEqualTo("test@example.com"),
+                () -> assertThat(user.getPassword()).isEqualTo("encodedPassword"),
+                () -> assertThat(user.getNickname()).isEqualTo("TestUser"),
+                () -> assertThat(user.getProfileImageUrl()).isEqualTo("http://example.com/profile.jpg"),
+                () -> assertThat(user.getIntroductionText()).isEqualTo("Hello, I am a test user."),
+                () -> assertThat(user.isAdTermsAgreed()).isTrue(),
+                () -> assertThat(user.getAuthorLevelId()).isEqualTo(1L),
+                () -> assertThat(user.getOccupationId()).isEqualTo(2L),
+                () -> assertThat(user.getTopicIds()).isEqualTo(List.of(1L, 2L)),
+                () -> assertThat(user.getVisitSourceId()).isEqualTo(3L),
+                () -> assertThat(user.isDeleted()).isFalse()
+        );
     }
 }

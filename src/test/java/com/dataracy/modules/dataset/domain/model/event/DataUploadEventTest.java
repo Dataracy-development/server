@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataUploadEventTest {
 
@@ -14,8 +15,10 @@ class DataUploadEventTest {
         DataUploadEvent event = new DataUploadEvent(1L, "url", "file.csv");
 
         // then
-        assertThat(event.getDataId()).isEqualTo(1L);
-        assertThat(event.getDataFileUrl()).isEqualTo("url");
-        assertThat(event.getOriginalFilename()).isEqualTo("file.csv");
+        assertAll(
+                () -> assertThat(event.getDataId()).isEqualTo(1L),
+                () -> assertThat(event.getDataFileUrl()).isEqualTo("url"),
+                () -> assertThat(event.getOriginalFilename()).isEqualTo("file.csv")
+        );
     }
 }

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -119,8 +120,10 @@ class UserDataReadServiceTest {
         Page<UserDataResponse> result = service.findUserDataSets(1L, PageRequest.of(0, 10));
 
         // then
-        assertThat(result).hasSize(2);
-        assertThat(result.getContent().get(0).topicLabel()).isEqualTo("토픽1");
-        assertThat(result.getContent().get(1).dataTypeLabel()).isEqualTo("타입2");
+        assertAll(
+                () -> assertThat(result).hasSize(2),
+                () -> assertThat(result.getContent().get(0).topicLabel()).isEqualTo("토픽1"),
+                () -> assertThat(result.getContent().get(1).dataTypeLabel()).isEqualTo("타입2")
+        );
     }
 }

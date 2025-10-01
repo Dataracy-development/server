@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.given;
 
@@ -80,10 +81,18 @@ class ReIssueTokenServiceTest {
             ReIssueTokenResponse res = service.reIssueToken(refreshToken);
 
             // then
-            assertThat(res.accessToken()).isEqualTo("new-access");
-            assertThat(res.refreshToken()).isEqualTo("new-refresh");
-            assertThat(res.accessTokenExpiration()).isEqualTo(3600000L);
-            assertThat(res.refreshTokenExpiration()).isEqualTo(1209600000L);
+            assertAll(
+
+                    () -> assertThat(res.accessToken()).isEqualTo("new-access"),
+
+                    () -> assertThat(res.refreshToken()).isEqualTo("new-refresh"),
+
+                    () -> assertThat(res.accessTokenExpiration()).isEqualTo(3600000L),
+
+                    () -> assertThat(res.refreshTokenExpiration()).isEqualTo(1209600000L)
+
+            );
+
         }
 
         @Test

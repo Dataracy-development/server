@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("EmailContentFactory 테스트")
 class EmailContentFactoryTest {
@@ -26,10 +27,12 @@ class EmailContentFactoryTest {
             EmailContent content = EmailContentFactory.generate(type, code);
 
             // then
-            assertThat(content).isNotNull();
-            assertThat(content.subject()).contains("회원가입 이메일 인증번호");
-            assertThat(content.body()).contains(code);
-            assertThat(content.body()).contains("Dataracy 회원가입을 위한 인증번호");
+            assertAll(
+                    () -> assertThat(content).isNotNull(),
+                    () -> assertThat(content.subject()).contains("회원가입 이메일 인증번호"),
+                    () -> assertThat(content.body()).contains(code),
+                    () -> assertThat(content.body()).contains("Dataracy 회원가입을 위한 인증번호")
+            );
         }
 
         @Test
@@ -43,10 +46,12 @@ class EmailContentFactoryTest {
             EmailContent content = EmailContentFactory.generate(type, code);
 
             // then
-            assertThat(content).isNotNull();
-            assertThat(content.subject()).contains("비밀번호 찾기 인증번호");
-            assertThat(content.body()).contains(code);
-            assertThat(content.body()).contains("비밀번호 찾기를 위한 인증번호");
+            assertAll(
+                    () -> assertThat(content).isNotNull(),
+                    () -> assertThat(content.subject()).contains("비밀번호 찾기 인증번호"),
+                    () -> assertThat(content.body()).contains(code),
+                    () -> assertThat(content.body()).contains("비밀번호 찾기를 위한 인증번호")
+            );
         }
 
         @Test
@@ -60,10 +65,12 @@ class EmailContentFactoryTest {
             EmailContent content = EmailContentFactory.generate(type, code);
 
             // then
-            assertThat(content).isNotNull();
-            assertThat(content.subject()).contains("비밀번호 재설정 인증번호");
-            assertThat(content.body()).contains(code);
-            assertThat(content.body()).contains("비밀번호 재설정을 위한 인증번호");
+            assertAll(
+                    () -> assertThat(content).isNotNull(),
+                    () -> assertThat(content.subject()).contains("비밀번호 재설정 인증번호"),
+                    () -> assertThat(content.body()).contains(code),
+                    () -> assertThat(content.body()).contains("비밀번호 재설정을 위한 인증번호")
+            );
         }
 
         @Test
@@ -105,8 +112,10 @@ class EmailContentFactoryTest {
             EmailContent content = EmailContentFactory.generate(type, code);
 
             // then
-            assertThat(content).isNotNull();
-            assertThat(content.body()).contains("🔐 인증번호: ");
+            assertAll(
+                    () -> assertThat(content).isNotNull(),
+                    () -> assertThat(content.body()).contains("🔐 인증번호: ")
+            );
         }
     }
 }

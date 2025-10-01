@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 class CreateUserDtoMapperTest {
@@ -51,19 +52,23 @@ class CreateUserDtoMapperTest {
         User user = mapper.toDomain(req, providerId, encodedPassword);
 
         // then
-        assertThat(user.getProvider()).isEqualTo(ProviderType.LOCAL);
-        assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(user.getEmail()).isEqualTo("test@email.com");
-        assertThat(user.getPassword()).isEqualTo("encodedPw");
-        assertThat(user.getNickname()).isEqualTo("tester");
-        assertThat(user.getAuthorLevelId()).isEqualTo(1L);
-        assertThat(user.getOccupationId()).isEqualTo(2L);
-        assertThat(user.getTopicIds()).containsExactly(10L, 20L);
-        assertThat(user.getVisitSourceId()).isEqualTo(3L);
-        assertThat(user.getProfileImageUrl()).isEqualTo("default.png");
-        assertThat(user.getIntroductionText()).contains("tester");
-        assertThat(user.isAdTermsAgreed()).isTrue();
-        assertThat(user.isDeleted()).isFalse();
+        assertAll(
+                () -> assertThat(user.getProvider()).isEqualTo(ProviderType.LOCAL),
+                () -> assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(user.getEmail()).isEqualTo("test@email.com"),
+                () -> assertThat(user.getPassword()).isEqualTo("encodedPw"),
+                () -> assertThat(user.getNickname()).isEqualTo("tester"),
+                () -> assertThat(user.getAuthorLevelId()).isEqualTo(1L),
+                () -> assertThat(user.getOccupationId()).isEqualTo(2L),
+                () -> assertThat(user.getTopicIds()).containsExactly(10L, 20L),
+                () -> assertThat(user.getVisitSourceId()).isEqualTo(3L),
+                () -> assertThat(user.getProfileImageUrl()).isEqualTo("default.png"),
+                () -> assertThat(user.getIntroductionText()).contains("tester")
+        );
+        assertAll(
+                () -> assertThat(user.isAdTermsAgreed()).isTrue(),
+                () -> assertThat(user.isDeleted()).isFalse()
+        );
     }
 
     @Test
@@ -87,19 +92,21 @@ class CreateUserDtoMapperTest {
         User user = mapper.toDomain(req, provider, providerId, email);
 
         // then
-        assertThat(user.getProvider()).isEqualTo(ProviderType.GOOGLE);
-        assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER);
-        assertThat(user.getProviderId()).isEqualTo("google-123");
-        assertThat(user.getEmail()).isEqualTo("google@test.com");
-        assertThat(user.getNickname()).isEqualTo("tester");
-        assertThat(user.getAuthorLevelId()).isEqualTo(1L);
-        assertThat(user.getOccupationId()).isEqualTo(2L);
-        assertThat(user.getTopicIds()).containsExactly(10L, 20L);
-        assertThat(user.getVisitSourceId()).isEqualTo(3L);
-        assertThat(user.getProfileImageUrl()).isEqualTo("default.png");
-        assertThat(user.getIntroductionText()).contains("tester");
-        assertThat(user.isAdTermsAgreed()).isTrue();
-        assertThat(user.isDeleted()).isFalse();
+        assertAll(
+                () -> assertThat(user.getProvider()).isEqualTo(ProviderType.GOOGLE),
+                () -> assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER),
+                () -> assertThat(user.getProviderId()).isEqualTo("google-123"),
+                () -> assertThat(user.getEmail()).isEqualTo("google@test.com"),
+                () -> assertThat(user.getNickname()).isEqualTo("tester"),
+                () -> assertThat(user.getAuthorLevelId()).isEqualTo(1L),
+                () -> assertThat(user.getOccupationId()).isEqualTo(2L),
+                () -> assertThat(user.getTopicIds()).containsExactly(10L, 20L),
+                () -> assertThat(user.getVisitSourceId()).isEqualTo(3L),
+                () -> assertThat(user.getProfileImageUrl()).isEqualTo("default.png"),
+                () -> assertThat(user.getIntroductionText()).contains("tester"),
+                () -> assertThat(user.isAdTermsAgreed()).isTrue(),
+                () -> assertThat(user.isDeleted()).isFalse()
+        );
     }
 
     @Test
@@ -122,8 +129,10 @@ class CreateUserDtoMapperTest {
         User user = mapper.toDomain(req, "pid", "encodedPw");
 
         // then
-        assertThat(user.getTopicIds()).isEmpty();
-        assertThat(user.isAdTermsAgreed()).isFalse();
+        assertAll(
+                () -> assertThat(user.getTopicIds()).isEmpty(),
+                () -> assertThat(user.isAdTermsAgreed()).isFalse()
+        );
     }
 
     @Test

@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -223,8 +225,13 @@ class OAuth2LoginSuccessHandlerTest {
 
         // when & then
         // NullPointerException이 발생할 수 있지만, 실제로는 isNewUserUseCase에서 처리됨
-        assertThatThrownBy(() -> oAuth2LoginSuccessHandler.onAuthenticationSuccess(request, response, authentication))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> oAuth2LoginSuccessHandler.onAuthenticationSuccess(request, response, authentication),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 
     @Test
@@ -239,8 +246,13 @@ class OAuth2LoginSuccessHandlerTest {
         when(selectSocialProviderPort.extract(provider, null)).thenReturn(null);
 
         // when & then
-        assertThatThrownBy(() -> oAuth2LoginSuccessHandler.onAuthenticationSuccess(request, response, authentication))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> oAuth2LoginSuccessHandler.onAuthenticationSuccess(request, response, authentication),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 
     @Test
@@ -255,7 +267,12 @@ class OAuth2LoginSuccessHandlerTest {
         when(selectSocialProviderPort.extract(null, attributes)).thenReturn(null);
 
         // when & then
-        assertThatThrownBy(() -> oAuth2LoginSuccessHandler.onAuthenticationSuccess(request, response, authentication))
-                .isInstanceOf(NullPointerException.class);
+        NullPointerException exception = catchThrowableOfType(
+                () -> oAuth2LoginSuccessHandler.onAuthenticationSuccess(request, response, authentication),
+                NullPointerException.class
+        );
+        assertAll(
+                () -> assertThat(exception).isNotNull()
+        );
     }
 }

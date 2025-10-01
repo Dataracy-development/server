@@ -16,7 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.util.function.Function;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
@@ -69,10 +70,15 @@ class UpdateDataDownloadEsAdapterTest {
             loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
 
             // when & then
-            assertThatThrownBy(() -> adapter.increaseDownloadCount(dataId))
-                .isInstanceOf(EsUpdateException.class)
-                .hasMessage("ES update failed: dataId=123")
-                .hasCause(ioException);
+            EsUpdateException exception = catchThrowableOfType(
+                    () -> adapter.increaseDownloadCount(dataId),
+                    EsUpdateException.class
+            );
+            assertAll(
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).hasMessage("ES update failed: dataId=123"),
+                    () -> org.assertj.core.api.Assertions.assertThat(exception).hasCause(ioException)
+            );
             
             then(elasticLogger).should().logError(eq("data_index"), eq("dataset download++ 실패 dataId=123"), any(IOException.class));
         }

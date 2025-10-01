@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("AuthorLevel 테스트")
 class AuthorLevelTest {
@@ -20,9 +21,11 @@ class AuthorLevelTest {
         AuthorLevel authorLevel = new AuthorLevel(id, value, label);
 
         // Then
-        assertThat(authorLevel.id()).isEqualTo(id);
-        assertThat(authorLevel.value()).isEqualTo(value);
-        assertThat(authorLevel.label()).isEqualTo(label);
+        assertAll(
+                () -> assertThat(authorLevel.id()).isEqualTo(id),
+                () -> assertThat(authorLevel.value()).isEqualTo(value),
+                () -> assertThat(authorLevel.label()).isEqualTo(label)
+        );
     }
 
     @Test
@@ -34,9 +37,10 @@ class AuthorLevelTest {
         AuthorLevel authorLevel3 = new AuthorLevel(2L, "expert", "전문가");
 
         // When & Then
-        assertThat(authorLevel1).isEqualTo(authorLevel2);
-        assertThat(authorLevel1.hashCode()).isEqualTo(authorLevel2.hashCode());
-        assertThat(authorLevel1).isNotEqualTo(authorLevel3);
+        assertThat(authorLevel1)
+                .isEqualTo(authorLevel2)
+                .hasSameHashCodeAs(authorLevel2)
+                .isNotEqualTo(authorLevel3);
     }
 
     @Test
@@ -49,10 +53,11 @@ class AuthorLevelTest {
         String toString = authorLevel.toString();
 
         // Then
-        assertThat(toString).contains("AuthorLevel");
-        assertThat(toString).contains("1");
-        assertThat(toString).contains("intermediate");
-        assertThat(toString).contains("중급자");
+        assertThat(toString)
+                .contains("AuthorLevel")
+                .contains("1")
+                .contains("intermediate")
+                .contains("중급자");
     }
 
     @Test
@@ -62,9 +67,11 @@ class AuthorLevelTest {
         AuthorLevel authorLevel = new AuthorLevel(null, null, null);
 
         // Then
-        assertThat(authorLevel.id()).isNull();
-        assertThat(authorLevel.value()).isNull();
-        assertThat(authorLevel.label()).isNull();
+        assertAll(
+                () -> assertThat(authorLevel.id()).isNull(),
+                () -> assertThat(authorLevel.value()).isNull(),
+                () -> assertThat(authorLevel.label()).isNull()
+        );
     }
 
     @Test
@@ -76,12 +83,13 @@ class AuthorLevelTest {
         AuthorLevel authorLevel3 = new AuthorLevel(3L, "expert", "전문가");
 
         // Then
-        assertThat(authorLevel1.value()).isEqualTo("beginner");
-        assertThat(authorLevel2.value()).isEqualTo("intermediate");
-        assertThat(authorLevel3.value()).isEqualTo("expert");
-        
-        assertThat(authorLevel1.label()).isEqualTo("초급자");
-        assertThat(authorLevel2.label()).isEqualTo("중급자");
-        assertThat(authorLevel3.label()).isEqualTo("전문가");
+        assertAll(
+                () -> assertThat(authorLevel1.value()).isEqualTo("beginner"),
+                () -> assertThat(authorLevel2.value()).isEqualTo("intermediate"),
+                () -> assertThat(authorLevel3.value()).isEqualTo("expert"),
+                () -> assertThat(authorLevel1.label()).isEqualTo("초급자"),
+                () -> assertThat(authorLevel2.label()).isEqualTo("중급자"),
+                () -> assertThat(authorLevel3.label()).isEqualTo("전문가")
+        );
     }
 }

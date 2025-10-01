@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class PopularProjectDtoMapperTest {
 
@@ -51,18 +52,20 @@ class PopularProjectDtoMapperTest {
         );
 
         // then
-        assertThat(response.id()).isEqualTo(1L);
-        assertThat(response.title()).isEqualTo("proj-title");
-        assertThat(response.content()).isEqualTo("proj-content");
-        assertThat(response.creatorId()).isEqualTo(99L);
-        assertThat(response.creatorName()).isEqualTo("tester");
-        assertThat(response.projectThumbnailUrl()).isEqualTo("thumb.png");
-        assertThat(response.topicLabel()).isEqualTo("topic-label");
-        assertThat(response.analysisPurposeLabel()).isEqualTo("purpose-label");
-        assertThat(response.dataSourceLabel()).isEqualTo("source-label");
-        assertThat(response.authorLevelLabel()).isEqualTo("level-label");
-        assertThat(response.commentCount()).isEqualTo(5L);
-        assertThat(response.likeCount()).isEqualTo(6L);
-        assertThat(response.viewCount()).isEqualTo(7L);
+        assertAll(
+                () -> assertThat(response.id()).isEqualTo(1L),
+                () -> assertThat(response.title()).isEqualTo("proj-title"),
+                () -> assertThat(response.content()).isEqualTo("proj-content"),
+                () -> assertThat(response.creatorId()).isEqualTo(99L),
+                () -> assertThat(response.creatorName()).isEqualTo("tester"),
+                () -> assertThat(response.projectThumbnailUrl()).isEqualTo("thumb.png"),
+                () -> assertThat(response.topicLabel()).isEqualTo("topic-label"),
+                () -> assertThat(response.analysisPurposeLabel()).isEqualTo("purpose-label"),
+                () -> assertThat(response.dataSourceLabel()).isEqualTo("source-label"),
+                () -> assertThat(response.authorLevelLabel()).isEqualTo("level-label"),
+                () -> assertThat(response.commentCount()).isEqualTo(5L),
+                () -> assertThat(response.likeCount()).isEqualTo(6L),
+                () -> assertThat(response.viewCount()).isEqualTo(7L)
+        );
     }
 }

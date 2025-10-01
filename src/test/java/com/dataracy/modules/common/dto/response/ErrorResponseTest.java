@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ErrorResponseTest {
 
@@ -20,9 +21,11 @@ class ErrorResponseTest {
         ErrorResponse result = ErrorResponse.of(errorCode);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(400);
-        assertThat(result.getCode()).isEqualTo("COMMON-400");
-        assertThat(result.getMessage()).isEqualTo("잘못된 요청입니다.");
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(400),
+                () -> assertThat(result.getCode()).isEqualTo("COMMON-400"),
+                () -> assertThat(result.getMessage()).isEqualTo("잘못된 요청입니다.")
+        );
     }
 
     @Test
@@ -36,9 +39,11 @@ class ErrorResponseTest {
         ErrorResponse result = ErrorResponse.of(errorCode, customMessage);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(401);
-        assertThat(result.getCode()).isEqualTo("COMMON-401");
-        assertThat(result.getMessage()).isEqualTo("인증이 필요합니다.");
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(401),
+                () -> assertThat(result.getCode()).isEqualTo("COMMON-401"),
+                () -> assertThat(result.getMessage()).isEqualTo("인증이 필요합니다.")
+        );
     }
 
     @Test
@@ -51,9 +56,11 @@ class ErrorResponseTest {
         ErrorResponse result = ErrorResponse.of(errorCode);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(400);
-        assertThat(result.getCode()).isEqualTo("USER-020");
-        assertThat(result.getMessage()).isEqualTo("이메일 또는 비밀번호를 확인해주세요");
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(400),
+                () -> assertThat(result.getCode()).isEqualTo("USER-020"),
+                () -> assertThat(result.getMessage()).isEqualTo("이메일 또는 비밀번호를 확인해주세요")
+        );
     }
 
     @Test
@@ -67,9 +74,11 @@ class ErrorResponseTest {
         ErrorResponse result = ErrorResponse.of(errorCode, customMessage);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(409);
-        assertThat(result.getCode()).isEqualTo("USER-004");
-        assertThat(result.getMessage()).isEqualTo("닉네임은 2-8자 사이여야 합니다.");
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(409),
+                () -> assertThat(result.getCode()).isEqualTo("USER-004"),
+                () -> assertThat(result.getMessage()).isEqualTo("닉네임은 2-8자 사이여야 합니다.")
+        );
     }
 
     @Test
@@ -82,9 +91,11 @@ class ErrorResponseTest {
         ErrorResponse result = ErrorResponse.of(errorCode);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(500);
-        assertThat(result.getCode()).isEqualTo("COMMON-500");
-        assertThat(result.getMessage()).isEqualTo("서버 내부 오류가 발생했습니다. 관리자에게 문의하세요.");
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(500),
+                () -> assertThat(result.getCode()).isEqualTo("COMMON-500"),
+                () -> assertThat(result.getMessage()).isEqualTo("서버 내부 오류가 발생했습니다. 관리자에게 문의하세요.")
+        );
     }
 
     @Test
@@ -98,9 +109,11 @@ class ErrorResponseTest {
         ErrorResponse result = ErrorResponse.of(errorCode, customMessage);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(400);
-        assertThat(result.getCode()).isEqualTo("COMMON-400");
-        assertThat(result.getMessage()).isEqualTo("");
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(400),
+                () -> assertThat(result.getCode()).isEqualTo("COMMON-400"),
+                () -> assertThat(result.getMessage()).isEmpty()
+        );
     }
 
     @Test
@@ -114,8 +127,10 @@ class ErrorResponseTest {
         ErrorResponse result = ErrorResponse.of(errorCode, customMessage);
 
         // then
-        assertThat(result.getHttpStatus()).isEqualTo(400);
-        assertThat(result.getCode()).isEqualTo("COMMON-400");
-        assertThat(result.getMessage()).isNull();
+        assertAll(
+                () -> assertThat(result.getHttpStatus()).isEqualTo(400),
+                () -> assertThat(result.getCode()).isEqualTo("COMMON-400"),
+                () -> assertThat(result.getMessage()).isNull()
+        );
     }
 }

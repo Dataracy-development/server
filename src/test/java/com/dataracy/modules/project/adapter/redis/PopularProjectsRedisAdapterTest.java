@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -82,10 +83,12 @@ class PopularProjectsRedisAdapterTest {
             Optional<List<PopularProjectResponse>> result = adapter.getPopularProjects();
 
             // then
-            assertThat(result).isPresent();
-            assertThat(result.get()).hasSize(1);
-            assertThat(result.get().get(0).id()).isEqualTo(1L);
-            assertThat(result.get().get(0).title()).isEqualTo("Test Project");
+            assertAll(
+                    () -> assertThat(result).isPresent(),
+                    () -> assertThat(result.get()).hasSize(1),
+                    () -> assertThat(result.get().get(0).id()).isEqualTo(1L),
+                    () -> assertThat(result.get().get(0).title()).isEqualTo("Test Project")
+            );
         }
 
         @Test
@@ -156,8 +159,10 @@ class PopularProjectsRedisAdapterTest {
             Optional<Long> result = adapter.getLastUpdateTime();
 
             // then
-            assertThat(result).isPresent();
-            assertThat(result.get()).isEqualTo(1234567890123L);
+            assertAll(
+                    () -> assertThat(result).isPresent(),
+                    () -> assertThat(result.get()).isEqualTo(1234567890123L)
+            );
         }
 
         @Test

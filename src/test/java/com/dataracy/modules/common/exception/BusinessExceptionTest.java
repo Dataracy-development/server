@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("BusinessException 테스트")
 class BusinessExceptionTest {
@@ -20,12 +21,14 @@ class BusinessExceptionTest {
         DataException exception = new DataException(DataErrorStatus.NOT_FOUND_DATA);
 
         // when & then
-        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(exception.getCode()).isEqualTo("DATA-002");
-        assertThat(exception.getMessage()).isEqualTo("해당 데이터셋 리소스가 존재하지 않습니다.");
-        assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA);
-        assertThat(exception).isInstanceOf(BusinessException.class);
-        assertThat(exception).isInstanceOf(CustomException.class);
+        assertAll(
+                () -> assertThat(exception).isInstanceOf(BusinessException.class),
+                () -> assertThat(exception).isInstanceOf(CustomException.class),
+                () -> assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.NOT_FOUND),
+                () -> assertThat(exception.getCode()).isEqualTo("DATA-002"),
+                () -> assertThat(exception.getMessage()).isEqualTo("해당 데이터셋 리소스가 존재하지 않습니다."),
+                () -> assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA)
+        );
     }
 
     @Test
@@ -35,12 +38,14 @@ class BusinessExceptionTest {
         ProjectException exception = new ProjectException(ProjectErrorStatus.NOT_FOUND_PROJECT);
 
         // when & then
-        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(exception.getCode()).isEqualTo("PROJECT-002");
-        assertThat(exception.getMessage()).isEqualTo("해당 프로젝트 리소스가 존재하지 않습니다.");
-        assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_FOUND_PROJECT);
-        assertThat(exception).isInstanceOf(BusinessException.class);
-        assertThat(exception).isInstanceOf(CustomException.class);
+        assertAll(
+                () -> assertThat(exception).isInstanceOf(BusinessException.class),
+                () -> assertThat(exception).isInstanceOf(CustomException.class),
+                () -> assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.NOT_FOUND),
+                () -> assertThat(exception.getCode()).isEqualTo("PROJECT-002"),
+                () -> assertThat(exception.getMessage()).isEqualTo("해당 프로젝트 리소스가 존재하지 않습니다."),
+                () -> assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.NOT_FOUND_PROJECT)
+        );
     }
 
     @Test
@@ -50,10 +55,12 @@ class BusinessExceptionTest {
         DataException exception = new DataException(DataErrorStatus.INVALID_FILE_URL);
 
         // when & then
-        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(exception.getCode()).isEqualTo("DATA-010");
-        assertThat(exception.getMessage()).isEqualTo("유효하지 않은 파일 url입니다.");
-        assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.INVALID_FILE_URL);
+        assertAll(
+                () -> assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST),
+                () -> assertThat(exception.getCode()).isEqualTo("DATA-010"),
+                () -> assertThat(exception.getMessage()).isEqualTo("유효하지 않은 파일 url입니다."),
+                () -> assertThat(exception.getErrorCode()).isEqualTo(DataErrorStatus.INVALID_FILE_URL)
+        );
     }
 
     @Test
@@ -63,9 +70,11 @@ class BusinessExceptionTest {
         ProjectException exception = new ProjectException(ProjectErrorStatus.INVALID_THUMBNAIL_FILE_URL);
 
         // when & then
-        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(exception.getCode()).isEqualTo("PROJECT-010");
-        assertThat(exception.getMessage()).isEqualTo("유효하지 않은 프로젝트 썸네일 파일 url입니다.");
-        assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.INVALID_THUMBNAIL_FILE_URL);
+        assertAll(
+                () -> assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST),
+                () -> assertThat(exception.getCode()).isEqualTo("PROJECT-010"),
+                () -> assertThat(exception.getMessage()).isEqualTo("유효하지 않은 프로젝트 썸네일 파일 url입니다."),
+                () -> assertThat(exception.getErrorCode()).isEqualTo(ProjectErrorStatus.INVALID_THUMBNAIL_FILE_URL)
+        );
     }
 }

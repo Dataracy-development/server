@@ -50,6 +50,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProjectReadServiceTest {
@@ -221,7 +222,9 @@ class ProjectReadServiceTest {
         Page<ContinuedProjectResponse> result = service.findContinuedProjects(projectId, PageRequest.of(0, 10));
 
         // then
-        assertThat(result.getContent()).contains(expected);
+        assertAll(
+                () -> assertThat(result.getContent()).contains(expected)
+        );
     }
 
     @Test
@@ -245,7 +248,9 @@ class ProjectReadServiceTest {
         Page<ConnectedProjectResponse> result = service.findConnectedProjects(dataId, PageRequest.of(0, 10));
 
         // then
-        assertThat(result.getContent()).contains(expected);
+        assertAll(
+                () -> assertThat(result.getContent()).contains(expected)
+        );
     }
 
     @Test

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataMetadataTest {
 
@@ -19,9 +20,11 @@ class DataMetadataTest {
         );
 
         // then
-        assertThat(metadata.getId()).isEqualTo(1L);
-        assertThat(metadata.getRowCount()).isEqualTo(100);
-        assertThat(metadata.getColumnCount()).isEqualTo(10);
-        assertThat(metadata.getPreviewJson()).isEqualTo("{\"sample\":true}");
+        assertAll(
+                () -> assertThat(metadata.getId()).isEqualTo(1L),
+                () -> assertThat(metadata.getRowCount()).isEqualTo(100),
+                () -> assertThat(metadata.getColumnCount()).isEqualTo(10),
+                () -> assertThat(metadata.getPreviewJson()).isEqualTo("{\"sample\":true}")
+        );
     }
 }

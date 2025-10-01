@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class UserCommandWebMapperTest {
 
@@ -30,11 +31,13 @@ class UserCommandWebMapperTest {
         ModifyUserInfoRequest appReq = mapper.toApplicationDto(webReq);
 
         // then
-        assertThat(appReq.nickname()).isEqualTo("닉네임");
-        assertThat(appReq.authorLevelId()).isEqualTo(2L);
-        assertThat(appReq.occupationId()).isEqualTo(3L);
-        assertThat(appReq.topicIds()).containsExactly(10L, 20L);
-        assertThat(appReq.visitSourceId()).isEqualTo(4L);
-        assertThat(appReq.introductionText()).isEqualTo("자기소개");
+        assertAll(
+                () -> assertThat(appReq.nickname()).isEqualTo("닉네임"),
+                () -> assertThat(appReq.authorLevelId()).isEqualTo(2L),
+                () -> assertThat(appReq.occupationId()).isEqualTo(3L),
+                () -> assertThat(appReq.topicIds()).containsExactly(10L, 20L),
+                () -> assertThat(appReq.visitSourceId()).isEqualTo(4L),
+                () -> assertThat(appReq.introductionText()).isEqualTo("자기소개")
+        );
     }
 }

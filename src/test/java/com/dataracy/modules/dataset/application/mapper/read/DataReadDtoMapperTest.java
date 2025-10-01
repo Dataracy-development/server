@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DataReadDtoMapperTest {
 
@@ -46,8 +47,10 @@ class DataReadDtoMapperTest {
         ConnectedDataResponse res = mapper.toResponseDto(data, "userA", "profile.png", "topic", "type", 5L);
 
         // then
-        assertThat(res.title()).isEqualTo("title");
-        assertThat(res.countConnectedProjects()).isEqualTo(5L);
+        assertAll(
+                () -> assertThat(res.title()).isEqualTo("title"),
+                () -> assertThat(res.countConnectedProjects()).isEqualTo(5L)
+        );
     }
 
     @Test
@@ -73,8 +76,10 @@ class DataReadDtoMapperTest {
         PopularDataResponse res = mapper.toResponseDto(data, "user", "profile.png", "topic", "src", "type", 7L);
 
         // then
-        assertThat(res.creatorName()).isEqualTo("user");
-        assertThat(res.countConnectedProjects()).isEqualTo(7L);
+        assertAll(
+                () -> assertThat(res.creatorName()).isEqualTo("user"),
+                () -> assertThat(res.countConnectedProjects()).isEqualTo(7L)
+        );
     }
 
     @Test
@@ -97,8 +102,10 @@ class DataReadDtoMapperTest {
         );
 
         // then
-        assertThat(res.creatorName()).isEqualTo("nick");
-        assertThat(res.occupationLabel()).isEqualTo("occ");
+        assertAll(
+                () -> assertThat(res.creatorName()).isEqualTo("nick"),
+                () -> assertThat(res.occupationLabel()).isEqualTo("occ")
+        );
     }
 
     @Test
@@ -116,9 +123,11 @@ class DataReadDtoMapperTest {
         );
 
         // then
-        assertThat(res.title()).isEqualTo("title");
-        assertThat(res.topicLabel()).isEqualTo("topic");
-        assertThat(res.dataTypeLabel()).isEqualTo("type");
-        assertThat(res.countConnectedProjects()).isEqualTo(3L);
+        assertAll(
+                () -> assertThat(res.title()).isEqualTo("title"),
+                () -> assertThat(res.topicLabel()).isEqualTo("topic"),
+                () -> assertThat(res.dataTypeLabel()).isEqualTo("type"),
+                () -> assertThat(res.countConnectedProjects()).isEqualTo(3L)
+        );
     }
 }

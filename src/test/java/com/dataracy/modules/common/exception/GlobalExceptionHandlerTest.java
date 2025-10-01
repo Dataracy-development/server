@@ -15,7 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,10 +39,12 @@ class GlobalExceptionHandlerTest {
             ResponseEntity<ErrorResponse> response = exceptionHandler.handleCustomException(dataException);
 
             // then
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).isNotNull();
-            assertThat(response.getBody().getCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA.getCode());
-            assertThat(response.getBody().getMessage()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA.getMessage());
+            assertAll(
+                    () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND),
+                    () -> assertThat(response.getBody()).isNotNull(),
+                    () -> assertThat(response.getBody().getCode()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA.getCode()),
+                    () -> assertThat(response.getBody().getMessage()).isEqualTo(DataErrorStatus.NOT_FOUND_DATA.getMessage())
+            );
         }
 
         @Test
@@ -61,10 +64,12 @@ class GlobalExceptionHandlerTest {
                 ResponseEntity<ErrorResponse> response = exceptionHandler.handleCommonException(commonException);
 
                 // then
-                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-                assertThat(response.getBody()).isNotNull();
-                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getCode());
-                assertThat(response.getBody().getMessage()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getMessage());
+                assertAll(
+                        () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR),
+                        () -> assertThat(response.getBody()).isNotNull(),
+                        () -> assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getCode()),
+                        () -> assertThat(response.getBody().getMessage()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getMessage())
+                );
                 
                 verify(mockLogger).logError("CommonException", "공통 글로벌 예외입니다.", commonException);
             }
@@ -92,10 +97,12 @@ class GlobalExceptionHandlerTest {
                 ResponseEntity<ErrorResponse> response = exceptionHandler.handleLockError(lockException);
 
                 // then
-                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-                assertThat(response.getBody()).isNotNull();
-                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.CONFLICT.getCode());
-                assertThat(response.getBody().getMessage()).isEqualTo("락 획득 실패");
+                assertAll(
+                        () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT),
+                        () -> assertThat(response.getBody()).isNotNull(),
+                        () -> assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.CONFLICT.getCode()),
+                        () -> assertThat(response.getBody().getMessage()).isEqualTo("락 획득 실패")
+                );
                 
                 verify(mockLogger).logError("LockException", "동시성 락 예외입니다.", lockException);
             }
@@ -124,10 +131,12 @@ class GlobalExceptionHandlerTest {
                 ResponseEntity<ErrorResponse> response = exceptionHandler.handleSecurityException(securityException);
 
                 // then
-                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-                assertThat(response.getBody()).isNotNull();
-                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.UNAUTHORIZED.getCode());
-                assertThat(response.getBody().getMessage()).isEqualTo("인증 실패");
+                assertAll(
+                        () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED),
+                        () -> assertThat(response.getBody()).isNotNull(),
+                        () -> assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.UNAUTHORIZED.getCode()),
+                        () -> assertThat(response.getBody().getMessage()).isEqualTo("인증 실패")
+                );
                 
                 verify(mockLogger).logError("SecurityException", "인증 예외입니다.", securityException);
             }
@@ -155,10 +164,12 @@ class GlobalExceptionHandlerTest {
                 ResponseEntity<ErrorResponse> response = exceptionHandler.handleIllegalArgumentException(illegalArgException);
 
                 // then
-                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                assertThat(response.getBody()).isNotNull();
-                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.BAD_REQUEST.getCode());
-                assertThat(response.getBody().getMessage()).isEqualTo("잘못된 인자");
+                assertAll(
+                        () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST),
+                        () -> assertThat(response.getBody()).isNotNull(),
+                        () -> assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.BAD_REQUEST.getCode()),
+                        () -> assertThat(response.getBody().getMessage()).isEqualTo("잘못된 인자")
+                );
                 
                 verify(mockLogger).logError("IllegalArgumentException", "잘못된 인자가 전달되었습니다.", illegalArgException);
             }
@@ -192,9 +203,11 @@ class GlobalExceptionHandlerTest {
                 ResponseEntity<ErrorResponse> response = exceptionHandler.handleNullPointerException(nullPointerException);
 
                 // then
-                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-                assertThat(response.getBody()).isNotNull();
-                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getCode());
+                assertAll(
+                        () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR),
+                        () -> assertThat(response.getBody()).isNotNull(),
+                        () -> assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getCode())
+                );
                 
                 verify(mockLogger).logError("NullPointerException", "요청을 처리하는 중에 Null 값이 참조되었습니다.", nullPointerException);
             }
@@ -217,9 +230,11 @@ class GlobalExceptionHandlerTest {
                 ResponseEntity<ErrorResponse> response = exceptionHandler.handleNumberFormatException(numberFormatException);
 
                 // then
-                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                assertThat(response.getBody()).isNotNull();
-                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.BAD_REQUEST.getCode());
+                assertAll(
+                        () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST),
+                        () -> assertThat(response.getBody()).isNotNull(),
+                        () -> assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.BAD_REQUEST.getCode())
+                );
                 
                 verify(mockLogger).logError("NumberFormatException", "숫자 형식이 잘못되었습니다.", numberFormatException);
             }
@@ -242,9 +257,11 @@ class GlobalExceptionHandlerTest {
                 ResponseEntity<ErrorResponse> response = exceptionHandler.handleIndexOutOfBoundsException(indexOutOfBoundsException);
 
                 // then
-                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                assertThat(response.getBody()).isNotNull();
-                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.BAD_REQUEST.getCode());
+                assertAll(
+                        () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST),
+                        () -> assertThat(response.getBody()).isNotNull(),
+                        () -> assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.BAD_REQUEST.getCode())
+                );
                 
                 verify(mockLogger).logError("IndexOutOfBoundsException", "인덱스가 범위를 벗어났습니다.", indexOutOfBoundsException);
             }
@@ -274,10 +291,12 @@ class GlobalExceptionHandlerTest {
                 ResponseEntity<ErrorResponse> response = exceptionHandler.handleException(generalException);
 
                 // then
-                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-                assertThat(response.getBody()).isNotNull();
-                assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getCode());
-                assertThat(response.getBody().getMessage()).isEqualTo("예상치 못한 오류");
+                assertAll(
+                        () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR),
+                        () -> assertThat(response.getBody()).isNotNull(),
+                        () -> assertThat(response.getBody().getCode()).isEqualTo(CommonErrorStatus.INTERNAL_SERVER_ERROR.getCode()),
+                        () -> assertThat(response.getBody().getMessage()).isEqualTo("예상치 못한 오류")
+                );
                 
                 verify(mockLogger).logError("Exception", "내부 서버 오류입니다.", generalException);
             }

@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class BehaviorLogTest {
 
@@ -104,13 +105,24 @@ class BehaviorLogTest {
                 .build();
 
         // then
-        assertThat(result.getUserId()).isEqualTo(original.getUserId());
-        assertThat(result.getPath()).isEqualTo(original.getPath());
-        assertThat(result.getHttpMethod()).isEqualTo(original.getHttpMethod());
-        assertThat(result.getAction()).isEqualTo(original.getAction());
-        assertThat(result.getDeviceType()).isEqualTo(original.getDeviceType());
-        assertThat(result.getLogType()).isEqualTo(original.getLogType());
-        assertThat(result.getTimestamp()).isEqualTo(newTimestamp);
+        assertAll(
+
+                () -> assertThat(result.getUserId()).isEqualTo(original.getUserId()),
+
+                () -> assertThat(result.getPath()).isEqualTo(original.getPath()),
+
+                () -> assertThat(result.getHttpMethod()).isEqualTo(original.getHttpMethod()),
+
+                () -> assertThat(result.getAction()).isEqualTo(original.getAction()),
+
+                () -> assertThat(result.getDeviceType()).isEqualTo(original.getDeviceType()),
+
+                () -> assertThat(result.getLogType()).isEqualTo(original.getLogType()),
+
+                () -> assertThat(result.getTimestamp()).isEqualTo(newTimestamp)
+
+        );
+
     }
 
     @Test
@@ -141,25 +153,49 @@ class BehaviorLogTest {
                 .build();
 
         // then
-        assertThat(behaviorLog.getUserId()).isEqualTo("user123");
-        assertThat(behaviorLog.getAnonymousId()).isEqualTo("anonymous123");
-        assertThat(behaviorLog.getPath()).isEqualTo("/test");
-        assertThat(behaviorLog.getHttpMethod()).isEqualTo(HttpMethod.GET);
-        assertThat(behaviorLog.getIp()).isEqualTo("192.168.1.1");
-        assertThat(behaviorLog.getRequestId()).isEqualTo("req123");
-        assertThat(behaviorLog.getSessionId()).isEqualTo("session123");
-        assertThat(behaviorLog.getUserAgent()).isEqualTo("Mozilla/5.0");
-        assertThat(behaviorLog.getReferrer()).isEqualTo("https://example.com");
-        assertThat(behaviorLog.getNextPath()).isEqualTo("/next");
-        assertThat(behaviorLog.getAction()).isEqualTo(ActionType.CLICK);
-        assertThat(behaviorLog.getStayTime()).isEqualTo(5000L);
-        assertThat(behaviorLog.getResponseTime()).isEqualTo(100L);
-        assertThat(behaviorLog.getDbLatency()).isEqualTo(50L);
-        assertThat(behaviorLog.getExternalLatency()).isEqualTo(30L);
-        assertThat(behaviorLog.getDeviceType()).isEqualTo(DeviceType.PC);
-        assertThat(behaviorLog.getOs()).isEqualTo("Windows");
-        assertThat(behaviorLog.getBrowser()).isEqualTo("Chrome");
-        assertThat(behaviorLog.getLogType()).isEqualTo(LogType.ACTION);
-        assertThat(behaviorLog.getTimestamp()).isEqualTo("2024-01-01T00:00:00Z");
+        assertAll(
+
+                () -> assertThat(behaviorLog.getUserId()).isEqualTo("user123"),
+
+                () -> assertThat(behaviorLog.getAnonymousId()).isEqualTo("anonymous123"),
+
+                () -> assertThat(behaviorLog.getPath()).isEqualTo("/test"),
+
+                () -> assertThat(behaviorLog.getHttpMethod()).isEqualTo(HttpMethod.GET),
+
+                () -> assertThat(behaviorLog.getIp()).isEqualTo("192.168.1.1"),
+
+                () -> assertThat(behaviorLog.getRequestId()).isEqualTo("req123"),
+
+                () -> assertThat(behaviorLog.getSessionId()).isEqualTo("session123"),
+
+                () -> assertThat(behaviorLog.getUserAgent()).isEqualTo("Mozilla/5.0"),
+
+                () -> assertThat(behaviorLog.getReferrer()).isEqualTo("https://example.com"),
+
+                () -> assertThat(behaviorLog.getNextPath()).isEqualTo("/next"),
+
+                () -> assertThat(behaviorLog.getAction()).isEqualTo(ActionType.CLICK),
+
+                () -> assertThat(behaviorLog.getStayTime()).isEqualTo(5000L),
+
+                () -> assertThat(behaviorLog.getResponseTime()).isEqualTo(100L),
+
+                () -> assertThat(behaviorLog.getDbLatency()).isEqualTo(50L),
+
+                () -> assertThat(behaviorLog.getExternalLatency()).isEqualTo(30L),
+
+                () -> assertThat(behaviorLog.getDeviceType()).isEqualTo(DeviceType.PC),
+
+                () -> assertThat(behaviorLog.getOs()).isEqualTo("Windows"),
+
+                () -> assertThat(behaviorLog.getBrowser()).isEqualTo("Chrome"),
+
+                () -> assertThat(behaviorLog.getLogType()).isEqualTo(LogType.ACTION),
+
+                () -> assertThat(behaviorLog.getTimestamp()).isEqualTo("2024-01-01T00:00:00Z")
+
+        );
+
     }
 }

@@ -5,7 +5,8 @@ import com.dataracy.modules.email.application.dto.request.command.SendEmailReque
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class EmailCommandWebMapperTest {
 
@@ -20,7 +21,9 @@ class EmailCommandWebMapperTest {
         SendEmailRequest dto = mapper.toApplicationDto(web);
 
         // then
-        assertThat(dto.email()).isEqualTo("user@example.com");
-        assertThat(dto.purpose()).isEqualTo("SIGN_UP");
+        assertAll(
+                () -> assertThat(dto.email()).isEqualTo("user@example.com"),
+                () -> assertThat(dto.purpose()).isEqualTo("SIGN_UP")
+        );
     }
 }
