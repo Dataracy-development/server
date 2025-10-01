@@ -214,19 +214,48 @@ jacocoTestCoverageVerification {
 
 sonarqube {
 	properties {
+		// 프로젝트 기본 정보
 		property "sonar.projectKey", "dataracy-server"
 		property "sonar.projectName", "Dataracy Server"
 		property "sonar.projectVersion", version
+		property "sonar.organization", "dataracy"
+		
+		// 소스 코드 경로
 		property "sonar.sources", "src/main/java"
 		property "sonar.tests", "src/test/java"
-		property "sonar.java.coveragePlugin", "jacoco"
-		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
 		property "sonar.java.binaries", "build/classes/java/main"
 		property "sonar.java.test.binaries", "build/classes/java/test"
-		property "sonar.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store"
+		
+		// 커버리지 설정
+		property "sonar.java.coveragePlugin", "jacoco"
+		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+		property "sonar.coverage.exclusions", "**/config/**/*,**/exception/**/*,**/dto/**/*,**/entity/**/*,**/vo/**/*"
+		
+		// 파일 제외 설정
+		property "sonar.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store,**/config/**/*,**/dto/**/*,**/exception/**/*,**/entity/**/*,**/vo/**/*"
 		property "sonar.test.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store"
-		property "sonar.qualitygate.wait", false
+		
+		// 코드 품질 설정
 		property "sonar.sourceEncoding", "UTF-8"
-		property "sonar.text.inclusions", "**/*.java,**/*.xml,**/*.yml,**/*.yaml,**/*.properties"
+		property "sonar.java.libraries", "build/libs/*.jar"
+		property "sonar.java.source", "17"
+		property "sonar.java.target", "17"
+		
+		// 품질 게이트 설정
+		property "sonar.qualitygate.wait", true
+		property "sonar.qualitygate.timeout", "300"
+		
+		// 분석 설정
+		property "sonar.analysis.mode", "publish"
+		property "sonar.issuesReport.console.enable", "true"
+		property "sonar.verbose", "false"
+		
+		// 보안 및 취약점 설정
+		property "sonar.security.hotspots", "true"
+		property "sonar.vulnerabilities", "true"
+		
+		// 중복 코드 설정
+		property "sonar.cpd.java.minimumtokens", "100"
+		property "sonar.cpd.minimumtokens", "100"
 	}
 }

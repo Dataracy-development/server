@@ -150,11 +150,8 @@ class BehaviorLogRedisMergeAdapterTest {
 
             // then
             assertAll(
-
                     () -> assertThat(result).isPresent(),
-
-src/test/java/com/dataracy/modules/comment/domain/model/CommentTest.java                    () -> assertThat(result).contains(456L)
-
+                    () -> assertThat(result).contains(456L)
             );
 
             then(valueOperations).should().get(expectedKey);
