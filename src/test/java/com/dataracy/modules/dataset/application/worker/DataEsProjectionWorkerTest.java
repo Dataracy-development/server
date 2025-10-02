@@ -109,7 +109,7 @@ class DataEsProjectionWorkerTest {
 
     @Test
     @DisplayName("run 호출 시 LoadPort → processTask 실행 후 taskPort 삭제 확인")
-    void runShouldLoadAndProcess() throws Exception {
+    void runShouldLoadAndProcess() throws InterruptedException {
         // given
         DataEsProjectionTaskEntity t = task(4L, 13L, true, 0);
         given(loadPort.findBatchForWork(any(), any(), any(PageRequest.class)))
@@ -117,6 +117,9 @@ class DataEsProjectionWorkerTest {
 
         // when
         worker.run();
+        
+        // 비동기 작업 완료 대기
+        Thread.sleep(100);
 
         // then
         then(loadPort).should().findBatchForWork(any(), any(), any(PageRequest.class));

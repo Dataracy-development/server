@@ -46,8 +46,9 @@ class ProjectSortTypeTest {
     @DisplayName("of - 잘못된 입력으로 ProjectException이 발생한다")
     void of_WhenInvalidInput_ThrowsProjectException(String input, String expectedInput) {
         // when & then
+        String actualInput = "null".equals(input) ? null : input;
         ProjectException exception = catchThrowableOfType(
-                () -> ProjectSortType.of("null".equals(input) ? null : input),
+                () -> ProjectSortType.of(actualInput),
                 ProjectException.class
         );
         assertAll(

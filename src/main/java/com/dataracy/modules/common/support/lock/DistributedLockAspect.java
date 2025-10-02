@@ -68,7 +68,12 @@ public class DistributedLockAspect {
                         LoggerFactory.lock().logInfo("[AOP] 분산 락 내부 실행 - method: {} key: {}", method.getName(), key);
                         try {
                             return proceedSafely(joinPoint);
+                        } catch (BusinessException | CommonException e) {
+                            // 비즈니스/공통 예외는 그대로 전파
+                            throw e;
                         } catch (Throwable e) {
+                            // 기타 예외는 래핑하여 전파
+                            LoggerFactory.lock().logError("[AOP] 원본 메서드 실행 중 예외 - key: {}", key, e);
                             throw new CommonException(CommonErrorStatus.DISTRIBUTED_LOCK_EXECUTION_FAILURE);
                         }
                     });

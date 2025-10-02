@@ -63,10 +63,11 @@ class FileParsingUtilTest {
     void parse_ShouldThrowExceptionForInvalidInput(String filename, String expectedMessage) {
         // Given
         ByteArrayInputStream inputStream = new ByteArrayInputStream("test".getBytes());
+        String actualFilename = "null".equals(filename) ? null : filename;
 
         // When & Then
         IllegalArgumentException exception = catchThrowableOfType(
-                () -> FileParsingUtil.parse(inputStream, "null".equals(filename) ? null : filename),
+                () -> FileParsingUtil.parse(inputStream, actualFilename),
                 IllegalArgumentException.class
         );
         assertAll(

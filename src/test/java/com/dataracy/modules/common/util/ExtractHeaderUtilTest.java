@@ -14,21 +14,30 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DisplayName("ExtractHeaderUtil 테스트")
 class ExtractHeaderUtilTest {
 
-    @Test
-    @DisplayName("extractAccessToken - 유효한 Bearer 토큰 추출")
-    void extractAccessToken_ShouldExtractValidBearerToken() {
+    @ParameterizedTest(name = "extractAccessToken - {0}")
+    @CsvSource({
+            "'Bearer valid-token-123', 'valid-token-123', true",
+            "'Bearer ', '', true",
+            "'Bearer token with spaces', 'token with spaces', true"
+    })
+    @DisplayName("extractAccessToken - 다양한 Bearer 토큰 추출")
+    void extractAccessToken_ShouldExtractVariousBearerTokens(String authHeader, String expectedToken, boolean shouldBePresent) {
         // Given
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer valid-token-123");
+        request.addHeader("Authorization", authHeader);
 
         // When
         Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
         // Then
-        assertAll(
-                () -> assertThat(token).isPresent(),
-                () -> assertThat(token).contains("valid-token-123")
-        );
+        if (shouldBePresent) {
+            assertAll(
+                    () -> assertThat(token).isPresent(),
+                    () -> assertThat(token).contains(expectedToken)
+            );
+        } else {
+            assertThat(token).isEmpty();
+        }
     }
 
     @Test
@@ -66,37 +75,4 @@ class ExtractHeaderUtilTest {
         assertThat(token).isEmpty();
     }
 
-    @Test
-    @DisplayName("extractAccessToken - Bearer만 있고 토큰이 없는 경우")
-    void extractAccessToken_ShouldReturnEmptyWhenOnlyBearer() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer ");
-
-        // When
-        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
-
-        // Then
-        assertAll(
-                () -> assertThat(token).isPresent(),
-                () -> assertThat(token).contains("")
-        );
-    }
-
-    @Test
-    @DisplayName("extractAccessToken - 공백이 포함된 토큰 처리")
-    void extractAccessToken_ShouldHandleTokenWithSpaces() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer token with spaces");
-
-        // When
-        Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
-
-        // Then
-        assertAll(
-                () -> assertThat(token).isPresent(),
-                () -> assertThat(token).contains("token with spaces")
-        );
-    }
 }

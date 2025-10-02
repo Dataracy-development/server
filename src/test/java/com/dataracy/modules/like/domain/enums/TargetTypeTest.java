@@ -38,8 +38,9 @@ class TargetTypeTest {
     @DisplayName("of - 잘못된 입력으로 LikeException이 발생한다")
     void of_WhenInvalidInput_ThrowsLikeException(String input, String expectedInput) {
         // when & then
+        String actualInput = "null".equals(input) ? null : input;
         LikeException exception = catchThrowableOfType(
-                () -> TargetType.of("null".equals(input) ? null : input),
+                () -> TargetType.of(actualInput),
                 LikeException.class
         );
         assertAll(

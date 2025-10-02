@@ -40,8 +40,9 @@ class RoleTypeTest {
     @DisplayName("of - 잘못된 입력으로 UserException이 발생한다")
     void of_WhenInvalidInput_ThrowsUserException(String input, String expectedInput) {
         // when & then
+        String actualInput = "null".equals(input) ? null : input;
         UserException exception = catchThrowableOfType(
-                () -> RoleType.of("null".equals(input) ? null : input),
+                () -> RoleType.of(actualInput),
                 UserException.class
         );
         assertAll(

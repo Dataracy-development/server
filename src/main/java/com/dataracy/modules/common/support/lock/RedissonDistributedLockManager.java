@@ -62,10 +62,22 @@ public class RedissonDistributedLockManager {
         int attempts = 0;
         
         while (attempts <= retryCount) {
-            LockAttemptResult result = tryAcquireLock(key, lock, waitTime, leaseTime, attempts);
+            boolean acquired = acquireLock(key, lock, waitTime, leaseTime);
             
-            if (result.isSuccess()) {
-                return executeAction(key, lock, action, startTime);
+            if (acquired) {
+                try {
+                    T result = action.get();
+                    LoggerFactory.lock().logSuccess(key, "락 기반 작업 성공", startTime);
+                    return result;
+                } catch (Exception e) {
+                    LoggerFactory.lock().logException(key, "락 기반 작업 실행 중 예외 발생", e);
+                    throw e;
+                } finally {
+                    // 락을 실제로 획득한 경우에만 해제
+                    if (lock.isHeldByCurrentThread()) {
+                        releaseLock(key, lock);
+                    }
+                }
             }
             
             attempts++;
@@ -78,73 +90,27 @@ public class RedissonDistributedLockManager {
     }
     
     /**
-     * 락 획득 시도를 수행하고 결과를 반환합니다.
+     * 락 획득만 담당합니다. (락 해제는 하지 않음)
+     * 락 해제는 호출하는 메서드에서 finally 블록을 통해 처리됩니다.
      */
-    private LockAttemptResult tryAcquireLock(String key, RLock lock, long waitTime, long leaseTime, int attempts) {
-        boolean acquired = false;
+    @SuppressWarnings("java:S2222") // 락 해제는 호출자에서 처리됨
+    private boolean acquireLock(String key, RLock lock, long waitTime, long leaseTime) {
         try {
-            LoggerFactory.lock().logTry(key, attempts);
-            acquired = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
+            boolean acquired = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
             LoggerFactory.lock().logInfo("tryLock 결과 - key={} acquired={}", key, acquired);
-            
-            return new LockAttemptResult(acquired);
-            
+            return acquired;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            if (acquired) {
-                releaseLock(key, lock);
-            }
             LoggerFactory.lock().logException(key, "인터럽트 발생", e);
             throw new LockAcquisitionException("스레드 인터럽트로 인해 락 획득 실패", e);
-        } catch (BusinessException | CommonException e) {
-            if (acquired) {
-                releaseLock(key, lock);
-            }
-            LoggerFactory.lock().logWarning(key, "비즈니스/공통 예외 발생 - message=" + e.getMessage());
-            throw (RuntimeException) e;
-        } catch (RuntimeException e) {
-            if (acquired) {
-                releaseLock(key, lock);
-            }
-            Throwable cause = e.getCause();
-            if (cause instanceof BusinessException || cause instanceof CommonException) {
-                throw (RuntimeException) cause;
-            }
-            LoggerFactory.lock().logException(key, "Runtime 예외 발생", e);
-            throw new LockAcquisitionException("분산 락 실행 중 런타임 예외 발생", e);
         } catch (Exception e) {
-            if (acquired) {
-                releaseLock(key, lock);
-            }
-            LoggerFactory.lock().logException(key, "시스템 예외 발생", e);
-            throw new LockAcquisitionException("분산 락 실행 중 시스템 예외 발생", e);
+            LoggerFactory.lock().logException(key, "락 획득 중 예외 발생", e);
+            throw new LockAcquisitionException("분산 락 획득 중 예외 발생", e);
         }
     }
     
-    /**
-     * 락 획득 시도 결과를 나타내는 내부 클래스
-     */
-    private static class LockAttemptResult {
-        private final boolean success;
-        
-        public LockAttemptResult(boolean success) {
-            this.success = success;
-        }
-        
-        public boolean isSuccess() {
-            return success;
-        }
-    }
     
-    private <T> T executeAction(String key, RLock lock, Supplier<T> action, Instant startTime) {
-        try {
-            T result = action.get();
-            LoggerFactory.lock().logSuccess(key, "락 기반 작업 성공", startTime);
-            return result;
-        } finally {
-            releaseLock(key, lock);
-        }
-    }
+    
     
     private void performBackoff(int attempts) {
         // 지수 백오프: 100ms, 200ms, 400ms, 800ms...

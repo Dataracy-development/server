@@ -42,8 +42,9 @@ class DataSortTypeTest {
     @DisplayName("of - 잘못된 입력으로 DataException이 발생한다")
     void of_WhenInvalidInput_ThrowsDataException(String input, String expectedInput) {
         // when & then
+        String actualInput = "null".equals(input) ? null : input;
         DataException exception = catchThrowableOfType(
-                () -> DataSortType.of("null".equals(input) ? null : input),
+                () -> DataSortType.of(actualInput),
                 DataException.class
         );
         assertAll(

@@ -42,9 +42,9 @@ public class CreateProjectDtoMapper {
                 requestDto.isContinue(),
                 parentProjectId,
                 requestDto.content(),
-                defaultProjectImageUrl,
+                defaultProjectImageUrl, // thumbnailUrl
                 requestDto.dataIds(),
-                null,
+                null, // createdAt
                 0L,   // commentCount 초기값
                 0L,   // likeCount 초기값
                 0L,   // viewCount 초기값
