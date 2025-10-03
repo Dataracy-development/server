@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.comment.application.dto.response.read;
 
 import java.time.LocalDateTime;
@@ -17,14 +21,13 @@ import java.time.LocalDateTime;
  * @param isLiked 현재 사용자의 좋아요 여부
  */
 public record FindCommentResponse(
-        Long id,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String authorLevelLabel,
-        String content,
-        Long likeCount,
-        Long childCommentCount,
-        LocalDateTime createdAt,
-        boolean isLiked
-) {}
+    Long id,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String authorLevelLabel,
+    String content,
+    Long likeCount,
+    Long childCommentCount,
+    LocalDateTime createdAt,
+    boolean isLiked) {}

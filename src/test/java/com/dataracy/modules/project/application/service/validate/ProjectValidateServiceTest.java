@@ -1,7 +1,14 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.project.application.service.validate;
 
-import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByIdPort;
-import com.dataracy.modules.project.domain.exception.ProjectException;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,59 +19,88 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import com.dataracy.modules.project.application.port.out.query.validate.CheckProjectExistsByIdPort;
+import com.dataracy.modules.project.domain.exception.ProjectException;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ProjectValidateServiceTest {
 
-    @Mock
-    private CheckProjectExistsByIdPort checkProjectExistsByIdPort;
+  @Mock private CheckProjectExistsByIdPort checkProjectExistsByIdPort;
 
-    private ProjectValidateService projectValidateService;
+  private ProjectValidateService projectValidateService;
 
-    @BeforeEach
-    void setUp() {
-        projectValidateService = new ProjectValidateService(checkProjectExistsByIdPort);
+  @BeforeEach
+  void setUp() {
+    projectValidateService = new ProjectValidateService(checkProjectExistsByIdPort);
+  }
+
+  @Nested
+  @DisplayName("validateProject 메서드 테스트")
+  class ValidateProjectTest {
+
+    @Test
+    @DisplayName("성공: 프로젝트가 존재할 때 검증 통과")
+    void validateProject_프로젝트존재_검증통과() {
+      // given
+      Long projectId = 1L;
+      given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(true);
+
+      // when & then
+      projectValidateService.validateProject(projectId);
+
+      then(checkProjectExistsByIdPort).should().checkProjectExistsById(projectId);
     }
 
-    @Nested
-    @DisplayName("validateProject 메서드 테스트")
-    class ValidateProjectTest {
+    @Test
+    @DisplayName("실패: 프로젝트가 존재하지 않을 때 ProjectException 발생")
+    void validateProject_프로젝트존재하지않음_ProjectException발생() {
+      // given
+      Long projectId = 999L;
+      given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(false);
 
-        @Test
-        @DisplayName("성공: 프로젝트가 존재할 때 검증 통과")
-        void validateProject_프로젝트존재_검증통과() {
-            // given
-            Long projectId = 1L;
-            given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(true);
+      // when & then
+      ProjectException exception =
+          catchThrowableOfType(
+              () -> projectValidateService.validateProject(projectId), ProjectException.class);
+      assertAll(
+          () ->
+              org.assertj.core.api.Assertions.assertThat(exception)
+                  .isInstanceOf(ProjectException.class));
 
-            // when & then
-            projectValidateService.validateProject(projectId);
-            
-            then(checkProjectExistsByIdPort).should().checkProjectExistsById(projectId);
-        }
-
-        @Test
-        @DisplayName("실패: 프로젝트가 존재하지 않을 때 ProjectException 발생")
-        void validateProject_프로젝트존재하지않음_ProjectException발생() {
-            // given
-            Long projectId = 999L;
-            given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(false);
-
-            // when & then
-            ProjectException exception = catchThrowableOfType(
-                    () -> projectValidateService.validateProject(projectId),
-                    ProjectException.class
-            );
-            assertAll(
-                    () -> org.assertj.core.api.Assertions.assertThat(exception).isInstanceOf(ProjectException.class)
-            );
-            
-            then(checkProjectExistsByIdPort).should().checkProjectExistsById(projectId);
-        }
+      then(checkProjectExistsByIdPort).should().checkProjectExistsById(projectId);
     }
+
+    @Test
+    @DisplayName("성공: 프로젝트 ID가 null일 때도 정상 처리")
+    void validateProject_nullProjectId_정상처리() {
+      // given
+      Long projectId = null;
+      given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(false);
+
+      // when & then
+      ProjectException exception =
+          catchThrowableOfType(
+              () -> projectValidateService.validateProject(projectId), ProjectException.class);
+      assertAll(() -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull());
+
+      then(checkProjectExistsByIdPort).should().checkProjectExistsById(projectId);
+    }
+
+    @Test
+    @DisplayName("성공: 프로젝트 ID가 음수일 때도 정상 처리")
+    void validateProject_negativeProjectId_정상처리() {
+      // given
+      Long projectId = -1L;
+      given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(false);
+
+      // when & then
+      ProjectException exception =
+          catchThrowableOfType(
+              () -> projectValidateService.validateProject(projectId), ProjectException.class);
+      assertAll(() -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull());
+
+      then(checkProjectExistsByIdPort).should().checkProjectExistsById(projectId);
+    }
+  }
 }

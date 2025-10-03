@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.auth.application.dto.request;
 
 /**
@@ -6,7 +10,4 @@ package com.dataracy.modules.auth.application.dto.request;
  * @param email 이메일
  * @param password 비밀번호
  */
-public record SelfLoginRequest(
-        String email,
-        String password
-) {}
+public record SelfLoginRequest(String email, String password) {}

@@ -1,7 +1,22 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.auth.adapter.redis;
 
-import com.dataracy.modules.auth.adapter.jwt.JwtProperties;
-import com.dataracy.modules.common.exception.CommonException;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doThrow;
+
+import java.util.concurrent.TimeUnit;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,155 +30,136 @@ import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.doThrow;
+import com.dataracy.modules.auth.adapter.jwt.JwtProperties;
+import com.dataracy.modules.common.exception.CommonException;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class RefreshTokenRedisAdapterTest {
 
-    @Mock
-    private StringRedisTemplate redisTemplate;
-    
-    @Mock
-    private ValueOperations<String, String> valueOperations;
-    
-    @Mock
-    private JwtProperties jwtProperties;
+  @Mock private StringRedisTemplate redisTemplate;
 
-    private RefreshTokenRedisAdapter adapter;
+  @Mock private ValueOperations<String, String> valueOperations;
 
-    @BeforeEach
-    void setUp() {
-        adapter = new RefreshTokenRedisAdapter(redisTemplate, jwtProperties);
-        given(redisTemplate.opsForValue()).willReturn(valueOperations);
-        given(jwtProperties.getRefreshTokenExpirationTime()).willReturn(7L);
+  @Mock private JwtProperties jwtProperties;
+
+  private RefreshTokenRedisAdapter adapter;
+
+  @BeforeEach
+  void setUp() {
+    adapter = new RefreshTokenRedisAdapter(redisTemplate, jwtProperties);
+    given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    given(jwtProperties.getRefreshTokenExpirationTime()).willReturn(7L);
+  }
+
+  @Nested
+  @DisplayName("saveRefreshToken 메서드 테스트")
+  class SaveRefreshTokenTest {
+
+    @Test
+    @DisplayName("성공: 리프레시 토큰 저장")
+    void saveRefreshToken_성공() {
+      // given
+      String userId = "user123";
+      String refreshToken = "refresh-token-123";
+
+      // when
+      adapter.saveRefreshToken(userId, refreshToken);
+
+      // then
+      then(valueOperations)
+          .should()
+          .set(eq("refreshToken:user:user123"), eq(refreshToken), eq(7L), eq(TimeUnit.DAYS));
     }
 
-    @Nested
-    @DisplayName("saveRefreshToken 메서드 테스트")
-    class SaveRefreshTokenTest {
+    @Test
+    @DisplayName("예외 발생 시 CommonException 변환")
+    void saveRefreshToken_예외발생_CommonException변환() {
+      // given
+      String userId = "user456";
+      String refreshToken = "refresh-token-456";
+      RedisConnectionFailureException redisException =
+          new RedisConnectionFailureException("Redis connection failed");
 
-        @Test
-        @DisplayName("성공: 리프레시 토큰 저장")
-        void saveRefreshToken_성공() {
-            // given
-            String userId = "user123";
-            String refreshToken = "refresh-token-123";
+      doThrow(redisException)
+          .when(valueOperations)
+          .set(anyString(), anyString(), anyLong(), any(TimeUnit.class));
 
-            // when
-            adapter.saveRefreshToken(userId, refreshToken);
+      // when & then
+      CommonException exception =
+          catchThrowableOfType(
+              () -> adapter.saveRefreshToken(userId, refreshToken), CommonException.class);
+      assertAll(() -> assertThat(exception).isNotNull());
+    }
+  }
 
-            // then
-            then(valueOperations).should().set(
-                eq("refreshToken:user:user123"),
-                eq(refreshToken),
-                eq(7L),
-                eq(TimeUnit.DAYS)
-            );
-        }
+  @Nested
+  @DisplayName("getRefreshToken 메서드 테스트")
+  class GetRefreshTokenTest {
 
-        @Test
-        @DisplayName("예외 발생 시 CommonException 변환")
-        void saveRefreshToken_예외발생_CommonException변환() {
-            // given
-            String userId = "user456";
-            String refreshToken = "refresh-token-456";
-            RedisConnectionFailureException redisException = new RedisConnectionFailureException("Redis connection failed");
-            
-            doThrow(redisException).when(valueOperations).set(anyString(), anyString(), anyLong(), any(TimeUnit.class));
+    @Test
+    @DisplayName("성공: 리프레시 토큰 조회")
+    void getRefreshToken_성공() {
+      // given
+      String userId = "user123";
+      String refreshToken = "refresh-token-123";
+      given(valueOperations.get("refreshToken:user:user123")).willReturn(refreshToken);
 
-            // when & then
-            CommonException exception = catchThrowableOfType(
-                    () -> adapter.saveRefreshToken(userId, refreshToken),
-                    CommonException.class
-            );
-            assertAll(
-                    () -> assertThat(exception).isNotNull()
-            );
-        }
+      // when
+      String result = adapter.getRefreshToken(userId);
+
+      // then
+      assertThat(result).isEqualTo(refreshToken);
+      then(valueOperations).should().get("refreshToken:user:user123");
     }
 
-    @Nested
-    @DisplayName("getRefreshToken 메서드 테스트")
-    class GetRefreshTokenTest {
+    @Test
+    @DisplayName("토큰이 존재하지 않을 때 null 반환")
+    void getRefreshToken_토큰존재하지않음_null반환() {
+      // given
+      String userId = "user999";
+      given(valueOperations.get("refreshToken:user:user999")).willReturn(null);
 
-        @Test
-        @DisplayName("성공: 리프레시 토큰 조회")
-        void getRefreshToken_성공() {
-            // given
-            String userId = "user123";
-            String refreshToken = "refresh-token-123";
-            given(valueOperations.get("refreshToken:user:user123")).willReturn(refreshToken);
+      // when
+      String result = adapter.getRefreshToken(userId);
 
-            // when
-            String result = adapter.getRefreshToken(userId);
+      // then
+      assertThat(result).isNull();
+      then(valueOperations).should().get("refreshToken:user:user999");
+    }
+  }
 
-            // then
-            assertThat(result).isEqualTo(refreshToken);
-            then(valueOperations).should().get("refreshToken:user:user123");
-        }
+  @Nested
+  @DisplayName("deleteRefreshToken 메서드 테스트")
+  class DeleteRefreshTokenTest {
 
-        @Test
-        @DisplayName("토큰이 존재하지 않을 때 null 반환")
-        void getRefreshToken_토큰존재하지않음_null반환() {
-            // given
-            String userId = "user999";
-            given(valueOperations.get("refreshToken:user:user999")).willReturn(null);
+    @Test
+    @DisplayName("성공: 리프레시 토큰 삭제")
+    void deleteRefreshToken_성공() {
+      // given
+      String userId = "user222";
 
-            // when
-            String result = adapter.getRefreshToken(userId);
+      // when
+      adapter.deleteRefreshToken(userId);
 
-            // then
-            assertThat(result).isNull();
-            then(valueOperations).should().get("refreshToken:user:user999");
-        }
+      // then
+      then(redisTemplate).should().delete("refreshToken:user:user222");
     }
 
-    @Nested
-    @DisplayName("deleteRefreshToken 메서드 테스트")
-    class DeleteRefreshTokenTest {
+    @Test
+    @DisplayName("예외 발생 시 CommonException 변환")
+    void deleteRefreshToken_예외발생_CommonException변환() {
+      // given
+      String userId = "user333";
+      RedisConnectionFailureException redisException =
+          new RedisConnectionFailureException("Redis connection failed");
 
-        @Test
-        @DisplayName("성공: 리프레시 토큰 삭제")
-        void deleteRefreshToken_성공() {
-            // given
-            String userId = "user222";
+      given(redisTemplate.delete(anyString())).willThrow(redisException);
 
-            // when
-            adapter.deleteRefreshToken(userId);
-
-            // then
-            then(redisTemplate).should().delete("refreshToken:user:user222");
-        }
-
-        @Test
-        @DisplayName("예외 발생 시 CommonException 변환")
-        void deleteRefreshToken_예외발생_CommonException변환() {
-            // given
-            String userId = "user333";
-            RedisConnectionFailureException redisException = new RedisConnectionFailureException("Redis connection failed");
-            
-            given(redisTemplate.delete(anyString())).willThrow(redisException);
-
-            // when & then
-            CommonException exception = catchThrowableOfType(
-                    () -> adapter.deleteRefreshToken(userId),
-                    CommonException.class
-            );
-            assertAll(
-                    () -> assertThat(exception).isNotNull()
-            );
-        }
+      // when & then
+      CommonException exception =
+          catchThrowableOfType(() -> adapter.deleteRefreshToken(userId), CommonException.class);
+      assertAll(() -> assertThat(exception).isNotNull());
     }
+  }
 }

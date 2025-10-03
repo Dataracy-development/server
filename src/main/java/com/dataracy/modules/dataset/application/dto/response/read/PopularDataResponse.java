@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.dataset.application.dto.response.read;
 
 import java.time.LocalDate;
@@ -25,22 +29,21 @@ import java.time.LocalDateTime;
  * @param countConnectedProjects 연결된 프로젝트 수
  */
 public record PopularDataResponse(
-        Long id,
-        String title,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String topicLabel,
-        String dataSourceLabel,
-        String dataTypeLabel,
-        LocalDate startDate,
-        LocalDate endDate,
-        String description,
-        String dataThumbnailUrl,
-        Integer downloadCount,
-        Long sizeBytes,
-        Integer rowCount,
-        Integer columnCount,
-        LocalDateTime createdAt,
-        Long countConnectedProjects
-) {}
+    Long id,
+    String title,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String topicLabel,
+    String dataSourceLabel,
+    String dataTypeLabel,
+    LocalDate startDate,
+    LocalDate endDate,
+    String description,
+    String dataThumbnailUrl,
+    Integer downloadCount,
+    Long sizeBytes,
+    Integer rowCount,
+    Integer columnCount,
+    LocalDateTime createdAt,
+    Long countConnectedProjects) {}

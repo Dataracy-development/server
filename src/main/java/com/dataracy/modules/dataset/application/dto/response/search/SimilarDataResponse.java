@@ -1,11 +1,14 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.dataset.application.dto.response.search;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * 유사 데이터 검색 결과 애플리케이션 응답 DTO
- * 검색된 데이터셋의 핵심 메타데이터를 담습니다.
+ * 유사 데이터 검색 결과 애플리케이션 응답 DTO 검색된 데이터셋의 핵심 메타데이터를 담습니다.
  *
  * @param id 데이터 ID
  * @param title 데이터 제목
@@ -25,21 +28,20 @@ import java.time.LocalDateTime;
  * @param createdAt 생성 시각
  */
 public record SimilarDataResponse(
-        Long id,
-        String title,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String topicLabel,
-        String dataSourceLabel,
-        String dataTypeLabel,
-        LocalDate startDate,
-        LocalDate endDate,
-        String description,
-        String dataThumbnailUrl,
-        Integer downloadCount,
-        Long sizeBytes,
-        Integer rowCount,
-        Integer columnCount,
-        LocalDateTime createdAt
-) {}
+    Long id,
+    String title,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String topicLabel,
+    String dataSourceLabel,
+    String dataTypeLabel,
+    LocalDate startDate,
+    LocalDate endDate,
+    String description,
+    String dataThumbnailUrl,
+    Integer downloadCount,
+    Long sizeBytes,
+    Integer rowCount,
+    Integer columnCount,
+    LocalDateTime createdAt) {}

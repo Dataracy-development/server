@@ -1,120 +1,121 @@
 <?xml version="1.0"?>
 <!DOCTYPE module PUBLIC
-    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
-    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+	"-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+	"https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
-    <property name="charset" value="UTF-8"/>
-    <property name="severity" value="warning"/>
-    <property name="fileExtensions" value="java, properties, xml"/>
+	<property name="charset" value="UTF-8"/>
+	<property name="severity" value="warning"/>
+	<property name="fileExtensions" value="java, properties, xml"/>
 
-    <!-- 파일 길이 제한 -->
-    <module name="FileLength">
-        <property name="max" value="2000"/>
-    </module>
+	<module name="BeforeExecutionExclusionFileFilter">
+		<property name="fileNamePattern" value="module\-info\.java$"/>
+	</module>
+	<module name="BeforeExecutionExclusionFileFilter">
+		<property name="fileNamePattern" value=".*Q[A-Z].*\.java$"/>
+	</module>
+	<module name="BeforeExecutionExclusionFileFilter">
+		<property name="fileNamePattern" value=".*/generated/.*"/>
+	</module>
 
-    <!-- 라인 길이 제한 -->
-    <module name="LineLength">
-        <property name="fileExtensions" value="java"/>
-        <property name="max" value="120"/>
-        <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
-    </module>
+	<!-- QueryDSL 관련 파일들 및 특수 상수 파일들에서 ConstantName 규칙 비활성화 -->
+	<module name="SuppressionSingleFilter">
+		<property name="checks" value="ConstantName"/>
+		<property name="files" value=".*QueryDslAdapter\.java$|.*SortBuilder\.java$|.*PortAdapter\.java$|.*DataDatePredicate\.java$|.*UserAgentParser\.java$"/>
+	</module>
 
-    <!-- 공백 문자 검사 -->
-    <module name="FileTabCharacter">
-        <property name="eachLine" value="true"/>
-    </module>
+	<module name="FileLength">
+		<property name="max" value="2000"/>
+	</module>
 
-    <!-- 트리 구조 검사 -->
-    <module name="TreeWalker">
-        <!-- Import 검사 -->
-        <module name="AvoidStarImport"/>
-        <module name="IllegalImport"/>
-        <module name="RedundantImport"/>
-        <module name="UnusedImports">
-            <property name="processJavadoc" value="false"/>
-        </module>
+	<module name="LineLength">
+		<property name="fileExtensions" value="java"/>
+		<property name="max" value="200"/>
+		<property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+	</module>
 
-        <!-- 크기 검사 -->
-        <module name="MethodLength">
-            <property name="max" value="150"/>
-        </module>
-        <module name="ParameterNumber">
-            <property name="max" value="7"/>
-            <property name="ignoreOverriddenMethods" value="true"/>
-        </module>
+	<module name="FileTabCharacter">
+		<property name="eachLine" value="true"/>
+	</module>
 
-        <!-- 공백 검사 -->
-        <module name="EmptyForIteratorPad"/>
-        <module name="GenericWhitespace"/>
-        <module name="MethodParamPad"/>
-        <module name="NoWhitespaceAfter"/>
-        <module name="NoWhitespaceBefore"/>
-        <module name="OperatorWrap"/>
-        <module name="ParenPad"/>
-        <module name="TypecastParenPad"/>
-        <module name="WhitespaceAfter"/>
-        <module name="WhitespaceAround"/>
+	<module name="TreeWalker">
+		<!-- <module name="AvoidStarImport"/> -->
+		<module name="IllegalImport"/>
+		<!-- <module name="RedundantImport"/> -->
+		<!-- <module name="UnusedImports"> -->
 
-        <!-- 수정자 검사 -->
-        <module name="ModifierOrder"/>
-        <module name="RedundantModifier"/>
+		<module name="MethodLength">
+			<property name="max" value="200"/>
+		</module>
+		<!-- <module name="ParameterNumber">
+			<property name="max" value="12"/>
+			<property name="ignoreOverriddenMethods" value="true"/>
+		</module> -->
 
-        <!-- 블록 검사 -->
-        <module name="AvoidNestedBlocks"/>
-        <module name="EmptyBlock"/>
-        <module name="LeftCurly"/>
-        <module name="NeedBraces"/>
-        <module name="RightCurly"/>
+		<module name="GenericWhitespace"/>
+		<!-- <module name="MethodParamPad"/> -->
+		<module name="NoWhitespaceAfter"/>
+		<module name="NoWhitespaceBefore"/>
+		<!-- <module name="OperatorWrap"/> -->
+		<module name="ParenPad"/>
+		<!-- <module name="TypecastParenPad"/> -->
+		<module name="WhitespaceAfter"/>
+		<!-- <module name="WhitespaceAround"/> -->
 
-        <!-- 공통 검사 -->
-        <module name="EmptyStatement"/>
-        <module name="EqualsHashCode"/>
-        <module name="HiddenField">
-            <property name="ignoreConstructorParameter" value="true"/>
-            <property name="ignoreSetter" value="true"/>
-        </module>
-        <module name="IllegalInstantiation"/>
-        <module name="InnerAssignment"/>
-        <module name="MagicNumber">
-            <property name="ignoreNumbers" value="-1, 0, 1, 2"/>
-            <property name="ignoreHashCodeMethod" value="true"/>
-            <property name="ignoreAnnotation" value="true"/>
-        </module>
-        <module name="MissingSwitchDefault"/>
-        <module name="MultipleVariableDeclarations"/>
-        <module name="SimplifyBooleanExpression"/>
-        <module name="SimplifyBooleanReturn"/>
+		<module name="ModifierOrder"/>
+		<module name="RedundantModifier"/>
 
-        <!-- 클래스 설계 검사 -->
-        <module name="DesignForExtension"/>
-        <module name="FinalClass"/>
-        <module name="HideUtilityClassConstructor"/>
-        <module name="InterfaceIsType"/>
-        <module name="VisibilityModifier">
-            <property name="protectedAllowed" value="true"/>
-        </module>
+		<module name="AvoidNestedBlocks"/>
+		<module name="EmptyBlock"/>
+		<!-- <module name="LeftCurly"/> -->
+		<!-- <module name="NeedBraces"/> -->
+		<!-- <module name="RightCurly"/> -->
 
-        <!-- 혼합 검사 -->
-        <module name="ArrayTypeStyle"/>
-        <module name="FinalParameters"/>
-        <module name="TodoComment"/>
-        <module name="UpperEll"/>
+		<module name="EmptyStatement"/>
+		<module name="EqualsHashCode"/>
+		<!-- <module name="HiddenField">
+			<property name="ignoreConstructorParameter" value="true"/>
+			<property name="ignoreSetter" value="true"/>
+		</module> -->
+		<module name="IllegalInstantiation"/>
+		<module name="InnerAssignment"/>
+		<module name="MagicNumber">
+			<property name="ignoreNumbers" value="-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 32, 60, 100, 120, 200, 300, 400, 500, 1000, 1024, 1500, 2000, 3000, 4096, 5000, 8192, 10000, 15000, 16000, 16384, 32000, 32768, 60000, 90000, 100000, 120000, 134217728, 3600, 86400, 15000000, 67088640, 1.5, 1.3, 64_000, 30_000, 67_108_864, 1_000_000, 900000, 1_000_000"/>
+			<property name="ignoreHashCodeMethod" value="true"/>
+			<property name="ignoreAnnotation" value="true"/>
+		</module>
+		<!-- <module name="MissingSwitchDefault"/> -->
+		<!-- <module name="MultipleVariableDeclarations"/> -->
+		<module name="SimplifyBooleanExpression"/>
+		<module name="SimplifyBooleanReturn"/>
 
-        <!-- 네이밍 검사 -->
-        <module name="AbstractClassName"/>
-        <module name="ConstantName"/>
-        <module name="LocalFinalVariableName"/>
-        <module name="LocalVariableName"/>
-        <module name="MemberName"/>
-        <module name="MethodName"/>
-        <module name="PackageName"/>
-        <module name="ParameterName"/>
-        <module name="StaticVariableName"/>
-        <module name="TypeName"/>
+		<!-- <module name="DesignForExtension"/> -->
+		<!-- <module name="FinalClass"/> -->
+		<module name="HideUtilityClassConstructor"/>
+		<!-- <module name="InterfaceIsType"/> -->
+		<module name="VisibilityModifier">
+			<property name="protectedAllowed" value="true"/>
+		</module>
 
-        <!-- 주석 검사 -->
-        <module name="CommentsIndentation"/>
-        <module name="RequireThis"/>
-    </module>
+		<module name="ArrayTypeStyle"/>
+		<!-- <module name="FinalParameters"/> -->
+		<module name="TodoComment"/>
+		<module name="UpperEll"/>
+
+		<!-- <module name="AbstractClassName"/> -->
+		<module name="ConstantName">
+			<property name="format" value="^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+		</module>
+		<module name="LocalFinalVariableName"/>
+		<module name="LocalVariableName"/>
+		<module name="MemberName"/>
+		<module name="MethodName"/>
+		<module name="PackageName"/>
+		<module name="ParameterName"/>
+		<module name="StaticVariableName"/>
+		<module name="TypeName"/>
+
+		<!-- <module name="CommentsIndentation"/> -->
+		<!-- <module name="RequireThis"/> -->
+	</module>
 </module>

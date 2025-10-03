@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.auth.application.dto.response;
 
 /**
@@ -6,7 +10,4 @@ package com.dataracy.modules.auth.application.dto.response;
  * @param refreshToken 쿠키에 설정할 리프레시 토큰
  * @param refreshTokenExpiration 리프레시 토큰 유효기간 (밀리초 단위)
  */
-public record RefreshTokenResponse(
-        String refreshToken,
-        long refreshTokenExpiration
-) {}
+public record RefreshTokenResponse(String refreshToken, long refreshTokenExpiration) {}

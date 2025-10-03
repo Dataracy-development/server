@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.dataset.application.dto.response.support;
 
 import com.dataracy.modules.dataset.domain.model.Data;
@@ -8,7 +12,4 @@ import com.dataracy.modules.dataset.domain.model.Data;
  * @param data 데이터 도메인 객체
  * @param countConnectedProjects 연결된 프로젝트 수
  */
-public record DataWithProjectCountDto(
-        Data data,
-        Long countConnectedProjects
-) {}
+public record DataWithProjectCountDto(Data data, Long countConnectedProjects) {}

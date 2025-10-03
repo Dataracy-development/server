@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.user.application.dto.response.read;
 
 import org.springframework.data.domain.Page;
@@ -15,12 +19,11 @@ import org.springframework.data.domain.Page;
  * @param datasets 업로드 한 데이터셋 목록
  */
 public record GetOtherUserInfoResponse(
-        Long id,
-        String nickname,
-        String authorLevelLabel,
-        String occupationLabel,
-        String profileImageUrl,
-        String introductionText,
-        Page<GetOtherUserProjectResponse> projects,
-        Page<GetOtherUserDataResponse> datasets
-) {}
+    Long id,
+    String nickname,
+    String authorLevelLabel,
+    String occupationLabel,
+    String profileImageUrl,
+    String introductionText,
+    Page<GetOtherUserProjectResponse> projects,
+    Page<GetOtherUserDataResponse> datasets) {}

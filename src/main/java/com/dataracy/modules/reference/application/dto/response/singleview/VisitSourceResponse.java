@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.reference.application.dto.response.singleview;
 
 /**
@@ -7,5 +11,4 @@ package com.dataracy.modules.reference.application.dto.response.singleview;
  * @param value 값
  * @param label 라벨
  */
-public record VisitSourceResponse(Long id, String value, String label
-) {}
+public record VisitSourceResponse(Long id, String value, String label) {}

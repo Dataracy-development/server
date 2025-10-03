@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.user.application.dto.request.signup;
 
 import java.util.List;
@@ -13,10 +17,9 @@ import java.util.List;
  * @param isAdTermsAgreed 광고 동의 여부
  */
 public record OnboardingRequest(
-        String nickname,
-        Long authorLevelId,
-        Long occupationId,
-        List<Long> topicIds,
-        Long visitSourceId,
-        Boolean isAdTermsAgreed
-) {}
+    String nickname,
+    Long authorLevelId,
+    Long occupationId,
+    List<Long> topicIds,
+    Long visitSourceId,
+    Boolean isAdTermsAgreed) {}

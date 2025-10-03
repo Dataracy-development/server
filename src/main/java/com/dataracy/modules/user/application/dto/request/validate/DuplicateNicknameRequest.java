@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.user.application.dto.request.validate;
 
 /**
@@ -5,6 +9,4 @@ package com.dataracy.modules.user.application.dto.request.validate;
  *
  * @param nickname 닉네임
  */
-public record DuplicateNicknameRequest(
-        String nickname
-) {}
+public record DuplicateNicknameRequest(String nickname) {}

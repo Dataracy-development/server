@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.comment.application.dto.response.command;
 
 /**
@@ -5,6 +9,4 @@ package com.dataracy.modules.comment.application.dto.response.command;
  *
  * @param id 댓글 아이디
  */
-public record UploadCommentResponse(
-        Long id
-) {}
+public record UploadCommentResponse(Long id) {}

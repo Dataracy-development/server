@@ -1,4 +1,27 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.comment.adapter.web.api;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.behaviorlog.application.port.out.BehaviorLogSendProducerPort;
@@ -15,132 +38,111 @@ import com.dataracy.modules.comment.application.port.in.command.content.ModifyCo
 import com.dataracy.modules.comment.application.port.in.command.content.UploadCommentUseCase;
 import com.dataracy.modules.comment.domain.status.CommentSuccessStatus;
 import com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(controllers = CommentCommandController.class, includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {com.dataracy.modules.common.util.CookieUtil.class, com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver.class}))
+@WebMvcTest(
+    controllers = CommentCommandController.class,
+    includeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {
+              com.dataracy.modules.common.util.CookieUtil.class,
+              com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver.class
+            }))
 class CommentCommandControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-    @MockBean
-    private CommandCommentWebMapper commandCommentWebMapper;
+  @MockBean private CommandCommentWebMapper commandCommentWebMapper;
 
-    @MockBean
-    private UploadCommentUseCase uploadCommentUseCase;
+  @MockBean private UploadCommentUseCase uploadCommentUseCase;
 
-    @MockBean
-    private ModifyCommentUseCase modifyCommentUseCase;
+  @MockBean private ModifyCommentUseCase modifyCommentUseCase;
 
-    @MockBean
-    private DeleteCommentUseCase deleteCommentUseCase;
+  @MockBean private DeleteCommentUseCase deleteCommentUseCase;
 
-    @MockBean
-    private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+  @MockBean private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
 
-    @MockBean
-    private JwtValidateUseCase jwtValidateUseCase;
+  @MockBean private JwtValidateUseCase jwtValidateUseCase;
 
-    @MockBean
-    private com.dataracy.modules.security.config.SecurityPathConfig securityPathConfig;
+  @MockBean private com.dataracy.modules.security.config.SecurityPathConfig securityPathConfig;
 
-    // ArgumentResolver Mock 처리
-    @MockBean
-    private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
+  // ArgumentResolver Mock 처리
+  @MockBean private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
 
-    @BeforeEach
-    void setupResolver() {
-        // 모든 @CurrentUserId Long 파라미터 → userId=1L 주입
-        given(currentUserIdArgumentResolver.supportsParameter(any())).willReturn(true);
-        given(currentUserIdArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
+  @BeforeEach
+  void setupResolver() {
+    // 모든 @CurrentUserId Long 파라미터 → userId=1L 주입
+    given(currentUserIdArgumentResolver.supportsParameter(any())).willReturn(true);
+    given(currentUserIdArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
 
-        // Jwt도 항상 통과
-        given(jwtValidateUseCase.getUserIdFromToken(any()))
-                .willReturn(1L);
-    }
+    // Jwt도 항상 통과
+    given(jwtValidateUseCase.getUserIdFromToken(any())).willReturn(1L);
+  }
 
-    @Test
-    @DisplayName("댓글 작성 성공 → 201 Created + CREATED_COMMENT 반환")
-    void uploadCommentSuccess() throws Exception {
-        // given
-        UploadCommentWebRequest webReq =
-                new UploadCommentWebRequest("내용입니다", null);
-        UploadCommentRequest appReq =
-                new UploadCommentRequest("내용입니다", null);
-        UploadCommentResponse appRes = new UploadCommentResponse(1L);
-        UploadCommentWebResponse webRes = new UploadCommentWebResponse(1L);
+  @Test
+  @DisplayName("댓글 작성 성공 → 201 Created + CREATED_COMMENT 반환")
+  void uploadCommentSuccess() throws Exception {
+    // given
+    UploadCommentWebRequest webReq = new UploadCommentWebRequest("내용입니다", null);
+    UploadCommentRequest appReq = new UploadCommentRequest("내용입니다", null);
+    UploadCommentResponse appRes = new UploadCommentResponse(1L);
+    UploadCommentWebResponse webRes = new UploadCommentWebResponse(1L);
 
-        given(commandCommentWebMapper.toApplicationDto(any(UploadCommentWebRequest.class)))
-                .willReturn(appReq);
-        given(uploadCommentUseCase.uploadComment(any(), any(), any()))
-                .willReturn(appRes);
-        given(commandCommentWebMapper.toWebDto(appRes))
-                .willReturn(webRes);
+    given(commandCommentWebMapper.toApplicationDto(any(UploadCommentWebRequest.class)))
+        .willReturn(appReq);
+    given(uploadCommentUseCase.uploadComment(any(), any(), any())).willReturn(appRes);
+    given(commandCommentWebMapper.toWebDto(appRes)).willReturn(webRes);
 
-        // when & then
-        mockMvc.perform(post("/api/v1/projects/{projectId}/comments", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(webReq)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.code").value(CommentSuccessStatus.CREATED_COMMENT.getCode()))
-                .andExpect(jsonPath("$.message").value(CommentSuccessStatus.CREATED_COMMENT.getMessage()))
-                .andExpect(jsonPath("$.data.id").value(1L));
-    }
+    // when & then
+    mockMvc
+        .perform(
+            post("/api/v1/projects/{projectId}/comments", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(webReq)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.code").value(CommentSuccessStatus.CREATED_COMMENT.getCode()))
+        .andExpect(jsonPath("$.message").value(CommentSuccessStatus.CREATED_COMMENT.getMessage()))
+        .andExpect(jsonPath("$.data.id").value(1L));
+  }
 
-    @Test
-    @DisplayName("댓글 수정 성공 → 200 OK + MODIFY_COMMENT 반환")
-    void modifyCommentSuccess() throws Exception {
-        // given
-        ModifyCommentWebRequest webReq =
-                new ModifyCommentWebRequest("수정된 내용");
-        ModifyCommentRequest appReq =
-                new ModifyCommentRequest("수정된 내용");
+  @Test
+  @DisplayName("댓글 수정 성공 → 200 OK + MODIFY_COMMENT 반환")
+  void modifyCommentSuccess() throws Exception {
+    // given
+    ModifyCommentWebRequest webReq = new ModifyCommentWebRequest("수정된 내용");
+    ModifyCommentRequest appReq = new ModifyCommentRequest("수정된 내용");
 
-        given(commandCommentWebMapper.toApplicationDto(any(ModifyCommentWebRequest.class)))
-                .willReturn(appReq);
-        willDoNothing().given(modifyCommentUseCase).modifyComment(any(), any(), any());
+    given(commandCommentWebMapper.toApplicationDto(any(ModifyCommentWebRequest.class)))
+        .willReturn(appReq);
+    willDoNothing().given(modifyCommentUseCase).modifyComment(any(), any(), any());
 
-        // when & then
-        mockMvc.perform(put("/api/v1/projects/{projectId}/comments/{commentId}", 1L, 2L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(webReq)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(CommentSuccessStatus.MODIFY_COMMENT.getCode()))
-                .andExpect(jsonPath("$.message").value(CommentSuccessStatus.MODIFY_COMMENT.getMessage()));
-    }
+    // when & then
+    mockMvc
+        .perform(
+            put("/api/v1/projects/{projectId}/comments/{commentId}", 1L, 2L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(webReq)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.code").value(CommentSuccessStatus.MODIFY_COMMENT.getCode()))
+        .andExpect(jsonPath("$.message").value(CommentSuccessStatus.MODIFY_COMMENT.getMessage()));
+  }
 
-    @Test
-    @DisplayName("댓글 삭제 성공 → 200 OK + DELETE_COMMENT 반환")
-    void deleteCommentSuccess() throws Exception {
-        // given
-        willDoNothing().given(deleteCommentUseCase).deleteComment(1L, 2L);
+  @Test
+  @DisplayName("댓글 삭제 성공 → 200 OK + DELETE_COMMENT 반환")
+  void deleteCommentSuccess() throws Exception {
+    // given
+    willDoNothing().given(deleteCommentUseCase).deleteComment(1L, 2L);
 
-        // when & then
-        mockMvc.perform(delete("/api/v1/projects/{projectId}/comments/{commentId}", 1L, 2L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(CommentSuccessStatus.DELETE_COMMENT.getCode()))
-                .andExpect(jsonPath("$.message").value(CommentSuccessStatus.DELETE_COMMENT.getMessage()));
-    }
+    // when & then
+    mockMvc
+        .perform(delete("/api/v1/projects/{projectId}/comments/{commentId}", 1L, 2L))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.code").value(CommentSuccessStatus.DELETE_COMMENT.getCode()))
+        .andExpect(jsonPath("$.message").value(CommentSuccessStatus.DELETE_COMMENT.getMessage()));
+  }
 }

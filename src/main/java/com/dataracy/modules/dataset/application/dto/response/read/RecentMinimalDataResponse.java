@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.dataset.application.dto.response.read;
 
 import java.time.LocalDateTime;
@@ -14,11 +18,10 @@ import java.time.LocalDateTime;
  * @param createdAt 생성 일시
  */
 public record RecentMinimalDataResponse(
-        Long id,
-        String title,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String dataThumbnailUrl,
-        LocalDateTime createdAt
-) {}
+    Long id,
+    String title,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String dataThumbnailUrl,
+    LocalDateTime createdAt) {}

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.user.adapter.web.request.password;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,19 +10,16 @@ import jakarta.validation.constraints.Pattern;
 
 @Schema(description = "비로그인 시 비밀번호를 재설정하는 웹 요청 DTO")
 public record ResetPasswordWithTokenWebRequest(
-        @Schema(description = "비밀번호", example = "ezskfj12kj2kjkjr2~~", minLength = 8)
+    @Schema(description = "비밀번호", example = "ezskfj12kj2kjkjr2~~", minLength = 8)
         @NotBlank(message = "비밀번호 재설정을 위한 토큰을 입력해주세요.")
         String resetPasswordToken,
-
-        @Schema(description = "비밀번호", example = "juuuunny123@", minLength = 8)
+    @Schema(description = "비밀번호", example = "juuuunny123@", minLength = 8)
         @NotBlank(message = "비밀번호를 입력해주세요.")
         @Pattern(
-                regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,}$",
-                message = "비밀번호는 영문, 숫자, 특수문자가 포함된 8자리 이상 문자열입니다."
-        )
+            regexp =
+                "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,}$",
+            message = "비밀번호는 영문, 숫자, 특수문자가 포함된 8자리 이상 문자열입니다.")
         String password,
-
-        @Schema(description = "비밀번호 확인", example = "juuuunny123@")
+    @Schema(description = "비밀번호 확인", example = "juuuunny123@")
         @NotBlank(message = "비밀번호 확인을 입력해주세요.")
-        String passwordConfirm
-) {}
+        String passwordConfirm) {}

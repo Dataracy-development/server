@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.comment.application.dto.response.support;
 
 import com.dataracy.modules.comment.domain.model.Comment;
@@ -8,7 +12,4 @@ import com.dataracy.modules.comment.domain.model.Comment;
  * @param comment 댓글 도메인 객체
  * @param replyCount 댓글에 달린 답글 수
  */
-public record FindCommentWithReplyCountResponse(
-        Comment comment,
-        long replyCount
-) {}
+public record FindCommentWithReplyCountResponse(Comment comment, long replyCount) {}

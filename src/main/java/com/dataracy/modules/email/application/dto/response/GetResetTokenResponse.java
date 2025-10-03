@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.email.application.dto.response;
 
 /**
@@ -5,6 +9,4 @@ package com.dataracy.modules.email.application.dto.response;
  *
  * @param resetToken 비밀번호 재설정용 토큰
  */
-public record GetResetTokenResponse(
-        String resetToken
-) {}
+public record GetResetTokenResponse(String resetToken) {}

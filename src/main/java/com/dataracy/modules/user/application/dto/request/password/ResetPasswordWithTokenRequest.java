@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.user.application.dto.request.password;
 
 import com.dataracy.modules.user.application.dto.request.PasswordConfirmable;
@@ -10,7 +14,5 @@ import com.dataracy.modules.user.application.dto.request.PasswordConfirmable;
  * @param passwordConfirm 비밀번호 확인
  */
 public record ResetPasswordWithTokenRequest(
-        String resetPasswordToken,
-        String password,
-        String passwordConfirm
-) implements PasswordConfirmable {}
+    String resetPasswordToken, String password, String passwordConfirm)
+    implements PasswordConfirmable {}

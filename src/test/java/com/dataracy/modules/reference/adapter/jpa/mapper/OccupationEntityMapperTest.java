@@ -1,55 +1,57 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.reference.adapter.jpa.mapper;
-
-import com.dataracy.modules.reference.adapter.jpa.entity.OccupationEntity;
-import com.dataracy.modules.reference.domain.model.Occupation;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import com.dataracy.modules.reference.adapter.jpa.entity.OccupationEntity;
+import com.dataracy.modules.reference.domain.model.Occupation;
+
 class OccupationEntityMapperTest {
 
-    @Test
-    @DisplayName("toDomain: 성공 - 엔티티에서 도메인으로 변환")
-    void toDomainSuccess() {
-        // given
-        OccupationEntity entity = OccupationEntity.builder().id(1L).value("v").label("l").build();
+  @Test
+  @DisplayName("toDomain: 성공 - 엔티티에서 도메인으로 변환")
+  void toDomainSuccess() {
+    // given
+    OccupationEntity entity = OccupationEntity.builder().id(1L).value("v").label("l").build();
 
-        // when
-        Occupation domain = OccupationEntityMapper.toDomain(entity);
+    // when
+    Occupation domain = OccupationEntityMapper.toDomain(entity);
 
-        // then
-        assertAll(
-                () -> assertThat(domain.id()).isEqualTo(1L),
-                () -> assertThat(domain.value()).isEqualTo("v"),
-                () -> assertThat(domain.label()).isEqualTo("l")
-        );
-    }
+    // then
+    assertAll(
+        () -> assertThat(domain.id()).isEqualTo(1L),
+        () -> assertThat(domain.value()).isEqualTo("v"),
+        () -> assertThat(domain.label()).isEqualTo("l"));
+  }
 
-    @Test
-    @DisplayName("toEntity: 성공 - 도메인에서 엔티티로 변환 (id 제외)")
-    void toEntitySuccess() {
-        // given
-        Occupation domain = new Occupation(1L, "v", "l");
+  @Test
+  @DisplayName("toEntity: 성공 - 도메인에서 엔티티로 변환 (id 제외)")
+  void toEntitySuccess() {
+    // given
+    Occupation domain = new Occupation(1L, "v", "l");
 
-        // when
-        OccupationEntity entity = OccupationEntityMapper.toEntity(domain);
+    // when
+    OccupationEntity entity = OccupationEntityMapper.toEntity(domain);
 
-        // then
-        assertAll(
-                () -> assertThat(entity.getId()).isNull(), // of(value,label)로 생성되어 id는 null
-                () -> assertThat(entity.getValue()).isEqualTo("v"),
-                () -> assertThat(entity.getLabel()).isEqualTo("l")
-        );
-    }
+    // then
+    assertAll(
+        () -> assertThat(entity.getId()).isNull(), // of(value,label)로 생성되어 id는 null
+        () -> assertThat(entity.getValue()).isEqualTo("v"),
+        () -> assertThat(entity.getLabel()).isEqualTo("l"));
+  }
 
-    @Test
-    @DisplayName("null 입력 처리 - null 반환")
-    void nullInputsReturnNull() {
-        assertAll(
-                () -> assertThat(OccupationEntityMapper.toDomain(null)).isNull(),
-                () -> assertThat(OccupationEntityMapper.toEntity(null)).isNull()
-        );
-    }
+  @Test
+  @DisplayName("null 입력 처리 - null 반환")
+  void nullInputsReturnNull() {
+    assertAll(
+        () -> assertThat(OccupationEntityMapper.toDomain(null)).isNull(),
+        () -> assertThat(OccupationEntityMapper.toEntity(null)).isNull());
+  }
 }

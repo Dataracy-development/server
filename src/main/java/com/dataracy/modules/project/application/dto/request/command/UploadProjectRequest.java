@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.project.application.dto.request.command;
 
 import java.util.List;
@@ -16,13 +20,12 @@ import java.util.List;
  * @param dataIds 프로젝트에 연결된 데이터 아이디 목록
  */
 public record UploadProjectRequest(
-        String title,
-        Long topicId,
-        Long analysisPurposeId,
-        Long dataSourceId,
-        Long authorLevelId,
-        Boolean isContinue,
-        Long parentProjectId,
-        String content,
-        List<Long> dataIds
-) {}
+    String title,
+    Long topicId,
+    Long analysisPurposeId,
+    Long dataSourceId,
+    Long authorLevelId,
+    Boolean isContinue,
+    Long parentProjectId,
+    String content,
+    List<Long> dataIds) {}

@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.project.adapter.jpa.repository;
 
-import com.dataracy.modules.project.adapter.jpa.entity.ProjectEsProjectionDlqEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProjectEsProjectionDlqRepository extends JpaRepository<ProjectEsProjectionDlqEntity, Long> {
-}
+import com.dataracy.modules.project.adapter.jpa.entity.ProjectEsProjectionDlqEntity;
+
+public interface ProjectEsProjectionDlqRepository
+    extends JpaRepository<ProjectEsProjectionDlqEntity, Long> {}

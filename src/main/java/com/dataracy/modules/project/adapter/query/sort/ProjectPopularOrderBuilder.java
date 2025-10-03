@@ -1,25 +1,32 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.project.adapter.query.sort;
 
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity;
+
 import com.querydsl.core.types.OrderSpecifier;
 
 public final class ProjectPopularOrderBuilder {
-    private ProjectPopularOrderBuilder() {}
+  private ProjectPopularOrderBuilder() {}
 
-    /**
-     * 프로젝트의 인기 점수를 계산하여 내림차순으로 정렬하는 OrderSpecifier를 반환합니다.
-     *
-     * 인기 점수는 (좋아요 수 × 2) + (댓글 수 × 1.5) + 조회수로 산출됩니다.
-     *
-     * @return 프로젝트 인기 점수 기준 내림차순 정렬 OrderSpecifier
-     */
-    @SuppressWarnings("rawtypes")
-    public static OrderSpecifier popularOrder() {
-        QProjectEntity project = QProjectEntity.projectEntity;
+  /**
+   * 프로젝트의 인기 점수를 계산하여 내림차순으로 정렬하는 OrderSpecifier를 반환합니다.
+   *
+   * <p>인기 점수는 (좋아요 수 × 2) + (댓글 수 × 1.5) + 조회수로 산출됩니다.
+   *
+   * @return 프로젝트 인기 점수 기준 내림차순 정렬 OrderSpecifier
+   */
+  @SuppressWarnings("rawtypes")
+  public static OrderSpecifier popularOrder() {
+    QProjectEntity project = QProjectEntity.projectEntity;
 
-        return project.likeCount.multiply(2)
-                .add(project.commentCount.multiply(1.5))
-                .add(project.viewCount)
-                .desc();
-    }
+    return project
+        .likeCount
+        .multiply(2)
+        .add(project.commentCount.multiply(1.5))
+        .add(project.viewCount)
+        .desc();
+  }
 }

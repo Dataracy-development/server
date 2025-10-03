@@ -1,4 +1,15 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.dataset.application.service.command;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Instant;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.util.FileParsingUtil;
@@ -20,83 +31,89 @@ import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLa
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Instant;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ParseMetadataService implements ParseMetadataUseCase {
-    // @Qualifier("awsS3FileStorageAdapterBefore") // 원래 구현체 사용
-    private final FileStoragePort fileStoragePort;
+  // @Qualifier("awsS3FileStorageAdapterBefore") // 원래 구현체 사용
+  private final FileStoragePort fileStoragePort;
 
-    private final CreateMetadataPort metadataRepositoryPort;
-    private final FindDataPort findDataPort;
-    private final IndexDataPort indexDataPort;
+  private final CreateMetadataPort metadataRepositoryPort;
+  private final FindDataPort findDataPort;
+  private final IndexDataPort indexDataPort;
 
-    private final FindUsernameUseCase findUsernameUseCase;
-    private final FindUserThumbnailUseCase findUserThumbnailUseCase;
-    private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
-    private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
-    private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
+  private final FindUsernameUseCase findUsernameUseCase;
+  private final FindUserThumbnailUseCase findUserThumbnailUseCase;
+  private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
+  private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
+  private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
 
-    // Use Case 상수 정의
-    private static final String PARSE_METADATA_USE_CASE = "ParseMetadataUseCase";
-    
-    // 메시지 상수 정의
-    private static final String DATA_NOT_FOUND_MESSAGE = "해당 데이터셋이 존재하지 않습니다. dataId=";
+  // Use Case 상수 정의
+  private static final String PARSE_METADATA_USE_CASE = "ParseMetadataUseCase";
 
-    /**
-     * 파일을 다운로드하여 메타데이터를 추출하고, 해당 데이터셋에 저장한 뒤 검색 색인에 반영합니다.
-     *
-     * 파일 URL과 원본 파일명을 기반으로 파일을 파싱하여 행/열 수 및 미리보기 정보를 포함한 메타데이터를 생성하고, 데이터 ID에 연결해 저장합니다.
-     * 이후 데이터와 관련 라벨 정보를 조회하여 검색 색인 문서를 생성하고, 이를 검색 시스템에 색인합니다.
-     * 파싱, 저장, 색인 과정에서 발생하는 모든 오류는 예외로 던지지 않고 로그로만 처리됩니다.
-     *
-     * @param request 메타데이터 파싱 및 저장에 필요한 파일 URL, 원본 파일명, 데이터 ID를 포함한 요청 객체
-     */
-    @Override
-    @Transactional
-    public void parseAndSaveMetadata(ParseMetadataRequest request) {
-        Instant startTime = LoggerFactory.service().logStart(PARSE_METADATA_USE_CASE, "데이터셋 파일을 파싱하고 내용 저장 서비스 시작 dataId=" + request.dataId());
-        try (InputStream inputStream = fileStoragePort.download(request.fileUrl())) {
-            ParsedMetadataResponse response = FileParsingUtil.parse(inputStream, request.originalFilename());
-            DataMetadata metadata = DataMetadata.of(
-                    null,
-                    response.rowCount(),
-                    response.columnCount(),
-                    response.previewJson()
-            );
+  // 메시지 상수 정의
+  private static final String DATA_NOT_FOUND_MESSAGE = "해당 데이터셋이 존재하지 않습니다. dataId=";
 
-            metadataRepositoryPort.saveMetadata(request.dataId(), metadata);
+  /**
+   * 파일을 다운로드하여 메타데이터를 추출하고, 해당 데이터셋에 저장한 뒤 검색 색인에 반영합니다.
+   *
+   * <p>파일 URL과 원본 파일명을 기반으로 파일을 파싱하여 행/열 수 및 미리보기 정보를 포함한 메타데이터를 생성하고, 데이터 ID에 연결해 저장합니다. 이후 데이터와
+   * 관련 라벨 정보를 조회하여 검색 색인 문서를 생성하고, 이를 검색 시스템에 색인합니다. 파싱, 저장, 색인 과정에서 발생하는 모든 오류는 예외로 던지지 않고 로그로만
+   * 처리됩니다.
+   *
+   * @param request 메타데이터 파싱 및 저장에 필요한 파일 URL, 원본 파일명, 데이터 ID를 포함한 요청 객체
+   */
+  @Override
+  @Transactional
+  public void parseAndSaveMetadata(ParseMetadataRequest request) {
+    Instant startTime =
+        LoggerFactory.service()
+            .logStart(
+                PARSE_METADATA_USE_CASE, "데이터셋 파일을 파싱하고 내용 저장 서비스 시작 dataId=" + request.dataId());
+    try (InputStream inputStream = fileStoragePort.download(request.fileUrl())) {
+      ParsedMetadataResponse response =
+          FileParsingUtil.parse(inputStream, request.originalFilename());
+      DataMetadata metadata =
+          DataMetadata.of(
+              null, response.rowCount(), response.columnCount(), response.previewJson());
 
-            // 색인을 위한 데이터 조회
-            Data data = findDataPort.findDataById(request.dataId())
-                    .orElseThrow(() -> {
-                        LoggerFactory.service().logWarning(PARSE_METADATA_USE_CASE, DATA_NOT_FOUND_MESSAGE + request.dataId());
-                        return new DataException(DataErrorStatus.NOT_FOUND_DATA);
-                    });
-            String topicLabel = getTopicLabelFromIdUseCase.getLabelById(data.getTopicId());
-            String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(data.getDataSourceId());
-            String dataTypeLabel = getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId());
-            String username = findUsernameUseCase.findUsernameById(data.getUserId());
-            String userProfileImageUrl = findUserThumbnailUseCase.findUserThumbnailById(data.getUserId());
-            DataLabels dataLabels = new DataLabels(topicLabel, dataSourceLabel, dataTypeLabel, username, userProfileImageUrl);
+      metadataRepositoryPort.saveMetadata(request.dataId(), metadata);
 
-            // Elasticsearch 색인
-            DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);
-            indexDataPort.index(document);
-        } catch (IOException e) {
-            LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "파일 다운로드 또는 파싱 실패", e);
-        } catch (DataException e) {
-            LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "데이터 조회 실패", e);
-        } catch (Exception e) {
-            LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "예상치 못한 오류 발생", e);
-        }
-        LoggerFactory.service().logSuccess(PARSE_METADATA_USE_CASE, "데이터셋 파일을 파싱하고 내용 저장 서비스 종료. dataId=" + request.dataId(), startTime);
+      // 색인을 위한 데이터 조회
+      Data data =
+          findDataPort
+              .findDataById(request.dataId())
+              .orElseThrow(
+                  () -> {
+                    LoggerFactory.service()
+                        .logWarning(
+                            PARSE_METADATA_USE_CASE, DATA_NOT_FOUND_MESSAGE + request.dataId());
+                    return new DataException(DataErrorStatus.NOT_FOUND_DATA);
+                  });
+      String topicLabel = getTopicLabelFromIdUseCase.getLabelById(data.getTopicId());
+      String dataSourceLabel = getDataSourceLabelFromIdUseCase.getLabelById(data.getDataSourceId());
+      String dataTypeLabel = getDataTypeLabelFromIdUseCase.getLabelById(data.getDataTypeId());
+      String username = findUsernameUseCase.findUsernameById(data.getUserId());
+      String userProfileImageUrl = findUserThumbnailUseCase.findUserThumbnailById(data.getUserId());
+      DataLabels dataLabels =
+          new DataLabels(topicLabel, dataSourceLabel, dataTypeLabel, username, userProfileImageUrl);
+
+      // Elasticsearch 색인
+      DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);
+      indexDataPort.index(document);
+    } catch (IOException e) {
+      LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "파일 다운로드 또는 파싱 실패", e);
+    } catch (DataException e) {
+      LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "데이터 조회 실패", e);
+    } catch (Exception e) {
+      LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "예상치 못한 오류 발생", e);
     }
+    LoggerFactory.service()
+        .logSuccess(
+            PARSE_METADATA_USE_CASE,
+            "데이터셋 파일을 파싱하고 내용 저장 서비스 종료. dataId=" + request.dataId(),
+            startTime);
+  }
 }

@@ -1,8 +1,12 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.user.application.dto.request.signup;
 
-import com.dataracy.modules.user.application.dto.request.PasswordConfirmable;
-
 import java.util.List;
+
+import com.dataracy.modules.user.application.dto.request.PasswordConfirmable;
 
 /**
  * 자체 회원가입을 위한 애플리케이션 요청 DTO
@@ -18,13 +22,13 @@ import java.util.List;
  * @param isAdTermsAgreed 광고 동의 여부
  */
 public record SelfSignUpRequest(
-        String email,
-        String password,
-        String passwordConfirm,
-        String nickname,
-        Long authorLevelId,
-        Long occupationId,
-        List<Long> topicIds,
-        Long visitSourceId,
-        Boolean isAdTermsAgreed
-) implements PasswordConfirmable {}
+    String email,
+    String password,
+    String passwordConfirm,
+    String nickname,
+    Long authorLevelId,
+    Long occupationId,
+    List<Long> topicIds,
+    Long visitSourceId,
+    Boolean isAdTermsAgreed)
+    implements PasswordConfirmable {}

@@ -1,16 +1,20 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.auth.domain.model;
 
 import lombok.Getter;
 
 @Getter
 public class AnonymousUser {
-    private final String anonymousId;
+  private final String anonymousId;
 
-    private AnonymousUser(String anonymousId) {
-        this.anonymousId = anonymousId;
-    }
+  private AnonymousUser(String anonymousId) {
+    this.anonymousId = anonymousId;
+  }
 
-    public static AnonymousUser of(String anonymousId) {
-        return new AnonymousUser(anonymousId);
-    }
+  public static AnonymousUser of(String anonymousId) {
+    return new AnonymousUser(anonymousId);
+  }
 }

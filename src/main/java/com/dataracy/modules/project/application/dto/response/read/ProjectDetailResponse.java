@@ -1,10 +1,14 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.project.application.dto.response.read;
-
-import com.dataracy.modules.project.application.dto.response.support.ParentProjectResponse;
-import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.dataracy.modules.project.application.dto.response.support.ParentProjectResponse;
+import com.dataracy.modules.project.application.dto.response.support.ProjectConnectedDataResponse;
 
 /**
  * 프로젝트 상세 조회 애플리케이션 응답 DTO
@@ -13,7 +17,7 @@ import java.util.List;
  * @param title 프로젝트 제목
  * @param creatorId 작성자 아이디
  * @param creatorName 작성자 닉네임
- * @param userIntroductionText  유저 자기소개
+ * @param userIntroductionText 유저 자기소개
  * @param userProfileImageUrl 유저 프로필 이미지 URL
  * @param authorLevelLabel 작성자 유형 라벨
  * @param occupationLabel 직업 라벨
@@ -33,27 +37,26 @@ import java.util.List;
  * @param connectedDataSets 연결된 데이터셋 목록
  */
 public record ProjectDetailResponse(
-        Long id,
-        String title,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String userIntroductionText,
-        String authorLevelLabel,
-        String occupationLabel,
-        String topicLabel,
-        String analysisPurposeLabel,
-        String dataSourceLabel,
-        boolean isContinue,
-        Long parentProjectId,
-        String content,
-        String projectThumbnailUrl,
-        LocalDateTime createdAt,
-        Long commentCount,
-        Long likeCount,
-        Long viewCount,
-        boolean isLiked,
-        boolean hasChild,
-        List<ProjectConnectedDataResponse> connectedDataSets,
-        ParentProjectResponse parentProject
-) {}
+    Long id,
+    String title,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String userIntroductionText,
+    String authorLevelLabel,
+    String occupationLabel,
+    String topicLabel,
+    String analysisPurposeLabel,
+    String dataSourceLabel,
+    boolean isContinue,
+    Long parentProjectId,
+    String content,
+    String projectThumbnailUrl,
+    LocalDateTime createdAt,
+    Long commentCount,
+    Long likeCount,
+    Long viewCount,
+    boolean isLiked,
+    boolean hasChild,
+    List<ProjectConnectedDataResponse> connectedDataSets,
+    ParentProjectResponse parentProject) {}

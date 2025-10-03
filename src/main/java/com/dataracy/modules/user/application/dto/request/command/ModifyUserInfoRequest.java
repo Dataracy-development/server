@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.user.application.dto.request.command;
 
 import java.util.List;
@@ -13,10 +17,9 @@ import java.util.List;
  * @param introductionText 자기 소개 글
  */
 public record ModifyUserInfoRequest(
-        String nickname,
-        Long authorLevelId,
-        Long occupationId,
-        List<Long> topicIds,
-        Long visitSourceId,
-        String introductionText
-) {}
+    String nickname,
+    Long authorLevelId,
+    Long occupationId,
+    List<Long> topicIds,
+    Long visitSourceId,
+    String introductionText) {}

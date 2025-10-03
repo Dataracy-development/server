@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.auth.application.dto.response;
 
 /**
@@ -9,8 +13,7 @@ package com.dataracy.modules.auth.application.dto.response;
  * @param refreshTokenExpiration 리프레시토큰 만료시간
  */
 public record ReIssueTokenResponse(
-        String accessToken,
-        String refreshToken,
-        long accessTokenExpiration,
-        long refreshTokenExpiration
-) {}
+    String accessToken,
+    String refreshToken,
+    long accessTokenExpiration,
+    long refreshTokenExpiration) {}

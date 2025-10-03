@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.comment.application.dto.response.support;
 
 import java.util.Map;
@@ -11,8 +15,7 @@ import java.util.Map;
  * @param userAuthorLevelLabelMap 작성자 유형 라벨 map<작성자 유형 아이디, 작성자 유형 라벨>
  */
 public record CommentLabelResponse(
-        Map<Long, String> usernameMap,
-        Map<Long, String> userProfileUrlMap,
-        Map<Long, String> userAuthorLevelIds,
-        Map<Long, String> userAuthorLevelLabelMap
-) {}
+    Map<Long, String> usernameMap,
+    Map<Long, String> userProfileUrlMap,
+    Map<Long, String> userAuthorLevelIds,
+    Map<Long, String> userAuthorLevelLabelMap) {}

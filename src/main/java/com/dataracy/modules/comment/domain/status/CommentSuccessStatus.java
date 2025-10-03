@@ -1,21 +1,26 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.comment.domain.status;
 
+import org.springframework.http.HttpStatus;
+
 import com.dataracy.modules.common.status.BaseSuccessCode;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
 public enum CommentSuccessStatus implements BaseSuccessCode {
-    CREATED_COMMENT(HttpStatus.CREATED, "201", "댓글 작성이 완료되었습니다"),
-    MODIFY_COMMENT(HttpStatus.OK, "200", "댓글 수정이 완료되었습니다."),
-    DELETE_COMMENT(HttpStatus.OK, "200", "댓글 삭제가 완료되었습니다."),
-    GET_COMMENTS(HttpStatus.OK, "200", "프로젝트에 대한 댓글 목록 조회가 완료되었습니다."),
-    GET_REPLY_COMMENTS(HttpStatus.OK, "200", "댓글에 대한 답글 목록 조회가 완료되었습니다."),
-    ;
+  CREATED_COMMENT(HttpStatus.CREATED, "201", "댓글 작성이 완료되었습니다"),
+  MODIFY_COMMENT(HttpStatus.OK, "200", "댓글 수정이 완료되었습니다."),
+  DELETE_COMMENT(HttpStatus.OK, "200", "댓글 삭제가 완료되었습니다."),
+  GET_COMMENTS(HttpStatus.OK, "200", "프로젝트에 대한 댓글 목록 조회가 완료되었습니다."),
+  GET_REPLY_COMMENTS(HttpStatus.OK, "200", "댓글에 대한 답글 목록 조회가 완료되었습니다.");
 
-    private final HttpStatus httpStatus;
-    private final String code;
-    private final String message;
+  private final HttpStatus httpStatus;
+  private final String code;
+  private final String message;
 }

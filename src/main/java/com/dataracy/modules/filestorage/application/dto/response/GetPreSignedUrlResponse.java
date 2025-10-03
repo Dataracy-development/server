@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.filestorage.application.dto.response;
 
 /**
@@ -5,6 +9,4 @@ package com.dataracy.modules.filestorage.application.dto.response;
  *
  * @param preSignedUrl 사전 서명 URL
  */
-public record GetPreSignedUrlResponse(
-        String preSignedUrl
-) {}
+public record GetPreSignedUrlResponse(String preSignedUrl) {}

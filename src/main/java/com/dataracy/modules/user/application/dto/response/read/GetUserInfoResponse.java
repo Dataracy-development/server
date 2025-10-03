@@ -1,8 +1,12 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.user.application.dto.response.read;
 
-import com.dataracy.modules.user.domain.enums.RoleType;
-
 import java.util.List;
+
+import com.dataracy.modules.user.domain.enums.RoleType;
 
 /**
  * 사용자 개인정보 조회 애플리케이션 응답 DTO
@@ -19,18 +23,17 @@ import java.util.List;
  * @param introductionText 소개글
  */
 public record GetUserInfoResponse(
-        Long id,
-        RoleType role,
-        String email,
-        String nickname,
-        Long authorLevelId,
-        String authorLevelLabel,
-        Long occupationId,
-        String occupationLabel,
-        List<Long> topicIds,
-        List<String> topicLabels,
-        Long visitSourceId,
-        String visitSourceLabel,
-        String profileImageUrl,
-        String introductionText
-) {}
+    Long id,
+    RoleType role,
+    String email,
+    String nickname,
+    Long authorLevelId,
+    String authorLevelLabel,
+    Long occupationId,
+    String occupationLabel,
+    List<Long> topicIds,
+    List<String> topicLabels,
+    Long visitSourceId,
+    String visitSourceLabel,
+    String profileImageUrl,
+    String introductionText) {}

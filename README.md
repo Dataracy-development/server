@@ -1,6 +1,43 @@
+# 🏆 **핵심 성과 지표**
+
+| 영역                | 지표              | 달성도       | 실무적 가치               |
+| ------------------- | ----------------- | ------------ | ------------------------- |
+| **코드 품질**       | Instruction 82.5% | ✅ 목표 달성 | 안정적인 코드베이스 구축  |
+| **분기 커버리지**   | Branch 71.9%      | ✅ 양호      | 조건문 테스트 완성도      |
+| **메서드 커버리지** | Method 85.8%      | ✅ 우수      | 비즈니스 로직 검증 완성도 |
+| **클래스 커버리지** | Class 96.5%       | ✅ 완벽      | 전체 클래스 테스트 완성도 |
+| **테스트 안정성**   | 성공률 100%       | ✅ 완벽 달성 | 배포 신뢰성 확보          |
+| **빌드 안정성**     | Gradle 9.0 호환   | ✅ 완벽 달성 | 최신 도구 지원            |
+| **보안**            | 취약점 0개        | ✅ 완벽 달성 | 보안성 확보               |
+| **유지보수성**      | 코드 냄새 0개     | ✅ 완벽 달성 | 장기적 개발 효율성        |
+
+---
+
 # 📊 01. Dataracy 플랫폼 개요
 
-**Dataracy(데이터러시)** — _“사례를 보고 → 따라하고 → 이어가는”_ 흐름으로 초심자가 쉽게 시작하고 성장하는 **피드백 중심 데이터 분석 커뮤니티**입니다.
+**Dataracy(데이터러시)** — _"사례를 보고 → 따라하고 → 이어가는"_ 흐름으로 초심자가 쉽게 시작하고 성장하는 **피드백 중심 데이터 분석 커뮤니티**입니다.
+
+---
+
+## 🚀 **기술적 혁신**
+
+### **1. 아키텍처 설계**
+
+- **DDD + 헥사고날 아키텍처**: 도메인 중심 설계로 비즈니스 로직 명확화
+- **CQRS 패턴**: 명령과 조회 분리로 성능 최적화
+- **Port & Adapter**: 인프라와 도메인 분리로 유지보수성 향상
+
+### **2. 데이터 처리 전략**
+
+- **Kafka 기반 이벤트 처리**: 비동기 분리로 API 부하 완화
+- **Redis 캐싱**: 인메모리 캐싱으로 조회 성능 향상
+- **Elasticsearch 검색**: 전문 검색과 유사도 추천으로 사용자 경험 향상
+
+### **3. 운영 안정성**
+
+- **Blue-Green 배포**: 무중단 배포로 서비스 연속성 확보
+- **분산락**: Redisson 기반 동시성 제어로 데이터 정합성 보장
+- **모니터링**: Prometheus + Grafana로 실시간 시스템 상태 추적
 
 ---
 
@@ -16,16 +53,105 @@
 - **가벼운 댓글 피드백**: 빠른 상호작용으로 학습 루프 촉진
 - **데이터셋 큐레이션·자동 태깅**: 탐색/재사용성 향상
 
-## 핵심 기능
+## 🎯 **핵심 기능 & API**
 
-| 기능             | 설명                                   |
-| ---------------- | -------------------------------------- |
-| 🔍 사례 탐색     | 도메인·목적·형태별 필터/검색           |
-| ➕ 프로젝트 등록 | 템플릿 기반 카드 업로드(구조화 가이드) |
-| 🔁 이어가기      | 기존 프로젝트 리메이크·확장            |
-| 💬 댓글 피드백   | 짧은 질문/의견으로 빠른 교환           |
-| 📈 데이터셋 목록 | 등록된 데이터셋을 선택해 분석          |
-| 📂 마이페이지    | 포트폴리오·관심·활동 기록 관리         |
+### **사용자 중심 기능**
+
+| 기능             | 설명                                   | 주요 API 엔드포인트                                  |
+| ---------------- | -------------------------------------- | ---------------------------------------------------- |
+| 🔍 사례 탐색     | 도메인·목적·형태별 필터/검색           | `GET /api/v1/projects/filter`, `/search/real-time`   |
+| ➕ 프로젝트 등록 | 템플릿 기반 카드 업로드(구조화 가이드) | `POST /api/v1/projects`, `PUT /api/v1/projects/{id}` |
+| 🔁 이어가기      | 기존 프로젝트 리메이크·확장            | `GET /api/v1/projects/{id}/similar`                  |
+| 💬 댓글 피드백   | 짧은 질문/의견으로 빠른 교환           | `POST /api/v1/comments`, `PUT /api/v1/comments/{id}` |
+| 📈 데이터셋 목록 | 등록된 데이터셋을 선택해 분석          | `POST /api/v1/datasets`, `GET /api/v1/datasets/{id}` |
+| 📂 마이페이지    | 포트폴리오·관심·활동 기록 관리         | `GET/PUT /api/v1/user/profile`                       |
+
+### **기술적 구현 영역**
+
+| 모듈             | 구현 기능                             | 주요 API 엔드포인트                                                   |
+| ---------------- | ------------------------------------- | --------------------------------------------------------------------- |
+| **인증/사용자**  | OAuth2, JWT, 프로필, 비밀번호 관리    | `POST /api/v1/auth/login`, `/token/re-issue`, `/user/password/change` |
+| **프로젝트**     | CRUD, 좋아요, 데이터셋 연결           | `POST /api/v1/projects`, `POST /api/v1/likes`                         |
+| **데이터셋**     | 파일 업로드, 메타데이터, 검색         | `POST /api/v1/datasets`, `/search/real-time`                          |
+| **검색/추천**    | Elasticsearch 기반 통합 검색, 유사도  | `GET /api/v1/projects/{id}/similar`                                   |
+| **댓글**         | CRUD, 대댓글, 좋아요, 이벤트 발행     | `POST /api/v1/comments`, `DELETE /api/v1/comments/{id}`               |
+| **참조데이터**   | 토픽, 분석목적, 데이터소스 등 관리    | `GET /api/v1/references/topics`, `/analysis-purposes`                 |
+| **이메일**       | SendGrid/SES 인증 코드 발송/검증      | `POST /api/v1/email/send-code`, `/verify`                             |
+| **파일스토리지** | S3 멀티파트 업로드, PreSigned URL     | `GET /api/v1/files/pre-signed-url`                                    |
+| **행동로그**     | MDC 기반 실시간 로그 수집, Kafka 전송 | 자동 수집 (API 없음)                                                  |
+| **알림**         | Kafka 이벤트 기반 비동기 알림         | 이벤트 기반 처리 (API 없음)                                           |
+
+### **상세 구현 기능**
+
+#### **🔐 인증/사용자 관리**
+
+- **OAuth2 소셜 로그인**: 카카오, 구글 연동 (`OAuth2LoginSuccessHandler`)
+- **자체 회원가입**: 이메일/닉네임 중복 검증, 비밀번호 암호화 (`SignUpUserService`)
+- **JWT 토큰 관리**: Access/Refresh 토큰 발급, 재발급, 쿠키 저장 (`AuthCommandService`)
+- **프로필 관리**: 닉네임, 직업, 레벨, 관심주제, 프로필 이미지 (`UserCommandService`)
+- **비밀번호 관리**: 변경, 확인, 재설정 (소셜 로그인 사용자 제외) (`UserPasswordApi`)
+- **분산락 적용**: 회원가입 시 이메일 중복 방지 (`@DistributedLock`)
+
+#### **📊 프로젝트 관리**
+
+- **프로젝트 CRUD**: 생성, 수정, 삭제, 상세 조회 (`ProjectCommandService`)
+- **썸네일 업로드**: S3 멀티파트 업로드, URL 업데이트 (`FileCommandUseCase`)
+- **데이터셋 연결**: 프로젝트-데이터셋 다대다 관계 관리 (`ProjectDataEntity`)
+- **부모-자식 관계**: 이어가기 기능을 위한 계층 구조 (`parentProject`, `childProjects`)
+- **좋아요 시스템**: 프로젝트별 좋아요/취소, 카운트 관리 (`LikeCommandService`)
+- **조회수 추적**: 중복 방지 로직으로 조회수 증가 (`ProjectReadService`)
+- **검색 색인**: Elasticsearch 자동 색인 (`ProjectEsProjectionWorker`)
+
+#### **📁 데이터셋 관리**
+
+- **파일 업로드**: CSV, Excel 파일 업로드 및 검증 (`DataCommandService`)
+- **메타데이터 파싱**: 파일 내용 분석, 행/열 수 추출 (`ParseMetadataService`)
+- **썸네일 생성**: 데이터셋 미리보기 이미지 자동 생성 (`ThumbnailGenerator`)
+- **참조 데이터 연결**: 토픽, 데이터소스, 데이터타입 분류
+- **검색 최적화**: Elasticsearch 기반 전문 검색 및 유사도 추천
+
+#### **💬 댓글 시스템**
+
+- **댓글 CRUD**: 작성, 수정, 삭제 (`CommentCommandService`)
+- **대댓글**: 한 단계 깊이의 답글 기능 (`parentCommentId`)
+- **댓글 좋아요**: 댓글별 좋아요/취소 기능
+- **이벤트 발행**: 댓글 작성 시 Kafka 이벤트 발행 (`SendCommentEventPort`)
+- **분산락 적용**: 동시성 제어로 데이터 정합성 보장
+
+#### **🔍 검색/추천 시스템**
+
+- **실시간 검색**: 키워드 자동완성 (`ProjectSearchApi`)
+- **필터링 검색**: 다중 조건 필터링 (`FilteringProjectWebRequest`)
+- **유사도 추천**: Elasticsearch 기반 유사 프로젝트 추천
+- **통합 검색**: 프로젝트, 데이터셋, 사용자 통합 검색
+
+#### **📧 이메일 인증**
+
+- **인증 코드 발송**: SendGrid/SES 기반 이메일 전송 (`EmailCommandService`)
+- **코드 검증**: Redis 기반 임시 저장 및 검증 (`EmailVerifyApi`)
+- **다목적 지원**: 회원가입, 비밀번호 찾기, 재설정 인증
+- **보안**: 6자리 랜덤 코드, 만료시간 관리
+
+#### **☁️ 파일 스토리지**
+
+- **S3 멀티파트 업로드**: 대용량 파일 안정적 처리 (`AwsS3FileStorageAdapter`)
+- **PreSigned URL**: 임시 다운로드 링크 생성 (`FileApi`)
+- **파일 관리**: 업로드, 삭제, 교체 기능 (`FileCommandService`)
+- **썸네일 생성**: 이미지 자동 리사이징 및 최적화
+
+#### **📊 행동 로그 시스템**
+
+- **실시간 수집**: MDC 기반 사용자 행동 추적 (`BehaviorLogTrackingFilter`)
+- **Kafka 전송**: 비동기 로그 메시지 전송 (`BehaviorLogKafkaProducerAdapter`)
+- **Elasticsearch 저장**: 로그 데이터 영구 저장 (`BehaviorLogElasticsearchSaveAdapter`)
+- **행동 분석**: 클릭, 네비게이션, 체류시간 추적
+- **디바이스 정보**: OS, 브라우저, IP, User-Agent 수집
+
+#### **🔔 실시간 알림**
+
+- **Kafka 이벤트**: 좋아요, 댓글, 팔로우 이벤트 처리
+- **비동기 처리**: 이벤트 기반 비동기 알림 시스템
+- **이벤트 발행**: 각 모듈에서 이벤트 발행 (`SendLikeEventPort`, `SendCommentEventPort`)
 
 ## 누구를 위해?
 
@@ -37,6 +163,9 @@
 
 - **한국어·직관 UI**로 낮은 진입장벽
 - **템플릿 가이드**로 초심자 친화적 작성 경험
+- **실무 중심**: 실제 사용 가능한 데이터와 프로젝트
+- **커뮤니티 기반**: 피드백과 소통을 통한 학습
+- **단계별 성장**: 초심자부터 전문가까지 체계적 지원
 - **이어가기 + 댓글**로 구조화된 협업/학습 루프
 - **확장성**: 리포트 판매·교육 연계 등 성장 경로
 
@@ -61,6 +190,13 @@
 | **테스트/DX**           | k6, LLM 기반 커스텀 자동 PR 리뷰 + Code Rabbit 리뷰                               |
 | **추가 기술**           | SpEL, Jackson, Swagger/OpenAPI, CORS, Global Exception Handler, Custom Validators |
 
+### **Quality Assurance**
+
+- **Code Coverage**: JaCoCo (82.5% Instruction Coverage)
+- **Static Analysis**: SonarQube (A등급 품질 게이트 통과)
+- **Code Style**: Checkstyle (Main 코드 0개 경고 - 완전 해결)
+- **Testing**: JUnit 5, Mockito, AssertJ
+
 <br/>
 <br/>
 
@@ -81,22 +217,22 @@
 
 ```plaintext
 [Adapters]   ┌─────────────────────────────────────────────────────────────────────────┐
- Web(API)    │  Web Adapter (Controller, Web DTO, Web DTO <-> Application DTO Mapper)  │
- Messaging   │  Kafka Adapter (Producer/Consumer)                                      │
- Persistence │  JPA Adapter (Entity, Repository, Impl, Entity <-> Domain Mapper)       │
- Query       │  QueryDsl Adapter (Predicates, SortBuilder, Impl)                       │
- Search      │  Elasticsearch Adapter (Indexing, Search)                               │
- Storage     │  S3 Adapter                                                             │
- Email       │  SES/SendGrid Adapter                                                   │
- Security    │  OAuth2/JWT Adapter                                                     │
-             └───────────────-┐───────────────────────────────▲────────────────────────┘
-                              │ inbound ports (use-cases)     │ outbound ports (port)
+Web(API)    │  Web Adapter (Controller, Web DTO, Web DTO <-> Application DTO Mapper)  │
+Messaging   │  Kafka Adapter (Producer/Consumer)                                      │
+Persistence │  JPA Adapter (Entity, Repository, Impl, Entity <-> Domain Mapper)       │
+Query       │  QueryDsl Adapter (Predicates, SortBuilder, Impl)                       │
+Search      │  Elasticsearch Adapter (Indexing, Search)                               │
+Storage     │  S3 Adapter                                                             │
+Email       │  SES/SendGrid Adapter                                                   │
+Security    │  OAuth2/JWT Adapter                                                     │
+			└───────────────-┐───────────────────────────────▲────────────────────────┘
+							│ inbound ports (use-cases)     │ outbound ports (port)
 [Application]        ┌───────-▼───────────────────────────--──┘────────--─┐
- Use Cases/Services  │  Application Layer (Ports-In, Ports-Out), Service  │
-                     └──────────────────────────────────────────────────--┘
+Use Cases/Services  │  Application Layer (Ports-In, Ports-Out), Service  │
+					└──────────────────────────────────────────────────--┘
 [Domain]             ┌─────────────────────────────────────────────────--─┐
- Model/Rules         │      Domain Layer (도메인 모델, 도메인 규칙 및 정책)      │
-                     └──────────────────────────────────────────────────--┘
+Model/Rules         │      Domain Layer (도메인 모델, 도메인 규칙 및 정책)      │
+					└──────────────────────────────────────────────────--┘
 ```
 
 <br/>
@@ -136,11 +272,11 @@
 
 ```plaintext
 [Web Controller]
-    → Ports-In (UseCase)
-        → Application Service
-            → Domain 규칙 검증 / 모델 변환
-            → Ports-Out (JPA/Redis/ES/Kafka 등)
-                → [Adapters]
+	→ Ports-In (UseCase)
+		→ Application Service
+			→ Domain 규칙 검증 / 모델 변환
+			→ Ports-Out (JPA/Redis/ES/Kafka 등)
+				→ [Adapters]
 ```
 
 ## 기대 효과
@@ -157,7 +293,7 @@
 
 # 🚀 04. Blue-Green 무중단 배포 (dev - prod 각자 블루 그린 배포)
 
-> **목적**  
+> **목적**
 > 서비스 중단 없이 새 버전을 배포하고, 실패 시 즉시 이전 상태로 복귀할 수 있는 안정적인 배포 체계 구축.
 
 ```plaintext
@@ -179,14 +315,17 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 1. **develop 브랜치 Push**
 2. **GitHub Actions**(`deploy-dev.yml`)
-   - EC2에서 현재 색상 확인 → 반대 색상으로 Docker 이미지 빌드/푸시
-   - `deploy.sh` 원격 실행 → `switch-dev.sh` 호출
+
+- EC2에서 현재 색상 확인 → 반대 색상으로 Docker 이미지 빌드/푸시
+- `deploy.sh` 원격 실행 → `switch-dev.sh` 호출
+
 3. **switch-dev.sh**
-   - 현재 가동중인 컨테이너의 색상 확인
-   - 새 컨테이너 기동 (`docker-compose-<color>-dev.yml`, `--pull always`)
-   - Docker Health(`actuator/health`) 확인
-   - Nginx 업스트림 파일 수정 후 스택 재시작
-   - 이전 컨테이너 종료 및 색상 기록 갱신
+
+- 현재 가동중인 컨테이너의 색상 확인
+- 새 컨테이너 기동 (`docker-compose-<color>-dev.yml`, `--pull always`)
+- Docker Health(`actuator/health`) 확인
+- Nginx 업스트림 파일 수정 후 스택 재시작
+- 이전 컨테이너 종료 및 색상 기록 갱신
 
 <br/>
 
@@ -228,10 +367,10 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 ```plaintext
 [API 요청]
-   ↓ (💾 DB 트랜잭션 커밋)
+↓ (💾 DB 트랜잭션 커밋)
 [Kafka 이벤트 발행]
-   ├─ [🗂 색인 소비자] → Elasticsearch 인덱스 반영
-   └─ [⚙️ 업무 소비자] → 알림·검색·집계·후속 로직 실행
+├─ [🗂 색인 소비자] → Elasticsearch 인덱스 반영
+└─ [⚙️ 업무 소비자] → 알림·검색·집계·후속 로직 실행
 ```
 
 - 색인 토픽: DB 변경사항을 ES에 실시간/준실시간 반영 → 검색·추천·유사도 분석 정확도 유지
@@ -281,46 +420,47 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 1. **Projection Task Queue**
 
-   - `ProjectEsProjectionTaskEntity`: 댓글·좋아요·조회수·삭제 상태 변경 요청을 큐에 저장, DB 트랜잭션과 함께 커밋
-   - `ProjectEsProjectionDlqEntity`: 재시도 초과 시 실패 작업을 격리
+- `ProjectEsProjectionTaskEntity`: 댓글·좋아요·조회수·삭제 상태 변경 요청을 큐에 저장, DB 트랜잭션과 함께 커밋
+- `ProjectEsProjectionDlqEntity`: 재시도 초과 시 실패 작업을 격리
 
 2. **Adapter & Repository**
 
-   - `ManageProjectEsProjectionTaskDbAdapter`: 큐에 작업 등록
-   - `LoadProjectEsProjectionTaskDbAdapter`: `PESSIMISTIC_WRITE + SKIP LOCKED` 조회로 중복 처리 방지
-   - `ManageProjectEsProjectionDlqDbAdapter`: DLQ 이관
-   - `ProjectEsProjectionTaskRepository`: 배치 조회·즉시 삭제 지원
+- `ManageProjectEsProjectionTaskDbAdapter`: 큐에 작업 등록
+- `LoadProjectEsProjectionTaskDbAdapter`: `PESSIMISTIC_WRITE + SKIP LOCKED` 조회로 중복 처리 방지
+- `ManageProjectEsProjectionDlqDbAdapter`: DLQ 이관
+- `ProjectEsProjectionTaskRepository`: 배치 조회·즉시 삭제 지원
 
 3. **Worker**
 
-   - `ProjectEsProjectionWorker`:
-     - `@Scheduled`로 주기적 폴링
-     - 각 Task를 `REQUIRES_NEW` 트랜잭션으로 실행 → 실패가 다른 Task에 영향 없음
-     - **지수 백오프**로 재시도, 한도 초과 시 DLQ로 이동
-     - 성공 시 Task 삭제 → ES와 DB의 최종적 일관성 유지
+- `ProjectEsProjectionWorker`:
+- `@Scheduled`로 주기적 폴링
+- 각 Task를 `REQUIRES_NEW` 트랜잭션으로 실행 → 실패가 다른 Task에 영향 없음
+- **지수 백오프**로 재시도, 한도 초과 시 DLQ로 이동
+- 성공 시 Task 삭제 → ES와 DB의 최종적 일관성 유지
 
 4. **Service**
-   - `ProjectCountService`:
-     - 댓글/좋아요 수를 DB에 먼저 반영
-     - 같은 트랜잭션에서 Projection Task 큐잉
-     - `@DistributedLock`으로 프로젝트 단위 동시성 제어
+
+- `ProjectCountService`:
+- 댓글/좋아요 수를 DB에 먼저 반영
+- 같은 트랜잭션에서 Projection Task 큐잉
+- `@DistributedLock`으로 프로젝트 단위 동시성 제어
 
 ---
 
 ## 🚀 어떤 효과가 있었는가?
 
-- **정합성 강화**  
+- **정합성 강화**
   DB와 큐에 동시에 기록 → ES 실패 시에도 큐에 남아 재처리 가능 → 최종적으로 DB와 ES가 일치
 
-- **안정성 확보**  
+- **안정성 확보**
   배치 처리, 재시도/백오프, DLQ 격리로 장애 확산 방지
 
-- **운영 편의성**  
+- **운영 편의성**
   DLQ를 통한 원인 분석 및 재처리 가능
   추후 큐 사이즈·DLQ 건수·지연 시간 모니터링으로 상태 가시성 확보
 
-- **성능 개선**  
-  API 요청 시 ES 반영을 기다리지 않음 → 응답 속도 단축  
+- **성능 개선**
+  API 요청 시 ES 반영을 기다리지 않음 → 응답 속도 단축
   ES 반영을 비동기로 처리 → 트래픽 급증에도 확장성 확보
 
 <br/>
@@ -346,8 +486,8 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 @Entity
 @Where(clause = "is_deleted = false") // 자동 필터링
 public class ProjectEntity {
-    @Column(name = "is_deleted")
-    private Boolean isDeleted = false;
+	@Column(name = "is_deleted")
+	private Boolean isDeleted = false;
 }
 ```
 
@@ -358,21 +498,21 @@ public class ProjectEntity {
 ```java
 // 1단계: ID만 페이징 (N+1 문제 방지)
 List<Long> pageIds = queryFactory
-    .select(project.id)
-    .from(project)
-    .where(buildFilterPredicates(request))
-    .orderBy(ProjectSortBuilder.fromSortOption(sortType))
-    .offset(pageable.getOffset())
-    .limit(pageable.getPageSize())
-    .fetch();
+	.select(project.id)
+	.from(project)
+	.where(buildFilterPredicates(request))
+	.orderBy(ProjectSortBuilder.fromSortOption(sortType))
+	.offset(pageable.getOffset())
+	.limit(pageable.getPageSize())
+	.fetch();
 
 // 2단계: 필요한 데이터만 fetch join
 List<ProjectEntity> parentsWithChildren = queryFactory
-    .selectFrom(project)
-    .distinct()
-    .leftJoin(project.childProjects).fetchJoin() // 1:N 페치조인
-    .where(project.id.in(pageIds))
-    .fetch();
+	.selectFrom(project)
+	.distinct()
+	.leftJoin(project.childProjects).fetchJoin() // 1:N 페치조인
+	.where(project.id.in(pageIds))
+	.fetch();
 ```
 
 **효과**:
@@ -385,14 +525,14 @@ List<ProjectEntity> parentsWithChildren = queryFactory
 
 ```java
 private BooleanExpression[] buildFilterPredicates(FilteringProjectRequest request) {
-    return new BooleanExpression[] {
-        ProjectFilterPredicate.keywordContains(request.keyword()),
-        ProjectFilterPredicate.topicIdEq(request.topicId()),
-        ProjectFilterPredicate.analysisPurposeIdEq(request.analysisPurposeId()),
-        ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
-        ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId()),
-        ProjectFilterPredicate.notDeleted()
-    };
+	return new BooleanExpression[] {
+		ProjectFilterPredicate.keywordContains(request.keyword()),
+		ProjectFilterPredicate.topicIdEq(request.topicId()),
+		ProjectFilterPredicate.analysisPurposeIdEq(request.analysisPurposeId()),
+		ProjectFilterPredicate.dataSourceIdEq(request.dataSourceId()),
+		ProjectFilterPredicate.authorLevelIdEq(request.authorLevelId()),
+		ProjectFilterPredicate.notDeleted()
+	};
 }
 ```
 
@@ -407,18 +547,18 @@ private BooleanExpression[] buildFilterPredicates(FilteringProjectRequest reques
 ```java
 // 각 데이터셋의 프로젝트 개수를 서브쿼리로 계산
 SubQueryExpression<Long> projectCountSub = JPAExpressions
-    .select(projectData.project.id.countDistinct())
-    .from(projectData)
-    .where(projectData.dataId.eq(data.id));
+	.select(projectData.project.id.countDistinct())
+	.from(projectData)
+	.where(projectData.dataId.eq(data.id));
 
 // 메인 쿼리에서 서브쿼리 결과 활용
 List<Tuple> tuples = queryFactory
-    .select(data, ExpressionUtils.as(projectCountSub, projectCountPath))
-    .from(data)
-    .join(data.metadata).fetchJoin()
-    .where(buildFilterPredicates(request))
-    .orderBy(DataSortBuilder.fromSortOption(sortType, projectCountPath))
-    .fetch();
+	.select(data, ExpressionUtils.as(projectCountSub, projectCountPath))
+	.from(data)
+	.join(data.metadata).fetchJoin()
+	.where(buildFilterPredicates(request))
+	.orderBy(DataSortBuilder.fromSortOption(sortType, projectCountPath))
+	.fetch();
 ```
 
 **효과**:
@@ -443,7 +583,7 @@ List<Tuple> tuples = queryFactory
 - **서브쿼리**로 복잡한 집계 최적화
 - **모듈화된 필터**로 유지보수성 향상
 
-**성능 개선**: 복잡한 검색 쿼리 **50% 성능 향상**, 메모리 사용량 **30% 감소**
+**성능 개선**: QueryDSL을 통한 복잡한 검색 쿼리 최적화 및 N+1 문제 해결
 
 <br/>
 <br/>
@@ -463,29 +603,30 @@ List<Tuple> tuples = queryFactory
 
 1. **읽기 성능 최적화**
 
-   - **조회 빈도가 높은 데이터**(예: 인기 프로젝트 목록, 인기 데이터셋 목록)를 Redis에 캐싱
-   - TTL(Time-To-Live) 기반 자동 만료 적용
+- **조회 빈도가 높은 데이터**(예: 인기 프로젝트 목록, 인기 데이터셋 목록)를 Redis에 캐싱
+- TTL(Time-To-Live) 기반 자동 만료 적용
 
 2. **데이터 갱신**
-   - DB 업데이트 시 관련 캐시 키 **갱신** 처리
-   - 변경이 잦은 데이터는 TTL을 짧게 설정해 캐시 정합성 유지
+
+- DB 업데이트 시 관련 캐시 키 **갱신** 처리
+- 변경이 잦은 데이터는 TTL을 짧게 설정해 캐시 정합성 유지
 
 ```java
 @Bean
 public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory, ObjectMapper objectMapper) {
-    RedisTemplate<String, Object> template = new RedisTemplate<>();
-    template.setConnectionFactory(connectionFactory);
+	RedisTemplate<String, Object> template = new RedisTemplate<>();
+	template.setConnectionFactory(connectionFactory);
 
-    // Key: String, Value: JSON 직렬화
-    StringRedisSerializer keySerializer = new StringRedisSerializer();
-    GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+	// Key: String, Value: JSON 직렬화
+	StringRedisSerializer keySerializer = new StringRedisSerializer();
+	GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
 
-    template.setKeySerializer(keySerializer);
-    template.setValueSerializer(valueSerializer);
-    template.setHashKeySerializer(keySerializer);
-    template.setHashValueSerializer(valueSerializer);
+	template.setKeySerializer(keySerializer);
+	template.setValueSerializer(valueSerializer);
+	template.setHashKeySerializer(keySerializer);
+	template.setHashValueSerializer(valueSerializer);
 
-    return template;
+	return template;
 }
 ```
 
@@ -500,19 +641,19 @@ public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connec
 ```java
 @Before("@annotation(trackNavigation)")
 public void handleTrackNavigation(JoinPoint joinPoint, TrackNavigation trackNavigation) {
-    String redisKey = buildRedisKey(anonymousId, sessionId);
-    String redisValue = redisTemplate.opsForValue().get(redisKey);
+	String redisKey = buildRedisKey(anonymousId, sessionId);
+	String redisValue = redisTemplate.opsForValue().get(redisKey);
 
-    // 이전 경로와 머문 시간 계산
-    if (redisValue != null && redisValue.contains(",")) {
-        String[] parts = redisValue.split(",");
-        lastPath = parts[0];
-        lastTime = Long.parseLong(parts[1]);
-        stayTime = now - lastTime;
-    }
+	// 이전 경로와 머문 시간 계산
+	if (redisValue != null && redisValue.contains(",")) {
+		String[] parts = redisValue.split(",");
+		lastPath = parts[0];
+		lastTime = Long.parseLong(parts[1]);
+		stayTime = now - lastTime;
+	}
 
-    // 현재 경로와 시간 저장 (10분 TTL)
-    redisTemplate.opsForValue().set(redisKey, path + "," + now, Duration.ofMinutes(10));
+	// 현재 경로와 시간 저장 (10분 TTL)
+	redisTemplate.opsForValue().set(redisKey, path + "," + now, Duration.ofMinutes(10));
 }
 ```
 
@@ -526,13 +667,13 @@ public void handleTrackNavigation(JoinPoint joinPoint, TrackNavigation trackNavi
 
 ```java
 public void addToBlackList(String token, Duration expiration) {
-    String key = "blacklist:" + token;
-    stringRedisTemplate.opsForValue().set(key, "1", expiration);
+	String key = "blacklist:" + token;
+	stringRedisTemplate.opsForValue().set(key, "1", expiration);
 }
 
 public boolean isBlacklisted(String token) {
-    String key = "blacklist:" + token;
-    return Boolean.TRUE.equals(stringRedisTemplate.hasKey(key));
+	String key = "blacklist:" + token;
+	return Boolean.TRUE.equals(stringRedisTemplate.hasKey(key));
 }
 ```
 
@@ -546,13 +687,13 @@ public boolean isBlacklisted(String token) {
 
 ```java
 public void increaseViewCount(Long projectId, String viewerId, String targetType) {
-    String dedupKey = String.format("viewDedup:%s:%s:%s", targetType, projectId, viewerId);
-    Boolean wasSet = redisTemplate.opsForValue().setIfAbsent(dedupKey, "1", TTL);
+	String dedupKey = String.format("viewDedup:%s:%s:%s", targetType, projectId, viewerId);
+	Boolean wasSet = redisTemplate.opsForValue().setIfAbsent(dedupKey, "1", TTL);
 
-    if (Boolean.TRUE.equals(wasSet)) {
-        String countKey = String.format("viewCount:%s:%s", targetType, projectId);
-        redisTemplate.opsForValue().increment(countKey);
-    }
+	if (Boolean.TRUE.equals(wasSet)) {
+		String countKey = String.format("viewCount:%s:%s", targetType, projectId);
+		redisTemplate.opsForValue().increment(countKey);
+	}
 }
 ```
 
@@ -570,24 +711,24 @@ public void increaseViewCount(Long projectId, String viewerId, String targetType
 // 1) 인기 프로젝트 목록 캐싱 (페이징별)
 @Cacheable(value = "popularProjects", key = "#page + '_' + #size", unless = "#result.content.isEmpty()")
 public Page<ProjectSummaryDto> getPopularProjects(int page, int size) {
-    // Redis 키: "popularProjects::0_10", "popularProjects::1_10" 등
-    return projectRepository.findPopularProjects(PageRequest.of(page, size));
+	// Redis 키: "popularProjects::0_10", "popularProjects::1_10" 등
+	return projectRepository.findPopularProjects(PageRequest.of(page, size));
 }
 
 // 2) 인기 데이터셋 목록 캐싱 (페이징별)
 @Cacheable(value = "popularDatasets", key = "#page + '_' + #size", unless = "#result.content.isEmpty()")
 public Page<DataSummaryDto> getPopularDatasets(int page, int size) {
-    // Redis 키: "popularDatasets::0_10", "popularDatasets::1_10" 등
-    return dataRepository.findPopularDatasets(PageRequest.of(page, size));
+	// Redis 키: "popularDatasets::0_10", "popularDatasets::1_10" 등
+	return dataRepository.findPopularDatasets(PageRequest.of(page, size));
 }
 
 // 3) 최근 프로젝트 목록 캐싱 (시간 기반)
 @Cacheable(value = "recentProjects", key = "'recent'", unless = "#result.isEmpty()")
 public List<ProjectSummaryDto> getRecentProjects() {
-    // Redis 키: "recentProjects::recent"
-    return projectRepository.findTop20ByCreatedAtAfterOrderByCreatedAtDesc(
-        LocalDateTime.now().minusDays(7)
-    );
+	// Redis 키: "recentProjects::recent"
+	return projectRepository.findTop20ByCreatedAtAfterOrderByCreatedAtDesc(
+		LocalDateTime.now().minusDays(7)
+	);
 }
 ```
 
@@ -596,26 +737,26 @@ public List<ProjectSummaryDto> getRecentProjects() {
 ```java
 // 프로젝트 목록용 경량 DTO
 public class ProjectSummaryDto {
-    private Long id;
-    private String title;
-    private String description;
-    private Long viewCount;
-    private Long likeCount;
-    private String thumbnailUrl;
-    private LocalDateTime createdAt;
-    // 상세 정보는 제외 (메모리 절약)
+	private Long id;
+	private String title;
+	private String description;
+	private Long viewCount;
+	private Long likeCount;
+	private String thumbnailUrl;
+	private LocalDateTime createdAt;
+	// 상세 정보는 제외 (메모리 절약)
 }
 
 // 데이터셋 목록용 경량 DTO
 public class DataSummaryDto {
-    private Long id;
-    private String name;
-    private String description;
-    private Long downloadCount;
-    private String fileSize;
-    private String thumbnailUrl;
-    private LocalDateTime createdAt;
-    // 상세 정보는 제외 (메모리 절약)
+	private Long id;
+	private String name;
+	private String description;
+	private Long downloadCount;
+	private String fileSize;
+	private String thumbnailUrl;
+	private LocalDateTime createdAt;
+	// 상세 정보는 제외 (메모리 절약)
 }
 ```
 
@@ -626,19 +767,19 @@ public class DataSummaryDto {
 @EnableCaching
 public class CacheConfig {
 
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-            .entryTtl(Duration.ofMinutes(10)) // 10분 TTL
-            .serializeKeysWith(RedisSerializationContext.SerializationPair
-                .fromSerializer(new StringRedisSerializer()))
-            .serializeValuesWith(RedisSerializationContext.SerializationPair
-                .fromSerializer(new GenericJackson2JsonRedisSerializer()));
+	@Bean
+	public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+		RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+			.entryTtl(Duration.ofMinutes(10)) // 10분 TTL
+			.serializeKeysWith(RedisSerializationContext.SerializationPair
+				.fromSerializer(new StringRedisSerializer()))
+			.serializeValuesWith(RedisSerializationContext.SerializationPair
+				.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
-        return RedisCacheManager.builder(connectionFactory)
-            .cacheDefaults(config)
-            .build();
-    }
+		return RedisCacheManager.builder(connectionFactory)
+			.cacheDefaults(config)
+			.build();
+	}
 }
 ```
 
@@ -649,32 +790,32 @@ public class CacheConfig {
 ```java
 // 1) 조회수 증가 시 - TTL 의존 (무효화 없음)
 public void increaseViewCount(Long projectId) {
-    projectRepository.incrementViewCount(projectId);
-    // 인기 목록은 TTL(10분)에 의존하여 자동 갱신
-    // 이유: 조회수는 자주 변경되므로 매번 무효화하면 캐시 효과 없음
+	projectRepository.incrementViewCount(projectId);
+	// 인기 목록은 TTL(10분)에 의존하여 자동 갱신
+	// 이유: 조회수는 자주 변경되므로 매번 무효화하면 캐시 효과 없음
 }
 
 // 2) 좋아요 증가 시 - 인기 목록만 무효화
 @CacheEvict(value = "popularProjects", allEntries = true)
 public void likeProject(Long projectId, Long userId) {
-    projectRepository.incrementLikeCount(projectId);
-    // Redis에서 "popularProjects::*" 키 모두 삭제
-    // 이유: 좋아요는 인기 순위에 직접 영향
+	projectRepository.incrementLikeCount(projectId);
+	// Redis에서 "popularProjects::*" 키 모두 삭제
+	// 이유: 좋아요는 인기 순위에 직접 영향
 }
 
 // 3) 프로젝트 생성 시 - 최근 목록만 무효화
 @CacheEvict(value = "recentProjects", allEntries = true)
 public void createProject(Project project) {
-    projectRepository.save(project);
-    // Redis에서 "recentProjects::recent" 키 삭제
-    // 이유: 새 프로젝트가 최근 목록에 추가됨
+	projectRepository.save(project);
+	// Redis에서 "recentProjects::recent" 키 삭제
+	// 이유: 새 프로젝트가 최근 목록에 추가됨
 }
 
 // 4) 프로젝트 업데이트 시 - 무효화 없음 (TTL 의존)
 public void updateProject(Project project) {
-    projectRepository.save(project);
-    // 목록 캐시는 TTL에 의존하여 자동 갱신
-    // 이유: 제목/설명 변경은 목록 순위에 영향 없음
+	projectRepository.save(project);
+	// 목록 캐시는 TTL에 의존하여 자동 갱신
+	// 이유: 제목/설명 변경은 목록 순위에 영향 없음
 }
 ```
 
@@ -704,16 +845,16 @@ public void updateProject(Project project) {
 // Before: 상세 정보 캐싱
 // 프로젝트 1000개 × 상세 정보 = 약 50MB
 ProjectDetailDto {
-    Long id, String title, String description, String content,
-    List<String> tags, List<String> images, User author,
-    List<Comment> comments, List<Data> datasets, ...
+	Long id, String title, String description, String content,
+	List<String> tags, List<String> images, User author,
+	List<Comment> comments, List<Data> datasets, ...
 }
 
 // After: Summary DTO 캐싱
 // 프로젝트 1000개 × 요약 정보 = 약 5MB (90% 절약)
 ProjectSummaryDto {
-    Long id, String title, String description,
-    Long viewCount, Long likeCount, String thumbnailUrl, LocalDateTime createdAt
+	Long id, String title, String description,
+	Long viewCount, Long likeCount, String thumbnailUrl, LocalDateTime createdAt
 }
 ```
 
@@ -736,11 +877,11 @@ ProjectSummaryDto {
 
 ### **After (Redis 캐싱)**
 
-- **인메모리 접근**: 평균 응답 시간 **90% 단축**
+- **인메모리 접근**: 빠른 응답 시간
 - **원자적 연산**: 동시성 문제 해결
 - **자동 만료**: 메모리 효율성 확보
 
-**성능 개선**: 캐시 적중 시 **10ms 이하** 응답, DB 부하 **80% 감소**
+**성능 개선**: 캐시 적중 시 빠른 응답, DB 부하 감소
 
 <br/>
 <br/>
@@ -760,22 +901,23 @@ ProjectSummaryDto {
 
 1. **리프레시 토큰 저장**
 
-   - 로그인 성공 시 `refresh:user:<userId>` 키로 Redis에 저장, TTL은 만료 시간과 동일
-   - 재발급 시 Redis에 저장된 토큰과 비교해 유효성 검증
+- 로그인 성공 시 `refresh:user:<userId>` 키로 Redis에 저장, TTL은 만료 시간과 동일
+- 재발급 시 Redis에 저장된 토큰과 비교해 유효성 검증
 
 2. **토큰 블랙리스트 처리**
 
-   - 로그아웃 시 Access Token을 `blacklist:<token>`에 저장, TTL은 남은 유효기간
-   - JWT 검증 시 블랙리스트 조회 → 존재 시 인증 거부
-     -> 보안 등급이 높은 서비스에서 필요. 현재 프로젝트에서는 실무적으로 과한 기능이라 생각하여 유스케이스로 개발만 해두고 비활성화 처리 해둠.
+- 로그아웃 시 Access Token을 `blacklist:<token>`에 저장, TTL은 남은 유효기간
+- JWT 검증 시 블랙리스트 조회 → 존재 시 인증 거부
+  -> 보안 등급이 높은 서비스에서 필요. 현재 프로젝트에서는 실무적으로 과한 기능이라 생각하여 유스케이스로 개발만 해두고 비활성화 처리 해둠.
 
 3. **TTL 기반 자동 만료**
 
-   - Redis 자체 TTL 기능으로 만료 토큰 자동 제거
-   - 별도의 정리 배치 불필요
+- Redis 자체 TTL 기능으로 만료 토큰 자동 제거
+- 별도의 정리 배치 불필요
 
 4. **고속 인증 검증**
-   - DB 대신 인메모리 Redis에서 상태 확인 → ms 단위 응답
+
+- DB 대신 인메모리 Redis에서 상태 확인 → ms 단위 응답
 
 <br/>
 
@@ -802,19 +944,20 @@ ProjectSummaryDto {
 
 1. **AOP 기반 락 적용**
 
-   - `@DistributedLock` 어노테이션으로 메서드 단위 락 제어
-   - SpEL 지원 → 자원 식별 키를 동적으로 생성 가능
-   - `waitTime`, `leaseTime`, `retry` 등 파라미터로 세밀한 제어 가능
+- `@DistributedLock` 어노테이션으로 메서드 단위 락 제어
+- SpEL 지원 → 자원 식별 키를 동적으로 생성 가능
+- `waitTime`, `leaseTime`, `retry` 등 파라미터로 세밀한 제어 가능
 
 2. **Redisson Lock Manager**
 
-   - `tryLock()` 기반으로 락 획득 시도 → 실패 시 재시도 로직 포함
-   - **자동 해제(leaseTime)** 설정으로 데드락 방지
-   - 예외 유형별(`BusinessException`, `CommonException`) 세분화 처리
+- `tryLock()` 기반으로 락 획득 시도 → 실패 시 재시도 로직 포함
+- **자동 해제(leaseTime)** 설정으로 데드락 방지
+- 예외 유형별(`BusinessException`, `CommonException`) 세분화 처리
 
 3. **안전한 해제**
-   - `lock.isHeldByCurrentThread()` 확인 후 `unlock()` 호출
-   - 해제 실패 시 로깅 및 예외 처리
+
+- `lock.isHeldByCurrentThread()` 확인 후 `unlock()` 호출
+- 해제 실패 시 로깅 및 예외 처리
 
 <br/>
 
@@ -863,36 +1006,37 @@ ProjectSummaryDto {
 
 1. **Redis 캐싱 & Deduplication**
 
-   - `viewDedup:{targetType}:{projectId}:{viewerId}` 키를 사용해 **5분 TTL** 동안 동일 사용자의 중복 조회수 증가를 방지.
-   - 최초 조회일 때만 `viewCount:{targetType}:{projectId}` 카운트를 +1 증가.
-   - Redis의 빠른 쓰기 성능을 활용하여 고빈도 요청을 흡수.
+- `viewDedup:{targetType}:{projectId}:{viewerId}` 키를 사용해 **5분 TTL** 동안 동일 사용자의 중복 조회수 증가를 방지.
+- 최초 조회일 때만 `viewCount:{targetType}:{projectId}` 카운트를 +1 증가.
+- Redis의 빠른 쓰기 성능을 활용하여 고빈도 요청을 흡수.
 
 2. **스케줄러 기반 워커** (`ProjectViewCountWorker`)
 
-   - `@Scheduled(fixedDelay=20s)` 주기로 Redis의 viewCount 키를 스캔.
-   - 각 키의 카운트를 **원자적 pop(getDel)** 하여 가져오고,
-     - 값이 있으면 DB `viewCount`를 증가시키고,
-     - 동시에 **Projection Task** 큐에 등록 → ES에도 반영됨.
-   - 개별 처리 중 오류가 발생해도 로깅 후 다음 키를 계속 처리 → 장애가 전체 동작에 영향 주지 않음.
+- `@Scheduled(fixedDelay=20s)` 주기로 Redis의 viewCount 키를 스캔.
+- 각 키의 카운트를 **원자적 pop(getDel)** 하여 가져오고,
+- 값이 있으면 DB `viewCount`를 증가시키고,
+- 동시에 **Projection Task** 큐에 등록 → ES에도 반영됨.
+- 개별 처리 중 오류가 발생해도 로깅 후 다음 키를 계속 처리 → 장애가 전체 동작에 영향 주지 않음.
 
 3. **DB & ES 동기화**
-   - DB에는 최종 집계된 viewCount 반영.
-   - ES에는 Projection Worker를 통해 비동기 업데이트 → 검색·추천에서 최신 데이터 활용 가능.
+
+- DB에는 최종 집계된 viewCount 반영.
+- ES에는 Projection Worker를 통해 비동기 업데이트 → 검색·추천에서 최신 데이터 활용 가능.
 
 ---
 
 ## 🚀 효과
 
-- **DB 부하 감소**  
+- **DB 부하 감소**
   잦은 조회 이벤트를 Redis에서 집계 → 주기적으로 DB에 반영 → 트랜잭션 횟수 감소.
 
-- **중복 방지**  
+- **중복 방지**
   TTL 기반 deduplication → 동일 사용자의 짧은 시간 내 반복 조회는 카운트에 반영되지 않음 → 데이터 왜곡 방지.
 
-- **최종적 일관성**  
+- **최종적 일관성**
   Redis → DB → ES 순서로 동기화 → 약간의 지연은 있지만, DB/ES의 상태는 최종적으로 일치.
 
-- **운영 효율성**  
+- **운영 효율성**
   워커 기반 배치 처리 → 모니터링·알림·재처리 체계와 쉽게 통합 가능.
 
 <br/>
@@ -913,13 +1057,13 @@ ProjectSummaryDto {
 ## ⚙️ 메시지 & 토픽 설계 (적용 사례)
 
 - **메시지 타입**
-  - **도메인 이벤트**: `DataUploadEvent{ dataId, dataFileUrl, originalFilename }` (JSON)
-  - **경량 트리거**: `Long` (예: `projectId`, `commentId`)
+- **도메인 이벤트**: `DataUploadEvent{ dataId, dataFileUrl, originalFilename }` (JSON)
+- **경량 트리거**: `Long` (예: `projectId`, `commentId`)
 - **키 정책**: 항상 `key = 리소스 ID` → 동일 ID는 동일 파티션으로 직렬 처리
 - **대표 토픽**
-  - 업로드 이벤트: `data-uploaded`
-  - 좋아요 증감: `project-like-increase` / `project-like-decrease`
-  - 댓글 수 변경 트리거: `comment-uploaded-topic` / `comment-deleted-topic`
+- 업로드 이벤트: `data-uploaded`
+- 좋아요 증감: `project-like-increase` / `project-like-decrease`
+- 댓글 수 변경 트리거: `comment-uploaded-topic` / `comment-deleted-topic`
 
 ---
 
@@ -927,44 +1071,44 @@ ProjectSummaryDto {
 
 - **DataKafkaProducerAdapter — 업로드 이벤트**
 
-  - Key / Value: `dataId` / `DataUploadEvent(JSON)`
-  - Topic: `spring.kafka.producer.extract-metadata.topic` → `data-uploaded`
+- Key / Value: `dataId` / `DataUploadEvent(JSON)`
+- Topic: `spring.kafka.producer.extract-metadata.topic` → `data-uploaded`
 
 - **LikeKafkaProducerAdapter — 좋아요 증감**
 
-  - Key / Value: `targetId` / `Long`
-  - Topic(프로젝트): `spring.kafka.producer.project-like-(increase|decrease).topic` → `project-like-*-topic`
-  - Topic(댓글): `spring.kafka.producer.comment-like-(increase|decrease).topic` → `comment-like-*-topic`
+- Key / Value: `targetId` / `Long`
+- Topic(프로젝트): `spring.kafka.producer.project-like-(increase|decrease).topic` → `project-like-*-topic`
+- Topic(댓글): `spring.kafka.producer.comment-like-(increase|decrease).topic` → `comment-like-*-topic`
 
 - **CommentKafkaProducerAdapter — 댓글 수 변경**
-  - Key / Value: `projectId` / `Long`
-  - Topic: `spring.kafka.producer.comment-(upload|delete).topic` → `comment-*-topic`
+- Key / Value: `projectId` / `Long`
+- Topic: `spring.kafka.producer.comment-(upload|delete).topic` → `comment-*-topic`
 
 ## 📥 컨슈머 (구현 기준)
 
 - **DataKafkaConsumerAdapter.consume — 파일 첨부 및 업로드 → 메타데이터 파싱/저장**
 
-  - Payload: `DataUploadEvent`
-  - Topic: `spring.kafka.consumer.extract-metadata.topic` → `data-uploaded`
+- Payload: `DataUploadEvent`
+- Topic: `spring.kafka.consumer.extract-metadata.topic` → `data-uploaded`
 
 - **ProjectKafkaConsumerAdapter.consumeCommentUpload — 프로젝트 댓글 수 +1**
 
-  - Payload: `Long projectId`
-  - Topic: `spring.kafka.consumer.comment-upload.topic` → `comment-uploaded-topic`
+- Payload: `Long projectId`
+- Topic: `spring.kafka.consumer.comment-upload.topic` → `comment-uploaded-topic`
 
 - **ProjectKafkaConsumerAdapter.consumeCommentDelete — 프로젝트 댓글 수 -1**
 
-  - Payload: `Long projectId`
-  - Topic: `spring.kafka.consumer.comment-delete.topic` → `comment-deleted-topic`
+- Payload: `Long projectId`
+- Topic: `spring.kafka.consumer.comment-delete.topic` → `comment-deleted-topic`
 
 - **ProjectKafkaConsumerAdapter.consumeLikeIncrease — 프로젝트 좋아요 수 +1**
 
-  - Payload: `Long projectId`
-  - Topic: `spring.kafka.consumer.project-like-increase.topic` → `project-like-increase-topic`
+- Payload: `Long projectId`
+- Topic: `spring.kafka.consumer.project-like-increase.topic` → `project-like-increase-topic`
 
 - **ProjectKafkaConsumerAdapter.consumeLikeDecrease — 프로젝트 좋아요 수 -1**
-  - Payload: `Long projectId`
-  - Topic: `spring.kafka.consumer.project-like-decrease.topic` → `project-like-decrease-topic`
+- Payload: `Long projectId`
+- Topic: `spring.kafka.consumer.project-like-decrease.topic` → `project-like-decrease-topic`
 
 > 처리 실패 시 예외 재던지기 → 컨테이너 **재시도/백오프 → DLQ** 정책 적용.
 
@@ -1008,7 +1152,7 @@ ProjectSummaryDto {
 
 - **색인 어댑터**: 프로젝트 문서를 `project_index`에 저장/갱신.
 - **증분 업데이트**: 댓글 수 변화는 **Painless 스크립트**로 증가/감소 처리
-  - `commentCount == null` → 초기화, 0 이하 방지
+- `commentCount == null` → 초기화, 0 이하 방지
 - **목표**: API 트랜잭션 이후 **준실시간 반영**으로 검색/추천 정확도 유지.
 
 <br/>
@@ -1025,10 +1169,10 @@ ProjectSummaryDto {
 ### 2) 유사 프로젝트 추천
 
 - **쿼리 조합**:
-  - `more_like_this`(title, content)
-  - `term` 가중치: `topicId`(1.5), `analysisPurposeId`(1.3)
-  - `must_not`: 자기 자신(`id`) 제외
-  - `filter`: `isDeleted=false`
+- `more_like_this`(title, content)
+- `term` 가중치: `topicId`(1.5), `analysisPurposeId`(1.3)
+- `must_not`: 자기 자신(`id`) 제외
+- `filter`: `isDeleted=false`
 - **정렬**: 최신성 반영(`createdAt` desc)
 - **결과**: 제목/요약/작성자/썸네일/통계 필드를 포함한 추천 리스트
 
@@ -1066,7 +1210,7 @@ ProjectSummaryDto {
 
 - **`BaseLogger`**: 모든 로거의 기본 로깅 기능(info/debug/warn/error) 추상화
 - **전문화 Logger 클래스**: API, Service, Domain, Persistence, Kafka, Elasticsearch, Redis, 분산락 등 기능별 로깅 지원
-- **`LoggerFactory`**: 전역에서 각 Logger **싱글톤** 제공  
+- **`LoggerFactory`**: 전역에서 각 Logger **싱글톤** 제공
   → 호출 계층에 맞는 Logger를 선택적으로 사용 가능
 
 ---
@@ -1125,7 +1269,7 @@ ProjectSummaryDto {
 
 ## 🎯 목적
 
-데이터 **편집·삭제·복원** 시 현재 인증 사용자가 해당 데이터의 **생성자**인지 검증하여  
+데이터 **편집·삭제·복원** 시 현재 인증 사용자가 해당 데이터의 **생성자**인지 검증하여
 비인가 접근을 차단하고 로깅합니다.
 
 ---
@@ -1134,9 +1278,10 @@ ProjectSummaryDto {
 
 1. 🏷️ 메서드에 `@AuthorizationDataEdit` 적용
 2. 🔍 AOP 실행:
-   - 👤 인증 사용자 ID 조회
-   - 📂 데이터 Owner ID 조회 (복원 시 삭제 데이터 포함)
-   - 🚫 불일치 시 **경고 로그** 기록 후 `DataException` 발생
+
+- 👤 인증 사용자 ID 조회
+- 📂 데이터 Owner ID 조회 (복원 시 삭제 데이터 포함)
+- 🚫 불일치 시 **경고 로그** 기록 후 `DataException` 발생
 
 ---
 
@@ -1212,20 +1357,20 @@ public void restore(Long dataId) { ... }
 
 ```plaintext
 User
- └── HTTP Request
-      └── 🔍 [Filter] MDC 추적 ID, IP, Path 등 수집
-           └── 🎯 [@TrackClick / @TrackNavigation] 사용자 행동 분류
-                └── 🕓 DB/외부 API 응답시간 측정 (AOP)
-                     └── 📦 Kafka Producer 전송
-                          └── 🧵 Kafka Consumer → Elasticsearch 저장
-                               └── 📊 Kibana 대시보드 시각화
-      └── 📡 Prometheus /actuator/prometheus 수집
-           └── 📈 Grafana 실시간 메트릭 분석
+└── HTTP Request
+	└── 🔍 [Filter] MDC 추적 ID, IP, Path 등 수집
+		└── 🎯 [@TrackClick / @TrackNavigation] 사용자 행동 분류
+				└── 🕓 DB/외부 API 응답시간 측정 (AOP)
+					└── 📦 Kafka Producer 전송
+						└── 🧵 Kafka Consumer → Elasticsearch 저장
+							└── 📊 Kibana 대시보드 시각화
+	└── 📡 Prometheus /actuator/prometheus 수집
+		└── 📈 Grafana 실시간 메트릭 분석
 ```
 
 ## 🎯 목표
 
-사용자와 시스템이 **"누가, 언제, 무엇을, 얼마나 걸려서"** 수행했는지를  
+사용자와 시스템이 **"누가, 언제, 무엇을, 얼마나 걸려서"** 수행했는지를
 행동 단위로 기록하여 **운영, 분석, 성능 모니터링, 컴플라이언스 근거 데이터**를 확보합니다.
 
 ---
@@ -1233,13 +1378,13 @@ User
 ## 🛠 설계
 
 - **MDC 기반 상관관계 ID 부여**
-  - 요청·응답 전 구간 추적 (Controller~Repository 호출 체인 연결)
+- 요청·응답 전 구간 추적 (Controller~Repository 호출 체인 연결)
 - **AOP 계층별 지연 측정**
-  - API, DB, 외부 I/O 호출 시간 로깅
+- API, DB, 외부 I/O 호출 시간 로깅
 - **비동기 처리**
-  - Kafka를 통한 로그 전송 → API 응답 지연 최소화
+- Kafka를 통한 로그 전송 → API 응답 지연 최소화
 - **시각화**
-  - Elasticsearch 색인 + Kibana 대시보드로 사용자 행동 패턴 분석
+- Elasticsearch 색인 + Kibana 대시보드로 사용자 행동 패턴 분석
 
 | 필드명      | 설명                    |
 | ----------- | ----------------------- |
@@ -1266,18 +1411,22 @@ User
 
 ## 🧪 19. 테스트 전략 & 코드 품질 관리
 
-### 🎯 **실무 중심 품질 관리 체계**
+### 🎯 **체계적인 품질 관리 시스템**
 
 > **목표**: 높은 코드 품질과 안정성을 보장하는 체계적인 테스트 및 품질 관리 시스템 구축
 
 ---
 
-### 📊 **현재 품질 지표 (2024년 기준)**
+### 📊 **코드 품질 현황**
 
 | 지표                      | 현재 값      | 목표      | 상태        |
 | ------------------------- | ------------ | --------- | ----------- |
-| **코드 커버리지**         | **71.4%**    | 70% 이상  | ✅ **달성** |
-| **브랜치 커버리지**       | **71.4%**    | 70% 이상  | ✅ **달성** |
+| **Instruction 커버리지**  | **82.5%**    | 80% 이상  | ✅ **우수** |
+| **Branch 커버리지**       | **71.9%**    | 70% 이상  | ✅ **달성** |
+| **Line 커버리지**         | **83.8%**    | 80% 이상  | ✅ **우수** |
+| **Method 커버리지**       | **85.8%**    | 80% 이상  | ✅ **우수** |
+| **Class 커버리지**        | **96.5%**    | 90% 이상  | ✅ **완벽** |
+| **Complexity 커버리지**   | **80.5%**    | 80% 이상  | ✅ **달성** |
 | **테스트 실행 시간**      | **1분 41초** | 3분 이하  | ✅ **우수** |
 | **테스트 성공률**         | **100%**     | 99% 이상  | ✅ **완벽** |
 | **SonarQube 품질 게이트** | **통과**     | 통과 필수 | ✅ **통과** |
@@ -1287,40 +1436,40 @@ User
 
 ### 🏗️ **테스트 아키텍처**
 
-#### **1. 계층별 테스트 전략**
+#### **계층별 테스트 전략**
 
 ```java
 // 단위 테스트 (Service Layer) - 비즈니스 로직 검증
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DataCommandServiceTest {
-    @InjectMocks private DataCommandService service;
-    @Mock private CreateDataPort createDataPort;
+	@InjectMocks private DataCommandService service;
+	@Mock private CreateDataPort createDataPort;
 
-    @Nested
-    @DisplayName("데이터 업로드 테스트")
-    class UploadDataTest {
-        @Test
-        @DisplayName("정상적인 데이터 업로드 성공")
-        void uploadDataSuccess() {
-            // given-when-then 패턴으로 명확한 테스트 구조
-        }
-    }
+	@Nested
+	@DisplayName("데이터 업로드 테스트")
+	class UploadDataTest {
+		@Test
+		@DisplayName("정상적인 데이터 업로드 성공")
+		void uploadDataSuccess() {
+			// given-when-then 패턴으로 명확한 테스트 구조
+		}
+	}
 }
 
 // 웹 테스트 (Controller Layer) - API 엔드포인트 검증
 @WebMvcTest(controllers = TopicController.class)
 class TopicControllerTest {
-    @Autowired private MockMvc mockMvc;
-    @MockBean private FindAllTopicsUseCase findAllTopicsUseCase;
+	@Autowired private MockMvc mockMvc;
+	@MockBean private FindAllTopicsUseCase findAllTopicsUseCase;
 
-    @Test
-    @DisplayName("API 응답 검증: 200 OK와 JSON 구조")
-    void findAllTopicsSuccess() throws Exception {
-        mockMvc.perform(get("/api/v1/references/topics"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.topics[0].id").value(1));
-    }
+	@Test
+	@DisplayName("API 응답 검증: 200 OK와 JSON 구조")
+	void findAllTopicsSuccess() throws Exception {
+		mockMvc.perform(get("/api/v1/references/topics"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.topics[0].id").value(1));
+	}
 }
 
 // 통합 테스트 (Database Integration) - 실제 DB 연동 검증
@@ -1328,95 +1477,139 @@ class TopicControllerTest {
 @ActiveProfiles("test")
 @Transactional
 class LikeServiceIntegrationTest {
-    @Autowired private LikeTargetUseCase likeTargetUseCase;
-    @Autowired private UserJpaRepository userJpaRepository;
+	@Autowired private LikeTargetUseCase likeTargetUseCase;
+	@Autowired private UserJpaRepository userJpaRepository;
 
-    @Test
-    @DisplayName("프로젝트 좋아요 → DB 저장 및 조회 검증")
-    void likeProject_ShouldBeSavedAndRetrievable() {
-        // 실제 데이터베이스 연동 테스트
-    }
+	@Test
+	@DisplayName("프로젝트 좋아요 → DB 저장 및 조회 검증")
+	void likeProject_ShouldBeSavedAndRetrievable() {
+		// 실제 데이터베이스 연동 테스트
+	}
 }
 ```
 
-#### **2. 성능 테스트 (k6 기반)**
+### 🔧 **품질 관리 도구 통합**
 
-**실무 검증된 성능 기준**:
+#### **JaCoCo 커버리지 분석**
 
-| API               | 응답 시간 목표 | 처리량 목표 | 테스트 시나리오    |
-| ----------------- | -------------- | ----------- | ------------------ |
-| **로그인**        | < 200ms        | 1000 req/s  | Load, Stress       |
-| **프로젝트 조회** | < 100ms        | 2000 req/s  | Cache 효과 검증    |
-| **파일 업로드**   | < 2s           | 100 req/s   | 대용량 처리        |
-| **검색**          | < 300ms        | 500 req/s   | Elasticsearch 성능 |
+- **실행 결과**: **✅ 82.5% 커버리지 달성** (목표 70% 초과 달성)
+- **구체적 수치**:
+- **Instruction Coverage**: 82.5% (38,023/46,099) ✅
+- **Branch Coverage**: 71.9% (900/1,251) ✅
+- **Line Coverage**: 83.8% (7,471/8,916) ✅
+- **Method Coverage**: 85.8% (2,381/2,775) ✅
+- **Class Coverage**: 96.5% (605/627) ✅
+- **분석 결과**: **총 46,099개 명령어 중 38,023개 테스트 완료**
+- **왜 중요한가**:
+- **테스트 커버리지 측정**: 어떤 코드가 테스트되지 않았는지 정확히 파악
+- **테스트 품질 평가**: 테스트가 얼마나 철저하게 작성되었는지 수치로 확인
+- **품질 게이트 통과**: 70% 이상 커버리지로 코드 품질 보장
+- **HTML 보고서**: `build/reports/jacoco/test/html/index.html`
 
-**실행 명령어**:
+#### **SonarQube 정적 분석**
+
+- **실행 결과**: **✅ A등급 달성** - 모든 품질 기준 통과
+- **구체적 수치**:
+- **Coverage**: 71.9% (기준 70% 이상) ✅
+- **Duplicated Lines**: 0.0% (기준 3% 이하) ✅
+- **Code Smells**: 0개 (기준 0개) ✅
+- **Security Vulnerabilities**: 0개 (기준 0개) ✅
+- **Bugs**: 0개 (기준 0개) ✅
+- **Reliability Rating**: A 등급 ✅
+- **분석 결과**: **완벽한 코드 품질 상태 유지**
+- **왜 중요한가**:
+- **코드 품질 분석**: 버그, 취약점, 코드 냄새를 자동으로 탐지
+- **중복 코드 제거**: 동일한 코드 패턴을 찾아 리팩토링 포인트 제공
+- **기술 부채 관리**: 코드 복잡도, 유지보수성 지수를 통한 품질 모니터링
+- **웹 대시보드**: `http://localhost:9000` (SonarQube 서버 실행 후)
+
+#### **Checkstyle 코드 스타일 검사**
+
+- **도구**: Checkstyle 10.12.4
+- **실제 결과**: **0개 위반** - 모든 스타일 규칙 준수
+- **왜 중요한가**:
+- **코딩 스타일 강제**: 들여쓰기, 명명 규칙, 줄 길이 등 일관된 스타일 적용
+- **문법 오류 방지**: 세미콜론 누락, 잘못된 import 등 기본적인 오류 사전 차단
+- **팀 코딩 표준 준수**: 모든 개발자가 동일한 스타일 가이드라인을 따르도록 보장
+- **HTML 보고서**: `build/reports/checkstyle/main.html`, `build/reports/checkstyle/test.html`
+
+#### **🚀 우선순위 도구 (추가 권장)**
+
+##### **1. SpotBugs + FindSecBugs** ✅
+
+- **상태**: **완전 설정 및 실행 완료** - **0개 버그 달성**
+- **목적**: 정적 분석을 통한 버그 탐지 및 보안 취약점 분석
+- **왜 중요한가**:
+- **정적 분석 버그 탐지**: 컴파일 타임에 발견되지 않는 런타임 버그 패턴 탐지
+- **보안 취약점 발견**: 캡슐화 위반, 배열 직접 노출 등 보안 위험 코드 식별
+- **코드 품질 향상**: null 포인터, 메모리 누수, 잘못된 타입 캐스팅 등 잠재적 문제 발견
+- **실무적 무해 패턴 제외**: Spring 프레임워크, Lombok, 테스트 코드의 정상적인 사용 패턴들
+- **SonarQube와 차이점**: 더 세밀한 바이트코드 분석으로 특정 버그 패턴 전문 탐지
+- **해결된 주요 버그 패턴**:
+- **DM_CONVERT_CASE**: 로케일 문제 (toLowerCase() → toLowerCase(Locale.ENGLISH))
+- **DM_DEFAULT_ENCODING**: 인코딩 문제 (getBytes() → getBytes(StandardCharsets.UTF_8))
+- **CT_CONSTRUCTOR_THROW**: 생성자 예외 문제 (private 생성자로 인스턴스화 방지)
+- **EI_EXPOSE_REP**: 내부 표현 노출 문제 (방어적 복사 구현)
+- **UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR**: 필드 초기화 문제 (null 체크 추가)
+- **HTML 보고서**: `build/reports/spotbugs/main.html`, `build/reports/spotbugs/test.html`
+
+##### **2. Spotless (자동 포맷)** ✅
+
+- **상태**: **완전 설정 및 실행 완료** - **코드 스타일 100% 통일**
+- **실행 결과**: **✅ 모든 파일 포맷팅 완료** - 스타일 일관성 달성
+
+**목적**: 코드 자동 포맷팅 및 스타일 통일
+
+**왜 중요한가**:
+
+- **팀 협업 효율성**: 코드 스타일 논의 시간 절약, 일관된 가독성으로 리뷰 시간 단축
+- **IDE 독립성**: 어떤 IDE를 사용하든 동일한 코드 스타일 보장
+- **자동화**: 수동 포맷팅 작업 제거로 개발 생산성 향상
+
+**적용 파일 타입 및 규칙**:
+
+- **Java**: Google Java Format + Import 정리 + 라이선스 헤더 자동 추가
+- **XML/YAML/Gradle**: 들여쓰기 통일 + 공백 정리
+- **Markdown/Properties/JSON/SQL**: 공백 정리 + 줄바꿈 통일
+- **공통 규칙**: 줄 끝 공백 제거, 파일 끝 개행 문자 통일
+
+**실제 해결된 문제들**:
+
+- **들여쓰기 불일치**: IDE마다 다른 들여쓰기 → Google Java Format으로 통일
+- **공백 문제**: 파일 끝/줄 끝 공백 → 자동 제거
+- **Import 정리**: 사용하지 않는 import, 순서 불일치 → 자동 정리
+- **라이선스 헤더**: 누락된 저작권 정보 → 자동 추가
+- **HTML 보고서**: `build/reports/spotless/spotlessJava.html`, `build/reports/spotless/spotlessXml.html` 등
+
+**개발자 워크플로우**:
 
 ```bash
-# 로그인 성능 테스트
-k6 run --env SCENARIO=load performance-test/auth/scenarios/login.test.js
+# 코드 작성/수정 후
+./gradlew spotlessApply
 
-# 캐시 성능 검증
-k6 run --env SCENARIO=stress performance-test/project/scenarios/project-popular-read.test.js
-
-# 보안 테스트 (레이트 리미팅)
-k6 run --env SCENARIO=stress performance-test/auth/scenarios/login-abuse-with-rate-limit.test.js
+# 커밋 전 필수
+./gradlew spotlessCheck  # 검사만 (파일 수정 안함)
+./gradlew spotlessApply  # 실제 수정
+git add .
+git commit -m "기능 추가"
 ```
 
----
-
-### 🔧 **코드 품질 도구 통합**
-
-#### **1. JaCoCo 커버리지 분석**
-
-**현재 상태**:
-
-- **라인 커버리지**: 71.4% (목표 70% 달성)
-- **브랜치 커버리지**: 71.4% (목표 70% 달성)
-- **복잡도 커버리지**: 68.2%
-- **메서드 커버리지**: 78.1%
-
-**자동화 설정**:
-
-```gradle
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = 0.70 // 70% 이상 강제
-            }
-        }
-    }
-}
-```
-
-#### **2. SonarQube 정적 분석**
-
-**품질 게이트 기준**:
-
-- **커버리지**: 70% 이상 ✅
-- **중복 코드**: 3% 이하 ✅
-- **코드 냄새**: 0개 ✅
-- **보안 취약점**: 0개 ✅
-- **신뢰성 등급**: A 등급 ✅
-
-**자동 분석 실행**:
+**통합 실행 명령어**:
 
 ```bash
-./gradlew sonar
+# 기본 품질 관리 도구 (필수)
+./gradlew jacocoTestReport               # JaCoCo 커버리지 분석
+./gradlew sonar                          # SonarQube 정적 분석
+./gradlew checkstyleMain checkstyleTest  # Checkstyle 코드 스타일 검사
+
+# 우선순위 추가 도구 (권장)
+./gradlew spotbugsMainFixed spotbugsTestFixed  # SpotBugs + FindSecBugs
+
+# Spotless 자동 포맷팅 (개발 워크플로우 필수)
+./gradlew spotlessApply                        # 포맷팅 적용 (파일 수정)
+./gradlew spotlessCheck                        # 포맷팅 검사만 (수정 안함)
+./gradlew spotlessJavaCheck spotlessXmlCheck spotlessYamlCheck spotlessGradleCheck spotlessMarkdownCheck spotlessMiscCheck  # 개별 파일 타입 검사
 ```
-
-#### **3. Checkstyle 코드 스타일 검사**
-
-**검사 항목**:
-
-- 라인 길이 (120자 이하)
-- 파일 길이 (2000라인 이하)
-- 네이밍 컨벤션 준수
-- 불필요한 import 제거
-- 코드 복잡도 관리
-
-**실행 결과**: 경고 0개, 오류 0개 ✅
 
 ---
 
@@ -1427,86 +1620,25 @@ jacocoTestCoverageVerification {
 ```java
 // 도메인 모델 생성
 User user = TestDataBuilder.user()
-    .email("test@example.com")
-    .nickname("테스트유저")
-    .role(RoleType.ROLE_USER)
-    .build();
-
-// JPA 엔티티 생성 (통합 테스트용)
-UserEntity userEntity = TestDataBuilder.userEntity()
-    .email(TestDataBuilder.RandomData.randomEmail())
-    .nickname(TestDataBuilder.RandomData.randomNickname())
-    .build();
+	.email("test@example.com")
+	.nickname("테스트유저")
+	.role(RoleType.ROLE_USER)
+	.build();
 ```
 
-**장점**:
-
-- 일관된 테스트 데이터 생성
-- 유지보수성 향상
-- 테스트 가독성 개선
-
----
-
-### 📋 **테스트 명명 규칙 & 구조**
-
-#### **명명 규칙**
+#### **테스트 명명 규칙**
 
 - **클래스**: `{ClassName}Test`, `{ClassName}IntegrationTest`
 - **메서드**: `{methodName}_{상황}_{예상결과}` 패턴
 - **@DisplayName**: 한국어로 명확한 의도 표현
-- **@Nested**: 관련 테스트 그룹화
 
 #### **AssertJ 활용**
 
 ```java
-// 기존 방식 (제거됨)
-assertThatThrownBy(() -> service.method())
-    .isInstanceOf(SomeException.class);
-
-// 개선된 방식 (현재 적용)
+// 개선된 예외 처리 방식
 Throwable ex = catchThrowableOfType(() -> service.method(), SomeException.class);
 assertThat(ex).isNotNull();
 assertThat(ex.getMessage()).contains("예상 메시지");
-```
-
----
-
-### 🚀 **실무적 품질 개선 사례**
-
-#### **1. 분산락 테스트 최적화**
-
-```java
-// @DistributedLock 어노테이션 테스트를 위한 @Spy 활용
-@Spy
-private UserCommandService service;
-
-@BeforeEach
-void setUp() {
-    service.setSelf(service); // 자기 참조 설정
-}
-```
-
-#### **2. DTO 생성자 파라미터 순서 정확성**
-
-```java
-// 잘못된 순서 (수정 전)
-new UploadDataRequest(title, description, file, startDate, endDate);
-
-// 올바른 순서 (수정 후)
-new UploadDataRequest(title, description, startDate, endDate, file);
-```
-
-#### **3. AssertJ 체이닝으로 가독성 향상**
-
-```java
-// 개선 전
-assertThat(values).hasSize(2);
-assertThat(values).containsExactly(TargetType.PROJECT, TargetType.COMMENT);
-
-// 개선 후
-assertThat(values)
-    .hasSize(2)
-    .containsExactly(TargetType.PROJECT, TargetType.COMMENT);
 ```
 
 ---
@@ -1517,12 +1649,11 @@ assertThat(values)
 
 ```bash
 # 전체 품질 검증 실행
-./gradlew clean build test jacocoTestReport sonar
+./gradlew clean build jacocoTestReport sonar
 
 # 결과 확인
 open build/reports/tests/test/index.html          # 테스트 리포트
 open build/reports/jacoco/test/html/index.html    # 커버리지 리포트
-open build/reports/problems/problems-report.html  # 문제 리포트
 ```
 
 #### **품질 게이트 자동 통과**
@@ -1536,20 +1667,20 @@ open build/reports/problems/problems-report.html  # 문제 리포트
 
 ### ✅ **실무적 성과**
 
-#### **개발 생산성 향상**
+#### **개발 생산성**
 
-- **테스트 실행 시간**: 1분 41초 (기존 대비 30% 단축)
-- **컴파일 시간**: 30초 (기존 대비 50% 단축)
-- **품질 검증 시간**: 2분 (전체 프로세스)
+- **테스트 실행 시간**: 1분 41초
+- **컴파일 시간**: 약 30초
+- **품질 검증 시간**: 약 2분 (전체 프로세스)
 
-#### **코드 품질 향상**
+#### **코드 품질**
 
-- **커버리지**: 71.4% 달성 (목표 70% 초과 달성)
-- **코드 냄새**: 0개 (완전 제거)
-- **컴파일러 경고**: 0개 (완전 제거)
+- **커버리지**: 82.5% 달성
+- **코드 냄새**: 0개
+- **컴파일러 경고**: 0개
 - **테스트 안정성**: 100% 성공률
 
-#### **유지보수성 향상**
+#### **유지보수성**
 
 - **TestDataBuilder**: 테스트 데이터 관리 체계화
 - **AssertJ 체이닝**: 테스트 가독성 향상
@@ -1559,10 +1690,10 @@ open build/reports/problems/problems-report.html  # 문제 리포트
 
 ### 🎯 **향후 개선 계획**
 
-1. **커버리지 목표**: 75% → 80% 단계적 향상
-2. **성능 테스트**: 더 많은 시나리오 추가
-3. **보안 테스트**: OWASP Dependency Check 통합
-4. **코드 품질**: SonarQube 규칙 강화
+1. **커버리지 목표**: Branch Coverage 75% 달성
+2. **코드 품질**: SonarQube 규칙 강화
+3. **보안 검사**: 정기적인 라이브러리 업데이트 및 취약점 모니터링
+4. **테스트 확장**: 더 많은 시나리오 추가
 
 <br/>
 <br/>
@@ -1581,7 +1712,7 @@ open build/reports/problems/problems-report.html  # 문제 리포트
 
 ### 🔔 알림
 
-- 임계치 초과 시 Slack/메일 등 실시간 통지  
+- 임계치 초과 시 Slack/메일 등 실시간 통지
   (예: p95 지연, 5xx 비율, Kafka Lag, DLQ 적재량, 색인 지연)
 - 배포 직후 **엄격 임계치 윈도우(5~10분)** 운영
 
@@ -1597,198 +1728,63 @@ open build/reports/problems/problems-report.html  # 문제 리포트
 
 <br/>
 <br/>
-
 ---
 
-# 🏆 **프로젝트 전체 성과 요약**
+# 🏆 **프로젝트 최종 성과 & 기술적 우수성**
 
-## 🎯 **핵심 성과 지표**
+## 📊 **실제 달성 성과 요약**
 
-| 영역                | 지표              | 달성도       | 실무적 가치               |
-| ------------------- | ----------------- | ------------ | ------------------------- |
-| **코드 품질**       | Instruction 82.5% | ✅ 목표 달성 | 안정적인 코드베이스 구축  |
-| **분기 커버리지**   | Branch 71.9%      | ✅ 양호      | 조건문 테스트 완성도      |
-| **메서드 커버리지** | Method 85.8%      | ✅ 우수      | 비즈니스 로직 검증 완성도 |
-| **클래스 커버리지** | Class 96.5%       | ✅ 완벽      | 전체 클래스 테스트 완성도 |
-| **테스트 안정성**   | 성공률 100%       | ✅ 완벽 달성 | 배포 신뢰성 확보          |
-| **빌드 안정성**     | Gradle 9.0 호환   | ✅ 완벽 달성 | 최신 도구 지원            |
-| **보안**            | 취약점 0개        | ✅ 완벽 달성 | 보안성 확보               |
-| **유지보수성**      | 코드 냄새 0개     | ✅ 완벽 달성 | 장기적 개발 효율성        |
+### **코드 품질 지표**
 
-## 🚀 **기술적 혁신**
+- **Instruction Coverage**: 82.5% (목표 70% 초과 달성)
+- **Branch Coverage**: 71.9% (목표 70% 달성)
+- **Method Coverage**: 85.8% (메서드 테스트 완성도 우수)
+- **Class Coverage**: 96.5% (클래스 테스트 완성도 완벽)
+- **테스트 성공률**: 100% (완벽 달성)
+- **코드 냄새**: 0개 (완벽한 코드 품질 유지)
+- **보안 취약점**: 0개 (보안성 확보)
+- **컴파일러 경고**: 0개 (깔끔한 코드베이스 구축)
 
-### **1. 아키텍처 설계**
+## 🔧 **품질 관리 도구 통합**
 
-- **DDD + 헥사고날 아키텍처**: 도메인 중심 설계로 비즈니스 로직 명확화
-- **CQRS 패턴**: 명령과 조회 분리로 성능 최적화
-- **Port & Adapter**: 인프라와 도메인 분리로 유지보수성 향상
-
-### **2. 데이터 처리 전략**
-
-- **Kafka 기반 이벤트 처리**: 비동기 분리로 API 부하 완화
-- **Redis 캐싱**: 인메모리 캐싱으로 90% 응답시간 단축
-- **Elasticsearch 검색**: 전문 검색과 유사도 추천으로 사용자 경험 향상
-
-### **3. 운영 안정성**
-
-- **Blue-Green 배포**: 무중단 배포로 서비스 연속성 확보
-- **분산락**: Redisson 기반 동시성 제어로 데이터 정합성 보장
-- **모니터링**: Prometheus + Grafana로 실시간 시스템 상태 추적
-
-## 🛠️ **품질 관리 도구 통합**
-
-### **1. 코드 커버리지 (JaCoCo)**
-
-#### **📊 전체 커버리지 지표**
-
-- **Instruction Coverage**: 82.5% (38,023/46,099) - 바이트코드 명령어 커버리지
-- **Branch Coverage**: 71.9% (900/1,251) - 분기문 커버리지
-- **Line Coverage**: 83.8% (7,471/8,916) - 라인 커버리지
-- **Complexity Coverage**: 80.5% (2,745/3,409) - 순환복잡도 커버리지
-- **Method Coverage**: 85.8% (2,381/2,775) - 메서드 커버리지
-- **Class Coverage**: 96.5% (605/627) - 클래스 커버리지
-
-#### **🎯 커버리지 품질 평가**
-
-- ✅ **우수한 커버리지 (80% 이상)**: Instruction, Line, Method, Class
-- ⚠️ **개선 여지 (70-80% 이상)**: Branch, Complexity
-
-#### **🔧 자동화 설정**
-
-- **CI/CD 파이프라인 통합**: 빌드 시 자동 커버리지 측정
-- **HTML 리포트 생성**: 상세한 커버리지 분석 리포트 제공
-- **품질 게이트 연동**: SonarQube와 연동하여 품질 기준 자동 검증
-
-### **2. 정적 코드 분석 (SonarQube)**
-
-- **품질 게이트**: 자동 통과 기준 설정
-- **코드 냄새**: 0개 (완벽 달성)
-- **보안 취약점**: 0개 (완벽 달성)
-- **중복 코드**: 최소화
-
-### **3. 코드 스타일 검사 (Checkstyle)**
-
-- **일관성 유지**: 팀 코딩 스타일 통일
-- **자동 검증**: 빌드 시 자동 스타일 검사
-- **경고 관리**: 설정 가능한 경고 수준
-
-## 🔄 **자동화된 품질 검증**
-
-### **1. CI/CD 파이프라인**
-
-```bash
-# 전체 품질 검증 실행
-./gradlew clean build jacocoTestReport sonar
-```
-
-### **2. 품질 게이트 설정**
+### **1. 품질 게이트 설정**
 
 - **커버리지**: 70% 이상 (현재 82.5% 달성)
 - **코드 냄새**: 0개
 - **보안 취약점**: 0개
 - **중복 코드**: 최소화
 
-### **3. 리포트 생성**
+### **2. 리포트 생성**
 
 - **테스트 리포트**: `build/reports/tests/test/index.html`
 - **커버리지 리포트**: `build/reports/jacoco/test/html/index.html`
 - **SonarQube 대시보드**: 자동 업데이트
 
-## 🎖️ **기술적 우수성**
+### **3. 자동화된 품질 검증**
 
-### **코드 품질 관리**
+```bash
+# 전체 품질 검증 실행
+./gradlew clean build jacocoTestReport sonar
+```
 
-- **Instruction Coverage**: 82.5% (목표 70% 초과 달성)
-- **Method Coverage**: 85.8% (메서드 테스트 완성도 우수)
-- **Class Coverage**: 96.5% (클래스 테스트 완성도 완벽)
-- **Branch Coverage**: 71.9% (분기 테스트 완성도 양호)
-- **0개 코드 냄새**: 완벽한 코드 품질 유지
-- **0개 컴파일러 경고**: 깔끔한 코드베이스 구축
-- **Gradle 9.0 호환성**: 최신 빌드 도구 지원
+## 🚀 **핵심 기술적 성과**
 
-### **테스트 전략**
+### **아키텍처 & 설계**
 
-- **계층별 테스트**: 단위/통합/웹/성능 테스트 체계화
-- **성능 테스트**: k6 기반 실무 검증된 성능 기준
-- **테스트 데이터 관리**: TestDataBuilder 패턴으로 일관성 확보
-- **AssertJ 활용**: 가독성 높은 테스트 코드 작성
+- **DDD + 헥사고날 아키텍처**: 도메인 중심 설계로 비즈니스 로직 명확화
+- **CQRS 패턴**: 명령과 조회 분리로 성능 최적화
+- **Port & Adapter**: 인프라와 도메인 분리로 유지보수성 향상
 
-### **보안 및 안정성**
+### **성능 & 확장성**
 
-- **OAuth2 + JWT**: 안전한 인증 시스템 구축
-- **분산락**: 동시성 문제 해결로 데이터 정합성 보장
-- **예외 처리**: 체계적인 예외 처리로 시스템 안정성 확보
-- **OWASP 검증**: 보안 취약점 사전 차단
+- **Kafka 기반 이벤트 처리**: 비동기 분리로 API 부하 완화
+- **Redis 캐싱**: 인메모리 캐싱으로 조회 성능 향상
+- **Elasticsearch 검색**: 전문 검색과 유사도 추천으로 사용자 경험 향상
+- **QueryDSL 최적화**: N+1 문제 해결 및 복잡한 쿼리 최적화
 
-## 🔮 **향후 발전 방향**
+### **운영 & 안정성**
 
-### **단기 목표 (3개월)**
-
-- 커버리지 75% 달성
-- Checkstyle 경고 최소화
-- OWASP 의존성 검사 정기화
-
-### **중기 목표 (6개월)**
-
-- 마이크로서비스 아키텍처 전환
-- AI 기반 코드 리뷰 시스템 도입
-- 자동화된 성능 회귀 감지
-
-### **장기 목표 (1년)**
-
-- 클라우드 네이티브 아키텍처 구축
-- 실시간 데이터 분석 플랫폼 구축
-- 개발자 경험(DX) 최적화
-
----
-
-## 📊 **실제 빌드 결과 요약**
-
-### **✅ 성공적으로 완료된 작업**
-
-1. **코드 품질 개선**
-
-   - `assertThatThrownBy` → `catchThrowableOfType` 전환 완료
-   - 82.5% 커버리지 달성 (목표 70% 초과)
-   - SonarQube 품질 게이트 통과
-
-2. **빌드 시스템 최적화**
-
-   - Gradle 9.0 호환성 확보
-   - Deprecation 경고 해결
-   - 컴파일러 경고 제거
-
-3. **품질 도구 통합**
-
-   - JaCoCo 커버리지 리포트 자동 생성
-   - SonarQube 정적 분석 통합
-   - Checkstyle 코드 스타일 검사 설정
-
-4. **보안 검증**
-   - OWASP 의존성 검사 설정
-   - 보안 취약점 0개 달성
-
-### **📈 달성된 지표**
-
-- **테스트 성공률**: 100%
-- **Instruction Coverage**: 82.5% (38,023/46,099)
-- **Branch Coverage**: 71.9% (900/1,251)
-- **Line Coverage**: 83.8% (7,471/8,916)
-- **Method Coverage**: 85.8% (2,381/2,775)
-- **Class Coverage**: 96.5% (605/627)
-- **코드 냄새**: 0개
-- **보안 취약점**: 0개
-- **컴파일러 경고**: 0개
-
----
-
-## 📞 **연락처 및 지원**
-
-프로젝트에 대한 문의사항이나 기술적 지원이 필요한 경우 언제든 연락주세요.
-
-**프로젝트 관리자**: [연락처 정보]
-**기술 지원**: [기술 지원 연락처]
-
----
-
-_이 문서는 2024년 기준으로 작성되었으며, 지속적으로 업데이트됩니다._
+- **Blue-Green 배포**: 무중단 배포로 서비스 연속성 확보
+- **분산락**: Redisson 기반 동시성 제어로 데이터 정합성 보장
+- **모니터링**: Prometheus + Grafana로 실시간 시스템 상태 추적
+- **Gradle 9.0 호환성**: 최신 빌드 도구 지원으로 미래 지향적 개발 환경 구축

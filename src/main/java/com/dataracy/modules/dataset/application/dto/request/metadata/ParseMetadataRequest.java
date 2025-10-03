@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.dataset.application.dto.request.metadata;
 
 /**
@@ -7,8 +11,4 @@ package com.dataracy.modules.dataset.application.dto.request.metadata;
  * @param fileUrl 파일 URL
  * @param originalFilename 원본 파일명
  */
-public record ParseMetadataRequest(
-        Long dataId,
-        String fileUrl,
-        String originalFilename
-) {}
+public record ParseMetadataRequest(Long dataId, String fileUrl, String originalFilename) {}

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.dataset.application.dto.response.download;
 
 /**
@@ -5,6 +9,4 @@ package com.dataracy.modules.dataset.application.dto.response.download;
  *
  * @param preSignedUrl 유효기간이 있는 다운로드 링크
  */
-public record GetDataPreSignedUrlResponse(
-    String preSignedUrl
-) {}
+public record GetDataPreSignedUrlResponse(String preSignedUrl) {}

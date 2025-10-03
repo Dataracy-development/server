@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.email.application.dto.request.command;
 
 /**
@@ -6,7 +10,4 @@ package com.dataracy.modules.email.application.dto.request.command;
  * @param email 이메일
  * @param purpose 이메일 인증 코드 전송 목적
  */
-public record SendEmailRequest(
-        String email,
-        String purpose
-) {}
+public record SendEmailRequest(String email, String purpose) {}

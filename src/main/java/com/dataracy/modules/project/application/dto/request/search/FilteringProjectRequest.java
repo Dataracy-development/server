@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.project.application.dto.request.search;
 
 /**
@@ -11,10 +15,9 @@ package com.dataracy.modules.project.application.dto.request.search;
  * @param authorLevelId 작성자 레벨 ID(선택)
  */
 public record FilteringProjectRequest(
-        String keyword,
-        String sortType,
-        Long topicId,
-        Long analysisPurposeId,
-        Long dataSourceId,
-        Long authorLevelId
-) {}
+    String keyword,
+    String sortType,
+    Long topicId,
+    Long analysisPurposeId,
+    Long dataSourceId,
+    Long authorLevelId) {}

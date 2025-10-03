@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 Dataracy
+ * Licensed under the MIT License.
+ */
 package com.dataracy.modules.reference.domain.model;
 
 /**
@@ -7,8 +11,4 @@ package com.dataracy.modules.reference.domain.model;
  * @param value 데이터 유형 값
  * @param label 데이터 유형 라벨
  */
-public record DataType(
-        Long id,
-        String value,
-        String label
-) {}
+public record DataType(Long id, String value, String label) {}
