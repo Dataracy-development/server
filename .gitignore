@@ -50,3 +50,7 @@ logs/
 /infrastructure/elasticsearch/ilm-policy.json
 /infrastructure/elasticsearch/index-template.json
 /infrastructure/kibana/behaviorlog-dashboard.ndjson
+
+# SonarQube
+sonarqube-*.zip
+sonarqube-*/
