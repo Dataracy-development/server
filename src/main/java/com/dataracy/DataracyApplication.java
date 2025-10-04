@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class DataracyApplication {
 
-  public DataracyApplication() {
+  private DataracyApplication() {
     // Spring Boot 애플리케이션 클래스의 기본 생성자
   }
 
