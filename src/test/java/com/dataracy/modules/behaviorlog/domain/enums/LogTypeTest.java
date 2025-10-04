@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.behaviorlog.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +11,7 @@ class LogTypeTest {
 
   @Test
   @DisplayName("LogType enum 값들 확인")
-  void logType_ShouldHaveCorrectValues() {
+  void logTypeShouldHaveCorrectValues() {
     // Given & When & Then
     assertThat(LogType.values()).hasSize(2);
 
@@ -25,7 +21,7 @@ class LogTypeTest {
 
   @Test
   @DisplayName("LogType name() 메서드 테스트")
-  void logType_ShouldHaveCorrectNames() {
+  void logTypeShouldHaveCorrectNames() {
     // Given & When & Then
     assertAll(
         () -> assertThat(LogType.ACTION.name()).isEqualTo("ACTION"),
@@ -34,7 +30,7 @@ class LogTypeTest {
 
   @Test
   @DisplayName("LogType valueOf() 메서드 테스트")
-  void logType_ShouldParseFromString() {
+  void logTypeShouldParseFromString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(LogType.valueOf("ACTION")).isEqualTo(LogType.ACTION),
@@ -43,7 +39,7 @@ class LogTypeTest {
 
   @Test
   @DisplayName("LogType ordinal() 메서드 테스트")
-  void logType_ShouldHaveCorrectOrdinals() {
+  void logTypeShouldHaveCorrectOrdinals() {
     // Given & When & Then
     assertAll(
         () -> assertThat(LogType.ACTION.ordinal()).isZero(),
@@ -52,7 +48,7 @@ class LogTypeTest {
 
   @Test
   @DisplayName("LogType toString() 메서드 테스트")
-  void logType_ShouldHaveCorrectToString() {
+  void logTypeShouldHaveCorrectToString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(LogType.ACTION).hasToString("ACTION"),
@@ -61,7 +57,7 @@ class LogTypeTest {
 
   @Test
   @DisplayName("LogType description 테스트")
-  void logType_ShouldHaveCorrectDescriptions() {
+  void logTypeShouldHaveCorrectDescriptions() {
     // Given & When & Then
     assertAll(
         () -> assertThat(LogType.ACTION.getDescription()).isEqualTo("행동"),

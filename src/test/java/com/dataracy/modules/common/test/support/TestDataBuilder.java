@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.test.support;
 
 import java.time.LocalDateTime;
@@ -25,6 +21,10 @@ import com.dataracy.modules.user.domain.model.User;
  * .role(RoleType.ROLE_USER) .build();
  */
 public class TestDataBuilder {
+
+  private TestDataBuilder() {
+    // Utility class
+  }
 
   /** User 테스트 데이터 빌더 */
   public static UserBuilder user() {
@@ -61,10 +61,10 @@ public class TestDataBuilder {
     private Long id = 1L;
     private String email = "test@example.com";
     private String nickname = "테스트유저";
-    private String password = "password123!";
+    private String password = "password1!";
     private RoleType role = RoleType.ROLE_USER;
     private ProviderType provider = ProviderType.LOCAL;
-    private String providerId = "provider123";
+    private String providerId = "provider1";
     private Long authorLevelId = 1L;
     private Long occupationId = 1L;
     private Long visitSourceId = 1L;
@@ -168,10 +168,10 @@ public class TestDataBuilder {
     private Long id = 1L;
     private String email = "test@example.com";
     private String nickname = "테스트유저";
-    private String password = "password123!";
+    private String password = "password1!";
     private RoleType role = RoleType.ROLE_USER;
     private ProviderType provider = ProviderType.LOCAL;
-    private String providerId = "provider123";
+    private String providerId = "provider1";
 
     public UserBuilder id(Long id) {
       this.id = id;

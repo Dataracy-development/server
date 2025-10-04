@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.application.service.validate;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -26,6 +22,9 @@ import com.dataracy.modules.project.domain.exception.ProjectException;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ProjectValidateServiceTest {
 
+  // Test constants
+  private static final Long TEST_PROJECT_ID = 1L;
+
   @Mock private CheckProjectExistsByIdPort checkProjectExistsByIdPort;
 
   private ProjectValidateService projectValidateService;
@@ -41,7 +40,7 @@ class ProjectValidateServiceTest {
 
     @Test
     @DisplayName("성공: 프로젝트가 존재할 때 검증 통과")
-    void validateProject_프로젝트존재_검증통과() {
+    void validateProjectWhenProjectExistsReturnsSuccess() {
       // given
       Long projectId = 1L;
       given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(true);
@@ -54,7 +53,7 @@ class ProjectValidateServiceTest {
 
     @Test
     @DisplayName("실패: 프로젝트가 존재하지 않을 때 ProjectException 발생")
-    void validateProject_프로젝트존재하지않음_ProjectException발생() {
+    void validateProjectWhenProjectNotExistsThrowsProjectException() {
       // given
       Long projectId = 999L;
       given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(false);
@@ -73,7 +72,7 @@ class ProjectValidateServiceTest {
 
     @Test
     @DisplayName("성공: 프로젝트 ID가 null일 때도 정상 처리")
-    void validateProject_nullProjectId_정상처리() {
+    void validateProjectWithNullProjectIdHandlesNormally() {
       // given
       Long projectId = null;
       given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(false);
@@ -89,7 +88,7 @@ class ProjectValidateServiceTest {
 
     @Test
     @DisplayName("성공: 프로젝트 ID가 음수일 때도 정상 처리")
-    void validateProject_negativeProjectId_정상처리() {
+    void validateProjectWithNegativeProjectIdHandlesNormally() {
       // given
       Long projectId = -1L;
       given(checkProjectExistsByIdPort.checkProjectExistsById(projectId)).willReturn(false);

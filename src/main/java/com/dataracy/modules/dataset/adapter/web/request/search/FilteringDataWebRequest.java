@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.web.request.search;
 
 import com.dataracy.modules.common.support.annotation.ValidEnumValue;

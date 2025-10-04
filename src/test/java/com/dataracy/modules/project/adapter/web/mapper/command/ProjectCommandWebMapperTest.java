@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.web.mapper.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +16,11 @@ import com.dataracy.modules.project.application.dto.request.command.UploadProjec
 import com.dataracy.modules.project.application.dto.response.command.UploadProjectResponse;
 
 class ProjectCommandWebMapperTest {
+
+  // Test constants
+  private static final Long TWENTY_TWO = 22L;
+  private static final Long THIRTY_THREE = 33L;
+  private static final Long FORTY_FOUR = 44L;
 
   private final ProjectCommandWebMapper mapper = new ProjectCommandWebMapper();
 
@@ -46,13 +47,13 @@ class ProjectCommandWebMapperTest {
   @DisplayName("성공 → UploadProjectResponse를 UploadProjectWebResponse로 변환")
   void toWebDtoFromUploadResponse() {
     // given
-    UploadProjectResponse response = new UploadProjectResponse(123L);
+    UploadProjectResponse response = new UploadProjectResponse(1L);
 
     // when
     UploadProjectWebResponse webResponse = mapper.toWebDto(response);
 
     // then
-    assertThat(webResponse.id()).isEqualTo(123L);
+    assertThat(webResponse.id()).isEqualTo(1L);
   }
 
   @Test
@@ -61,7 +62,15 @@ class ProjectCommandWebMapperTest {
     // given
     ModifyProjectWebRequest webRequest =
         new ModifyProjectWebRequest(
-            "modified", 11L, 22L, 33L, 44L, false, 55L, "updated content", List.of(300L, 400L));
+            "modified",
+            11L,
+            TWENTY_TWO,
+            THIRTY_THREE,
+            FORTY_FOUR,
+            false,
+            55L,
+            "updated content",
+            List.of(300L, 400L));
 
     // when
     ModifyProjectRequest appRequest = mapper.toApplicationDto(webRequest);
@@ -70,7 +79,7 @@ class ProjectCommandWebMapperTest {
     assertAll(
         () -> assertThat(appRequest.title()).isEqualTo("modified"),
         () -> assertThat(appRequest.topicId()).isEqualTo(11L),
-        () -> assertThat(appRequest.dataSourceId()).isEqualTo(33L),
+        () -> assertThat(appRequest.dataSourceId()).isEqualTo(THIRTY_THREE),
         () -> assertThat(appRequest.dataIds()).containsExactly(300L, 400L));
   }
 }

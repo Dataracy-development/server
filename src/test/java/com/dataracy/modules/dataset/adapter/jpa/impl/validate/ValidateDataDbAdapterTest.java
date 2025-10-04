@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.jpa.impl.validate;
 
 import static org.assertj.core.api.Assertions.assertThat;

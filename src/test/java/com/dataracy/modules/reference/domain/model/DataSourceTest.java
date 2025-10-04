@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,9 +9,12 @@ import org.junit.jupiter.api.Test;
 @DisplayName("DataSource 테스트")
 class DataSourceTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("DataSource record 생성 및 속성 확인")
-  void dataSource_ShouldCreateCorrectly() {
+  void dataSourceShouldCreateCorrectly() {
     // Given
     Long id = 1L;
     String value = "government";
@@ -33,7 +32,7 @@ class DataSourceTest {
 
   @Test
   @DisplayName("DataSource record equals 및 hashCode 테스트")
-  void dataSource_ShouldHaveCorrectEqualsAndHashCode() {
+  void dataSourceShouldHaveCorrectEqualsAndHashCode() {
     // Given
     DataSource dataSource1 = new DataSource(1L, "corporate", "기업 데이터");
     DataSource dataSource2 = new DataSource(1L, "corporate", "기업 데이터");
@@ -48,7 +47,7 @@ class DataSourceTest {
 
   @Test
   @DisplayName("DataSource record toString 테스트")
-  void dataSource_ShouldHaveCorrectToString() {
+  void dataSourceShouldHaveCorrectToString() {
     // Given
     DataSource dataSource = new DataSource(1L, "research", "연구 데이터");
 
@@ -65,7 +64,7 @@ class DataSourceTest {
 
   @Test
   @DisplayName("DataSource record - null 값 처리")
-  void dataSource_ShouldHandleNullValues() {
+  void dataSourceShouldHandleNullValues() {
     // Given & When
     DataSource dataSource = new DataSource(null, null, null);
 
@@ -78,7 +77,7 @@ class DataSourceTest {
 
   @Test
   @DisplayName("DataSource record - 다양한 값들 테스트")
-  void dataSource_ShouldHandleVariousValues() {
+  void dataSourceShouldHandleVariousValues() {
     // Given & When
     DataSource dataSource1 = new DataSource(1L, "government", "정부 데이터");
     DataSource dataSource2 = new DataSource(2L, "corporate", "기업 데이터");

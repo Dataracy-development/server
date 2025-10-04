@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,11 +22,11 @@ class UserTest {
 
   @Test
   @DisplayName("isPasswordMatch - 비밀번호가 일치하는 경우 true를 반환한다")
-  void isPasswordMatch_WhenPasswordMatches_ReturnsTrue() {
+  void isPasswordMatchWhenPasswordMatchesReturnsTrue() {
     // given
     PasswordEncoder encoder = mock(PasswordEncoder.class);
-    String rawPassword = "password123";
-    String encodedPassword = "encodedPassword123";
+    String rawPassword = "password1";
+    String encodedPassword = "encodedPassword1";
 
     User user = User.builder().password(encodedPassword).build();
 
@@ -45,11 +41,11 @@ class UserTest {
 
   @Test
   @DisplayName("isPasswordMatch - 비밀번호가 일치하지 않는 경우 false를 반환한다")
-  void isPasswordMatch_WhenPasswordDoesNotMatch_ReturnsFalse() {
+  void isPasswordMatchWhenPasswordDoesNotMatchReturnsFalse() {
     // given
     PasswordEncoder encoder = mock(PasswordEncoder.class);
-    String rawPassword = "password123";
-    String encodedPassword = "encodedPassword123";
+    String rawPassword = "password1";
+    String encodedPassword = "encodedPassword1";
 
     User user = User.builder().password(encodedPassword).build();
 
@@ -64,7 +60,7 @@ class UserTest {
 
   @Test
   @DisplayName("validatePasswordChangable - GOOGLE 제공자일 때 UserException이 발생한다")
-  void validatePasswordChangable_WhenGoogleProvider_ThrowsUserException() {
+  void validatePasswordChangableWhenGoogleProviderThrowsUserException() {
     // given
     User user = User.builder().provider(ProviderType.GOOGLE).build();
 
@@ -82,7 +78,7 @@ class UserTest {
 
   @Test
   @DisplayName("validatePasswordChangable - KAKAO 제공자일 때 UserException이 발생한다")
-  void validatePasswordChangable_WhenKakaoProvider_ThrowsUserException() {
+  void validatePasswordChangableWhenKakaoProviderThrowsUserException() {
     // given
     User user = User.builder().provider(ProviderType.KAKAO).build();
 
@@ -100,7 +96,7 @@ class UserTest {
 
   @Test
   @DisplayName("validatePasswordChangable - LOCAL 제공자일 때 예외가 발생하지 않는다")
-  void validatePasswordChangable_WhenLocalProvider_DoesNotThrowException() {
+  void validatePasswordChangableWhenLocalProviderDoesNotThrowException() {
     // given
     User user = User.builder().provider(ProviderType.LOCAL).build();
 
@@ -110,7 +106,7 @@ class UserTest {
 
   @Test
   @DisplayName("toUserInfo - UserInfo로 변환한다")
-  void toUserInfo_ConvertsToUserInfo() {
+  void toUserInfoConvertsToUserInfo() {
     // given
     User user =
         User.builder()
@@ -145,13 +141,13 @@ class UserTest {
 
   @Test
   @DisplayName("builder - 모든 필드를 포함한 User 객체를 생성한다")
-  void builder_WithAllFields_CreatesUser() {
+  void builderWithAllFieldsCreatesUser() {
     // when
     User user =
         User.builder()
             .id(1L)
             .provider(ProviderType.LOCAL)
-            .providerId("local123")
+            .providerId("local1")
             .role(RoleType.ROLE_USER)
             .email("test@example.com")
             .password("encodedPassword")
@@ -170,7 +166,7 @@ class UserTest {
     assertAll(
         () -> assertThat(user.getId()).isEqualTo(1L),
         () -> assertThat(user.getProvider()).isEqualTo(ProviderType.LOCAL),
-        () -> assertThat(user.getProviderId()).isEqualTo("local123"),
+        () -> assertThat(user.getProviderId()).isEqualTo("local1"),
         () -> assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER),
         () -> assertThat(user.getEmail()).isEqualTo("test@example.com"),
         () -> assertThat(user.getPassword()).isEqualTo("encodedPassword"),

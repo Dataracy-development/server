@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.application.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -348,7 +344,7 @@ class DataReadServiceTest {
 
     @Test
     @DisplayName("캐시에서 데이터를 조회할 때 - 캐시 히트")
-    void getPopularDataSets_CacheHit() {
+    void getPopularDataSetsCacheHit() {
       // given
       PopularDataResponse cachedData =
           new PopularDataResponse(

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -101,7 +97,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("부모 프로젝트 ID로 자식 프로젝트 존재 확인 - 자식이 있는 경우")
-    void checkParentProjectExistsById_자식이_있는_경우_true_반환() {
+    void checkParentProjectExistsByIdWhenHasChildrenReturnsTrue() {
       // when
       boolean result = validateAdapter.checkParentProjectExistsById(parentProject.getId());
 
@@ -111,7 +107,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("부모 프로젝트 ID로 자식 프로젝트 존재 확인 - 자식이 없는 경우")
-    void checkParentProjectExistsById_자식이_없는_경우_false_반환() {
+    void checkParentProjectExistsByIdWhenNoChildrenReturnsFalse() {
       // when
       boolean result = validateAdapter.checkParentProjectExistsById(childProject.getId());
 
@@ -121,7 +117,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("삭제된 자식 프로젝트는 존재하지 않는 것으로 간주")
-    void checkParentProjectExistsById_삭제된_자식_프로젝트_존재하지_않음() {
+    void checkParentProjectExistsByIdWhenDeletedChildrenNotExists() {
       // given - 삭제된 자식 프로젝트만 있는 부모 프로젝트 생성
       ProjectEntity anotherParent =
           ProjectEntity.builder()
@@ -162,7 +158,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("존재하지 않는 프로젝트 ID로 확인 시 false 반환")
-    void checkParentProjectExistsById_존재하지_않는_프로젝트_ID_false_반환() {
+    void checkParentProjectExistsByIdWithNonExistentIdReturnsFalse() {
       // when
       boolean result = validateAdapter.checkParentProjectExistsById(999L);
 
@@ -177,7 +173,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("프로젝트 ID로 프로젝트 데이터 존재 확인 - 데이터가 있는 경우")
-    void checkProjectDataExistsByProjectId_데이터가_있는_경우_true_반환() {
+    void checkProjectDataExistsByProjectIdWhenDataExistsReturnsTrue() {
       // when
       boolean result = validateAdapter.checkProjectDataExistsByProjectId(parentProject.getId());
 
@@ -187,7 +183,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("프로젝트 ID로 프로젝트 데이터 존재 확인 - 데이터가 없는 경우")
-    void checkProjectDataExistsByProjectId_데이터가_없는_경우_false_반환() {
+    void checkProjectDataExistsByProjectIdWhenNoDataReturnsFalse() {
       // when
       boolean result = validateAdapter.checkProjectDataExistsByProjectId(childProject.getId());
 
@@ -197,7 +193,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("프로젝트 데이터가 있는 경우 true 반환")
-    void checkProjectDataExistsByProjectId_프로젝트_데이터가_있는_경우_true_반환() {
+    void checkProjectDataExistsByProjectIdWhenProjectDataExistsReturnsTrue() {
       // given - 새로운 프로젝트와 데이터 생성
       ProjectEntity anotherProject =
           ProjectEntity.builder()
@@ -227,7 +223,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("존재하지 않는 프로젝트 ID로 확인 시 false 반환")
-    void checkProjectDataExistsByProjectId_존재하지_않는_프로젝트_ID_false_반환() {
+    void checkProjectDataExistsByProjectIdWithNonExistentIdReturnsFalse() {
       // when
       boolean result = validateAdapter.checkProjectDataExistsByProjectId(999L);
 
@@ -242,7 +238,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("여러 자식 프로젝트가 있는 부모 프로젝트")
-    void multiple_children_parent_project() {
+    void multiplechildrenparentproject() {
       // given - 추가 자식 프로젝트 생성
       ProjectEntity secondChild =
           ProjectEntity.builder()
@@ -270,7 +266,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("자식 프로젝트와 데이터가 모두 없는 프로젝트")
-    void project_without_children_and_data() {
+    void projectWithoutChildrenAndData() {
       // given - 독립적인 프로젝트 생성
       ProjectEntity independentProject =
           ProjectEntity.builder()
@@ -299,7 +295,7 @@ class ValidateProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("삭제된 프로젝트에 대한 검증")
-    void validation_for_deleted_project() {
+    void validationfordeletedproject() {
       // given - 삭제된 프로젝트 생성
       ProjectEntity deletedProject =
           ProjectEntity.builder()

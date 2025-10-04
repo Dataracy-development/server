@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.web;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -44,6 +40,13 @@ import jakarta.servlet.http.Cookie;
             classes = com.dataracy.modules.common.util.CookieUtil.class))
 class AuthControllerTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
+  // Test constants
+  private static final Long TWO_WEEKS_IN_MILLIS = 1209600000L;
+  private static final Long FIVE_MINUTES_IN_MILLIS = 300000L;
+
   @Autowired private MockMvc mockMvc;
 
   @Autowired private ObjectMapper objectMapper;
@@ -64,10 +67,10 @@ class AuthControllerTest {
   @DisplayName("자체 로그인 성공 시 RefreshToken 쿠키 발급")
   void loginSuccess() throws Exception {
     // given
-    SelfLoginWebRequest webReq = new SelfLoginWebRequest("test@email.com", "password123@");
-    SelfLoginRequest appReq = new SelfLoginRequest("test@email.com", "password123@");
+    SelfLoginWebRequest webReq = new SelfLoginWebRequest("test@email.com", "password1@");
+    SelfLoginRequest appReq = new SelfLoginRequest("test@email.com", "password1@");
     RefreshTokenResponse refreshResponse =
-        new RefreshTokenResponse("issued-refresh-token", 1209600000L);
+        new RefreshTokenResponse("issued-refresh-token", TWO_WEEKS_IN_MILLIS);
 
     given(authWebMapper.toApplicationDto(any(SelfLoginWebRequest.class))).willReturn(appReq);
     given(selfLoginUseCase.loginWithRateLimit(any(SelfLoginRequest.class), any(String.class)))
@@ -90,7 +93,8 @@ class AuthControllerTest {
   void reIssueTokenSuccess() throws Exception {
     // given
     ReIssueTokenResponse reissueResponse =
-        new ReIssueTokenResponse("new-access", "new-refresh", 360000L, 1209600000L);
+        new ReIssueTokenResponse(
+            "new-access", "new-refresh", FIVE_MINUTES_IN_MILLIS, TWO_WEEKS_IN_MILLIS);
 
     given(reIssueTokenUseCase.reIssueToken("issued-refresh-token")).willReturn(reissueResponse);
 

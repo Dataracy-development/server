@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.web.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,14 +19,17 @@ import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 @DisplayName("AuthDevWebMapper 테스트")
 class AuthDevWebMapperTest {
 
+  // Test constants
+  private static final Long TOKEN_EXPIRE_HOURS = 24L;
+
   private final AuthDevWebMapper authDevWebMapper = new AuthDevWebMapper();
 
   @Test
   @DisplayName("자체 로그인 웹 요청 DTO를 애플리케이션 요청 DTO로 변환")
-  void toApplicationDto_자체_로그인_웹_요청_변환_성공() {
+  void toApplicationDtoSelfLoginWebRequestConversionSuccess() {
     // given
     String email = "test@example.com";
-    String password = "password123";
+    String password = "password1";
     SelfLoginWebRequest webRequest = new SelfLoginWebRequest(email, password);
 
     // when
@@ -45,10 +44,10 @@ class AuthDevWebMapperTest {
 
   @Test
   @DisplayName("리프레시 토큰 발급 애플리케이션 응답 DTO를 웹 응답 DTO로 변환")
-  void toWebDto_리프레시_토큰_발급_응답_변환_성공() {
+  void toWebDtoRefreshTokenIssueResponseConversionSuccess() {
     // given
-    String refreshToken = "refresh_token_123";
-    long expiration = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000L; // 7일 후
+    String refreshToken = "refresh_token_1";
+    long expiration = System.currentTimeMillis() + 7 * TOKEN_EXPIRE_HOURS * 60 * 60 * 1000L; // 7일 후
     RefreshTokenResponse responseDto = new RefreshTokenResponse(refreshToken, expiration);
 
     // when
@@ -63,9 +62,9 @@ class AuthDevWebMapperTest {
 
   @Test
   @DisplayName("토큰 재발급 웹 요청 DTO를 애플리케이션 요청 DTO로 변환")
-  void toApplicationDto_토큰_재발급_웹_요청_변환_성공() {
+  void toApplicationDtoTokenReissueWebRequestConversionSuccess() {
     // given
-    String refreshToken = "refresh_token_123";
+    String refreshToken = "refresh_token_1";
     RefreshTokenWebRequest webRequest = new RefreshTokenWebRequest(refreshToken);
 
     // when
@@ -79,12 +78,13 @@ class AuthDevWebMapperTest {
 
   @Test
   @DisplayName("토큰 재발급 애플리케이션 응답 DTO를 웹 응답 DTO로 변환")
-  void toWebDto_토큰_재발급_응답_변환_성공() {
+  void toWebDtoTokenReissueResponseConversionSuccess() {
     // given
-    String accessToken = "access_token_123";
-    String refreshToken = "refresh_token_123";
+    String accessToken = "access_token_1";
+    String refreshToken = "refresh_token_1";
     long accessTokenExpiration = System.currentTimeMillis() + 60 * 60 * 1000L; // 1시간 후
-    long refreshTokenExpiration = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000L; // 7일 후
+    long refreshTokenExpiration =
+        System.currentTimeMillis() + 7 * TOKEN_EXPIRE_HOURS * 60 * 60 * 1000L; // 7일 후
 
     ReIssueTokenResponse responseDto =
         new ReIssueTokenResponse(

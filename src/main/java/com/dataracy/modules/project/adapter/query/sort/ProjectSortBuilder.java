@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.query.sort;
 
 import com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity;

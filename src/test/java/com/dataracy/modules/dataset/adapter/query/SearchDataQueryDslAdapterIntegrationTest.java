@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +34,9 @@ import jakarta.persistence.PersistenceContext;
 @Transactional
 class SearchDataQueryDslAdapterIntegrationTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @PersistenceContext private EntityManager entityManager;
 
   @Autowired private SearchDataQueryDslAdapter searchAdapter;
@@ -69,8 +68,8 @@ class SearchDataQueryDslAdapterIntegrationTest {
             .dataTypeId(1L)
             .isDeleted(false)
             .downloadCount(100)
-            .startDate(LocalDate.of(2024, 1, 1))
-            .endDate(LocalDate.of(2024, 12, 31))
+            .startDate(LocalDate.of(CURRENT_YEAR, 1, 1))
+            .endDate(LocalDate.of(CURRENT_YEAR, 12, 31))
             .build();
     entityManager.persist(savedData);
 
@@ -90,8 +89,8 @@ class SearchDataQueryDslAdapterIntegrationTest {
             .dataTypeId(1L)
             .isDeleted(true)
             .downloadCount(50)
-            .startDate(LocalDate.of(2024, 1, 1))
-            .endDate(LocalDate.of(2024, 12, 31))
+            .startDate(LocalDate.of(CURRENT_YEAR, 1, 1))
+            .endDate(LocalDate.of(CURRENT_YEAR, 12, 31))
             .build();
     entityManager.persist(deletedData);
 
@@ -106,8 +105,8 @@ class SearchDataQueryDslAdapterIntegrationTest {
             .dataTypeId(1L)
             .isDeleted(false)
             .downloadCount(1000)
-            .startDate(LocalDate.of(2024, 1, 1))
-            .endDate(LocalDate.of(2024, 12, 31))
+            .startDate(LocalDate.of(CURRENT_YEAR, 1, 1))
+            .endDate(LocalDate.of(CURRENT_YEAR, 12, 31))
             .build();
     entityManager.persist(popularData);
 
@@ -139,7 +138,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("키워드로 데이터셋 검색")
-    void searchByFilters_키워드로_데이터셋_검색_성공() {
+    void searchByFiltersWithKeywordReturnsSuccess() {
       // given
       FilteringDataRequest request = new FilteringDataRequest("테스트", null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -157,7 +156,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("빈 키워드로 모든 데이터셋 검색")
-    void searchByFilters_빈_키워드로_모든_데이터셋_검색_성공() {
+    void searchByFiltersWithEmptyKeywordReturnsAllDataSets() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -176,7 +175,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("삭제된 데이터는 검색 결과에서 제외")
-    void searchByFilters_삭제된_데이터_검색_결과에서_제외() {
+    void searchByFiltersExcludesDeletedDataFromResults() {
       // given
       FilteringDataRequest request = new FilteringDataRequest("삭제", null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -191,7 +190,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("정렬 조건별 데이터셋 검색")
-    void searchByFilters_정렬_조건별_데이터셋_검색_성공() {
+    void searchByFiltersWithSortConditionsReturnsSuccess() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -208,7 +207,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("OLDEST 정렬 테스트")
-    void searchByFilters_OLDEST_정렬_테스트() {
+    void searchByFiltersWithOldestSortReturnsSuccess() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -224,7 +223,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("페이지네이션 검색")
-    void searchByFilters_페이지네이션_검색_성공() {
+    void searchByFiltersWithPaginationReturnsSuccess() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 1);
@@ -243,7 +242,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("토픽 ID로 데이터셋 필터링")
-    void searchByFilters_토픽_ID로_데이터셋_필터링_성공() {
+    void searchByFiltersWithTopicIdReturnsSuccess() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, 1L, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -259,7 +258,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("존재하지 않는 토픽 ID로 필터링 시 빈 결과")
-    void searchByFilters_존재하지_않는_토픽_ID_필터링_시_빈_결과() {
+    void searchByFiltersWithNonExistentTopicIdReturnsEmpty() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, 999L, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -274,7 +273,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("데이터 소스 ID로 데이터셋 필터링")
-    void searchByFilters_데이터_소스_ID로_데이터셋_필터링_성공() {
+    void searchByFiltersWithDataSourceIdReturnsSuccess() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, null, 1L, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -290,7 +289,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("데이터 타입 ID로 데이터셋 필터링")
-    void searchByFilters_데이터_타입_ID로_데이터셋_필터링_성공() {
+    void searchByFiltersWithDataTypeIdReturnsSuccess() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, null, null, 1L, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -306,9 +305,10 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("연도로 데이터셋 필터링")
-    void searchByFilters_연도로_데이터셋_필터링_성공() {
+    void searchByFiltersWithYearReturnsSuccess() {
       // given
-      FilteringDataRequest request = new FilteringDataRequest(null, null, null, null, null, 2024);
+      FilteringDataRequest request =
+          new FilteringDataRequest(null, null, null, null, null, CURRENT_YEAR);
       Pageable pageable = PageRequest.of(0, 10);
 
       // when
@@ -322,9 +322,10 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("복합 필터 조건으로 데이터셋 검색")
-    void searchByFilters_복합_필터_조건으로_데이터셋_검색_성공() {
+    void searchByFiltersWithComplexConditionsReturnsSuccess() {
       // given
-      FilteringDataRequest request = new FilteringDataRequest("테스트", null, 1L, 1L, 1L, 2024);
+      FilteringDataRequest request =
+          new FilteringDataRequest("테스트", null, 1L, 1L, 1L, CURRENT_YEAR);
       Pageable pageable = PageRequest.of(0, 10);
 
       // when
@@ -345,7 +346,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("다중 프로젝트 연결 데이터 테스트")
-    void data_with_multiple_project_connections() {
+    void dataWithMultipleProjectConnections() {
       // given - 추가 데이터와 프로젝트 생성
       DataEntity anotherData =
           DataEntity.builder()
@@ -358,8 +359,8 @@ class SearchDataQueryDslAdapterIntegrationTest {
               .dataTypeId(1L)
               .isDeleted(false)
               .downloadCount(200)
-              .startDate(LocalDate.of(2024, 1, 1))
-              .endDate(LocalDate.of(2024, 12, 31))
+              .startDate(LocalDate.of(CURRENT_YEAR, 1, 1))
+              .endDate(LocalDate.of(CURRENT_YEAR, 12, 31))
               .build();
       entityManager.persist(anotherData);
 
@@ -414,7 +415,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("빈 검색 결과 처리")
-    void empty_search_result_handling() {
+    void emptysearchresulthandling() {
       // given
       FilteringDataRequest request =
           new FilteringDataRequest("존재하지않는키워드", null, null, null, null, null);
@@ -433,7 +434,7 @@ class SearchDataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("메타데이터와 함께 조회되는 데이터")
-    void data_with_metadata_retrieval() {
+    void datawithmetadataretrieval() {
       // given
       FilteringDataRequest request = new FilteringDataRequest("테스트", null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);

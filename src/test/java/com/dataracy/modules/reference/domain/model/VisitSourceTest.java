@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,9 +9,12 @@ import org.junit.jupiter.api.Test;
 @DisplayName("VisitSource 테스트")
 class VisitSourceTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("VisitSource record 생성 및 속성 확인")
-  void visitSource_ShouldCreateCorrectly() {
+  void visitSourceShouldCreateCorrectly() {
     // Given
     Long id = 1L;
     String value = "google";
@@ -33,7 +32,7 @@ class VisitSourceTest {
 
   @Test
   @DisplayName("VisitSource record equals 및 hashCode 테스트")
-  void visitSource_ShouldHaveCorrectEqualsAndHashCode() {
+  void visitSourceShouldHaveCorrectEqualsAndHashCode() {
     // Given
     VisitSource visitSource1 = new VisitSource(1L, "naver", "네이버");
     VisitSource visitSource2 = new VisitSource(1L, "naver", "네이버");
@@ -48,7 +47,7 @@ class VisitSourceTest {
 
   @Test
   @DisplayName("VisitSource record toString 테스트")
-  void visitSource_ShouldHaveCorrectToString() {
+  void visitSourceShouldHaveCorrectToString() {
     // Given
     VisitSource visitSource = new VisitSource(1L, "direct", "직접 접속");
 
@@ -61,7 +60,7 @@ class VisitSourceTest {
 
   @Test
   @DisplayName("VisitSource record - null 값 처리")
-  void visitSource_ShouldHandleNullValues() {
+  void visitSourceShouldHandleNullValues() {
     // Given & When
     VisitSource visitSource = new VisitSource(null, null, null);
 
@@ -74,7 +73,7 @@ class VisitSourceTest {
 
   @Test
   @DisplayName("VisitSource record - 다양한 방문 소스들 테스트")
-  void visitSource_ShouldHandleVariousSources() {
+  void visitSourceShouldHandleVariousSources() {
     // Given & When
     VisitSource visitSource1 = new VisitSource(1L, "google", "구글");
     VisitSource visitSource2 = new VisitSource(2L, "naver", "네이버");

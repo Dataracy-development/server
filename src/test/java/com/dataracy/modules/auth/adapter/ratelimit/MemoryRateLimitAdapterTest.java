@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.ratelimit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +28,7 @@ class MemoryRateLimitAdapterTest {
 
   @Test
   @DisplayName("isAllowed - 유효한 키로 요청이 허용된다")
-  void isAllowed_WhenValidKey_ReturnsTrue() {
+  void isAllowedWhenValidKeyReturnsTrue() {
     // given
     String key = "192.168.1.1";
     int maxRequests = 5;
@@ -47,7 +43,7 @@ class MemoryRateLimitAdapterTest {
 
   @Test
   @DisplayName("isAllowed - 최대 요청 수를 초과하면 차단된다")
-  void isAllowed_WhenExceedsMaxRequests_ReturnsFalse() {
+  void isAllowedWhenExceedsMaxRequestsReturnsFalse() {
     // given
     String key = "192.168.1.1";
     int maxRequests = 2;
@@ -71,7 +67,7 @@ class MemoryRateLimitAdapterTest {
   @NullAndEmptySource
   @ValueSource(strings = {"   ", "\t", "\n"})
   @DisplayName("isAllowed - null이거나 빈 문자열 또는 공백 키는 항상 허용된다")
-  void isAllowed_WhenInvalidKey_ReturnsTrue(String key) {
+  void isAllowedWhenInvalidKeyReturnsTrue(String key) {
     // given
     int maxRequests = 5;
     int windowMinutes = 1;
@@ -85,7 +81,7 @@ class MemoryRateLimitAdapterTest {
 
   @Test
   @DisplayName("isAllowed - 다른 키들은 독립적으로 카운트된다")
-  void isAllowed_WhenDifferentKeys_CountsIndependently() {
+  void isAllowedWhenDifferentKeysCountsIndependently() {
     // given
     String key1 = "192.168.1.1";
     String key2 = "192.168.1.2";
@@ -110,7 +106,7 @@ class MemoryRateLimitAdapterTest {
 
   @Test
   @DisplayName("incrementRequestCount - 요청 카운트를 증가시킨다")
-  void incrementRequestCount_WhenValidKey_IncrementsCount() {
+  void incrementRequestCountWhenValidKeyIncrementsCount() {
     // given
     String key = "192.168.1.1";
     int incrementBy = 1;
@@ -126,7 +122,7 @@ class MemoryRateLimitAdapterTest {
 
   @Test
   @DisplayName("incrementRequestCount - null 키는 카운트하지 않는다")
-  void incrementRequestCount_WhenNullKey_DoesNotIncrement() {
+  void incrementRequestCountWhenNullKeyDoesNotIncrement() {
     // given
     String key = null;
     int incrementBy = 1;
@@ -142,7 +138,7 @@ class MemoryRateLimitAdapterTest {
 
   @Test
   @DisplayName("incrementRequestCount - 빈 문자열 키는 카운트하지 않는다")
-  void incrementRequestCount_WhenEmptyKey_DoesNotIncrement() {
+  void incrementRequestCountWhenEmptyKeyDoesNotIncrement() {
     // given
     String key = "";
     int incrementBy = 1;
@@ -158,7 +154,7 @@ class MemoryRateLimitAdapterTest {
 
   @Test
   @DisplayName("isAllowed - 윈도우 시간이 지나면 카운터가 리셋된다")
-  void isAllowed_WhenWindowExpires_ResetsCounter() {
+  void isAllowedWhenWindowExpiresResetsCounter() {
     // given
     String key = "192.168.1.1";
     int maxRequests = 1;
@@ -178,7 +174,7 @@ class MemoryRateLimitAdapterTest {
 
   @Test
   @DisplayName("isAllowed - 0 maxRequests는 항상 차단한다")
-  void isAllowed_WhenZeroMaxRequests_AlwaysBlocks() {
+  void isAllowedWhenZeroMaxRequestsAlwaysBlocks() {
     // given
     String key = "192.168.1.1";
     int maxRequests = 0;
@@ -193,7 +189,7 @@ class MemoryRateLimitAdapterTest {
 
   @Test
   @DisplayName("isAllowed - 음수 maxRequests는 항상 차단한다")
-  void isAllowed_WhenNegativeMaxRequests_AlwaysBlocks() {
+  void isAllowedWhenNegativeMaxRequestsAlwaysBlocks() {
     // given
     String key = "192.168.1.1";
     int maxRequests = -1;
@@ -209,7 +205,7 @@ class MemoryRateLimitAdapterTest {
   @ParameterizedTest
   @ValueSource(ints = {0, -1, -10})
   @DisplayName("isAllowed - windowMinutes가 0 이하이면 항상 허용한다")
-  void isAllowed_WhenInvalidWindowMinutes_AlwaysAllows(int windowMinutes) {
+  void isAllowedWhenInvalidWindowMinutesAlwaysAllows(int windowMinutes) {
     // given
     String key = "192.168.1.1";
     int maxRequests = 5;

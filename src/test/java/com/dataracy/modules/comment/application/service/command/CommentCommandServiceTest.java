@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.comment.application.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +32,14 @@ import com.dataracy.modules.comment.domain.status.CommentErrorStatus;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class CommentCommandServiceTest {
 
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+  private static final Long COMMENT_ID = 2L;
+  private static final Long TARGET_ID = 3L;
+  private static final Long USER_ID = 4L;
+  private static final Long LIKE_ID = 35L;
+  private static final Long SAMPLE_ID = 42L;
+  private static final Long ANOTHER_LIKE_ID = 45L;
   @Mock private ReadCommentPort readCommentPort;
 
   @Mock private UploadCommentPort uploadCommentPort;
@@ -205,11 +209,11 @@ class CommentCommandServiceTest {
       // given
       willThrow(new CommentException(CommentErrorStatus.MISMATCH_PROJECT_COMMENT))
           .given(deleteCommentPort)
-          .deleteComment(1L, 77L);
+          .deleteComment(1L, TARGET_ID);
 
       // when & then
       CommentException ex =
-          catchThrowableOfType(() -> service.deleteComment(1L, 77L), CommentException.class);
+          catchThrowableOfType(() -> service.deleteComment(1L, TARGET_ID), CommentException.class);
       assertThat(ex.getErrorCode()).isEqualTo(CommentErrorStatus.MISMATCH_PROJECT_COMMENT);
     }
 

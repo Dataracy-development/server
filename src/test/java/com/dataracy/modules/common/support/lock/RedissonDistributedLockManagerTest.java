@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.support.lock;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,7 +48,7 @@ class RedissonDistributedLockManagerTest {
 
     @Test
     @DisplayName("성공: 분산 락 획득 및 작업 실행")
-    void execute_성공() throws Exception {
+    void executeReturnsSuccess() throws Exception {
       // given
       String key = "test-lock";
       long waitTime = 1000L;
@@ -76,7 +72,7 @@ class RedissonDistributedLockManagerTest {
 
     @Test
     @DisplayName("락 획득 실패 후 재시도 성공")
-    void execute_락획득실패후재시도성공() throws Exception {
+    void executeWhenLockAcquisitionFailsThenRetryReturnsSuccess() throws Exception {
       // given
       String key = "test-lock";
       long waitTime = 1000L;
@@ -101,7 +97,7 @@ class RedissonDistributedLockManagerTest {
 
     @Test
     @DisplayName("모든 재시도 실패 시 LockAcquisitionException 발생")
-    void execute_모든재시도실패_LockAcquisitionException발생() throws Exception {
+    void executeWhenAllRetriesFailThrowsLockAcquisitionException() throws Exception {
       // given
       String key = "test-lock";
       long waitTime = 1000L;
@@ -128,7 +124,7 @@ class RedissonDistributedLockManagerTest {
 
     @Test
     @DisplayName("InterruptedException 발생 시 LockAcquisitionException 변환")
-    void execute_InterruptedException_LockAcquisitionException변환() throws Exception {
+    void executeWhenInterruptedExceptionThrowsLockAcquisitionException() throws Exception {
       // given
       String key = "test-lock";
       long waitTime = 1000L;
@@ -156,7 +152,7 @@ class RedissonDistributedLockManagerTest {
 
     @Test
     @DisplayName("BusinessException 발생 시 그대로 전파")
-    void execute_BusinessException_그대로전파() throws Exception {
+    void executeWhenBusinessExceptionPropagatesAsIs() throws Exception {
       // given
       String key = "test-lock";
       long waitTime = 1000L;
@@ -188,7 +184,7 @@ class RedissonDistributedLockManagerTest {
 
     @Test
     @DisplayName("CommonException 발생 시 그대로 전파")
-    void execute_CommonException_그대로전파() throws Exception {
+    void executeWhenCommonExceptionPropagatesAsIs() throws Exception {
       // given
       String key = "test-lock";
       long waitTime = 1000L;
@@ -224,7 +220,7 @@ class RedissonDistributedLockManagerTest {
 
     @Test
     @DisplayName("성공: 비동기 실행")
-    void executeAsync_성공() throws Exception {
+    void executeAsyncReturnsSuccess() throws Exception {
       // given
       String key = "test-lock";
       long waitTime = 1000L;

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +16,7 @@ class TargetTypeTest {
   @ParameterizedTest(name = "of - {0} 문자열로 {1} enum을 반환한다")
   @CsvSource({"PROJECT, PROJECT", "project, PROJECT", "COMMENT, COMMENT", "comment, COMMENT"})
   @DisplayName("of - 문자열로 해당 enum을 반환한다")
-  void of_WhenValidString_ReturnsCorrespondingEnum(String input, String expectedEnumName) {
+  void ofWhenValidStringReturnsCorrespondingEnum(String input, String expectedEnumName) {
     // when
     TargetType result = TargetType.of(input);
 
@@ -31,7 +27,7 @@ class TargetTypeTest {
   @ParameterizedTest(name = "of - {0}로 LikeException이 발생한다")
   @CsvSource({"INVALID, 'INVALID'", "null, null", "'', ''"})
   @DisplayName("of - 잘못된 입력으로 LikeException이 발생한다")
-  void of_WhenInvalidInput_ThrowsLikeException(String input, String expectedInput) {
+  void ofWhenInvalidInputThrowsLikeException(String input, String expectedInput) {
     // when & then
     String actualInput = "null".equals(input) ? null : input;
     LikeException exception =
@@ -43,7 +39,7 @@ class TargetTypeTest {
 
   @Test
   @DisplayName("getValue - PROJECT의 value를 반환한다")
-  void getValue_WhenProject_ReturnsProjectValue() {
+  void getValueWhenProjectReturnsProjectValue() {
     // when
     String result = TargetType.PROJECT.getValue();
 
@@ -53,7 +49,7 @@ class TargetTypeTest {
 
   @Test
   @DisplayName("getValue - COMMENT의 value를 반환한다")
-  void getValue_WhenComment_ReturnsCommentValue() {
+  void getValueWhenCommentReturnsCommentValue() {
     // when
     String result = TargetType.COMMENT.getValue();
 
@@ -63,7 +59,7 @@ class TargetTypeTest {
 
   @Test
   @DisplayName("values - 모든 enum 값들을 반환한다")
-  void values_ReturnsAllEnumValues() {
+  void valuesReturnsAllEnumValues() {
     // when
     TargetType[] values = TargetType.values();
 
@@ -73,7 +69,7 @@ class TargetTypeTest {
 
   @Test
   @DisplayName("valueOf - PROJECT 문자열로 PROJECT enum을 반환한다")
-  void valueOf_WhenProjectString_ReturnsProjectEnum() {
+  void valueOfWhenProjectStringReturnsProjectEnum() {
     // when
     TargetType result = TargetType.valueOf("PROJECT");
 
@@ -83,7 +79,7 @@ class TargetTypeTest {
 
   @Test
   @DisplayName("valueOf - COMMENT 문자열로 COMMENT enum을 반환한다")
-  void valueOf_WhenCommentString_ReturnsCommentEnum() {
+  void valueOfWhenCommentStringReturnsCommentEnum() {
     // when
     TargetType result = TargetType.valueOf("COMMENT");
 

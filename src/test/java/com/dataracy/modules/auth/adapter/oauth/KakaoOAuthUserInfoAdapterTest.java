@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.oauth;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +15,9 @@ import com.dataracy.modules.auth.application.dto.response.OAuthUserInfo;
 
 class KakaoOAuthUserInfoAdapterTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   private KakaoOAuthUserInfoAdapter kakaoOAuthUserInfoAdapter;
 
   @BeforeEach
@@ -28,7 +27,7 @@ class KakaoOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - 카카오 제공자로 유효한 속성을 추출한다")
-  void extract_WhenKakaoProvider_ReturnsOAuthUserInfo() {
+  void extractWhenKakaoProviderReturnsOAuthUserInfo() {
     // given
     String provider = "kakao";
     Map<String, Object> kakaoAccount = new HashMap<>();
@@ -40,7 +39,7 @@ class KakaoOAuthUserInfoAdapterTest {
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("kakao_account", kakaoAccount);
     attributes.put("properties", properties);
-    attributes.put("id", "123456789");
+    attributes.put("id", "14562");
 
     // when
     OAuthUserInfo result = kakaoOAuthUserInfoAdapter.extract(provider, attributes);
@@ -51,12 +50,12 @@ class KakaoOAuthUserInfoAdapterTest {
         () -> assertThat(result.email()).isEqualTo("test@example.com"),
         () -> assertThat(result.name()).isEqualTo("Test User"),
         () -> assertThat(result.provider()).isEqualTo("kakao"),
-        () -> assertThat(result.providerId()).isEqualTo("123456789"));
+        () -> assertThat(result.providerId()).isEqualTo("14562"));
   }
 
   @Test
   @DisplayName("extract - 카카오 제공자로 null 속성을 추출한다")
-  void extract_WhenKakaoProviderWithNullValues_ReturnsOAuthUserInfo() {
+  void extractWhenKakaoProviderWithNullValuesReturnsOAuthUserInfo() {
     // given
     String provider = "kakao";
     Map<String, Object> kakaoAccount = new HashMap<>();
@@ -84,7 +83,7 @@ class KakaoOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - 카카오 제공자로 일부 속성만 있는 경우를 처리한다")
-  void extract_WhenKakaoProviderWithPartialValues_ReturnsOAuthUserInfo() {
+  void extractWhenKakaoProviderWithPartialValuesReturnsOAuthUserInfo() {
     // given
     String provider = "kakao";
     Map<String, Object> kakaoAccount = new HashMap<>();
@@ -96,7 +95,7 @@ class KakaoOAuthUserInfoAdapterTest {
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("kakao_account", kakaoAccount);
     attributes.put("properties", properties);
-    attributes.put("id", "123456789");
+    attributes.put("id", "14562");
 
     // when
     OAuthUserInfo result = kakaoOAuthUserInfoAdapter.extract(provider, attributes);
@@ -107,18 +106,18 @@ class KakaoOAuthUserInfoAdapterTest {
         () -> assertThat(result.email()).isEqualTo("test@example.com"),
         () -> assertThat(result.name()).isNull(),
         () -> assertThat(result.provider()).isEqualTo("kakao"),
-        () -> assertThat(result.providerId()).isEqualTo("123456789"));
+        () -> assertThat(result.providerId()).isEqualTo("14562"));
   }
 
   @Test
   @DisplayName("extract - 카카오가 아닌 제공자로 호출하면 null을 반환한다")
-  void extract_WhenNonKakaoProvider_ReturnsNull() {
+  void extractWhenNonKakaoProviderReturnsNull() {
     // given
     String provider = "google";
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("kakao_account", new HashMap<>());
     attributes.put("properties", new HashMap<>());
-    attributes.put("id", "123456789");
+    attributes.put("id", "14562");
 
     // when
     OAuthUserInfo result = kakaoOAuthUserInfoAdapter.extract(provider, attributes);
@@ -129,7 +128,7 @@ class KakaoOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - 빈 속성 맵으로 호출하면 예외가 발생한다")
-  void extract_WhenEmptyAttributes_ThrowsException() {
+  void extractWhenEmptyAttributesThrowsException() {
     // given
     String provider = "kakao";
     Map<String, Object> attributes = new HashMap<>();
@@ -144,7 +143,7 @@ class KakaoOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - null 제공자로 호출하면 예외가 발생한다")
-  void extract_WhenNullProvider_ThrowsException() {
+  void extractWhenNullProviderThrowsException() {
     // given
     String provider = null;
     Map<String, Object> attributes = new HashMap<>();
@@ -160,7 +159,7 @@ class KakaoOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - null 속성으로 호출하면 예외가 발생한다")
-  void extract_WhenNullAttributes_ThrowsException() {
+  void extractWhenNullAttributesThrowsException() {
     // given
     String provider = "kakao";
     Map<String, Object> attributes = null;
@@ -175,13 +174,13 @@ class KakaoOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - kakao_account가 null인 경우 예외가 발생한다")
-  void extract_WhenKakaoAccountIsNull_ThrowsException() {
+  void extractWhenKakaoAccountIsNullThrowsException() {
     // given
     String provider = "kakao";
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("kakao_account", null);
     attributes.put("properties", new HashMap<>());
-    attributes.put("id", "123456789");
+    attributes.put("id", "14562");
 
     // when & then
     NullPointerException exception =
@@ -193,7 +192,7 @@ class KakaoOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - properties가 null인 경우 예외가 발생한다")
-  void extract_WhenPropertiesIsNull_ThrowsException() {
+  void extractWhenPropertiesIsNullThrowsException() {
     // given
     String provider = "kakao";
     Map<String, Object> kakaoAccount = new HashMap<>();
@@ -202,7 +201,7 @@ class KakaoOAuthUserInfoAdapterTest {
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("kakao_account", kakaoAccount);
     attributes.put("properties", null);
-    attributes.put("id", "123456789");
+    attributes.put("id", "14562");
 
     // when & then
     NullPointerException exception =

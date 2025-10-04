@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.web.api.read;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -43,6 +39,9 @@ import com.dataracy.modules.security.config.SecurityPathConfig;
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 class DataReadControllerTest {
+
+  // Test constants
+  private static final Integer CURRENT_HOUR = 14;
 
   @Autowired private MockMvc mockMvc;
 
@@ -176,7 +175,7 @@ class DataReadControllerTest {
             300,
             15,
             "{\"preview\":true}",
-            LocalDateTime.of(2022, 6, 1, 14, 30));
+            LocalDateTime.of(2022, 6, 1, CURRENT_HOUR, 30));
     DataDetailWebResponse webRes =
         new DataDetailWebResponse(
             2L,
@@ -200,7 +199,7 @@ class DataReadControllerTest {
             300,
             15,
             "{\"preview\":true}",
-            LocalDateTime.of(2022, 6, 1, 14, 30));
+            LocalDateTime.of(2022, 6, 1, CURRENT_HOUR, 30));
 
     given(getDataDetailUseCase.getDataDetail(2L)).willReturn(resDto);
     given(mapper.toWebDto(resDto)).willReturn(webRes);
@@ -274,7 +273,7 @@ class DataReadControllerTest {
             LocalDate.of(2023, 1, 1),
             LocalDate.of(2023, 12, 31),
             "thumb7.png",
-            123,
+            1,
             2048L,
             300,
             10,
@@ -292,7 +291,7 @@ class DataReadControllerTest {
             LocalDate.of(2023, 1, 1),
             LocalDate.of(2023, 12, 31),
             "thumb7.png",
-            123,
+            1,
             2048L,
             300,
             10,
@@ -338,7 +337,7 @@ class DataReadControllerTest {
             LocalDate.of(2023, 1, 1),
             LocalDate.of(2023, 12, 31),
             "thumb7.png",
-            123,
+            1,
             2048L,
             300,
             10,
@@ -353,7 +352,7 @@ class DataReadControllerTest {
             LocalDate.of(2023, 1, 1),
             LocalDate.of(2023, 12, 31),
             "thumb7.png",
-            123,
+            1,
             2048L,
             300,
             10,

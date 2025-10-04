@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.filestorage.domain.exception;
 
 public class S3UploadException extends RuntimeException {

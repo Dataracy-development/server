@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.service.query.password;
 
 import static org.assertj.core.api.Assertions.*;
@@ -51,7 +47,7 @@ class ConfirmPasswordServiceTest {
 
   @Test
   @DisplayName("confirmPassword: 유저 존재 + 비밀번호 일치 → 성공 (예외 없음)")
-  void confirmPassword_success() {
+  void confirmPasswordsuccess() {
     // given
     given(userQueryPort.findUserById(10L)).willReturn(Optional.of(localUser()));
     given(passwordEncoder.matches("raw", "encoded")).willReturn(true);
@@ -63,7 +59,7 @@ class ConfirmPasswordServiceTest {
 
   @Test
   @DisplayName("confirmPassword: 유저 없음 → NOT_FOUND_USER 예외")
-  void confirmPassword_userNotFound() {
+  void confirmPassworduserNotFound() {
     // given
     given(userQueryPort.findUserById(99L)).willReturn(Optional.empty());
     ConfirmPasswordRequest req = new ConfirmPasswordRequest("pw");
@@ -79,7 +75,7 @@ class ConfirmPasswordServiceTest {
 
   @Test
   @DisplayName("confirmPassword: 비밀번호 불일치 → FAIL_CONFIRM_PASSWORD 예외")
-  void confirmPassword_passwordMismatch() {
+  void confirmPasswordpasswordMismatch() {
     // given
     given(userQueryPort.findUserById(10L)).willReturn(Optional.of(localUser()));
     given(passwordEncoder.matches("wrong", "encoded")).willReturn(false);

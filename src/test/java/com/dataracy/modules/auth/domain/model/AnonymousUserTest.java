@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +13,7 @@ class AnonymousUserTest {
   @DisplayName("of() 정적 팩토리 메서드로 AnonymousUser 인스턴스 생성")
   void createAnonymousUserWithOfMethod() {
     // given
-    String anonymousId = "anonymous_123";
+    String anonymousId = "anonymous_1";
 
     // when
     AnonymousUser anonymousUser = AnonymousUser.of(anonymousId);

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.behaviorlog.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +11,7 @@ class ActionTypeTest {
 
   @Test
   @DisplayName("ActionType enum 값들 확인")
-  void actionType_ShouldHaveCorrectValues() {
+  void actionTypeShouldHaveCorrectValues() {
     // Given & When & Then
     assertThat(ActionType.values()).hasSize(3);
 
@@ -27,7 +23,7 @@ class ActionTypeTest {
 
   @Test
   @DisplayName("ActionType name() 메서드 테스트")
-  void actionType_ShouldHaveCorrectNames() {
+  void actionTypeShouldHaveCorrectNames() {
     // Given & When & Then
     assertAll(
         () -> assertThat(ActionType.CLICK.name()).isEqualTo("CLICK"),
@@ -37,7 +33,7 @@ class ActionTypeTest {
 
   @Test
   @DisplayName("ActionType valueOf() 메서드 테스트")
-  void actionType_ShouldParseFromString() {
+  void actionTypeShouldParseFromString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(ActionType.valueOf("CLICK")).isEqualTo(ActionType.CLICK),
@@ -47,7 +43,7 @@ class ActionTypeTest {
 
   @Test
   @DisplayName("ActionType ordinal() 메서드 테스트")
-  void actionType_ShouldHaveCorrectOrdinals() {
+  void actionTypeShouldHaveCorrectOrdinals() {
     // Given & When & Then
     assertAll(
         () -> assertThat(ActionType.CLICK.ordinal()).isZero(),
@@ -57,7 +53,7 @@ class ActionTypeTest {
 
   @Test
   @DisplayName("ActionType toString() 메서드 테스트")
-  void actionType_ShouldHaveCorrectToString() {
+  void actionTypeShouldHaveCorrectToString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(ActionType.CLICK).hasToString("CLICK"),
@@ -67,7 +63,7 @@ class ActionTypeTest {
 
   @Test
   @DisplayName("ActionType description 테스트")
-  void actionType_ShouldHaveCorrectDescriptions() {
+  void actionTypeShouldHaveCorrectDescriptions() {
     // Given & When & Then
     assertAll(
         () -> assertThat(ActionType.CLICK.getDescription()).isEqualTo("클릭"),
@@ -77,7 +73,7 @@ class ActionTypeTest {
 
   @Test
   @DisplayName("ActionType fromNullableString() 메서드 테스트")
-  void actionType_ShouldParseFromNullableString() {
+  void actionTypeShouldParseFromNullableString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(ActionType.fromNullableString("CLICK")).isEqualTo(ActionType.CLICK),

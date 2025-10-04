@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.jpa.impl.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,6 +29,9 @@ import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class MetadataCommandDbAdapterTest {
+
+  // Test constants
+  private static final Long EIGHTY_EIGHT = 88L;
 
   @Mock private DataMetadataJpaRepository metadataRepo;
 
@@ -92,7 +91,7 @@ class MetadataCommandDbAdapterTest {
     given(metadataRepo.findByDataId(1L)).willReturn(Optional.of(existing));
     given(metadataRepo.save(existing)).willReturn(existing);
 
-    DataMetadata meta = DataMetadata.of(1L, 99, 88, "new");
+    DataMetadata meta = DataMetadata.of(1L, 99, EIGHTY_EIGHT.intValue(), "new");
 
     // when
     adapter.saveMetadata(1L, meta);
@@ -100,7 +99,7 @@ class MetadataCommandDbAdapterTest {
     // then
     assertAll(
         () -> assertThat(existing.getRowCount()).isEqualTo(99),
-        () -> assertThat(existing.getColumnCount()).isEqualTo(88),
+        () -> assertThat(existing.getColumnCount()).isEqualTo(EIGHTY_EIGHT.intValue()),
         () -> assertThat(existing.getPreviewJson()).isEqualTo("new"),
         () -> then(metadataRepo).should().save(existing));
   }

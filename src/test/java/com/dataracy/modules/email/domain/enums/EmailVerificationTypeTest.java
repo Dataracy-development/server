@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +12,7 @@ class EmailVerificationTypeTest {
 
   @Test
   @DisplayName("EmailVerificationType.of() - value로 정상 조회")
-  void of_withValue_returnsCorrectType() {
+  void ofwithValuereturnsCorrectType() {
     // given & when & then
     assertAll(
         () ->
@@ -32,7 +28,7 @@ class EmailVerificationTypeTest {
 
   @Test
   @DisplayName("EmailVerificationType.of() - 대소문자 무시하고 value로 조회")
-  void of_withValueIgnoreCase_returnsCorrectType() {
+  void ofwithValueIgnoreCasereturnsCorrectType() {
     // given & when & then
     assertAll(
         () ->
@@ -57,7 +53,7 @@ class EmailVerificationTypeTest {
 
   @Test
   @DisplayName("EmailVerificationType value 속성 확인")
-  void emailVerificationType_values_areCorrect() {
+  void emailVerificationTypevaluesareCorrect() {
     // given & when & then
     assertAll(
         () -> assertThat(EmailVerificationType.SIGN_UP.getValue()).isEqualTo("SIGN_UP"),
@@ -71,7 +67,7 @@ class EmailVerificationTypeTest {
 
   @Test
   @DisplayName("EmailVerificationType.of() - 유효하지 않은 값으로 조회 시 예외 발생")
-  void of_withInvalidValue_throwsException() {
+  void ofwithInvalidValuethrowsException() {
     // given & when & then
     assertAll(
         () -> {
@@ -92,7 +88,7 @@ class EmailVerificationTypeTest {
 
   @Test
   @DisplayName("EmailVerificationType.valueOf() - 정상적인 값으로 조회")
-  void valueOf_withValidValue_returnsCorrectType() {
+  void valueOfwithValidValuereturnsCorrectType() {
     // given & when & then
     assertAll(
         () ->
@@ -108,7 +104,7 @@ class EmailVerificationTypeTest {
 
   @Test
   @DisplayName("EmailVerificationType.valueOf() - 유효하지 않은 값으로 조회 시 예외 발생")
-  void valueOf_withInvalidValue_throwsException() {
+  void valueOfwithInvalidValuethrowsException() {
     // given & when & then
     assertAll(
         () -> {

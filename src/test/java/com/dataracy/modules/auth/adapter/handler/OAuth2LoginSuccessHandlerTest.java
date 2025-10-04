@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +33,12 @@ import jakarta.servlet.http.HttpServletResponse;
 @ExtendWith(MockitoExtension.class)
 class OAuth2LoginSuccessHandlerTest {
 
+  // Test constants
+  private static final Long THIRTY_MINUTES_IN_MILLIS = 1800000L;
+  private static final Long COOKIE_EXPIRE_SECONDS = 1800L;
+  private static final Long ONE_WEEK_IN_MILLIS = 604800000L;
+  private static final Long ONE_WEEK_IN_SECONDS = 604800L;
+
   @Mock private SelectSocialProviderPort selectSocialProviderPort;
 
   @Mock private IsNewUserUseCase isNewUserUseCase;
@@ -70,19 +72,19 @@ class OAuth2LoginSuccessHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationSuccess - 신규 유저인 경우 레지스터 토큰을 발급하고 온보딩 페이지로 리다이렉트한다")
-  void onAuthenticationSuccess_WhenNewUser_HandlesNewUser() throws IOException {
+  void onAuthenticationSuccessWhenNewUserHandlesNewUser() throws IOException {
     // given
     String provider = "google";
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("email", "test@example.com");
     attributes.put("name", "Test User");
-    attributes.put("sub", "123456789");
+    attributes.put("sub", "14562");
 
     OAuthUserInfo oAuthUserInfo =
-        new OAuthUserInfo("test@example.com", "Test User", "google", "123456789");
+        new OAuthUserInfo("test@example.com", "Test User", "google", "14562");
 
     RegisterTokenResponse registerTokenResponse =
-        new RegisterTokenResponse("register.token.here", 1800000L);
+        new RegisterTokenResponse("register.token.here", THIRTY_MINUTES_IN_MILLIS);
 
     when(jwtProperties.getRedirectOnboarding()).thenReturn("/onboarding");
     when(authentication.getAuthorizedClientRegistrationId()).thenReturn(provider);
@@ -99,25 +101,31 @@ class OAuth2LoginSuccessHandlerTest {
     verify(selectSocialProviderPort).extract(provider, attributes);
     verify(isNewUserUseCase).isNewUser(oAuthUserInfo);
     verify(handleUserUseCase).handleNewUser(oAuthUserInfo);
-    verify(cookieUtil).setCookie(request, response, "registerToken", "register.token.here", 1800);
+    verify(cookieUtil)
+        .setCookie(
+            request,
+            response,
+            "registerToken",
+            "register.token.here",
+            COOKIE_EXPIRE_SECONDS.intValue());
     // 리다이렉트는 Spring Security의 DefaultRedirectStrategy에서 처리되므로 검증 생략
   }
 
   @Test
   @DisplayName("onAuthenticationSuccess - 기존 유저인 경우 리프레시 토큰을 발급하고 메인 페이지로 리다이렉트한다")
-  void onAuthenticationSuccess_WhenExistingUser_HandlesExistingUser() throws IOException {
+  void onAuthenticationSuccessWhenExistingUserHandlesExistingUser() throws IOException {
     // given
     String provider = "kakao";
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("kakao_account", new HashMap<>());
     attributes.put("properties", new HashMap<>());
-    attributes.put("id", "123456789");
+    attributes.put("id", "14562");
 
     OAuthUserInfo oAuthUserInfo =
-        new OAuthUserInfo("test@example.com", "Test User", "kakao", "123456789");
+        new OAuthUserInfo("test@example.com", "Test User", "kakao", "14562");
 
     RefreshTokenResponse refreshTokenResponse =
-        new RefreshTokenResponse("refresh.token.here", 604800000L);
+        new RefreshTokenResponse("refresh.token.here", ONE_WEEK_IN_MILLIS);
 
     when(jwtProperties.getRedirectBase()).thenReturn("/");
     when(authentication.getAuthorizedClientRegistrationId()).thenReturn(provider);
@@ -134,19 +142,25 @@ class OAuth2LoginSuccessHandlerTest {
     verify(selectSocialProviderPort).extract(provider, attributes);
     verify(isNewUserUseCase).isNewUser(oAuthUserInfo);
     verify(handleUserUseCase).handleExistingUser(oAuthUserInfo);
-    verify(cookieUtil).setCookie(request, response, "refreshToken", "refresh.token.here", 604800);
+    verify(cookieUtil)
+        .setCookie(
+            request,
+            response,
+            "refreshToken",
+            "refresh.token.here",
+            ONE_WEEK_IN_SECONDS.intValue());
     // 리다이렉트는 Spring Security의 DefaultRedirectStrategy에서 처리되므로 검증 생략
   }
 
   @Test
   @DisplayName("onAuthenticationSuccess - 레지스터 토큰 만료 시간이 Integer.MAX_VALUE를 초과하는 경우 처리한다")
-  void onAuthenticationSuccess_WhenRegisterTokenExpirationExceedsMaxValue_HandlesCorrectly()
+  void onAuthenticationSuccessWhenRegisterTokenExpirationExceedsMaxValueHandlesCorrectly()
       throws IOException {
     // given
     String provider = "google";
     Map<String, Object> attributes = new HashMap<>();
     OAuthUserInfo oAuthUserInfo =
-        new OAuthUserInfo("test@example.com", "Test User", "google", "123456789");
+        new OAuthUserInfo("test@example.com", "Test User", "google", "14562");
     RegisterTokenResponse registerTokenResponse =
         new RegisterTokenResponse("register.token.here", Long.MAX_VALUE);
 
@@ -168,13 +182,13 @@ class OAuth2LoginSuccessHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationSuccess - 리프레시 토큰 만료 시간이 Integer.MAX_VALUE를 초과하는 경우 처리한다")
-  void onAuthenticationSuccess_WhenRefreshTokenExpirationExceedsMaxValue_HandlesCorrectly()
+  void onAuthenticationSuccessWhenRefreshTokenExpirationExceedsMaxValueHandlesCorrectly()
       throws IOException {
     // given
     String provider = "kakao";
     Map<String, Object> attributes = new HashMap<>();
     OAuthUserInfo oAuthUserInfo =
-        new OAuthUserInfo("test@example.com", "Test User", "kakao", "123456789");
+        new OAuthUserInfo("test@example.com", "Test User", "kakao", "14562");
     RefreshTokenResponse refreshTokenResponse =
         new RefreshTokenResponse("refresh.token.here", Long.MAX_VALUE);
 
@@ -196,7 +210,7 @@ class OAuth2LoginSuccessHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationSuccess - null OAuthUserInfo로도 처리한다")
-  void onAuthenticationSuccess_WhenNullOAuthUserInfo_HandlesCorrectly() {
+  void onAuthenticationSuccessWhenNullOAuthUserInfoHandlesCorrectly() {
     // given
     String provider = "google";
     Map<String, Object> attributes = new HashMap<>();
@@ -219,7 +233,7 @@ class OAuth2LoginSuccessHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationSuccess - null 속성으로도 처리한다")
-  void onAuthenticationSuccess_WhenNullAttributes_HandlesCorrectly() {
+  void onAuthenticationSuccessWhenNullAttributesHandlesCorrectly() {
     // given
     String provider = "google";
 
@@ -240,7 +254,7 @@ class OAuth2LoginSuccessHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationSuccess - null 제공자로도 처리한다")
-  void onAuthenticationSuccess_WhenNullProvider_HandlesCorrectly() {
+  void onAuthenticationSuccessWhenNullProviderHandlesCorrectly() {
     // given
     Map<String, Object> attributes = new HashMap<>();
 

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.domain.status;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +12,7 @@ class ProjectSuccessStatusTest {
 
   @Test
   @DisplayName("모든 ProjectSuccessStatus 값 확인")
-  void allProjectSuccessStatuses_ShouldBeDefined() {
+  void allProjectSuccessStatusesShouldBeDefined() {
     // Then
     assertAll(
         () -> assertThat(ProjectSuccessStatus.values()).hasSize(13),
@@ -37,7 +33,7 @@ class ProjectSuccessStatusTest {
 
   @Test
   @DisplayName("ProjectSuccessStatus HTTP 상태 코드 확인")
-  void projectSuccessStatuses_ShouldHaveCorrectHttpStatus() {
+  void projectSuccessStatusesShouldHaveCorrectHttpStatus() {
     // Then
     assertAll(
         () ->
@@ -68,7 +64,7 @@ class ProjectSuccessStatusTest {
 
   @Test
   @DisplayName("ProjectSuccessStatus 코드 확인")
-  void projectSuccessStatuses_ShouldHaveCorrectCode() {
+  void projectSuccessStatusesShouldHaveCorrectCode() {
     // Then
     assertAll(
         () -> assertThat(ProjectSuccessStatus.CREATED_PROJECT.getCode()).isEqualTo("201"),
@@ -83,7 +79,7 @@ class ProjectSuccessStatusTest {
 
   @Test
   @DisplayName("ProjectSuccessStatus 메시지 확인")
-  void projectSuccessStatuses_ShouldHaveCorrectMessage() {
+  void projectSuccessStatusesShouldHaveCorrectMessage() {
     // Then
     assertAll(
         () -> assertThat(ProjectSuccessStatus.CREATED_PROJECT.getMessage()).contains("제출이 완료되었습니다"),

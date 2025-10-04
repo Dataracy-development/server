@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.application.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,12 +51,12 @@ class JwtTokenGeneratorTest {
 
   @Test
   @DisplayName("generateRegisterToken - 레지스터 토큰을 성공적으로 생성한다")
-  void generateRegisterToken_Success() {
+  void generateRegisterTokenSuccess() {
     // given
     String provider = "google";
-    String providerId = "123456";
+    String providerId = "1456";
     String email = "test@example.com";
-    String expectedToken = "register_token_123";
+    String expectedToken = "register_token_1";
 
     when(jwtGeneratorPort.generateRegisterToken(provider, providerId, email))
         .thenReturn(expectedToken);
@@ -77,10 +73,10 @@ class JwtTokenGeneratorTest {
 
   @Test
   @DisplayName("generateRegisterToken - 토큰 생성 실패 시 AuthException을 던진다")
-  void generateRegisterToken_Failure() {
+  void generateRegisterTokenFailure() {
     // given
     String provider = "google";
-    String providerId = "123456";
+    String providerId = "1456";
     String email = "test@example.com";
 
     when(jwtGeneratorPort.generateRegisterToken(provider, providerId, email))
@@ -102,10 +98,10 @@ class JwtTokenGeneratorTest {
 
   @Test
   @DisplayName("generateResetPasswordToken - 패스워드 재설정 토큰을 성공적으로 생성한다")
-  void generateResetPasswordToken_Success() {
+  void generateResetPasswordTokenSuccess() {
     // given
     String email = "test@example.com";
-    String expectedToken = "reset_token_123";
+    String expectedToken = "reset_token_1";
 
     when(jwtGeneratorPort.generateResetPasswordToken(email)).thenReturn(expectedToken);
 
@@ -121,7 +117,7 @@ class JwtTokenGeneratorTest {
 
   @Test
   @DisplayName("generateResetPasswordToken - 토큰 생성 실패 시 AuthException을 던진다")
-  void generateResetPasswordToken_Failure() {
+  void generateResetPasswordTokenFailure() {
     // given
     String email = "test@example.com";
 
@@ -143,11 +139,11 @@ class JwtTokenGeneratorTest {
 
   @Test
   @DisplayName("generateAccessToken - 액세스 토큰을 성공적으로 생성한다")
-  void generateAccessToken_Success() {
+  void generateAccessTokenSuccess() {
     // given
     Long userId = 1L;
     RoleType role = RoleType.ROLE_USER;
-    String expectedToken = "access_token_123";
+    String expectedToken = "access_token_1";
 
     when(jwtGeneratorPort.generateAccessToken(userId, role)).thenReturn(expectedToken);
 
@@ -163,7 +159,7 @@ class JwtTokenGeneratorTest {
 
   @Test
   @DisplayName("generateAccessToken - 토큰 생성 실패 시 AuthException을 던진다")
-  void generateAccessToken_Failure() {
+  void generateAccessTokenFailure() {
     // given
     Long userId = 1L;
     RoleType role = RoleType.ROLE_USER;
@@ -186,11 +182,11 @@ class JwtTokenGeneratorTest {
 
   @Test
   @DisplayName("generateRefreshToken - 리프레시 토큰을 성공적으로 생성한다")
-  void generateRefreshToken_Success() {
+  void generateRefreshTokenSuccess() {
     // given
     Long userId = 1L;
     RoleType role = RoleType.ROLE_USER;
-    String expectedToken = "refresh_token_123";
+    String expectedToken = "refresh_token_1";
 
     when(jwtGeneratorPort.generateRefreshToken(userId, role)).thenReturn(expectedToken);
 
@@ -206,7 +202,7 @@ class JwtTokenGeneratorTest {
 
   @Test
   @DisplayName("generateRefreshToken - 토큰 생성 실패 시 AuthException을 던진다")
-  void generateRefreshToken_Failure() {
+  void generateRefreshTokenFailure() {
     // given
     Long userId = 1L;
     RoleType role = RoleType.ROLE_USER;
@@ -229,7 +225,7 @@ class JwtTokenGeneratorTest {
 
   @Test
   @DisplayName("getErrorStatus - 알 수 없는 토큰 타입에 대해 기본 에러 상태를 반환한다")
-  void getErrorStatus_UnknownTokenType() {
+  void getErrorStatusUnknownTokenType() {
     // given
     // getErrorStatus는 private 메서드이므로 간접적으로 테스트
     when(jwtGeneratorPort.generateAccessToken(any(), any()))

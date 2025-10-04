@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.domain.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +14,7 @@ class ProjectExceptionTest {
 
   @Test
   @DisplayName("ProjectException 생성 및 속성 확인")
-  void projectException_ShouldHaveCorrectProperties() {
+  void projectExceptionShouldHaveCorrectProperties() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {
@@ -51,7 +47,7 @@ class ProjectExceptionTest {
 
   @Test
   @DisplayName("ProjectException은 BusinessException을 상속받는다")
-  void projectException_ShouldExtendBusinessException() {
+  void projectExceptionShouldExtendBusinessException() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {

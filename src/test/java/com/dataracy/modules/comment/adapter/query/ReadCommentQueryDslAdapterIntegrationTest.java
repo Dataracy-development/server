@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.comment.adapter.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -104,7 +100,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("댓글 ID로 댓글 조회")
-    void findCommentById_댓글_ID로_댓글_조회_성공() {
+    void findCommentByIdWithValidIdReturnsComment() {
       // when
       Optional<Comment> result = readCommentAdapter.findCommentById(rootComment.getId());
 
@@ -117,7 +113,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("존재하지 않는 댓글 ID로 조회 시 빈 Optional 반환")
-    void findCommentById_존재하지_않는_댓글_ID_빈_Optional_반환() {
+    void findCommentByIdWithNonExistentIdReturnsEmptyOptional() {
       // when
       Optional<Comment> result = readCommentAdapter.findCommentById(999L);
 
@@ -127,7 +123,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("프로젝트 ID로 루트 댓글 목록 조회")
-    void findComments_프로젝트_ID로_루트_댓글_목록_조회_성공() {
+    void findCommentsByProjectIdReturnsRootComments() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -157,7 +153,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("페이지네이션으로 루트 댓글 조회")
-    void findComments_페이지네이션으로_루트_댓글_조회_성공() {
+    void findCommentsWithPaginationReturnsRootComments() {
       // given
       Pageable pageable = PageRequest.of(0, 1);
 
@@ -175,7 +171,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("두 번째 페이지 루트 댓글 조회")
-    void findComments_두_번째_페이지_루트_댓글_조회_성공() {
+    void findCommentsSecondPageReturnsRootComments() {
       // given
       Pageable pageable = PageRequest.of(1, 1);
 
@@ -193,7 +189,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("존재하지 않는 프로젝트 ID로 댓글 조회 시 빈 결과")
-    void findComments_존재하지_않는_프로젝트_ID_빈_결과() {
+    void findCommentsWithNonExistentProjectIdReturnsEmpty() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -208,7 +204,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("부모 댓글 ID로 답글 목록 조회")
-    void findReplyComments_부모_댓글_ID로_답글_목록_조회_성공() {
+    void findReplyCommentsByParentCommentIdReturnsReplies() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -226,7 +222,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("페이지네이션으로 답글 조회")
-    void findReplyComments_페이지네이션으로_답글_조회_성공() {
+    void findReplyCommentsWithPaginationReturnsReplies() {
       // given - 추가 답글 생성
       CommentEntity secondReply =
           CommentEntity.of(savedProject.getId(), savedUser.getId(), "두 번째 답글", rootComment.getId());
@@ -249,7 +245,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("답글이 없는 부모 댓글의 답글 조회 시 빈 결과")
-    void findReplyComments_답글이_없는_부모_댓글_빈_결과() {
+    void findReplyCommentsWithNoRepliesReturnsEmpty() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -265,7 +261,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("존재하지 않는 프로젝트 ID로 답글 조회 시 빈 결과")
-    void findReplyComments_존재하지_않는_프로젝트_ID_빈_결과() {
+    void findReplyCommentsWithNonExistentProjectIdReturnsEmpty() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -285,7 +281,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("여러 답글이 있는 댓글의 답글 수 계산")
-    void multiple_replies_count_calculation() {
+    void multiplerepliescountcalculation() {
       // given - 추가 답글들 생성
       CommentEntity reply2 =
           CommentEntity.of(savedProject.getId(), savedUser.getId(), "답글 2", rootComment.getId());
@@ -320,7 +316,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("여러 프로젝트의 댓글 분리")
-    void comments_from_different_projects_separation() {
+    void commentsFromDifferentProjectsSeparation() {
       // given - 다른 프로젝트 생성
       ProjectEntity anotherProject =
           ProjectEntity.builder()
@@ -361,7 +357,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("여러 사용자의 댓글")
-    void comments_from_different_users() {
+    void commentsfromdifferentusers() {
       // given - 다른 사용자 생성
       UserEntity anotherUser =
           UserEntity.builder()
@@ -405,7 +401,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("대댓글의 답글 수는 0")
-    void reply_comments_have_zero_reply_count() {
+    void replyCommentsHaveZeroReplyCount() {
       // given - 대댓글에 대한 답글 생성
       CommentEntity replyToReply =
           CommentEntity.of(savedProject.getId(), savedUser.getId(), "답글의 답글", replyComment.getId());
@@ -434,7 +430,7 @@ class ReadCommentQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("빈 댓글 목록 처리")
-    void empty_comment_list_handling() {
+    void emptycommentlisthandling() {
       // given - 새로운 프로젝트 생성 (댓글 없음)
       ProjectEntity emptyProject =
           ProjectEntity.builder()

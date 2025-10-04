@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.application.port.out.rate;
 
 /** 레이트 리미팅을 위한 포트 인터페이스 IP 기반으로 요청 횟수를 제한합니다. */

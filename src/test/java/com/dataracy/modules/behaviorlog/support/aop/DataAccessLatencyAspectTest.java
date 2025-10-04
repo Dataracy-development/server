@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.behaviorlog.support.aop;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +42,7 @@ class DataAccessLatencyAspectTest {
 
     @Test
     @DisplayName("성공: 정상적인 메서드 실행")
-    void trackDataAccessLatency_정상실행_성공() throws Throwable {
+    void trackDataAccessLatencyNormalExecutionReturnsSuccess() throws Throwable {
       // given
       String expectedResult = "test-result";
       given(proceedingJoinPoint.proceed()).willReturn(expectedResult);
@@ -60,7 +56,7 @@ class DataAccessLatencyAspectTest {
 
     @Test
     @DisplayName("성공: null 반환값 처리")
-    void trackDataAccessLatency_null반환값_정상처리() throws Throwable {
+    void trackDataAccessLatencyWhenNullReturnValueHandlesCorrectly() throws Throwable {
       // given
       given(proceedingJoinPoint.proceed()).willReturn(null);
 
@@ -73,7 +69,7 @@ class DataAccessLatencyAspectTest {
 
     @Test
     @DisplayName("성공: 예외 발생 처리")
-    void trackDataAccessLatency_예외발생_처리() throws Throwable {
+    void trackDataAccessLatencyWhenExceptionOccursHandlesCorrectly() throws Throwable {
       // given
       RuntimeException expectedException = new RuntimeException("Test exception");
       willThrow(expectedException).given(proceedingJoinPoint).proceed();

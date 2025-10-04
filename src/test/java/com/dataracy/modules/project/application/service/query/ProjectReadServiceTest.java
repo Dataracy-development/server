@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.application.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -165,7 +161,7 @@ class ProjectReadServiceTest {
       // given
       Long projectId = 1L;
       Long userId = 1L;
-      String viewerId = "viewer123";
+      String viewerId = "viewer1";
       ProjectWithDataIdsResponse projectWithDataIds = createSampleProjectWithDataIds();
       UserInfo userInfo = createSampleUserInfo();
       ConnectedDataResponse connectedData =
@@ -259,11 +255,11 @@ class ProjectReadServiceTest {
 
     @Test
     @DisplayName("프로젝트 상세 조회 실패 - 프로젝트가 존재하지 않음")
-    void getProjectDetailFail_ProjectNotFound() {
+    void getProjectDetailFailProjectNotFound() {
       // given
       Long projectId = 999L;
       Long userId = 1L;
-      String viewerId = "viewer123";
+      String viewerId = "viewer1";
 
       given(findProjectPort.findProjectWithDataById(projectId)).willReturn(Optional.empty());
 
@@ -276,10 +272,10 @@ class ProjectReadServiceTest {
 
     @Test
     @DisplayName("프로젝트 상세 조회 성공 - null 사용자 ID")
-    void getProjectDetailSuccess_WithNullUserId() {
+    void getProjectDetailSuccessWithNullUserId() {
       // given
       Long projectId = 1L;
-      String viewerId = "viewer123";
+      String viewerId = "viewer1";
       ProjectWithDataIdsResponse projectWithDataIds = createSampleProjectWithDataIds();
       UserInfo userInfo = createSampleUserInfo();
       ConnectedDataResponse connectedData =
@@ -465,7 +461,7 @@ class ProjectReadServiceTest {
 
     @Test
     @DisplayName("인기 프로젝트 조회 성공 - 캐시 히트")
-    void getPopularProjectsSuccess_CacheHit() {
+    void getPopularProjectsSuccessCacheHit() {
       // given
       int size = 5;
       PopularProjectResponse cachedProject =
@@ -500,7 +496,7 @@ class ProjectReadServiceTest {
 
     @Test
     @DisplayName("인기 프로젝트 조회 성공 - 캐시 미스")
-    void getPopularProjectsSuccess_CacheMiss() {
+    void getPopularProjectsSuccessCacheMiss() {
       // given
       int size = 5;
       Project project = createSampleProject();
@@ -565,7 +561,7 @@ class ProjectReadServiceTest {
       // given
       Long negativeProjectId = -1L;
       Long userId = 1L;
-      String viewerId = "viewer123";
+      String viewerId = "viewer1";
 
       given(findProjectPort.findProjectWithDataById(negativeProjectId))
           .willReturn(Optional.empty());

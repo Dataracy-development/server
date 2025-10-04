@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +26,7 @@ class DataSortTypeTest {
     "utilize, UTILIZE"
   })
   @DisplayName("of - 문자열로 해당 enum을 반환한다")
-  void of_WhenValidString_ReturnsCorrespondingEnum(String input, String expectedEnumName) {
+  void ofWhenValidStringReturnsCorrespondingEnum(String input, String expectedEnumName) {
     // when
     DataSortType result = DataSortType.of(input);
 
@@ -41,7 +37,7 @@ class DataSortTypeTest {
   @ParameterizedTest(name = "of - {0}로 DataException이 발생한다")
   @CsvSource({"INVALID, 'INVALID'", "null, null", "'', ''"})
   @DisplayName("of - 잘못된 입력으로 DataException이 발생한다")
-  void of_WhenInvalidInput_ThrowsDataException(String input, String expectedInput) {
+  void ofWhenInvalidInputThrowsDataException(String input, String expectedInput) {
     // when & then
     String actualInput = "null".equals(input) ? null : input;
     DataException exception =
@@ -55,7 +51,7 @@ class DataSortTypeTest {
 
   @Test
   @DisplayName("getValue - LATEST의 value를 반환한다")
-  void getValue_WhenLatest_ReturnsLatestValue() {
+  void getValueWhenLatestReturnsLatestValue() {
     // when
     String result = DataSortType.LATEST.getValue();
 
@@ -65,7 +61,7 @@ class DataSortTypeTest {
 
   @Test
   @DisplayName("getValue - OLDEST의 value를 반환한다")
-  void getValue_WhenOldest_ReturnsOldestValue() {
+  void getValueWhenOldestReturnsOldestValue() {
     // when
     String result = DataSortType.OLDEST.getValue();
 
@@ -75,7 +71,7 @@ class DataSortTypeTest {
 
   @Test
   @DisplayName("getValue - DOWNLOAD의 value를 반환한다")
-  void getValue_WhenDownload_ReturnsDownloadValue() {
+  void getValueWhenDownloadReturnsDownloadValue() {
     // when
     String result = DataSortType.DOWNLOAD.getValue();
 
@@ -85,7 +81,7 @@ class DataSortTypeTest {
 
   @Test
   @DisplayName("getValue - UTILIZE의 value를 반환한다")
-  void getValue_WhenUtilize_ReturnsUtilizeValue() {
+  void getValueWhenUtilizeReturnsUtilizeValue() {
     // when
     String result = DataSortType.UTILIZE.getValue();
 

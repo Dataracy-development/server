@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +11,7 @@ class ProviderTypeTest {
 
   @Test
   @DisplayName("모든 ProviderType 값 확인")
-  void allProviderTypes_ShouldBeDefined() {
+  void allProviderTypesShouldBeDefined() {
     // Then
     assertAll(
         () -> assertThat(ProviderType.values()).hasSize(3),
@@ -26,7 +22,7 @@ class ProviderTypeTest {
 
   @Test
   @DisplayName("ProviderType name 확인")
-  void providerTypeNames_ShouldBeCorrect() {
+  void providerTypeNamesShouldBeCorrect() {
     // Then
     assertAll(
         () -> assertThat(ProviderType.GOOGLE.name()).isEqualTo("GOOGLE"),
@@ -36,7 +32,7 @@ class ProviderTypeTest {
 
   @Test
   @DisplayName("ProviderType toString 확인")
-  void providerTypeToString_ShouldReturnName() {
+  void providerTypeToStringShouldReturnName() {
     // Then
     assertAll(
         () -> assertThat(ProviderType.GOOGLE).hasToString("GOOGLE"),

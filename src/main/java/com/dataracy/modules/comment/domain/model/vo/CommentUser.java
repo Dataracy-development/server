@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.comment.domain.model.vo;
 
 import com.dataracy.modules.user.domain.enums.RoleType;

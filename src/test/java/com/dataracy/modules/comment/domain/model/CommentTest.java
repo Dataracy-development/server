@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.comment.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,6 +10,15 @@ import org.junit.jupiter.api.Test;
 
 /** Comment 도메인 모델 테스트 */
 class CommentTest {
+
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+  private static final Long COMMENT_ID = 2L;
+  private static final Long TARGET_ID = 3L;
+  private static final Long USER_ID = 4L;
+  private static final Long LIKE_ID = 35L;
+  private static final Long SAMPLE_ID = 42L;
+  private static final Long ANOTHER_LIKE_ID = 45L;
 
   @Test
   @DisplayName("기본 생성자로 Comment 인스턴스 생성")
@@ -144,7 +149,7 @@ class CommentTest {
     // given
     Long id = 4L;
     Long projectId = 25L;
-    Long userId = 35L;
+    Long userId = LIKE_ID;
     String content = "a".repeat(1000); // 1000자 댓글
     Long parentCommentId = null;
     Long likeCount = 10L;

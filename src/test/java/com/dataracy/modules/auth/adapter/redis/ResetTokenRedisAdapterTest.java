@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,9 +47,9 @@ class ResetTokenRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 토큰을 Redis에 저장")
-    void saveResetToken_성공() {
+    void saveResetTokenSuccess() {
       // given
-      String token = "test-reset-token-123";
+      String token = "test-reset-token-1";
       String expectedKey = "resetPasswordToken:" + token;
 
       // when
@@ -65,7 +61,7 @@ class ResetTokenRedisAdapterTest {
 
     @Test
     @DisplayName("Redis 연결 실패 시 CommonException 발생")
-    void saveResetToken_Redis연결실패_예외발생() {
+    void saveResetTokenThrowsExceptionOnRedisFailure() {
       // given
       String token = "test-token";
       willThrow(new RedisConnectionFailureException("Redis connection failed"))
@@ -80,7 +76,7 @@ class ResetTokenRedisAdapterTest {
 
     @Test
     @DisplayName("DataAccessException 발생 시 CommonException 발생")
-    void saveResetToken_DataAccessException_예외발생() {
+    void saveResetTokenThrowsExceptionOnDataAccessFailure() {
       // given
       String token = "test-token";
       willThrow(new DataAccessException("Data access failed") {})
@@ -100,7 +96,7 @@ class ResetTokenRedisAdapterTest {
 
     @Test
     @DisplayName("토큰이 존재할 때 true 반환")
-    void isValidResetToken_토큰존재_true반환() {
+    void isValidResetTokenReturnsTrueWhenTokenExists() {
       // given
       String token = "valid-token";
       String expectedKey = "resetPasswordToken:" + token;
@@ -116,7 +112,7 @@ class ResetTokenRedisAdapterTest {
 
     @Test
     @DisplayName("토큰이 존재하지 않을 때 false 반환")
-    void isValidResetToken_토큰미존재_false반환() {
+    void isValidResetTokenReturnsFalseWhenTokenNotExists() {
       // given
       String token = "invalid-token";
       String expectedKey = "resetPasswordToken:" + token;
@@ -132,7 +128,7 @@ class ResetTokenRedisAdapterTest {
 
     @Test
     @DisplayName("Redis 연결 실패 시 CommonException 발생")
-    void isValidResetToken_Redis연결실패_예외발생() {
+    void isValidResetTokenThrowsExceptionOnRedisFailure() {
       // given
       String token = "test-token";
       willThrow(new RedisConnectionFailureException("Redis connection failed"))
@@ -147,7 +143,7 @@ class ResetTokenRedisAdapterTest {
 
     @Test
     @DisplayName("DataAccessException 발생 시 CommonException 발생")
-    void isValidResetToken_DataAccessException_예외발생() {
+    void isValidResetTokenThrowsExceptionOnDataAccessFailure() {
       // given
       String token = "test-token";
       willThrow(new DataAccessException("Data access failed") {})
@@ -162,7 +158,7 @@ class ResetTokenRedisAdapterTest {
 
     @Test
     @DisplayName("Redis가 null을 반환할 때 false 반환")
-    void isValidResetToken_Redis가null반환_false반환() {
+    void isValidResetTokenReturnsFalseWhenRedisReturnsNull() {
       // given
       String token = "test-token";
       String expectedKey = "resetPasswordToken:" + token;

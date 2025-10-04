@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.application.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +37,9 @@ import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class TopicQueryServiceTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @InjectMocks private TopicQueryService service;
 
   @Mock private TopicDtoMapper topicDtoMapper;
@@ -70,6 +69,9 @@ class TopicQueryServiceTest {
   @Nested
   @DisplayName("findAllTopics 메서드 테스트")
   class FindAllTopicsTest {
+
+    // Test constants
+    private static final Integer CURRENT_YEAR = 2024;
 
     @Test
     @DisplayName("모든 토픽 조회 성공")
@@ -104,6 +106,9 @@ class TopicQueryServiceTest {
   @Nested
   @DisplayName("findTopic 메서드 테스트")
   class FindTopicTest {
+
+    // Test constants
+    private static final Integer CURRENT_YEAR = 2024;
 
     @Test
     @DisplayName("토픽 조회 성공")
@@ -166,6 +171,9 @@ class TopicQueryServiceTest {
   @DisplayName("validateTopic 메서드 테스트")
   class ValidateTopicTest {
 
+    // Test constants
+    private static final Integer CURRENT_YEAR = 2024;
+
     @Test
     @DisplayName("토픽 검증 성공")
     void validateTopicSuccess() {
@@ -224,6 +232,9 @@ class TopicQueryServiceTest {
   @Nested
   @DisplayName("getLabelById 메서드 테스트")
   class GetLabelByIdTest {
+
+    // Test constants
+    private static final Integer CURRENT_YEAR = 2024;
 
     @Test
     @DisplayName("라벨 조회 성공")
@@ -285,6 +296,9 @@ class TopicQueryServiceTest {
   @Nested
   @DisplayName("getLabelsByIds 메서드 테스트")
   class GetLabelsByIdsTest {
+
+    // Test constants
+    private static final Integer CURRENT_YEAR = 2024;
 
     @Test
     @DisplayName("라벨 목록 조회 성공")

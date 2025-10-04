@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.domain.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,9 +12,12 @@ import com.dataracy.modules.common.status.BaseErrorCode;
 @DisplayName("ReferenceException 테스트")
 class ReferenceExceptionTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("ReferenceException 생성 및 속성 확인")
-  void referenceException_ShouldHaveCorrectProperties() {
+  void referenceExceptionShouldHaveCorrectProperties() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {
@@ -51,7 +50,7 @@ class ReferenceExceptionTest {
 
   @Test
   @DisplayName("ReferenceException은 BusinessException을 상속받는다")
-  void referenceException_ShouldExtendBusinessException() {
+  void referenceExceptionShouldExtendBusinessException() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {

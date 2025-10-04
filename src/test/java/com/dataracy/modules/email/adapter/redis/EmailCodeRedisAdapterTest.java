@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.adapter.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,9 +23,9 @@ import com.dataracy.modules.email.domain.enums.EmailVerificationType;
 
 class EmailCodeRedisAdapterTest {
 
-  StringRedisTemplate redisTemplate;
-  ValueOperations<String, String> valueOps;
-  EmailCodeRedisAdapter adapter;
+  private StringRedisTemplate redisTemplate;
+  private ValueOperations<String, String> valueOps;
+  private EmailCodeRedisAdapter adapter;
 
   @BeforeEach
   void setUp() {
@@ -49,7 +45,7 @@ class EmailCodeRedisAdapterTest {
     void success() {
       // given
       String email = "user@example.com";
-      String code = "123456";
+      String code = "1456";
       String expectedKey = "email:verification:signup:" + email;
 
       // when

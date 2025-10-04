@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.adapter.web.mapper.read;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +25,7 @@ class UserReadWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - GetUserInfoResponse를 GetUserInfoWebResponse로 변환한다")
-  void toWebDto_ConvertsGetUserInfoResponseToWebResponse() {
+  void toWebDtoConvertsGetUserInfoResponseToWebResponse() {
     // given
     GetUserInfoResponse responseDto =
         new GetUserInfoResponse(
@@ -71,7 +67,7 @@ class UserReadWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - null 값들이 포함된 GetUserInfoResponse를 변환한다")
-  void toWebDto_WithNullValues_ConvertsResponse() {
+  void toWebDtoWithNullValuesConvertsResponse() {
     // given
     GetUserInfoResponse responseDto =
         new GetUserInfoResponse(
@@ -113,7 +109,7 @@ class UserReadWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - 빈 리스트가 포함된 GetUserInfoResponse를 변환한다")
-  void toWebDto_WithEmptyLists_ConvertsResponse() {
+  void toWebDtoWithEmptyListsConvertsResponse() {
     // given
     GetUserInfoResponse responseDto =
         new GetUserInfoResponse(
@@ -155,7 +151,7 @@ class UserReadWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - null GetUserInfoResponse를 변환한다")
-  void toWebDto_WithNullResponse_ConvertsResponse() {
+  void toWebDtoWithNullResponseConvertsResponse() {
     // given
     GetUserInfoResponse responseDto = null;
 

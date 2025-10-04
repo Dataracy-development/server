@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.web;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +44,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
             classes = com.dataracy.modules.common.util.CookieUtil.class))
 class AuthDevControllerTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
+  // Test constants
+  private static final Long TWO_WEEKS_IN_MILLIS = 1209600000L;
+  private static final Long ONE_HOUR_IN_MILLIS = 3600000L;
+
   @Autowired private MockMvc mockMvc;
 
   @Autowired private ObjectMapper objectMapper;
@@ -68,12 +71,12 @@ class AuthDevControllerTest {
   @DisplayName("개발용 로그인 성공 시 RefreshToken 반환")
   void loginDevSuccess() throws Exception {
     // given
-    SelfLoginWebRequest webReq = new SelfLoginWebRequest("test@email.com", "password123@");
-    SelfLoginRequest appReq = new SelfLoginRequest("test@email.com", "password123@");
+    SelfLoginWebRequest webReq = new SelfLoginWebRequest("test@email.com", "password1@");
+    SelfLoginRequest appReq = new SelfLoginRequest("test@email.com", "password1@");
     RefreshTokenResponse refreshResp =
-        new RefreshTokenResponse("issued-refresh-token", 1209600000L);
+        new RefreshTokenResponse("issued-refresh-token", TWO_WEEKS_IN_MILLIS);
     RefreshTokenWebResponse webResp =
-        new RefreshTokenWebResponse("issued-refresh-token", 1209600000L);
+        new RefreshTokenWebResponse("issued-refresh-token", TWO_WEEKS_IN_MILLIS);
 
     given(authDevWebMapper.toApplicationDto(any(SelfLoginWebRequest.class))).willReturn(appReq);
     given(selfLoginUseCase.login(appReq)).willReturn(refreshResp);
@@ -98,9 +101,11 @@ class AuthDevControllerTest {
     RefreshTokenWebRequest webReq = new RefreshTokenWebRequest("old-refresh");
     RefreshTokenRequest appReq = new RefreshTokenRequest("old-refresh");
     ReIssueTokenResponse reissueResp =
-        new ReIssueTokenResponse("new-access", "new-refresh", 3600000L, 1209600000L);
+        new ReIssueTokenResponse(
+            "new-access", "new-refresh", ONE_HOUR_IN_MILLIS, TWO_WEEKS_IN_MILLIS);
     ReIssueTokenWebResponse webResp =
-        new ReIssueTokenWebResponse("new-access", "new-refresh", 3600000L, 1209600000L);
+        new ReIssueTokenWebResponse(
+            "new-access", "new-refresh", ONE_HOUR_IN_MILLIS, TWO_WEEKS_IN_MILLIS);
 
     given(authDevWebMapper.toApplicationDto(any(RefreshTokenWebRequest.class))).willReturn(appReq);
     given(reIssueTokenUseCase.reIssueToken("old-refresh")).willReturn(reissueResp);
@@ -117,7 +122,7 @@ class AuthDevControllerTest {
         .andExpect(jsonPath("$.message").value(AuthSuccessStatus.OK_RE_ISSUE_TOKEN.getMessage()))
         .andExpect(jsonPath("$.data.accessToken").value("new-access"))
         .andExpect(jsonPath("$.data.refreshToken").value("new-refresh"))
-        .andExpect(jsonPath("$.data.accessTokenExpiration").value(3600000L))
-        .andExpect(jsonPath("$.data.refreshTokenExpiration").value(1209600000L));
+        .andExpect(jsonPath("$.data.accessTokenExpiration").value(ONE_HOUR_IN_MILLIS))
+        .andExpect(jsonPath("$.data.refreshTokenExpiration").value(TWO_WEEKS_IN_MILLIS));
   }
 }

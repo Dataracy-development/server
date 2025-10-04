@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.application.mapper.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,12 +22,12 @@ class CreateProjectDtoMapperTest {
     ReflectionTestUtils.setField(mapper, "defaultProjectImageUrl", "default.png");
 
     UploadProjectRequest requestDto =
-        new UploadProjectRequest("title", 1L, 2L, 3L, 4L, true, 123L, "content", List.of(10L, 20L));
+        new UploadProjectRequest("title", 1L, 2L, 3L, 4L, true, 1L, "content", List.of(10L, 20L));
 
     Long userId = 99L;
 
     // when
-    Project project = mapper.toDomain(requestDto, userId, 123L);
+    Project project = mapper.toDomain(requestDto, userId, 1L);
 
     // then
     assertAll(
@@ -43,7 +39,7 @@ class CreateProjectDtoMapperTest {
         () -> assertThat(project.getDataSourceId()).isEqualTo(3L),
         () -> assertThat(project.getAuthorLevelId()).isEqualTo(4L),
         () -> assertThat(project.getIsContinue()).isTrue(),
-        () -> assertThat(project.getParentProjectId()).isEqualTo(123L),
+        () -> assertThat(project.getParentProjectId()).isEqualTo(1L),
         () -> assertThat(project.getContent()).isEqualTo("content"),
         () -> assertThat(project.getThumbnailUrl()).isEqualTo("default.png"),
         () -> assertThat(project.getDataIds()).containsExactly(10L, 20L),

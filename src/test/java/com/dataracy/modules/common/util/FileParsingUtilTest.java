@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +24,7 @@ class FileParsingUtilTest {
     "test.json, '[{\"name\":\"John\",\"age\":25},{\"name\":\"Jane\",\"age\":30}]', 2, 2"
   })
   @DisplayName("parse - 다양한 파일 형식 파싱")
-  void parse_ShouldParseValidFiles(
+  void parseShouldParseValidFiles(
       String filename, String content, int expectedRows, int expectedColumns) throws IOException {
     // Given
     ByteArrayInputStream inputStream =
@@ -47,7 +43,7 @@ class FileParsingUtilTest {
 
   @Test
   @DisplayName("parse - null 입력 스트림 처리")
-  void parse_ShouldThrowExceptionForNullInputStream() {
+  void parseShouldThrowExceptionForNullInputStream() {
     // Given & When & Then
     IllegalArgumentException exception =
         catchThrowableOfType(
@@ -64,7 +60,7 @@ class FileParsingUtilTest {
     "test.txt, '지원하지 않는 파일 형식'"
   })
   @DisplayName("parse - 잘못된 입력 처리")
-  void parse_ShouldThrowExceptionForInvalidInput(String filename, String expectedMessage) {
+  void parseShouldThrowExceptionForInvalidInput(String filename, String expectedMessage) {
     // Given
     ByteArrayInputStream inputStream =
         new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8));
@@ -82,7 +78,7 @@ class FileParsingUtilTest {
 
   @Test
   @DisplayName("parse - 대소문자 무관 파일 확장자 처리")
-  void parse_ShouldHandleCaseInsensitiveExtensions() throws IOException {
+  void parseShouldHandleCaseInsensitiveExtensions() throws IOException {
     // Given
     String csvContent = "name,age\nJohn,25";
     ByteArrayInputStream inputStream =
@@ -100,7 +96,7 @@ class FileParsingUtilTest {
 
   @Test
   @DisplayName("detectEncoding - UTF-8 인코딩 감지")
-  void detectEncoding_ShouldDetectUtf8() throws IOException {
+  void detectEncodingShouldDetectUtf8() throws IOException {
     // Given
     String content = "한글 테스트 content";
     ByteArrayInputStream inputStream =
@@ -118,7 +114,7 @@ class FileParsingUtilTest {
 
   @Test
   @DisplayName("detectEncoding - 빈 스트림 처리")
-  void detectEncoding_ShouldHandleEmptyStream() throws IOException {
+  void detectEncodingShouldHandleEmptyStream() throws IOException {
     // Given
     ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
 

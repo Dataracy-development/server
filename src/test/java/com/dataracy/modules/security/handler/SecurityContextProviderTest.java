@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.security.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +20,9 @@ import com.dataracy.modules.user.domain.enums.RoleType;
 
 class SecurityContextProviderTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @BeforeEach
   void setUp() {
     SecurityContextHolder.clearContext();
@@ -36,7 +35,7 @@ class SecurityContextProviderTest {
 
   @Test
   @DisplayName("getAuthentication - 인증 객체가 설정된 경우 해당 인증 객체를 반환한다")
-  void getAuthentication_WhenAuthenticationExists_ReturnsAuthentication() {
+  void getAuthenticationWhenAuthenticationExistsReturnsAuthentication() {
     // given
     Authentication mockAuth = mock(Authentication.class);
     SecurityContext mockContext = mock(SecurityContext.class);
@@ -52,7 +51,7 @@ class SecurityContextProviderTest {
 
   @Test
   @DisplayName("getAuthentication - 인증 객체가 없는 경우 null을 반환한다")
-  void getAuthentication_WhenNoAuthentication_ReturnsNull() {
+  void getAuthenticationWhenNoAuthenticationReturnsNull() {
     // given
     SecurityContext mockContext = mock(SecurityContext.class);
     given(mockContext.getAuthentication()).willReturn(null);
@@ -67,9 +66,9 @@ class SecurityContextProviderTest {
 
   @Test
   @DisplayName("isAnonymous - 익명 사용자인 경우 true를 반환한다")
-  void isAnonymous_WhenAnonymousUser_ReturnsTrue() {
+  void isAnonymousWhenAnonymousUserReturnsTrue() {
     // given
-    AnonymousUser anonymousUser = AnonymousUser.of("anonymous-123");
+    AnonymousUser anonymousUser = AnonymousUser.of("anonymous-1");
     Authentication mockAuth = mock(Authentication.class);
     given(mockAuth.getPrincipal()).willReturn(anonymousUser);
 
@@ -86,7 +85,7 @@ class SecurityContextProviderTest {
 
   @Test
   @DisplayName("isAnonymous - 로그인한 사용자인 경우 false를 반환한다")
-  void isAnonymous_WhenAuthenticatedUser_ReturnsFalse() {
+  void isAnonymousWhenAuthenticatedUserReturnsFalse() {
     // given
     CustomUserDetails userDetails = new CustomUserDetails(1L, RoleType.ROLE_USER);
     Authentication mockAuth = mock(Authentication.class);
@@ -105,7 +104,7 @@ class SecurityContextProviderTest {
 
   @Test
   @DisplayName("isAnonymous - 인증 객체가 null인 경우 NullPointerException이 발생한다")
-  void isAnonymous_WhenNoAuthentication_ThrowsNullPointerException() {
+  void isAnonymousWhenNoAuthenticationThrowsNullPointerException() {
     // given
     SecurityContext mockContext = mock(SecurityContext.class);
     given(mockContext.getAuthentication()).willReturn(null);
@@ -119,7 +118,7 @@ class SecurityContextProviderTest {
 
   @Test
   @DisplayName("isAuthenticated - 로그인한 사용자인 경우 true를 반환한다")
-  void isAuthenticated_WhenAuthenticatedUser_ReturnsTrue() {
+  void isAuthenticatedWhenAuthenticatedUserReturnsTrue() {
     // given
     CustomUserDetails userDetails = new CustomUserDetails(1L, RoleType.ROLE_USER);
     Authentication mockAuth = mock(Authentication.class);
@@ -138,9 +137,9 @@ class SecurityContextProviderTest {
 
   @Test
   @DisplayName("isAuthenticated - 익명 사용자인 경우 false를 반환한다")
-  void isAuthenticated_WhenAnonymousUser_ReturnsFalse() {
+  void isAuthenticatedWhenAnonymousUserReturnsFalse() {
     // given
-    AnonymousUser anonymousUser = AnonymousUser.of("anonymous-123");
+    AnonymousUser anonymousUser = AnonymousUser.of("anonymous-1");
     Authentication mockAuth = mock(Authentication.class);
     given(mockAuth.getPrincipal()).willReturn(anonymousUser);
 
@@ -157,7 +156,7 @@ class SecurityContextProviderTest {
 
   @Test
   @DisplayName("isAuthenticated - 인증 객체가 null인 경우 false를 반환한다")
-  void isAuthenticated_WhenNoAuthentication_ReturnsFalse() {
+  void isAuthenticatedWhenNoAuthenticationReturnsFalse() {
     // given
     SecurityContext mockContext = mock(SecurityContext.class);
     given(mockContext.getAuthentication()).willReturn(null);
@@ -172,7 +171,7 @@ class SecurityContextProviderTest {
 
   @Test
   @DisplayName("isAuthenticated - principal이 CustomUserDetails가 아닌 경우 false를 반환한다")
-  void isAuthenticated_WhenPrincipalIsNotCustomUserDetails_ReturnsFalse() {
+  void isAuthenticatedWhenPrincipalIsNotCustomUserDetailsReturnsFalse() {
     // given
     String principal = "someOtherPrincipal";
     Authentication mockAuth = mock(Authentication.class);

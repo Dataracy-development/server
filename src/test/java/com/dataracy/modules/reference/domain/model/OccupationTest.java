@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,9 +9,12 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Occupation 테스트")
 class OccupationTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("Occupation record 생성 및 속성 확인")
-  void occupation_ShouldCreateCorrectly() {
+  void occupationShouldCreateCorrectly() {
     // Given
     Long id = 1L;
     String value = "developer";
@@ -33,7 +32,7 @@ class OccupationTest {
 
   @Test
   @DisplayName("Occupation record equals 및 hashCode 테스트")
-  void occupation_ShouldHaveCorrectEqualsAndHashCode() {
+  void occupationShouldHaveCorrectEqualsAndHashCode() {
     // Given
     Occupation occupation1 = new Occupation(1L, "designer", "디자이너");
     Occupation occupation2 = new Occupation(1L, "designer", "디자이너");
@@ -48,7 +47,7 @@ class OccupationTest {
 
   @Test
   @DisplayName("Occupation record toString 테스트")
-  void occupation_ShouldHaveCorrectToString() {
+  void occupationShouldHaveCorrectToString() {
     // Given
     Occupation occupation = new Occupation(1L, "analyst", "분석가");
 
@@ -61,7 +60,7 @@ class OccupationTest {
 
   @Test
   @DisplayName("Occupation record - null 값 처리")
-  void occupation_ShouldHandleNullValues() {
+  void occupationShouldHandleNullValues() {
     // Given & When
     Occupation occupation = new Occupation(null, null, null);
 
@@ -74,7 +73,7 @@ class OccupationTest {
 
   @Test
   @DisplayName("Occupation record - 다양한 직업들 테스트")
-  void occupation_ShouldHandleVariousOccupations() {
+  void occupationShouldHandleVariousOccupations() {
     // Given & When
     Occupation occupation1 = new Occupation(1L, "developer", "개발자");
     Occupation occupation2 = new Occupation(2L, "designer", "디자이너");

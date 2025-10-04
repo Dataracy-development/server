@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,9 +9,12 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Topic 테스트")
 class TopicTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("Topic record 생성 및 속성 확인")
-  void topic_ShouldCreateCorrectly() {
+  void topicShouldCreateCorrectly() {
     // Given
     Long id = 1L;
     String value = "data-analysis";
@@ -33,7 +32,7 @@ class TopicTest {
 
   @Test
   @DisplayName("Topic record equals 및 hashCode 테스트")
-  void topic_ShouldHaveCorrectEqualsAndHashCode() {
+  void topicShouldHaveCorrectEqualsAndHashCode() {
     // Given
     Topic topic1 = new Topic(1L, "machine-learning", "머신러닝");
     Topic topic2 = new Topic(1L, "machine-learning", "머신러닝");
@@ -45,7 +44,7 @@ class TopicTest {
 
   @Test
   @DisplayName("Topic record toString 테스트")
-  void topic_ShouldHaveCorrectToString() {
+  void topicShouldHaveCorrectToString() {
     // Given
     Topic topic = new Topic(1L, "ai", "인공지능");
 
@@ -58,7 +57,7 @@ class TopicTest {
 
   @Test
   @DisplayName("Topic record - null 값 처리")
-  void topic_ShouldHandleNullValues() {
+  void topicShouldHandleNullValues() {
     // Given & When
     Topic topic = new Topic(null, null, null);
 
@@ -71,7 +70,7 @@ class TopicTest {
 
   @Test
   @DisplayName("Topic record - 다양한 값들 테스트")
-  void topic_ShouldHandleVariousValues() {
+  void topicShouldHandleVariousValues() {
     // Given & When
     Topic topic1 = new Topic(1L, "data-science", "데이터 사이언스");
     Topic topic2 = new Topic(2L, "big-data", "빅데이터");

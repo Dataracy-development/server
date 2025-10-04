@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.behaviorlog.adapter.kafka.consumer;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -84,13 +80,13 @@ class BehaviorLogKafkaConsumerAdapterTest {
 
   private BehaviorLog createTestBehaviorLog() {
     return BehaviorLog.builder()
-        .userId("123")
+        .userId("1")
         .path("/api/projects/456")
         .httpMethod(HttpMethod.GET)
         .action(ActionType.CLICK)
         .deviceType(DeviceType.PC)
         .logType(LogType.ACTION)
-        .timestamp("2024-01-01T00:00:00Z")
+        .timestamp("CURRENT_YEAR-01-01T00:00:00Z")
         .build();
   }
 }

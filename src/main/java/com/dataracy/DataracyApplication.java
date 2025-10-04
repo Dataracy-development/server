@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy;
 
 import org.springframework.boot.SpringApplication;
@@ -10,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class DataracyApplication {
 
-  private DataracyApplication() {
-    // Spring Boot 애플리케이션 클래스는 인스턴스화되지 않도록 private 생성자 선언
+  public DataracyApplication() {
+    // Spring Boot 애플리케이션 클래스의 기본 생성자
   }
 
   /**

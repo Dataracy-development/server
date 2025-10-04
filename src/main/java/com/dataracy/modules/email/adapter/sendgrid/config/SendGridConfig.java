@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.adapter.sendgrid.config;
 
 import org.springframework.beans.factory.annotation.Value;

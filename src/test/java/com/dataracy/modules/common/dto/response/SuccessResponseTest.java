@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.dto.response;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +14,7 @@ class SuccessResponseTest {
 
   @Test
   @DisplayName("of - BaseSuccessCode와 데이터로 SuccessResponse를 생성한다")
-  void of_WithSuccessCodeAndData_CreatesSuccessResponse() {
+  void ofWithSuccessCodeAndDataCreatesSuccessResponse() {
     // given
     BaseSuccessCode successCode = CommonSuccessStatus.OK;
     String data = "test data";
@@ -36,7 +32,7 @@ class SuccessResponseTest {
 
   @Test
   @DisplayName("of - BaseSuccessCode만으로 SuccessResponse를 생성한다")
-  void of_WithSuccessCodeOnly_CreatesSuccessResponse() {
+  void ofWithSuccessCodeOnlyCreatesSuccessResponse() {
     // given
     BaseSuccessCode successCode = CommonSuccessStatus.CREATED;
 
@@ -53,7 +49,7 @@ class SuccessResponseTest {
 
   @Test
   @DisplayName("of - UserSuccessStatus로 SuccessResponse를 생성한다")
-  void of_WithUserSuccessStatus_CreatesSuccessResponse() {
+  void ofWithUserSuccessStatusCreatesSuccessResponse() {
     // given
     BaseSuccessCode successCode = UserSuccessStatus.CREATED_USER;
     Long userId = 1L;
@@ -71,7 +67,7 @@ class SuccessResponseTest {
 
   @Test
   @DisplayName("of - null 데이터로 SuccessResponse를 생성한다")
-  void of_WithNullData_CreatesSuccessResponse() {
+  void ofWithNullDataCreatesSuccessResponse() {
     // given
     BaseSuccessCode successCode = CommonSuccessStatus.NO_CONTENT;
     String data = null;
@@ -89,7 +85,7 @@ class SuccessResponseTest {
 
   @Test
   @DisplayName("of - 복잡한 객체 데이터로 SuccessResponse를 생성한다")
-  void of_WithComplexData_CreatesSuccessResponse() {
+  void ofWithComplexDataCreatesSuccessResponse() {
     // given
     BaseSuccessCode successCode = UserSuccessStatus.OK_GET_USER_INFO;
     UserInfo data = new UserInfo(1L, "test@example.com", "TestUser");
@@ -111,7 +107,7 @@ class SuccessResponseTest {
     private final String email;
     private final String nickname;
 
-    public UserInfo(Long id, String email, String nickname) {
+    UserInfo(Long id, String email, String nickname) {
       this.id = id;
       this.email = email;
       this.nickname = nickname;

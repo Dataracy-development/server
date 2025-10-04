@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.query.predicates;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +15,7 @@ class ProjectFilterPredicateTest {
 
   @Test
   @DisplayName("notDeleted - 삭제되지 않은 프로젝트만 필터링하는 조건을 반환한다")
-  void notDeleted_ReturnsNotDeletedCondition() {
+  void notDeletedReturnsNotDeletedCondition() {
     // when
     BooleanExpression result = ProjectFilterPredicate.notDeleted();
 
@@ -31,7 +27,7 @@ class ProjectFilterPredicateTest {
 
   @Test
   @DisplayName("projectIdEq - projectId가 null이 아닌 경우 해당 ID와 일치하는 조건을 반환한다")
-  void projectIdEq_WhenProjectIdIsNotNull_ReturnsIdEqualsCondition() {
+  void projectIdEqWhenProjectIdIsNotNullReturnsIdEqualsCondition() {
     // given
     Long projectId = 1L;
 
@@ -46,7 +42,7 @@ class ProjectFilterPredicateTest {
 
   @Test
   @DisplayName("projectIdEq - projectId가 null인 경우 null을 반환한다")
-  void projectIdEq_WhenProjectIdIsNull_ReturnsNull() {
+  void projectIdEqWhenProjectIdIsNullReturnsNull() {
     // when
     BooleanExpression result = ProjectFilterPredicate.projectIdEq(null);
 
@@ -56,7 +52,7 @@ class ProjectFilterPredicateTest {
 
   @Test
   @DisplayName("keywordContains - 키워드가 유효한 경우 제목에 포함되는 조건을 반환한다")
-  void keywordContains_WhenKeywordIsValid_ReturnsContainsCondition() {
+  void keywordContainsWhenKeywordIsValidReturnsContainsCondition() {
     // given
     String keyword = "test";
 
@@ -73,7 +69,7 @@ class ProjectFilterPredicateTest {
   @NullAndEmptySource
   @ValueSource(strings = {"   ", "\t"})
   @DisplayName("keywordContains - 키워드가 null, 빈 문자열, 공백인 경우 null을 반환한다")
-  void keywordContains_WhenKeywordIsInvalid_ReturnsNull(String keyword) {
+  void keywordContainsWhenKeywordIsInvalidReturnsNull(String keyword) {
     // when
     BooleanExpression result = ProjectFilterPredicate.keywordContains(keyword);
 
@@ -83,7 +79,7 @@ class ProjectFilterPredicateTest {
 
   @Test
   @DisplayName("topicIdEq - topicId가 null이 아닌 경우 해당 토픽 ID와 일치하는 조건을 반환한다")
-  void topicIdEq_WhenTopicIdIsNotNull_ReturnsTopicIdEqualsCondition() {
+  void topicIdEqWhenTopicIdIsNotNullReturnsTopicIdEqualsCondition() {
     // given
     Long topicId = 1L;
 
@@ -98,7 +94,7 @@ class ProjectFilterPredicateTest {
 
   @Test
   @DisplayName("topicIdEq - topicId가 null인 경우 null을 반환한다")
-  void topicIdEq_WhenTopicIdIsNull_ReturnsNull() {
+  void topicIdEqWhenTopicIdIsNullReturnsNull() {
     // when
     BooleanExpression result = ProjectFilterPredicate.topicIdEq(null);
 
@@ -108,7 +104,7 @@ class ProjectFilterPredicateTest {
 
   @Test
   @DisplayName("authorLevelIdEq - authorLevelId가 null이 아닌 경우 해당 저자레벨 ID와 일치하는 조건을 반환한다")
-  void authorLevelIdEq_WhenAuthorLevelIdIsNotNull_ReturnsAuthorLevelIdEqualsCondition() {
+  void authorLevelIdEqWhenAuthorLevelIdIsNotNullReturnsAuthorLevelIdEqualsCondition() {
     // given
     Long authorLevelId = 1L;
 
@@ -123,7 +119,7 @@ class ProjectFilterPredicateTest {
 
   @Test
   @DisplayName("authorLevelIdEq - authorLevelId가 null인 경우 null을 반환한다")
-  void authorLevelIdEq_WhenAuthorLevelIdIsNull_ReturnsNull() {
+  void authorLevelIdEqWhenAuthorLevelIdIsNullReturnsNull() {
     // when
     BooleanExpression result = ProjectFilterPredicate.authorLevelIdEq(null);
 
@@ -133,7 +129,7 @@ class ProjectFilterPredicateTest {
 
   @Test
   @DisplayName("dataSourceIdEq - dataSourceId가 null이 아닌 경우 해당 데이터소스 ID와 일치하는 조건을 반환한다")
-  void dataSourceIdEq_WhenDataSourceIdIsNotNull_ReturnsDataSourceIdEqualsCondition() {
+  void dataSourceIdEqWhenDataSourceIdIsNotNullReturnsDataSourceIdEqualsCondition() {
     // given
     Long dataSourceId = 1L;
 
@@ -148,7 +144,7 @@ class ProjectFilterPredicateTest {
 
   @Test
   @DisplayName("dataSourceIdEq - dataSourceId가 null인 경우 null을 반환한다")
-  void dataSourceIdEq_WhenDataSourceIdIsNull_ReturnsNull() {
+  void dataSourceIdEqWhenDataSourceIdIsNullReturnsNull() {
     // when
     BooleanExpression result = ProjectFilterPredicate.dataSourceIdEq(null);
 

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.elasticsearch.indexing;
 
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -33,6 +29,9 @@ import co.elastic.clients.elasticsearch.core.IndexResponse;
 @ExtendWith(MockitoExtension.class)
 class IndexDataAdapterTest {
 
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+
   @Mock private ElasticsearchClient elasticsearchClient;
 
   @Mock private ElasticLogger elasticLogger;
@@ -60,7 +59,7 @@ class IndexDataAdapterTest {
 
       // then
       then(elasticsearchClient).should().index(any(Function.class));
-      then(elasticLogger).should().logIndex("data_index", "123", "데이터셋 인덱싱 완료");
+      then(elasticLogger).should().logIndex("data_index", "1", "데이터셋 인덱싱 완료");
     }
   }
 
@@ -79,18 +78,18 @@ class IndexDataAdapterTest {
       assertThatNoException().isThrownBy(() -> adapter.index(doc));
       then(elasticLogger)
           .should()
-          .logError(eq("data_index"), eq("데이터셋 인덱싱 실패: docId=123"), any(IOException.class));
+          .logError(eq("data_index"), eq("데이터셋 인덱싱 실패: docId=1"), any(IOException.class));
     }
   }
 
   private DataSearchDocument createTestDocument() {
     return DataSearchDocument.builder()
-        .id(123L)
+        .id(1L)
         .title("Test Dataset")
         .description("Test Description")
         .topicId(1L)
         .topicLabel("Test Topic")
-        .userId(456L)
+        .userId(PROJECT_ID)
         .username("testuser")
         .userProfileImageUrl("http://example.com/profile.jpg")
         .dataSourceId(1L)

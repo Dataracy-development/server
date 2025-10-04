@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.jpa.impl.command;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -55,7 +51,7 @@ class UpdateProjectViewDbAdapterTest {
 
   @Test
   @DisplayName("단일 프로젝트 조회수 증가 성공")
-  void increaseViewCount_성공() {
+  void increaseViewCountReturnsSuccess() {
     // given
     Long projectId = 1L;
     Long count = 5L;
@@ -69,7 +65,7 @@ class UpdateProjectViewDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 증가 성공 - 여러 프로젝트")
-  void increaseViewCountBatch_성공_여러프로젝트() {
+  void increaseViewCountBatchWithMultipleProjectsReturnsSuccess() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>();
     viewCountUpdates.put(1L, 3L);
@@ -86,7 +82,7 @@ class UpdateProjectViewDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 증가 성공 - 단일 프로젝트")
-  void increaseViewCountBatch_성공_단일프로젝트() {
+  void increaseViewCountBatchWithSingleProjectReturnsSuccess() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>();
     viewCountUpdates.put(1L, 10L);
@@ -101,7 +97,7 @@ class UpdateProjectViewDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 증가 - 빈 맵으로 호출 시 아무것도 하지 않음")
-  void increaseViewCountBatch_빈맵_아무것도하지않음() {
+  void increaseViewCountBatchWithEmptyMapDoesNothing() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>(); // 빈 맵
 
@@ -115,7 +111,7 @@ class UpdateProjectViewDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 증가 성공 - null 값 포함")
-  void increaseViewCountBatch_성공_null값포함() {
+  void increaseViewCountBatchWithNullValueReturnsSuccess() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>();
     viewCountUpdates.put(1L, 3L);
@@ -132,7 +128,7 @@ class UpdateProjectViewDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 증가 성공 - 0 값 포함")
-  void increaseViewCountBatch_성공_0값포함() {
+  void increaseViewCountBatchWithZeroValueReturnsSuccess() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>();
     viewCountUpdates.put(1L, 3L);
@@ -149,7 +145,7 @@ class UpdateProjectViewDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 증가 성공 - 음수 값 포함")
-  void increaseViewCountBatch_성공_음수값포함() {
+  void increaseViewCountBatchWithNegativeValueReturnsSuccess() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>();
     viewCountUpdates.put(1L, 3L);

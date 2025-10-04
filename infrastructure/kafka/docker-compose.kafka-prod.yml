@@ -1,13 +1,13 @@
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
+    image: zookeeper:3.9
     container_name: zookeeper-prod
-    # 운영 환경에서는 포트 노출 제거 (내부 네트워크만 사용)
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper-prod:2888:3888;2181
+      ZOO_TICK_TIME: 2000
+      ZOO_INIT_LIMIT: 5
+      ZOO_SYNC_LIMIT: 2
     networks:
       - dataracy-network-prod
     deploy:
@@ -20,9 +20,8 @@ services:
           cpus: "0.25"
 
   kafka:
-    image: confluentinc/cp-kafka:7.5.0
+    image: apache/kafka:3.4.1
     container_name: kafka-prod
-    # 운영 환경에서는 포트 노출 제거 (내부 네트워크만 사용)
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-prod:2181

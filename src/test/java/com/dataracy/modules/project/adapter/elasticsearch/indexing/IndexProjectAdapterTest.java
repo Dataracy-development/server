@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.elasticsearch.indexing;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -29,6 +25,11 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 @ExtendWith(MockitoExtension.class)
 class IndexProjectAdapterTest {
 
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+  private static final Integer CURRENT_YEAR = 2024;
+  private static final Long LARGE_NUMBER = 999999L;
+
   @Mock private ElasticsearchClient elasticsearchClient;
 
   @Mock private ElasticLogger elasticLogger;
@@ -54,7 +55,7 @@ class IndexProjectAdapterTest {
 
       // then
       then(elasticsearchClient).should().index(any(Function.class));
-      then(elasticLogger).should().logIndex("project_index", "123", "프로젝트 인덱싱 완료");
+      then(elasticLogger).should().logIndex("project_index", "1", "프로젝트 인덱싱 완료");
     }
   }
 
@@ -74,7 +75,7 @@ class IndexProjectAdapterTest {
 
       // then
       then(elasticsearchClient).should().index(any(Function.class));
-      then(elasticLogger).should().logError("project_index", "프로젝트 인덱싱 실패: docId=123", ioException);
+      then(elasticLogger).should().logError("project_index", "프로젝트 인덱싱 실패: docId=1", ioException);
     }
   }
 
@@ -84,10 +85,10 @@ class IndexProjectAdapterTest {
     // given
     ProjectSearchDocument doc =
         ProjectSearchDocument.builder()
-            .id(999999L)
+            .id(LARGE_NUMBER)
             .title("Large Project")
             .content("Large project content")
-            .userId(456L)
+            .userId(PROJECT_ID)
             .username("testuser")
             .build();
 
@@ -105,10 +106,10 @@ class IndexProjectAdapterTest {
 
   private ProjectSearchDocument createTestProjectDocument() {
     return ProjectSearchDocument.builder()
-        .id(123L)
+        .id(1L)
         .title("Test Project")
         .content("Test project content")
-        .userId(456L)
+        .userId(PROJECT_ID)
         .username("testuser")
         .userProfileImageUrl("http://example.com/profile.jpg")
         .projectThumbnailUrl("http://example.com/thumb.jpg")
@@ -124,7 +125,7 @@ class IndexProjectAdapterTest {
         .viewCount(0L)
         .likeCount(0L)
         .commentCount(0L)
-        .createdAt(java.time.LocalDateTime.of(2024, 1, 1, 0, 0, 0))
+        .createdAt(java.time.LocalDateTime.of(CURRENT_YEAR, 1, 1, 0, 0, 0))
         .build();
   }
 }

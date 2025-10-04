@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.application.port.in.query.read;
 
 import com.dataracy.modules.dataset.application.dto.response.read.DataDetailResponse;

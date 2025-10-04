@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +11,9 @@ import org.junit.jupiter.api.Test;
 
 /** Data 도메인 모델 테스트 */
 class DataTest {
+
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
 
   @Test
   @DisplayName("기본 생성자로 Data 인스턴스 생성")
@@ -80,8 +79,8 @@ class DataTest {
   @DisplayName("Data 빌더 패턴으로 인스턴스 생성")
   void createDataWithBuilder() {
     // given
-    LocalDate startDate = LocalDate.of(2024, 1, 1);
-    LocalDate endDate = LocalDate.of(2024, 12, 31);
+    LocalDate startDate = LocalDate.of(CURRENT_YEAR, 1, 1);
+    LocalDate endDate = LocalDate.of(CURRENT_YEAR, 12, 31);
     LocalDateTime createdAt = LocalDateTime.now();
     DataMetadata metadata = DataMetadata.of(2L, 2000, 20, "{\"preview\": \"빌더 데이터 미리보기\"}");
 

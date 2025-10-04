@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +11,7 @@ class EmailContentTest {
 
   @Test
   @DisplayName("EmailContent record 생성 및 속성 확인")
-  void emailContent_ShouldCreateCorrectly() {
+  void emailContentShouldCreateCorrectly() {
     // Given
     String subject = "테스트 이메일";
     String content = "이것은 테스트 이메일 내용입니다.";
@@ -31,7 +27,7 @@ class EmailContentTest {
 
   @Test
   @DisplayName("EmailContent record equals 및 hashCode 테스트")
-  void emailContent_ShouldHaveCorrectEqualsAndHashCode() {
+  void emailContentShouldHaveCorrectEqualsAndHashCode() {
     // Given
     EmailContent emailContent1 = new EmailContent("제목", "내용");
     EmailContent emailContent2 = new EmailContent("제목", "내용");
@@ -46,20 +42,20 @@ class EmailContentTest {
 
   @Test
   @DisplayName("EmailContent record toString 테스트")
-  void emailContent_ShouldHaveCorrectToString() {
+  void emailContentShouldHaveCorrectToString() {
     // Given
-    EmailContent emailContent = new EmailContent("인증 이메일", "인증 코드: 123456");
+    EmailContent emailContent = new EmailContent("인증 이메일", "인증 코드: 1456");
 
     // When
     String toString = emailContent.toString();
 
     // Then
-    assertThat(toString).contains("EmailContent").contains("인증 이메일").contains("인증 코드: 123456");
+    assertThat(toString).contains("EmailContent").contains("인증 이메일").contains("인증 코드: 1456");
   }
 
   @Test
   @DisplayName("EmailContent record - null 값 처리")
-  void emailContent_ShouldHandleNullValues() {
+  void emailContentShouldHandleNullValues() {
     // Given & When
     EmailContent emailContent = new EmailContent(null, null);
 
@@ -71,7 +67,7 @@ class EmailContentTest {
 
   @Test
   @DisplayName("EmailContent record - 다양한 이메일 타입들 테스트")
-  void emailContent_ShouldHandleVariousEmailTypes() {
+  void emailContentShouldHandleVariousEmailTypes() {
     // Given & When
     EmailContent welcomeEmail = new EmailContent("환영합니다", "회원가입을 환영합니다.");
     EmailContent passwordResetEmail = new EmailContent("비밀번호 재설정", "비밀번호를 재설정해주세요.");
@@ -89,7 +85,7 @@ class EmailContentTest {
 
   @Test
   @DisplayName("EmailContent record - 빈 문자열 처리")
-  void emailContent_ShouldHandleEmptyStrings() {
+  void emailContentShouldHandleEmptyStrings() {
     // Given & When
     EmailContent emailContent = new EmailContent("", "");
 

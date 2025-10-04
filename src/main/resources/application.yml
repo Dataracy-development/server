@@ -69,6 +69,10 @@ spring:
       partitioner.class: org.apache.kafka.clients.producer.internals.DefaultPartitioner
       # 토픽 자동 생성 활성화
       auto.create.topics.enable: true
+      # 연결 안정성 개선
+      connections.max.idle.ms: 540000
+      request.timeout.ms: 30000
+      retry.backoff.ms: 1000
 
     producer:
       acks: all
@@ -109,7 +113,22 @@ spring:
 
       properties:
         fetch.max.bytes: 5242880 # 5MB
-        max-poll-records: 500 # 한 번에 가져올 레코드 수
+        max.poll.records: 500 # 한 번에 가져올 레코드 수
+        # 연결 안정성 개선
+        session.timeout.ms: 30000
+        heartbeat.interval.ms: 3000
+        max.poll.interval.ms: 300000
+        request.timeout.ms: 30000
+        retry.backoff.ms: 1000
+        # Confluent Platform 7.3.0 호환 설정
+        inter.broker.protocol.version: 3.3-IV1
+        log.message.format.version: 3.0-IV1
+        # API 버전 호환성 강제 설정
+        api.version.request: false
+        api.version.fallback.ms: 0
+        # 네트워크 설정 최적화
+        socket.connection.setup.timeout.ms: 10000
+        socket.connection.setup.timeout.max.ms: 30000
 
       behavior-log:
         topic: behavior-logs

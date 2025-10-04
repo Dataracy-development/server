@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.adapter.jpa.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,18 +28,23 @@ import com.dataracy.modules.like.domain.model.Like;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class LikeCommandAdapterTest {
 
-  @Mock LikeJpaRepository likeJpaRepository;
+  // Test constants
+  private static final Long EIGHTY_EIGHT = 88L;
+  private static final Long TEST_ID = EIGHTY_EIGHT;
+  private static final Integer CURRENT_YEAR = 2024;
 
-  @InjectMocks LikeCommandAdapter adapter;
+  @Mock private LikeJpaRepository likeJpaRepository;
 
-  @Captor ArgumentCaptor<LikeEntity> entityCaptor;
+  @InjectMocks private LikeCommandAdapter adapter;
+
+  @Captor private ArgumentCaptor<LikeEntity> entityCaptor;
 
   @Test
   @DisplayName("저장 성공")
   void saveLike() {
     // given
-    Like like = Like.of(null, 88L, TargetType.PROJECT, 100L);
-    LikeEntity entity = LikeEntity.of(88L, TargetType.PROJECT, 100L);
+    Like like = Like.of(null, TEST_ID, TargetType.PROJECT, 100L);
+    LikeEntity entity = LikeEntity.of(TEST_ID, TargetType.PROJECT, 100L);
     given(likeJpaRepository.save(any(LikeEntity.class))).willReturn(entity);
 
     // when
@@ -53,7 +54,7 @@ class LikeCommandAdapterTest {
     then(likeJpaRepository).should().save(entityCaptor.capture());
     LikeEntity saved = entityCaptor.getValue();
     assertAll(
-        () -> assertThat(saved.getTargetId()).isEqualTo(88L),
+        () -> assertThat(saved.getTargetId()).isEqualTo(TEST_ID),
         () -> assertThat(saved.getTargetType()).isEqualTo(TargetType.PROJECT),
         () -> assertThat(saved.getUserId()).isEqualTo(100L));
   }

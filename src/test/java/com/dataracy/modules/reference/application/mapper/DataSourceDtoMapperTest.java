@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.application.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,11 +15,14 @@ import com.dataracy.modules.reference.domain.model.DataSource;
 @DisplayName("DataSourceDtoMapper 테스트")
 class DataSourceDtoMapperTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   private final DataSourceDtoMapper mapper = new DataSourceDtoMapper();
 
   @Test
   @DisplayName("단일 DataSource를 DataSourceResponse로 변환 성공")
-  void toResponseDto_ShouldConvertSingleDataSource() {
+  void toResponseDtoShouldConvertSingleDataSource() {
     // Given
     DataSource dataSource = new DataSource(1L, "government", "정부 기관");
 
@@ -40,7 +39,7 @@ class DataSourceDtoMapperTest {
 
   @Test
   @DisplayName("DataSource 리스트를 AllDataSourcesResponse로 변환 성공")
-  void toResponseDto_ShouldConvertDataSourceList() {
+  void toResponseDtoShouldConvertDataSourceList() {
     // Given
     DataSource dataSource1 = new DataSource(1L, "government", "정부 기관");
     DataSource dataSource2 = new DataSource(2L, "private", "민간 기업");
@@ -61,7 +60,7 @@ class DataSourceDtoMapperTest {
 
   @Test
   @DisplayName("빈 DataSource 리스트를 AllDataSourcesResponse로 변환 성공")
-  void toResponseDto_ShouldConvertEmptyDataSourceList() {
+  void toResponseDtoShouldConvertEmptyDataSourceList() {
     // Given
     List<DataSource> dataSources = List.of();
 

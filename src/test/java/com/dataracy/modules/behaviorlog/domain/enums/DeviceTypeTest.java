@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.behaviorlog.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +11,7 @@ class DeviceTypeTest {
 
   @Test
   @DisplayName("DeviceType enum 값들 확인")
-  void deviceType_ShouldHaveCorrectValues() {
+  void deviceTypeShouldHaveCorrectValues() {
     // Given & When & Then
     assertThat(DeviceType.values()).hasSize(4);
 
@@ -28,7 +24,7 @@ class DeviceTypeTest {
 
   @Test
   @DisplayName("DeviceType name() 메서드 테스트")
-  void deviceType_ShouldHaveCorrectNames() {
+  void deviceTypeShouldHaveCorrectNames() {
     // Given & When & Then
     assertAll(
         () -> assertThat(DeviceType.PC.name()).isEqualTo("PC"),
@@ -39,7 +35,7 @@ class DeviceTypeTest {
 
   @Test
   @DisplayName("DeviceType valueOf() 메서드 테스트")
-  void deviceType_ShouldParseFromString() {
+  void deviceTypeShouldParseFromString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(DeviceType.valueOf("PC")).isEqualTo(DeviceType.PC),
@@ -50,7 +46,7 @@ class DeviceTypeTest {
 
   @Test
   @DisplayName("DeviceType ordinal() 메서드 테스트")
-  void deviceType_ShouldHaveCorrectOrdinals() {
+  void deviceTypeShouldHaveCorrectOrdinals() {
     // Given & When & Then
     assertAll(
         () -> assertThat(DeviceType.PC.ordinal()).isZero(),
@@ -61,7 +57,7 @@ class DeviceTypeTest {
 
   @Test
   @DisplayName("DeviceType toString() 메서드 테스트")
-  void deviceType_ShouldHaveCorrectToString() {
+  void deviceTypeShouldHaveCorrectToString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(DeviceType.PC).hasToString("PC"),
@@ -72,7 +68,7 @@ class DeviceTypeTest {
 
   @Test
   @DisplayName("DeviceType resolve() 메서드 테스트")
-  void deviceType_ShouldResolveFromUserAgent() {
+  void deviceTypeShouldResolveFromUserAgent() {
     // Given & When & Then
     assertAll(
         () -> assertThat(DeviceType.resolve(null)).isEqualTo(DeviceType.UNKNOWN),

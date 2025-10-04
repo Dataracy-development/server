@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +23,7 @@ class RoleTypeTest {
     "role_anonymous, ROLE_ANONYMOUS"
   })
   @DisplayName("of - 문자열로 해당 enum을 반환한다")
-  void of_WhenValidString_ReturnsCorrespondingEnum(String input, String expectedEnumName) {
+  void ofWhenValidStringReturnsCorrespondingEnum(String input, String expectedEnumName) {
     // when
     RoleType result = RoleType.of(input);
 
@@ -38,7 +34,7 @@ class RoleTypeTest {
   @ParameterizedTest(name = "of - {0}로 UserException이 발생한다")
   @CsvSource({"INVALID, 'INVALID'", "null, null", "'', ''"})
   @DisplayName("of - 잘못된 입력으로 UserException이 발생한다")
-  void of_WhenInvalidInput_ThrowsUserException(String input, String expectedInput) {
+  void ofWhenInvalidInputThrowsUserException(String input, String expectedInput) {
     // when & then
     String actualInput = "null".equals(input) ? null : input;
     UserException exception =
@@ -50,7 +46,7 @@ class RoleTypeTest {
 
   @Test
   @DisplayName("getValue - ROLE_USER의 value를 반환한다")
-  void getValue_WhenRoleUser_ReturnsRoleUserValue() {
+  void getValueWhenRoleUserReturnsRoleUserValue() {
     // when
     String result = RoleType.ROLE_USER.getValue();
 
@@ -60,7 +56,7 @@ class RoleTypeTest {
 
   @Test
   @DisplayName("getValue - ROLE_ADMIN의 value를 반환한다")
-  void getValue_WhenRoleAdmin_ReturnsRoleAdminValue() {
+  void getValueWhenRoleAdminReturnsRoleAdminValue() {
     // when
     String result = RoleType.ROLE_ADMIN.getValue();
 
@@ -70,7 +66,7 @@ class RoleTypeTest {
 
   @Test
   @DisplayName("getValue - ROLE_ANONYMOUS의 value를 반환한다")
-  void getValue_WhenRoleAnonymous_ReturnsRoleAnonymousValue() {
+  void getValueWhenRoleAnonymousReturnsRoleAnonymousValue() {
     // when
     String result = RoleType.ROLE_ANONYMOUS.getValue();
 
@@ -80,7 +76,7 @@ class RoleTypeTest {
 
   @Test
   @DisplayName("values - 모든 enum 값들을 반환한다")
-  void values_ReturnsAllEnumValues() {
+  void valuesReturnsAllEnumValues() {
     // when
     RoleType[] values = RoleType.values();
 
@@ -92,7 +88,7 @@ class RoleTypeTest {
 
   @Test
   @DisplayName("valueOf - ROLE_USER 문자열로 ROLE_USER enum을 반환한다")
-  void valueOf_WhenRoleUserString_ReturnsRoleUserEnum() {
+  void valueOfWhenRoleUserStringReturnsRoleUserEnum() {
     // when
     RoleType result = RoleType.valueOf("ROLE_USER");
 
@@ -102,7 +98,7 @@ class RoleTypeTest {
 
   @Test
   @DisplayName("valueOf - ROLE_ADMIN 문자열로 ROLE_ADMIN enum을 반환한다")
-  void valueOf_WhenRoleAdminString_ReturnsRoleAdminEnum() {
+  void valueOfWhenRoleAdminStringReturnsRoleAdminEnum() {
     // when
     RoleType result = RoleType.valueOf("ROLE_ADMIN");
 

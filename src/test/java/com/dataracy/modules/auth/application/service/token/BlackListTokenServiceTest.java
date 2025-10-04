@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.application.service.token;
 
 import static org.mockito.BDDMockito.then;
@@ -22,6 +18,11 @@ import com.dataracy.modules.auth.application.port.out.token.BlackListTokenPort;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class BlackListTokenServiceTest {
 
+  // Test constants
+  private static final Long THIRTY_MINUTES_IN_MILLIS = 1800000L;
+  private static final Long ONE_HOUR_IN_MILLIS = 3600000L;
+  private static final Long TWO_HOURS_IN_MILLIS = 7200000L;
+
   @Mock private BlackListTokenPort blackListTokenPort;
 
   private BlackListTokenService blackListTokenService;
@@ -37,10 +38,10 @@ class BlackListTokenServiceTest {
 
     @Test
     @DisplayName("성공: 토큰을 블랙리스트에 추가")
-    void addToBlackList_정상토큰_블랙리스트추가() {
+    void addToBlackListWithNormalTokenSuccess() {
       // given
       String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
-      long expirationMillis = 3600000L; // 1시간
+      long expirationMillis = ONE_HOUR_IN_MILLIS; // 1시간
 
       // when
       blackListTokenService.addToBlackList(token, expirationMillis);
@@ -51,11 +52,11 @@ class BlackListTokenServiceTest {
 
     @Test
     @DisplayName("성공: 긴 토큰도 정상 처리")
-    void addToBlackList_긴토큰_정상처리() {
+    void addToBlackListWithLongTokenSuccess() {
       // given
       String longToken =
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-      long expirationMillis = 7200000L; // 2시간
+      long expirationMillis = TWO_HOURS_IN_MILLIS;
 
       // when
       blackListTokenService.addToBlackList(longToken, expirationMillis);
@@ -66,10 +67,10 @@ class BlackListTokenServiceTest {
 
     @Test
     @DisplayName("성공: 빈 토큰도 처리")
-    void addToBlackList_빈토큰_처리() {
+    void addToBlackListWithEmptyTokenSuccess() {
       // given
       String emptyToken = "";
-      long expirationMillis = 1800000L; // 30분
+      long expirationMillis = THIRTY_MINUTES_IN_MILLIS; // 30분
 
       // when
       blackListTokenService.addToBlackList(emptyToken, expirationMillis);
@@ -85,7 +86,7 @@ class BlackListTokenServiceTest {
 
     @Test
     @DisplayName("성공: 블랙리스트에 있는 토큰 확인")
-    void isBlacklisted_블랙리스트토큰_true반환() {
+    void isBlacklistedWithBlacklistedTokenReturnsTrue() {
       // given
       String token = "blacklisted-token";
 
@@ -98,7 +99,7 @@ class BlackListTokenServiceTest {
 
     @Test
     @DisplayName("성공: 일반 토큰 확인")
-    void isBlacklisted_일반토큰_확인() {
+    void isBlacklistedWithNormalTokenReturnsFalse() {
       // given
       String token = "normal-token";
 

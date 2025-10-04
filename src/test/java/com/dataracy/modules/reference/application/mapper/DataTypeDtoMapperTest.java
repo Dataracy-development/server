@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.application.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +19,7 @@ class DataTypeDtoMapperTest {
 
   @Test
   @DisplayName("단일 DataType을 DataTypeResponse로 변환 성공")
-  void toResponseDto_ShouldConvertSingleDataType() {
+  void toResponseDtoShouldConvertSingleDataType() {
     // Given
     DataType dataType = new DataType(1L, "csv", "CSV 파일");
 
@@ -40,7 +36,7 @@ class DataTypeDtoMapperTest {
 
   @Test
   @DisplayName("DataType 리스트를 AllDataTypesResponse로 변환 성공")
-  void toResponseDto_ShouldConvertDataTypeList() {
+  void toResponseDtoShouldConvertDataTypeList() {
     // Given
     DataType dataType1 = new DataType(1L, "csv", "CSV 파일");
     DataType dataType2 = new DataType(2L, "json", "JSON 파일");
@@ -61,7 +57,7 @@ class DataTypeDtoMapperTest {
 
   @Test
   @DisplayName("빈 DataType 리스트를 AllDataTypesResponse로 변환 성공")
-  void toResponseDto_ShouldConvertEmptyDataTypeList() {
+  void toResponseDtoShouldConvertEmptyDataTypeList() {
     // Given
     List<DataType> dataTypes = List.of();
 

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.dto.request;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;

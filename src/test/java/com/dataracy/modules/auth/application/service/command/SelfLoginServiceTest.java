@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.application.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +39,9 @@ import com.dataracy.modules.user.domain.status.UserErrorStatus;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class SelfLoginServiceTest {
 
+  // Test constants
+  private static final Long TWO_WEEKS_IN_MILLIS = 1209600000L;
+
   @Mock private JwtGeneratorPort jwtGeneratorPort;
 
   @Mock private JwtValidatorPort jwtValidatorPort;
@@ -58,7 +57,7 @@ class SelfLoginServiceTest {
 
   @BeforeEach
   void setup() {
-    jwtProperties.setRefreshTokenExpirationTime(1_209_600_000L);
+    jwtProperties.setRefreshTokenExpirationTime(TWO_WEEKS_IN_MILLIS);
   }
 
   private UserInfo dummyUserInfo(Long id, String email, RoleType role) {
@@ -83,12 +82,10 @@ class SelfLoginServiceTest {
     @DisplayName("이메일/비밀번호 맞으면 RefreshTokenResponse 반환")
     void loginSuccess() {
       // given
-      SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password123@");
+      SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password1@");
       UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
 
-      given(
-              isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo(
-                  "test@email.com", "password123@"))
+      given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "password1@"))
           .willReturn(userInfo);
       given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
           .willReturn("issued-refresh");
@@ -99,7 +96,7 @@ class SelfLoginServiceTest {
       // then
       assertAll(
           () -> assertThat(res.refreshToken()).isEqualTo("issued-refresh"),
-          () -> assertThat(res.refreshTokenExpiration()).isEqualTo(1209600000L));
+          () -> assertThat(res.refreshTokenExpiration()).isEqualTo(TWO_WEEKS_IN_MILLIS));
 
       then(manageRefreshTokenPort).should().saveRefreshToken("1", "issued-refresh");
     }
@@ -122,12 +119,10 @@ class SelfLoginServiceTest {
     @DisplayName("RefreshToken 발급 실패 → FAILED_GENERATE_REFRESH_TOKEN 발생")
     void loginTokenFail() {
       // given
-      SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password123@");
+      SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password1@");
       UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
 
-      given(
-              isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo(
-                  "test@email.com", "password123@"))
+      given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "password1@"))
           .willReturn(userInfo);
       given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
           .willThrow(new AuthException(AuthErrorStatus.FAILED_GENERATE_REFRESH_TOKEN));
@@ -141,12 +136,10 @@ class SelfLoginServiceTest {
     @DisplayName("로그인 (Redis 저장 실패) - Redis 연결 장애 → REDIS_CONNECTION_FAILURE 발생")
     void loginSaveRedisConnectionError() {
       // given
-      SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password123@");
+      SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password1@");
       UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
 
-      given(
-              isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo(
-                  "test@email.com", "password123@"))
+      given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "password1@"))
           .willReturn(userInfo);
       given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
           .willReturn("issued-refresh");
@@ -164,12 +157,10 @@ class SelfLoginServiceTest {
     @DisplayName("로그인 (Redis 저장 실패) - 네트워크 장애 → DATA_ACCESS_EXCEPTION 발생")
     void loginSaveDataAccessError() {
       // given
-      SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password123@");
+      SelfLoginRequest request = new SelfLoginRequest("test@email.com", "password1@");
       UserInfo userInfo = dummyUserInfo(1L, "test@email.com", RoleType.ROLE_USER);
 
-      given(
-              isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo(
-                  "test@email.com", "password123@"))
+      given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@email.com", "password1@"))
           .willReturn(userInfo);
       given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
           .willReturn("issued-refresh");

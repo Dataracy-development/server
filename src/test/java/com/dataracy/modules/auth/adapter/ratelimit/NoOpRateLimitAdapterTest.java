@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.ratelimit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +30,7 @@ class NoOpRateLimitAdapterTest {
     "192.168.1.1, 5, -1" // 음수 windowMinutes
   })
   @DisplayName("isAllowed - 모든 입력에 대해 항상 true를 반환한다")
-  void isAllowed_AlwaysReturnsTrue(String key, int maxRequests, int windowMinutes) {
+  void isAllowedAlwaysReturnsTrue(String key, int maxRequests, int windowMinutes) {
     // when
     boolean result = noOpRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
 
@@ -51,7 +47,7 @@ class NoOpRateLimitAdapterTest {
     "192.168.1.1, -1" // 음수 incrementBy
   })
   @DisplayName("incrementRequestCount - 모든 입력에 대해 예외 없이 실행된다")
-  void incrementRequestCount_DoesNothing(String key, int incrementBy) {
+  void incrementRequestCountDoesNothing(String key, int incrementBy) {
     // when & then
     thenCode(() -> noOpRateLimitAdapter.incrementRequestCount(key, incrementBy))
         .doesNotThrowAnyException();
@@ -59,7 +55,7 @@ class NoOpRateLimitAdapterTest {
 
   @Test
   @DisplayName("isAllowed - 여러 번 호출해도 항상 true를 반환한다")
-  void isAllowed_MultipleCalls_AlwaysReturnsTrue() {
+  void isAllowedMultipleCallsAlwaysReturnsTrue() {
     // given
     String key = "192.168.1.1";
     int maxRequests = 1;

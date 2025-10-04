@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.application.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,20 +42,20 @@ class EmailVerifyServiceTest {
     void successPasswordSearch() {
       // given
       String email = "a@ex.com";
-      String inputCode = "123456";
+      String inputCode = "1456";
 
       given(manageEmailCodePort.verifyCode(email, inputCode, EmailVerificationType.PASSWORD_SEARCH))
           .willReturn(inputCode);
-      given(jwtGenerateUseCase.generateResetPasswordToken(email)).willReturn("jwt-token-123");
+      given(jwtGenerateUseCase.generateResetPasswordToken(email)).willReturn("jwt-token-1");
 
       // when
       GetResetTokenResponse res =
           service.verifyCode(email, inputCode, EmailVerificationType.PASSWORD_SEARCH);
 
       // then
-      assertThat(res.resetToken()).isEqualTo("jwt-token-123");
+      assertThat(res.resetToken()).isEqualTo("jwt-token-1");
       then(manageEmailCodePort).should().deleteCode(email, EmailVerificationType.PASSWORD_SEARCH);
-      then(manageResetTokenUseCase).should().saveResetToken("jwt-token-123");
+      then(manageResetTokenUseCase).should().saveResetToken("jwt-token-1");
     }
 
     @Test

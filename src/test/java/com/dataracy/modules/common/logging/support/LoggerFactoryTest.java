@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.logging.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +18,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("ApiLogger 싱글톤 인스턴스 반환")
-    void api_ApiLogger싱글톤인스턴스반환() {
+    void apiApiLoggerReturnsSingletonInstance() {
       // when
       ApiLogger logger1 = LoggerFactory.api();
       ApiLogger logger2 = LoggerFactory.api();
@@ -41,7 +37,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("ServiceLogger 싱글톤 인스턴스 반환")
-    void service_ServiceLogger싱글톤인스턴스반환() {
+    void serviceServiceLoggerReturnsSingletonInstance() {
       // when
       ServiceLogger logger1 = LoggerFactory.service();
       ServiceLogger logger2 = LoggerFactory.service();
@@ -60,7 +56,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("DomainLogger 싱글톤 인스턴스 반환")
-    void domain_DomainLogger싱글톤인스턴스반환() {
+    void domainDomainLoggerReturnsSingletonInstance() {
       // when
       DomainLogger logger1 = LoggerFactory.domain();
       DomainLogger logger2 = LoggerFactory.domain();
@@ -79,7 +75,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("PersistenceLogger 싱글톤 인스턴스 반환")
-    void persistence_PersistenceLogger싱글톤인스턴스반환() {
+    void persistencePersistenceLoggerReturnsSingletonInstance() {
       // when
       PersistenceLogger logger1 = LoggerFactory.db();
       PersistenceLogger logger2 = LoggerFactory.db();
@@ -98,7 +94,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("QueryDslLogger 싱글톤 인스턴스 반환")
-    void queryDsl_QueryDslLogger싱글톤인스턴스반환() {
+    void queryDslQueryDslLoggerReturnsSingletonInstance() {
       // when
       QueryDslLogger logger1 = LoggerFactory.query();
       QueryDslLogger logger2 = LoggerFactory.query();
@@ -117,7 +113,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("KafkaLogger 싱글톤 인스턴스 반환")
-    void kafka_KafkaLogger싱글톤인스턴스반환() {
+    void kafkaKafkaLoggerReturnsSingletonInstance() {
       // when
       KafkaLogger logger1 = LoggerFactory.kafka();
       KafkaLogger logger2 = LoggerFactory.kafka();
@@ -136,7 +132,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("ElasticLogger 싱글톤 인스턴스 반환")
-    void elastic_ElasticLogger싱글톤인스턴스반환() {
+    void elasticElasticLoggerReturnsSingletonInstance() {
       // when
       ElasticLogger logger1 = LoggerFactory.elastic();
       ElasticLogger logger2 = LoggerFactory.elastic();
@@ -155,7 +151,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("RedisLogger 싱글톤 인스턴스 반환")
-    void redis_RedisLogger싱글톤인스턴스반환() {
+    void redisRedisLoggerReturnsSingletonInstance() {
       // when
       RedisLogger logger1 = LoggerFactory.redis();
       RedisLogger logger2 = LoggerFactory.redis();
@@ -174,7 +170,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("SchedulerLogger 싱글톤 인스턴스 반환")
-    void scheduler_SchedulerLogger싱글톤인스턴스반환() {
+    void schedulerSchedulerLoggerReturnsSingletonInstance() {
       // when
       SchedulerLogger logger1 = LoggerFactory.scheduler();
       SchedulerLogger logger2 = LoggerFactory.scheduler();
@@ -193,7 +189,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("DistributedLockLogger 싱글톤 인스턴스 반환")
-    void distributedLock_DistributedLockLogger싱글톤인스턴스반환() {
+    void distributedLockDistributedLockLoggerReturnsSingletonInstance() {
       // when
       DistributedLockLogger logger1 = LoggerFactory.lock();
       DistributedLockLogger logger2 = LoggerFactory.lock();
@@ -212,7 +208,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("CommonLogger 싱글톤 인스턴스 반환")
-    void common_CommonLogger싱글톤인스턴스반환() {
+    void commonCommonLoggerReturnsSingletonInstance() {
       // when
       CommonLogger logger1 = LoggerFactory.common();
       CommonLogger logger2 = LoggerFactory.common();
@@ -231,7 +227,7 @@ class LoggerFactoryTest {
 
     @Test
     @DisplayName("모든 로거가 정상적으로 생성되는지 확인")
-    void 모든로거_정상생성확인() {
+    void allLoggersAreCreatedSuccessfully() {
       // when
       ApiLogger apiLogger = LoggerFactory.api();
       ServiceLogger serviceLogger = LoggerFactory.service();

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.jpa.impl.command;
 
 import static org.mockito.BDDMockito.*;
@@ -28,6 +24,9 @@ import com.dataracy.modules.project.adapter.jpa.repository.ProjectEsProjectionTa
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ManageProjectEsProjectionTaskDbAdapterTest {
 
+  // Test constants
+  private static final Integer NEGATIVE_THREE = -3;
+
   @InjectMocks
   private ManageProjectEsProjectionTaskDbAdapter manageProjectEsProjectionTaskDbAdapter;
 
@@ -44,7 +43,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("댓글 델타 큐잇 성공")
-  void enqueueCommentDelta_성공() {
+  void enqueueCommentDeltaReturnsSuccess() {
     // given
     Long projectId = 1L;
     int deltaComment = 5;
@@ -58,10 +57,10 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("댓글 델타 큐잇 성공 - 음수 값")
-  void enqueueCommentDelta_성공_음수값() {
+  void enqueueCommentDeltaWithNegativeValueReturnsSuccess() {
     // given
     Long projectId = 1L;
-    int deltaComment = -3; // 댓글 삭제
+    int deltaComment = NEGATIVE_THREE; // 댓글 삭제
 
     // when
     manageProjectEsProjectionTaskDbAdapter.enqueueCommentDelta(projectId, deltaComment);
@@ -72,7 +71,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("좋아요 델타 큐잇 성공")
-  void enqueueLikeDelta_성공() {
+  void enqueueLikeDeltaReturnsSuccess() {
     // given
     Long projectId = 1L;
     int deltaLike = 1;
@@ -86,7 +85,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("좋아요 델타 큐잇 성공 - 음수 값")
-  void enqueueLikeDelta_성공_음수값() {
+  void enqueueLikeDeltaWithNegativeValueReturnsSuccess() {
     // given
     Long projectId = 1L;
     int deltaLike = -1; // 좋아요 취소
@@ -100,7 +99,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("조회수 델타 큐잇 성공")
-  void enqueueViewDelta_성공() {
+  void enqueueViewDeltaReturnsSuccess() {
     // given
     Long projectId = 1L;
     Long deltaView = 10L;
@@ -114,7 +113,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("조회수 델타 큐잇 성공 - 0 값")
-  void enqueueViewDelta_성공_0값() {
+  void enqueueViewDeltaWithZeroValueReturnsSuccess() {
     // given
     Long projectId = 1L;
     Long deltaView = 0L;
@@ -128,7 +127,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("삭제 상태 설정 큐잇 성공 - 삭제")
-  void enqueueSetDeleted_성공_삭제() {
+  void enqueueSetDeletedForDeletionReturnsSuccess() {
     // given
     Long projectId = 1L;
     boolean deleted = true;
@@ -142,7 +141,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("삭제 상태 설정 큐잇 성공 - 복원")
-  void enqueueSetDeleted_성공_복원() {
+  void enqueueSetDeletedForRestorationReturnsSuccess() {
     // given
     Long projectId = 1L;
     boolean deleted = false;
@@ -156,7 +155,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("프로젝션 작업 삭제 성공")
-  void delete_성공() {
+  void deleteReturnsSuccess() {
     // given
     Long projectEsProjectionTaskId = 1L;
 
@@ -169,7 +168,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 델타 큐잇 성공 - 여러 프로젝트")
-  void enqueueViewDeltaBatch_성공_여러프로젝트() {
+  void enqueueViewDeltaBatchWithMultipleProjectsReturnsSuccess() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>();
     viewCountUpdates.put(1L, 5L);
@@ -185,7 +184,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 델타 큐잇 성공 - 단일 프로젝트")
-  void enqueueViewDeltaBatch_성공_단일프로젝트() {
+  void enqueueViewDeltaBatchWithSingleProjectReturnsSuccess() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>();
     viewCountUpdates.put(1L, 7L);
@@ -199,7 +198,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 델타 큐잇 - 빈 맵으로 호출 시 아무것도 하지 않음")
-  void enqueueViewDeltaBatch_빈맵_아무것도하지않음() {
+  void enqueueViewDeltaBatchWithEmptyMapDoesNothing() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>(); // 빈 맵
 
@@ -212,7 +211,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 델타 큐잇 성공 - null 값 포함")
-  void enqueueViewDeltaBatch_성공_null값포함() {
+  void enqueueViewDeltaBatchWithNullValueReturnsSuccess() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>();
     viewCountUpdates.put(1L, 5L);
@@ -228,7 +227,7 @@ class ManageProjectEsProjectionTaskDbAdapterTest {
 
   @Test
   @DisplayName("배치 조회수 델타 큐잇 성공 - 0 값 포함")
-  void enqueueViewDeltaBatch_성공_0값포함() {
+  void enqueueViewDeltaBatchWithZeroValueReturnsSuccess() {
     // given
     Map<Long, Long> viewCountUpdates = new HashMap<>();
     viewCountUpdates.put(1L, 5L);

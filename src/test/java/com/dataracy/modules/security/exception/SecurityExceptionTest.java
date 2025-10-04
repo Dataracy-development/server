@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.security.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,9 +12,12 @@ import com.dataracy.modules.common.status.BaseErrorCode;
 @DisplayName("SecurityException 테스트")
 class SecurityExceptionTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("SecurityException 생성 및 속성 확인")
-  void securityException_ShouldHaveCorrectProperties() {
+  void securityExceptionShouldHaveCorrectProperties() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {
@@ -51,7 +50,7 @@ class SecurityExceptionTest {
 
   @Test
   @DisplayName("SecurityException은 BusinessException을 상속받는다")
-  void securityException_ShouldExtendBusinessException() {
+  void securityExceptionShouldExtendBusinessException() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {

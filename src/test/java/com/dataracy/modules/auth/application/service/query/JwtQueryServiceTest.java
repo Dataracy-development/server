@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.application.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +26,10 @@ import com.dataracy.modules.user.domain.enums.RoleType;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class JwtQueryServiceTest {
+
+  // Test constants
+  private static final Long ONE_HOUR_IN_MILLIS = 3600000L;
+  private static final Long ONE_WEEK_IN_MILLIS = 604800000L;
 
   @Mock private JwtValidatorPort jwtValidatorPort;
 
@@ -132,7 +132,7 @@ class JwtQueryServiceTest {
     void success() {
       // given
       String token = "valid.jwt.token";
-      Long expectedUserId = 123L;
+      Long expectedUserId = 1L;
       given(jwtValidatorPort.getUserIdFromToken(token)).willReturn(expectedUserId);
 
       // when
@@ -215,7 +215,7 @@ class JwtQueryServiceTest {
     @DisplayName("Access Token 만료 시간 조회 성공")
     void getAccessTokenExpirationTimeSuccess() {
       // given
-      long expectedExpirationTime = 3600000L; // 1 hour
+      long expectedExpirationTime = ONE_HOUR_IN_MILLIS; // 1 hour
       given(jwtProperties.getAccessTokenExpirationTime()).willReturn(expectedExpirationTime);
 
       // when
@@ -239,7 +239,7 @@ class JwtQueryServiceTest {
     @DisplayName("Refresh Token 만료 시간 조회 성공")
     void getRefreshTokenExpirationTimeSuccess() {
       // given
-      long expectedExpirationTime = 604800000L; // 7 days
+      long expectedExpirationTime = ONE_WEEK_IN_MILLIS; // 7 days
       given(jwtProperties.getRefreshTokenExpirationTime()).willReturn(expectedExpirationTime);
 
       // when

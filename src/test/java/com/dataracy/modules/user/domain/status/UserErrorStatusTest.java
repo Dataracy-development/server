@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.domain.status;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +23,7 @@ class UserErrorStatusTest {
 
   @Test
   @DisplayName("비밀번호 변경 불가(소셜 계정) 상태")
-  void forbiddenChangePassword_social() {
+  void forbiddenChangePasswordsocial() {
     assertAll(
         () ->
             assertThat(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO.getHttpStatus())

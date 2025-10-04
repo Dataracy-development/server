@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.adapter.web.mapper.signup;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,13 +20,13 @@ class UserSignUpWebMapperTest {
 
   @Test
   @DisplayName("SelfSignUpWebRequest를 SelfSignUpRequest로 변환 성공")
-  void toApplicationDto_ShouldConvertSelfSignUpRequest() {
+  void toApplicationDtoShouldConvertSelfSignUpRequest() {
     // Given
     SelfSignUpWebRequest webRequest =
         new SelfSignUpWebRequest(
             "test@example.com",
-            "password123",
-            "password123",
+            "password1",
+            "password1",
             "testuser",
             1L,
             2L,
@@ -45,8 +41,8 @@ class UserSignUpWebMapperTest {
     assertAll(
         () -> assertThat(applicationRequest).isNotNull(),
         () -> assertThat(applicationRequest.email()).isEqualTo("test@example.com"),
-        () -> assertThat(applicationRequest.password()).isEqualTo("password123"),
-        () -> assertThat(applicationRequest.passwordConfirm()).isEqualTo("password123"),
+        () -> assertThat(applicationRequest.password()).isEqualTo("password1"),
+        () -> assertThat(applicationRequest.passwordConfirm()).isEqualTo("password1"),
         () -> assertThat(applicationRequest.nickname()).isEqualTo("testuser"),
         () -> assertThat(applicationRequest.authorLevelId()).isEqualTo(1L),
         () -> assertThat(applicationRequest.occupationId()).isEqualTo(2L),
@@ -57,7 +53,7 @@ class UserSignUpWebMapperTest {
 
   @Test
   @DisplayName("OnboardingWebRequest를 OnboardingRequest로 변환 성공")
-  void toApplicationDto_ShouldConvertOnboardingRequest() {
+  void toApplicationDtoShouldConvertOnboardingRequest() {
     // Given
     OnboardingWebRequest webRequest =
         new OnboardingWebRequest("nickname", 1L, 2L, List.of(1L, 2L, 3L), 3L, false);
@@ -78,13 +74,13 @@ class UserSignUpWebMapperTest {
 
   @Test
   @DisplayName("빈 토픽 리스트로 변환 성공")
-  void toApplicationDto_ShouldConvertWithEmptyTopics() {
+  void toApplicationDtoShouldConvertWithEmptyTopics() {
     // Given
     SelfSignUpWebRequest webRequest =
         new SelfSignUpWebRequest(
             "test@example.com",
-            "password123",
-            "password123",
+            "password1",
+            "password1",
             "testuser",
             1L,
             null,

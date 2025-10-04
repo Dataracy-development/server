@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,9 +9,12 @@ import org.junit.jupiter.api.Test;
 @DisplayName("AnalysisPurpose 테스트")
 class AnalysisPurposeTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("AnalysisPurpose record 생성 및 속성 확인")
-  void analysisPurpose_ShouldCreateCorrectly() {
+  void analysisPurposeShouldCreateCorrectly() {
     // Given
     Long id = 1L;
     String value = "research";
@@ -33,7 +32,7 @@ class AnalysisPurposeTest {
 
   @Test
   @DisplayName("AnalysisPurpose record equals 및 hashCode 테스트")
-  void analysisPurpose_ShouldHaveCorrectEqualsAndHashCode() {
+  void analysisPurposeShouldHaveCorrectEqualsAndHashCode() {
     // Given
     AnalysisPurpose analysisPurpose1 = new AnalysisPurpose(1L, "business", "비즈니스");
     AnalysisPurpose analysisPurpose2 = new AnalysisPurpose(1L, "business", "비즈니스");
@@ -48,7 +47,7 @@ class AnalysisPurposeTest {
 
   @Test
   @DisplayName("AnalysisPurpose record toString 테스트")
-  void analysisPurpose_ShouldHaveCorrectToString() {
+  void analysisPurposeShouldHaveCorrectToString() {
     // Given
     AnalysisPurpose analysisPurpose = new AnalysisPurpose(1L, "education", "교육");
 
@@ -65,7 +64,7 @@ class AnalysisPurposeTest {
 
   @Test
   @DisplayName("AnalysisPurpose record - null 값 처리")
-  void analysisPurpose_ShouldHandleNullValues() {
+  void analysisPurposeShouldHandleNullValues() {
     // Given & When
     AnalysisPurpose analysisPurpose = new AnalysisPurpose(null, null, null);
 
@@ -78,7 +77,7 @@ class AnalysisPurposeTest {
 
   @Test
   @DisplayName("AnalysisPurpose record - 다양한 분석 목적들 테스트")
-  void analysisPurpose_ShouldHandleVariousPurposes() {
+  void analysisPurposeShouldHandleVariousPurposes() {
     // Given & When
     AnalysisPurpose analysisPurpose1 = new AnalysisPurpose(1L, "research", "연구");
     AnalysisPurpose analysisPurpose2 = new AnalysisPurpose(2L, "business", "비즈니스");

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.application.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +33,10 @@ import com.dataracy.modules.user.domain.enums.RoleType;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ReIssueTokenServiceTest {
 
+  // Test constants
+  private static final Long ONE_HOUR_IN_MILLIS = 3600000L;
+  private static final Long TWO_WEEKS_IN_MILLIS = 1209600000L;
+
   @Mock private JwtValidatorPort jwtValidatorPort;
 
   @Mock private JwtGeneratorPort jwtGeneratorPort;
@@ -51,8 +51,8 @@ class ReIssueTokenServiceTest {
 
   @BeforeEach
   void setUp() {
-    jwtProperties.setAccessTokenExpirationTime(3600000L);
-    jwtProperties.setRefreshTokenExpirationTime(1209600000L);
+    jwtProperties.setAccessTokenExpirationTime(ONE_HOUR_IN_MILLIS);
+    jwtProperties.setRefreshTokenExpirationTime(TWO_WEEKS_IN_MILLIS);
   }
 
   @Nested
@@ -81,8 +81,8 @@ class ReIssueTokenServiceTest {
       assertAll(
           () -> assertThat(res.accessToken()).isEqualTo("new-access"),
           () -> assertThat(res.refreshToken()).isEqualTo("new-refresh"),
-          () -> assertThat(res.accessTokenExpiration()).isEqualTo(3600000L),
-          () -> assertThat(res.refreshTokenExpiration()).isEqualTo(1209600000L));
+          () -> assertThat(res.accessTokenExpiration()).isEqualTo(ONE_HOUR_IN_MILLIS),
+          () -> assertThat(res.refreshTokenExpiration()).isEqualTo(TWO_WEEKS_IN_MILLIS));
     }
 
     @Test

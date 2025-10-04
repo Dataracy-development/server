@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.service.command.signup;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +39,10 @@ import com.dataracy.modules.user.domain.model.User;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class SignUpUserServiceTest {
 
+  // Test constants
+  private static final Long ONE_HOUR_IN_MILLIS = 3600000L;
+  private static final Long ONE_WEEK_IN_MILLIS = 604800000L;
+  private static final Long TWO_WEEKS_IN_MILLIS = 1209600000L;
   @InjectMocks private SignUpUserService service;
 
   @Mock private PasswordEncoder passwordEncoder;
@@ -72,8 +72,8 @@ class SignUpUserServiceTest {
   private SelfSignUpRequest createSampleSelfSignUpRequest() {
     return new SelfSignUpRequest(
         "test@example.com",
-        "password123",
-        "password123",
+        "password1",
+        "password1",
         "testuser",
         1L,
         1L,
@@ -115,7 +115,7 @@ class SignUpUserServiceTest {
       User user = createSampleUser();
       User savedUser = createSampleUser();
       String refreshToken = "generated-refresh-token";
-      long expirationTime = 3600000L; // 1시간
+      long expirationTime = ONE_HOUR_IN_MILLIS; // 1시간
 
       willDoNothing().given(duplicateEmailUseCase).validateDuplicatedEmail(anyString());
       willDoNothing().given(duplicateNicknameUseCase).validateDuplicatedNickname(anyString());
@@ -143,13 +143,13 @@ class SignUpUserServiceTest {
 
     @Test
     @DisplayName("자체 회원가입 성공 - 선택적 필드 null")
-    void signUpSelfSuccess_WithNullOptionalFields() {
+    void signUpSelfSuccessWithNullOptionalFields() {
       // given
       SelfSignUpRequest request =
           new SelfSignUpRequest(
               "test@example.com",
-              "password123",
-              "password123",
+              "password1",
+              "password1",
               "testuser",
               1L,
               null, // occupationId null
@@ -159,7 +159,7 @@ class SignUpUserServiceTest {
       User user = createSampleUser();
       User savedUser = createSampleUser();
       String refreshToken = "generated-refresh-token";
-      long expirationTime = 3600000L; // 1시간
+      long expirationTime = ONE_HOUR_IN_MILLIS; // 1시간
 
       willDoNothing().given(duplicateEmailUseCase).validateDuplicatedEmail(anyString());
       willDoNothing().given(duplicateNicknameUseCase).validateDuplicatedNickname(anyString());
@@ -196,12 +196,11 @@ class SignUpUserServiceTest {
       User user = createSampleUser();
       User savedUser = createSampleUser();
       String refreshToken = "generated-refresh-token";
-      long expirationTime = 3600000L; // 1시간
+      long expirationTime = ONE_HOUR_IN_MILLIS; // 1시간
 
       willDoNothing().given(jwtValidateUseCase).validateToken(anyString());
       given(jwtValidateUseCase.getProviderFromRegisterToken(registerToken)).willReturn("GOOGLE");
-      given(jwtValidateUseCase.getProviderIdFromRegisterToken(registerToken))
-          .willReturn("google123");
+      given(jwtValidateUseCase.getProviderIdFromRegisterToken(registerToken)).willReturn("google1");
       given(jwtValidateUseCase.getEmailFromRegisterToken(registerToken))
           .willReturn("test@example.com");
       willDoNothing().given(duplicateEmailUseCase).validateDuplicatedEmail(anyString());
@@ -230,7 +229,7 @@ class SignUpUserServiceTest {
 
     @Test
     @DisplayName("소셜 회원가입 성공 - 빈 토픽 ID 리스트")
-    void signUpOAuthSuccess_WithEmptyTopicIds() {
+    void signUpOAuthSuccessWithEmptyTopicIds() {
       // given
       String registerToken = "valid-register-token";
       OnboardingRequest request =
@@ -244,12 +243,11 @@ class SignUpUserServiceTest {
       User user = createSampleUser();
       User savedUser = createSampleUser();
       String refreshToken = "generated-refresh-token";
-      long expirationTime = 3600000L; // 1시간
+      long expirationTime = ONE_HOUR_IN_MILLIS; // 1시간
 
       willDoNothing().given(jwtValidateUseCase).validateToken(anyString());
       given(jwtValidateUseCase.getProviderFromRegisterToken(registerToken)).willReturn("GOOGLE");
-      given(jwtValidateUseCase.getProviderIdFromRegisterToken(registerToken))
-          .willReturn("google123");
+      given(jwtValidateUseCase.getProviderIdFromRegisterToken(registerToken)).willReturn("google1");
       given(jwtValidateUseCase.getEmailFromRegisterToken(registerToken))
           .willReturn("test@example.com");
       willDoNothing().given(duplicateEmailUseCase).validateDuplicatedEmail(anyString());
@@ -280,13 +278,13 @@ class SignUpUserServiceTest {
 
     @Test
     @DisplayName("자체 회원가입 성공 - 최소 필수 정보만")
-    void signUpSelfSuccess_MinimalRequiredInfo() {
+    void signUpSelfSuccessMinimalRequiredInfo() {
       // given
       SelfSignUpRequest request =
           new SelfSignUpRequest(
               "minimal@example.com",
-              "password123",
-              "password123",
+              "password1",
+              "password1",
               "minimaluser",
               1L,
               null, // occupationId null
@@ -297,7 +295,7 @@ class SignUpUserServiceTest {
       User user = createSampleUser();
       User savedUser = createSampleUser();
       String refreshToken = "generated-refresh-token";
-      long expirationTime = 3600000L; // 1시간
+      long expirationTime = ONE_HOUR_IN_MILLIS; // 1시간
 
       willDoNothing().given(duplicateEmailUseCase).validateDuplicatedEmail(anyString());
       willDoNothing().given(duplicateNicknameUseCase).validateDuplicatedNickname(anyString());
@@ -320,19 +318,18 @@ class SignUpUserServiceTest {
 
     @Test
     @DisplayName("소셜 회원가입 성공 - 다른 소셜 제공자")
-    void signUpOAuthSuccess_DifferentProvider() {
+    void signUpOAuthSuccessDifferentProvider() {
       // given
       String registerToken = "valid-register-token";
       OnboardingRequest request = createSampleOnboardingRequest();
       User user = createSampleUser();
       User savedUser = createSampleUser();
       String refreshToken = "generated-refresh-token";
-      long expirationTime = 3600000L; // 1시간
+      long expirationTime = ONE_HOUR_IN_MILLIS; // 1시간
 
       willDoNothing().given(jwtValidateUseCase).validateToken(anyString());
       given(jwtValidateUseCase.getProviderFromRegisterToken(registerToken)).willReturn("KAKAO");
-      given(jwtValidateUseCase.getProviderIdFromRegisterToken(registerToken))
-          .willReturn("kakao123");
+      given(jwtValidateUseCase.getProviderIdFromRegisterToken(registerToken)).willReturn("kakao1");
       given(jwtValidateUseCase.getEmailFromRegisterToken(registerToken))
           .willReturn("test@kakao.com");
       willDoNothing().given(duplicateEmailUseCase).validateDuplicatedEmail(anyString());

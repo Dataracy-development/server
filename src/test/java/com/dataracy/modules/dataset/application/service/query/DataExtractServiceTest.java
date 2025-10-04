@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.application.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +18,9 @@ import com.dataracy.modules.dataset.application.port.out.query.extractor.Extract
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DataExtractServiceTest {
+
+  // Test constants
+  private static final Long TARGET_ID = 3L;
 
   @InjectMocks private DataExtractService service;
 
@@ -48,13 +47,13 @@ class DataExtractServiceTest {
     @DisplayName("삭제 포함 데이터 조회 → userId 반환")
     void findUserIdIncludingDeletedSuccess() {
       // given
-      given(port.findUserIdIncludingDeleted(1L)).willReturn(77L);
+      given(port.findUserIdIncludingDeleted(1L)).willReturn(TARGET_ID);
 
       // when
       Long res = service.findUserIdIncludingDeleted(1L);
 
       // then
-      assertThat(res).isEqualTo(77L);
+      assertThat(res).isEqualTo(TARGET_ID);
     }
   }
 }

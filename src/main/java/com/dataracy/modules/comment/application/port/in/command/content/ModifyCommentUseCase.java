@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.comment.application.port.in.command.content;
 
 import com.dataracy.modules.comment.application.dto.request.command.ModifyCommentRequest;

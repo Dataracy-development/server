@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.behaviorlog.adapter.elasticsearch;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -96,7 +92,7 @@ class BehaviorLogElasticsearchSaveAdapterTest {
 
   private BehaviorLog createTestBehaviorLog() {
     return BehaviorLog.builder()
-        .userId("123")
+        .userId("1")
         .action(ActionType.CLICK)
         .deviceType(DeviceType.PC)
         .logType(LogType.ACTION)

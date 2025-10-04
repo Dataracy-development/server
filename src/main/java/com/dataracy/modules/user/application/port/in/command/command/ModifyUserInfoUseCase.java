@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.port.in.command.command;
 
 import org.springframework.web.multipart.MultipartFile;

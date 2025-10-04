@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.application.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,6 +29,9 @@ import com.dataracy.modules.reference.domain.model.DataType;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DataTypeQueryServiceTest {
+
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
 
   @Mock private DataTypePort dataTypePort;
 

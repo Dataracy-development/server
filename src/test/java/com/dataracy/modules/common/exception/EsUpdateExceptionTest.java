@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +11,7 @@ class EsUpdateExceptionTest {
 
   @Test
   @DisplayName("EsUpdateException 생성 및 속성 확인")
-  void esUpdateException_ShouldHaveCorrectProperties() {
+  void esUpdateExceptionShouldHaveCorrectProperties() {
     // Given
     String message = "Elasticsearch 업데이트에 실패했습니다.";
     RuntimeException cause = new RuntimeException("인덱스 오류");
@@ -31,7 +27,7 @@ class EsUpdateExceptionTest {
 
   @Test
   @DisplayName("EsUpdateException은 RuntimeException을 상속받는다")
-  void esUpdateException_ShouldExtendRuntimeException() {
+  void esUpdateExceptionShouldExtendRuntimeException() {
     // Given
     String message = "ES 업데이트 실패";
     RuntimeException cause = new RuntimeException("연결 오류");
@@ -45,7 +41,7 @@ class EsUpdateExceptionTest {
 
   @Test
   @DisplayName("EsUpdateException - null 원인으로 생성")
-  void esUpdateException_ShouldCreateWithNullCause() {
+  void esUpdateExceptionShouldCreateWithNullCause() {
     // Given
     String message = "ES 업데이트 실패";
 

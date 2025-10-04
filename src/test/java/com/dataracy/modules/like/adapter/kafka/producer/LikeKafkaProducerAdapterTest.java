@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.adapter.kafka.producer;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -31,6 +27,13 @@ import com.dataracy.modules.like.domain.enums.TargetType;
 @ExtendWith(MockitoExtension.class)
 class LikeKafkaProducerAdapterTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
+  // Test constants
+  private static final Long TEST_ID_1 = 1L;
+  private static final Long TEST_ID_2 = 2L;
+
   @Mock private KafkaTemplate<String, Long> kafkaTemplate;
 
   @Mock private KafkaLogger kafkaLogger;
@@ -54,14 +57,14 @@ class LikeKafkaProducerAdapterTest {
   @DisplayName("프로젝트 좋아요 이벤트 발행 성공")
   void sendProjectLikeEventSuccess() {
     // given
-    Long projectId = 123L;
+    Long projectId = 1L;
     @SuppressWarnings("unchecked")
     CompletableFuture<SendResult<String, Long>> future = new CompletableFuture<>();
     future.complete(mock(SendResult.class));
 
     willReturn(future)
         .given(kafkaTemplate)
-        .send(eq("project-like-increase-topic"), eq("123"), eq(123L));
+        .send(eq("project-like-increase-topic"), eq("1"), eq(1L));
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -70,10 +73,10 @@ class LikeKafkaProducerAdapterTest {
       adapter.sendLikeEvent(TargetType.PROJECT, projectId, false);
 
       // then
-      then(kafkaTemplate).should().send("project-like-increase-topic", "123", 123L);
+      then(kafkaTemplate).should().send("project-like-increase-topic", "1", 1L);
       then(kafkaLogger)
           .should()
-          .logProduce("project-like-increase-topic", "프로젝트 좋아요 이벤트 발송됨: projectId=123");
+          .logProduce("project-like-increase-topic", "프로젝트 좋아요 이벤트 발송됨: projectId=1");
     }
   }
 
@@ -81,14 +84,14 @@ class LikeKafkaProducerAdapterTest {
   @DisplayName("프로젝트 좋아요 취소 이벤트 발행 성공")
   void sendProjectLikeDecreaseEventSuccess() {
     // given
-    Long projectId = 456L;
+    Long projectId = TEST_ID_1;
     @SuppressWarnings("unchecked")
     CompletableFuture<SendResult<String, Long>> future = new CompletableFuture<>();
     future.complete(mock(SendResult.class));
 
     willReturn(future)
         .given(kafkaTemplate)
-        .send(eq("project-like-decrease-topic"), eq("456"), eq(456L));
+        .send(eq("project-like-decrease-topic"), eq("1"), eq(TEST_ID_1));
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -97,10 +100,10 @@ class LikeKafkaProducerAdapterTest {
       adapter.sendLikeEvent(TargetType.PROJECT, projectId, true);
 
       // then
-      then(kafkaTemplate).should().send("project-like-decrease-topic", "456", 456L);
+      then(kafkaTemplate).should().send("project-like-decrease-topic", "1", TEST_ID_1);
       then(kafkaLogger)
           .should()
-          .logProduce("project-like-decrease-topic", "프로젝트 좋아요 취소 이벤트 발송됨: projectId=456");
+          .logProduce("project-like-decrease-topic", "프로젝트 좋아요 취소 이벤트 발송됨: projectId=1");
     }
   }
 
@@ -108,14 +111,14 @@ class LikeKafkaProducerAdapterTest {
   @DisplayName("댓글 좋아요 이벤트 발행 성공")
   void sendCommentLikeEventSuccess() {
     // given
-    Long commentId = 789L;
+    Long commentId = TEST_ID_2;
     @SuppressWarnings("unchecked")
     CompletableFuture<SendResult<String, Long>> future = new CompletableFuture<>();
     future.complete(mock(SendResult.class));
 
     willReturn(future)
         .given(kafkaTemplate)
-        .send(eq("comment-like-increase-topic"), eq("789"), eq(789L));
+        .send(eq("comment-like-increase-topic"), eq("2"), eq(TEST_ID_2));
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -124,10 +127,10 @@ class LikeKafkaProducerAdapterTest {
       adapter.sendLikeEvent(TargetType.COMMENT, commentId, false);
 
       // then
-      then(kafkaTemplate).should().send("comment-like-increase-topic", "789", 789L);
+      then(kafkaTemplate).should().send("comment-like-increase-topic", "2", TEST_ID_2);
       then(kafkaLogger)
           .should()
-          .logProduce("comment-like-increase-topic", "댓글 좋아요 이벤트 발송됨: commentId=789");
+          .logProduce("comment-like-increase-topic", "댓글 좋아요 이벤트 발송됨: commentId=2");
     }
   }
 

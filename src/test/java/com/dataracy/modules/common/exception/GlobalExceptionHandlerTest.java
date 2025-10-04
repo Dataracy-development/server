@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +32,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("성공: BusinessException을 올바른 HTTP 상태 코드로 처리한다")
-    void success_handleBusinessException() {
+    void successhandleBusinessException() {
       // given
       DataException dataException = new DataException(DataErrorStatus.NOT_FOUND_DATA);
 
@@ -58,7 +54,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("성공: CommonException을 올바른 HTTP 상태 코드로 처리한다")
-    void success_handleCommonException() {
+    void successhandleCommonException() {
       // given
       CommonException commonException =
           new CommonException(CommonErrorStatus.INTERNAL_SERVER_ERROR);
@@ -98,7 +94,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("성공: LockAcquisitionException을 HTTP 409로 처리한다")
-    void success_handleLockAcquisitionException() {
+    void successhandleLockAcquisitionException() {
       // given
       LockAcquisitionException lockException = new LockAcquisitionException("락 획득 실패");
 
@@ -134,7 +130,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("성공: SecurityException을 HTTP 401로 처리한다")
-    void success_handleSecurityException() {
+    void successhandleSecurityException() {
       // given
       SecurityException securityException = mock(SecurityException.class);
       when(securityException.getMessage()).thenReturn("인증 실패");
@@ -172,7 +168,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("성공: IllegalArgumentException을 HTTP 400으로 처리한다")
-    void success_handleIllegalArgumentException() {
+    void successhandleIllegalArgumentException() {
       // given
       IllegalArgumentException illegalArgException = new IllegalArgumentException("잘못된 인자");
 
@@ -214,7 +210,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("성공: NullPointerException을 HTTP 500으로 처리한다")
-    void success_handleNullPointerException() {
+    void successhandleNullPointerException() {
       // given
       NullPointerException nullPointerException = new NullPointerException("null 값 참조");
 
@@ -246,7 +242,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("성공: NumberFormatException을 HTTP 400으로 처리한다")
-    void success_handleNumberFormatException() {
+    void successhandleNumberFormatException() {
       // given
       NumberFormatException numberFormatException = new NumberFormatException("숫자 형식 오류");
 
@@ -278,7 +274,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("성공: IndexOutOfBoundsException을 HTTP 400으로 처리한다")
-    void success_handleIndexOutOfBoundsException() {
+    void successhandleIndexOutOfBoundsException() {
       // given
       IndexOutOfBoundsException indexOutOfBoundsException =
           new IndexOutOfBoundsException("인덱스 범위 초과");
@@ -316,7 +312,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("성공: 일반 Exception을 HTTP 500으로 처리한다")
-    void success_handleGeneralException() {
+    void successhandleGeneralException() {
       // given
       Exception generalException = new Exception("예상치 못한 오류");
 

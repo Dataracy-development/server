@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.adapter.web.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +25,7 @@ class DataSourceWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - DataSourceResponse를 DataSourceWebResponse로 변환한다")
-  void toWebDto_WhenDataSourceResponse_ConvertsToDataSourceWebResponse() {
+  void toWebDtoWhenDataSourceResponseConvertsToDataSourceWebResponse() {
     // given
     DataSourceResponse dataSourceResponse = new DataSourceResponse(1L, "GOV", "정부기관");
 
@@ -45,7 +41,7 @@ class DataSourceWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - AllDataSourcesResponse를 AllDataSourcesWebResponse로 변환한다")
-  void toWebDto_WhenAllDataSourcesResponse_ConvertsToAllDataSourcesWebResponse() {
+  void toWebDtoWhenAllDataSourcesResponseConvertsToAllDataSourcesWebResponse() {
     // given
     List<DataSourceResponse> dataSources =
         List.of(
@@ -73,7 +69,7 @@ class DataSourceWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - AllDataSourcesResponse가 null인 경우 빈 리스트를 반환한다")
-  void toWebDto_WhenAllDataSourcesResponseIsNull_ReturnsEmptyList() {
+  void toWebDtoWhenAllDataSourcesResponseIsNullReturnsEmptyList() {
     // when
     AllDataSourcesWebResponse result = dataSourceWebMapper.toWebDto((AllDataSourcesResponse) null);
 
@@ -83,7 +79,7 @@ class DataSourceWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - AllDataSourcesResponse의 dataSources가 null인 경우 빈 리스트를 반환한다")
-  void toWebDto_WhenDataSourcesIsNull_ReturnsEmptyList() {
+  void toWebDtoWhenDataSourcesIsNullReturnsEmptyList() {
     // given
     AllDataSourcesResponse allDataSourcesResponse = new AllDataSourcesResponse(null);
 
@@ -96,7 +92,7 @@ class DataSourceWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - AllDataSourcesResponse의 dataSources가 빈 리스트인 경우 빈 리스트를 반환한다")
-  void toWebDto_WhenDataSourcesIsEmpty_ReturnsEmptyList() {
+  void toWebDtoWhenDataSourcesIsEmptyReturnsEmptyList() {
     // given
     AllDataSourcesResponse allDataSourcesResponse = new AllDataSourcesResponse(List.of());
 
@@ -109,7 +105,7 @@ class DataSourceWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - DataSourceResponse의 모든 필드가 null인 경우에도 변환한다")
-  void toWebDto_WhenDataSourceResponseFieldsAreNull_ConvertsToDataSourceWebResponse() {
+  void toWebDtoWhenDataSourceResponseFieldsAreNullConvertsToDataSourceWebResponse() {
     // given
     DataSourceResponse dataSourceResponse = new DataSourceResponse(null, null, null);
 

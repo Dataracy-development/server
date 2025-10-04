@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.adapter.web.mapper.read;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,11 +21,11 @@ import com.dataracy.modules.user.application.dto.response.read.GetOtherUserProje
 
 class OtherUserReadWebMapperTest {
 
-  OtherUserReadWebMapper mapper = new OtherUserReadWebMapper();
+  private OtherUserReadWebMapper mapper = new OtherUserReadWebMapper();
 
   @Test
   @DisplayName("단일 프로젝트 DTO 매핑 성공")
-  void toWebDto_project_success() {
+  void toWebDtoprojectsuccess() {
     // given
     GetOtherUserProjectResponse dto =
         new GetOtherUserProjectResponse(
@@ -63,7 +59,7 @@ class OtherUserReadWebMapperTest {
 
   @Test
   @DisplayName("단일 데이터 DTO 매핑 성공")
-  void toWebDto_data_success() {
+  void toWebDtodatasuccess() {
     // given
     GetOtherUserDataResponse dto =
         new GetOtherUserDataResponse(
@@ -103,7 +99,7 @@ class OtherUserReadWebMapperTest {
 
   @Test
   @DisplayName("유저 정보 전체 DTO 매핑 성공 (프로젝트/데이터셋 Page 포함)")
-  void toWebDto_userInfo_success() {
+  void toWebDtouserInfosuccess() {
     // given
     GetOtherUserProjectResponse project =
         new GetOtherUserProjectResponse(

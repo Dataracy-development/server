@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.kafka.config;
 
 import java.util.HashMap;
@@ -92,7 +88,12 @@ public class KafkaDataUploadConsumerConfig {
     handler.addNotRetryableExceptions(
         IllegalArgumentException.class,
         org.apache.kafka.common.errors.SerializationException.class,
-        org.springframework.kafka.support.serializer.DeserializationException.class);
+        org.springframework.kafka.support.serializer.DeserializationException.class,
+        // Kafka 연결 관련 예외들 추가
+        org.apache.kafka.common.protocol.types.SchemaException.class,
+        java.nio.BufferUnderflowException.class,
+        org.apache.kafka.common.errors.NetworkException.class,
+        org.apache.kafka.common.errors.TimeoutException.class);
     // 참고: spring-messaging 의존성 추가 시 MessageConversionException도 추가 가능
     return handler;
   }

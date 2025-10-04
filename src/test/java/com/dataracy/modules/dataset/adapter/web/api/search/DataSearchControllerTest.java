@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.web.api.search;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -47,6 +43,9 @@ import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
 @AutoConfigureMockMvc(addFilters = false)
 class DataSearchControllerTest {
 
+  // Test constants
+  private static final Long ONE_MB_IN_BYTES = 1048576L;
+
   @Autowired private MockMvc mockMvc;
 
   @MockBean private DataSearchWebMapper dataSearchWebMapper;
@@ -87,7 +86,7 @@ class DataSearchControllerTest {
             "desc",
             "thumb.png",
             10,
-            1048576L,
+            ONE_MB_IN_BYTES,
             5,
             3,
             LocalDateTime.of(2025, 8, 4, 10, 30));
@@ -106,7 +105,7 @@ class DataSearchControllerTest {
             "desc",
             "thumb.png",
             10,
-            1048576L,
+            ONE_MB_IN_BYTES,
             5,
             3,
             LocalDateTime.of(2025, 8, 4, 10, 30));

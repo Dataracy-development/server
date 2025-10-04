@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.filestorage.domain.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +11,7 @@ class S3UploadExceptionTest {
 
   @Test
   @DisplayName("S3UploadException 생성 및 속성 확인")
-  void s3UploadException_ShouldHaveCorrectProperties() {
+  void s3UploadExceptionShouldHaveCorrectProperties() {
     // Given
     String message = "S3 파일 업로드에 실패했습니다.";
 
@@ -30,7 +26,7 @@ class S3UploadExceptionTest {
 
   @Test
   @DisplayName("S3UploadException - 메시지와 원인으로 생성")
-  void s3UploadException_ShouldCreateWithMessageAndCause() {
+  void s3UploadExceptionShouldCreateWithMessageAndCause() {
     // Given
     String message = "S3 업로드 중 오류 발생";
     RuntimeException cause = new RuntimeException("네트워크 오류");
@@ -46,7 +42,7 @@ class S3UploadExceptionTest {
 
   @Test
   @DisplayName("S3UploadException은 RuntimeException을 상속받는다")
-  void s3UploadException_ShouldExtendRuntimeException() {
+  void s3UploadExceptionShouldExtendRuntimeException() {
     // Given
     String message = "S3 업로드 실패";
 

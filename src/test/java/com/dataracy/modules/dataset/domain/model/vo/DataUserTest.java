@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.domain.model.vo;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +18,7 @@ class DataUserTest {
 
   @Test
   @DisplayName("fromUserInfo - UserInfo로부터 DataUser를 생성한다")
-  void fromUserInfo_WhenValidUserInfo_CreatesDataUser() {
+  void fromUserInfoWhenValidUserInfoCreatesDataUser() {
     // given
     UserInfo userInfo =
         new UserInfo(
@@ -54,7 +50,7 @@ class DataUserTest {
 
   @Test
   @DisplayName("fromUserInfo - UserInfo가 null인 경우 DataException이 발생한다")
-  void fromUserInfo_WhenUserInfoIsNull_ThrowsDataException() {
+  void fromUserInfoWhenUserInfoIsNullThrowsDataException() {
     // when & then
     DataException exception =
         catchThrowableOfType(() -> DataUser.fromUserInfo(null), DataException.class);
@@ -67,7 +63,7 @@ class DataUserTest {
 
   @Test
   @DisplayName("fromUserInfo - UserInfo의 모든 필드가 null인 경우에도 DataUser를 생성한다")
-  void fromUserInfo_WhenUserInfoFieldsAreNull_CreatesDataUser() {
+  void fromUserInfoWhenUserInfoFieldsAreNullCreatesDataUser() {
     // given
     UserInfo userInfo = new UserInfo(null, null, null, null, null, null, null, null, null, null);
 
@@ -88,7 +84,7 @@ class DataUserTest {
 
   @Test
   @DisplayName("fromUserInfo - UserInfo의 일부 필드만 있는 경우 DataUser를 생성한다")
-  void fromUserInfo_WhenUserInfoHasPartialFields_CreatesDataUser() {
+  void fromUserInfoWhenUserInfoHasPartialFieldsCreatesDataUser() {
     // given
     UserInfo userInfo =
         new UserInfo(

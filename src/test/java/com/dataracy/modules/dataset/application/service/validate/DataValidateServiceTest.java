@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.application.service.validate;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -26,6 +22,9 @@ import com.dataracy.modules.dataset.domain.exception.DataException;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DataValidateServiceTest {
 
+  // Test constants
+  private static final Long TEST_DATA_ID = 1L;
+
   @Mock private CheckDataExistsByIdPort checkDataExistsByIdPort;
 
   private DataValidateService dataValidateService;
@@ -41,7 +40,7 @@ class DataValidateServiceTest {
 
     @Test
     @DisplayName("성공: 데이터가 존재할 때 검증 통과")
-    void validateData_데이터존재_검증통과() {
+    void validateDataWhenDataExistsReturnsSuccess() {
       // given
       Long dataId = 1L;
       given(checkDataExistsByIdPort.existsDataById(dataId)).willReturn(true);
@@ -54,7 +53,7 @@ class DataValidateServiceTest {
 
     @Test
     @DisplayName("실패: 데이터가 존재하지 않을 때 DataException 발생")
-    void validateData_데이터존재하지않음_DataException발생() {
+    void validateDataWhenDataNotExistsThrowsDataException() {
       // given
       Long dataId = 999L;
       given(checkDataExistsByIdPort.existsDataById(dataId)).willReturn(false);
@@ -69,7 +68,7 @@ class DataValidateServiceTest {
 
     @Test
     @DisplayName("성공: 데이터 ID가 null일 때도 정상 처리")
-    void validateData_nullDataId_정상처리() {
+    void validateDataWithNullDataIdHandlesNormally() {
       // given
       Long dataId = null;
       given(checkDataExistsByIdPort.existsDataById(dataId)).willReturn(false);
@@ -84,7 +83,7 @@ class DataValidateServiceTest {
 
     @Test
     @DisplayName("성공: 데이터 ID가 음수일 때도 정상 처리")
-    void validateData_negativeDataId_정상처리() {
+    void validateDataWithNegativeDataIdHandlesNormally() {
       // given
       Long dataId = -1L;
       given(checkDataExistsByIdPort.existsDataById(dataId)).willReturn(false);

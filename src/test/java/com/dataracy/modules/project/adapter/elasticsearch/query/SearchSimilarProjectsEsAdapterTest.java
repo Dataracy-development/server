@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.elasticsearch.query;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -73,14 +69,14 @@ class SearchSimilarProjectsEsAdapterTest {
           .should()
           .logError(
               eq("project_index"),
-              eq("유사 프로젝트 조회 실패: projectId=123, size=10"),
+              eq("유사 프로젝트 조회 실패: projectId=1, size=10"),
               any(IOException.class));
     }
   }
 
   private Project createTestProject() {
     return Project.builder()
-        .id(123L)
+        .id(1L)
         .title("Test Project")
         .content("Test project content")
         .topicId(1L)

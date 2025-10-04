@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,6 +10,13 @@ import com.dataracy.modules.like.domain.enums.TargetType;
 
 /** Like 도메인 모델 테스트 */
 class LikeTest {
+
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
+  // Test constants
+  private static final Long TEST_ID_35 = 35L;
+  private static final Long TEST_ID_45 = 45L;
 
   @Test
   @DisplayName("Like.of() 정적 팩토리 메서드로 인스턴스 생성")
@@ -86,7 +89,7 @@ class LikeTest {
     Long id = 3L;
     Long targetId = 30L;
     TargetType targetType = TargetType.PROJECT;
-    Long userId = 35L;
+    Long userId = TEST_ID_35;
 
     // when
     Like like = Like.of(id, targetId, targetType, userId);
@@ -104,7 +107,7 @@ class LikeTest {
     Long id = 4L;
     Long targetId = 40L;
     TargetType targetType = TargetType.COMMENT;
-    Long userId = 45L;
+    Long userId = TEST_ID_45;
 
     // when
     Like like = Like.of(id, targetId, targetType, userId);

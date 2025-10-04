@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.domain.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,10 +19,10 @@ class EmailContentFactoryTest {
 
     @Test
     @DisplayName("성공: SIGN_UP 타입 이메일 내용 생성")
-    void generate_SIGNUP타입_회원가입이메일내용생성() {
+    void generateWithSignupTypeCreatesSignupEmailContent() {
       // given
       EmailVerificationType type = EmailVerificationType.SIGN_UP;
-      String code = "123456";
+      String code = "1456";
 
       // when
       EmailContent content = EmailContentFactory.generate(type, code);
@@ -41,10 +37,10 @@ class EmailContentFactoryTest {
 
     @Test
     @DisplayName("성공: PASSWORD_SEARCH 타입 이메일 내용 생성")
-    void generate_PASSWORDSEARCH타입_비밀번호찾기이메일내용생성() {
+    void generateWithPasswordSearchTypeCreatesPasswordSearchEmailContent() {
       // given
       EmailVerificationType type = EmailVerificationType.PASSWORD_SEARCH;
-      String code = "789012";
+      String code = "2012";
 
       // when
       EmailContent content = EmailContentFactory.generate(type, code);
@@ -59,7 +55,7 @@ class EmailContentFactoryTest {
 
     @Test
     @DisplayName("성공: PASSWORD_RESET 타입 이메일 내용 생성")
-    void generate_PASSWORDRESET타입_비밀번호재설정이메일내용생성() {
+    void generateWithPasswordResetTypeCreatesPasswordResetEmailContent() {
       // given
       EmailVerificationType type = EmailVerificationType.PASSWORD_RESET;
       String code = "345678";
@@ -77,7 +73,7 @@ class EmailContentFactoryTest {
 
     @Test
     @DisplayName("성공: 이메일 내용에 인증번호가 포함됨")
-    void generate_인증번호포함_이메일내용에인증번호포함() {
+    void generateWithVerificationCodeIncludesVerificationCodeInEmailContent() {
       // given
       EmailVerificationType type = EmailVerificationType.SIGN_UP;
       String code = "999999";
@@ -91,7 +87,7 @@ class EmailContentFactoryTest {
 
     @Test
     @DisplayName("성공: 이메일 내용에 유효시간 정보 포함")
-    void generate_유효시간정보_이메일내용에유효시간포함() {
+    void generateWithValidityTimeIncludesValidityTimeInEmailContent() {
       // given
       EmailVerificationType type = EmailVerificationType.SIGN_UP;
       String code = "111111";
@@ -105,7 +101,7 @@ class EmailContentFactoryTest {
 
     @Test
     @DisplayName("성공: 빈 인증번호 처리")
-    void generate_빈인증번호_정상처리() {
+    void generateWithEmptyVerificationCodeHandlesCorrectly() {
       // given
       EmailVerificationType type = EmailVerificationType.SIGN_UP;
       String code = "";

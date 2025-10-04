@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.support.aop;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +59,7 @@ class ProjectAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkProjectEditPermission - 일반 편집 권한 검증 성공")
-  void checkProjectEditPermission_EditPermission_Success() {
+  void checkProjectEditPermissionEditPermissionSuccess() {
     // given
     Long projectId = 1L;
     Long authenticatedUserId = 100L;
@@ -85,7 +81,7 @@ class ProjectAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkProjectEditPermission - 복원 권한 검증 성공")
-  void checkProjectEditPermission_RestorePermission_Success() {
+  void checkProjectEditPermissionRestorePermissionSuccess() {
     // given
     Long projectId = 1L;
     Long authenticatedUserId = 100L;
@@ -108,7 +104,7 @@ class ProjectAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkProjectEditPermission - 일반 편집 권한 검증 실패 - 작성자 불일치")
-  void checkProjectEditPermission_EditPermission_Fail_OwnerMismatch() {
+  void checkProjectEditPermissionEditPermissionFailOwnerMismatch() {
     // given
     Long projectId = 1L;
     Long authenticatedUserId = 100L;
@@ -138,7 +134,7 @@ class ProjectAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkProjectEditPermission - 복원 권한 검증 실패 - 작성자 불일치")
-  void checkProjectEditPermission_RestorePermission_Fail_OwnerMismatch() {
+  void checkProjectEditPermissionRestorePermissionFailOwnerMismatch() {
     // given
     Long projectId = 1L;
     Long authenticatedUserId = 100L;
@@ -169,7 +165,7 @@ class ProjectAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkProjectEditPermission - 로깅 검증 - 일반 편집 실패")
-  void checkProjectEditPermission_EditPermission_LoggingVerification() {
+  void checkProjectEditPermissionEditPermissionLoggingVerification() {
     // given
     Long projectId = 1L;
     Long authenticatedUserId = 100L;
@@ -199,7 +195,7 @@ class ProjectAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkProjectEditPermission - 로깅 검증 - 복원 실패")
-  void checkProjectEditPermission_RestorePermission_LoggingVerification() {
+  void checkProjectEditPermissionRestorePermissionLoggingVerification() {
     // given
     Long projectId = 1L;
     Long authenticatedUserId = 100L;
@@ -230,7 +226,7 @@ class ProjectAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkProjectEditPermission - 동일한 사용자 ID 검증")
-  void checkProjectEditPermission_SameUserId_Success() {
+  void checkProjectEditPermissionSameUserIdSuccess() {
     // given
     Long projectId = 1L;
     Long userId = 100L;
@@ -251,7 +247,7 @@ class ProjectAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkProjectEditPermission - null 값 처리")
-  void checkProjectEditPermission_NullValues_ThrowsException() {
+  void checkProjectEditPermissionNullValuesThrowsException() {
     // given
     Long projectId = 1L;
     Long authenticatedUserId = 100L;

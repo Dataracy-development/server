@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.comment.adapter.web.mapper.command;
 
 import static org.assertj.core.api.Assertions.assertThat;

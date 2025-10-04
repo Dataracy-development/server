@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.adapter.sendgrid;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,9 +30,9 @@ import com.sendgrid.SendGrid;
 @ExtendWith(MockitoExtension.class)
 class SendEmailSendGridAdapterTest {
 
-  @Mock SendGrid client;
+  @Mock private SendGrid client;
 
-  @InjectMocks SendEmailSendGridAdapter adapter;
+  @InjectMocks private SendEmailSendGridAdapter adapter;
 
   @BeforeEach
   void init() {

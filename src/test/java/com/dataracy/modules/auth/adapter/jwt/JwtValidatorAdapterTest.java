@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,6 +22,9 @@ import io.jsonwebtoken.Claims;
 @ExtendWith(MockitoExtension.class)
 class JwtValidatorAdapterTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Mock private JwtUtilInternal jwtUtilInternal;
 
   @Mock private Claims claims;
@@ -39,7 +38,7 @@ class JwtValidatorAdapterTest {
 
   @Test
   @DisplayName("validateToken - 유효한 토큰을 검증한다")
-  void validateToken_WhenValidToken_ValidatesSuccessfully() {
+  void validateTokenWhenValidTokenValidatesSuccessfully() {
     // given
     String token = "valid.token.here";
 
@@ -52,10 +51,10 @@ class JwtValidatorAdapterTest {
 
   @Test
   @DisplayName("getUserIdFromToken - 토큰에서 사용자 ID를 추출한다")
-  void getUserIdFromToken_WhenValidToken_ReturnsUserId() {
+  void getUserIdFromTokenWhenValidTokenReturnsUserId() {
     // given
     String token = "valid.token.here";
-    Long expectedUserId = 123L;
+    Long expectedUserId = 1L;
     when(claims.get("userId", Long.class)).thenReturn(expectedUserId);
 
     // when
@@ -68,7 +67,7 @@ class JwtValidatorAdapterTest {
 
   @Test
   @DisplayName("getRoleFromToken - 토큰에서 역할을 추출한다")
-  void getRoleFromToken_WhenValidToken_ReturnsRole() {
+  void getRoleFromTokenWhenValidTokenReturnsRole() {
     // given
     String token = "valid.token.here";
     String roleValue = "ROLE_USER";
@@ -84,7 +83,7 @@ class JwtValidatorAdapterTest {
 
   @Test
   @DisplayName("getEmailFromToken - 토큰에서 이메일을 추출한다")
-  void getEmailFromToken_WhenValidToken_ReturnsEmail() {
+  void getEmailFromTokenWhenValidTokenReturnsEmail() {
     // given
     String token = "valid.token.here";
     String expectedEmail = "test@example.com";
@@ -100,7 +99,7 @@ class JwtValidatorAdapterTest {
 
   @Test
   @DisplayName("getProviderFromRegisterToken - 레지스터 토큰에서 제공자를 추출한다")
-  void getProviderFromRegisterToken_WhenValidToken_ReturnsProvider() {
+  void getProviderFromRegisterTokenWhenValidTokenReturnsProvider() {
     // given
     String token = "register.token.here";
     String expectedProvider = "google";
@@ -116,10 +115,10 @@ class JwtValidatorAdapterTest {
 
   @Test
   @DisplayName("getProviderIdFromRegisterToken - 레지스터 토큰에서 제공자 ID를 추출한다")
-  void getProviderIdFromRegisterToken_WhenValidToken_ReturnsProviderId() {
+  void getProviderIdFromRegisterTokenWhenValidTokenReturnsProviderId() {
     // given
     String token = "register.token.here";
-    String expectedProviderId = "123456789";
+    String expectedProviderId = "14562";
     when(claims.get("providerId", String.class)).thenReturn(expectedProviderId);
 
     // when
@@ -132,7 +131,7 @@ class JwtValidatorAdapterTest {
 
   @Test
   @DisplayName("getUserIdFromToken - null 사용자 ID를 반환한다")
-  void getUserIdFromToken_WhenNullUserId_ReturnsNull() {
+  void getUserIdFromTokenWhenNullUserIdReturnsNull() {
     // given
     String token = "valid.token.here";
     when(claims.get("userId", Long.class)).thenReturn(null);
@@ -146,7 +145,7 @@ class JwtValidatorAdapterTest {
 
   @Test
   @DisplayName("getEmailFromToken - null 이메일을 반환한다")
-  void getEmailFromToken_WhenNullEmail_ReturnsNull() {
+  void getEmailFromTokenWhenNullEmailReturnsNull() {
     // given
     String token = "valid.token.here";
     when(claims.get("email", String.class)).thenReturn(null);
@@ -160,7 +159,7 @@ class JwtValidatorAdapterTest {
 
   @Test
   @DisplayName("getRoleFromToken - null 역할을 반환한다")
-  void getRoleFromToken_WhenNullRole_ThrowsException() {
+  void getRoleFromTokenWhenNullRoleThrowsException() {
     // given
     String token = "valid.token.here";
     when(claims.get("role", String.class)).thenReturn(null);

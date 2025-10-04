@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.elasticsearch.query;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -69,13 +65,13 @@ class SearchSimilarDataSetsEsAdapterTest {
       then(elasticLogger)
           .should()
           .logError(
-              eq("data_index"), eq("유사 데이터셋 조회 실패: dataId=123, size=10"), any(IOException.class));
+              eq("data_index"), eq("유사 데이터셋 조회 실패: dataId=1, size=10"), any(IOException.class));
     }
   }
 
   private Data createTestData() {
     return Data.builder()
-        .id(123L)
+        .id(1L)
         .title("Test Dataset")
         .description("Test dataset description")
         .topicId(1L)

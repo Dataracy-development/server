@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.application.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -162,7 +158,7 @@ class ProjectCommandServiceTest {
 
     @Test
     @DisplayName("프로젝트 업로드 실패 - 부모 프로젝트가 존재하지 않음")
-    void uploadProjectFail_ParentProjectNotFound() {
+    void uploadProjectFailParentProjectNotFound() {
       // given
       Long userId = 1L;
       UploadProjectRequest request =
@@ -199,7 +195,7 @@ class ProjectCommandServiceTest {
 
     @Test
     @DisplayName("프로젝트 업로드 실패 - 파일 업로드 실패")
-    void uploadProjectFail_FileUploadFailure() {
+    void uploadProjectFailFileUploadFailure() {
       // given
       Long userId = 1L;
       UploadProjectRequest request = createSampleUploadRequest();
@@ -274,7 +270,7 @@ class ProjectCommandServiceTest {
 
     @Test
     @DisplayName("프로젝트 수정 실패 - 프로젝트가 존재하지 않음")
-    void modifyProjectFail_ProjectNotFound() {
+    void modifyProjectFailProjectNotFound() {
       // given
       Long projectId = 999L;
       ModifyProjectRequest request = createSampleModifyRequest();
@@ -305,7 +301,7 @@ class ProjectCommandServiceTest {
 
     @Test
     @DisplayName("프로젝트 수정 실패 - 부모 프로젝트가 존재하지 않음")
-    void modifyProjectFail_ParentProjectNotFound() {
+    void modifyProjectFailParentProjectNotFound() {
       // given
       Long projectId = 1L;
       ModifyProjectRequest request =

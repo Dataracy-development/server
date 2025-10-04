@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.application.port.in.command;
 
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;

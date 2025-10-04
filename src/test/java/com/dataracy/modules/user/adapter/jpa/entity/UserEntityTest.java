@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.adapter.jpa.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,7 +17,7 @@ class UserEntityTest {
   private UserEntity createUser() {
     return UserEntity.of(
         ProviderType.LOCAL,
-        "provider-123",
+        "provider-1",
         RoleType.ROLE_USER,
         "user@test.com",
         "encodedPw",
@@ -44,7 +40,7 @@ class UserEntityTest {
     // then
     assertAll(
         () -> assertThat(user.getProvider()).isEqualTo(ProviderType.LOCAL),
-        () -> assertThat(user.getProviderId()).isEqualTo("provider-123"),
+        () -> assertThat(user.getProviderId()).isEqualTo("provider-1"),
         () -> assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER),
         () -> assertThat(user.getEmail()).isEqualTo("user@test.com"),
         () -> assertThat(user.getPassword()).isEqualTo("encodedPw"),

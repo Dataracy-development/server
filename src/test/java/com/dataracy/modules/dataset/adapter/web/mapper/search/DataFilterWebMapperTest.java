@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.web.mapper.search;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,6 +17,9 @@ import com.dataracy.modules.dataset.application.dto.response.search.FilteredData
 
 class DataFilterWebMapperTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   private DataFilterWebMapper dataFilterWebMapper;
 
   @BeforeEach
@@ -30,10 +29,10 @@ class DataFilterWebMapperTest {
 
   @Test
   @DisplayName("toApplicationDto - FilteringDataWebRequest를 FilteringDataRequest로 변환한다")
-  void toApplicationDto_WhenFilteringDataWebRequest_ConvertsToFilteringDataRequest() {
+  void toApplicationDtoWhenFilteringDataWebRequestConvertsToFilteringDataRequest() {
     // given
     FilteringDataWebRequest webRequest =
-        new FilteringDataWebRequest("AI", "LATEST", 1L, 2L, 3L, 2024);
+        new FilteringDataWebRequest("AI", "LATEST", 1L, 2L, 3L, CURRENT_YEAR);
 
     // when
     FilteringDataRequest result = dataFilterWebMapper.toApplicationDto(webRequest);
@@ -45,12 +44,12 @@ class DataFilterWebMapperTest {
         () -> assertThat(result.topicId()).isEqualTo(1L),
         () -> assertThat(result.dataSourceId()).isEqualTo(2L),
         () -> assertThat(result.dataTypeId()).isEqualTo(3L),
-        () -> assertThat(result.year()).isEqualTo(2024));
+        () -> assertThat(result.year()).isEqualTo(CURRENT_YEAR));
   }
 
   @Test
   @DisplayName("toApplicationDto - FilteringDataWebRequest의 모든 필드가 null인 경우에도 변환한다")
-  void toApplicationDto_WhenAllFieldsAreNull_ConvertsToFilteringDataRequest() {
+  void toApplicationDtoWhenAllFieldsAreNullConvertsToFilteringDataRequest() {
     // given
     FilteringDataWebRequest webRequest =
         new FilteringDataWebRequest(null, null, null, null, null, null);
@@ -70,7 +69,7 @@ class DataFilterWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - FilteredDataResponse를 FilteredDataWebResponse로 변환한다")
-  void toWebDto_WhenFilteredDataResponse_ConvertsToFilteredDataWebResponse() {
+  void toWebDtoWhenFilteredDataResponseConvertsToFilteredDataWebResponse() {
     // given
     FilteredDataResponse responseDto =
         new FilteredDataResponse(
@@ -82,15 +81,15 @@ class DataFilterWebMapperTest {
             "AI",
             "Government",
             "CSV",
-            LocalDate.of(2024, 1, 1),
-            LocalDate.of(2024, 12, 31),
+            LocalDate.of(CURRENT_YEAR, 1, 1),
+            LocalDate.of(CURRENT_YEAR, 12, 31),
             "This is a test dataset",
             "http://example.com/thumbnail.jpg",
             100,
             1024L,
             1000,
             10,
-            LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+            LocalDateTime.of(CURRENT_YEAR, 1, 1, 0, 0, 0),
             5L);
 
     // when
@@ -106,21 +105,22 @@ class DataFilterWebMapperTest {
         () -> assertThat(result.topicLabel()).isEqualTo("AI"),
         () -> assertThat(result.dataSourceLabel()).isEqualTo("Government"),
         () -> assertThat(result.dataTypeLabel()).isEqualTo("CSV"),
-        () -> assertThat(result.startDate()).isEqualTo(LocalDate.of(2024, 1, 1)),
-        () -> assertThat(result.endDate()).isEqualTo(LocalDate.of(2024, 12, 31)),
+        () -> assertThat(result.startDate()).isEqualTo(LocalDate.of(CURRENT_YEAR, 1, 1)),
+        () -> assertThat(result.endDate()).isEqualTo(LocalDate.of(CURRENT_YEAR, 12, 31)),
         () -> assertThat(result.description()).isEqualTo("This is a test dataset"),
         () -> assertThat(result.dataThumbnailUrl()).isEqualTo("http://example.com/thumbnail.jpg"),
         () -> assertThat(result.downloadCount()).isEqualTo(100),
         () -> assertThat(result.sizeBytes()).isEqualTo(1024L),
         () -> assertThat(result.rowCount()).isEqualTo(1000),
         () -> assertThat(result.columnCount()).isEqualTo(10),
-        () -> assertThat(result.createdAt()).isEqualTo(LocalDateTime.of(2024, 1, 1, 0, 0, 0)),
+        () ->
+            assertThat(result.createdAt()).isEqualTo(LocalDateTime.of(CURRENT_YEAR, 1, 1, 0, 0, 0)),
         () -> assertThat(result.countConnectedProjects()).isEqualTo(5L));
   }
 
   @Test
   @DisplayName("toWebDto - FilteredDataResponse의 모든 필드가 null인 경우에도 변환한다")
-  void toWebDto_WhenAllFieldsAreNull_ConvertsToFilteredDataWebResponse() {
+  void toWebDtoWhenAllFieldsAreNullConvertsToFilteredDataWebResponse() {
     // given
     FilteredDataResponse responseDto =
         new FilteredDataResponse(

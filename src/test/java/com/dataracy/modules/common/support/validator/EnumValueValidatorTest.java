@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.support.validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +36,7 @@ class EnumValueValidatorTest {
 
   @Test
   @DisplayName("initialize - RoleType enum으로 초기화한다")
-  void initialize_WithRoleTypeEnum_InitializesSuccessfully() {
+  void initializeWithRoleTypeEnumInitializesSuccessfully() {
     // given
     ValidEnumValue annotation = mock(ValidEnumValue.class);
     given(annotation.enumClass()).willReturn((Class) RoleType.class);
@@ -55,7 +51,7 @@ class EnumValueValidatorTest {
 
   @Test
   @DisplayName("isValid - 유효한 enum 값인 경우 true를 반환한다")
-  void isValid_WhenValidEnumValue_ReturnsTrue() {
+  void isValidWhenValidEnumValueReturnsTrue() {
     // given
     ValidEnumValue annotation = mock(ValidEnumValue.class);
     given(annotation.enumClass()).willReturn((Class) RoleType.class);
@@ -81,7 +77,7 @@ class EnumValueValidatorTest {
     "'   ', true, false" // 공백이고 required=true
   })
   @DisplayName("isValid - 다양한 유효하지 않은 값들에 대한 검증")
-  void isValid_WhenVariousInvalidValues_ReturnsExpectedResult(
+  void isValidWhenVariousInvalidValuesReturnsExpectedResult(
       String value, boolean required, boolean expectedResult) {
     // given
     ValidEnumValue annotation = mock(ValidEnumValue.class);

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.behaviorlog.application.service.command;
 
 import static org.mockito.BDDMockito.then;
@@ -30,10 +26,10 @@ class MergeAnonymousUserLogServiceTest {
 
     @ParameterizedTest
     @CsvSource({
-      "anonymous-123, 1", // 정상 케이스 1
+      "anonymous-1, 1", // 정상 케이스 1
       "anonymous-456, 2", // 정상 케이스 2
       ", 1", // null 익명 ID
-      "anonymous-123," // null 사용자 ID
+      "anonymous-1," // null 사용자 ID
     })
     @DisplayName("익명 사용자 로그 병합 - 모든 케이스에서 merge 호출")
     void mergeAnonymousUserLog(String anonymousId, Long userId) {

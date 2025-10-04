@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.application.service.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +41,11 @@ import com.dataracy.modules.user.adapter.jpa.repository.UserJpaRepository;
     })
 class LikeServiceIntegrationTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+  private static final Integer TWENTY_FOUR = 24;
+  private static final Integer FOURTEEN = 14;
+  private static final Integer EIGHTEEN = 18;
   @Autowired private LikeTargetUseCase likeTargetUseCase;
 
   @Autowired private UserJpaRepository userJpaRepository;
@@ -75,7 +76,7 @@ class LikeServiceIntegrationTest {
 
   @Test
   @DisplayName("프로젝트 좋아요 → 데이터베이스에 저장되고 조회 가능")
-  void likeProject_ShouldBeSavedAndRetrievable() {
+  void likeProjectShouldBeSavedAndRetrievable() {
     // given
     TargetLikeRequest request = new TargetLikeRequest(testProject.getId(), "PROJECT", false);
 
@@ -102,7 +103,7 @@ class LikeServiceIntegrationTest {
 
   @Test
   @DisplayName("좋아요 취소 → 데이터베이스에서 삭제")
-  void unlikeProject_ShouldBeRemovedFromDatabase() {
+  void unlikeProjectShouldBeRemovedFromDatabase() {
     // given - 먼저 좋아요 생성
     TargetLikeRequest likeRequest = new TargetLikeRequest(testProject.getId(), "PROJECT", false);
     likeTargetUseCase.likeTarget(testUser.getId(), likeRequest);
@@ -125,7 +126,7 @@ class LikeServiceIntegrationTest {
 
   @Test
   @DisplayName("트랜잭션 롤백 테스트 → 예외 발생 시 데이터 변경사항 롤백")
-  void transactionRollback_WhenExceptionOccurs_ShouldRollbackChanges() {
+  void transactionRollbackWhenExceptionOccursShouldRollbackChanges() {
     // given
     TargetLikeRequest request = new TargetLikeRequest(testProject.getId(), "PROJECT", false);
 

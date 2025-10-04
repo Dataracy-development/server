@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.application.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,11 +34,11 @@ class JwtCommandServiceTest {
     @DisplayName("성공 - 토큰 생성 성공 시 그대로 반환")
     void success() {
       // given
-      given(jwtTokenGenerator.generateRegisterToken("google", "pid-123", "user@test.com"))
+      given(jwtTokenGenerator.generateRegisterToken("google", "pid-1", "user@test.com"))
           .willReturn("registerToken");
 
       // when
-      String result = service.generateRegisterToken("google", "pid-123", "user@test.com");
+      String result = service.generateRegisterToken("google", "pid-1", "user@test.com");
 
       // then
       assertThat(result).isEqualTo("registerToken");
@@ -58,7 +54,7 @@ class JwtCommandServiceTest {
       // when
       AuthException ex =
           catchThrowableOfType(
-              () -> service.generateRegisterToken("google", "pid-123", "user@test.com"),
+              () -> service.generateRegisterToken("google", "pid-1", "user@test.com"),
               AuthException.class);
 
       // then

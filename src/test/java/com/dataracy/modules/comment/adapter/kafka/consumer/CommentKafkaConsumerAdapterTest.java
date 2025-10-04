@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.comment.adapter.kafka.consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +26,14 @@ import com.dataracy.modules.common.logging.support.LoggerFactory;
 @ExtendWith(MockitoExtension.class)
 class CommentKafkaConsumerAdapterTest {
 
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+  private static final Long COMMENT_ID = 2L;
+  private static final Long TARGET_ID = 3L;
+  private static final Long USER_ID = 4L;
+  private static final Long LIKE_ID = 35L;
+  private static final Long SAMPLE_ID = 42L;
+  private static final Long ANOTHER_LIKE_ID = 45L;
   @Mock private IncreaseLikeCountUseCase increaseLikeCountUseCase;
 
   @Mock private DecreaseLikeCountUseCase decreaseLikeCountUseCase;
@@ -51,7 +55,7 @@ class CommentKafkaConsumerAdapterTest {
   @DisplayName("댓글 좋아요 증가 이벤트 수신 시 좋아요 수 증가 성공")
   void consumeLikeIncreaseSuccess() {
     // given
-    Long commentId = 123L;
+    Long commentId = 1L;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -63,10 +67,10 @@ class CommentKafkaConsumerAdapterTest {
       then(increaseLikeCountUseCase).should().increaseLikeCount(commentId);
       then(kafkaLogger)
           .should()
-          .logConsume("comment-like-increase-topic", "댓글 좋아요 이벤트 수신됨: commentId=123");
+          .logConsume("comment-like-increase-topic", "댓글 좋아요 이벤트 수신됨: commentId=1");
       then(kafkaLogger)
           .should()
-          .logConsume("comment-like-increase-topic", "댓글 좋아요 이벤트 처리 완료: commentId=123");
+          .logConsume("comment-like-increase-topic", "댓글 좋아요 이벤트 처리 완료: commentId=1");
     }
   }
 
@@ -74,7 +78,7 @@ class CommentKafkaConsumerAdapterTest {
   @DisplayName("댓글 좋아요 증가 이벤트 처리 실패 시 예외 재발생")
   void consumeLikeIncreaseFailure() {
     // given
-    Long commentId = 456L;
+    Long commentId = PROJECT_ID;
     RuntimeException exception = new RuntimeException("Database error");
     willThrow(exception).given(increaseLikeCountUseCase).increaseLikeCount(commentId);
 
@@ -89,12 +93,12 @@ class CommentKafkaConsumerAdapterTest {
 
       then(kafkaLogger)
           .should()
-          .logConsume("comment-like-increase-topic", "댓글 좋아요 이벤트 수신됨: commentId=456");
+          .logConsume("comment-like-increase-topic", "댓글 좋아요 이벤트 수신됨: commentId=1");
       then(kafkaLogger)
           .should()
           .logError(
               eq("comment-like-increase-topic"),
-              eq("댓글 좋아요 이벤트 처리 실패: commentId=456"),
+              eq("댓글 좋아요 이벤트 처리 실패: commentId=1"),
               any(RuntimeException.class));
     }
   }
@@ -103,7 +107,7 @@ class CommentKafkaConsumerAdapterTest {
   @DisplayName("댓글 좋아요 감소 이벤트 수신 시 좋아요 수 감소 성공")
   void consumeLikeDecreaseSuccess() {
     // given
-    Long commentId = 789L;
+    Long commentId = COMMENT_ID;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -115,10 +119,10 @@ class CommentKafkaConsumerAdapterTest {
       then(decreaseLikeCountUseCase).should().decreaseLikeCount(commentId);
       then(kafkaLogger)
           .should()
-          .logConsume("comment-like-decrease-topic", "댓글 좋아요 취소 이벤트 수신됨: commentId=789");
+          .logConsume("comment-like-decrease-topic", "댓글 좋아요 취소 이벤트 수신됨: commentId=2");
       then(kafkaLogger)
           .should()
-          .logConsume("comment-like-decrease-topic", "댓글 좋아요 취소 이벤트 처리 완료: commentId=789");
+          .logConsume("comment-like-decrease-topic", "댓글 좋아요 취소 이벤트 처리 완료: commentId=2");
     }
   }
 

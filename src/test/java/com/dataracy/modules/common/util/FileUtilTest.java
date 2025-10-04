@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.util;
 
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +9,7 @@ class FileUtilTest {
 
   @Test
   @DisplayName("validateImageFile - 유효한 이미지 파일 검증")
-  void validateImageFile_ShouldPassForValidImageFile() {
+  void validateImageFileShouldPassForValidImageFile() {
     // Given
     // 5MB 이하의 작은 파일로 테스트
     byte[] smallImageData = new byte[1024]; // 1KB
@@ -27,7 +23,7 @@ class FileUtilTest {
 
   @Test
   @DisplayName("validateImageFile - null 파일 처리")
-  void validateImageFile_ShouldHandleNullFile() {
+  void validateImageFileShouldHandleNullFile() {
     // When & Then
     // validateImageFile은 null 파일을 처리하므로 예외가 발생하지 않음
     FileUtil.validateImageFile(null);
@@ -35,7 +31,7 @@ class FileUtilTest {
 
   @Test
   @DisplayName("validateImageFile - 빈 파일 처리")
-  void validateImageFile_ShouldHandleEmptyFile() {
+  void validateImageFileShouldHandleEmptyFile() {
     // Given
     MockMultipartFile file = new MockMultipartFile("file", "empty.jpg", "image/jpeg", new byte[0]);
 
@@ -45,7 +41,7 @@ class FileUtilTest {
 
   @Test
   @DisplayName("validateImageFile - 허용된 확장자 검증")
-  void validateImageFile_ShouldAcceptValidExtensions() {
+  void validateImageFileShouldAcceptValidExtensions() {
     // Given
     byte[] smallData = new byte[1024]; // 1KB
     MockMultipartFile jpgFile = new MockMultipartFile("file", "test.jpg", "image/jpeg", smallData);
@@ -61,7 +57,7 @@ class FileUtilTest {
 
   @Test
   @DisplayName("validateImageFile - 대소문자 무관 확장자 검증")
-  void validateImageFile_ShouldAcceptCaseInsensitiveExtensions() {
+  void validateImageFileShouldAcceptCaseInsensitiveExtensions() {
     // Given
     byte[] smallData = new byte[1024]; // 1KB
     MockMultipartFile jpgFile = new MockMultipartFile("file", "test.JPG", "image/jpeg", smallData);
@@ -74,7 +70,7 @@ class FileUtilTest {
 
   @Test
   @DisplayName("validateGeneralFile - 유효한 일반 파일 검증")
-  void validateGeneralFile_ShouldPassForValidGeneralFile() {
+  void validateGeneralFileShouldPassForValidGeneralFile() {
     // Given
     byte[] smallData = new byte[1024]; // 1KB
     MockMultipartFile file = new MockMultipartFile("file", "test.csv", "text/csv", smallData);
@@ -85,7 +81,7 @@ class FileUtilTest {
 
   @Test
   @DisplayName("validateGeneralFile - null 파일 처리")
-  void validateGeneralFile_ShouldHandleNullFile() {
+  void validateGeneralFileShouldHandleNullFile() {
     // When & Then
     // validateGeneralFile은 null 파일을 처리하므로 예외가 발생하지 않음
     FileUtil.validateGeneralFile(null);
@@ -93,7 +89,7 @@ class FileUtilTest {
 
   @Test
   @DisplayName("validateGeneralFile - 빈 파일 처리")
-  void validateGeneralFile_ShouldHandleEmptyFile() {
+  void validateGeneralFileShouldHandleEmptyFile() {
     // Given
     MockMultipartFile file = new MockMultipartFile("file", "empty.csv", "text/csv", new byte[0]);
 
@@ -103,7 +99,7 @@ class FileUtilTest {
 
   @Test
   @DisplayName("validateGeneralFile - 허용된 확장자 검증")
-  void validateGeneralFile_ShouldAcceptValidExtensions() {
+  void validateGeneralFileShouldAcceptValidExtensions() {
     // Given
     byte[] smallData = new byte[1024]; // 1KB
     MockMultipartFile csvFile = new MockMultipartFile("file", "test.csv", "text/csv", smallData);
@@ -124,7 +120,7 @@ class FileUtilTest {
 
   @Test
   @DisplayName("validateGeneralFile - 대소문자 무관 확장자 검증")
-  void validateGeneralFile_ShouldAcceptCaseInsensitiveExtensions() {
+  void validateGeneralFileShouldAcceptCaseInsensitiveExtensions() {
     // Given
     byte[] smallData = new byte[1024]; // 1KB
     MockMultipartFile csvFile = new MockMultipartFile("file", "test.CSV", "text/csv", smallData);

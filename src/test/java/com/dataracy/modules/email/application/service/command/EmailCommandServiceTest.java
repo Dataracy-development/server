@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.application.service.command;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -47,7 +43,7 @@ class EmailCommandServiceTest {
 
     @Test
     @DisplayName("성공: 이메일 인증 코드 전송 성공")
-    void sendEmailVerificationCode_정상전송_성공() {
+    void sendEmailVerificationCodeNormalSendingReturnsSuccess() {
       // given
       String email = "test@example.com";
       EmailVerificationType type = EmailVerificationType.SIGN_UP;
@@ -64,7 +60,7 @@ class EmailCommandServiceTest {
 
     @Test
     @DisplayName("성공: PASSWORD_SEARCH 타입 이메일 전송")
-    void sendEmailVerificationCode_PASSWORDSEARCH타입_성공() {
+    void sendEmailVerificationCodeWithPasswordSearchTypeReturnsSuccess() {
       // given
       String email = "user@test.com";
       EmailVerificationType type = EmailVerificationType.PASSWORD_SEARCH;
@@ -81,7 +77,7 @@ class EmailCommandServiceTest {
 
     @Test
     @DisplayName("성공: PASSWORD_RESET 타입 이메일 전송")
-    void sendEmailVerificationCode_PASSWORDRESET타입_성공() {
+    void sendEmailVerificationCodeWithPasswordResetTypeReturnsSuccess() {
       // given
       String email = "reset@example.com";
       EmailVerificationType type = EmailVerificationType.PASSWORD_RESET;
@@ -98,7 +94,7 @@ class EmailCommandServiceTest {
 
     @Test
     @DisplayName("실패: 이메일 전송 중 예외 발생")
-    void sendEmailVerificationCode_전송예외_EmailException발생() {
+    void sendEmailVerificationCodeWhenSendingExceptionThrowsEmailException() {
       // given
       String email = "error@example.com";
       EmailVerificationType type = EmailVerificationType.SIGN_UP;

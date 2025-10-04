@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +38,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("setCookie - HTTP 환경에서 쿠키 설정")
-  void setCookie_ShouldSetCookieWithCorrectAttributes_WhenHttpEnvironment() {
+  void setCookieShouldSetCookieWithCorrectAttributesWhenHttpEnvironment() {
     // Given
     when(request.getHeader("X-Forwarded-Proto")).thenReturn(null);
     when(request.getHeader("X-Forwarded-Ssl")).thenReturn(null);
@@ -70,7 +66,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("setCookie - HTTPS 환경에서 쿠키 설정")
-  void setCookie_ShouldSetSecureCookie_WhenHttpsEnvironment() {
+  void setCookieShouldSetSecureCookieWhenHttpsEnvironment() {
     // Given
     when(request.getHeader("X-Forwarded-Proto")).thenReturn("https");
 
@@ -89,7 +85,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("setCookie - 운영 환경에서 쿠키 설정")
-  void setCookie_ShouldSetProductionCookie_WhenProdProfile() {
+  void setCookieShouldSetProductionCookieWhenProdProfile() {
     // Given
     ReflectionTestUtils.setField(cookieUtil, "activeProfile", "prod");
 
@@ -109,7 +105,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("getRefreshTokenFromCookies - refreshToken 쿠키가 존재할 때")
-  void getRefreshTokenFromCookies_ShouldReturnToken_WhenRefreshTokenExists() {
+  void getRefreshTokenFromCookiesShouldReturnTokenWhenRefreshTokenExists() {
     // Given
     Cookie refreshTokenCookie = new Cookie("refreshToken", "test-refresh-token");
     Cookie otherCookie = new Cookie("otherCookie", "otherValue");
@@ -128,7 +124,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("getRefreshTokenFromCookies - refreshToken 쿠키가 존재하지 않을 때")
-  void getRefreshTokenFromCookies_ShouldReturnEmpty_WhenRefreshTokenNotExists() {
+  void getRefreshTokenFromCookiesShouldReturnEmptyWhenRefreshTokenNotExists() {
     // Given
     Cookie otherCookie = new Cookie("otherCookie", "otherValue");
     Cookie[] cookies = {otherCookie};
@@ -144,7 +140,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("getRefreshTokenFromCookies - 쿠키가 null일 때")
-  void getRefreshTokenFromCookies_ShouldReturnEmpty_WhenCookiesAreNull() {
+  void getRefreshTokenFromCookiesShouldReturnEmptyWhenCookiesAreNull() {
     // Given
     when(request.getCookies()).thenReturn(null);
 
@@ -157,7 +153,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("deleteCookie - 쿠키 삭제")
-  void deleteCookie_ShouldSetCookieWithZeroMaxAge() {
+  void deleteCookieShouldSetCookieWithZeroMaxAge() {
     // Given
     when(request.getHeader("X-Forwarded-Proto")).thenReturn(null);
     when(request.getHeader("X-Forwarded-Ssl")).thenReturn(null);
@@ -179,7 +175,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("deleteAllAuthCookies - 모든 인증 쿠키 삭제")
-  void deleteAllAuthCookies_ShouldDeleteAllAuthenticationCookies() {
+  void deleteAllAuthCookiesShouldDeleteAllAuthenticationCookies() {
     // Given
     when(request.getHeader("X-Forwarded-Proto")).thenReturn(null);
     when(request.getHeader("X-Forwarded-Ssl")).thenReturn(null);
@@ -214,7 +210,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("getOrCreateAnonymousId - 기존 anonymousId 쿠키가 존재할 때")
-  void getOrCreateAnonymousId_ShouldReturnExistingId_WhenAnonymousIdExists() {
+  void getOrCreateAnonymousIdShouldReturnExistingIdWhenAnonymousIdExists() {
     // Given
     Cookie anonymousIdCookie = new Cookie("anonymousId", "existing-anonymous-id");
     Cookie[] cookies = {anonymousIdCookie};
@@ -231,7 +227,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("getOrCreateAnonymousId - anonymousId 쿠키가 존재하지 않을 때")
-  void getOrCreateAnonymousId_ShouldCreateNewId_WhenAnonymousIdNotExists() {
+  void getOrCreateAnonymousIdShouldCreateNewIdWhenAnonymousIdNotExists() {
     // Given
     Cookie otherCookie = new Cookie("otherCookie", "otherValue");
     Cookie[] cookies = {otherCookie};
@@ -255,7 +251,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("getOrCreateAnonymousId - 쿠키가 null일 때")
-  void getOrCreateAnonymousId_ShouldCreateNewId_WhenCookiesAreNull() {
+  void getOrCreateAnonymousIdShouldCreateNewIdWhenCookiesAreNull() {
     // Given
     when(request.getCookies()).thenReturn(null);
     when(request.getHeader("X-Forwarded-Proto")).thenReturn(null);
@@ -276,7 +272,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("isSecureEnvironment - X-Forwarded-Ssl 헤더로 HTTPS 감지")
-  void setCookie_ShouldDetectHttps_WhenXForwardedSslHeader() {
+  void setCookieShouldDetectHttpsWhenXForwardedSslHeader() {
     // Given
     when(request.getHeader("X-Forwarded-Proto")).thenReturn(null);
     when(request.getHeader("X-Forwarded-Ssl")).thenReturn("on");
@@ -296,7 +292,7 @@ class CookieUtilTest {
 
   @Test
   @DisplayName("isSecureEnvironment - 개발 환경에서 도메인 설정")
-  void setCookie_ShouldSetDomain_WhenDevProfile() {
+  void setCookieShouldSetDomainWhenDevProfile() {
     // Given
     ReflectionTestUtils.setField(cookieUtil, "activeProfile", "dev");
 

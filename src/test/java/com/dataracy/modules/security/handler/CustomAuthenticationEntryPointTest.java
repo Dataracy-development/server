@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.security.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +28,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @ExtendWith(MockitoExtension.class)
 class CustomAuthenticationEntryPointTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Mock private HttpServletRequest request;
 
   @Mock private HttpServletResponse response;
@@ -54,7 +53,7 @@ class CustomAuthenticationEntryPointTest {
 
   @Test
   @DisplayName("commence - BusinessException인 경우 해당 에러 코드로 응답한다")
-  void commence_WhenBusinessException_ReturnsBusinessErrorResponse() throws IOException {
+  void commenceWhenBusinessExceptionReturnsBusinessErrorResponse() throws IOException {
     // given
     BaseErrorCode errorCode = CommonErrorStatus.UNAUTHORIZED;
     SecurityException businessException = new SecurityException(errorCode);
@@ -75,7 +74,7 @@ class CustomAuthenticationEntryPointTest {
 
   @Test
   @DisplayName("commence - BusinessException이 아닌 경우 500 에러로 응답한다")
-  void commence_WhenNotBusinessException_ReturnsInternalServerError() throws IOException {
+  void commenceWhenNotBusinessExceptionReturnsInternalServerError() throws IOException {
     // given
     RuntimeException runtimeException = new RuntimeException("Test exception");
     given(request.getAttribute("filter.error")).willReturn(runtimeException);
@@ -95,7 +94,7 @@ class CustomAuthenticationEntryPointTest {
 
   @Test
   @DisplayName("commence - filter.error가 null인 경우 500 에러로 응답한다")
-  void commence_WhenFilterErrorIsNull_ReturnsInternalServerError() throws IOException {
+  void commenceWhenFilterErrorIsNullReturnsInternalServerError() throws IOException {
     // given
     given(request.getAttribute("filter.error")).willReturn(null);
 
@@ -114,7 +113,7 @@ class CustomAuthenticationEntryPointTest {
 
   @Test
   @DisplayName("commence - IOException 발생 시 예외를 전파한다")
-  void commence_WhenIOException_PropagatesException() throws IOException {
+  void commenceWhenIOExceptionPropagatesException() throws IOException {
     // given
     given(request.getAttribute("filter.error"))
         .willReturn(new SecurityException(CommonErrorStatus.UNAUTHORIZED));

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -101,7 +97,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("키워드로 프로젝트 검색")
-    void searchByFilters_키워드로_프로젝트_검색_성공() {
+    void searchByFiltersWithKeywordReturnsSuccess() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest("테스트", null, null, null, null, null);
@@ -120,7 +116,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("빈 키워드로 모든 프로젝트 검색")
-    void searchByFilters_빈_키워드로_모든_프로젝트_검색_성공() {
+    void searchByFiltersWithEmptyKeywordReturnsAllProjects() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, null, null, null, null, null);
@@ -141,7 +137,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("삭제된 프로젝트는 검색 결과에서 제외")
-    void searchByFilters_삭제된_프로젝트_검색_결과에서_제외() {
+    void searchByFiltersExcludesDeletedProjectsFromResults() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest("삭제", null, null, null, null, null);
@@ -157,7 +153,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("정렬 조건별 프로젝트 검색")
-    void searchByFilters_정렬_조건별_프로젝트_검색_성공() {
+    void searchByFiltersWithSortConditionsReturnsSuccess() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, null, null, null, null, null);
@@ -179,7 +175,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("페이지네이션 검색")
-    void searchByFilters_페이지네이션_검색_성공() {
+    void searchByFiltersWithPaginationReturnsSuccess() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, null, null, null, null, null);
@@ -199,7 +195,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("두 번째 페이지 검색")
-    void searchByFilters_두_번째_페이지_검색_성공() {
+    void searchByFiltersWithSecondPageReturnsSuccess() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, null, null, null, null, null);
@@ -219,7 +215,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("토픽 ID로 프로젝트 필터링")
-    void searchByFilters_토픽_ID로_프로젝트_필터링_성공() {
+    void searchByFiltersWithTopicIdReturnsSuccess() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, null, 1L, null, null, null);
@@ -236,7 +232,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("존재하지 않는 토픽 ID로 필터링 시 빈 결과")
-    void searchByFilters_존재하지_않는_토픽_ID_필터링_시_빈_결과() {
+    void searchByFiltersWithNonExistentTopicIdReturnsEmpty() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, null, 999L, null, null, null);
@@ -252,7 +248,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("분석 목적 ID로 프로젝트 필터링")
-    void searchByFilters_분석_목적_ID로_프로젝트_필터링_성공() {
+    void searchByFiltersWithAnalysisPurposeIdReturnsSuccess() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, null, null, 1L, null, null);
@@ -269,7 +265,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("데이터 소스 ID로 프로젝트 필터링")
-    void searchByFilters_데이터_소스_ID로_프로젝트_필터링_성공() {
+    void searchByFiltersWithDataSourceIdReturnsSuccess() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, null, null, null, 1L, null);
@@ -286,7 +282,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("저자 레벨 ID로 프로젝트 필터링")
-    void searchByFilters_저자_레벨_ID로_프로젝트_필터링_성공() {
+    void searchByFiltersWithAuthorLevelIdReturnsSuccess() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, null, null, null, null, 1L);
@@ -303,7 +299,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("복합 필터 조건으로 프로젝트 검색")
-    void searchByFilters_복합_필터_조건으로_프로젝트_검색_성공() {
+    void searchByFiltersWithComplexConditionsReturnsSuccess() {
       // given
       FilteringProjectRequest request = new FilteringProjectRequest("테스트", null, 1L, 1L, 1L, 1L);
       Pageable pageable = PageRequest.of(0, 10);
@@ -326,7 +322,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("부모-자식 프로젝트 관계 검색")
-    void parent_child_project_relationship_search() {
+    void parentChildProjectRelationshipSearch() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, null, null, null, null, null);
@@ -347,7 +343,7 @@ class SearchProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("빈 검색 결과 처리")
-    void empty_search_result_handling() {
+    void emptysearchresulthandling() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest("존재하지않는키워드", null, null, null, null, null);

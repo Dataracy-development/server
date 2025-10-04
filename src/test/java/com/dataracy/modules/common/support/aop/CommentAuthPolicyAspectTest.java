@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.support.aop;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,7 +56,7 @@ class CommentAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkCommentEditPermission - 댓글 편집 권한 검증 성공")
-  void checkCommentEditPermission_Success() {
+  void checkCommentEditPermissionSuccess() {
     // given
     Long commentId = 1L;
     Long authenticatedUserId = 100L;
@@ -81,7 +77,7 @@ class CommentAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkCommentEditPermission - 댓글 편집 권한 검증 실패 - 작성자 불일치")
-  void checkCommentEditPermission_Fail_OwnerMismatch() {
+  void checkCommentEditPermissionFailOwnerMismatch() {
     // given
     Long commentId = 1L;
     Long authenticatedUserId = 100L;
@@ -110,7 +106,7 @@ class CommentAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkCommentEditPermission - 로깅 검증")
-  void checkCommentEditPermission_LoggingVerification() {
+  void checkCommentEditPermissionLoggingVerification() {
     // given
     Long commentId = 1L;
     Long authenticatedUserId = 100L;
@@ -139,7 +135,7 @@ class CommentAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkCommentEditPermission - 동일한 사용자 ID 검증")
-  void checkCommentEditPermission_SameUserId_Success() {
+  void checkCommentEditPermissionSameUserIdSuccess() {
     // given
     Long commentId = 1L;
     Long userId = 100L;
@@ -159,7 +155,7 @@ class CommentAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkCommentEditPermission - null 값 처리")
-  void checkCommentEditPermission_NullValues_ThrowsException() {
+  void checkCommentEditPermissionNullValuesThrowsException() {
     // given
     Long commentId = 1L;
     Long authenticatedUserId = 100L;

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.lock;
 
 import static org.assertj.core.api.BDDAssertions.thenCode;
@@ -41,7 +37,7 @@ class LockTest {
   }
 
   @Test
-  void testNicknameLock_concurrentAccess() throws Exception {
+  void testNicknameLockconcurrentAccess() throws Exception {
     // given
     int threadCount = 5;
     ExecutorService executor = Executors.newFixedThreadPool(threadCount);

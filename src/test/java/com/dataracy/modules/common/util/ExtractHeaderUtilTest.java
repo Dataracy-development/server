@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,12 +17,12 @@ class ExtractHeaderUtilTest {
 
   @ParameterizedTest(name = "extractAccessToken - {0}")
   @CsvSource({
-    "'Bearer valid-token-123', 'valid-token-123', true",
+    "'Bearer valid-token-1', 'valid-token-1', true",
     "'Bearer ', '', true",
     "'Bearer token with spaces', 'token with spaces', true"
   })
   @DisplayName("extractAccessToken - 다양한 Bearer 토큰 추출")
-  void extractAccessToken_ShouldExtractVariousBearerTokens(
+  void extractAccessTokenShouldExtractVariousBearerTokens(
       String authHeader, String expectedToken, boolean shouldBePresent) {
     // Given
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -46,7 +42,7 @@ class ExtractHeaderUtilTest {
 
   @Test
   @DisplayName("extractAccessToken - Authorization 헤더가 없는 경우")
-  void extractAccessToken_ShouldReturnEmptyWhenNoHeader() {
+  void extractAccessTokenShouldReturnEmptyWhenNoHeader() {
     // Given
     MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -65,7 +61,7 @@ class ExtractHeaderUtilTest {
     "bearer valid-token" // 대소문자 구분
   })
   @DisplayName("extractAccessToken - 유효하지 않은 Authorization 헤더는 empty를 반환한다")
-  void extractAccessToken_ShouldReturnEmptyWhenInvalidHeader(String authHeader) {
+  void extractAccessTokenShouldReturnEmptyWhenInvalidHeader(String authHeader) {
     // Given
     MockHttpServletRequest request = new MockHttpServletRequest();
     if (!authHeader.isEmpty()) {
@@ -81,7 +77,7 @@ class ExtractHeaderUtilTest {
 
   @Test
   @DisplayName("extractAccessToken - Bearer 토큰이 공백만 있는 경우")
-  void extractAccessToken_ShouldReturnWhitespaceTokenWhenTokenIsWhitespace() {
+  void extractAccessTokenShouldReturnWhitespaceTokenWhenTokenIsWhitespace() {
     // Given
     MockHttpServletRequest request = new MockHttpServletRequest();
     request.addHeader("Authorization", "Bearer    ");
@@ -94,9 +90,9 @@ class ExtractHeaderUtilTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"Basic token123", "Bearer"})
+  @ValueSource(strings = {"Basic token1", "Bearer"})
   @DisplayName("extractAccessToken - 유효하지 않은 Authorization 헤더 형식")
-  void extractAccessToken_ShouldReturnEmptyForInvalidFormats(String invalidHeader) {
+  void extractAccessTokenShouldReturnEmptyForInvalidFormats(String invalidHeader) {
     // Given
     MockHttpServletRequest request = new MockHttpServletRequest();
     request.addHeader("Authorization", invalidHeader);
@@ -110,7 +106,7 @@ class ExtractHeaderUtilTest {
 
   @Test
   @DisplayName("extractAccessToken - Bearer 공백만 있는 경우")
-  void extractAccessToken_ShouldReturnEmptyForBearerWithOnlySpace() {
+  void extractAccessTokenShouldReturnEmptyForBearerWithOnlySpace() {
     // Given
     MockHttpServletRequest request = new MockHttpServletRequest();
     request.addHeader("Authorization", "Bearer ");
@@ -125,15 +121,15 @@ class ExtractHeaderUtilTest {
 
   @Test
   @DisplayName("extractAccessToken - 정확한 Bearer 형식으로 토큰 추출")
-  void extractAccessToken_ShouldExtractTokenWithCorrectBearerFormat() {
+  void extractAccessTokenShouldExtractTokenWithCorrectBearerFormat() {
     // Given
     MockHttpServletRequest request = new MockHttpServletRequest();
-    request.addHeader("Authorization", "Bearer token123");
+    request.addHeader("Authorization", "Bearer token1");
 
     // When
     Optional<String> token = ExtractHeaderUtil.extractAccessToken(request);
 
     // Then
-    assertThat(token).isPresent().contains("token123");
+    assertThat(token).isPresent().contains("token1");
   }
 }

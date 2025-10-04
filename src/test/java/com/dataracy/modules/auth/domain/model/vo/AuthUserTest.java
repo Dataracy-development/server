@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.domain.model.vo;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +15,7 @@ class AuthUserTest {
 
   @Test
   @DisplayName("AuthUser 생성자 테스트")
-  void authUser_ShouldCreateCorrectly() {
+  void authUserShouldCreateCorrectly() {
     // Given
     Long userId = 1L;
     RoleType role = RoleType.ROLE_USER;
@@ -39,11 +35,11 @@ class AuthUserTest {
 
   @Test
   @DisplayName("AuthUser.from - UserInfo로부터 AuthUser 생성")
-  void from_ShouldCreateAuthUserFromUserInfo() {
+  void fromShouldCreateAuthUserFromUserInfo() {
     // Given
     UserInfo userInfo =
         new UserInfo(
-            123L,
+            1L,
             RoleType.ROLE_ADMIN,
             "admin@example.com",
             "adminUser",
@@ -59,7 +55,7 @@ class AuthUserTest {
 
     // Then
     assertAll(
-        () -> assertThat(authUser.userId()).isEqualTo(123L),
+        () -> assertThat(authUser.userId()).isEqualTo(1L),
         () -> assertThat(authUser.role()).isEqualTo(RoleType.ROLE_ADMIN),
         () -> assertThat(authUser.email()).isEqualTo("admin@example.com"),
         () -> assertThat(authUser.nickname()).isEqualTo("adminUser"));
@@ -67,7 +63,7 @@ class AuthUserTest {
 
   @Test
   @DisplayName("AuthUser.from - null UserInfo 처리")
-  void from_ShouldHandleNullUserInfo() {
+  void fromShouldHandleNullUserInfo() {
     // Given
     UserInfo userInfo = null;
 
@@ -79,7 +75,7 @@ class AuthUserTest {
 
   @Test
   @DisplayName("AuthUser - equals 및 hashCode 테스트")
-  void authUser_ShouldHaveCorrectEqualsAndHashCode() {
+  void authUserShouldHaveCorrectEqualsAndHashCode() {
     // Given
     AuthUser authUser1 = new AuthUser(1L, RoleType.ROLE_USER, "test@example.com", "testUser");
     AuthUser authUser2 = new AuthUser(1L, RoleType.ROLE_USER, "test@example.com", "testUser");
@@ -91,7 +87,7 @@ class AuthUserTest {
 
   @Test
   @DisplayName("AuthUser - toString 테스트")
-  void authUser_ShouldHaveCorrectToString() {
+  void authUserShouldHaveCorrectToString() {
     // Given
     AuthUser authUser = new AuthUser(1L, RoleType.ROLE_USER, "test@example.com", "testUser");
 
@@ -109,7 +105,7 @@ class AuthUserTest {
 
   @Test
   @DisplayName("AuthUser - 다양한 RoleType 테스트")
-  void authUser_ShouldHandleDifferentRoleTypes() {
+  void authUserShouldHandleDifferentRoleTypes() {
     // Given & When & Then
     AuthUser user = new AuthUser(1L, RoleType.ROLE_USER, "user@example.com", "user");
     AuthUser admin = new AuthUser(2L, RoleType.ROLE_ADMIN, "admin@example.com", "admin");

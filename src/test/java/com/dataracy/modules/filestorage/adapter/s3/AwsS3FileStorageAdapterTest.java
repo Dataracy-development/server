@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.filestorage.adapter.s3;
 
 import static org.assertj.core.api.Assertions.*;
@@ -48,11 +44,11 @@ class AwsS3FileStorageAdapterTest {
 
     // FileStorageProperties 모킹 설정 (기본값으로 설정)
     FileStorageProperties.FileSize fileSize = new FileStorageProperties.FileSize();
-    fileSize.setMultipartThreshold(20 * 1024 * 1024L); // 20MB
-    fileSize.setStreamingThreshold(5 * 1024 * 1024L); // 5MB
+    fileSize.setMultipartThreshold(20 * 1024L * 1024L); // 20MB
+    fileSize.setStreamingThreshold(5 * 1024L * 1024L); // 5MB
 
     FileStorageProperties.Multipart multipart = new FileStorageProperties.Multipart();
-    multipart.setChunkSize(5 * 1024 * 1024L); // 5MB
+    multipart.setChunkSize(5 * 1024L * 1024L); // 5MB
 
     FileStorageProperties.Buffer buffer = new FileStorageProperties.Buffer();
     buffer.setDefaultSize(8192); // 8KB

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.web.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,10 +17,10 @@ class AuthWebMapperTest {
 
   @Test
   @DisplayName("자체 로그인 웹 요청 DTO를 애플리케이션 요청 DTO로 변환")
-  void toApplicationDto_자체_로그인_웹_요청_변환_성공() {
+  void toApplicationDtoSelfLoginWebRequestConversionSuccess() {
     // given
     String email = "test@example.com";
-    String password = "password123";
+    String password = "password1";
     SelfLoginWebRequest webRequest = new SelfLoginWebRequest(email, password);
 
     // when

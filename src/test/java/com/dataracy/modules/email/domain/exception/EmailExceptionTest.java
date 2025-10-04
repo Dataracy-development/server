@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.domain.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +14,7 @@ class EmailExceptionTest {
 
   @Test
   @DisplayName("EmailException 생성 및 속성 확인")
-  void emailException_ShouldHaveCorrectProperties() {
+  void emailExceptionShouldHaveCorrectProperties() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {
@@ -51,7 +47,7 @@ class EmailExceptionTest {
 
   @Test
   @DisplayName("EmailException은 BusinessException을 상속받는다")
-  void emailException_ShouldExtendBusinessException() {
+  void emailExceptionShouldExtendBusinessException() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {

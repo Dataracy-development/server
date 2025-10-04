@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.service.command.content;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,8 +45,7 @@ class UserCommandServiceTest {
 
   @BeforeEach
   void setUp() {
-    // self 참조 설정
-    service.setSelf(service);
+    // ApplicationContext를 통한 프록시 방식으로 변경되었으므로 setSelf 호출 제거
   }
 
   @Mock private UserCommandPort userCommandPort;
@@ -85,7 +80,7 @@ class UserCommandServiceTest {
 
     @Test
     @DisplayName("사용자 정보 수정 성공 - 닉네임 변경")
-    void modifyUserInfoSuccess_WithNicknameChange() {
+    void modifyUserInfoSuccessWithNicknameChange() {
       // given
       Long userId = 1L;
       ModifyUserInfoRequest request = createSampleModifyRequest();
@@ -116,7 +111,7 @@ class UserCommandServiceTest {
 
     @Test
     @DisplayName("사용자 정보 수정 성공 - 닉네임 변경 없음")
-    void modifyUserInfoSuccess_WithoutNicknameChange() {
+    void modifyUserInfoSuccessWithoutNicknameChange() {
       // given
       Long userId = 1L;
       ModifyUserInfoRequest request = createSampleModifyRequest();
@@ -146,7 +141,7 @@ class UserCommandServiceTest {
 
     @Test
     @DisplayName("사용자 정보 수정 실패 - 사용자가 존재하지 않음")
-    void modifyUserInfoFail_UserNotFound() {
+    void modifyUserInfoFailUserNotFound() {
       // given
       Long userId = 999L;
       ModifyUserInfoRequest request = createSampleModifyRequest();
@@ -162,7 +157,7 @@ class UserCommandServiceTest {
 
     @Test
     @DisplayName("사용자 정보 수정 실패 - 파일 업로드 실패")
-    void modifyUserInfoFail_FileUploadFailure() {
+    void modifyUserInfoFailFileUploadFailure() {
       // given
       Long userId = 1L;
       ModifyUserInfoRequest request = createSampleModifyRequest();
@@ -194,7 +189,7 @@ class UserCommandServiceTest {
 
     @Test
     @DisplayName("사용자 정보 수정 성공 - null 프로필 이미지")
-    void modifyUserInfoSuccess_WithNullProfileImage() {
+    void modifyUserInfoSuccessWithNullProfileImage() {
       // given
       Long userId = 1L;
       ModifyUserInfoRequest request = createSampleModifyRequest();
@@ -238,7 +233,7 @@ class UserCommandServiceTest {
 
     @Test
     @DisplayName("사용자 탈퇴 성공 - 음수 사용자 ID")
-    void withdrawUserSuccess_WithNegativeId() {
+    void withdrawUserSuccessWithNegativeId() {
       // given
       Long negativeUserId = -1L;
       willDoNothing().given(userCommandPort).withdrawalUser(negativeUserId);
@@ -274,7 +269,7 @@ class UserCommandServiceTest {
 
     @Test
     @DisplayName("사용자 로그아웃 실패 - 만료된 리프레시 토큰")
-    void logoutUserFail_ExpiredRefreshToken() {
+    void logoutUserFailExpiredRefreshToken() {
       // given
       Long userId = 1L;
       String expiredRefreshToken = "expired-refresh-token";
@@ -290,7 +285,7 @@ class UserCommandServiceTest {
 
     @Test
     @DisplayName("사용자 로그아웃 실패 - 사용자 ID 불일치")
-    void logoutUserFail_UserMismatch() {
+    void logoutUserFailUserMismatch() {
       // given
       Long userId = 1L;
       Long differentUserId = 2L;

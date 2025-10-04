@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.adapter.web.api.signup;
 
 import static org.mockito.BDDMockito.*;
@@ -73,8 +69,8 @@ class UserSignUpControllerTest {
     SelfSignUpWebRequest webRequest =
         new SelfSignUpWebRequest(
             "test@example.com",
-            "Password123!",
-            "Password123!",
+            "Password1!",
+            "Password1!",
             "TestUser",
             1L,
             2L,
@@ -85,8 +81,8 @@ class UserSignUpControllerTest {
     SelfSignUpRequest requestDto =
         new SelfSignUpRequest(
             "test@example.com",
-            "Password123!",
-            "Password123!",
+            "Password1!",
+            "Password1!",
             "TestUser",
             1L,
             2L,

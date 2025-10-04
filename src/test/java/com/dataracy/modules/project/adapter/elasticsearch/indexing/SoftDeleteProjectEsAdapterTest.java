@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.elasticsearch.indexing;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -33,6 +29,9 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 @ExtendWith(MockitoExtension.class)
 class SoftDeleteProjectEsAdapterTest {
 
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+
   @Mock private ElasticsearchClient elasticsearchClient;
 
   @Mock private ElasticLogger elasticLogger;
@@ -48,7 +47,7 @@ class SoftDeleteProjectEsAdapterTest {
   @DisplayName("프로젝트 소프트 삭제 성공 시 정상 동작")
   void deleteProjectSuccess() throws IOException {
     // given
-    Long projectId = 123L;
+    Long projectId = 1L;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
@@ -62,7 +61,7 @@ class SoftDeleteProjectEsAdapterTest {
           .update(any(Function.class), eq(ProjectSearchDocument.class));
       then(elasticLogger)
           .should()
-          .logUpdate("project_index", "123", "프로젝트 Soft Delete완료: projectId=123");
+          .logUpdate("project_index", "1", "프로젝트 Soft Delete완료: projectId=1");
     }
   }
 
@@ -70,7 +69,7 @@ class SoftDeleteProjectEsAdapterTest {
   @DisplayName("프로젝트 복원 성공 시 정상 동작")
   void restoreProjectSuccess() throws IOException {
     // given
-    Long projectId = 456L;
+    Long projectId = PROJECT_ID;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
@@ -82,7 +81,7 @@ class SoftDeleteProjectEsAdapterTest {
       then(elasticsearchClient)
           .should()
           .update(any(Function.class), eq(ProjectSearchDocument.class));
-      then(elasticLogger).should().logUpdate("project_index", "456", "프로젝트 삭제 복원완료: projectId=456");
+      then(elasticLogger).should().logUpdate("project_index", "1", "프로젝트 삭제 복원완료: projectId=1");
     }
   }
 
@@ -90,7 +89,7 @@ class SoftDeleteProjectEsAdapterTest {
   @DisplayName("소프트 삭제 시 IOException 발생하면 EsUpdateException으로 변환")
   void deleteProjectWithIOException() throws IOException {
     // given
-    Long projectId = 123L;
+    Long projectId = 1L;
     IOException ioException = new IOException("Connection failed");
     willThrow(ioException)
         .given(elasticsearchClient)
@@ -108,13 +107,13 @@ class SoftDeleteProjectEsAdapterTest {
                   .isInstanceOf(EsUpdateException.class),
           () ->
               org.assertj.core.api.Assertions.assertThat(exception)
-                  .hasMessage("ES update failed: projectId=123"),
+                  .hasMessage("ES update failed: projectId=1"),
           () -> org.assertj.core.api.Assertions.assertThat(exception).hasCause(ioException));
 
       then(elasticLogger)
           .should()
           .logError(
-              eq("project_index"), eq("프로젝트 Soft Delete실패: projectId=123"), any(IOException.class));
+              eq("project_index"), eq("프로젝트 Soft Delete실패: projectId=1"), any(IOException.class));
     }
   }
 
@@ -122,7 +121,7 @@ class SoftDeleteProjectEsAdapterTest {
   @DisplayName("복원 시 IOException 발생하면 EsUpdateException으로 변환")
   void restoreProjectWithIOException() throws IOException {
     // given
-    Long projectId = 456L;
+    Long projectId = PROJECT_ID;
     IOException ioException = new IOException("Network error");
     willThrow(ioException)
         .given(elasticsearchClient)
@@ -140,12 +139,12 @@ class SoftDeleteProjectEsAdapterTest {
                   .isInstanceOf(EsUpdateException.class),
           () ->
               org.assertj.core.api.Assertions.assertThat(exception)
-                  .hasMessage("ES update failed: projectId=456"),
+                  .hasMessage("ES update failed: projectId=1"),
           () -> org.assertj.core.api.Assertions.assertThat(exception).hasCause(ioException));
 
       then(elasticLogger)
           .should()
-          .logError(eq("project_index"), eq("프로젝트 삭제 복원실패: projectId=456"), any(IOException.class));
+          .logError(eq("project_index"), eq("프로젝트 삭제 복원실패: projectId=1"), any(IOException.class));
     }
   }
 }

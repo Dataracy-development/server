@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.web.response.support;
 
 import io.swagger.v3.oas.annotations.media.Schema;

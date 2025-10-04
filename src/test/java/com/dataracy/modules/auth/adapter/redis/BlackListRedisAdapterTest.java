@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +26,10 @@ import org.springframework.data.redis.core.ValueOperations;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class BlackListRedisAdapterTest {
 
+  // Test constants
+  private static final Long ONE_HOUR_IN_MILLIS = 3600000L;
+  private static final Long NEGATIVE_EXPIRATION_MILLIS = -1000L;
+
   @Mock private StringRedisTemplate redisTemplate;
 
   @Mock private ValueOperations<String, String> valueOperations;
@@ -48,10 +48,10 @@ class BlackListRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 토큰을 블랙리스트에 등록")
-    void setBlackListToken_성공() {
+    void setBlackListTokenSuccess() {
       // given
       String token = "test-jwt-token";
-      long expirationMillis = 3600000L; // 1시간
+      long expirationMillis = ONE_HOUR_IN_MILLIS; // 1시간
       String expectedKey = "blacklist:" + token;
 
       // when
@@ -65,7 +65,7 @@ class BlackListRedisAdapterTest {
 
     @Test
     @DisplayName("만료 시간이 0일 때도 정상 처리")
-    void setBlackListToken_만료시간0_정상처리() {
+    void setBlackListTokenWithZeroExpiration() {
       // given
       String token = "test-token";
       long expirationMillis = 0L;
@@ -82,10 +82,10 @@ class BlackListRedisAdapterTest {
 
     @Test
     @DisplayName("음수 만료 시간일 때도 정상 처리")
-    void setBlackListToken_음수만료시간_정상처리() {
+    void setBlackListTokenWithNegativeExpiration() {
       // given
       String token = "test-token";
-      long expirationMillis = -1000L;
+      long expirationMillis = NEGATIVE_EXPIRATION_MILLIS;
       String expectedKey = "blacklist:" + token;
 
       // when
@@ -104,7 +104,7 @@ class BlackListRedisAdapterTest {
 
     @Test
     @DisplayName("토큰이 블랙리스트에 있을 때 true 반환")
-    void isBlacklisted_토큰이블랙리스트에있음_true반환() {
+    void isBlacklistedReturnsTrueWhenTokenExists() {
       // given
       String token = "blacklisted-token";
       String expectedKey = "blacklist:" + token;
@@ -122,7 +122,7 @@ class BlackListRedisAdapterTest {
     @NullAndEmptySource
     @ValueSource(strings = {"valid-token", "test-token"})
     @DisplayName("블랙리스트에 없는 토큰은 false 반환 (null, 빈 문자열, 일반 토큰 모두 포함)")
-    void isBlacklisted_블랙리스트에없음_false반환(String token) {
+    void isBlacklistedReturnsFalseWhenTokenNotExists(String token) {
       // given
       String expectedKey = "blacklist:" + token;
       given(redisTemplate.hasKey(expectedKey)).willReturn(false);
@@ -137,7 +137,7 @@ class BlackListRedisAdapterTest {
 
     @Test
     @DisplayName("Redis가 null을 반환할 때 false 반환")
-    void isBlacklisted_Redis가null반환_false반환() {
+    void isBlacklistedReturnsFalseWhenRedisReturnsNull() {
       // given
       String token = "test-token";
       String expectedKey = "blacklist:" + token;

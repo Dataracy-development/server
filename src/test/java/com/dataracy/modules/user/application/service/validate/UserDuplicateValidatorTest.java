@@ -1,14 +1,9 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.service.validate;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.given;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
 import com.dataracy.modules.user.application.port.out.validate.ValidateUserExistsPort;
-import com.dataracy.modules.user.domain.enums.ProviderType;
-import com.dataracy.modules.user.domain.enums.RoleType;
 import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
@@ -29,76 +22,62 @@ import com.dataracy.modules.user.domain.status.UserErrorStatus;
 @ExtendWith(MockitoExtension.class)
 class UserDuplicateValidatorTest {
 
-  @Mock ValidateUserExistsPort userExistencePort;
-  @Mock UserQueryPort userQueryPort;
+  @Mock private ValidateUserExistsPort userExistencePort;
+  @Mock private UserQueryPort userQueryPort;
 
-  @InjectMocks UserDuplicateValidator validator;
+  @InjectMocks private UserDuplicateValidator validator;
 
-  private User localUser() {
-    return User.builder()
-        .id(1L)
-        .provider(ProviderType.LOCAL)
-        .providerId("local-1")
-        .role(RoleType.ROLE_USER)
-        .email("u@test.com")
-        .password("encoded")
-        .nickname("nick")
-        .topicIds(Collections.emptyList())
-        .isDeleted(false)
-        .build();
-  }
-
-  // ---------------- duplicateNickname ----------------
   @Test
-  @DisplayName("duplicateNickname: 닉네임이 중복되지 않으면 예외 없음")
-  void duplicateNicknameSuccess() {
+  @DisplayName("duplicateNickname - 닉네임이 중복되지 않은 경우 예외가 발생하지 않는다")
+  void duplicateNicknameWhenNicknameIsNotDuplicatedDoesNotThrowException() {
     // given
-    given(userExistencePort.existsByNickname("nick")).willReturn(false);
+    String nickname = "testNickname";
+    when(userExistencePort.existsByNickname(nickname)).thenReturn(false);
 
     // when & then
-    assertThatCode(() -> validator.duplicateNickname("nick")).doesNotThrowAnyException();
+    validator.duplicateNickname(nickname);
   }
 
   @Test
-  @DisplayName("duplicateNickname: 닉네임이 중복되면 DUPLICATED_NICKNAME 예외 발생")
-  void duplicateNicknameDuplicated() {
+  @DisplayName("duplicateNickname - 닉네임이 중복된 경우 UserException이 발생한다")
+  void duplicateNicknameWhenNicknameIsDuplicatedThrowsUserException() {
     // given
-    given(userExistencePort.existsByNickname("dupNick")).willReturn(true);
+    String nickname = "duplicateNickname";
+    when(userExistencePort.existsByNickname(nickname)).thenReturn(true);
 
-    // when
-    UserException ex =
-        catchThrowableOfType(() -> validator.duplicateNickname("dupNick"), UserException.class);
-
-    // then
-    assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.DUPLICATED_NICKNAME);
-  }
-
-  // ---------------- duplicateEmail ----------------
-  @Test
-  @DisplayName("duplicateEmail: 해당 이메일이 존재하면 User 반환")
-  void duplicateEmailExists() {
-    // given
-    given(userQueryPort.findUserByEmail("u@test.com")).willReturn(Optional.of(localUser()));
-
-    // when
-    Optional<User> result = validator.duplicateEmail("u@test.com");
-
-    // then
-    assertAll(
-        () -> assertThat(result).isPresent(),
-        () -> assertThat(result.get().getEmail()).isEqualTo("u@test.com"));
+    // when & then
+    assertThatThrownBy(() -> validator.duplicateNickname(nickname))
+        .isInstanceOf(UserException.class)
+        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_NICKNAME);
   }
 
   @Test
-  @DisplayName("duplicateEmail: 해당 이메일이 존재하지 않으면 Optional.empty 반환")
-  void duplicateEmailNotExists() {
+  @DisplayName("duplicateEmail - 이메일이 중복되지 않은 경우 빈 Optional을 반환한다")
+  void duplicateEmailWhenEmailIsNotDuplicatedReturnsEmptyOptional() {
     // given
-    given(userQueryPort.findUserByEmail("none@test.com")).willReturn(Optional.empty());
+    String email = "test@example.com";
+    when(userQueryPort.findUserByEmail(email)).thenReturn(Optional.empty());
 
     // when
-    Optional<User> result = validator.duplicateEmail("none@test.com");
+    Optional<User> result = validator.duplicateEmail(email);
 
     // then
     assertThat(result).isEmpty();
+  }
+
+  @Test
+  @DisplayName("duplicateEmail - 이메일이 중복된 경우 해당 사용자를 포함한 Optional을 반환한다")
+  void duplicateEmailWhenEmailIsDuplicatedReturnsOptionalWithUser() {
+    // given
+    String email = "duplicate@example.com";
+    User existingUser = User.builder().email(email).build();
+    when(userQueryPort.findUserByEmail(email)).thenReturn(Optional.of(existingUser));
+
+    // when
+    Optional<User> result = validator.duplicateEmail(email);
+
+    // then
+    assertThat(result).isPresent();
+    assertThat(result.get()).isEqualTo(existingUser);
   }
 }

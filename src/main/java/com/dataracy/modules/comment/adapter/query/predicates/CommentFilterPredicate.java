@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.comment.adapter.query.predicates;
 
 import static com.dataracy.modules.comment.adapter.jpa.entity.QCommentEntity.commentEntity;

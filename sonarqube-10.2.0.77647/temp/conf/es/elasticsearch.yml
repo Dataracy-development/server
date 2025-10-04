@@ -13,7 +13,7 @@ http.cors.enabled: 'true'
 xpack.security.enabled: 'false'
 http.host: 127.0.0.1
 path.logs: /Users/junhyeongpark/Desktop/dataracy/server/sonarqube-10.2.0.77647/logs
-transport.port: '50882'
+transport.port: '50201'
 path.data: /Users/junhyeongpark/Desktop/dataracy/server/sonarqube-10.2.0.77647/data/es8
 node.name: sonarqube
 network.tcp.reuse_address: 'true'

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.dto.response;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +14,7 @@ class ErrorResponseTest {
 
   @Test
   @DisplayName("of - BaseErrorCode로 ErrorResponse를 생성한다")
-  void of_WithErrorCode_CreatesErrorResponse() {
+  void ofWithErrorCodeCreatesErrorResponse() {
     // given
     BaseErrorCode errorCode = CommonErrorStatus.BAD_REQUEST;
 
@@ -34,7 +30,7 @@ class ErrorResponseTest {
 
   @Test
   @DisplayName("of - BaseErrorCode와 커스텀 메시지로 ErrorResponse를 생성한다")
-  void of_WithErrorCodeAndCustomMessage_CreatesErrorResponse() {
+  void ofWithErrorCodeAndCustomMessageCreatesErrorResponse() {
     // given
     BaseErrorCode errorCode = CommonErrorStatus.UNAUTHORIZED;
     String customMessage = "인증이 필요합니다.";
@@ -51,7 +47,7 @@ class ErrorResponseTest {
 
   @Test
   @DisplayName("of - UserErrorStatus로 ErrorResponse를 생성한다")
-  void of_WithUserErrorStatus_CreatesErrorResponse() {
+  void ofWithUserErrorStatusCreatesErrorResponse() {
     // given
     BaseErrorCode errorCode = UserErrorStatus.BAD_REQUEST_LOGIN;
 
@@ -67,7 +63,7 @@ class ErrorResponseTest {
 
   @Test
   @DisplayName("of - UserErrorStatus와 커스텀 메시지로 ErrorResponse를 생성한다")
-  void of_WithUserErrorStatusAndCustomMessage_CreatesErrorResponse() {
+  void ofWithUserErrorStatusAndCustomMessageCreatesErrorResponse() {
     // given
     BaseErrorCode errorCode = UserErrorStatus.DUPLICATED_NICKNAME;
     String customMessage = "닉네임은 2-8자 사이여야 합니다.";
@@ -84,7 +80,7 @@ class ErrorResponseTest {
 
   @Test
   @DisplayName("of - INTERNAL_SERVER_ERROR로 ErrorResponse를 생성한다")
-  void of_WithInternalServerError_CreatesErrorResponse() {
+  void ofWithInternalServerErrorCreatesErrorResponse() {
     // given
     BaseErrorCode errorCode = CommonErrorStatus.INTERNAL_SERVER_ERROR;
 
@@ -100,7 +96,7 @@ class ErrorResponseTest {
 
   @Test
   @DisplayName("of - 빈 문자열 커스텀 메시지로 ErrorResponse를 생성한다")
-  void of_WithEmptyCustomMessage_CreatesErrorResponse() {
+  void ofWithEmptyCustomMessageCreatesErrorResponse() {
     // given
     BaseErrorCode errorCode = CommonErrorStatus.BAD_REQUEST;
     String customMessage = "";
@@ -117,7 +113,7 @@ class ErrorResponseTest {
 
   @Test
   @DisplayName("of - null 커스텀 메시지로 ErrorResponse를 생성한다")
-  void of_WithNullCustomMessage_CreatesErrorResponse() {
+  void ofWithNullCustomMessageCreatesErrorResponse() {
     // given
     BaseErrorCode errorCode = CommonErrorStatus.BAD_REQUEST;
     String customMessage = null;

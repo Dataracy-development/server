@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.adapter.web.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +20,7 @@ class DataTypeWebMapperTest {
 
   @Test
   @DisplayName("단일 DataTypeResponse를 DataTypeWebResponse로 변환 성공")
-  void toWebDto_ShouldConvertSingleResponse() {
+  void toWebDtoShouldConvertSingleResponse() {
     // Given
     DataTypeResponse response = new DataTypeResponse(1L, "type1", "Type 1");
 
@@ -41,7 +37,7 @@ class DataTypeWebMapperTest {
 
   @Test
   @DisplayName("전체 DataTypesResponse를 AllDataTypesWebResponse로 변환 성공")
-  void toWebDto_ShouldConvertAllResponse() {
+  void toWebDtoShouldConvertAllResponse() {
     // Given
     DataTypeResponse response1 = new DataTypeResponse(1L, "type1", "Type 1");
     DataTypeResponse response2 = new DataTypeResponse(2L, "type2", "Type 2");
@@ -62,7 +58,7 @@ class DataTypeWebMapperTest {
 
   @Test
   @DisplayName("빈 리스트로 AllDataTypesResponse 변환 성공")
-  void toWebDto_ShouldConvertEmptyResponse() {
+  void toWebDtoShouldConvertEmptyResponse() {
     // Given
     AllDataTypesResponse allResponse = new AllDataTypesResponse(List.of());
 

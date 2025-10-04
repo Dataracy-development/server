@@ -1,12 +1,15 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.behaviorlog.support.parser;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.basjes.parse.useragent.UserAgent;
 import nl.basjes.parse.useragent.UserAgentAnalyzer;
+
+/** UserAgentParser 초기화 실패 시 발생하는 예외 */
+class UserAgentParserInitializationException extends RuntimeException {
+  UserAgentParserInitializationException(String message, Throwable cause) {
+    super(message, cause);
+  }
+}
 
 @Slf4j
 public class UserAgentParser {
@@ -22,7 +25,7 @@ public class UserAgentParser {
           .build();
     } catch (Exception e) {
       log.error("UserAgentAnalyzer 초기화 실패", e);
-      throw new RuntimeException("UserAgentAnalyzer 초기화 실패", e);
+      throw new UserAgentParserInitializationException("UserAgentAnalyzer 초기화 실패", e);
     }
   }
 

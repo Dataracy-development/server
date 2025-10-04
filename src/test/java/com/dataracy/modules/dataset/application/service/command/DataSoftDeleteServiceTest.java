@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.application.service.command;
 
 import static org.mockito.BDDMockito.*;
@@ -51,7 +47,7 @@ class DataSoftDeleteServiceTest {
 
     @Test
     @DisplayName("데이터 소프트 삭제 실패 - DB 삭제 실패")
-    void deleteDataFail_DbDeleteFailure() {
+    void deleteDataFailDbDeleteFailure() {
       // given
       Long dataId = 1L;
       willThrow(new RuntimeException("DB 삭제 실패")).given(softDeleteDataDbPort).deleteData(dataId);
@@ -69,7 +65,7 @@ class DataSoftDeleteServiceTest {
 
     @Test
     @DisplayName("데이터 소프트 삭제 실패 - 프로젝션 작업 등록 실패")
-    void deleteDataFail_ProjectionTaskFailure() {
+    void deleteDataFailProjectionTaskFailure() {
       // given
       Long dataId = 1L;
       willDoNothing().given(softDeleteDataDbPort).deleteData(dataId);
@@ -111,7 +107,7 @@ class DataSoftDeleteServiceTest {
 
     @Test
     @DisplayName("데이터 복원 실패 - DB 복원 실패")
-    void restoreDataFail_DbRestoreFailure() {
+    void restoreDataFailDbRestoreFailure() {
       // given
       Long dataId = 1L;
       willThrow(new RuntimeException("DB 복원 실패")).given(softDeleteDataDbPort).restoreData(dataId);
@@ -129,7 +125,7 @@ class DataSoftDeleteServiceTest {
 
     @Test
     @DisplayName("데이터 복원 실패 - 프로젝션 작업 등록 실패")
-    void restoreDataFail_ProjectionTaskFailure() {
+    void restoreDataFailProjectionTaskFailure() {
       // given
       Long dataId = 1L;
       willDoNothing().given(softDeleteDataDbPort).restoreData(dataId);

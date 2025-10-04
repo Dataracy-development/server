@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.application.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,6 +13,9 @@ import com.dataracy.modules.reference.application.dto.response.singleview.VisitS
 import com.dataracy.modules.reference.domain.model.VisitSource;
 
 class VisitSourceDtoMapperTest {
+
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
   private final VisitSourceDtoMapper mapper = new VisitSourceDtoMapper();
 
   @Test

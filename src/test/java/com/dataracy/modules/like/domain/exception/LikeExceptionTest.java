@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.domain.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,9 +12,12 @@ import com.dataracy.modules.common.status.BaseErrorCode;
 @DisplayName("LikeException 테스트")
 class LikeExceptionTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("LikeException 생성 및 속성 확인")
-  void likeException_ShouldHaveCorrectProperties() {
+  void likeExceptionShouldHaveCorrectProperties() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {
@@ -51,7 +50,7 @@ class LikeExceptionTest {
 
   @Test
   @DisplayName("LikeException은 BusinessException을 상속받는다")
-  void likeException_ShouldExtendBusinessException() {
+  void likeExceptionShouldExtendBusinessException() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {

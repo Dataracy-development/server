@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -141,7 +137,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findProjectById - 존재하는 프로젝트 조회 성공")
-    void findProjectById_WhenProjectExists_ReturnsProject() {
+    void findProjectByIdWhenProjectExistsReturnsProject() {
       // when
       Optional<Project> result = readAdapter.findProjectById(savedProject.getId());
 
@@ -154,7 +150,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findProjectById - 삭제된 프로젝트는 조회되지 않음")
-    void findProjectById_WhenProjectIsDeleted_ReturnsEmpty() {
+    void findProjectByIdWhenProjectIsDeletedReturnsEmpty() {
       // when
       Optional<Project> result = readAdapter.findProjectById(deletedProject.getId());
 
@@ -164,7 +160,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findProjectById - 존재하지 않는 프로젝트 조회")
-    void findProjectById_WhenProjectNotExists_ReturnsEmpty() {
+    void findProjectByIdWhenProjectNotExistsReturnsEmpty() {
       // when
       Optional<Project> result = readAdapter.findProjectById(999L);
 
@@ -174,7 +170,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findProjectWithDataById - 프로젝트와 연결된 데이터 조회")
-    void findProjectWithDataById_WhenProjectExists_ReturnsProjectWithData() {
+    void findProjectWithDataByIdWhenProjectExistsReturnsProjectWithData() {
       // when
       Optional<ProjectWithDataIdsResponse> result =
           readAdapter.findProjectWithDataById(savedProject.getId());
@@ -188,7 +184,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findUserProjects - 사용자 프로젝트 목록 조회")
-    void findUserProjects_WhenUserHasProjects_ReturnsProjects() {
+    void findUserProjectsWhenUserHasProjectsReturnsProjects() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -204,7 +200,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("getPopularProjects - 인기 프로젝트 조회")
-    void getPopularProjects_ReturnsPopularProjects() {
+    void getPopularProjectsReturnsPopularProjects() {
       // given
       int size = 10;
 
@@ -220,7 +216,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findContinuedProjects - 이어가기 프로젝트 목록 조회")
-    void findContinuedProjects_WhenParentHasChildren_ReturnsChildren() {
+    void findContinuedProjectsWhenParentHasChildrenReturnsChildren() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -237,7 +233,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findContinuedProjects - 자식 프로젝트가 없는 경우")
-    void findContinuedProjects_WhenNoChildren_ReturnsEmpty() {
+    void findContinuedProjectsWhenNoChildrenReturnsEmpty() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -253,7 +249,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findConnectedProjectsAssociatedWithDataset - 데이터셋과 연결된 프로젝트 조회")
-    void findConnectedProjectsAssociatedWithDataset_WhenDataConnected_ReturnsProjects() {
+    void findConnectedProjectsAssociatedWithDatasetWhenDataConnectedReturnsProjects() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -270,7 +266,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findConnectedProjectsAssociatedWithDataset - 연결된 프로젝트가 없는 경우")
-    void findConnectedProjectsAssociatedWithDataset_WhenNoConnectedProjects_ReturnsEmpty() {
+    void findConnectedProjectsAssociatedWithDatasetWhenNoConnectedProjectsReturnsEmpty() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -286,7 +282,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findUserProjects - null Pageable 처리")
-    void findUserProjects_WithNullPageable_UsesDefaultPageable() {
+    void findUserProjectsWithNullPageableUsesDefaultPageable() {
       // when
       Page<Project> result = readAdapter.findUserProjects(1L, null);
 
@@ -301,7 +297,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findUserProjects - 프로젝트가 없는 사용자")
-    void findUserProjects_WhenUserHasNoProjects_ReturnsEmpty() {
+    void findUserProjectsWhenUserHasNoProjectsReturnsEmpty() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -317,7 +313,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findProjectWithDataById - 존재하지 않는 프로젝트")
-    void findProjectWithDataById_WhenProjectNotExists_ReturnsEmpty() {
+    void findProjectWithDataByIdWhenProjectNotExistsReturnsEmpty() {
       // when
       Optional<ProjectWithDataIdsResponse> result = readAdapter.findProjectWithDataById(999L);
 
@@ -327,7 +323,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findProjectWithDataById - 데이터가 연결되지 않은 프로젝트")
-    void findProjectWithDataById_WhenNoDataConnected_ReturnsProjectWithEmptyData() {
+    void findProjectWithDataByIdWhenNoDataConnectedReturnsProjectWithEmptyData() {
       // when
       Optional<ProjectWithDataIdsResponse> result =
           readAdapter.findProjectWithDataById(parentProject.getId());
@@ -341,7 +337,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findLikeProjects - 사용자가 좋아요한 프로젝트 조회")
-    void findLikeProjects_WhenUserHasLikes_ReturnsLikedProjects() {
+    void findLikeProjectsWhenUserHasLikesReturnsLikedProjects() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -358,7 +354,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("findLikeProjects - 좋아요가 없는 사용자")
-    void findLikeProjects_WhenUserHasNoLikes_ReturnsEmpty() {
+    void findLikeProjectsWhenUserHasNoLikesReturnsEmpty() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -379,7 +375,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("searchByFilters - 키워드로 프로젝트 검색")
-    void searchByFilters_WithKeyword_ReturnsMatchingProjects() {
+    void searchByFiltersWithKeywordReturnsMatchingProjects() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest("테스트", "LATEST", null, null, null, null);
@@ -398,7 +394,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("searchByFilters - 빈 키워드로 모든 프로젝트 검색")
-    void searchByFilters_WithEmptyKeyword_ReturnsAllProjects() {
+    void searchByFiltersWithEmptyKeywordReturnsAllProjects() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest(null, "LATEST", null, null, null, null);
@@ -417,7 +413,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("searchByFilters - 존재하지 않는 키워드로 검색")
-    void searchByFilters_WithNonExistentKeyword_ReturnsEmpty() {
+    void searchByFiltersWithNonExistentKeywordReturnsEmpty() {
       // given
       FilteringProjectRequest request =
           new FilteringProjectRequest("존재하지않는프로젝트", "LATEST", null, null, null, null);
@@ -439,7 +435,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("checkParentProjectExistsById - 자식 프로젝트가 있는 부모 프로젝트")
-    void checkParentProjectExistsById_WhenHasChildProjects_ReturnsTrue() {
+    void checkParentProjectExistsByIdWhenHasChildProjectsReturnsTrue() {
       // when
       boolean result = validateAdapter.checkParentProjectExistsById(parentProject.getId());
 
@@ -449,7 +445,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("checkParentProjectExistsById - 자식 프로젝트가 없는 프로젝트")
-    void checkParentProjectExistsById_WhenNoChildProjects_ReturnsFalse() {
+    void checkParentProjectExistsByIdWhenNoChildProjectsReturnsFalse() {
       // when
       boolean result = validateAdapter.checkParentProjectExistsById(savedProject.getId());
 
@@ -459,7 +455,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("checkProjectDataExistsByProjectId - 데이터가 연결된 프로젝트")
-    void checkProjectDataExistsByProjectId_WhenHasData_ReturnsTrue() {
+    void checkProjectDataExistsByProjectIdWhenHasDataReturnsTrue() {
       // when
       boolean result = validateAdapter.checkProjectDataExistsByProjectId(savedProject.getId());
 
@@ -469,7 +465,7 @@ class ProjectQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("checkProjectDataExistsByProjectId - 데이터가 연결되지 않은 프로젝트")
-    void checkProjectDataExistsByProjectId_WhenNoData_ReturnsFalse() {
+    void checkProjectDataExistsByProjectIdWhenNoDataReturnsFalse() {
       // when
       boolean result = validateAdapter.checkProjectDataExistsByProjectId(parentProject.getId());
 

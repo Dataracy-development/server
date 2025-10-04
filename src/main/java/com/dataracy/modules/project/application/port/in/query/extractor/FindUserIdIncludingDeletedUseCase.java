@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.application.port.in.query.extractor;
 
 public interface FindUserIdIncludingDeletedUseCase {

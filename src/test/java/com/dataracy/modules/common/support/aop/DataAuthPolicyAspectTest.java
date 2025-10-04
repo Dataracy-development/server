@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.support.aop;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +59,7 @@ class DataAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkDataEditPermission - 일반 편집 권한 검증 성공")
-  void checkDataEditPermission_EditPermission_Success() {
+  void checkDataEditPermissionEditPermissionSuccess() {
     // given
     Long dataId = 1L;
     Long authenticatedUserId = 100L;
@@ -85,7 +81,7 @@ class DataAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkDataEditPermission - 복원 권한 검증 성공")
-  void checkDataEditPermission_RestorePermission_Success() {
+  void checkDataEditPermissionRestorePermissionSuccess() {
     // given
     Long dataId = 1L;
     Long authenticatedUserId = 100L;
@@ -107,7 +103,7 @@ class DataAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkDataEditPermission - 일반 편집 권한 검증 실패 - 작성자 불일치")
-  void checkDataEditPermission_EditPermission_Fail_OwnerMismatch() {
+  void checkDataEditPermissionEditPermissionFailOwnerMismatch() {
     // given
     Long dataId = 1L;
     Long authenticatedUserId = 100L;
@@ -137,7 +133,7 @@ class DataAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkDataEditPermission - 복원 권한 검증 실패 - 작성자 불일치")
-  void checkDataEditPermission_RestorePermission_Fail_OwnerMismatch() {
+  void checkDataEditPermissionRestorePermissionFailOwnerMismatch() {
     // given
     Long dataId = 1L;
     Long authenticatedUserId = 100L;
@@ -167,7 +163,7 @@ class DataAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkDataEditPermission - 로깅 검증 - 일반 편집 실패")
-  void checkDataEditPermission_EditPermission_LoggingVerification() {
+  void checkDataEditPermissionEditPermissionLoggingVerification() {
     // given
     Long dataId = 1L;
     Long authenticatedUserId = 100L;
@@ -197,7 +193,7 @@ class DataAuthPolicyAspectTest {
 
   @Test
   @DisplayName("checkDataEditPermission - 로깅 검증 - 복원 실패")
-  void checkDataEditPermission_RestorePermission_LoggingVerification() {
+  void checkDataEditPermissionRestorePermissionLoggingVerification() {
     // given
     Long dataId = 1L;
     Long authenticatedUserId = 100L;

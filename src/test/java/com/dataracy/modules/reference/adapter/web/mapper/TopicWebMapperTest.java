@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.adapter.web.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +25,7 @@ class TopicWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - TopicResponse를 TopicWebResponse로 변환한다")
-  void toWebDto_WhenTopicResponse_ConvertsToTopicWebResponse() {
+  void toWebDtoWhenTopicResponseConvertsToTopicWebResponse() {
     // given
     TopicResponse topicResponse = new TopicResponse(1L, "AI", "인공지능");
 
@@ -46,7 +42,7 @@ class TopicWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - AllTopicsResponse를 AllTopicsWebResponse로 변환한다")
-  void toWebDto_WhenAllTopicsResponse_ConvertsToAllTopicsWebResponse() {
+  void toWebDtoWhenAllTopicsResponseConvertsToAllTopicsWebResponse() {
     // given
     List<TopicResponse> topics =
         List.of(
@@ -74,7 +70,7 @@ class TopicWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - AllTopicsResponse가 null인 경우 빈 리스트를 반환한다")
-  void toWebDto_WhenAllTopicsResponseIsNull_ReturnsEmptyList() {
+  void toWebDtoWhenAllTopicsResponseIsNullReturnsEmptyList() {
     // when
     AllTopicsWebResponse result = topicWebMapper.toWebDto((AllTopicsResponse) null);
 
@@ -84,7 +80,7 @@ class TopicWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - AllTopicsResponse의 topics가 null인 경우 빈 리스트를 반환한다")
-  void toWebDto_WhenTopicsIsNull_ReturnsEmptyList() {
+  void toWebDtoWhenTopicsIsNullReturnsEmptyList() {
     // given
     AllTopicsResponse allTopicsResponse = new AllTopicsResponse(null);
 
@@ -97,7 +93,7 @@ class TopicWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - AllTopicsResponse의 topics가 빈 리스트인 경우 빈 리스트를 반환한다")
-  void toWebDto_WhenTopicsIsEmpty_ReturnsEmptyList() {
+  void toWebDtoWhenTopicsIsEmptyReturnsEmptyList() {
     // given
     AllTopicsResponse allTopicsResponse = new AllTopicsResponse(List.of());
 
@@ -110,7 +106,7 @@ class TopicWebMapperTest {
 
   @Test
   @DisplayName("toWebDto - TopicResponse의 모든 필드가 null인 경우에도 변환한다")
-  void toWebDto_WhenTopicResponseFieldsAreNull_ConvertsToTopicWebResponse() {
+  void toWebDtoWhenTopicResponseFieldsAreNullConvertsToTopicWebResponse() {
     // given
     TopicResponse topicResponse = new TopicResponse(null, null, null);
 

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,13 +52,13 @@ class ProjectViewCountRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 최초 조회 시 조회수 증가")
-    void increaseViewCount_최초조회_조회수증가() {
+    void increaseViewCountOnFirstViewIncrementsCount() {
       // given
       Long projectId = 1L;
-      String viewerId = "user123";
+      String viewerId = "user1";
       String targetType = "project";
 
-      given(valueOperations.setIfAbsent("viewDedup:project:1:user123", "1", Duration.ofMinutes(5)))
+      given(valueOperations.setIfAbsent("viewDedup:project:1:user1", "1", Duration.ofMinutes(5)))
           .willReturn(true);
 
       // when
@@ -71,19 +67,19 @@ class ProjectViewCountRedisAdapterTest {
       // then
       then(valueOperations)
           .should()
-          .setIfAbsent("viewDedup:project:1:user123", "1", Duration.ofMinutes(5));
+          .setIfAbsent("viewDedup:project:1:user1", "1", Duration.ofMinutes(5));
       then(valueOperations).should().increment("viewCount:project:1");
     }
 
     @Test
     @DisplayName("중복 조회 시 조회수 증가하지 않음")
-    void increaseViewCount_중복조회_조회수증가하지않음() {
+    void increaseViewCountOnDuplicateViewDoesNotIncrement() {
       // given
       Long projectId = 1L;
-      String viewerId = "user123";
+      String viewerId = "user1";
       String targetType = "project";
 
-      given(valueOperations.setIfAbsent("viewDedup:project:1:user123", "1", Duration.ofMinutes(5)))
+      given(valueOperations.setIfAbsent("viewDedup:project:1:user1", "1", Duration.ofMinutes(5)))
           .willReturn(false);
 
       // when
@@ -92,16 +88,16 @@ class ProjectViewCountRedisAdapterTest {
       // then
       then(valueOperations)
           .should()
-          .setIfAbsent("viewDedup:project:1:user123", "1", Duration.ofMinutes(5));
+          .setIfAbsent("viewDedup:project:1:user1", "1", Duration.ofMinutes(5));
       // increment는 호출되지 않아야 함
     }
 
     @Test
     @DisplayName("예외 발생 시 CommonException 변환")
-    void increaseViewCount_예외발생_CommonException변환() {
+    void increaseViewCountWhenExceptionOccursThrowsCommonException() {
       // given
       Long projectId = 1L;
-      String viewerId = "user123";
+      String viewerId = "user1";
       String targetType = "project";
       RedisConnectionFailureException redisException =
           new RedisConnectionFailureException("Redis connection failed");
@@ -124,7 +120,7 @@ class ProjectViewCountRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 조회수 조회")
-    void getViewCount_성공() {
+    void getViewCountReturnsSuccess() {
       // given
       Long projectId = 1L;
       String targetType = "project";
@@ -142,7 +138,7 @@ class ProjectViewCountRedisAdapterTest {
 
     @Test
     @DisplayName("키가 없을 때 0 반환")
-    void getViewCount_키없음_0반환() {
+    void getViewCountWhenKeyNotFoundReturnsZero() {
       // given
       Long projectId = 1L;
       String targetType = "project";
@@ -158,7 +154,7 @@ class ProjectViewCountRedisAdapterTest {
 
     @Test
     @DisplayName("예외 발생 시 CommonException 변환")
-    void getViewCount_예외발생_CommonException변환() {
+    void getViewCountWhenExceptionOccursThrowsCommonException() {
       // given
       Long projectId = 1L;
       String targetType = "project";
@@ -180,7 +176,7 @@ class ProjectViewCountRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 모든 조회수 키 조회")
-    void getAllViewCountKeys_성공() {
+    void getAllViewCountKeysReturnsSuccess() {
       // given
       String targetType = "project";
 
@@ -204,7 +200,7 @@ class ProjectViewCountRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 조회수 키 삭제")
-    void clearViewCount_성공() {
+    void clearViewCountReturnsSuccess() {
       // given
       Long targetId = 1L;
       String targetType = "project";
@@ -223,7 +219,7 @@ class ProjectViewCountRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 조회수 Pop")
-    void popViewCount_성공() {
+    void popViewCountReturnsSuccess() {
       // given
       Long projectId = 1L;
       String targetType = "project";
@@ -239,7 +235,7 @@ class ProjectViewCountRedisAdapterTest {
 
     @Test
     @DisplayName("키가 없을 때 0 반환")
-    void popViewCount_키없음_0반환() {
+    void popViewCountWhenKeyNotFoundReturnsZero() {
       // given
       Long projectId = 1L;
       String targetType = "project";

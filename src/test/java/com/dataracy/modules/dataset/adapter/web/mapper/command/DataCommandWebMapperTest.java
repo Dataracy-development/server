@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.web.mapper.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +22,7 @@ class DataCommandWebMapperTest {
 
   @Test
   @DisplayName("UploadDataWebRequest를 UploadDataRequest로 변환 성공")
-  void toApplicationDto_ShouldConvertUploadRequest() {
+  void toApplicationDtoShouldConvertUploadRequest() {
     // Given
     UploadDataWebRequest webRequest =
         new UploadDataWebRequest(
@@ -57,7 +53,7 @@ class DataCommandWebMapperTest {
 
   @Test
   @DisplayName("ModifyDataWebRequest를 ModifyDataRequest로 변환 성공")
-  void toApplicationDto_ShouldConvertModifyRequest() {
+  void toApplicationDtoShouldConvertModifyRequest() {
     // Given
     ModifyDataWebRequest webRequest =
         new ModifyDataWebRequest(
@@ -88,9 +84,9 @@ class DataCommandWebMapperTest {
 
   @Test
   @DisplayName("UploadDataResponse를 UploadDataWebResponse로 변환 성공")
-  void toWebDto_ShouldConvertUploadResponse() {
+  void toWebDtoShouldConvertUploadResponse() {
     // Given
-    UploadDataResponse applicationResponse = new UploadDataResponse(123L);
+    UploadDataResponse applicationResponse = new UploadDataResponse(1L);
 
     // When
     UploadDataWebResponse webResponse = mapper.toWebDto(applicationResponse);
@@ -98,6 +94,6 @@ class DataCommandWebMapperTest {
     // Then
     assertAll(
         () -> assertThat(webResponse).isNotNull(),
-        () -> assertThat(webResponse.id()).isEqualTo(123L));
+        () -> assertThat(webResponse.id()).isEqualTo(1L));
   }
 }

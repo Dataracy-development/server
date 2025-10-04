@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +30,7 @@ class ProjectSortTypeTest {
     "least_commented, LEAST_COMMENTED"
   })
   @DisplayName("of - 문자열로 해당 enum을 반환한다")
-  void of_WhenValidString_ReturnsCorrespondingEnum(String input, String expectedEnumName) {
+  void ofWhenValidStringReturnsCorrespondingEnum(String input, String expectedEnumName) {
     // when
     ProjectSortType result = ProjectSortType.of(input);
 
@@ -45,7 +41,7 @@ class ProjectSortTypeTest {
   @ParameterizedTest(name = "of - {0}로 ProjectException이 발생한다")
   @CsvSource({"INVALID, 'INVALID'", "null, null", "'', ''"})
   @DisplayName("of - 잘못된 입력으로 ProjectException이 발생한다")
-  void of_WhenInvalidInput_ThrowsProjectException(String input, String expectedInput) {
+  void ofWhenInvalidInputThrowsProjectException(String input, String expectedInput) {
     // when & then
     String actualInput = "null".equals(input) ? null : input;
     ProjectException exception =
@@ -60,7 +56,7 @@ class ProjectSortTypeTest {
 
   @Test
   @DisplayName("getValue - LATEST의 value를 반환한다")
-  void getValue_WhenLatest_ReturnsLatestValue() {
+  void getValueWhenLatestReturnsLatestValue() {
     // when
     String result = ProjectSortType.LATEST.getValue();
 
@@ -70,7 +66,7 @@ class ProjectSortTypeTest {
 
   @Test
   @DisplayName("getValue - OLDEST의 value를 반환한다")
-  void getValue_WhenOldest_ReturnsOldestValue() {
+  void getValueWhenOldestReturnsOldestValue() {
     // when
     String result = ProjectSortType.OLDEST.getValue();
 
@@ -80,7 +76,7 @@ class ProjectSortTypeTest {
 
   @Test
   @DisplayName("getValue - MOST_LIKED의 value를 반환한다")
-  void getValue_WhenMostLiked_ReturnsMostLikedValue() {
+  void getValueWhenMostLikedReturnsMostLikedValue() {
     // when
     String result = ProjectSortType.MOST_LIKED.getValue();
 
@@ -90,7 +86,7 @@ class ProjectSortTypeTest {
 
   @Test
   @DisplayName("getValue - MOST_VIEWED의 value를 반환한다")
-  void getValue_WhenMostViewed_ReturnsMostViewedValue() {
+  void getValueWhenMostViewedReturnsMostViewedValue() {
     // when
     String result = ProjectSortType.MOST_VIEWED.getValue();
 
@@ -100,7 +96,7 @@ class ProjectSortTypeTest {
 
   @Test
   @DisplayName("getValue - MOST_COMMENTED의 value를 반환한다")
-  void getValue_WhenMostCommented_ReturnsMostCommentedValue() {
+  void getValueWhenMostCommentedReturnsMostCommentedValue() {
     // when
     String result = ProjectSortType.MOST_COMMENTED.getValue();
 
@@ -110,7 +106,7 @@ class ProjectSortTypeTest {
 
   @Test
   @DisplayName("getValue - LEAST_COMMENTED의 value를 반환한다")
-  void getValue_WhenLeastCommented_ReturnsLeastCommentedValue() {
+  void getValueWhenLeastCommentedReturnsLeastCommentedValue() {
     // when
     String result = ProjectSortType.LEAST_COMMENTED.getValue();
 

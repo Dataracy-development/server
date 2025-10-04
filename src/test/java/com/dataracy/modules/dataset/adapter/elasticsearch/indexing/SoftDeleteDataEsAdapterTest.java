@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.elasticsearch.indexing;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -33,6 +29,9 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 @ExtendWith(MockitoExtension.class)
 class SoftDeleteDataEsAdapterTest {
 
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+
   @Mock private ElasticsearchClient elasticsearchClient;
 
   @Mock private ElasticLogger elasticLogger;
@@ -48,7 +47,7 @@ class SoftDeleteDataEsAdapterTest {
   @DisplayName("데이터 소프트 삭제 성공 시 정상 동작")
   void deleteDataSuccess() throws IOException {
     // given
-    Long dataId = 123L;
+    Long dataId = 1L;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
@@ -58,9 +57,7 @@ class SoftDeleteDataEsAdapterTest {
 
       // then
       then(elasticsearchClient).should().update(any(Function.class), eq(DataSearchDocument.class));
-      then(elasticLogger)
-          .should()
-          .logUpdate("data_index", "123", "데이터셋 soft delete 완료: dataId=123");
+      then(elasticLogger).should().logUpdate("data_index", "1", "데이터셋 soft delete 완료: dataId=1");
     }
   }
 
@@ -68,7 +65,7 @@ class SoftDeleteDataEsAdapterTest {
   @DisplayName("데이터 복원 성공 시 정상 동작")
   void restoreDataSuccess() throws IOException {
     // given
-    Long dataId = 456L;
+    Long dataId = PROJECT_ID;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
@@ -78,7 +75,7 @@ class SoftDeleteDataEsAdapterTest {
 
       // then
       then(elasticsearchClient).should().update(any(Function.class), eq(DataSearchDocument.class));
-      then(elasticLogger).should().logUpdate("data_index", "456", "데이터셋 복원 완료: dataId=456");
+      then(elasticLogger).should().logUpdate("data_index", "1", "데이터셋 복원 완료: dataId=1");
     }
   }
 
@@ -86,7 +83,7 @@ class SoftDeleteDataEsAdapterTest {
   @DisplayName("소프트 삭제 시 IOException 발생하면 EsUpdateException으로 변환")
   void deleteDataWithIOException() throws IOException {
     // given
-    Long dataId = 123L;
+    Long dataId = 1L;
     IOException ioException = new IOException("Connection failed");
     willThrow(ioException)
         .given(elasticsearchClient)
@@ -102,13 +99,12 @@ class SoftDeleteDataEsAdapterTest {
           () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
           () ->
               org.assertj.core.api.Assertions.assertThat(exception)
-                  .hasMessage("ES update failed: dataId=123"),
+                  .hasMessage("ES update failed: dataId=1"),
           () -> org.assertj.core.api.Assertions.assertThat(exception).hasCause(ioException));
 
       then(elasticLogger)
           .should()
-          .logError(
-              eq("data_index"), eq("데이터셋 soft delete 실패: dataId=123"), any(IOException.class));
+          .logError(eq("data_index"), eq("데이터셋 soft delete 실패: dataId=1"), any(IOException.class));
     }
   }
 
@@ -116,7 +112,7 @@ class SoftDeleteDataEsAdapterTest {
   @DisplayName("복원 시 IOException 발생하면 EsUpdateException으로 변환")
   void restoreDataWithIOException() throws IOException {
     // given
-    Long dataId = 456L;
+    Long dataId = PROJECT_ID;
     IOException ioException = new IOException("Network error");
     willThrow(ioException)
         .given(elasticsearchClient)
@@ -132,12 +128,12 @@ class SoftDeleteDataEsAdapterTest {
           () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
           () ->
               org.assertj.core.api.Assertions.assertThat(exception)
-                  .hasMessage("ES update failed: dataId=456"),
+                  .hasMessage("ES update failed: dataId=1"),
           () -> org.assertj.core.api.Assertions.assertThat(exception).hasCause(ioException));
 
       then(elasticLogger)
           .should()
-          .logError(eq("data_index"), eq("데이터셋 복원 실패: dataId=456"), any(IOException.class));
+          .logError(eq("data_index"), eq("데이터셋 복원 실패: dataId=1"), any(IOException.class));
     }
   }
 }

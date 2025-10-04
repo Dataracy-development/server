@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +11,7 @@ class TokenTypeTest {
 
   @Test
   @DisplayName("TokenType enum 값들 확인")
-  void tokenType_ShouldHaveCorrectValues() {
+  void tokenTypeShouldHaveCorrectValues() {
     // Given & When & Then
     assertThat(TokenType.values()).hasSize(4);
 
@@ -28,7 +24,7 @@ class TokenTypeTest {
 
   @Test
   @DisplayName("TokenType name() 메서드 테스트")
-  void tokenType_ShouldHaveCorrectNames() {
+  void tokenTypeShouldHaveCorrectNames() {
     // Given & When & Then
     assertAll(
         () -> assertThat(TokenType.REGISTER.name()).isEqualTo("REGISTER"),
@@ -39,7 +35,7 @@ class TokenTypeTest {
 
   @Test
   @DisplayName("TokenType valueOf() 메서드 테스트")
-  void tokenType_ShouldParseFromString() {
+  void tokenTypeShouldParseFromString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(TokenType.valueOf("REGISTER")).isEqualTo(TokenType.REGISTER),
@@ -50,7 +46,7 @@ class TokenTypeTest {
 
   @Test
   @DisplayName("TokenType ordinal() 메서드 테스트")
-  void tokenType_ShouldHaveCorrectOrdinals() {
+  void tokenTypeShouldHaveCorrectOrdinals() {
     // Given & When & Then
     assertAll(
         () -> assertThat(TokenType.REGISTER.ordinal()).isZero(),
@@ -61,7 +57,7 @@ class TokenTypeTest {
 
   @Test
   @DisplayName("TokenType toString() 메서드 테스트")
-  void tokenType_ShouldHaveCorrectToString() {
+  void tokenTypeShouldHaveCorrectToString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(TokenType.REGISTER).hasToString("REGISTER"),
@@ -72,7 +68,7 @@ class TokenTypeTest {
 
   @Test
   @DisplayName("TokenType value 테스트")
-  void tokenType_ShouldHaveCorrectValueProperties() {
+  void tokenTypeShouldHaveCorrectValueProperties() {
     // Given & When & Then
     assertAll(
         () -> assertThat(TokenType.REGISTER.getValue()).isEqualTo("REGISTER"),
@@ -83,7 +79,7 @@ class TokenTypeTest {
 
   @Test
   @DisplayName("TokenType of() 메서드 테스트")
-  void tokenType_ShouldParseFromOf() {
+  void tokenTypeShouldParseFromOf() {
     // Given & When & Then
     assertAll(
         () -> assertThat(TokenType.of("REGISTER")).isEqualTo(TokenType.REGISTER),

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.adapter.web.api;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -45,6 +41,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
               com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver.class
             }))
 class LikeControllerTest {
+
+  // Test constants
+  private static final Long TEST_ID = 77L;
+  private static final Integer CURRENT_YEAR = 2024;
 
   @Autowired private MockMvc mockMvc;
 
@@ -97,8 +97,8 @@ class LikeControllerTest {
   @DisplayName("댓글 좋아요 취소 시 200 반환")
   void modifyTargetLikeCancelComment() throws Exception {
     // given
-    TargetLikeWebRequest web = new TargetLikeWebRequest(77L, "COMMENT", true);
-    TargetLikeRequest dto = new TargetLikeRequest(77L, "COMMENT", true);
+    TargetLikeWebRequest web = new TargetLikeWebRequest(TEST_ID, "COMMENT", true);
+    TargetLikeRequest dto = new TargetLikeRequest(TEST_ID, "COMMENT", true);
 
     given(likeWebMapper.toApplicationDto(any())).willReturn(dto);
     given(likeTargetUseCase.likeTarget(1L, dto)).willReturn(TargetType.COMMENT);

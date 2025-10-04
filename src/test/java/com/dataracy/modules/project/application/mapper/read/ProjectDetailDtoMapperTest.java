@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.application.mapper.read;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,13 +17,16 @@ import com.dataracy.modules.project.domain.model.Project;
 
 class ProjectDetailDtoMapperTest {
 
+  // Test constants
+  private static final Integer CURRENT_HOUR = 18;
+
   private final ProjectDetailDtoMapper mapper = new ProjectDetailDtoMapper();
 
   @Test
   @DisplayName("성공 → Project와 부가 정보를 ProjectDetailResponse로 매핑")
   void toResponseDtoSuccess() {
     // given
-    LocalDateTime createdAt = LocalDateTime.of(2025, 8, 27, 18, 0);
+    LocalDateTime createdAt = LocalDateTime.of(2025, 8, 27, CURRENT_HOUR, 0);
 
     Project project =
         Project.of(

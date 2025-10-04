@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +14,7 @@ class CommonExceptionTest {
 
   @Test
   @DisplayName("CommonException 생성 및 속성 확인")
-  void commonException_ShouldHaveCorrectProperties() {
+  void commonExceptionShouldHaveCorrectProperties() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {
@@ -51,7 +47,7 @@ class CommonExceptionTest {
 
   @Test
   @DisplayName("CommonException은 CustomException을 상속받는다")
-  void commonException_ShouldExtendCustomException() {
+  void commonExceptionShouldExtendCustomException() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {

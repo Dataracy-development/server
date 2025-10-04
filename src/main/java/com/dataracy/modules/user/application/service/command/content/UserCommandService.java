@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.service.command.content;
 
 import java.time.Instant;
@@ -38,6 +34,7 @@ import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 
 @Service
 @RequiredArgsConstructor
@@ -64,22 +61,16 @@ public class UserCommandService
 
   private final JwtValidateUseCase jwtValidateUseCase;
   private final ManageRefreshTokenUseCase manageRefreshTokenUseCase;
+  private final ApplicationContext applicationContext;
 
-  // Self-injection: Spring 프록시를 통해 @Transactional과 @DistributedLock이 작동하도록 함
-  private UserCommandService self;
-
-  @org.springframework.beans.factory.annotation.Autowired
-  @org.springframework.context.annotation.Lazy
-  public void setSelf(UserCommandService self) {
-    this.self = self;
-  }
-
-  // SpotBugs UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR 경고 해결을 위한 초기화 확인
+  /**
+   * Spring 프록시를 통해 @Transactional과 @DistributedLock이 작동하도록 하는 메서드입니다.
+   * ApplicationContext를 통해 프록시된 빈을 가져옵니다.
+   *
+   * @return 프록시된 UserCommandService 인스턴스
+   */
   private UserCommandService getSelf() {
-    if (this.self == null) {
-      throw new IllegalStateException("UserCommandService self reference not initialized");
-    }
-    return this.self;
+    return applicationContext.getBean(UserCommandService.class);
   }
 
   /**
@@ -221,6 +212,7 @@ public class UserCommandService
    * @param topicIds 선택적 토픽 ID 목록(널이거나 비어있지 않은 경우 각 ID 존재 여부를 검사)
    * @param profileImageFile 업로드할 프로필 이미지 파일(널 또는 비어있지 않은 경우 이미지 형식 검사)
    */
+  @Transactional(readOnly = true)
   private void validateModifyUserInfo(
       String nickname,
       Long authorLevelId,
@@ -260,6 +252,7 @@ public class UserCommandService
    * @param topicIds 선택적 토픽 ID 목록(널이거나 비어있지 않은 경우 각 ID 존재 여부를 검사)
    * @param profileImageFile 업로드할 프로필 이미지 파일(널 또는 비어있지 않은 경우 이미지 형식 검사)
    */
+  @Transactional(readOnly = true)
   private void validateModifyUserInfoWithoutNickname(
       Long authorLevelId,
       Long occupationId,

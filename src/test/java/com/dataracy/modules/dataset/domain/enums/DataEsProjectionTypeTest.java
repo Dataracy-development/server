@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.domain.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +11,7 @@ class DataEsProjectionTypeTest {
 
   @Test
   @DisplayName("DataEsProjectionType enum 값들 확인")
-  void dataEsProjectionType_ShouldHaveCorrectValues() {
+  void dataEsProjectionTypeShouldHaveCorrectValues() {
     // Given & When & Then
     assertAll(
         () -> assertThat(DataEsProjectionType.values()).hasSize(2),
@@ -25,7 +21,7 @@ class DataEsProjectionTypeTest {
 
   @Test
   @DisplayName("DataEsProjectionType name() 메서드 테스트")
-  void dataEsProjectionType_ShouldHaveCorrectNames() {
+  void dataEsProjectionTypeShouldHaveCorrectNames() {
     // Given & When & Then
     assertAll(
         () -> assertThat(DataEsProjectionType.PENDING.name()).isEqualTo("PENDING"),
@@ -34,7 +30,7 @@ class DataEsProjectionTypeTest {
 
   @Test
   @DisplayName("DataEsProjectionType valueOf() 메서드 테스트")
-  void dataEsProjectionType_ShouldParseFromString() {
+  void dataEsProjectionTypeShouldParseFromString() {
     // Given & When & Then
     assertAll(
         () ->
@@ -47,7 +43,7 @@ class DataEsProjectionTypeTest {
 
   @Test
   @DisplayName("DataEsProjectionType ordinal() 메서드 테스트")
-  void dataEsProjectionType_ShouldHaveCorrectOrdinals() {
+  void dataEsProjectionTypeShouldHaveCorrectOrdinals() {
     // Given & When & Then
     assertAll(
         () -> assertThat(DataEsProjectionType.PENDING.ordinal()).isZero(),
@@ -56,7 +52,7 @@ class DataEsProjectionTypeTest {
 
   @Test
   @DisplayName("DataEsProjectionType toString() 메서드 테스트")
-  void dataEsProjectionType_ShouldHaveCorrectToString() {
+  void dataEsProjectionTypeShouldHaveCorrectToString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(DataEsProjectionType.PENDING).hasToString("PENDING"),

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.service.query.profile;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +51,7 @@ class OtherUserProfileServiceTest {
 
   @Mock private FindUserDataSetsUseCase findUserDataSetsUseCase;
 
-  @InjectMocks OtherUserProfileService service;
+  @InjectMocks private OtherUserProfileService service;
 
   @Test
   @DisplayName("유저 존재 시 타인 유저 정보 조회 성공")

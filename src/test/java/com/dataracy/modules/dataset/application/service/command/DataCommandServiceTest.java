@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.application.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,6 +45,9 @@ import com.dataracy.modules.reference.application.port.in.topic.ValidateTopicUse
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DataCommandServiceTest {
+
+  // Test constants
+  private static final Long FIVE_HUNDRED_TWELVE = 512L;
 
   @InjectMocks private DataCommandService service;
 
@@ -143,7 +142,7 @@ class DataCommandServiceTest {
       given(dataFile.getSize()).willReturn(1024L);
       given(thumbnailFile.isEmpty()).willReturn(false);
       given(thumbnailFile.getOriginalFilename()).willReturn("test.jpg");
-      given(thumbnailFile.getSize()).willReturn(512L);
+      given(thumbnailFile.getSize()).willReturn(FIVE_HUNDRED_TWELVE);
 
       willDoNothing().given(validateTopicUseCase).validateTopic(anyLong());
       willDoNothing().given(validateDataSourceUseCase).validateDataSource(anyLong());
@@ -165,7 +164,7 @@ class DataCommandServiceTest {
 
     @Test
     @DisplayName("데이터 업로드 실패 - 시작일이 종료일보다 늦음")
-    void uploadDataFail_InvalidDateRange() {
+    void uploadDataFailInvalidDateRange() {
       // given
       Long userId = 1L;
       UploadDataRequest request =
@@ -189,7 +188,7 @@ class DataCommandServiceTest {
 
     @Test
     @DisplayName("데이터 업로드 실패 - 파일 업로드 실패")
-    void uploadDataFail_FileUploadFailure() {
+    void uploadDataFailFileUploadFailure() {
       // given
       Long userId = 1L;
       UploadDataRequest request = createSampleUploadRequest();
@@ -284,7 +283,7 @@ class DataCommandServiceTest {
 
     @Test
     @DisplayName("데이터 수정 실패 - 데이터가 존재하지 않음")
-    void modifyDataFail_DataNotFound() {
+    void modifyDataFailDataNotFound() {
       // given
       Long dataId = 999L;
       ModifyDataRequest request = createSampleModifyRequest();
@@ -301,7 +300,7 @@ class DataCommandServiceTest {
 
     @Test
     @DisplayName("데이터 수정 실패 - 파일 업로드 실패")
-    void modifyDataFail_FileUploadFailure() {
+    void modifyDataFailFileUploadFailure() {
       // given
       Long dataId = 1L;
       ModifyDataRequest request = createSampleModifyRequest();
@@ -345,7 +344,7 @@ class DataCommandServiceTest {
       given(dataFile.isEmpty()).willReturn(true);
       given(thumbnailFile.isEmpty()).willReturn(false);
       given(thumbnailFile.getOriginalFilename()).willReturn("test.jpg");
-      given(thumbnailFile.getSize()).willReturn(512L);
+      given(thumbnailFile.getSize()).willReturn(FIVE_HUNDRED_TWELVE);
 
       willDoNothing().given(validateTopicUseCase).validateTopic(anyLong());
       willDoNothing().given(validateDataSourceUseCase).validateDataSource(anyLong());

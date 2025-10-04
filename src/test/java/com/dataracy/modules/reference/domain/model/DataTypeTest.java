@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,9 +9,12 @@ import org.junit.jupiter.api.Test;
 @DisplayName("DataType 테스트")
 class DataTypeTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("DataType record 생성 및 속성 확인")
-  void dataType_ShouldCreateCorrectly() {
+  void dataTypeShouldCreateCorrectly() {
     // Given
     Long id = 1L;
     String value = "csv";
@@ -33,7 +32,7 @@ class DataTypeTest {
 
   @Test
   @DisplayName("DataType record equals 및 hashCode 테스트")
-  void dataType_ShouldHaveCorrectEqualsAndHashCode() {
+  void dataTypeShouldHaveCorrectEqualsAndHashCode() {
     // Given
     DataType dataType1 = new DataType(1L, "json", "JSON 파일");
     DataType dataType2 = new DataType(1L, "json", "JSON 파일");
@@ -45,7 +44,7 @@ class DataTypeTest {
 
   @Test
   @DisplayName("DataType record toString 테스트")
-  void dataType_ShouldHaveCorrectToString() {
+  void dataTypeShouldHaveCorrectToString() {
     // Given
     DataType dataType = new DataType(1L, "xml", "XML 파일");
 
@@ -58,7 +57,7 @@ class DataTypeTest {
 
   @Test
   @DisplayName("DataType record - null 값 처리")
-  void dataType_ShouldHandleNullValues() {
+  void dataTypeShouldHandleNullValues() {
     // Given & When
     DataType dataType = new DataType(null, null, null);
 
@@ -71,7 +70,7 @@ class DataTypeTest {
 
   @Test
   @DisplayName("DataType record - 다양한 값들 테스트")
-  void dataType_ShouldHandleVariousValues() {
+  void dataTypeShouldHandleVariousValues() {
     // Given & When
     DataType dataType1 = new DataType(1L, "csv", "CSV 파일");
     DataType dataType2 = new DataType(2L, "json", "JSON 파일");

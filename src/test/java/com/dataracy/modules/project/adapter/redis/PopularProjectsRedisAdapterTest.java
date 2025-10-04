@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +32,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class PopularProjectsRedisAdapterTest {
 
+  // Test constants
+  private static final Long TEST_TIMESTAMP = 1456201L;
+
   @Mock private RedisTemplate<String, String> redisTemplate;
 
   @Mock private ValueOperations<String, String> valueOperations;
@@ -56,7 +55,7 @@ class PopularProjectsRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 캐시에서 인기 프로젝트 조회")
-    void getPopularProjects_성공() throws Exception {
+    void getPopularProjectsReturnsSuccess() throws Exception {
       // given
       String cachedJson = "[{\"id\":1,\"title\":\"Test Project\",\"viewCount\":100}]";
       List<PopularProjectResponse> expectedData =
@@ -96,7 +95,7 @@ class PopularProjectsRedisAdapterTest {
 
     @Test
     @DisplayName("캐시에 데이터가 없을 때 빈 Optional 반환")
-    void getPopularProjects_캐시에데이터없음_빈Optional반환() {
+    void getPopularProjectsWhenCacheEmptyReturnsEmptyOptional() {
       // given
       given(valueOperations.get("popular:projects")).willReturn(null);
 
@@ -114,7 +113,7 @@ class PopularProjectsRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 인기 프로젝트 캐시 저장")
-    void setPopularProjects_성공() throws Exception {
+    void setPopularProjectsReturnsSuccess() throws Exception {
       // given
       List<PopularProjectResponse> popularProjects =
           List.of(
@@ -156,9 +155,9 @@ class PopularProjectsRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 마지막 업데이트 시간 조회")
-    void getLastUpdateTime_성공() {
+    void getLastUpdateTimeSuccess() {
       // given
-      String metadata = "1234567890123";
+      String metadata = "1456201";
       given(valueOperations.get("popular:projects:metadata")).willReturn(metadata);
 
       // when
@@ -166,12 +165,12 @@ class PopularProjectsRedisAdapterTest {
 
       // then
       assertAll(
-          () -> assertThat(result).isPresent(), () -> assertThat(result).contains(1234567890123L));
+          () -> assertThat(result).isPresent(), () -> assertThat(result).contains(TEST_TIMESTAMP));
     }
 
     @Test
     @DisplayName("메타데이터가 없을 때 빈 Optional 반환")
-    void getLastUpdateTime_메타데이터없음_빈Optional반환() {
+    void getLastUpdateTimeNoMetadataReturnsEmptyOptional() {
       // given
       given(valueOperations.get("popular:projects:metadata")).willReturn(null);
 
@@ -189,7 +188,7 @@ class PopularProjectsRedisAdapterTest {
 
     @Test
     @DisplayName("캐시가 존재할 때 true 반환")
-    void hasValidData_캐시존재_true반환() {
+    void hasValidDataWhenCacheExistsReturnsTrue() {
       // given
       given(redisTemplate.hasKey("popular:projects")).willReturn(true);
       given(redisTemplate.hasKey("popular:projects:metadata")).willReturn(true);
@@ -203,7 +202,7 @@ class PopularProjectsRedisAdapterTest {
 
     @Test
     @DisplayName("캐시가 없을 때 false 반환")
-    void hasValidData_캐시없음_false반환() {
+    void hasValidDataWhenCacheEmptyReturnsFalse() {
       // given
       given(redisTemplate.hasKey("popular:projects")).willReturn(false);
       given(redisTemplate.hasKey("popular:projects:metadata")).willReturn(true);

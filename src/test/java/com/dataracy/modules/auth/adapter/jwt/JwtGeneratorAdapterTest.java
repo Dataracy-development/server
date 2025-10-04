@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,6 +23,11 @@ import com.dataracy.modules.user.domain.enums.RoleType;
 @ExtendWith(MockitoExtension.class)
 class JwtGeneratorAdapterTest {
 
+  // Test constants
+  private static final Long ONE_HOUR_IN_MILLIS = 3600000L;
+  private static final Long THIRTY_MINUTES_IN_MILLIS = 1800000L;
+  private static final Long ONE_WEEK_IN_MILLIS = 604800000L;
+
   @Mock private JwtUtilInternal jwtUtilInternal;
 
   @Mock private JwtProperties jwtProperties;
@@ -40,11 +41,11 @@ class JwtGeneratorAdapterTest {
 
   @Test
   @DisplayName("generateResetPasswordToken - 비밀번호 재설정 토큰을 생성한다")
-  void generateResetPasswordToken_WhenValidEmail_GeneratesToken() {
+  void generateResetPasswordTokenWhenValidEmailGeneratesToken() {
     // given
     String email = "test@example.com";
     String expectedToken = "reset.token.here";
-    when(jwtProperties.getResetTokenExpirationTime()).thenReturn(3600000L);
+    when(jwtProperties.getResetTokenExpirationTime()).thenReturn(ONE_HOUR_IN_MILLIS);
     when(jwtUtilInternal.generateToken(any(Map.class), anyLong(), any())).thenReturn(expectedToken);
 
     // when
@@ -55,19 +56,19 @@ class JwtGeneratorAdapterTest {
     verify(jwtUtilInternal)
         .generateToken(
             Map.of("email", email),
-            3600000L,
+            ONE_HOUR_IN_MILLIS,
             com.dataracy.modules.auth.domain.enums.TokenType.RESET_PASSWORD);
   }
 
   @Test
   @DisplayName("generateRegisterToken - 레지스터 토큰을 생성한다")
-  void generateRegisterToken_WhenValidData_GeneratesToken() {
+  void generateRegisterTokenWhenValidDataGeneratesToken() {
     // given
     String provider = "google";
-    String providerId = "123456789";
+    String providerId = "14562";
     String email = "test@example.com";
     String expectedToken = "register.token.here";
-    when(jwtProperties.getRegisterTokenExpirationTime()).thenReturn(1800000L);
+    when(jwtProperties.getRegisterTokenExpirationTime()).thenReturn(THIRTY_MINUTES_IN_MILLIS);
     when(jwtUtilInternal.generateToken(any(Map.class), anyLong(), any())).thenReturn(expectedToken);
 
     // when
@@ -78,13 +79,13 @@ class JwtGeneratorAdapterTest {
     verify(jwtUtilInternal)
         .generateToken(
             Map.of("provider", provider, "providerId", providerId, "email", email),
-            1800000L,
+            THIRTY_MINUTES_IN_MILLIS,
             com.dataracy.modules.auth.domain.enums.TokenType.REGISTER);
   }
 
   @Test
   @DisplayName("generateAccessToken - 액세스 토큰을 생성한다")
-  void generateAccessToken_WhenValidData_GeneratesToken() {
+  void generateAccessTokenWhenValidDataGeneratesToken() {
     // given
     Long userId = 1L;
     RoleType role = RoleType.ROLE_USER;
@@ -106,12 +107,12 @@ class JwtGeneratorAdapterTest {
 
   @Test
   @DisplayName("generateRefreshToken - 리프레시 토큰을 생성한다")
-  void generateRefreshToken_WhenValidData_GeneratesToken() {
+  void generateRefreshTokenWhenValidDataGeneratesToken() {
     // given
     Long userId = 1L;
     RoleType role = RoleType.ROLE_ADMIN;
     String expectedToken = "refresh.token.here";
-    when(jwtProperties.getRefreshTokenExpirationTime()).thenReturn(604800000L);
+    when(jwtProperties.getRefreshTokenExpirationTime()).thenReturn(ONE_WEEK_IN_MILLIS);
     when(jwtUtilInternal.generateToken(any(Map.class), anyLong(), any())).thenReturn(expectedToken);
 
     // when
@@ -122,13 +123,13 @@ class JwtGeneratorAdapterTest {
     verify(jwtUtilInternal)
         .generateToken(
             Map.of("userId", userId, "role", role.getValue()),
-            604800000L,
+            ONE_WEEK_IN_MILLIS,
             com.dataracy.modules.auth.domain.enums.TokenType.REFRESH);
   }
 
   @Test
   @DisplayName("generateResetPasswordToken - null 이메일로도 토큰을 생성한다")
-  void generateResetPasswordToken_WhenNullEmail_ThrowsException() {
+  void generateResetPasswordTokenWhenNullEmailThrowsException() {
     // given
     String email = null;
 
@@ -142,7 +143,7 @@ class JwtGeneratorAdapterTest {
 
   @Test
   @DisplayName("generateRegisterToken - null 값들로도 토큰을 생성한다")
-  void generateRegisterToken_WhenNullValues_ThrowsException() {
+  void generateRegisterTokenWhenNullValuesThrowsException() {
     // given
     String provider = null;
     String providerId = null;

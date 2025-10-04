@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.adapter.jpa.mapper;
 
 import com.dataracy.modules.reference.adapter.jpa.entity.VisitSourceEntity;

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.domain.status;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,9 +10,12 @@ import org.springframework.http.HttpStatus;
 /** ReferenceErrorStatus 테스트 */
 class ReferenceErrorStatusTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("NOT_FOUND_TOPIC_NAME 상태 확인")
-  void notFoundTopicName_상태확인() {
+  void notFoundTopicNameStatusCheck() {
     // when
     ReferenceErrorStatus status = ReferenceErrorStatus.NOT_FOUND_TOPIC_NAME;
 
@@ -29,7 +28,7 @@ class ReferenceErrorStatusTest {
 
   @Test
   @DisplayName("NOT_FOUND_AUTHOR_LEVEL 상태 확인")
-  void notFoundAuthorLevel_상태확인() {
+  void notFoundAuthorLevelStatusCheck() {
     // when
     ReferenceErrorStatus status = ReferenceErrorStatus.NOT_FOUND_AUTHOR_LEVEL;
 
@@ -42,7 +41,7 @@ class ReferenceErrorStatusTest {
 
   @Test
   @DisplayName("NOT_FOUND_OCCUPATION 상태 확인")
-  void notFoundOccupation_상태확인() {
+  void notFoundOccupationStatusCheck() {
     // when
     ReferenceErrorStatus status = ReferenceErrorStatus.NOT_FOUND_OCCUPATION;
 
@@ -55,7 +54,7 @@ class ReferenceErrorStatusTest {
 
   @Test
   @DisplayName("NOT_FOUND_VISIT_SOURCE 상태 확인")
-  void notFoundVisitSource_상태확인() {
+  void notFoundVisitSourceStatusCheck() {
     // when
     ReferenceErrorStatus status = ReferenceErrorStatus.NOT_FOUND_VISIT_SOURCE;
 
@@ -68,7 +67,7 @@ class ReferenceErrorStatusTest {
 
   @Test
   @DisplayName("NOT_FOUND_ANALYSIS_PURPOSE 상태 확인")
-  void notFoundAnalysisPurpose_상태확인() {
+  void notFoundAnalysisPurposeStatusCheck() {
     // when
     ReferenceErrorStatus status = ReferenceErrorStatus.NOT_FOUND_ANALYSIS_PURPOSE;
 
@@ -81,7 +80,7 @@ class ReferenceErrorStatusTest {
 
   @Test
   @DisplayName("NOT_FOUND_DATA_SOURCE 상태 확인")
-  void notFoundDataSource_상태확인() {
+  void notFoundDataSourceStatusCheck() {
     // when
     ReferenceErrorStatus status = ReferenceErrorStatus.NOT_FOUND_DATA_SOURCE;
 
@@ -94,7 +93,7 @@ class ReferenceErrorStatusTest {
 
   @Test
   @DisplayName("NOT_FOUND_DATA_TYPE 상태 확인")
-  void notFoundDataType_상태확인() {
+  void notFoundDataTypeStatusCheck() {
     // when
     ReferenceErrorStatus status = ReferenceErrorStatus.NOT_FOUND_DATA_TYPE;
 

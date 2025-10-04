@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.oauth;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +27,9 @@ import com.dataracy.modules.auth.domain.exception.AuthException;
 @ExtendWith(MockitoExtension.class)
 class OAuthUserInfoFactoryTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Mock private OAuthUserInfoPort googleAdapter;
 
   @Mock private OAuthUserInfoPort kakaoAdapter;
@@ -44,16 +43,16 @@ class OAuthUserInfoFactoryTest {
 
   @Test
   @DisplayName("extract - 구글 제공자로 유효한 OAuth 사용자 정보를 추출한다")
-  void extract_WhenGoogleProvider_ReturnsOAuthUserInfo() {
+  void extractWhenGoogleProviderReturnsOAuthUserInfo() {
     // given
     String provider = "google";
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("email", "test@example.com");
     attributes.put("name", "Test User");
-    attributes.put("sub", "123456789");
+    attributes.put("sub", "14562");
 
     OAuthUserInfo expectedUserInfo =
-        new OAuthUserInfo("test@example.com", "Test User", "google", "123456789");
+        new OAuthUserInfo("test@example.com", "Test User", "google", "14562");
 
     when(googleAdapter.extract(provider, attributes)).thenReturn(expectedUserInfo);
 
@@ -66,16 +65,16 @@ class OAuthUserInfoFactoryTest {
 
   @Test
   @DisplayName("extract - 카카오 제공자로 유효한 OAuth 사용자 정보를 추출한다")
-  void extract_WhenKakaoProvider_ReturnsOAuthUserInfo() {
+  void extractWhenKakaoProviderReturnsOAuthUserInfo() {
     // given
     String provider = "kakao";
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("kakao_account", new HashMap<>());
     attributes.put("properties", new HashMap<>());
-    attributes.put("id", "123456789");
+    attributes.put("id", "14562");
 
     OAuthUserInfo expectedUserInfo =
-        new OAuthUserInfo("test@example.com", "Test User", "kakao", "123456789");
+        new OAuthUserInfo("test@example.com", "Test User", "kakao", "14562");
 
     when(kakaoAdapter.extract(provider, attributes)).thenReturn(expectedUserInfo);
 
@@ -99,7 +98,7 @@ class OAuthUserInfoFactoryTest {
   @ParameterizedTest
   @MethodSource("provideInvalidCases")
   @DisplayName("extract - 유효하지 않은 입력으로 호출하면 예외가 발생한다")
-  void extract_WhenInvalidInput_ThrowsException(TestCase testCase) {
+  void extractWhenInvalidInputThrowsException(TestCase testCase) {
     // given
     when(googleAdapter.extract(any(), any())).thenReturn(null);
     when(kakaoAdapter.extract(any(), any())).thenReturn(null);
@@ -117,13 +116,13 @@ class OAuthUserInfoFactoryTest {
 
   @Test
   @DisplayName("extract - 첫 번째 어댑터에서 null을 반환하고 두 번째 어댑터에서 유효한 정보를 반환한다")
-  void extract_WhenFirstAdapterReturnsNullAndSecondReturnsValid_ReturnsValidInfo() {
+  void extractWhenFirstAdapterReturnsNullAndSecondReturnsValidReturnsValidInfo() {
     // given
     String provider = "kakao";
     Map<String, Object> attributes = new HashMap<>();
 
     OAuthUserInfo expectedUserInfo =
-        new OAuthUserInfo("test@example.com", "Test User", "kakao", "123456789");
+        new OAuthUserInfo("test@example.com", "Test User", "kakao", "14562");
 
     when(kakaoAdapter.extract(provider, attributes)).thenReturn(expectedUserInfo);
 

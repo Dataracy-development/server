@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.adapter.jpa.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,12 +19,12 @@ class UserEntityMapperTest {
 
   @Test
   @DisplayName("Entity를 Domain으로 변환 성공")
-  void toDomain_ShouldConvertEntityToDomain() {
+  void toDomainShouldConvertEntityToDomain() {
     // Given
     UserEntity entity =
         UserEntity.of(
             ProviderType.GOOGLE,
-            "google123",
+            "google1",
             RoleType.ROLE_USER,
             "test@example.com",
             "password",
@@ -54,7 +50,7 @@ class UserEntityMapperTest {
         () -> assertThat(domain).isNotNull(),
         () -> assertThat(domain.getId()).isNull(), // ID는 설정되지 않음
         () -> assertThat(domain.getProvider()).isEqualTo(ProviderType.GOOGLE),
-        () -> assertThat(domain.getProviderId()).isEqualTo("google123"),
+        () -> assertThat(domain.getProviderId()).isEqualTo("google1"),
         () -> assertThat(domain.getRole()).isEqualTo(RoleType.ROLE_USER),
         () -> assertThat(domain.getEmail()).isEqualTo("test@example.com"),
         () -> assertThat(domain.getNickname()).isEqualTo("testUser"),
@@ -63,7 +59,7 @@ class UserEntityMapperTest {
 
   @Test
   @DisplayName("Entity가 null일 때 Domain 변환 시 null 반환")
-  void toDomain_WithNullEntity_ShouldReturnNull() {
+  void toDomainWithNullEntityShouldReturnNull() {
     // When
     User domain = UserEntityMapper.toDomain(null);
 
@@ -73,12 +69,12 @@ class UserEntityMapperTest {
 
   @Test
   @DisplayName("Domain을 Entity로 변환 성공")
-  void toEntity_ShouldConvertDomainToEntity() {
+  void toEntityShouldConvertDomainToEntity() {
     // Given
     User domain =
         User.builder()
             .provider(ProviderType.GOOGLE)
-            .providerId("google123")
+            .providerId("google1")
             .role(RoleType.ROLE_USER)
             .email("test@example.com")
             .password("password")
@@ -100,7 +96,7 @@ class UserEntityMapperTest {
     assertAll(
         () -> assertThat(entity).isNotNull(),
         () -> assertThat(entity.getProvider()).isEqualTo(ProviderType.GOOGLE),
-        () -> assertThat(entity.getProviderId()).isEqualTo("google123"),
+        () -> assertThat(entity.getProviderId()).isEqualTo("google1"),
         () -> assertThat(entity.getRole()).isEqualTo(RoleType.ROLE_USER),
         () -> assertThat(entity.getEmail()).isEqualTo("test@example.com"),
         () -> assertThat(entity.getNickname()).isEqualTo("testUser"),
@@ -109,7 +105,7 @@ class UserEntityMapperTest {
 
   @Test
   @DisplayName("Domain이 null일 때 Entity 변환 시 null 반환")
-  void toEntity_WithNullDomain_ShouldReturnNull() {
+  void toEntityWithNullDomainShouldReturnNull() {
     // When
     UserEntity entity = UserEntityMapper.toEntity(null);
 
@@ -119,12 +115,12 @@ class UserEntityMapperTest {
 
   @Test
   @DisplayName("Domain에 토픽 ID가 null일 때 Entity 변환 성공")
-  void toEntity_WithNullTopicIds_ShouldConvertSuccessfully() {
+  void toEntityWithNullTopicIdsShouldConvertSuccessfully() {
     // Given
     User domain =
         User.builder()
             .provider(ProviderType.GOOGLE)
-            .providerId("google123")
+            .providerId("google1")
             .role(RoleType.ROLE_USER)
             .email("test@example.com")
             .password("password")

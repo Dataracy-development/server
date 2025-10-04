@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.mapper.external;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,11 +16,11 @@ import com.dataracy.modules.user.application.dto.response.read.GetOtherUserProje
 
 class OtherUserInfoMapperTest {
 
-  OtherUserInfoMapper mapper = new OtherUserInfoMapper();
+  private OtherUserInfoMapper mapper = new OtherUserInfoMapper();
 
   @Test
   @DisplayName("UserProjectResponse → GetOtherUserProjectResponse 매핑 성공")
-  void toOtherUserProject_success() {
+  void toOtherUserProjectsuccess() {
     // given
     UserProjectResponse source =
         new UserProjectResponse(
@@ -58,7 +54,7 @@ class OtherUserInfoMapperTest {
 
   @Test
   @DisplayName("UserDataResponse → GetOtherUserDataResponse 매핑 성공")
-  void toOtherUserData_success() {
+  void toOtherUserDatasuccess() {
     // given
     UserDataResponse source =
         new UserDataResponse(

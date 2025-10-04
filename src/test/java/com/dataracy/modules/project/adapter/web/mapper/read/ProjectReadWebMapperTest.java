@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.web.mapper.read;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +28,11 @@ import com.dataracy.modules.project.application.dto.response.support.ProjectConn
 
 @ExtendWith(MockitoExtension.class)
 class ProjectReadWebMapperTest {
+
+  // Test constants
+  private static final Long TWENTY_TWO = 22L;
+  private static final Long THIRTY_THREE = 33L;
+  private static final Long FORTY_FOUR = 44L;
 
   @Mock private ProjectConnectedDataWebMapper projectConnectedDataWebMapper;
 
@@ -161,14 +162,23 @@ class ProjectReadWebMapperTest {
     // given
     ConnectedProjectResponse responseDto =
         new ConnectedProjectResponse(
-            22L, "c-title", 1L, "user", "https://~~", "topic", 3L, 4L, 5L, LocalDateTime.now());
+            TWENTY_TWO,
+            "c-title",
+            1L,
+            "user",
+            "https://~~",
+            "topic",
+            3L,
+            4L,
+            5L,
+            LocalDateTime.now());
 
     // when
     ConnectedProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
     // then
     assertAll(
-        () -> assertThat(webResponse.id()).isEqualTo(22L),
+        () -> assertThat(webResponse.id()).isEqualTo(TWENTY_TWO),
         () -> assertThat(webResponse.title()).isEqualTo("c-title"),
         () -> assertThat(webResponse.viewCount()).isEqualTo(5L));
   }
@@ -178,14 +188,15 @@ class ProjectReadWebMapperTest {
   void toWebDtoChildProject() {
     // given
     ChildProjectResponse responseDto =
-        new ChildProjectResponse(33L, "child", "content", 1L, "user", "https://~~", 1L, 2L);
+        new ChildProjectResponse(
+            THIRTY_THREE, "child", "content", 1L, "user", "https://~~", 1L, 2L);
 
     // when
     ChildProjectWebResponse webResponse = mapper.toWebDto(responseDto);
 
     // then
     assertAll(
-        () -> assertThat(webResponse.id()).isEqualTo(33L),
+        () -> assertThat(webResponse.id()).isEqualTo(THIRTY_THREE),
         () -> assertThat(webResponse.title()).isEqualTo("child"),
         () -> assertThat(webResponse.likeCount()).isEqualTo(2L));
   }
@@ -196,7 +207,7 @@ class ProjectReadWebMapperTest {
     // given
     PopularProjectResponse responseDto =
         new PopularProjectResponse(
-            44L,
+            FORTY_FOUR,
             "pop-title",
             "content",
             1L,
@@ -216,7 +227,7 @@ class ProjectReadWebMapperTest {
 
     // then
     assertAll(
-        () -> assertThat(webResponse.id()).isEqualTo(44L),
+        () -> assertThat(webResponse.id()).isEqualTo(FORTY_FOUR),
         () -> assertThat(webResponse.title()).isEqualTo("pop-title"),
         () -> assertThat(webResponse.commentCount()).isEqualTo(9L));
   }

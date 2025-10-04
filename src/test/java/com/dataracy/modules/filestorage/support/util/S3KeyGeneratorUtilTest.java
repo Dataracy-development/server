@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.filestorage.support.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,12 +12,18 @@ import org.junit.jupiter.params.provider.ValueSource;
 @DisplayName("S3KeyGeneratorUtil 테스트")
 class S3KeyGeneratorUtilTest {
 
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+  private static final Long COMMENT_ID = 2L;
+  private static final Long USER_ID = 4L;
+  private static final Long TARGET_ID = 3L;
+
   @Test
   @DisplayName("generateKey - 정상적인 파라미터로 S3 키 생성")
-  void generateKey_ShouldGenerateCorrectKey_WhenValidParameters() {
+  void generateKeyShouldGenerateCorrectKeyWhenValidParameters() {
     // Given
     String domain = "projects";
-    Long entityId = 123L;
+    Long entityId = 1L;
     String originalFilename = "test-image.jpg";
 
     // When
@@ -29,21 +31,21 @@ class S3KeyGeneratorUtilTest {
 
     // Then
     assertAll(
-        () -> assertThat(key).startsWith("projects/123/"),
+        () -> assertThat(key).startsWith("projects/1/"),
         () -> assertThat(key).endsWith(".jpg"),
         () ->
             assertThat(key)
                 .matches(
-                    "projects/123/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.jpg"));
+                    "projects/1/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.jpg"));
   }
 
   @Test
   @DisplayName("generateKey - null 파라미터로 예외 발생")
-  void generateKey_ShouldThrowException_WhenNullParameters() {
+  void generateKeyShouldThrowExceptionWhenNullParameters() {
     // Given & When & Then
     IllegalArgumentException exception1 =
         catchThrowableOfType(
-            () -> S3KeyGeneratorUtil.generateKey(null, 123L, "test.jpg"),
+            () -> S3KeyGeneratorUtil.generateKey(null, 1L, "test.jpg"),
             IllegalArgumentException.class);
     assertAll(
         () -> assertThat(exception1).isNotNull(),
@@ -59,7 +61,7 @@ class S3KeyGeneratorUtilTest {
 
     IllegalArgumentException exception3 =
         catchThrowableOfType(
-            () -> S3KeyGeneratorUtil.generateKey("projects", 123L, null),
+            () -> S3KeyGeneratorUtil.generateKey("projects", 1L, null),
             IllegalArgumentException.class);
     assertAll(
         () -> assertThat(exception3).isNotNull(),
@@ -68,10 +70,10 @@ class S3KeyGeneratorUtilTest {
 
   @Test
   @DisplayName("generateThumbnailKey - 정상적인 파라미터로 썸네일 S3 키 생성")
-  void generateThumbnailKey_ShouldGenerateCorrectThumbnailKey_WhenValidParameters() {
+  void generateThumbnailKeyShouldGenerateCorrectThumbnailKeyWhenValidParameters() {
     // Given
     String domain = "datasets";
-    Long entityId = 456L;
+    Long entityId = PROJECT_ID;
     String originalFilename = "data-file.png";
 
     // When
@@ -79,21 +81,21 @@ class S3KeyGeneratorUtilTest {
 
     // Then
     assertAll(
-        () -> assertThat(key).startsWith("datasets/456/thumb/"),
+        () -> assertThat(key).startsWith("datasets/1/thumb/"),
         () -> assertThat(key).endsWith(".png"),
         () ->
             assertThat(key)
                 .matches(
-                    "datasets/456/thumb/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.png"));
+                    "datasets/1/thumb/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.png"));
   }
 
   @Test
   @DisplayName("generateThumbnailKey - null 파라미터로 예외 발생")
-  void generateThumbnailKey_ShouldThrowException_WhenNullParameters() {
+  void generateThumbnailKeyShouldThrowExceptionWhenNullParameters() {
     // Given & When & Then
     IllegalArgumentException exception1 =
         catchThrowableOfType(
-            () -> S3KeyGeneratorUtil.generateThumbnailKey(null, 456L, "test.png"),
+            () -> S3KeyGeneratorUtil.generateThumbnailKey(null, PROJECT_ID, "test.png"),
             IllegalArgumentException.class);
     assertAll(
         () -> assertThat(exception1).isNotNull(),
@@ -109,7 +111,7 @@ class S3KeyGeneratorUtilTest {
 
     IllegalArgumentException exception3 =
         catchThrowableOfType(
-            () -> S3KeyGeneratorUtil.generateThumbnailKey("datasets", 456L, null),
+            () -> S3KeyGeneratorUtil.generateThumbnailKey("datasets", PROJECT_ID, null),
             IllegalArgumentException.class);
     assertAll(
         () -> assertThat(exception3).isNotNull(),
@@ -119,10 +121,10 @@ class S3KeyGeneratorUtilTest {
   @ParameterizedTest
   @ValueSource(strings = {"document.pdf", "image.jpeg", "video.mp4", "archive.zip", "text.txt"})
   @DisplayName("generateKey - 다양한 파일 확장자 처리")
-  void generateKey_ShouldHandleVariousExtensions(String filename) {
+  void generateKeyShouldHandleVariousExtensions(String filename) {
     // Given
     String domain = "files";
-    Long entityId = 789L;
+    Long entityId = COMMENT_ID;
 
     // When
     String key = S3KeyGeneratorUtil.generateKey(domain, entityId, filename);
@@ -131,15 +133,15 @@ class S3KeyGeneratorUtilTest {
     String expectedExtension = filename.substring(filename.lastIndexOf('.') + 1);
     assertAll(
         () -> assertThat(key).endsWith("." + expectedExtension),
-        () -> assertThat(key).startsWith("files/789/"));
+        () -> assertThat(key).startsWith("files/2/"));
   }
 
   @Test
   @DisplayName("generateKey - 확장자가 없는 파일명 처리")
-  void generateKey_ShouldUseDefaultExtension_WhenNoExtension() {
+  void generateKeyShouldUseDefaultExtensionWhenNoExtension() {
     // Given
     String domain = "uploads";
-    Long entityId = 999L;
+    Long entityId = USER_ID;
     String filename = "noextension";
 
     // When
@@ -147,15 +149,15 @@ class S3KeyGeneratorUtilTest {
 
     // Then
     assertAll(
-        () -> assertThat(key).endsWith(".jpg"), () -> assertThat(key).startsWith("uploads/999/"));
+        () -> assertThat(key).endsWith(".jpg"), () -> assertThat(key).startsWith("uploads/4/"));
   }
 
   @Test
   @DisplayName("generateKey - 점으로 끝나는 파일명 처리")
-  void generateKey_ShouldUseDefaultExtension_WhenEndsWithDot() {
+  void generateKeyShouldUseDefaultExtensionWhenEndsWithDot() {
     // Given
     String domain = "uploads";
-    Long entityId = 888L;
+    Long entityId = USER_ID;
     String filename = "filename.";
 
     // When
@@ -163,15 +165,15 @@ class S3KeyGeneratorUtilTest {
 
     // Then
     assertAll(
-        () -> assertThat(key).endsWith(".jpg"), () -> assertThat(key).startsWith("uploads/888/"));
+        () -> assertThat(key).endsWith(".jpg"), () -> assertThat(key).startsWith("uploads/4/"));
   }
 
   @Test
   @DisplayName("generateThumbnailKey - 확장자가 없는 파일명 처리")
-  void generateThumbnailKey_ShouldUseDefaultExtension_WhenNoExtension() {
+  void generateThumbnailKeyShouldUseDefaultExtensionWhenNoExtension() {
     // Given
     String domain = "uploads";
-    Long entityId = 777L;
+    Long entityId = TARGET_ID;
     String filename = "noextension";
 
     // When
@@ -181,12 +183,12 @@ class S3KeyGeneratorUtilTest {
     assertAll(
         () -> assertThat(key).endsWith(".jpg"),
         () -> assertThat(key).contains("/thumb/"),
-        () -> assertThat(key).startsWith("uploads/777/thumb/"));
+        () -> assertThat(key).startsWith("uploads/3/thumb/"));
   }
 
   @Test
   @DisplayName("generateKey - 매번 다른 UUID 생성 확인")
-  void generateKey_ShouldGenerateDifferentUuids_WhenCalledMultipleTimes() {
+  void generateKeyShouldGenerateDifferentUuidsWhenCalledMultipleTimes() {
     // Given
     String domain = "test";
     Long entityId = 1L;

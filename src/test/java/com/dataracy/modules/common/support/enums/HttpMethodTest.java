@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.support.enums;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +11,7 @@ class HttpMethodTest {
 
   @Test
   @DisplayName("HttpMethod enum 값들 확인")
-  void httpMethod_ShouldHaveCorrectValues() {
+  void httpMethodShouldHaveCorrectValues() {
     // Given & When & Then
     assertAll(
         () -> assertThat(HttpMethod.values()).hasSize(8),
@@ -31,7 +27,7 @@ class HttpMethodTest {
 
   @Test
   @DisplayName("HttpMethod name() 메서드 테스트")
-  void httpMethod_ShouldHaveCorrectNames() {
+  void httpMethodShouldHaveCorrectNames() {
     // Given & When & Then
     assertAll(
         () -> assertThat(HttpMethod.GET.name()).isEqualTo("GET"),
@@ -46,7 +42,7 @@ class HttpMethodTest {
 
   @Test
   @DisplayName("HttpMethod valueOf() 메서드 테스트")
-  void httpMethod_ShouldParseFromString() {
+  void httpMethodShouldParseFromString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(HttpMethod.valueOf("GET")).isEqualTo(HttpMethod.GET),
@@ -61,7 +57,7 @@ class HttpMethodTest {
 
   @Test
   @DisplayName("HttpMethod ordinal() 메서드 테스트")
-  void httpMethod_ShouldHaveCorrectOrdinals() {
+  void httpMethodShouldHaveCorrectOrdinals() {
     // Given & When & Then
     assertAll(
         () -> assertThat(HttpMethod.GET.ordinal()).isZero(),
@@ -76,7 +72,7 @@ class HttpMethodTest {
 
   @Test
   @DisplayName("HttpMethod toString() 메서드 테스트")
-  void httpMethod_ShouldHaveCorrectToString() {
+  void httpMethodShouldHaveCorrectToString() {
     // Given & When & Then
     assertAll(
         () -> assertThat(HttpMethod.GET).hasToString("GET"),

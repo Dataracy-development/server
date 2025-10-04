@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.kafka.consumer;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -30,6 +26,9 @@ import com.dataracy.modules.dataset.domain.model.event.DataUploadEvent;
 @ExtendWith(MockitoExtension.class)
 class DataKafkaConsumerAdapterTest {
 
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+
   @Mock private ParseMetadataUseCase parseMetadataUseCase;
 
   @Mock private KafkaLogger kafkaLogger;
@@ -46,7 +45,7 @@ class DataKafkaConsumerAdapterTest {
   @DisplayName("데이터 업로드 이벤트 수신 시 메타데이터 파싱 성공")
   void consumeDataUploadEventSuccess() {
     // given
-    DataUploadEvent event = new DataUploadEvent(123L, "http://example.com/data.csv", "dataset.csv");
+    DataUploadEvent event = new DataUploadEvent(1L, "http://example.com/data.csv", "dataset.csv");
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -56,10 +55,8 @@ class DataKafkaConsumerAdapterTest {
 
       // then
       then(parseMetadataUseCase).should().parseAndSaveMetadata(any(ParseMetadataRequest.class));
-      then(kafkaLogger).should().logConsume("data-uploaded-topic", "데이터셋 업로드 이벤트 수신됨: dataId=123");
-      then(kafkaLogger)
-          .should()
-          .logConsume("data-uploaded-topic", "데이터셋 업로드 이벤트 처리 완료: dataId=123");
+      then(kafkaLogger).should().logConsume("data-uploaded-topic", "데이터셋 업로드 이벤트 수신됨: dataId=1");
+      then(kafkaLogger).should().logConsume("data-uploaded-topic", "데이터셋 업로드 이벤트 처리 완료: dataId=1");
     }
   }
 
@@ -68,7 +65,7 @@ class DataKafkaConsumerAdapterTest {
   void consumeDataUploadEventFailure() {
     // given
     DataUploadEvent event =
-        new DataUploadEvent(456L, "http://example.com/data.xlsx", "dataset.xlsx");
+        new DataUploadEvent(PROJECT_ID, "http://example.com/data.xlsx", "dataset.xlsx");
     RuntimeException exception = new RuntimeException("Metadata parsing failed");
     willThrow(exception)
         .given(parseMetadataUseCase)
@@ -83,12 +80,12 @@ class DataKafkaConsumerAdapterTest {
       assertAll(
           () -> org.assertj.core.api.Assertions.assertThat(caughtException).isSameAs(exception));
 
-      then(kafkaLogger).should().logConsume("data-uploaded-topic", "데이터셋 업로드 이벤트 수신됨: dataId=456");
+      then(kafkaLogger).should().logConsume("data-uploaded-topic", "데이터셋 업로드 이벤트 수신됨: dataId=1");
       then(kafkaLogger)
           .should()
           .logError(
               eq("data-uploaded-topic"),
-              eq("데이터셋 업로드 이벤트 처리 실패: dataId=456"),
+              eq("데이터셋 업로드 이벤트 처리 실패: dataId=1"),
               any(RuntimeException.class));
     }
   }

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.application.port.out.code;
 
 import com.dataracy.modules.email.domain.enums.EmailVerificationType;

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.web.mapper.read;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,6 +13,9 @@ import com.dataracy.modules.dataset.adapter.web.response.read.*;
 import com.dataracy.modules.dataset.application.dto.response.read.*;
 
 class DataReadWebMapperTest {
+
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
 
   private final DataReadWebMapper mapper = new DataReadWebMapper();
 
@@ -91,14 +90,14 @@ class DataReadWebMapperTest {
             "https://~~",
             "topicX",
             "typeY",
-            LocalDate.of(2024, 1, 1),
-            LocalDate.of(2024, 6, 30),
+            LocalDate.of(CURRENT_YEAR, 1, 1),
+            LocalDate.of(CURRENT_YEAR, 6, 30),
             "thumb.png",
             10,
             2048L,
             100,
             20,
-            LocalDateTime.of(2024, 2, 1, 9, 0),
+            LocalDateTime.of(CURRENT_YEAR, 2, 1, 9, 0),
             3L);
 
     // when
@@ -125,7 +124,7 @@ class DataReadWebMapperTest {
             "userA",
             "https://~~",
             "thumb.png",
-            LocalDateTime.of(2024, 3, 1, 12, 0));
+            LocalDateTime.of(CURRENT_YEAR, 3, 1, 12, 0));
 
     // when
     RecentMinimalDataWebResponse result = mapper.toWebDto(dto);

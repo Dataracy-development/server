@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.service.command.password;
 
 import static org.assertj.core.api.Assertions.*;
@@ -43,7 +39,7 @@ class ChangePasswordServiceTest {
 
   @Mock private JwtValidateUseCase jwtValidateUseCase;
 
-  @InjectMocks ChangePasswordService service;
+  @InjectMocks private ChangePasswordService service;
 
   private User localUser(ProviderType providerType) {
     return User.builder()
@@ -69,7 +65,7 @@ class ChangePasswordServiceTest {
 
   @Test
   @DisplayName("changePassword: LOCAL 유저 + 비밀번호 일치 → 성공 저장")
-  void changePassword_success() {
+  void changePasswordsuccess() {
     // given
     ChangePasswordRequest req = new ChangePasswordRequest("newPwd", "newPwd");
     given(userQueryPort.findUserById(10L)).willReturn(Optional.of(localUser(ProviderType.LOCAL)));
@@ -84,7 +80,7 @@ class ChangePasswordServiceTest {
 
   @Test
   @DisplayName("changePassword: 존재하지 않는 유저 → NOT_FOUND_USER 예외")
-  void changePassword_userNotFound() {
+  void changePassworduserNotFound() {
     // given
     given(userQueryPort.findUserById(99L)).willReturn(Optional.empty());
     ChangePasswordRequest req = new ChangePasswordRequest("pw", "pw");
@@ -100,7 +96,7 @@ class ChangePasswordServiceTest {
 
   @Test
   @DisplayName("changePassword: 소셜 계정(KAKAO/GOOGLE) → FORBIDDEN_CHANGE_PASSWORD_* 예외")
-  void changePassword_socialForbidden() {
+  void changePasswordsocialForbidden() {
     // given
     User kakaoUser = localUser(ProviderType.KAKAO);
     given(userQueryPort.findUserById(10L)).willReturn(Optional.of(kakaoUser));
@@ -120,7 +116,7 @@ class ChangePasswordServiceTest {
 
   @Test
   @DisplayName("changePassword: 비밀번호-확인 불일치 → validatePasswordMatch() 예외 전파")
-  void changePassword_passwordMismatch() {
+  void changePasswordpasswordMismatch() {
     // given
     ChangePasswordRequest req = new ChangePasswordRequest("pw1", "pw2");
 
@@ -139,7 +135,7 @@ class ChangePasswordServiceTest {
 
     @Test
     @DisplayName("resetPassword: 유효 토큰 + LOCAL 유저 → 성공 저장")
-    void resetPassword_success() {
+    void resetPasswordsuccess() {
       // given
       ResetPasswordWithTokenRequest req =
           new ResetPasswordWithTokenRequest("reset-token", "pw", "pw");
@@ -158,7 +154,7 @@ class ChangePasswordServiceTest {
 
     @Test
     @DisplayName("resetPassword: 무효 토큰 → INVALID_OR_EXPIRED_RESET_PASSWORD_TOKEN")
-    void resetPassword_invalidToken() {
+    void resetPasswordinvalidToken() {
       // given
       ResetPasswordWithTokenRequest req = new ResetPasswordWithTokenRequest("bad", "pw", "pw");
       given(manageResetTokenUseCase.isValidResetToken("bad")).willReturn(false);
@@ -176,7 +172,7 @@ class ChangePasswordServiceTest {
 
     @Test
     @DisplayName("resetPassword: 유저 없음 → NOT_FOUND_USER 예외")
-    void resetPassword_userNotFound() {
+    void resetPassworduserNotFound() {
       // given
       ResetPasswordWithTokenRequest req = new ResetPasswordWithTokenRequest("token", "pw", "pw");
       given(manageResetTokenUseCase.isValidResetToken("token")).willReturn(true);
@@ -193,7 +189,7 @@ class ChangePasswordServiceTest {
 
     @Test
     @DisplayName("resetPassword: 소셜 계정 → FORBIDDEN_CHANGE_PASSWORD_* 예외")
-    void resetPassword_socialForbidden() {
+    void resetPasswordsocialForbidden() {
       // given
       ResetPasswordWithTokenRequest req = new ResetPasswordWithTokenRequest("token", "pw", "pw");
       User kakao = localUser(ProviderType.KAKAO);
@@ -215,7 +211,7 @@ class ChangePasswordServiceTest {
 
     @Test
     @DisplayName("resetPassword: 비밀번호-확인 불일치 → validatePasswordMatch() 예외 전파")
-    void resetPassword_passwordMismatch() {
+    void resetPasswordpasswordMismatch() {
       // given
       ResetPasswordWithTokenRequest req = new ResetPasswordWithTokenRequest("token", "pw1", "pw2");
       given(manageResetTokenUseCase.isValidResetToken("token")).willReturn(true);

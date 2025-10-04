@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.handler;
 
 import static org.assertj.core.api.BDDAssertions.thenCode;
@@ -26,6 +22,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @ExtendWith(MockitoExtension.class)
 class OAuth2LoginFailureHandlerTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Mock private HttpServletRequest request;
 
   @Mock private HttpServletResponse response;
@@ -42,7 +41,7 @@ class OAuth2LoginFailureHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationFailure - 인증 실패 시 로깅하고 기본 처리 로직을 실행한다")
-  void onAuthenticationFailure_WhenAuthenticationFails_LogsErrorAndCallsSuper() {
+  void onAuthenticationFailureWhenAuthenticationFailsLogsErrorAndCallsSuper() {
     // given
     String errorMessage = "Authentication failed";
     given(exception.getMessage()).willReturn(errorMessage);
@@ -55,7 +54,7 @@ class OAuth2LoginFailureHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationFailure - null 예외로도 처리한다")
-  void onAuthenticationFailure_WhenNullException_HandlesCorrectly() {
+  void onAuthenticationFailureWhenNullExceptionHandlesCorrectly() {
     // given
     AuthenticationException nullException = null;
 
@@ -68,7 +67,7 @@ class OAuth2LoginFailureHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationFailure - null 요청으로도 처리한다")
-  void onAuthenticationFailure_WhenNullRequest_HandlesCorrectly() {
+  void onAuthenticationFailureWhenNullRequestHandlesCorrectly() {
     // given
     HttpServletRequest nullRequest = null;
 
@@ -81,7 +80,7 @@ class OAuth2LoginFailureHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationFailure - null 응답으로도 처리한다")
-  void onAuthenticationFailure_WhenNullResponse_HandlesCorrectly() {
+  void onAuthenticationFailureWhenNullResponseHandlesCorrectly() {
     // given
     HttpServletResponse nullResponse = null;
 
@@ -94,7 +93,7 @@ class OAuth2LoginFailureHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationFailure - 예외 메시지가 null인 경우도 처리한다")
-  void onAuthenticationFailure_WhenExceptionMessageIsNull_HandlesCorrectly() {
+  void onAuthenticationFailureWhenExceptionMessageIsNullHandlesCorrectly() {
     // given
     given(exception.getMessage()).willReturn(null);
 
@@ -105,7 +104,7 @@ class OAuth2LoginFailureHandlerTest {
 
   @Test
   @DisplayName("onAuthenticationFailure - 예외 메시지가 빈 문자열인 경우도 처리한다")
-  void onAuthenticationFailure_WhenExceptionMessageIsEmpty_HandlesCorrectly() {
+  void onAuthenticationFailureWhenExceptionMessageIsEmptyHandlesCorrectly() {
     // given
     given(exception.getMessage()).willReturn("");
 
@@ -117,7 +116,7 @@ class OAuth2LoginFailureHandlerTest {
   @ParameterizedTest
   @ValueSource(strings = {"IOException", "ServletException", "RuntimeException"})
   @DisplayName("onAuthenticationFailure - 예외 발생 케이스를 처리한다")
-  void onAuthenticationFailure_WhenExceptionOccurs_HandlesCorrectly(String exceptionType) {
+  void onAuthenticationFailureWhenExceptionOccursHandlesCorrectly(String exceptionType) {
     // given
     // 실제로는 예외가 발생하지 않으므로 Mock 설정 제거
 

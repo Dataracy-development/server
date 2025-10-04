@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +37,9 @@ import jakarta.persistence.PersistenceContext;
 @Transactional
 class DataQueryDslAdapterIntegrationTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @PersistenceContext private EntityManager entityManager;
 
   @Autowired private ReadDataQueryDslAdapter readAdapter;
@@ -73,8 +72,8 @@ class DataQueryDslAdapterIntegrationTest {
             .dataTypeId(1L)
             .isDeleted(false)
             .downloadCount(100)
-            .startDate(LocalDate.of(2024, 1, 1))
-            .endDate(LocalDate.of(2024, 12, 31))
+            .startDate(LocalDate.of(CURRENT_YEAR, 1, 1))
+            .endDate(LocalDate.of(CURRENT_YEAR, 12, 31))
             .build();
     entityManager.persist(savedData);
 
@@ -89,8 +88,8 @@ class DataQueryDslAdapterIntegrationTest {
             .dataTypeId(1L)
             .isDeleted(true)
             .downloadCount(50)
-            .startDate(LocalDate.of(2024, 1, 1))
-            .endDate(LocalDate.of(2024, 12, 31))
+            .startDate(LocalDate.of(CURRENT_YEAR, 1, 1))
+            .endDate(LocalDate.of(CURRENT_YEAR, 12, 31))
             .build();
     entityManager.persist(deletedData);
 
@@ -105,8 +104,8 @@ class DataQueryDslAdapterIntegrationTest {
             .dataTypeId(1L)
             .isDeleted(false)
             .downloadCount(1000)
-            .startDate(LocalDate.of(2024, 1, 1))
-            .endDate(LocalDate.of(2024, 12, 31))
+            .startDate(LocalDate.of(CURRENT_YEAR, 1, 1))
+            .endDate(LocalDate.of(CURRENT_YEAR, 12, 31))
             .build();
     entityManager.persist(popularData);
 
@@ -138,7 +137,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("ID로 삭제되지 않은 데이터 조회")
-    void findDataById_삭제되지_않은_데이터_조회_성공() {
+    void findDataByIdWithNonDeletedDataReturnsSuccess() {
       // when
       Optional<Data> result = readAdapter.findDataById(savedData.getId());
 
@@ -151,7 +150,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("ID로 삭제된 데이터 조회 시 빈 결과 반환")
-    void findDataById_삭제된_데이터_조회_시_빈_결과() {
+    void findDataByIdWithDeletedDataReturnsEmpty() {
       // when
       Optional<Data> result = readAdapter.findDataById(deletedData.getId());
 
@@ -161,7 +160,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("존재하지 않는 ID로 데이터 조회 시 빈 결과 반환")
-    void findDataById_존재하지_않는_ID_조회_시_빈_결과() {
+    void findDataByIdWithNonExistentIdReturnsEmpty() {
       // when
       Optional<Data> result = readAdapter.findDataById(999L);
 
@@ -171,7 +170,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("ID로 데이터와 메타데이터 함께 조회")
-    void findDataWithMetadataById_데이터와_메타데이터_조회_성공() {
+    void findDataWithMetadataByIdReturnsSuccess() {
       // given
       DataMetadataEntity metadata =
           DataMetadataEntity.builder()
@@ -194,7 +193,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("데이터 그룹 개수 조회")
-    void getDataGroupCount_데이터_그룹_개수_조회_성공() {
+    void getDataGroupCountReturnsSuccess() {
       // when & then - topic 테이블이 없어서 예외가 발생할 수 있으므로 예외 처리
       try {
         List<DataGroupCountResponse> result = readAdapter.getDataGroupCount();
@@ -207,7 +206,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("최근 데이터셋 조회")
-    void getRecentDataSets_최근_데이터셋_조회_성공() {
+    void getRecentDataSetsReturnsSuccess() {
       // given
       int size = 10;
 
@@ -223,7 +222,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("인기 데이터셋 조회")
-    void getPopularDataSets_인기_데이터셋_조회_성공() {
+    void getPopularDataSetsReturnsSuccess() {
       // given
       int size = 10;
 
@@ -237,7 +236,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("사용자 데이터셋 조회")
-    void findUserDataSets_사용자_데이터셋_조회_성공() {
+    void findUserDataSetsReturnsSuccess() {
       // given
       Long userId = savedData.getUserId();
       Pageable pageable = PageRequest.of(0, 10);
@@ -253,7 +252,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("프로젝트에 연결된 데이터셋 조회")
-    void findConnectedDataSetsAssociatedWithProject_프로젝트_연결_데이터셋_조회_성공() {
+    void findConnectedDataSetsAssociatedWithProjectReturnsSuccess() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -270,7 +269,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("데이터 ID 목록으로 연결된 데이터셋 조회")
-    void findConnectedDataSetsAssociatedWithProjectByIds_데이터_ID_목록_조회_성공() {
+    void findConnectedDataSetsAssociatedWithProjectByIdsReturnsSuccess() {
       // given
       List<Long> dataIds = List.of(savedData.getId(), popularData.getId());
 
@@ -285,7 +284,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("데이터 ID 목록으로 연결된 데이터셋 조회 - 빈 목록")
-    void findConnectedDataSetsAssociatedWithProjectByIds_빈_목록_조회() {
+    void findConnectedDataSetsAssociatedWithProjectByIdsWithEmptyList() {
       // given
       List<Long> dataIds = List.of();
 
@@ -299,7 +298,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("사용자 데이터셋 조회 - null Pageable 처리")
-    void findUserDataSets_null_Pageable_처리() {
+    void findUserDataSetsWithNullPageableHandlesCorrectly() {
       // given
       Long userId = savedData.getUserId();
 
@@ -314,7 +313,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("사용자 데이터셋 조회 - 존재하지 않는 사용자")
-    void findUserDataSets_존재하지_않는_사용자() {
+    void findUserDataSetsWithNonExistentUser() {
       // given
       Long userId = 999L;
       Pageable pageable = PageRequest.of(0, 10);
@@ -328,7 +327,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("프로젝트에 연결된 데이터셋 조회 - 연결된 데이터가 없는 경우")
-    void findConnectedDataSetsAssociatedWithProject_연결된_데이터_없음() {
+    void findConnectedDataSetsAssociatedWithProjectWithNoConnectedData() {
       // given
       ProjectEntity anotherProject =
           ProjectEntity.of(
@@ -357,7 +356,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("프로젝트에 연결된 데이터셋 조회 - 존재하지 않는 프로젝트")
-    void findConnectedDataSetsAssociatedWithProject_존재하지_않는_프로젝트() {
+    void findConnectedDataSetsAssociatedWithProjectWithNonExistentProject() {
       // given
       Pageable pageable = PageRequest.of(0, 10);
 
@@ -376,7 +375,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("필터 조건으로 데이터셋 검색")
-    void searchByFilters_필터_조건으로_데이터셋_검색_성공() {
+    void searchByFiltersWithFilterConditionsReturnsSuccess() {
       // given
       FilteringDataRequest request = new FilteringDataRequest("테스트", null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -393,7 +392,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("정렬 조건별 데이터셋 검색")
-    void searchByFilters_정렬_조건별_데이터셋_검색_성공() {
+    void searchByFiltersWithSortConditionsReturnsSuccess() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -414,7 +413,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("빈 검색 조건으로 모든 데이터셋 검색")
-    void searchByFilters_빈_검색_조건으로_모든_데이터셋_검색_성공() {
+    void searchByFiltersWithEmptyConditionsReturnsAllDataSets() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 10);
@@ -434,7 +433,7 @@ class DataQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("페이지네이션 검색")
-    void searchByFilters_페이지네이션_검색_성공() {
+    void searchByFiltersWithPaginationReturnsSuccess() {
       // given
       FilteringDataRequest request = new FilteringDataRequest(null, null, null, null, null, null);
       Pageable pageable = PageRequest.of(0, 1);

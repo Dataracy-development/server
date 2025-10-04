@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.config.adapter.kafka;
 
 import org.apache.kafka.common.TopicPartition;
@@ -82,7 +78,12 @@ public class KafkaLongConsumerConfig extends AbstractKafkaConsumerConfig<Long> {
         IllegalArgumentException.class,
         SerializationException.class,
         DeserializationException.class,
-        MessageConversionException.class);
+        MessageConversionException.class,
+        // Kafka 연결 관련 예외들 추가
+        org.apache.kafka.common.protocol.types.SchemaException.class,
+        java.nio.BufferUnderflowException.class,
+        org.apache.kafka.common.errors.NetworkException.class,
+        org.apache.kafka.common.errors.TimeoutException.class);
 
     return handler;
   }

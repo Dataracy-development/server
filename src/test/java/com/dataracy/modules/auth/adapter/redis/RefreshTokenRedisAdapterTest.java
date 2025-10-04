@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,10 +54,10 @@ class RefreshTokenRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 리프레시 토큰 저장")
-    void saveRefreshToken_성공() {
+    void saveRefreshTokenSuccess() {
       // given
-      String userId = "user123";
-      String refreshToken = "refresh-token-123";
+      String userId = "user1";
+      String refreshToken = "refresh-token-1";
 
       // when
       adapter.saveRefreshToken(userId, refreshToken);
@@ -69,12 +65,12 @@ class RefreshTokenRedisAdapterTest {
       // then
       then(valueOperations)
           .should()
-          .set(eq("refreshToken:user:user123"), eq(refreshToken), eq(7L), eq(TimeUnit.DAYS));
+          .set(eq("refreshToken:user:user1"), eq(refreshToken), eq(7L), eq(TimeUnit.DAYS));
     }
 
     @Test
     @DisplayName("예외 발생 시 CommonException 변환")
-    void saveRefreshToken_예외발생_CommonException변환() {
+    void saveRefreshTokenThrowsCommonException() {
       // given
       String userId = "user456";
       String refreshToken = "refresh-token-456";
@@ -99,23 +95,23 @@ class RefreshTokenRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 리프레시 토큰 조회")
-    void getRefreshToken_성공() {
+    void getRefreshTokenSuccess() {
       // given
-      String userId = "user123";
-      String refreshToken = "refresh-token-123";
-      given(valueOperations.get("refreshToken:user:user123")).willReturn(refreshToken);
+      String userId = "user1";
+      String refreshToken = "refresh-token-1";
+      given(valueOperations.get("refreshToken:user:user1")).willReturn(refreshToken);
 
       // when
       String result = adapter.getRefreshToken(userId);
 
       // then
       assertThat(result).isEqualTo(refreshToken);
-      then(valueOperations).should().get("refreshToken:user:user123");
+      then(valueOperations).should().get("refreshToken:user:user1");
     }
 
     @Test
     @DisplayName("토큰이 존재하지 않을 때 null 반환")
-    void getRefreshToken_토큰존재하지않음_null반환() {
+    void getRefreshTokenReturnsNullWhenNotFound() {
       // given
       String userId = "user999";
       given(valueOperations.get("refreshToken:user:user999")).willReturn(null);
@@ -135,7 +131,7 @@ class RefreshTokenRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 리프레시 토큰 삭제")
-    void deleteRefreshToken_성공() {
+    void deleteRefreshTokenSuccess() {
       // given
       String userId = "user222";
 
@@ -148,7 +144,7 @@ class RefreshTokenRedisAdapterTest {
 
     @Test
     @DisplayName("예외 발생 시 CommonException 변환")
-    void deleteRefreshToken_예외발생_CommonException변환() {
+    void deleteRefreshTokenThrowsCommonException() {
       // given
       String userId = "user333";
       RedisConnectionFailureException redisException =

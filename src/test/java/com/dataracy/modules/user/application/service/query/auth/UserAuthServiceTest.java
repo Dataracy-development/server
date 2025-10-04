@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.service.query.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,7 +45,7 @@ class UserAuthServiceTest {
   @InjectMocks private UserAuthService service;
 
   private OAuthUserInfo kakaoUserInfo() {
-    return new OAuthUserInfo("user@test.com", "주니", "KAKAO", "kakao-123");
+    return new OAuthUserInfo("user@test.com", "주니", "KAKAO", "kakao-1");
   }
 
   private User localUser() {
@@ -71,7 +67,7 @@ class UserAuthServiceTest {
   @DisplayName("isNewUser: 존재하지 않으면 true 반환")
   void isNewUserReturnsTrueWhenNotExists() {
     // given
-    given(userQueryPort.findUserByProviderId("kakao-123")).willReturn(Optional.empty());
+    given(userQueryPort.findUserByProviderId("kakao-1")).willReturn(Optional.empty());
 
     // when
     boolean result = service.isNewUser(kakaoUserInfo());
@@ -84,7 +80,7 @@ class UserAuthServiceTest {
   @DisplayName("isNewUser: 이미 존재하면 false 반환")
   void isNewUserReturnsFalseWhenExists() {
     // given
-    given(userQueryPort.findUserByProviderId("kakao-123")).willReturn(Optional.of(localUser()));
+    given(userQueryPort.findUserByProviderId("kakao-1")).willReturn(Optional.of(localUser()));
 
     // when
     boolean result = service.isNewUser(kakaoUserInfo());
@@ -99,7 +95,7 @@ class UserAuthServiceTest {
   @DisplayName("handleNewUser: 토큰 생성 및 RegisterTokenResponse 반환")
   void handleNewUserGeneratesRegisterToken() {
     // given
-    given(jwtGenerateUseCase.generateRegisterToken("KAKAO", "kakao-123", "user@test.com"))
+    given(jwtGenerateUseCase.generateRegisterToken("KAKAO", "kakao-1", "user@test.com"))
         .willReturn("register-token");
     given(jwtValidateUseCase.getRegisterTokenExpirationTime()).willReturn(1000L);
 
@@ -119,7 +115,7 @@ class UserAuthServiceTest {
   void handleExistingUserGeneratesAndSavesRefreshToken() {
     // given
     User exist = localUser();
-    given(userQueryPort.findUserByProviderId("kakao-123")).willReturn(Optional.of(exist));
+    given(userQueryPort.findUserByProviderId("kakao-1")).willReturn(Optional.of(exist));
     given(jwtGenerateUseCase.generateRefreshToken(1L, RoleType.ROLE_USER))
         .willReturn("refresh-token");
     given(jwtValidateUseCase.getRefreshTokenExpirationTime()).willReturn(1000L);
@@ -136,7 +132,7 @@ class UserAuthServiceTest {
   @DisplayName("handleExistingUser: 유저 없음 → NOT_FOUND_USER 예외")
   void handleExistingUserThrowsNotFoundWhenUserMissing() {
     // given
-    given(userQueryPort.findUserByProviderId("kakao-123")).willReturn(Optional.empty());
+    given(userQueryPort.findUserByProviderId("kakao-1")).willReturn(Optional.empty());
     OAuthUserInfo userInfo = kakaoUserInfo();
 
     // when

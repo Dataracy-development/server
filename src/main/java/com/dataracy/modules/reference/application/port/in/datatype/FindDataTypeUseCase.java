@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.application.port.in.datatype;
 
 import com.dataracy.modules.reference.application.dto.response.singleview.DataTypeResponse;

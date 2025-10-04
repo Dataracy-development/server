@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.adapter.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,7 +58,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("사용자가 좋아요한 타겟 ID 목록 조회")
-    void findLikedTargetIds_사용자_좋아요_타겟_ID_목록_조회_성공() {
+    void findLikedTargetIdsSuccess() {
       // given
       List<Long> targetIds = List.of(1L, 2L, 3L);
 
@@ -75,7 +71,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("다른 사용자의 좋아요는 조회되지 않음")
-    void findLikedTargetIds_다른_사용자_좋아요_조회되지_않음() {
+    void findLikedTargetIdsExcludesOtherUsers() {
       // given
       List<Long> targetIds = List.of(1L, 2L, 3L);
 
@@ -88,7 +84,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("빈 타겟 ID 목록으로 조회 시 빈 결과 반환")
-    void findLikedTargetIds_빈_타겟_ID_목록_조회_시_빈_결과() {
+    void findLikedTargetIdsWithEmptyListReturnsEmpty() {
       // when
       List<Long> result = likeAdapter.findLikedTargetIds(1L, List.of(), TargetType.PROJECT);
 
@@ -98,7 +94,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("null 타겟 ID 목록으로 조회 시 빈 결과 반환")
-    void findLikedTargetIds_null_타겟_ID_목록_조회_시_빈_결과() {
+    void findLikedTargetIdsWithNullListReturnsEmpty() {
       // when
       List<Long> result = likeAdapter.findLikedTargetIds(1L, null, TargetType.PROJECT);
 
@@ -108,7 +104,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("null 사용자 ID로 조회 시 빈 결과 반환")
-    void findLikedTargetIds_null_사용자_ID_조회_시_빈_결과() {
+    void findLikedTargetIdsWithNullUserIdReturnsEmpty() {
       // given
       List<Long> targetIds = List.of(1L, 2L, 3L);
 
@@ -126,7 +122,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("사용자가 특정 타겟을 좋아요 했는지 확인 - 좋아요 한 경우")
-    void isLikedTarget_좋아요_한_경우_true_반환() {
+    void isLikedTargetReturnsTrueWhenLiked() {
       // when
       boolean result = likeAdapter.isLikedTarget(1L, 1L, TargetType.PROJECT);
 
@@ -136,7 +132,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("사용자가 특정 타겟을 좋아요 했는지 확인 - 좋아요 안 한 경우")
-    void isLikedTarget_좋아요_안_한_경우_false_반환() {
+    void isLikedTargetReturnsFalseWhenNotLiked() {
       // when
       boolean result = likeAdapter.isLikedTarget(1L, 3L, TargetType.PROJECT);
 
@@ -146,7 +142,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("다른 사용자의 좋아요는 false 반환")
-    void isLikedTarget_다른_사용자_좋아요_false_반환() {
+    void isLikedTargetReturnsFalseForOtherUsers() {
       // when
       boolean result = likeAdapter.isLikedTarget(3L, 1L, TargetType.PROJECT);
 
@@ -156,7 +152,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("다른 타겟 타입의 좋아요는 false 반환")
-    void isLikedTarget_다른_타겟_타입_false_반환() {
+    void isLikedTargetReturnsFalseForDifferentTargetType() {
       // when
       boolean result = likeAdapter.isLikedTarget(1L, 1L, TargetType.COMMENT);
 
@@ -166,7 +162,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("존재하지 않는 사용자 ID로 조회 시 false 반환")
-    void isLikedTarget_존재하지_않는_사용자_ID_false_반환() {
+    void isLikedTargetReturnsFalseForNonExistentUserId() {
       // when
       boolean result = likeAdapter.isLikedTarget(999L, 1L, TargetType.PROJECT);
 
@@ -176,7 +172,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("존재하지 않는 타겟 ID로 조회 시 false 반환")
-    void isLikedTarget_존재하지_않는_타겟_ID_false_반환() {
+    void isLikedTargetReturnsFalseForNonExistentTargetId() {
       // when
       boolean result = likeAdapter.isLikedTarget(1L, 999L, TargetType.PROJECT);
 
@@ -191,7 +187,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("프로젝트 타겟 좋아요 테스트")
-    void project_target_like_test() {
+    void projecttargetliketest() {
       // when
       boolean isLiked = likeAdapter.isLikedTarget(1L, 1L, TargetType.PROJECT);
       List<Long> likedTargets =
@@ -206,7 +202,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("댓글 타겟 좋아요 테스트")
-    void comment_target_like_test() {
+    void commenttargetliketest() {
       // when
       boolean isLiked = likeAdapter.isLikedTarget(1L, 2L, TargetType.COMMENT);
       List<Long> likedTargets =
@@ -226,7 +222,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("여러 사용자가 같은 타겟에 좋아요")
-    void multiple_users_like_same_target() {
+    void multipleUsersLikeSameTarget() {
       // given - 이미 setUp에서 1L, 2L 사용자가 1L 프로젝트에 좋아요
       // when
       boolean user1Liked = likeAdapter.isLikedTarget(1L, 1L, TargetType.PROJECT);
@@ -242,7 +238,7 @@ class LikeQueryDslAdapterIntegrationTest {
 
     @Test
     @DisplayName("한 사용자가 여러 타겟에 좋아요")
-    void one_user_likes_multiple_targets() {
+    void oneUserLikesMultipleTargets() {
       // given - 이미 setUp에서 1L 사용자가 1L 프로젝트와 2L 댓글에 좋아요
       // when
       List<Long> projectLikes =

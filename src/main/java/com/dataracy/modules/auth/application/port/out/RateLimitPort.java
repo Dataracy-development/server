@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.application.port.out;
 
 /** Rate Limiting을 위한 Port 인터페이스 Clean Architecture의 Port Layer에 해당 */

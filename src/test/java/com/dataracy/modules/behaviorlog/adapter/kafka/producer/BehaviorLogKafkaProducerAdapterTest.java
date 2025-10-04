@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.behaviorlog.adapter.kafka.producer;
 
 import static org.mockito.ArgumentMatchers.eq;
@@ -40,43 +36,38 @@ class BehaviorLogKafkaProducerAdapterTest {
   @DisplayName("userId가 있는 행동 로그 이벤트 발행 성공")
   void sendBehaviorLogWithUserIdSuccess() {
     // given
-    BehaviorLog behaviorLog =
-        BehaviorLog.builder().userId("user123").anonymousId("anon456").build();
+    BehaviorLog behaviorLog = BehaviorLog.builder().userId("user1").anonymousId("anon456").build();
 
     CompletableFuture<SendResult<String, BehaviorLog>> future = new CompletableFuture<>();
     SendResult<String, BehaviorLog> sendResult = mock(SendResult.class);
     future.complete(sendResult);
 
-    willReturn(future)
-        .given(kafkaTemplate)
-        .send(eq("behavior-logs"), eq("user123"), eq(behaviorLog));
+    willReturn(future).given(kafkaTemplate).send(eq("behavior-logs"), eq("user1"), eq(behaviorLog));
 
     // when
     producer.send(behaviorLog);
 
     // then
-    then(kafkaTemplate).should().send("behavior-logs", "user123", behaviorLog);
+    then(kafkaTemplate).should().send("behavior-logs", "user1", behaviorLog);
   }
 
   @Test
   @DisplayName("userId가 없고 anonymousId가 있는 행동 로그 이벤트 발행 성공")
   void sendBehaviorLogWithAnonymousIdSuccess() {
     // given
-    BehaviorLog behaviorLog = BehaviorLog.builder().userId(null).anonymousId("anon789").build();
+    BehaviorLog behaviorLog = BehaviorLog.builder().userId(null).anonymousId("anon2").build();
 
     CompletableFuture<SendResult<String, BehaviorLog>> future = new CompletableFuture<>();
     SendResult<String, BehaviorLog> sendResult = mock(SendResult.class);
     future.complete(sendResult);
 
-    willReturn(future)
-        .given(kafkaTemplate)
-        .send(eq("behavior-logs"), eq("anon789"), eq(behaviorLog));
+    willReturn(future).given(kafkaTemplate).send(eq("behavior-logs"), eq("anon2"), eq(behaviorLog));
 
     // when
     producer.send(behaviorLog);
 
     // then
-    then(kafkaTemplate).should().send("behavior-logs", "anon789", behaviorLog);
+    then(kafkaTemplate).should().send("behavior-logs", "anon2", behaviorLog);
   }
 
   @Test

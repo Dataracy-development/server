@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.application.mapper.search;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +36,7 @@ class FilteredDataDtoMapperTest {
             "fileUrl",
             "thumbUrl",
             10,
-            123L,
+            1L,
             DataMetadata.of(1L, 100, 10, "{}"),
             LocalDateTime.now());
 

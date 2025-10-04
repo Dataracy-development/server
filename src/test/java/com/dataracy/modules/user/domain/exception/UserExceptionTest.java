@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.domain.exception;
 
 import static org.assertj.core.api.Assertions.*;
@@ -23,7 +19,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: UserErrorStatus로 UserException을 생성한다")
-    void success_createUserExceptionWithErrorStatus() {
+    void successcreateUserExceptionWithErrorStatus() {
       // given
       UserErrorStatus errorStatus = UserErrorStatus.NOT_FOUND_USER;
 
@@ -41,7 +37,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: 다양한 UserErrorStatus로 UserException을 생성한다")
-    void success_createUserExceptionWithVariousErrorStatuses() {
+    void successcreateUserExceptionWithVariousErrorStatuses() {
       // given & when & then
       UserErrorStatus[] errorStatuses = {
         UserErrorStatus.NOT_FOUND_USER,
@@ -71,7 +67,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: UserException은 BusinessException을 상속받는다")
-    void success_userExceptionExtendsBusinessException() {
+    void successuserExceptionExtendsBusinessException() {
       // given
       UserErrorStatus errorStatus = UserErrorStatus.NOT_FOUND_USER;
 
@@ -87,7 +83,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: UserException은 BusinessException의 모든 기능을 상속받는다")
-    void success_userExceptionInheritsBusinessExceptionFunctionality() {
+    void successuserExceptionInheritsBusinessExceptionFunctionality() {
       // given
       UserErrorStatus errorStatus = UserErrorStatus.NOT_FOUND_USER;
 
@@ -110,7 +106,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: NOT_FOUND_USER는 404 상태 코드를 가진다")
-    void success_notFoundUserHas404StatusCode() {
+    void successnotFoundUserHas404StatusCode() {
       // given
       UserErrorStatus errorStatus = UserErrorStatus.NOT_FOUND_USER;
 
@@ -123,7 +119,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: FORBIDDEN_CHANGE_PASSWORD_*는 403 상태 코드를 가진다")
-    void success_forbiddenChangePasswordHas403StatusCode() {
+    void successforbiddenChangePasswordHas403StatusCode() {
       // given
       UserErrorStatus googleError = UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE;
       UserErrorStatus kakaoError = UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_KAKAO;
@@ -140,7 +136,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: DUPLICATED_EMAIL은 409 상태 코드를 가진다")
-    void success_duplicatedEmailHas409StatusCode() {
+    void successduplicatedEmailHas409StatusCode() {
       // given
       UserErrorStatus errorStatus = UserErrorStatus.DUPLICATED_EMAIL;
 
@@ -153,7 +149,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: BAD_REQUEST_LOGIN는 400 상태 코드를 가진다")
-    void success_badRequestLoginHas400StatusCode() {
+    void successbadRequestLoginHas400StatusCode() {
       // given
       UserErrorStatus errorStatus = UserErrorStatus.BAD_REQUEST_LOGIN;
 
@@ -166,7 +162,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: ALREADY_SIGN_UP_USER는 409 상태 코드를 가진다")
-    void success_alreadySignUpUserHas409StatusCode() {
+    void successalreadySignUpUserHas409StatusCode() {
       // given
       UserErrorStatus errorStatus = UserErrorStatus.ALREADY_SIGN_UP_USER;
 
@@ -184,7 +180,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: 각 에러 상태에 맞는 메시지를 반환한다")
-    void success_returnAppropriateMessageForEachErrorStatus() {
+    void successreturnAppropriateMessageForEachErrorStatus() {
       // given & when & then
       assertAll(
           () ->
@@ -213,7 +209,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: 예외 메시지가 null이 아니다")
-    void success_exceptionMessageIsNotNull() {
+    void successexceptionMessageIsNotNull() {
       // given
       UserErrorStatus[] errorStatuses = UserErrorStatus.values();
 
@@ -233,7 +229,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: 각 에러 상태에 맞는 코드를 반환한다")
-    void success_returnAppropriateCodeForEachErrorStatus() {
+    void successreturnAppropriateCodeForEachErrorStatus() {
       // given & when & then
       assertAll(
           () ->
@@ -260,7 +256,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: 예외 코드가 null이 아니다")
-    void success_exceptionCodeIsNotNull() {
+    void successexceptionCodeIsNotNull() {
       // given
       UserErrorStatus[] errorStatuses = UserErrorStatus.values();
 
@@ -280,7 +276,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: 같은 UserErrorStatus로 생성된 예외는 동일한 속성을 가진다")
-    void success_exceptionsWithSameErrorStatusHaveSameProperties() {
+    void successexceptionsWithSameErrorStatusHaveSameProperties() {
       // given
       UserErrorStatus errorStatus = UserErrorStatus.NOT_FOUND_USER;
 
@@ -298,7 +294,7 @@ class UserExceptionTest {
 
     @Test
     @DisplayName("성공: 다른 UserErrorStatus로 생성된 예외는 다른 속성을 가진다")
-    void success_exceptionsWithDifferentErrorStatusHaveDifferentProperties() {
+    void successexceptionsWithDifferentErrorStatusHaveDifferentProperties() {
       // given
       UserErrorStatus errorStatus1 = UserErrorStatus.NOT_FOUND_USER;
       UserErrorStatus errorStatus2 = UserErrorStatus.DUPLICATED_EMAIL;

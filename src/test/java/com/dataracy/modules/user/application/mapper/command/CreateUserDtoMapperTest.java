@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.mapper.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +38,7 @@ class CreateUserDtoMapperTest {
         new SelfSignUpRequest(
             "test@email.com", "pw", "pw", "tester", 1L, 2L, List.of(10L, 20L), 3L, true);
 
-    String providerId = "uuid-123";
+    String providerId = "uuid-1";
     String encodedPassword = "encodedPw";
 
     // when
@@ -73,7 +69,7 @@ class CreateUserDtoMapperTest {
     OnboardingRequest req = new OnboardingRequest("tester", 1L, 2L, List.of(10L, 20L), 3L, true);
 
     String provider = "GOOGLE";
-    String providerId = "google-123";
+    String providerId = "google-1";
     String email = "google@test.com";
 
     // when
@@ -83,7 +79,7 @@ class CreateUserDtoMapperTest {
     assertAll(
         () -> assertThat(user.getProvider()).isEqualTo(ProviderType.GOOGLE),
         () -> assertThat(user.getRole()).isEqualTo(RoleType.ROLE_USER),
-        () -> assertThat(user.getProviderId()).isEqualTo("google-123"),
+        () -> assertThat(user.getProviderId()).isEqualTo("google-1"),
         () -> assertThat(user.getEmail()).isEqualTo("google@test.com"),
         () -> assertThat(user.getNickname()).isEqualTo("tester"),
         () -> assertThat(user.getAuthorLevelId()).isEqualTo(1L),

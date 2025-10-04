@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.query.sort;
 
 import static com.dataracy.modules.dataset.adapter.jpa.entity.QDataEntity.dataEntity;
@@ -20,7 +16,7 @@ class DataSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - null인 경우 생성일 기준 내림차순으로 정렬한다")
-  void fromSortOption_WhenNull_ReturnsCreatedAtDesc() {
+  void fromSortOptionWhenNullReturnsCreatedAtDesc() {
     // when
     OrderSpecifier<?>[] result = DataSortBuilder.fromSortOption(null, null);
 
@@ -33,7 +29,7 @@ class DataSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - LATEST인 경우 생성일 기준 내림차순으로 정렬한다")
-  void fromSortOption_WhenLatest_ReturnsCreatedAtDesc() {
+  void fromSortOptionWhenLatestReturnsCreatedAtDesc() {
     // when
     OrderSpecifier<?>[] result = DataSortBuilder.fromSortOption(DataSortType.LATEST, null);
 
@@ -46,7 +42,7 @@ class DataSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - OLDEST인 경우 생성일 기준 오름차순으로 정렬한다")
-  void fromSortOption_WhenOldest_ReturnsCreatedAtAsc() {
+  void fromSortOptionWhenOldestReturnsCreatedAtAsc() {
     // when
     OrderSpecifier<?>[] result = DataSortBuilder.fromSortOption(DataSortType.OLDEST, null);
 
@@ -59,7 +55,7 @@ class DataSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - DOWNLOAD인 경우 다운로드 수 기준 내림차순으로 정렬한다")
-  void fromSortOption_WhenDownload_ReturnsDownloadCountDesc() {
+  void fromSortOptionWhenDownloadReturnsDownloadCountDesc() {
     // when
     OrderSpecifier<?>[] result = DataSortBuilder.fromSortOption(DataSortType.DOWNLOAD, null);
 
@@ -72,7 +68,7 @@ class DataSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - UTILIZE인 경우 프로젝트 수 기준 내림차순으로 정렬한다")
-  void fromSortOption_WhenUtilize_ReturnsProjectCountDesc() {
+  void fromSortOptionWhenUtilizeReturnsProjectCountDesc() {
     // given
     NumberPath<Long> projectCountPath = dataEntity.id;
 

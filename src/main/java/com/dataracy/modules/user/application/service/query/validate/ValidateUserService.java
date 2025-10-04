@@ -1,10 +1,7 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.application.service.query.validate;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +12,7 @@ import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameU
 import com.dataracy.modules.user.application.service.validate.UserDuplicateValidator;
 import com.dataracy.modules.user.domain.enums.ProviderType;
 import com.dataracy.modules.user.domain.exception.UserException;
+import com.dataracy.modules.user.domain.model.User;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -53,65 +51,46 @@ public class ValidateUserService implements DuplicateNicknameUseCase, DuplicateE
    * DUPLICATED_GOOGLE_EMAIL - KAKAO -> DUPLICATED_KAKAO_EMAIL - LOCAL -> DUPLICATED_LOCAL_EMAIL -
    * null 또는 그 외의 값 -> DUPLICATED_LOCAL_EMAIL
    *
-   * <p>중복 사용자가 없으면 정상적으로 반환한다(예외 없음).
-   *
    * @param email 중복 여부를 확인할 이메일 주소
-   * @throws UserException 이메일이 이미 등록되어 있을 때, 위에 명시된 ProviderType별 중복 이메일 상태로 발생함
+   * @throws UserException 이메일이 이미 존재할 때 발생
    */
   @Override
   @Transactional(readOnly = true)
   public void validateDuplicatedEmail(String email) {
     Instant startTime =
         LoggerFactory.service()
-            .logStart(DUPLICATE_EMAIL_USE_CASE, "이메일 중복 여부 확인 서비스 시작 email=" + email);
-    userDuplicateValidator
-        .duplicateEmail(email)
-        .ifPresent(
-            user -> {
-              ProviderType providerType = user.getProvider();
-              if (providerType == null) {
-                LoggerFactory.service()
-                    .logWarning(
-                        DUPLICATE_EMAIL_USE_CASE,
-                        DUPLICATE_EMAIL_MESSAGE + email + "은 ProviderType이 null입니다.");
-                throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
-              }
-              switch (providerType) {
-                case GOOGLE -> {
-                  LoggerFactory.service()
-                      .logWarning(
-                          DUPLICATE_EMAIL_USE_CASE,
-                          DUPLICATE_EMAIL_MESSAGE + email + "은 구글 소셜 로그인으로 가입된 계정입니다.");
-                  throw new UserException(UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
-                }
-                case KAKAO -> {
-                  LoggerFactory.service()
-                      .logWarning(
-                          DUPLICATE_EMAIL_USE_CASE,
-                          DUPLICATE_EMAIL_MESSAGE + email + "은 카카오 소셜 로그인으로 가입된 계정입니다.");
-                  throw new UserException(UserErrorStatus.DUPLICATED_KAKAO_EMAIL);
-                }
-                case LOCAL -> {
-                  LoggerFactory.service()
-                      .logWarning(
-                          DUPLICATE_EMAIL_USE_CASE,
-                          DUPLICATE_EMAIL_MESSAGE + email + "은 자체 로그인으로 가입된 계정입니다.");
-                  throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
-                }
-                default -> {
-                  LoggerFactory.service()
-                      .logWarning(
-                          DUPLICATE_EMAIL_USE_CASE,
-                          DUPLICATE_EMAIL_MESSAGE
-                              + email
-                              + "은 알 수 없는 ProviderType("
-                              + providerType
-                              + ")으로 가입된 계정입니다.");
-                  throw new UserException(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
-                }
-              }
-            });
+            .logStart(DUPLICATE_EMAIL_USE_CASE, DUPLICATE_EMAIL_MESSAGE + email + " 중복 여부 확인 서비스 시작");
+    Optional<User> existingUser = userDuplicateValidator.duplicateEmail(email);
+    if (existingUser.isPresent()) {
+      User user = existingUser.get();
+      ProviderType providerType = user.getProvider();
+      UserErrorStatus errorStatus;
+      
+      if (providerType == null) {
+        errorStatus = UserErrorStatus.DUPLICATED_LOCAL_EMAIL;
+      } else {
+        switch (providerType) {
+          case GOOGLE:
+            errorStatus = UserErrorStatus.DUPLICATED_GOOGLE_EMAIL;
+            break;
+          case KAKAO:
+            errorStatus = UserErrorStatus.DUPLICATED_KAKAO_EMAIL;
+            break;
+          case LOCAL:
+          default:
+            errorStatus = UserErrorStatus.DUPLICATED_LOCAL_EMAIL;
+            break;
+        }
+      }
+      
+      LoggerFactory.service()
+          .logWarning(
+              DUPLICATE_EMAIL_USE_CASE,
+              DUPLICATE_EMAIL_MESSAGE + email + "은 이미 " + providerType + " 계정으로 등록되어 있습니다.");
+      throw new UserException(errorStatus);
+    }
     LoggerFactory.service()
-        .logSuccess(DUPLICATE_EMAIL_USE_CASE, "이메일 중복 여부 확인 서비스 성공 email=" + email, startTime);
+        .logSuccess(
+            DUPLICATE_EMAIL_USE_CASE, DUPLICATE_EMAIL_MESSAGE + email + " 중복 여부 확인 서비스 성공", startTime);
   }
 }

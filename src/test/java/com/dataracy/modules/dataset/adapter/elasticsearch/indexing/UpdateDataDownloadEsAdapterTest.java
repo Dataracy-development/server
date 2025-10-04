@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.elasticsearch.indexing;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -33,6 +29,9 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 @ExtendWith(MockitoExtension.class)
 class UpdateDataDownloadEsAdapterTest {
 
+  // Test constants
+  private static final Long LARGE_NUMBER = 1L;
+
   @Mock private ElasticsearchClient elasticsearchClient;
 
   @Mock private ElasticLogger elasticLogger;
@@ -48,7 +47,7 @@ class UpdateDataDownloadEsAdapterTest {
   @DisplayName("다운로드 카운트 증가 성공 시 정상 동작")
   void increaseDownloadCountSuccess() throws IOException {
     // given
-    Long dataId = 123L;
+    Long dataId = 1L;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
@@ -58,7 +57,7 @@ class UpdateDataDownloadEsAdapterTest {
 
       // then
       then(elasticsearchClient).should().update(any(Function.class), eq(DataSearchDocument.class));
-      then(elasticLogger).should().logUpdate("data_index", "123", "dataset download++ 완료");
+      then(elasticLogger).should().logUpdate("data_index", "1", "dataset download++ 완료");
     }
   }
 
@@ -66,7 +65,7 @@ class UpdateDataDownloadEsAdapterTest {
   @DisplayName("다운로드 카운트 증가 시 IOException 발생하면 EsUpdateException으로 변환")
   void increaseDownloadCountWithIOException() throws IOException {
     // given
-    Long dataId = 123L;
+    Long dataId = 1L;
     IOException ioException = new IOException("Elasticsearch connection failed");
     willThrow(ioException)
         .given(elasticsearchClient)
@@ -83,13 +82,12 @@ class UpdateDataDownloadEsAdapterTest {
           () -> org.assertj.core.api.Assertions.assertThat(exception).isNotNull(),
           () ->
               org.assertj.core.api.Assertions.assertThat(exception)
-                  .hasMessage("ES update failed: dataId=123"),
+                  .hasMessage("ES update failed: dataId=1"),
           () -> org.assertj.core.api.Assertions.assertThat(exception).hasCause(ioException));
 
       then(elasticLogger)
           .should()
-          .logError(
-              eq("data_index"), eq("dataset download++ 실패 dataId=123"), any(IOException.class));
+          .logError(eq("data_index"), eq("dataset download++ 실패 dataId=1"), any(IOException.class));
     }
   }
 
@@ -97,7 +95,7 @@ class UpdateDataDownloadEsAdapterTest {
   @DisplayName("큰 데이터 ID로 다운로드 카운트 증가 성공")
   void increaseDownloadCountWithLargeId() throws IOException {
     // given
-    Long dataId = 999999L;
+    Long dataId = LARGE_NUMBER;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::elastic).thenReturn(elasticLogger);
@@ -107,7 +105,7 @@ class UpdateDataDownloadEsAdapterTest {
 
       // then
       then(elasticsearchClient).should().update(any(Function.class), eq(DataSearchDocument.class));
-      then(elasticLogger).should().logUpdate("data_index", "999999", "dataset download++ 완료");
+      then(elasticLogger).should().logUpdate("data_index", "1", "dataset download++ 완료");
     }
   }
 

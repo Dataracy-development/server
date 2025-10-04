@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,9 +9,12 @@ import org.junit.jupiter.api.Test;
 @DisplayName("AuthorLevel 테스트")
 class AuthorLevelTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @Test
   @DisplayName("AuthorLevel record 생성 및 속성 확인")
-  void authorLevel_ShouldCreateCorrectly() {
+  void authorLevelShouldCreateCorrectly() {
     // Given
     Long id = 1L;
     String value = "beginner";
@@ -33,7 +32,7 @@ class AuthorLevelTest {
 
   @Test
   @DisplayName("AuthorLevel record equals 및 hashCode 테스트")
-  void authorLevel_ShouldHaveCorrectEqualsAndHashCode() {
+  void authorLevelShouldHaveCorrectEqualsAndHashCode() {
     // Given
     AuthorLevel authorLevel1 = new AuthorLevel(1L, "expert", "전문가");
     AuthorLevel authorLevel2 = new AuthorLevel(1L, "expert", "전문가");
@@ -48,7 +47,7 @@ class AuthorLevelTest {
 
   @Test
   @DisplayName("AuthorLevel record toString 테스트")
-  void authorLevel_ShouldHaveCorrectToString() {
+  void authorLevelShouldHaveCorrectToString() {
     // Given
     AuthorLevel authorLevel = new AuthorLevel(1L, "intermediate", "중급자");
 
@@ -65,7 +64,7 @@ class AuthorLevelTest {
 
   @Test
   @DisplayName("AuthorLevel record - null 값 처리")
-  void authorLevel_ShouldHandleNullValues() {
+  void authorLevelShouldHandleNullValues() {
     // Given & When
     AuthorLevel authorLevel = new AuthorLevel(null, null, null);
 
@@ -78,7 +77,7 @@ class AuthorLevelTest {
 
   @Test
   @DisplayName("AuthorLevel record - 다양한 레벨들 테스트")
-  void authorLevel_ShouldHandleVariousLevels() {
+  void authorLevelShouldHandleVariousLevels() {
     // Given & When
     AuthorLevel authorLevel1 = new AuthorLevel(1L, "beginner", "초급자");
     AuthorLevel authorLevel2 = new AuthorLevel(2L, "intermediate", "중급자");

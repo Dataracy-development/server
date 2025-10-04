@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.behaviorlog.domain.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,9 +17,9 @@ class BehaviorLogTest {
 
   @Test
   @DisplayName("isValid - userId가 유효한 경우 true를 반환한다")
-  void isValid_WhenUserIdIsValid_ReturnsTrue() {
+  void isValidWhenUserIdIsValidReturnsTrue() {
     // given
-    BehaviorLog behaviorLog = BehaviorLog.builder().userId("user123").build();
+    BehaviorLog behaviorLog = BehaviorLog.builder().userId("user1").build();
 
     // when
     boolean result = behaviorLog.isValid();
@@ -34,9 +30,9 @@ class BehaviorLogTest {
 
   @Test
   @DisplayName("isValid - anonymousId가 유효한 경우 true를 반환한다")
-  void isValid_WhenAnonymousIdIsValid_ReturnsTrue() {
+  void isValidWhenAnonymousIdIsValidReturnsTrue() {
     // given
-    BehaviorLog behaviorLog = BehaviorLog.builder().anonymousId("anonymous123").build();
+    BehaviorLog behaviorLog = BehaviorLog.builder().anonymousId("anonymous1").build();
 
     // when
     boolean result = behaviorLog.isValid();
@@ -47,10 +43,10 @@ class BehaviorLogTest {
 
   @Test
   @DisplayName("isValid - userId와 anonymousId가 모두 유효한 경우 true를 반환한다")
-  void isValid_WhenBothIdsAreValid_ReturnsTrue() {
+  void isValidWhenBothIdsAreValidReturnsTrue() {
     // given
     BehaviorLog behaviorLog =
-        BehaviorLog.builder().userId("user123").anonymousId("anonymous123").build();
+        BehaviorLog.builder().userId("user1").anonymousId("anonymous1").build();
 
     // when
     boolean result = behaviorLog.isValid();
@@ -61,17 +57,20 @@ class BehaviorLogTest {
 
   @ParameterizedTest
   @CsvSource({
-    ",", // 둘 다 null
-    "'',", // userId 빈 문자열, anonymousId null
-    "'   ',", // userId 공백, anonymousId null
-    ",''" // userId null, anonymousId 빈 문자열
-    ,
-    ",'   '" // userId null, anonymousId 공백
+    "null, null, '둘 다 null이면 false를 반환한다'",
+    "'', null, 'userId 빈 문자열, anonymousId null이면 false를 반환한다'",
+    "'   ', null, 'userId 공백, anonymousId null이면 false를 반환한다'",
+    "null, '', 'userId null, anonymousId 빈 문자열이면 false를 반환한다'",
+    "null, '   ', 'userId null, anonymousId 공백이면 false를 반환한다'"
   })
-  @DisplayName("isValid - userId와 anonymousId가 모두 유효하지 않으면 false를 반환한다")
-  void isValid_WhenBothIdsAreInvalid_ReturnsFalse(String userId, String anonymousId) {
+  @DisplayName("isValid - 유효하지 않은 ID 조합들이면 false를 반환한다")
+  void isValidWhenInvalidIdCombinationsReturnsFalse(
+      String userId, String anonymousId, String description) {
     // given
-    BehaviorLog behaviorLog = BehaviorLog.builder().userId(userId).anonymousId(anonymousId).build();
+    String actualUserId = "null".equals(userId) ? null : userId;
+    String actualAnonymousId = "null".equals(anonymousId) ? null : anonymousId;
+    BehaviorLog behaviorLog =
+        BehaviorLog.builder().userId(actualUserId).anonymousId(actualAnonymousId).build();
 
     // when
     boolean result = behaviorLog.isValid();
@@ -82,11 +81,11 @@ class BehaviorLogTest {
 
   @Test
   @DisplayName("withNewTimestamp - 새로운 타임스탬프로 BehaviorLog를 생성한다")
-  void withNewTimestamp_CreatesBehaviorLogWithNewTimestamp() {
+  void withNewTimestampCreatesBehaviorLogWithNewTimestamp() {
     // given
     BehaviorLog original =
         BehaviorLog.builder()
-            .userId("user123")
+            .userId("user1")
             .path("/test")
             .httpMethod(HttpMethod.GET)
             .action(ActionType.CLICK)
@@ -113,17 +112,17 @@ class BehaviorLogTest {
 
   @Test
   @DisplayName("builder - 모든 필드를 포함한 BehaviorLog를 생성한다")
-  void builder_WithAllFields_CreatesBehaviorLog() {
+  void builderWithAllFieldsCreatesBehaviorLog() {
     // when
     BehaviorLog behaviorLog =
         BehaviorLog.builder()
-            .userId("user123")
-            .anonymousId("anonymous123")
+            .userId("user1")
+            .anonymousId("anonymous1")
             .path("/test")
             .httpMethod(HttpMethod.GET)
             .ip("192.168.1.1")
-            .requestId("req123")
-            .sessionId("session123")
+            .requestId("req1")
+            .sessionId("session1")
             .userAgent("Mozilla/5.0")
             .referrer("https://example.com")
             .nextPath("/next")
@@ -141,13 +140,13 @@ class BehaviorLogTest {
 
     // then
     assertAll(
-        () -> assertThat(behaviorLog.getUserId()).isEqualTo("user123"),
-        () -> assertThat(behaviorLog.getAnonymousId()).isEqualTo("anonymous123"),
+        () -> assertThat(behaviorLog.getUserId()).isEqualTo("user1"),
+        () -> assertThat(behaviorLog.getAnonymousId()).isEqualTo("anonymous1"),
         () -> assertThat(behaviorLog.getPath()).isEqualTo("/test"),
         () -> assertThat(behaviorLog.getHttpMethod()).isEqualTo(HttpMethod.GET),
         () -> assertThat(behaviorLog.getIp()).isEqualTo("192.168.1.1"),
-        () -> assertThat(behaviorLog.getRequestId()).isEqualTo("req123"),
-        () -> assertThat(behaviorLog.getSessionId()).isEqualTo("session123"),
+        () -> assertThat(behaviorLog.getRequestId()).isEqualTo("req1"),
+        () -> assertThat(behaviorLog.getSessionId()).isEqualTo("session1"),
         () -> assertThat(behaviorLog.getUserAgent()).isEqualTo("Mozilla/5.0"),
         () -> assertThat(behaviorLog.getReferrer()).isEqualTo("https://example.com"),
         () -> assertThat(behaviorLog.getNextPath()).isEqualTo("/next"),

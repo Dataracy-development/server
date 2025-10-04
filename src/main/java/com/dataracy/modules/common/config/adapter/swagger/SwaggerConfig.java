@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.config.adapter.swagger;
 
 import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;

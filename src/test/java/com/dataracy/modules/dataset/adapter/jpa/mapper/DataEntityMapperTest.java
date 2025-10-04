@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.jpa.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +18,7 @@ class DataEntityMapperTest {
 
   @Test
   @DisplayName("Entity를 Domain으로 변환 성공")
-  void toDomain_ShouldConvertEntityToDomain() {
+  void toDomainShouldConvertEntityToDomain() {
     // Given
     DataMetadataEntity metadataEntity = DataMetadataEntity.of(1000, 10, "{\"preview\": \"data\"}");
     DataEntity entity =
@@ -69,7 +65,7 @@ class DataEntityMapperTest {
 
   @Test
   @DisplayName("Entity가 null일 때 Domain 변환 시 null 반환")
-  void toDomain_WithNullEntity_ShouldReturnNull() {
+  void toDomainWithNullEntityShouldReturnNull() {
     // When
     Data domain = DataEntityMapper.toDomain(null);
 
@@ -79,7 +75,7 @@ class DataEntityMapperTest {
 
   @Test
   @DisplayName("Entity에 메타데이터가 null일 때 Domain 변환 성공")
-  void toDomain_WithNullMetadata_ShouldConvertSuccessfully() {
+  void toDomainWithNullMetadataShouldConvertSuccessfully() {
     // Given
     DataEntity entity =
         DataEntity.builder()
@@ -110,7 +106,7 @@ class DataEntityMapperTest {
 
   @Test
   @DisplayName("Domain을 Entity로 변환 성공")
-  void toEntity_ShouldConvertDomainToEntity() {
+  void toEntityShouldConvertDomainToEntity() {
     // Given
     DataMetadata metadata = DataMetadata.of(1L, 1000, 10, "{\"preview\": \"data\"}");
     Data domain =
@@ -156,7 +152,7 @@ class DataEntityMapperTest {
 
   @Test
   @DisplayName("Domain이 null일 때 Entity 변환 시 null 반환")
-  void toEntity_WithNullDomain_ShouldReturnNull() {
+  void toEntityWithNullDomainShouldReturnNull() {
     // When
     DataEntity entity = DataEntityMapper.toEntity(null);
 

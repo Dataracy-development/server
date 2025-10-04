@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.adapter.web.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,11 +35,11 @@ class EmailVerifyControllerTest {
   @DisplayName("성공: 코드 검증 성공 시 200 응답과 resetToken 포함")
   void verifyCodeSuccess() {
     // given
-    given(useCase.verifyCode(eq("user@example.com"), eq("123456"), any()))
+    given(useCase.verifyCode(eq("user@example.com"), eq("1456"), any()))
         .willReturn(new GetResetTokenResponse("jwt-token"));
 
     VerifyCodeWebRequest req =
-        new VerifyCodeWebRequest("user@example.com", "123456", "PASSWORD_SEARCH");
+        new VerifyCodeWebRequest("user@example.com", "1456", "PASSWORD_SEARCH");
 
     // when
     ResponseEntity<SuccessResponse<GetResetTokenResponse>> res = controller.verifyCode(req);

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.application.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,6 +30,12 @@ import com.dataracy.modules.project.application.port.in.validate.ValidateProject
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class LikeCommandServiceTest {
+
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
+  // Test constants
+  private static final Long TEST_ID = 77L;
 
   @Mock private LikeCommandPort likeCommandPort;
 
@@ -80,16 +82,16 @@ class LikeCommandServiceTest {
     void unlikeCommentSuccess() {
       // given
       Long userId = 9L;
-      TargetLikeRequest req = new TargetLikeRequest(77L, "COMMENT", true);
-      willDoNothing().given(validateCommentUseCase).validateComment(77L);
+      TargetLikeRequest req = new TargetLikeRequest(TEST_ID, "COMMENT", true);
+      willDoNothing().given(validateCommentUseCase).validateComment(TEST_ID);
 
       // when
       TargetType result = service.likeTarget(userId, req);
 
       // then
       assertThat(result).isEqualTo(TargetType.COMMENT);
-      then(likeCommandPort).should().cancelLike(9L, 77L, TargetType.COMMENT);
-      then(sendLikeEventPort).should().sendLikeEvent(TargetType.COMMENT, 77L, true);
+      then(likeCommandPort).should().cancelLike(9L, TEST_ID, TargetType.COMMENT);
+      then(sendLikeEventPort).should().sendLikeEvent(TargetType.COMMENT, TEST_ID, true);
     }
 
     @Test

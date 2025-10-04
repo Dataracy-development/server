@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.domain.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +14,7 @@ class AuthExceptionTest {
 
   @Test
   @DisplayName("AuthException 생성 및 속성 확인")
-  void authException_ShouldHaveCorrectProperties() {
+  void authExceptionShouldHaveCorrectProperties() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {
@@ -51,7 +47,7 @@ class AuthExceptionTest {
 
   @Test
   @DisplayName("AuthException은 BusinessException을 상속받는다")
-  void authException_ShouldExtendBusinessException() {
+  void authExceptionShouldExtendBusinessException() {
     // Given
     BaseErrorCode errorCode =
         new BaseErrorCode() {

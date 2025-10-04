@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.reference.application.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +37,9 @@ import com.dataracy.modules.reference.domain.status.ReferenceErrorStatus;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class AnalysisPurposeQueryServiceTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   @InjectMocks private AnalysisPurposeQueryService service;
 
   @Mock private AnalysisPurposeDtoMapper analysisPurposeDtoMapper;
@@ -70,6 +69,9 @@ class AnalysisPurposeQueryServiceTest {
   @Nested
   @DisplayName("findAllAnalysisPurposes 메서드 테스트")
   class FindAllAnalysisPurposesTest {
+
+    // Test constants
+    private static final Integer CURRENT_YEAR = 2024;
 
     @Test
     @DisplayName("모든 분석 목적 조회 성공")
@@ -110,6 +112,9 @@ class AnalysisPurposeQueryServiceTest {
   @Nested
   @DisplayName("findAnalysisPurpose 메서드 테스트")
   class FindAnalysisPurposeTest {
+
+    // Test constants
+    private static final Integer CURRENT_YEAR = 2024;
 
     @Test
     @DisplayName("분석 목적 조회 성공")
@@ -182,6 +187,9 @@ class AnalysisPurposeQueryServiceTest {
   @DisplayName("validateAnalysisPurpose 메서드 테스트")
   class ValidateAnalysisPurposeTest {
 
+    // Test constants
+    private static final Integer CURRENT_YEAR = 2024;
+
     @Test
     @DisplayName("분석 목적 검증 성공")
     void validateAnalysisPurposeSuccess() {
@@ -247,6 +255,9 @@ class AnalysisPurposeQueryServiceTest {
   @DisplayName("getLabelById 메서드 테스트")
   class GetLabelByIdTest {
 
+    // Test constants
+    private static final Integer CURRENT_YEAR = 2024;
+
     @Test
     @DisplayName("라벨 조회 성공")
     void getLabelByIdSuccess() {
@@ -310,6 +321,9 @@ class AnalysisPurposeQueryServiceTest {
   @Nested
   @DisplayName("getLabelsByIds 메서드 테스트")
   class GetLabelsByIdsTest {
+
+    // Test constants
+    private static final Integer CURRENT_YEAR = 2024;
 
     @Test
     @DisplayName("라벨 목록 조회 성공")

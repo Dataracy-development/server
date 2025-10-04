@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.application.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,6 +36,9 @@ import com.dataracy.modules.user.domain.model.vo.UserInfo;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class AuthCommandServiceTest {
+
+  // Test constants
+  private static final Integer TWENTY_FOUR = 24;
 
   @InjectMocks private AuthCommandService service;
 
@@ -81,7 +80,8 @@ class AuthCommandServiceTest {
       given(isLoginPossibleUseCase.checkLoginPossibleAndGetUserInfo("test@example.com", "password"))
           .willReturn(userInfo);
       given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER)).willReturn(refreshToken);
-      given(jwtProperties.getRefreshTokenExpirationTime()).willReturn(7 * 24 * 60 * 60 * 1000L);
+      given(jwtProperties.getRefreshTokenExpirationTime())
+          .willReturn(7 * TWENTY_FOUR * 60 * 60 * 1000L);
 
       // when
       RefreshTokenResponse result = service.login(request);
@@ -89,7 +89,9 @@ class AuthCommandServiceTest {
       // then
       assertAll(
           () -> assertThat(result.refreshToken()).isEqualTo(refreshToken),
-          () -> assertThat(result.refreshTokenExpiration()).isEqualTo(7 * 24 * 60 * 60 * 1000L));
+          () ->
+              assertThat(result.refreshTokenExpiration())
+                  .isEqualTo(7 * TWENTY_FOUR * 60 * 60 * 1000L));
     }
   }
 
@@ -122,7 +124,8 @@ class AuthCommandServiceTest {
       given(rateLimitPort.isAllowed(anyString(), any(Integer.class), any(Integer.class)))
           .willReturn(true);
       given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER)).willReturn(refreshToken);
-      given(jwtProperties.getRefreshTokenExpirationTime()).willReturn(7 * 24 * 60 * 60 * 1000L);
+      given(jwtProperties.getRefreshTokenExpirationTime())
+          .willReturn(7 * TWENTY_FOUR * 60 * 60 * 1000L);
 
       // when
       RefreshTokenResponse result = service.loginWithRateLimit(request, clientIp);
@@ -186,7 +189,8 @@ class AuthCommandServiceTest {
       given(jwtGeneratorPort.generateRefreshToken(1L, RoleType.ROLE_USER))
           .willReturn(newRefreshToken);
       given(jwtProperties.getAccessTokenExpirationTime()).willReturn(30 * 60 * 1000L);
-      given(jwtProperties.getRefreshTokenExpirationTime()).willReturn(7 * 24 * 60 * 60 * 1000L);
+      given(jwtProperties.getRefreshTokenExpirationTime())
+          .willReturn(7 * TWENTY_FOUR * 60 * 60 * 1000L);
 
       // when
       ReIssueTokenResponse result = service.reIssueToken(refreshToken);
@@ -196,7 +200,9 @@ class AuthCommandServiceTest {
           () -> assertThat(result.accessToken()).isEqualTo(newAccessToken),
           () -> assertThat(result.refreshToken()).isEqualTo(newRefreshToken),
           () -> assertThat(result.accessTokenExpiration()).isEqualTo(30 * 60 * 1000L),
-          () -> assertThat(result.refreshTokenExpiration()).isEqualTo(7 * 24 * 60 * 60 * 1000L));
+          () ->
+              assertThat(result.refreshTokenExpiration())
+                  .isEqualTo(7 * TWENTY_FOUR * 60 * 60 * 1000L));
     }
 
     @Test

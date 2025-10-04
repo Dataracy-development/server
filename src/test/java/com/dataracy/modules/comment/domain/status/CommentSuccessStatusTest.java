@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.comment.domain.status;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +12,7 @@ class CommentSuccessStatusTest {
 
   @Test
   @DisplayName("모든 CommentSuccessStatus 값 확인")
-  void allCommentSuccessStatuses_ShouldBeDefined() {
+  void allCommentSuccessStatusesShouldBeDefined() {
     // Then
     assertAll(
         () -> assertThat(CommentSuccessStatus.values()).hasSize(5),
@@ -29,7 +25,7 @@ class CommentSuccessStatusTest {
 
   @Test
   @DisplayName("CommentSuccessStatus HTTP 상태 코드 확인")
-  void commentSuccessStatuses_ShouldHaveCorrectHttpStatus() {
+  void commentSuccessStatusesShouldHaveCorrectHttpStatus() {
     // Then
     assertAll(
         () ->
@@ -50,7 +46,7 @@ class CommentSuccessStatusTest {
 
   @Test
   @DisplayName("CommentSuccessStatus 코드 확인")
-  void commentSuccessStatuses_ShouldHaveCorrectCode() {
+  void commentSuccessStatusesShouldHaveCorrectCode() {
     // Then
     assertAll(
         () -> assertThat(CommentSuccessStatus.CREATED_COMMENT.getCode()).isEqualTo("201"),
@@ -62,7 +58,7 @@ class CommentSuccessStatusTest {
 
   @Test
   @DisplayName("CommentSuccessStatus 메시지 확인")
-  void commentSuccessStatuses_ShouldHaveCorrectMessage() {
+  void commentSuccessStatusesShouldHaveCorrectMessage() {
     // Then
     assertAll(
         () ->

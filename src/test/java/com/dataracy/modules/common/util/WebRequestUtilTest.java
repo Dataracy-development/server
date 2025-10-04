@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.common.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +13,7 @@ class WebRequestUtilTest {
 
   @Test
   @DisplayName("getCurrentRequestSafely - 정상적인 요청 컨텍스트에서 요청 객체 반환")
-  void getCurrentRequestSafely_ShouldReturnRequestWhenContextExists() {
+  void getCurrentRequestSafelyShouldReturnRequestWhenContextExists() {
     // Given & When
     // RequestContextHolder는 테스트 환경에서 설정이 필요하므로 null을 반환할 가능성이 높음
     var request = WebRequestUtil.getCurrentRequestSafely();
@@ -40,7 +36,7 @@ class WebRequestUtilTest {
         "/webjars/bootstrap/5.1.3/css/bootstrap.min.css" // Webjars
       })
   @DisplayName("isLogExceptRequest - 로그 예외 경로는 true를 반환한다")
-  void isLogExceptRequest_ShouldReturnTrueForExcludedPaths(String uri) {
+  void isLogExceptRequestShouldReturnTrueForExcludedPaths(String uri) {
     // Given
     MockHttpServletRequest request = new MockHttpServletRequest();
     request.setRequestURI(uri);
@@ -60,7 +56,7 @@ class WebRequestUtilTest {
         "/" // 루트 경로
       })
   @DisplayName("isLogExceptRequest - 일반 경로는 false를 반환한다")
-  void isLogExceptRequest_ShouldReturnFalseForNormalPaths(String uri) {
+  void isLogExceptRequestShouldReturnFalseForNormalPaths(String uri) {
     // Given
     MockHttpServletRequest request = new MockHttpServletRequest();
     request.setRequestURI(uri);
@@ -74,7 +70,7 @@ class WebRequestUtilTest {
 
   @Test
   @DisplayName("isLogExceptRequest - null 요청은 false를 반환한다")
-  void isLogExceptRequest_ShouldReturnFalseForNullRequest() {
+  void isLogExceptRequestShouldReturnFalseForNullRequest() {
     // Given & When
     boolean isExcluded = WebRequestUtil.isLogExceptRequest(null);
 

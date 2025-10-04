@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.email.adapter.web.mapper.validate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +18,7 @@ class ValidateEmailWebMapperTest {
   void toApplicationDto() {
     // given
     VerifyCodeWebRequest web =
-        new VerifyCodeWebRequest("user@example.com", "123456", "PASSWORD_RESET");
+        new VerifyCodeWebRequest("user@example.com", "1456", "PASSWORD_RESET");
     ValidateEmailWebMapper mapper = new ValidateEmailWebMapper();
 
     // when
@@ -31,7 +27,7 @@ class ValidateEmailWebMapperTest {
     // then
     assertAll(
         () -> assertThat(dto.email()).isEqualTo("user@example.com"),
-        () -> assertThat(dto.code()).isEqualTo("123456"),
+        () -> assertThat(dto.code()).isEqualTo("1456"),
         () -> assertThat(dto.purpose()).isEqualTo("PASSWORD_RESET"));
   }
 

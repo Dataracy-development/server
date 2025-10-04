@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.like.domain.status;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +12,7 @@ class LikeSuccessStatusTest {
 
   @Test
   @DisplayName("모든 LikeSuccessStatus 값 확인")
-  void allLikeSuccessStatuses_ShouldBeDefined() {
+  void allLikeSuccessStatusesShouldBeDefined() {
     // Then
     assertAll(
         () -> assertThat(LikeSuccessStatus.values()).hasSize(4),
@@ -28,7 +24,7 @@ class LikeSuccessStatusTest {
 
   @Test
   @DisplayName("LikeSuccessStatus HTTP 상태 코드 확인")
-  void likeSuccessStatuses_ShouldHaveCorrectHttpStatus() {
+  void likeSuccessStatusesShouldHaveCorrectHttpStatus() {
     // Then
     assertAll(
         () -> assertThat(LikeSuccessStatus.LIKE_PROJECT.getHttpStatus()).isEqualTo(HttpStatus.OK),
@@ -40,7 +36,7 @@ class LikeSuccessStatusTest {
 
   @Test
   @DisplayName("LikeSuccessStatus 코드 확인")
-  void likeSuccessStatuses_ShouldHaveCorrectCode() {
+  void likeSuccessStatusesShouldHaveCorrectCode() {
     // Then
     assertAll(
         () -> assertThat(LikeSuccessStatus.LIKE_PROJECT.getCode()).isEqualTo("LIKE-001"),
@@ -51,7 +47,7 @@ class LikeSuccessStatusTest {
 
   @Test
   @DisplayName("LikeSuccessStatus 메시지 확인")
-  void likeSuccessStatuses_ShouldHaveCorrectMessage() {
+  void likeSuccessStatusesShouldHaveCorrectMessage() {
     // Then
     assertAll(
         () ->

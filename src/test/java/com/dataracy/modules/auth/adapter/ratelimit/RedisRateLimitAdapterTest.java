@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.ratelimit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,7 +49,7 @@ class RedisRateLimitAdapterTest {
 
     @Test
     @DisplayName("성공: 요청 허용 (카운트가 제한보다 적음)")
-    void isAllowed_카운트가제한보다적음_true반환() {
+    void isAllowedCountLessThanLimitReturnsTrue() {
       // given
       String key = "192.168.1.1";
       int maxRequests = 5;
@@ -72,7 +68,7 @@ class RedisRateLimitAdapterTest {
 
     @Test
     @DisplayName("요청 차단: 카운트가 제한과 같음")
-    void isAllowed_카운트가제한과같음_false반환() {
+    void isAllowedCountEqualToLimitReturnsFalse() {
       // given
       String key = "192.168.1.1";
       int maxRequests = 5;
@@ -91,7 +87,7 @@ class RedisRateLimitAdapterTest {
 
     @Test
     @DisplayName("요청 차단: 카운트가 제한보다 많음")
-    void isAllowed_카운트가제한보다많음_false반환() {
+    void isAllowedCountMoreThanLimitReturnsFalse() {
       // given
       String key = "192.168.1.1";
       int maxRequests = 5;
@@ -112,7 +108,7 @@ class RedisRateLimitAdapterTest {
     @NullAndEmptySource
     @ValueSource(strings = {"   ", "\t"})
     @DisplayName("key가 null이거나 빈 문자열 또는 공백일 때 true 반환하고 Redis 호출 안 함")
-    void isAllowed_key가유효하지않음_true반환(String key) {
+    void isAllowedWhenKeyIsInvalidReturnsTrue(String key) {
       // given
       int maxRequests = 5;
       int windowMinutes = 1;
@@ -127,7 +123,7 @@ class RedisRateLimitAdapterTest {
 
     @Test
     @DisplayName("Redis에서 null 반환 시 안전을 위해 차단")
-    void isAllowed_Redis에서null반환_false반환() {
+    void isAllowedRedisReturnsNullReturnsFalse() {
       // given
       String key = "192.168.1.1";
       int maxRequests = 5;
@@ -145,7 +141,7 @@ class RedisRateLimitAdapterTest {
 
     @Test
     @DisplayName("첫 번째 요청일 때 TTL 설정")
-    void isAllowed_첫요청일때_TTL설정() {
+    void isAllowedWhenFirstRequestSetsTTL() {
       // given
       String key = "192.168.1.1";
       int maxRequests = 5;
@@ -169,7 +165,7 @@ class RedisRateLimitAdapterTest {
 
     @Test
     @DisplayName("성공: 첫 번째 요청 시 TTL 설정")
-    void incrementRequestCount_첫요청_TTL설정() {
+    void incrementRequestCountWhenFirstRequestSetsTTL() {
       // given
       String key = "192.168.1.1";
       int incrementBy = 1;
@@ -186,7 +182,7 @@ class RedisRateLimitAdapterTest {
 
     @Test
     @DisplayName("성공: 기존 요청 시 TTL 설정하지 않음")
-    void incrementRequestCount_기존요청_TTL설정하지않음() {
+    void incrementRequestCountWhenExistingRequestDoesNotSetTTL() {
       // given
       String key = "192.168.1.1";
       int incrementBy = 1;
@@ -205,7 +201,7 @@ class RedisRateLimitAdapterTest {
     @NullAndEmptySource
     @ValueSource(strings = {"   ", "\t"})
     @DisplayName("key가 null이거나 빈 문자열 또는 공백일 때 아무것도 하지 않음")
-    void incrementRequestCount_key가유효하지않음_아무것도하지않음(String key) {
+    void incrementRequestCountWhenKeyIsInvalidDoesNothing(String key) {
       // given
       int incrementBy = 1;
 
@@ -219,7 +215,7 @@ class RedisRateLimitAdapterTest {
 
     @Test
     @DisplayName("Redis 예외 발생 시 로그만 남기고 계속 진행")
-    void incrementRequestCount_Redis예외발생_로그만남기고계속진행() {
+    void incrementRequestCountWhenRedisExceptionOccursLogsAndContinues() {
       // given
       String key = "192.168.1.1";
       int incrementBy = 1;
@@ -238,7 +234,7 @@ class RedisRateLimitAdapterTest {
 
     @Test
     @DisplayName("incrementBy가 1보다 클 때도 정상 처리")
-    void incrementRequestCount_incrementBy가1보다큼_정상처리() {
+    void incrementRequestCountWhenIncrementByGreaterThanOneProcessesNormally() {
       // given
       String key = "192.168.1.1";
       int incrementBy = 3;

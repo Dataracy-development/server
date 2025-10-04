@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.query.sort;
 
 import static com.dataracy.modules.project.adapter.jpa.entity.QProjectEntity.projectEntity;
@@ -19,7 +15,7 @@ class ProjectSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - null인 경우 생성일 기준 내림차순으로 정렬한다")
-  void fromSortOption_WhenNull_ReturnsCreatedAtDesc() {
+  void fromSortOptionWhenNullReturnsCreatedAtDesc() {
     // when
     OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(null);
 
@@ -32,7 +28,7 @@ class ProjectSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - LATEST인 경우 생성일 기준 내림차순으로 정렬한다")
-  void fromSortOption_WhenLatest_ReturnsCreatedAtDesc() {
+  void fromSortOptionWhenLatestReturnsCreatedAtDesc() {
     // when
     OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.LATEST);
 
@@ -45,7 +41,7 @@ class ProjectSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - OLDEST인 경우 생성일 기준 오름차순으로 정렬한다")
-  void fromSortOption_WhenOldest_ReturnsCreatedAtAsc() {
+  void fromSortOptionWhenOldestReturnsCreatedAtAsc() {
     // when
     OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.OLDEST);
 
@@ -58,7 +54,7 @@ class ProjectSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - MOST_LIKED인 경우 좋아요 수 기준 내림차순으로 정렬한다")
-  void fromSortOption_WhenMostLiked_ReturnsLikeCountDesc() {
+  void fromSortOptionWhenMostLikedReturnsLikeCountDesc() {
     // when
     OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.MOST_LIKED);
 
@@ -71,7 +67,7 @@ class ProjectSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - MOST_VIEWED인 경우 조회 수 기준 내림차순으로 정렬한다")
-  void fromSortOption_WhenMostViewed_ReturnsViewCountDesc() {
+  void fromSortOptionWhenMostViewedReturnsViewCountDesc() {
     // when
     OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.MOST_VIEWED);
 
@@ -84,7 +80,7 @@ class ProjectSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - MOST_COMMENTED인 경우 댓글 수 기준 내림차순으로 정렬한다")
-  void fromSortOption_WhenMostCommented_ReturnsCommentCountDesc() {
+  void fromSortOptionWhenMostCommentedReturnsCommentCountDesc() {
     // when
     OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.MOST_COMMENTED);
 
@@ -97,7 +93,7 @@ class ProjectSortBuilderTest {
 
   @Test
   @DisplayName("fromSortOption - LEAST_COMMENTED인 경우 댓글 수 기준 오름차순으로 정렬한다")
-  void fromSortOption_WhenLeastCommented_ReturnsCommentCountAsc() {
+  void fromSortOptionWhenLeastCommentedReturnsCommentCountAsc() {
     // when
     OrderSpecifier<?>[] result = ProjectSortBuilder.fromSortOption(ProjectSortType.LEAST_COMMENTED);
 

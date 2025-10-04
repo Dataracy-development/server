@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.kafka.producer;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -31,6 +27,9 @@ import com.dataracy.modules.dataset.domain.model.event.DataUploadEvent;
 @ExtendWith(MockitoExtension.class)
 class DataKafkaProducerAdapterTest {
 
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+
   @Mock private KafkaTemplate<String, DataUploadEvent> kafkaTemplate;
 
   @Mock private KafkaLogger kafkaLogger;
@@ -47,13 +46,13 @@ class DataKafkaProducerAdapterTest {
   @DisplayName("데이터 업로드 이벤트 발행 성공 시 정상 로깅")
   void sendUploadEventSuccess() {
     // given
-    Long dataId = 123L;
+    Long dataId = 1L;
     String dataFileUrl = "http://example.com/data.csv";
     String originalFilename = "dataset.csv";
     CompletableFuture<SendResult<String, DataUploadEvent>> future = new CompletableFuture<>();
     future.complete(mock(SendResult.class));
 
-    willReturn(future).given(kafkaTemplate).send(eq("data-uploaded-topic"), eq("123"), any());
+    willReturn(future).given(kafkaTemplate).send(eq("data-uploaded-topic"), eq("1"), any());
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -62,8 +61,8 @@ class DataKafkaProducerAdapterTest {
       adapter.sendUploadEvent(dataId, dataFileUrl, originalFilename);
 
       // then
-      then(kafkaTemplate).should().send(eq("data-uploaded-topic"), eq("123"), any());
-      then(kafkaLogger).should().logProduce("data-uploaded-topic", "데이터셋 업로드 이벤트 발송됨: dataId=123");
+      then(kafkaTemplate).should().send(eq("data-uploaded-topic"), eq("1"), any());
+      then(kafkaLogger).should().logProduce("data-uploaded-topic", "데이터셋 업로드 이벤트 발송됨: dataId=1");
     }
   }
 
@@ -71,14 +70,14 @@ class DataKafkaProducerAdapterTest {
   @DisplayName("데이터 업로드 이벤트 발행 실패 시 에러 로깅")
   void sendUploadEventFailure() {
     // given
-    Long dataId = 456L;
+    Long dataId = PROJECT_ID;
     String dataFileUrl = "http://example.com/data.xlsx";
     String originalFilename = "dataset.xlsx";
     CompletableFuture<SendResult<String, DataUploadEvent>> future = new CompletableFuture<>();
     RuntimeException exception = new RuntimeException("Kafka send failed");
     future.completeExceptionally(exception);
 
-    willReturn(future).given(kafkaTemplate).send(eq("data-uploaded-topic"), eq("456"), any());
+    willReturn(future).given(kafkaTemplate).send(eq("data-uploaded-topic"), eq("1"), any());
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -87,12 +86,12 @@ class DataKafkaProducerAdapterTest {
       adapter.sendUploadEvent(dataId, dataFileUrl, originalFilename);
 
       // then
-      then(kafkaTemplate).should().send(eq("data-uploaded-topic"), eq("456"), any());
+      then(kafkaTemplate).should().send(eq("data-uploaded-topic"), eq("1"), any());
       then(kafkaLogger)
           .should()
           .logError(
               eq("data-uploaded-topic"),
-              eq("데이터셋 업로드 이벤트 발송 처리 실패: dataId=456"),
+              eq("데이터셋 업로드 이벤트 발송 처리 실패: dataId=1"),
               any(RuntimeException.class));
     }
   }

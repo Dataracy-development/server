@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.auth.adapter.oauth;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +15,9 @@ import com.dataracy.modules.auth.application.dto.response.OAuthUserInfo;
 
 class GoogleOAuthUserInfoAdapterTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+
   private GoogleOAuthUserInfoAdapter googleOAuthUserInfoAdapter;
 
   @BeforeEach
@@ -28,13 +27,13 @@ class GoogleOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - 구글 제공자로 유효한 속성을 추출한다")
-  void extract_WhenGoogleProvider_ReturnsOAuthUserInfo() {
+  void extractWhenGoogleProviderReturnsOAuthUserInfo() {
     // given
     String provider = "google";
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("email", "test@example.com");
     attributes.put("name", "Test User");
-    attributes.put("sub", "123456789");
+    attributes.put("sub", "14562");
 
     // when
     OAuthUserInfo result = googleOAuthUserInfoAdapter.extract(provider, attributes);
@@ -45,12 +44,12 @@ class GoogleOAuthUserInfoAdapterTest {
         () -> assertThat(result.email()).isEqualTo("test@example.com"),
         () -> assertThat(result.name()).isEqualTo("Test User"),
         () -> assertThat(result.provider()).isEqualTo("google"),
-        () -> assertThat(result.providerId()).isEqualTo("123456789"));
+        () -> assertThat(result.providerId()).isEqualTo("14562"));
   }
 
   @Test
   @DisplayName("extract - 구글 제공자로 null 속성을 추출한다")
-  void extract_WhenGoogleProviderWithNullValues_ReturnsOAuthUserInfo() {
+  void extractWhenGoogleProviderWithNullValuesReturnsOAuthUserInfo() {
     // given
     String provider = "google";
     Map<String, Object> attributes = new HashMap<>();
@@ -72,13 +71,13 @@ class GoogleOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - 구글 제공자로 일부 속성만 있는 경우를 처리한다")
-  void extract_WhenGoogleProviderWithPartialValues_ReturnsOAuthUserInfo() {
+  void extractWhenGoogleProviderWithPartialValuesReturnsOAuthUserInfo() {
     // given
     String provider = "google";
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("email", "test@example.com");
     attributes.put("name", null);
-    attributes.put("sub", "123456789");
+    attributes.put("sub", "14562");
 
     // when
     OAuthUserInfo result = googleOAuthUserInfoAdapter.extract(provider, attributes);
@@ -89,18 +88,18 @@ class GoogleOAuthUserInfoAdapterTest {
         () -> assertThat(result.email()).isEqualTo("test@example.com"),
         () -> assertThat(result.name()).isNull(),
         () -> assertThat(result.provider()).isEqualTo("google"),
-        () -> assertThat(result.providerId()).isEqualTo("123456789"));
+        () -> assertThat(result.providerId()).isEqualTo("14562"));
   }
 
   @Test
   @DisplayName("extract - 구글이 아닌 제공자로 호출하면 null을 반환한다")
-  void extract_WhenNonGoogleProvider_ReturnsNull() {
+  void extractWhenNonGoogleProviderReturnsNull() {
     // given
     String provider = "kakao";
     Map<String, Object> attributes = new HashMap<>();
     attributes.put("email", "test@example.com");
     attributes.put("name", "Test User");
-    attributes.put("sub", "123456789");
+    attributes.put("sub", "14562");
 
     // when
     OAuthUserInfo result = googleOAuthUserInfoAdapter.extract(provider, attributes);
@@ -111,7 +110,7 @@ class GoogleOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - 빈 속성 맵으로 호출한다")
-  void extract_WhenEmptyAttributes_ReturnsOAuthUserInfo() {
+  void extractWhenEmptyAttributesReturnsOAuthUserInfo() {
     // given
     String provider = "google";
     Map<String, Object> attributes = new HashMap<>();
@@ -130,7 +129,7 @@ class GoogleOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - null 제공자로 호출하면 예외가 발생한다")
-  void extract_WhenNullProvider_ThrowsException() {
+  void extractWhenNullProviderThrowsException() {
     // given
     String provider = null;
     Map<String, Object> attributes = new HashMap<>();
@@ -146,7 +145,7 @@ class GoogleOAuthUserInfoAdapterTest {
 
   @Test
   @DisplayName("extract - null 속성으로 호출하면 예외가 발생한다")
-  void extract_WhenNullAttributes_ThrowsException() {
+  void extractWhenNullAttributesThrowsException() {
     // given
     String provider = "google";
     Map<String, Object> attributes = null;

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.user.adapter.web.mapper.password;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +19,7 @@ class UserPasswordWebMapperTest {
 
   @Test
   @DisplayName("toApplicationDto(Change): 웹 → 앱 매핑")
-  void toApplicationDto_change() {
+  void toApplicationDtochange() {
     // given
     ChangePasswordWebRequest web = new ChangePasswordWebRequest("pw", "pw");
 
@@ -38,7 +34,7 @@ class UserPasswordWebMapperTest {
 
   @Test
   @DisplayName("toApplicationDto(ResetWithToken): 웹 → 앱 매핑")
-  void toApplicationDto_reset() {
+  void toApplicationDtoreset() {
     // given
     ResetPasswordWithTokenWebRequest web =
         new ResetPasswordWithTokenWebRequest("token", "pw", "pw");
@@ -55,7 +51,7 @@ class UserPasswordWebMapperTest {
 
   @Test
   @DisplayName("toApplicationDto(Confirm): 웹 → 앱 매핑")
-  void toApplicationDto_confirm() {
+  void toApplicationDtoconfirm() {
     // given
     ConfirmPasswordWebRequest web = new ConfirmPasswordWebRequest("pw");
 

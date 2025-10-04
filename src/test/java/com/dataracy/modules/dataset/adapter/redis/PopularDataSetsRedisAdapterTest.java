@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.dataset.adapter.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +34,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class PopularDataSetsRedisAdapterTest {
 
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
+  private static final Long TEST_TIMESTAMP = 1456201L;
+
   @Mock private RedisTemplate<String, String> redisTemplate;
 
   @Mock private ValueOperations<String, String> valueOperations;
@@ -58,7 +58,7 @@ class PopularDataSetsRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 캐시에서 인기 데이터셋 조회")
-    void getPopularDataSets_성공() throws Exception {
+    void getPopularDataSetsSuccess() throws Exception {
       // given
       String cachedJson = "[{\"id\":1,\"title\":\"Test Data\",\"downloadCount\":100}]";
       List<PopularDataResponse> expectedData =
@@ -72,8 +72,8 @@ class PopularDataSetsRedisAdapterTest {
                   "기술",
                   "공공기관",
                   "CSV",
-                  LocalDate.of(2024, 1, 1),
-                  LocalDate.of(2024, 12, 31),
+                  LocalDate.of(CURRENT_YEAR, 1, 1),
+                  LocalDate.of(CURRENT_YEAR, 12, 31),
                   "테스트 데이터",
                   "thumbnail.jpg",
                   100,
@@ -102,7 +102,7 @@ class PopularDataSetsRedisAdapterTest {
 
     @Test
     @DisplayName("캐시에 데이터가 없을 때 빈 Optional 반환")
-    void getPopularDataSets_캐시에데이터없음_빈Optional반환() {
+    void getPopularDataSetsWhenCacheEmptyReturnsEmptyOptional() {
       // given
       given(valueOperations.get("popular:datasets")).willReturn(null);
 
@@ -120,7 +120,7 @@ class PopularDataSetsRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 인기 데이터셋 캐시 저장")
-    void setPopularDataSets_성공() throws Exception {
+    void setPopularDataSetsSuccess() throws Exception {
       // given
       List<PopularDataResponse> popularDataSets =
           List.of(
@@ -133,8 +133,8 @@ class PopularDataSetsRedisAdapterTest {
                   "기술",
                   "공공기관",
                   "CSV",
-                  LocalDate.of(2024, 1, 1),
-                  LocalDate.of(2024, 12, 31),
+                  LocalDate.of(CURRENT_YEAR, 1, 1),
+                  LocalDate.of(CURRENT_YEAR, 12, 31),
                   "테스트 데이터",
                   "thumbnail.jpg",
                   100,
@@ -166,9 +166,9 @@ class PopularDataSetsRedisAdapterTest {
 
     @Test
     @DisplayName("성공: 마지막 업데이트 시간 조회")
-    void getLastUpdateTime_성공() {
+    void getLastUpdateTimeSuccess() {
       // given
-      String metadata = "1234567890123";
+      String metadata = "1456201";
       given(valueOperations.get("popular:datasets:metadata")).willReturn(metadata);
 
       // when
@@ -176,12 +176,12 @@ class PopularDataSetsRedisAdapterTest {
 
       // then
       assertAll(
-          () -> assertThat(result).isPresent(), () -> assertThat(result).contains(1234567890123L));
+          () -> assertThat(result).isPresent(), () -> assertThat(result).contains(TEST_TIMESTAMP));
     }
 
     @Test
     @DisplayName("메타데이터가 없을 때 빈 Optional 반환")
-    void getLastUpdateTime_메타데이터없음_빈Optional반환() {
+    void getLastUpdateTimeWhenNoMetadataReturnsEmptyOptional() {
       // given
       given(valueOperations.get("popular:datasets:metadata")).willReturn(null);
 
@@ -199,7 +199,7 @@ class PopularDataSetsRedisAdapterTest {
 
     @Test
     @DisplayName("캐시가 존재할 때 true 반환")
-    void hasValidData_캐시존재_true반환() {
+    void hasValidDataWhenCacheExistsReturnsTrue() {
       // given
       given(redisTemplate.hasKey("popular:datasets")).willReturn(true);
       given(redisTemplate.hasKey("popular:datasets:metadata")).willReturn(true);
@@ -213,7 +213,7 @@ class PopularDataSetsRedisAdapterTest {
 
     @Test
     @DisplayName("캐시가 없을 때 false 반환")
-    void hasValidData_캐시없음_false반환() {
+    void hasValidDataWhenCacheNotExistsReturnsFalse() {
       // given
       given(redisTemplate.hasKey("popular:datasets")).willReturn(false);
       given(redisTemplate.hasKey("popular:datasets:metadata")).willReturn(true);

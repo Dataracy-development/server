@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2024 Dataracy
- * Licensed under the MIT License.
- */
 package com.dataracy.modules.project.adapter.kafka.consumer;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -30,6 +26,10 @@ import com.dataracy.modules.project.application.port.in.command.count.IncreaseLi
 
 @ExtendWith(MockitoExtension.class)
 class ProjectKafkaConsumerAdapterTest {
+
+  // Test constants
+  private static final Long PROJECT_ID = 1L;
+  private static final Long COMMENT_ID = 2L;
 
   @Mock private IncreaseCommentCountUseCase increaseCommentCountUseCase;
 
@@ -61,7 +61,7 @@ class ProjectKafkaConsumerAdapterTest {
   @DisplayName("댓글 작성 이벤트 수신 시 댓글 수 증가 성공")
   void consumeCommentUploadSuccess() {
     // given
-    Long projectId = 123L;
+    Long projectId = 1L;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -71,12 +71,10 @@ class ProjectKafkaConsumerAdapterTest {
 
       // then
       then(increaseCommentCountUseCase).should().increaseCommentCount(projectId);
+      then(kafkaLogger).should().logConsume("comment-uploaded-topic", "댓글 작성 이벤트 수신됨: projectId=1");
       then(kafkaLogger)
           .should()
-          .logConsume("comment-uploaded-topic", "댓글 작성 이벤트 수신됨: projectId=123");
-      then(kafkaLogger)
-          .should()
-          .logConsume("comment-uploaded-topic", "댓글 작성 이벤트 처리 완료: projectId=123");
+          .logConsume("comment-uploaded-topic", "댓글 작성 이벤트 처리 완료: projectId=1");
     }
   }
 
@@ -84,7 +82,7 @@ class ProjectKafkaConsumerAdapterTest {
   @DisplayName("댓글 작성 이벤트 처리 실패 시 예외 재발생")
   void consumeCommentUploadFailure() {
     // given
-    Long projectId = 123L;
+    Long projectId = 1L;
     RuntimeException exception = new RuntimeException("Database error");
     willThrow(exception).given(increaseCommentCountUseCase).increaseCommentCount(projectId);
 
@@ -98,14 +96,12 @@ class ProjectKafkaConsumerAdapterTest {
       assertAll(
           () -> org.assertj.core.api.Assertions.assertThat(caughtException).isSameAs(exception));
 
-      then(kafkaLogger)
-          .should()
-          .logConsume("comment-uploaded-topic", "댓글 작성 이벤트 수신됨: projectId=123");
+      then(kafkaLogger).should().logConsume("comment-uploaded-topic", "댓글 작성 이벤트 수신됨: projectId=1");
       then(kafkaLogger)
           .should()
           .logError(
               eq("comment-uploaded-topic"),
-              eq("댓글 작성 이벤트 처리 실패: projectId=123"),
+              eq("댓글 작성 이벤트 처리 실패: projectId=1"),
               any(RuntimeException.class));
     }
   }
@@ -114,7 +110,7 @@ class ProjectKafkaConsumerAdapterTest {
   @DisplayName("댓글 삭제 이벤트 수신 시 댓글 수 감소 성공")
   void consumeCommentDeleteSuccess() {
     // given
-    Long projectId = 456L;
+    Long projectId = PROJECT_ID;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -124,12 +120,10 @@ class ProjectKafkaConsumerAdapterTest {
 
       // then
       then(decreaseCommentCountUseCase).should().decreaseCommentCount(projectId);
+      then(kafkaLogger).should().logConsume("comment-deleted-topic", "댓글 삭제 이벤트 수신됨: projectId=1");
       then(kafkaLogger)
           .should()
-          .logConsume("comment-deleted-topic", "댓글 삭제 이벤트 수신됨: projectId=456");
-      then(kafkaLogger)
-          .should()
-          .logConsume("comment-deleted-topic", "댓글 삭제 이벤트 처리 완료: projectId=456");
+          .logConsume("comment-deleted-topic", "댓글 삭제 이벤트 처리 완료: projectId=1");
     }
   }
 
@@ -137,7 +131,7 @@ class ProjectKafkaConsumerAdapterTest {
   @DisplayName("좋아요 증가 이벤트 수신 시 좋아요 수 증가 성공")
   void consumeLikeIncreaseSuccess() {
     // given
-    Long projectId = 789L;
+    Long projectId = COMMENT_ID;
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
@@ -149,10 +143,10 @@ class ProjectKafkaConsumerAdapterTest {
       then(increaseLikeCountUseCase).should().increaseLikeCount(projectId);
       then(kafkaLogger)
           .should()
-          .logConsume("project-like-increase-topic", "프로젝트 좋아요 이벤트 수신됨: projectId=789");
+          .logConsume("project-like-increase-topic", "프로젝트 좋아요 이벤트 수신됨: projectId=2");
       then(kafkaLogger)
           .should()
-          .logConsume("project-like-increase-topic", "프로젝트 좋아요 이벤트 처리 완료: projectId=789");
+          .logConsume("project-like-increase-topic", "프로젝트 좋아요 이벤트 처리 완료: projectId=2");
     }
   }
 
@@ -183,7 +177,7 @@ class ProjectKafkaConsumerAdapterTest {
   @DisplayName("좋아요 증가 이벤트 처리 실패 시 예외 재발생")
   void consumeLikeIncreaseFailure() {
     // given
-    Long projectId = 789L;
+    Long projectId = COMMENT_ID;
     RuntimeException exception = new RuntimeException("Elasticsearch error");
     willThrow(exception).given(increaseLikeCountUseCase).increaseLikeCount(projectId);
 
@@ -199,12 +193,12 @@ class ProjectKafkaConsumerAdapterTest {
 
       then(kafkaLogger)
           .should()
-          .logConsume("project-like-increase-topic", "프로젝트 좋아요 이벤트 수신됨: projectId=789");
+          .logConsume("project-like-increase-topic", "프로젝트 좋아요 이벤트 수신됨: projectId=2");
       then(kafkaLogger)
           .should()
           .logError(
               eq("project-like-increase-topic"),
-              eq("프로젝트 좋아요 이벤트 처리 실패: projectId=789"),
+              eq("프로젝트 좋아요 이벤트 처리 실패: projectId=2"),
               any(RuntimeException.class));
     }
   }
