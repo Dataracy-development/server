@@ -5,6 +5,4 @@ package com.dataracy.modules.auth.application.dto.request;
  *
  * @param refreshToken 리프레시 토큰
  */
-public record RefreshTokenRequest(
-        String refreshToken
-) {}
+public record RefreshTokenRequest(String refreshToken) {}

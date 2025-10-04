@@ -5,6 +5,4 @@ package com.dataracy.modules.dataset.application.dto.response.command;
  *
  * @param id 데이터 ID
  */
-public record UploadDataResponse(
-        Long id
-) {}
+public record UploadDataResponse(Long id) {}

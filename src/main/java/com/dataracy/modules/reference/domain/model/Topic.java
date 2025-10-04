@@ -7,8 +7,4 @@ package com.dataracy.modules.reference.domain.model;
  * @param value 토픽 값
  * @param label 토픽 라벨
  */
-public record Topic(
-        Long id,
-        String value,
-        String label
-) {}
+public record Topic(Long id, String value, String label) {}

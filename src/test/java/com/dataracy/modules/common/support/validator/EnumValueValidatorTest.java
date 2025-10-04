@@ -1,189 +1,94 @@
 package com.dataracy.modules.common.support.validator;
 
-import com.dataracy.modules.common.support.annotation.ValidEnumValue;
-import com.dataracy.modules.user.domain.enums.RoleType;
-import jakarta.validation.ConstraintValidatorContext;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import com.dataracy.modules.common.support.annotation.ValidEnumValue;
+import com.dataracy.modules.user.domain.enums.RoleType;
+
+import jakarta.validation.ConstraintValidatorContext;
+
 class EnumValueValidatorTest {
 
-    private EnumValueValidator validator;
-    private ConstraintValidatorContext context;
+  private EnumValueValidator validator;
+  private ConstraintValidatorContext context;
 
-    @BeforeEach
-    void setUp() {
-        validator = new EnumValueValidator();
-        context = mock(ConstraintValidatorContext.class);
-        
-        // ConstraintValidatorContext mock 설정
-        ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
-        when(context.buildConstraintViolationWithTemplate(org.mockito.ArgumentMatchers.anyString())).thenReturn(builder);
-        when(builder.addConstraintViolation()).thenReturn(context);
-    }
+  @BeforeEach
+  void setUp() {
+    validator = new EnumValueValidator();
+    context = mock(ConstraintValidatorContext.class);
 
-    @Test
-    @DisplayName("initialize - RoleType enum으로 초기화한다")
-    void initialize_WithRoleTypeEnum_InitializesSuccessfully() {
-        // given
-        ValidEnumValue annotation = mock(ValidEnumValue.class);
-        given(annotation.enumClass()).willReturn((Class) RoleType.class);
-        given(annotation.required()).willReturn(false);
+    // ConstraintValidatorContext mock 설정
+    ConstraintValidatorContext.ConstraintViolationBuilder builder =
+        mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
+    when(context.buildConstraintViolationWithTemplate(org.mockito.ArgumentMatchers.anyString()))
+        .thenReturn(builder);
+    when(builder.addConstraintViolation()).thenReturn(context);
+  }
 
-        // when
-        validator.initialize(annotation);
+  @Test
+  @DisplayName("initialize - RoleType enum으로 초기화한다")
+  void initializeWithRoleTypeEnumInitializesSuccessfully() {
+    // given
+    ValidEnumValue annotation = mock(ValidEnumValue.class);
+    given(annotation.enumClass()).willReturn((Class) RoleType.class);
+    given(annotation.required()).willReturn(false);
 
-        // then
-        assertThat(validator).isNotNull();
-    }
+    // when
+    validator.initialize(annotation);
 
-    @Test
-    @DisplayName("isValid - 유효한 enum 값인 경우 true를 반환한다")
-    void isValid_WhenValidEnumValue_ReturnsTrue() {
-        // given
-        ValidEnumValue annotation = mock(ValidEnumValue.class);
-        given(annotation.enumClass()).willReturn((Class) RoleType.class);
-        given(annotation.required()).willReturn(false);
-        validator.initialize(annotation);
+    // then
+    assertThat(validator).isNotNull();
+  }
 
-        // when
-        boolean result = validator.isValid("ROLE_USER", context);
+  @Test
+  @DisplayName("isValid - 유효한 enum 값인 경우 true를 반환한다")
+  void isValidWhenValidEnumValueReturnsTrue() {
+    // given
+    ValidEnumValue annotation = mock(ValidEnumValue.class);
+    given(annotation.enumClass()).willReturn((Class) RoleType.class);
+    given(annotation.required()).willReturn(false);
+    validator.initialize(annotation);
 
-        // then
-        assertThat(result).isTrue();
-    }
+    // when
+    boolean result = validator.isValid("ROLE_USER", context);
 
-    @Test
-    @DisplayName("isValid - 유효한 enum 값(소문자)인 경우 false를 반환한다")
-    void isValid_WhenValidEnumValueLowerCase_ReturnsFalse() {
-        // given
-        ValidEnumValue annotation = mock(ValidEnumValue.class);
-        given(annotation.enumClass()).willReturn((Class) RoleType.class);
-        given(annotation.required()).willReturn(false);
-        validator.initialize(annotation);
+    // then
+    assertThat(result).isTrue();
+  }
 
-        // when
-        boolean result = validator.isValid("role_user", context);
+  @ParameterizedTest
+  @CsvSource({
+    "role_user, false, false", // 소문자 enum 값
+    "INVALID_ROLE, false, false", // 유효하지 않은 enum
+    ", false, true", // null이고 required=false
+    ", true, false", // null이고 required=true
+    "'', false, false", // 빈 문자열이고 required=false
+    "'', true, false", // 빈 문자열이고 required=true
+    "'   ', false, false", // 공백이고 required=false
+    "'   ', true, false" // 공백이고 required=true
+  })
+  @DisplayName("isValid - 다양한 유효하지 않은 값들에 대한 검증")
+  void isValidWhenVariousInvalidValuesReturnsExpectedResult(
+      String value, boolean required, boolean expectedResult) {
+    // given
+    ValidEnumValue annotation = mock(ValidEnumValue.class);
+    given(annotation.enumClass()).willReturn((Class) RoleType.class);
+    given(annotation.required()).willReturn(required);
+    validator.initialize(annotation);
 
-        // then
-        assertThat(result).isFalse();
-    }
+    // when
+    boolean result = validator.isValid(value, context);
 
-    @Test
-    @DisplayName("isValid - 유효하지 않은 enum 값인 경우 false를 반환한다")
-    void isValid_WhenInvalidEnumValue_ReturnsFalse() {
-        // given
-        ValidEnumValue annotation = mock(ValidEnumValue.class);
-        given(annotation.enumClass()).willReturn((Class) RoleType.class);
-        given(annotation.required()).willReturn(false);
-        validator.initialize(annotation);
-
-        // when
-        boolean result = validator.isValid("INVALID_ROLE", context);
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    @DisplayName("isValid - null 값이고 required가 false인 경우 true를 반환한다")
-    void isValid_WhenNullAndNotRequired_ReturnsTrue() {
-        // given
-        ValidEnumValue annotation = mock(ValidEnumValue.class);
-        given(annotation.enumClass()).willReturn((Class) RoleType.class);
-        given(annotation.required()).willReturn(false);
-        validator.initialize(annotation);
-
-        // when
-        boolean result = validator.isValid(null, context);
-
-        // then
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    @DisplayName("isValid - null 값이고 required가 true인 경우 false를 반환한다")
-    void isValid_WhenNullAndRequired_ReturnsFalse() {
-        // given
-        ValidEnumValue annotation = mock(ValidEnumValue.class);
-        given(annotation.enumClass()).willReturn((Class) RoleType.class);
-        given(annotation.required()).willReturn(true);
-        validator.initialize(annotation);
-
-        // when
-        boolean result = validator.isValid(null, context);
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    @DisplayName("isValid - 빈 문자열이고 required가 false인 경우 false를 반환한다")
-    void isValid_WhenEmptyStringAndNotRequired_ReturnsFalse() {
-        // given
-        ValidEnumValue annotation = mock(ValidEnumValue.class);
-        given(annotation.enumClass()).willReturn((Class) RoleType.class);
-        given(annotation.required()).willReturn(false);
-        validator.initialize(annotation);
-
-        // when
-        boolean result = validator.isValid("", context);
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    @DisplayName("isValid - 빈 문자열이고 required가 true인 경우 false를 반환한다")
-    void isValid_WhenEmptyStringAndRequired_ReturnsFalse() {
-        // given
-        ValidEnumValue annotation = mock(ValidEnumValue.class);
-        given(annotation.enumClass()).willReturn((Class) RoleType.class);
-        given(annotation.required()).willReturn(true);
-        validator.initialize(annotation);
-
-        // when
-        boolean result = validator.isValid("", context);
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    @DisplayName("isValid - 공백 문자열이고 required가 false인 경우 false를 반환한다")
-    void isValid_WhenWhitespaceStringAndNotRequired_ReturnsFalse() {
-        // given
-        ValidEnumValue annotation = mock(ValidEnumValue.class);
-        given(annotation.enumClass()).willReturn((Class) RoleType.class);
-        given(annotation.required()).willReturn(false);
-        validator.initialize(annotation);
-
-        // when
-        boolean result = validator.isValid("   ", context);
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    @DisplayName("isValid - 공백 문자열이고 required가 true인 경우 false를 반환한다")
-    void isValid_WhenWhitespaceStringAndRequired_ReturnsFalse() {
-        // given
-        ValidEnumValue annotation = mock(ValidEnumValue.class);
-        given(annotation.enumClass()).willReturn((Class) RoleType.class);
-        given(annotation.required()).willReturn(true);
-        validator.initialize(annotation);
-
-        // when
-        boolean result = validator.isValid("   ", context);
-
-        // then
-        assertThat(result).isFalse();
-    }
+    // then
+    assertThat(result).isEqualTo(expectedResult);
+  }
 }

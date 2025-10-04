@@ -7,8 +7,4 @@ package com.dataracy.modules.reference.domain.model;
  * @param value 경험 값
  * @param label 경험 라벨
  */
-public record Occupation(
-        Long id,
-        String value,
-        String label
-) {}
+public record Occupation(Long id, String value, String label) {}

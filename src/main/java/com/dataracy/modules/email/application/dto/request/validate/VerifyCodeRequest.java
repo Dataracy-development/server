@@ -7,8 +7,4 @@ package com.dataracy.modules.email.application.dto.request.validate;
  * @param code 인증코드
  * @param purpose 이메일 전송 목적
  */
-public record VerifyCodeRequest(
-        String email,
-        String code,
-        String purpose
-) {}
+public record VerifyCodeRequest(String email, String code, String purpose) {}

@@ -17,14 +17,13 @@ import java.time.LocalDateTime;
  * @param createdAt 작성 시기
  */
 public record ConnectedProjectResponse(
-        Long id,
-        String title,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String topicLabel,
-        Long commentCount,
-        Long likeCount,
-        Long viewCount,
-        LocalDateTime createdAt
-) {}
+    Long id,
+    String title,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String topicLabel,
+    Long commentCount,
+    Long likeCount,
+    Long viewCount,
+    LocalDateTime createdAt) {}

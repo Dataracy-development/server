@@ -19,16 +19,15 @@ import java.time.LocalDateTime;
  * @param createdAt 작성 시기
  */
 public record ContinuedProjectResponse(
-        Long id,
-        String title,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String projectThumbnailUrl,
-        String topicLabel,
-        String authorLevelLabel,
-        Long commentCount,
-        Long likeCount,
-        Long viewCount,
-        LocalDateTime createdAt
-) {}
+    Long id,
+    String title,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String projectThumbnailUrl,
+    String topicLabel,
+    String authorLevelLabel,
+    Long commentCount,
+    Long likeCount,
+    Long viewCount,
+    LocalDateTime createdAt) {}

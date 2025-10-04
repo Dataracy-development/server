@@ -5,6 +5,4 @@ package com.dataracy.modules.comment.application.dto.request.command;
  *
  * @param content 댓글 내용
  */
-public record ModifyCommentRequest(
-        String content
-) {}
+public record ModifyCommentRequest(String content) {}

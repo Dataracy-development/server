@@ -5,6 +5,4 @@ package com.dataracy.modules.user.application.dto.request.password;
  *
  * @param password 비밀번호
  */
-public record ConfirmPasswordRequest(
-        String password
-) {}
+public record ConfirmPasswordRequest(String password) {}

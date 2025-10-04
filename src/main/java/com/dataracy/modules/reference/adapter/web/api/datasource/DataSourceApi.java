@@ -1,32 +1,36 @@
 package com.dataracy.modules.reference.adapter.web.api.datasource;
 
-import com.dataracy.modules.common.dto.response.SuccessResponse;
-import com.dataracy.modules.reference.adapter.web.response.allview.AllDataSourcesWebResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.dataracy.modules.common.dto.response.SuccessResponse;
+import com.dataracy.modules.reference.adapter.web.response.allview.AllDataSourcesWebResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @Tag(name = "Reference", description = "참조 데이터 관련 API")
 @RequestMapping("/api/v1/references")
 public interface DataSourceApi {
-    /**
-     * 전체 데이터 소스 목록을 반환한다.
-     * 데이터베이스에 저장된 모든 데이터 소스 정보를 성공 응답으로 제공한다.
-     *
-     * @return 전체 데이터 소스 목록이 포함된 성공 응답 객체
-     */
-    @Operation(
-            summary = "전체 데이터 출처 리스트를 조회",
-            description = "DB에서 전체 데이터 출처 리스트를 조회한다.",
-            security = {}
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 데이터 출처 리스트 조회", useReturnTypeSchema = true),
-    })
-    @GetMapping("/data-sources")
-    ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> findAllDataSources();
+  /**
+   * 전체 데이터 소스 목록을 반환한다. 데이터베이스에 저장된 모든 데이터 소스 정보를 성공 응답으로 제공한다.
+   *
+   * @return 전체 데이터 소스 목록이 포함된 성공 응답 객체
+   */
+  @Operation(
+      summary = "전체 데이터 출처 리스트를 조회",
+      description = "DB에서 전체 데이터 출처 리스트를 조회한다.",
+      security = {})
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "전체 데이터 출처 리스트 조회",
+            useReturnTypeSchema = true),
+      })
+  @GetMapping("/data-sources")
+  ResponseEntity<SuccessResponse<AllDataSourcesWebResponse>> findAllDataSources();
 }

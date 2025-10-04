@@ -10,7 +10,5 @@ import com.dataracy.modules.user.application.dto.request.PasswordConfirmable;
  * @param passwordConfirm 비밀번호 확인
  */
 public record ResetPasswordWithTokenRequest(
-        String resetPasswordToken,
-        String password,
-        String passwordConfirm
-) implements PasswordConfirmable {}
+    String resetPasswordToken, String password, String passwordConfirm)
+    implements PasswordConfirmable {}

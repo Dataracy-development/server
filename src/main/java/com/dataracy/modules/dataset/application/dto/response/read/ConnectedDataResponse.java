@@ -4,8 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * 연결된 데이터 조회 애플리케이션 응답 DTO
- * 데이터셋과 연결된 프로젝트 수, 다운로드 수 등 요약 정보를 담습니다.
+ * 연결된 데이터 조회 애플리케이션 응답 DTO 데이터셋과 연결된 프로젝트 수, 다운로드 수 등 요약 정보를 담습니다.
  *
  * @param id 데이터 ID
  * @param title 데이터 제목
@@ -24,20 +23,19 @@ import java.time.LocalDateTime;
  * @param countConnectedProjects 연결된 프로젝트 수
  */
 public record ConnectedDataResponse(
-        Long id,
-        String title,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String topicLabel,
-        String dataTypeLabel,
-        LocalDate startDate,
-        LocalDate endDate,
-        String dataThumbnailUrl,
-        Integer downloadCount,
-        Long sizeBytes,
-        Integer rowCount,
-        Integer columnCount,
-        LocalDateTime createdAt,
-        Long countConnectedProjects
-) {}
+    Long id,
+    String title,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String topicLabel,
+    String dataTypeLabel,
+    LocalDate startDate,
+    LocalDate endDate,
+    String dataThumbnailUrl,
+    Integer downloadCount,
+    Long sizeBytes,
+    Integer rowCount,
+    Integer columnCount,
+    LocalDateTime createdAt,
+    Long countConnectedProjects) {}

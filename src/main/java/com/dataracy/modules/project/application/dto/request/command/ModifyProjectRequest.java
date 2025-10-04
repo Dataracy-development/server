@@ -16,13 +16,12 @@ import java.util.List;
  * @param dataIds 프로젝트에 연결된 데이터 아이디 목록
  */
 public record ModifyProjectRequest(
-        String title,
-        Long topicId,
-        Long analysisPurposeId,
-        Long dataSourceId,
-        Long authorLevelId,
-        Boolean isContinue,
-        Long parentProjectId,
-        String content,
-        List<Long> dataIds
-) {}
+    String title,
+    Long topicId,
+    Long analysisPurposeId,
+    Long dataSourceId,
+    Long authorLevelId,
+    Boolean isContinue,
+    Long parentProjectId,
+    String content,
+    List<Long> dataIds) {}

@@ -1,116 +1,130 @@
 package com.dataracy.modules.project.adapter.kafka.consumer;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
+
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.project.application.port.in.command.count.DecreaseCommentCountUseCase;
 import com.dataracy.modules.project.application.port.in.command.count.DecreaseLikeCountUseCase;
 import com.dataracy.modules.project.application.port.in.command.count.IncreaseCommentCountUseCase;
 import com.dataracy.modules.project.application.port.in.command.count.IncreaseLikeCountUseCase;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class ProjectKafkaConsumerAdapter {
-    private final IncreaseCommentCountUseCase increaseCommentCountUseCase;
-    private final DecreaseCommentCountUseCase decreaseCommentCountUseCase;
-    private final IncreaseLikeCountUseCase increaseLikeCountUseCase;
-    private final DecreaseLikeCountUseCase decreaseLikeCountUseCase;
+  private final IncreaseCommentCountUseCase increaseCommentCountUseCase;
+  private final DecreaseCommentCountUseCase decreaseCommentCountUseCase;
+  private final IncreaseLikeCountUseCase increaseLikeCountUseCase;
+  private final DecreaseLikeCountUseCase decreaseLikeCountUseCase;
 
-    @Value("${spring.kafka.consumer.comment-upload.topic:comment-uploaded-topic}")
-    private String commentUploadedTopic;
+  @Value("${spring.kafka.consumer.comment-upload.topic:comment-uploaded-topic}")
+  private String commentUploadedTopic;
 
-    @Value("${spring.kafka.consumer.comment-delete.topic:comment-deleted-topic}")
-    private String commentDeletedTopic;
+  @Value("${spring.kafka.consumer.comment-delete.topic:comment-deleted-topic}")
+  private String commentDeletedTopic;
 
-    @Value("${spring.kafka.consumer.project-like-increase.topic:project-like-increase-topic}")
-    private String likeIncreaseTopic;
+  @Value("${spring.kafka.consumer.project-like-increase.topic:project-like-increase-topic}")
+  private String likeIncreaseTopic;
 
-    @Value("${spring.kafka.consumer.project-like-decrease.topic:project-like-decrease-topic}")
-    private String likeDecreaseTopic;
+  @Value("${spring.kafka.consumer.project-like-decrease.topic:project-like-decrease-topic}")
+  private String likeDecreaseTopic;
 
-    /**
-     * 프로젝트 댓글 작성 이벤트를 수신하여 해당 프로젝트의 댓글 수를 1 증가시킵니다.
-     *
-     * @param projectId 댓글이 작성된 프로젝트의 ID
-     */
-    @KafkaListener(
-            topics = "${spring.kafka.consumer.comment-upload.topic:comment-uploaded-topic}",
-            groupId = "${spring.kafka.consumer.comment-upload.group-id:project-comment-upload-consumer-group}",
-            containerFactory = "longKafkaListenerContainerFactory"
-    )
-    public void consumeCommentUpload(Long projectId) {
-        try {
-            LoggerFactory.kafka().logConsume(commentUploadedTopic, "댓글 작성 이벤트 수신됨: projectId=" + projectId);
-            increaseCommentCountUseCase.increaseCommentCount(projectId);
-            LoggerFactory.kafka().logConsume(commentUploadedTopic, "댓글 작성 이벤트 처리 완료: projectId=" + projectId);
-        } catch (Exception e) {
-            LoggerFactory.kafka().logError(commentUploadedTopic, "댓글 작성 이벤트 처리 실패: projectId=" + projectId, e);
-            throw e; // 재시도를 위해 예외 재던지기
-        }
+  /**
+   * 프로젝트 댓글 작성 이벤트를 수신하여 해당 프로젝트의 댓글 수를 1 증가시킵니다.
+   *
+   * @param projectId 댓글이 작성된 프로젝트의 ID
+   */
+  @KafkaListener(
+      topics = "${spring.kafka.consumer.comment-upload.topic:comment-uploaded-topic}",
+      groupId =
+          "${spring.kafka.consumer.comment-upload.group-id:project-comment-upload-consumer-group}",
+      containerFactory = "longKafkaListenerContainerFactory")
+  public void consumeCommentUpload(Long projectId) {
+    try {
+      LoggerFactory.kafka()
+          .logConsume(commentUploadedTopic, "댓글 작성 이벤트 수신됨: projectId=" + projectId);
+      increaseCommentCountUseCase.increaseCommentCount(projectId);
+      LoggerFactory.kafka()
+          .logConsume(commentUploadedTopic, "댓글 작성 이벤트 처리 완료: projectId=" + projectId);
+    } catch (Exception e) {
+      LoggerFactory.kafka()
+          .logError(commentUploadedTopic, "댓글 작성 이벤트 처리 실패: projectId=" + projectId, e);
+      throw e; // 재시도를 위해 예외 재던지기
     }
+  }
 
-    /**
-     * Kafka에서 프로젝트의 댓글 삭제 이벤트를 수신하여 해당 프로젝트의 댓글 수를 감소시킵니다.
-     *
-     * @param projectId 댓글이 삭제된 프로젝트의 ID
-     */
-    @KafkaListener(
-            topics = "${spring.kafka.consumer.comment-delete.topic:comment-deleted-topic}",
-            groupId = "${spring.kafka.consumer.comment-delete.group-id:project-comment-delete-consumer-group}",
-            containerFactory = "longKafkaListenerContainerFactory"
-    )
-    public void consumeCommentDelete(Long projectId) {
-        try {
-            LoggerFactory.kafka().logConsume(commentDeletedTopic, "댓글 삭제 이벤트 수신됨: projectId=" + projectId);
-            decreaseCommentCountUseCase.decreaseCommentCount(projectId);
-            LoggerFactory.kafka().logConsume(commentDeletedTopic, "댓글 삭제 이벤트 처리 완료: projectId=" + projectId);
-        } catch (Exception e) {
-            LoggerFactory.kafka().logError(commentDeletedTopic, "댓글 삭제 이벤트 처리 실패: projectId=" + projectId, e);
-            throw e; // 재시도를 위해 예외 재던지기
-        }
+  /**
+   * Kafka에서 프로젝트의 댓글 삭제 이벤트를 수신하여 해당 프로젝트의 댓글 수를 감소시킵니다.
+   *
+   * @param projectId 댓글이 삭제된 프로젝트의 ID
+   */
+  @KafkaListener(
+      topics = "${spring.kafka.consumer.comment-delete.topic:comment-deleted-topic}",
+      groupId =
+          "${spring.kafka.consumer.comment-delete.group-id:project-comment-delete-consumer-group}",
+      containerFactory = "longKafkaListenerContainerFactory")
+  public void consumeCommentDelete(Long projectId) {
+    try {
+      LoggerFactory.kafka()
+          .logConsume(commentDeletedTopic, "댓글 삭제 이벤트 수신됨: projectId=" + projectId);
+      decreaseCommentCountUseCase.decreaseCommentCount(projectId);
+      LoggerFactory.kafka()
+          .logConsume(commentDeletedTopic, "댓글 삭제 이벤트 처리 완료: projectId=" + projectId);
+    } catch (Exception e) {
+      LoggerFactory.kafka()
+          .logError(commentDeletedTopic, "댓글 삭제 이벤트 처리 실패: projectId=" + projectId, e);
+      throw e; // 재시도를 위해 예외 재던지기
     }
+  }
 
-    /**
-     * Kafka에서 프로젝트 좋아요 증가 이벤트를 수신하여 해당 프로젝트의 좋아요 수를 1 증가시킵니다.
-     *
-     * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
-     */
-    @KafkaListener(
-            topics = "${spring.kafka.consumer.project-like-increase.topic:project-like-increase-topic}",
-            groupId = "${spring.kafka.consumer.project-like-increase.group-id:project-like-increase-consumer-group}",
-            containerFactory = "longKafkaListenerContainerFactory"
-    )
-    public void consumeLikeIncrease(Long projectId) {
-        try {
-            LoggerFactory.kafka().logConsume(likeIncreaseTopic, "프로젝트 좋아요 이벤트 수신됨: projectId=" + projectId);
-            increaseLikeCountUseCase.increaseLikeCount(projectId);
-            LoggerFactory.kafka().logConsume(likeIncreaseTopic, "프로젝트 좋아요 이벤트 처리 완료: projectId=" + projectId);
-        } catch (Exception e) {
-            LoggerFactory.kafka().logError(likeIncreaseTopic, "프로젝트 좋아요 이벤트 처리 실패: projectId=" + projectId, e);
-            throw e; // 재시도를 위해 예외 재던지기
-        }
+  /**
+   * Kafka에서 프로젝트 좋아요 증가 이벤트를 수신하여 해당 프로젝트의 좋아요 수를 1 증가시킵니다.
+   *
+   * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
+   */
+  @KafkaListener(
+      topics = "${spring.kafka.consumer.project-like-increase.topic:project-like-increase-topic}",
+      groupId =
+          "${spring.kafka.consumer.project-like-increase.group-id:project-like-increase-consumer-group}",
+      containerFactory = "longKafkaListenerContainerFactory")
+  public void consumeLikeIncrease(Long projectId) {
+    try {
+      LoggerFactory.kafka()
+          .logConsume(likeIncreaseTopic, "프로젝트 좋아요 이벤트 수신됨: projectId=" + projectId);
+      increaseLikeCountUseCase.increaseLikeCount(projectId);
+      LoggerFactory.kafka()
+          .logConsume(likeIncreaseTopic, "프로젝트 좋아요 이벤트 처리 완료: projectId=" + projectId);
+    } catch (Exception e) {
+      LoggerFactory.kafka()
+          .logError(likeIncreaseTopic, "프로젝트 좋아요 이벤트 처리 실패: projectId=" + projectId, e);
+      throw e; // 재시도를 위해 예외 재던지기
     }
+  }
 
-    /**
-     * Kafka에서 프로젝트 좋아요 취소 이벤트를 수신하여 해당 프로젝트의 좋아요 수를 감소시킵니다.
-     *
-     * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
-     */
-    @KafkaListener(
-            topics = "${spring.kafka.consumer.project-like-decrease.topic:project-like-decrease-topic}",
-            groupId = "${spring.kafka.consumer.project-like-decrease.group-id:project-like-decrease-consumer-group}",
-            containerFactory = "longKafkaListenerContainerFactory"
-    )
-    public void consumeLikeDecrease(Long projectId) {
-        try {
-            LoggerFactory.kafka().logConsume(likeDecreaseTopic, "프로젝트 좋아요 취소 이벤트 수신됨: projectId=" + projectId);
-            decreaseLikeCountUseCase.decreaseLikeCount(projectId);
-            LoggerFactory.kafka().logConsume(likeDecreaseTopic, "프로젝트 좋아요 취소 이벤트 처리 완료: projectId=" + projectId);
-        } catch (Exception e) {
-            LoggerFactory.kafka().logError(likeDecreaseTopic, "프로젝트 좋아요 취소 이벤트 처리 실패: projectId=" + projectId, e);
-            throw e; // 재시도를 위해 예외 재던지기
-        }
+  /**
+   * Kafka에서 프로젝트 좋아요 취소 이벤트를 수신하여 해당 프로젝트의 좋아요 수를 감소시킵니다.
+   *
+   * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
+   */
+  @KafkaListener(
+      topics = "${spring.kafka.consumer.project-like-decrease.topic:project-like-decrease-topic}",
+      groupId =
+          "${spring.kafka.consumer.project-like-decrease.group-id:project-like-decrease-consumer-group}",
+      containerFactory = "longKafkaListenerContainerFactory")
+  public void consumeLikeDecrease(Long projectId) {
+    try {
+      LoggerFactory.kafka()
+          .logConsume(likeDecreaseTopic, "프로젝트 좋아요 취소 이벤트 수신됨: projectId=" + projectId);
+      decreaseLikeCountUseCase.decreaseLikeCount(projectId);
+      LoggerFactory.kafka()
+          .logConsume(likeDecreaseTopic, "프로젝트 좋아요 취소 이벤트 처리 완료: projectId=" + projectId);
+    } catch (Exception e) {
+      LoggerFactory.kafka()
+          .logError(likeDecreaseTopic, "프로젝트 좋아요 취소 이벤트 처리 실패: projectId=" + projectId, e);
+      throw e; // 재시도를 위해 예외 재던지기
     }
+  }
 }

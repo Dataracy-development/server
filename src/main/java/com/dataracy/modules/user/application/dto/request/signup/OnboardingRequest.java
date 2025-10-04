@@ -13,10 +13,9 @@ import java.util.List;
  * @param isAdTermsAgreed 광고 동의 여부
  */
 public record OnboardingRequest(
-        String nickname,
-        Long authorLevelId,
-        Long occupationId,
-        List<Long> topicIds,
-        Long visitSourceId,
-        Boolean isAdTermsAgreed
-) {}
+    String nickname,
+    Long authorLevelId,
+    Long occupationId,
+    List<Long> topicIds,
+    Long visitSourceId,
+    Boolean isAdTermsAgreed) {}

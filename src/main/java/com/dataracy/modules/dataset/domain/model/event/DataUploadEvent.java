@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DataUploadEvent {
-    private Long dataId;
-    private String dataFileUrl;
-    private String originalFilename;
+  private Long dataId;
+  private String dataFileUrl;
+  private String originalFilename;
 }

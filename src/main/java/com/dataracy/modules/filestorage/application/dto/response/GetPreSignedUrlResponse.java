@@ -5,6 +5,4 @@ package com.dataracy.modules.filestorage.application.dto.response;
  *
  * @param preSignedUrl 사전 서명 URL
  */
-public record GetPreSignedUrlResponse(
-        String preSignedUrl
-) {}
+public record GetPreSignedUrlResponse(String preSignedUrl) {}

@@ -1,142 +1,120 @@
 package com.dataracy.modules.user.application.service.query.validate;
 
-import com.dataracy.modules.user.application.service.validate.UserDuplicateValidator;
-import com.dataracy.modules.user.domain.enums.ProviderType;
-import com.dataracy.modules.user.domain.exception.UserException;
-import com.dataracy.modules.user.domain.model.User;
-import com.dataracy.modules.user.domain.status.UserErrorStatus;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.Collections;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import com.dataracy.modules.user.application.service.validate.UserDuplicateValidator;
+import com.dataracy.modules.user.domain.enums.ProviderType;
+import com.dataracy.modules.user.domain.exception.UserException;
+import com.dataracy.modules.user.domain.model.User;
+import com.dataracy.modules.user.domain.status.UserErrorStatus;
 
 @ExtendWith(MockitoExtension.class)
 class ValidateUserServiceTest {
 
-    @Mock
-    private UserDuplicateValidator userDuplicateValidator;
+  @Mock private UserDuplicateValidator userDuplicateValidator;
 
-    @InjectMocks
-    private ValidateUserService service;
+  @InjectMocks private ValidateUserService service;
 
-    private User userWithProvider(ProviderType provider) {
-        return User.builder()
-                .id(1L)
-                .provider(provider)
-                .providerId("pid")
-                .email("user@test.com")
-                .password("encoded")
-                .nickname("nick")
-                .topicIds(Collections.emptyList())
-                .isDeleted(false)
-                .build();
-    }
+  @Test
+  @DisplayName("validateDuplicatedNickname - 닉네임이 중복되지 않은 경우 예외가 발생하지 않는다")
+  void validateDuplicatedNicknameWhenNicknameIsNotDuplicatedDoesNotThrowException() {
+    // given
+    String nickname = "testNickname";
 
-    // ---------------- validateDuplicatedNickname ----------------
-    @Test
-    @DisplayName("닉네임 중복 없음 → 성공 (예외 없음)")
-    void validateDuplicatedNicknameSuccess() {
-        // given
-        willDoNothing().given(userDuplicateValidator).duplicateNickname("nick");
+    // when & then - 예외가 발생하지 않으면 성공
+    service.validateDuplicatedNickname(nickname);
+  }
 
-        // when & then
-        assertThatCode(() -> service.validateDuplicatedNickname("nick"))
-                .doesNotThrowAnyException();
-    }
+  @Test
+  @DisplayName("validateDuplicatedNickname - 닉네임이 중복된 경우 UserException이 발생한다")
+  void validateDuplicatedNicknameWhenNicknameIsDuplicatedThrowsUserException() {
+    // given
+    String nickname = "duplicateNickname";
+    doThrow(new UserException(UserErrorStatus.DUPLICATED_NICKNAME))
+        .when(userDuplicateValidator)
+        .duplicateNickname(nickname);
 
-    // ---------------- validateDuplicatedEmail ----------------
-    @Nested
-    class ValidateDuplicatedEmailTests {
+    // when & then
+    assertThatThrownBy(() -> service.validateDuplicatedNickname(nickname))
+        .isInstanceOf(UserException.class)
+        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_NICKNAME);
+  }
 
-        @Test
-        @DisplayName("구글 계정 존재 → DUPLICATED_GOOGLE_EMAIL 예외")
-        void validateDuplicatedEmailGoogle() {
-            // given
-            given(userDuplicateValidator.duplicateEmail("google@test.com"))
-                    .willReturn(Optional.of(userWithProvider(ProviderType.GOOGLE)));
+  @Test
+  @DisplayName("validateDuplicatedEmail - 이메일이 중복되지 않은 경우 예외가 발생하지 않는다")
+  void validateDuplicatedEmailWhenEmailIsNotDuplicatedDoesNotThrowException() {
+    // given
+    String email = "test@example.com";
+    when(userDuplicateValidator.duplicateEmail(email)).thenReturn(Optional.empty());
 
-            // when
-            UserException ex = catchThrowableOfType(
-                    () -> service.validateDuplicatedEmail("google@test.com"),
-                    UserException.class
-            );
+    // when & then - 예외가 발생하지 않으면 성공
+    service.validateDuplicatedEmail(email);
+  }
 
-            // then
-            assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
-        }
+  @Test
+  @DisplayName("validateDuplicatedEmail - 구글 계정 이메일이 중복된 경우 DUPLICATED_GOOGLE_EMAIL 예외가 발생한다")
+  void validateDuplicatedEmailWhenGoogleEmailIsDuplicatedThrowsGoogleEmailException() {
+    // given
+    String email = "google@example.com";
+    User existingUser = User.builder().provider(ProviderType.GOOGLE).build();
+    when(userDuplicateValidator.duplicateEmail(email)).thenReturn(Optional.of(existingUser));
 
-        @Test
-        @DisplayName("카카오 계정 존재 → DUPLICATED_KAKAO_EMAIL 예외")
-        void validateDuplicatedEmailKakao() {
-            // given
-            given(userDuplicateValidator.duplicateEmail("kakao@test.com"))
-                    .willReturn(Optional.of(userWithProvider(ProviderType.KAKAO)));
+    // when & then
+    assertThatThrownBy(() -> service.validateDuplicatedEmail(email))
+        .isInstanceOf(UserException.class)
+        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
+  }
 
-            // when
-            UserException ex = catchThrowableOfType(
-                    () -> service.validateDuplicatedEmail("kakao@test.com"),
-                    UserException.class
-            );
+  @Test
+  @DisplayName("validateDuplicatedEmail - 카카오 계정 이메일이 중복된 경우 DUPLICATED_KAKAO_EMAIL 예외가 발생한다")
+  void validateDuplicatedEmailWhenKakaoEmailIsDuplicatedThrowsKakaoEmailException() {
+    // given
+    String email = "kakao@example.com";
+    User existingUser = User.builder().provider(ProviderType.KAKAO).build();
+    when(userDuplicateValidator.duplicateEmail(email)).thenReturn(Optional.of(existingUser));
 
-            // then
-            assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.DUPLICATED_KAKAO_EMAIL);
-        }
+    // when & then
+    assertThatThrownBy(() -> service.validateDuplicatedEmail(email))
+        .isInstanceOf(UserException.class)
+        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_KAKAO_EMAIL);
+  }
 
-        @Test
-        @DisplayName("로컬 계정 존재 → DUPLICATED_LOCAL_EMAIL 예외")
-        void validateDuplicatedEmailLocal() {
-            // given
-            given(userDuplicateValidator.duplicateEmail("local@test.com"))
-                    .willReturn(Optional.of(userWithProvider(ProviderType.LOCAL)));
+  @Test
+  @DisplayName("validateDuplicatedEmail - 로컬 계정 이메일이 중복된 경우 DUPLICATED_LOCAL_EMAIL 예외가 발생한다")
+  void validateDuplicatedEmailWhenLocalEmailIsDuplicatedThrowsLocalEmailException() {
+    // given
+    String email = "local@example.com";
+    User existingUser = User.builder().provider(ProviderType.LOCAL).build();
+    when(userDuplicateValidator.duplicateEmail(email)).thenReturn(Optional.of(existingUser));
 
-            // when
-            UserException ex = catchThrowableOfType(
-                    () -> service.validateDuplicatedEmail("local@test.com"),
-                    UserException.class
-            );
+    // when & then
+    assertThatThrownBy(() -> service.validateDuplicatedEmail(email))
+        .isInstanceOf(UserException.class)
+        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
+  }
 
-            // then
-            assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
-        }
+  @Test
+  @DisplayName("validateDuplicatedEmail - ProviderType이 null인 경우 DUPLICATED_LOCAL_EMAIL 예외가 발생한다")
+  void validateDuplicatedEmailWhenProviderTypeIsNullThrowsLocalEmailException() {
+    // given
+    String email = "null@example.com";
+    User existingUser = User.builder().provider(null).build();
+    when(userDuplicateValidator.duplicateEmail(email)).thenReturn(Optional.of(existingUser));
 
-        @Test
-        @DisplayName("알 수 없는 ProviderType → DUPLICATED_LOCAL_EMAIL 예외 처리")
-        void validateDuplicatedEmailUnknownProvider() {
-            // given
-            User user = userWithProvider(null); // 강제로 null Provider
-            given(userDuplicateValidator.duplicateEmail("unknown@test.com"))
-                    .willReturn(Optional.of(user));
-
-            // when
-            UserException ex = catchThrowableOfType(
-                    () -> service.validateDuplicatedEmail("unknown@test.com"),
-                    UserException.class
-            );
-
-            // then
-            assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
-        }
-
-        @Test
-        @DisplayName("중복 이메일 없음 → 성공 (예외 없음)")
-        void validateDuplicatedEmailSuccess() {
-            // given
-            given(userDuplicateValidator.duplicateEmail("free@test.com"))
-                    .willReturn(Optional.empty());
-
-            // when & then
-            assertThatCode(() -> service.validateDuplicatedEmail("free@test.com"))
-                    .doesNotThrowAnyException();
-        }
-    }
+    // when & then
+    assertThatThrownBy(() -> service.validateDuplicatedEmail(email))
+        .isInstanceOf(UserException.class)
+        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
+  }
 }

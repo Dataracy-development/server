@@ -1,11 +1,14 @@
 package com.dataracy.modules.reference.application.service.query;
 
-import com.dataracy.modules.reference.application.dto.response.allview.AllOccupationsResponse;
-import com.dataracy.modules.reference.application.dto.response.singleview.OccupationResponse;
-import com.dataracy.modules.reference.application.mapper.OccupationDtoMapper;
-import com.dataracy.modules.reference.application.port.out.OccupationPort;
-import com.dataracy.modules.reference.domain.exception.ReferenceException;
-import com.dataracy.modules.reference.domain.model.Occupation;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,171 +17,163 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.BDDMockito.*;
+import com.dataracy.modules.reference.application.dto.response.allview.AllOccupationsResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.OccupationResponse;
+import com.dataracy.modules.reference.application.mapper.OccupationDtoMapper;
+import com.dataracy.modules.reference.application.port.out.OccupationPort;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
+import com.dataracy.modules.reference.domain.model.Occupation;
+
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class OccupationQueryServiceTest {
 
-    @Mock
-    private OccupationPort occupationPort;
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
 
-    @Mock
-    private OccupationDtoMapper occupationDtoMapper;
+  @Mock private OccupationPort occupationPort;
 
-    @InjectMocks
-    private OccupationQueryService service;
+  @Mock private OccupationDtoMapper occupationDtoMapper;
 
-    @Test
-    @DisplayName("전체 직업 조회 성공")
-    void findAllOccupationsSuccess() {
-        // given
-        List<Occupation> domainList = List.of(
-                new Occupation(1L, "v1", "l1"),
-                new Occupation(2L, "v2", "l2")
-        );
-        AllOccupationsResponse mapped = new AllOccupationsResponse(
-                List.of(
-                        new OccupationResponse(1L, "v1", "l1"),
-                        new OccupationResponse(2L, "v2", "l2")
-                )
-        );
-        given(occupationPort.findAllOccupations()).willReturn(domainList);
-        given(occupationDtoMapper.toResponseDto(domainList)).willReturn(mapped);
+  @InjectMocks private OccupationQueryService service;
 
-        // when
-        AllOccupationsResponse result = service.findAllOccupations();
+  @Test
+  @DisplayName("전체 직업 조회 성공")
+  void findAllOccupationsSuccess() {
+    // given
+    List<Occupation> domainList =
+        List.of(new Occupation(1L, "v1", "l1"), new Occupation(2L, "v2", "l2"));
+    AllOccupationsResponse mapped =
+        new AllOccupationsResponse(
+            List.of(
+                new OccupationResponse(1L, "v1", "l1"), new OccupationResponse(2L, "v2", "l2")));
+    given(occupationPort.findAllOccupations()).willReturn(domainList);
+    given(occupationDtoMapper.toResponseDto(domainList)).willReturn(mapped);
 
-        // then
-        assertThat(result).isSameAs(mapped);
-        then(occupationPort).should().findAllOccupations();
-        then(occupationDtoMapper).should().toResponseDto(domainList);
-    }
+    // when
+    AllOccupationsResponse result = service.findAllOccupations();
 
-    @Test
-    @DisplayName("직업 단건 조회 성공")
-    void findOccupationSuccess() {
-        // given
-        Long id = 10L;
-        Occupation domain = new Occupation(id, "v", "l");
-        OccupationResponse mapped = new OccupationResponse(id, "v", "l");
-        given(occupationPort.findOccupationById(id)).willReturn(Optional.of(domain));
-        given(occupationDtoMapper.toResponseDto(domain)).willReturn(mapped);
+    // then
+    assertThat(result).isSameAs(mapped);
+    then(occupationPort).should().findAllOccupations();
+    then(occupationDtoMapper).should().toResponseDto(domainList);
+  }
 
-        // when
-        OccupationResponse result = service.findOccupation(id);
+  @Test
+  @DisplayName("직업 단건 조회 성공")
+  void findOccupationSuccess() {
+    // given
+    Long id = 10L;
+    Occupation domain = new Occupation(id, "v", "l");
+    OccupationResponse mapped = new OccupationResponse(id, "v", "l");
+    given(occupationPort.findOccupationById(id)).willReturn(Optional.of(domain));
+    given(occupationDtoMapper.toResponseDto(domain)).willReturn(mapped);
 
-        // then
-        assertThat(result).isSameAs(mapped);
-        then(occupationPort).should().findOccupationById(id);
-        then(occupationDtoMapper).should().toResponseDto(domain);
-    }
+    // when
+    OccupationResponse result = service.findOccupation(id);
 
-    @Test
-    @DisplayName("직업 단건 조회 실패 - 없을 때 예외 발생")
-    void findOccupationFailWhenNotFound() {
-        // given
-        Long id = 999L;
-        given(occupationPort.findOccupationById(id)).willReturn(Optional.empty());
+    // then
+    assertThat(result).isSameAs(mapped);
+    then(occupationPort).should().findOccupationById(id);
+    then(occupationDtoMapper).should().toResponseDto(domain);
+  }
 
-        // when
-        ReferenceException ex = catchThrowableOfType(
-                () -> service.findOccupation(id),
-                ReferenceException.class
-        );
+  @Test
+  @DisplayName("직업 단건 조회 실패 - 없을 때 예외 발생")
+  void findOccupationFailWhenNotFound() {
+    // given
+    Long id = 999L;
+    given(occupationPort.findOccupationById(id)).willReturn(Optional.empty());
 
-        // then
-        assertThat(ex).isNotNull();
-        then(occupationPort).should().findOccupationById(id);
-        then(occupationDtoMapper).shouldHaveNoInteractions();
-    }
+    // when
+    ReferenceException ex =
+        catchThrowableOfType(() -> service.findOccupation(id), ReferenceException.class);
 
-    @Test
-    @DisplayName("직업 라벨 조회 성공")
-    void getLabelByIdSuccess() {
-        // given
-        Long id = 1L;
-        given(occupationPort.getLabelById(id)).willReturn(Optional.of("label"));
+    // then
+    assertThat(ex).isNotNull();
+    then(occupationPort).should().findOccupationById(id);
+    then(occupationDtoMapper).shouldHaveNoInteractions();
+  }
 
-        // when
-        String label = service.getLabelById(id);
+  @Test
+  @DisplayName("직업 라벨 조회 성공")
+  void getLabelByIdSuccess() {
+    // given
+    Long id = 1L;
+    given(occupationPort.getLabelById(id)).willReturn(Optional.of("label"));
 
-        // then
-        assertThat(label).isEqualTo("label");
-        then(occupationPort).should().getLabelById(id);
-    }
+    // when
+    String label = service.getLabelById(id);
 
-    @Test
-    @DisplayName("직업 라벨 조회 실패 - 없을 때 예외 발생")
-    void getLabelByIdFailWhenNotFound() {
-        // given
-        Long id = 404L;
-        given(occupationPort.getLabelById(id)).willReturn(Optional.empty());
+    // then
+    assertThat(label).isEqualTo("label");
+    then(occupationPort).should().getLabelById(id);
+  }
 
-        // when
-        ReferenceException ex = catchThrowableOfType(
-                () -> service.getLabelById(id),
-                ReferenceException.class
-        );
+  @Test
+  @DisplayName("직업 라벨 조회 실패 - 없을 때 예외 발생")
+  void getLabelByIdFailWhenNotFound() {
+    // given
+    Long id = 404L;
+    given(occupationPort.getLabelById(id)).willReturn(Optional.empty());
 
-        // then
-        assertThat(ex).isNotNull();
-        then(occupationPort).should().getLabelById(id);
-    }
+    // when
+    ReferenceException ex =
+        catchThrowableOfType(() -> service.getLabelById(id), ReferenceException.class);
 
-    @Test
-    @DisplayName("직업 검증 성공 - 존재할 때")
-    void validateOccupationSuccess() {
-        // given
-        Long id = 1L;
-        given(occupationPort.existsOccupationById(id)).willReturn(true);
+    // then
+    assertThat(ex).isNotNull();
+    then(occupationPort).should().getLabelById(id);
+  }
 
-        // when
-        service.validateOccupation(id);
+  @Test
+  @DisplayName("직업 검증 성공 - 존재할 때")
+  void validateOccupationSuccess() {
+    // given
+    Long id = 1L;
+    given(occupationPort.existsOccupationById(id)).willReturn(true);
 
-        // then
-        then(occupationPort).should().existsOccupationById(id);
-    }
+    // when
+    service.validateOccupation(id);
 
-    @Test
-    @DisplayName("직업 검증 실패 - 없을 때 예외 발생")
-    void validateOccupationFailWhenNotFound() {
-        // given
-        Long id = 2L;
-        given(occupationPort.existsOccupationById(id)).willReturn(false);
+    // then
+    then(occupationPort).should().existsOccupationById(id);
+  }
 
-        // when
-        ReferenceException ex = catchThrowableOfType(
-                () -> service.validateOccupation(id),
-                ReferenceException.class
-        );
+  @Test
+  @DisplayName("직업 검증 실패 - 없을 때 예외 발생")
+  void validateOccupationFailWhenNotFound() {
+    // given
+    Long id = 2L;
+    given(occupationPort.existsOccupationById(id)).willReturn(false);
 
-        // then
-        assertThat(ex).isNotNull();
-        then(occupationPort).should().existsOccupationById(id);
-    }
+    // when
+    ReferenceException ex =
+        catchThrowableOfType(() -> service.validateOccupation(id), ReferenceException.class);
 
-    @Test
-    @DisplayName("직업 라벨 다건 조회 성공 및 빈 값 처리")
-    void getLabelsByIdsSuccessAndEmptyHandling() {
-        // given - empty/null
-        assertThat(service.getLabelsByIds(null)).isEmpty();
-        assertThat(service.getLabelsByIds(List.of())).isEmpty();
+    // then
+    assertThat(ex).isNotNull();
+    then(occupationPort).should().existsOccupationById(id);
+  }
 
-        // given - values
-        List<Long> ids = List.of(1L, 2L);
-        given(occupationPort.getLabelsByIds(ids)).willReturn(Map.of(1L, "L1", 2L, "L2"));
+  @Test
+  @DisplayName("직업 라벨 다건 조회 성공 및 빈 값 처리")
+  void getLabelsByIdsSuccessAndEmptyHandling() {
+    // given - empty/null
+    assertAll(
+        () -> assertThat(service.getLabelsByIds(null)).isEmpty(),
+        () -> assertThat(service.getLabelsByIds(List.of())).isEmpty());
 
-        // when
-        Map<Long, String> result = service.getLabelsByIds(ids);
+    // given - values
+    List<Long> ids = List.of(1L, 2L);
+    given(occupationPort.getLabelsByIds(ids)).willReturn(Map.of(1L, "L1", 2L, "L2"));
 
-        // then
-        assertThat(result).containsEntry(1L, "L1").containsEntry(2L, "L2");
-        then(occupationPort).should().getLabelsByIds(ids);
-    }
+    // when
+    Map<Long, String> result = service.getLabelsByIds(ids);
+
+    // then
+    assertThat(result).containsEntry(1L, "L1").containsEntry(2L, "L2");
+    then(occupationPort).should().getLabelsByIds(ids);
+  }
 }
