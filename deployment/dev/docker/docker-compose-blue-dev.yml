@@ -1,20 +1,19 @@
 services:
-  backend-dev-blue:
-    image: juuuunny/backend:dev-blue
-    container_name: backend-dev-blue
+  backend-dev-green:
+    image: juuuunny/backend:dev-green
+    container_name: backend-dev-green
     restart: always
     ports:
-      - "8081:8080"
+      - "8082:8080"
     env_file:
       - /home/ubuntu/env-config/.env.dev
     environment:
       SPRING_PROFILES_ACTIVE: dev
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 20
-      start_period: 120s
+      interval: 15s
+      timeout: 5s
+      retries: 10
     networks:
       - dataracy-network-dev
 
