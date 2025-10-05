@@ -3,6 +3,7 @@ package com.dataracy.modules.user.application.service.command.content;
 import java.time.Instant;
 import java.util.List;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +35,6 @@ import com.dataracy.modules.user.domain.exception.UserException;
 import com.dataracy.modules.user.domain.status.UserErrorStatus;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationContext;
 
 @Service
 @RequiredArgsConstructor
@@ -64,8 +64,8 @@ public class UserCommandService
   private final ApplicationContext applicationContext;
 
   /**
-   * Spring 프록시를 통해 @Transactional과 @DistributedLock이 작동하도록 하는 메서드입니다.
-   * ApplicationContext를 통해 프록시된 빈을 가져옵니다.
+   * Spring 프록시를 통해 @Transactional과 @DistributedLock이 작동하도록 하는 메서드입니다. ApplicationContext를 통해 프록시된
+   * 빈을 가져옵니다.
    *
    * @return 프록시된 UserCommandService 인스턴스
    */

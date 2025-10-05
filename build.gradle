@@ -2,11 +2,16 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.11'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id 'jacoco'
-	id 'org.sonarqube' version '4.2.1.3168'
-	id 'checkstyle'
-	id 'com.github.spotbugs' version '6.0.29'
-	id 'com.diffplug.spotless' version '6.23.3'
+
+	// ===== 코드 품질 도구 설정 =====
+	// 일상 개발용 (항상 활성화)
+	id 'checkstyle'                    // 코드 스타일 검사
+	id 'com.diffplug.spotless' version '6.23.3'  // 자동 포맷팅
+
+	// 품질 분석용 (필요시 활성화)
+	// id 'jacoco'                     // 테스트 커버리지: ./gradlew jacocoTestReport
+	// id 'org.sonarqube' version '4.2.1.3168'  // 종합 분석: ./gradlew sonar
+	// id 'com.github.spotbugs' version '5.0.14'  // 버그 검사: ./gradlew spotbugsMain
 }
 
 group = 'com'
@@ -160,20 +165,20 @@ dependencies {
 }
 
 tasks.named('compileJava', JavaCompile).configure {
-	options.generatedSourceOutputDirectory = file("$build/generated/sources/annotationProcessor/java/main")
+	options.generatedSourceOutputDirectory = file("$buildDir/generated/sources/annotationProcessor/java/main")
 }
 
 sourceSets {
 	main {
 		java {
-			srcDirs += "$build/generated/sources/annotationProcessor/java/main"
+			srcDirs += "$buildDir/generated/sources/annotationProcessor/java/main"
 		}
 	}
 }
 
 tasks.named('compileJava') {
 	doFirst {
-		def generatedDir = file("$build/generated/sources/annotationProcessor/java/main")
+		def generatedDir = file("$buildDir/generated/sources/annotationProcessor/java/main")
 		if (generatedDir.exists()) {
 			generatedDir.deleteDir()
 		}
@@ -182,7 +187,7 @@ tasks.named('compileJava') {
 
 tasks.named('test') {
 	useJUnitPlatform()
-	finalizedBy jacocoTestReport
+	// finalizedBy jacocoTestReport  // JaCoCo 활성화 시 주석 해제
 
 	// CI 환경에서는 통합 테스트 제외 (외부 서버 의존성)
 	def isCI = System.getenv("CI") == "true"
@@ -203,93 +208,67 @@ tasks.named('test') {
 	}
 }
 
-jacocoTestReport {
-	dependsOn test
-	reports {
-		xml.required = true
-		html.required = true
-		csv.required = false
-	}
-}
+// ===== JaCoCo 설정 (필요시 활성화) =====
+// jacocoTestReport {
+//	dependsOn test
+//	reports {
+//		xml.required = true
+//		html.required = true
+//		csv.required = false
+//	}
+// }
+//
+// jacocoTestCoverageVerification {
+//	violationRules {
+//		rule {
+//			limit {
+//				minimum = 0.80
+//			}
+//		}
+//	}
+// }
 
-jacocoTestCoverageVerification {
-	violationRules {
-		rule {
-			limit {
-				minimum = 0.80
-			}
-		}
-	}
-}
+// ===== SonarQube 설정 (필요시 활성화) =====
+// sonarqube {
+//	properties {
+//		property "sonar.projectKey", "dataracy"
+//		property "sonar.projectName", "dataracy"
+//		property "sonar.host.url", "http://localhost:9000"
+//		property "sonar.login", "admin"
+//		property "sonar.password", "Juuuunny123@"
+//		property "sonar.sources", "src/main/java"
+//		property "sonar.tests", "src/test/java"
+//		property "sonar.java.binaries", "build/classes/java/main"
+//		property "sonar.java.test.binaries", "build/classes/java/test"
+//		property "sonar.java.coveragePlugin", "jacoco"
+//		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+//		property "sonar.coverage.exclusions", "**/config/**/*,**/exception/**/*,**/dto/**/*,**/entity/**/*,**/vo/**/*"
+//		property "sonar.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store,**/config/**/*,**/dto/**/*,**/exception/**/*,**/entity/**/*,**/vo/**/*,**/domain/model/**/*,**/domain/enums/**/*,**/domain/entity/**/*"
+//		property "sonar.test.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store"
+//		property "sonar.sourceEncoding", "UTF-8"
+//		property "sonar.java.libraries", "build/libs/*.jar"
+//		property "sonar.java.source", "17"
+//		property "sonar.java.target", "17"
+//		property "sonar.qualitygate.wait", "false"
+//		property "sonar.qualitygate.timeout", "300"
+//		property "sonar.coverage.minimum", "70"
+//		property "sonar.coverage.target", "80"
+//		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+//		property "sonar.newCode.coverage.minimum", "0"
+//		property "sonar.newCode.period", "previous_version"
+//		property "sonar.duplicated_lines_density.maximum", "5"
+//		property "sonar.ncloc.minimum", "100"
+//		property "sonar.analysis.mode", "publish"
+//		property "sonar.issuesReport.console.enable", "true"
+//		property "sonar.verbose", "false"
+//		property "sonar.security.hotspots", "true"
+//		property "sonar.vulnerabilities", "true"
+//		property "sonar.cpd.java.minimumtokens", "100"
+//		property "sonar.cpd.minimumtokens", "100"
+//	}
+// }
 
-sonarqube {
-	properties {
-		// 프로젝트 기본 정보
-		property "sonar.projectKey", "dataracy"
-		property "sonar.projectName", "dataracy"
-		property "sonar.projectVersion", version
-		property "sonar.organization", "dataracy"
-		property "sonar.host.url", "http://localhost:9000"
-		property "sonar.login", "admin"
-		property "sonar.password", "Juuuunny123@"
-
-		// 소스 코드 경로
-		property "sonar.sources", "src/main/java"
-		property "sonar.tests", "src/test/java"
-		property "sonar.java.binaries", "build/classes/java/main"
-		property "sonar.java.test.binaries", "build/classes/java/test"
-
-		// 커버리지 설정
-		property "sonar.java.coveragePlugin", "jacoco"
-		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
-		property "sonar.coverage.exclusions", "**/config/**/*,**/exception/**/*,**/dto/**/*,**/entity/**/*,**/vo/**/*"
-
-		// 파일 제외 설정 (도메인 모델, DTO, VO 등 제외)
-		property "sonar.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store,**/config/**/*,**/dto/**/*,**/exception/**/*,**/entity/**/*,**/vo/**/*,**/domain/model/**/*,**/domain/enums/**/*,**/domain/entity/**/*"
-		property "sonar.test.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store"
-
-		// 코드 품질 설정
-		property "sonar.sourceEncoding", "UTF-8"
-		property "sonar.java.libraries", "build/libs/*.jar"
-		property "sonar.java.source", "17"
-		property "sonar.java.target", "17"
-
-		// 품질 게이트 설정 (임시 비활성화)
-		property "sonar.qualitygate.wait", "false"  // Quality Gate 대기 비활성화
-		property "sonar.qualitygate.timeout", "300"
-
-		// Quality Gate 설정 파일 사용 (임시 비활성화)
-		// property "sonar.qualitygate.config", "quality-gate.yml"
-
-		// 커버리지 기준 설정 (quality-gate.yml과 동기화)
-		property "sonar.coverage.minimum", "70"  // 71.4%에 맞춰 70%로 설정
-		property "sonar.coverage.target", "80"   // 목표 커버리지
-		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
-		
-		// New Code 커버리지 기준 완화 (기존 코드 수정 시에도 적용)
-		property "sonar.newCode.coverage.minimum", "0"  // New Code 커버리지 최소 기준을 0%로 설정
-		property "sonar.newCode.period", "previous_version"  // New Code 기준을 이전 버전으로 설정
-
-		// 코드 품질 기준 설정
-		property "sonar.duplicated_lines_density.maximum", "5"  // 중복 코드 최대 5%
-		property "sonar.ncloc.minimum", "100"  // 최소 코드 라인 수
-
-		// 분석 설정
-		property "sonar.analysis.mode", "publish"
-		property "sonar.issuesReport.console.enable", "true"
-		property "sonar.verbose", "false"
-
-		// 보안 및 취약점 설정
-		property "sonar.security.hotspots", "true"
-		property "sonar.vulnerabilities", "true"
-
-		// 중복 코드 설정
-		property "sonar.cpd.java.minimumtokens", "100"
-		property "sonar.cpd.minimumtokens", "100"
-	}
-}
-
-// Checkstyle 설정
+// ===== Checkstyle 설정 (항상 활성화) =====
 checkstyle {
 	toolVersion = '10.12.4'
 	configFile = file('checkstyle.xml')
@@ -297,61 +276,48 @@ checkstyle {
 	maxWarnings = 100
 }
 
-// SpotBugs 설정 - 경로 문제 해결을 위한 완전한 설정
-spotbugs {
-	toolVersion = '4.8.3'
-	effort = 'max'
-	reportLevel = 'low'
-	ignoreFailures = true
-	excludeFilter = file('spotbugs-exclude.xml')  // 실무적으로 무해한 버그들 제외
-}
+// ===== SpotBugs 설정 (필요시 활성화) =====
+// spotbugs {
+//	toolVersion = '4.8.3'
+//	effort = 'max'
+//	reportLevel = 'low'
+//	ignoreFailures = true
+//	excludeFilter = file('spotbugs-exclude.xml')
+// }
+//
+// spotbugsMain {
+//	dependsOn compileJava
+//	classes = fileTree("$buildDir/classes/java/main") {
+//		exclude '**/Q*.class'  // QueryDSL Q클래스 제외
+//	}
+//	reports {
+//		html {
+//			required = true
+//			outputLocation = file("$buildDir/reports/spotbugs/main.html")
+//		}
+//		xml {
+//			required = true
+//			outputLocation = file("$buildDir/reports/spotbugs/main.xml")
+//		}
+//	}
+// }
+//
+// spotbugsTest {
+//	dependsOn compileTestJava
+//	classes = fileTree("$buildDir/classes/java/test")
+//	reports {
+//		html {
+//			required = true
+//			outputLocation = file("$buildDir/reports/spotbugs/test.html")
+//		}
+//		xml {
+//			required = true
+//			outputLocation = file("$buildDir/reports/spotbugs/test.xml")
+//		}
+//	}
+// }
 
-// SpotBugs Main 태스크 - 경로 문제 해결
-tasks.register('spotbugsMainFixed', com.github.spotbugs.snom.SpotBugsTask) {
-	group = 'verification'
-	description = 'Run SpotBugs analysis on main source set'
-
-	dependsOn compileJava
-
-	// 클래스 파일만 분석 (소스 파일 경로 문제 회피)
-	classes = files("$buildDir/classes/java/main").asFileTree.matching {
-		exclude '**/Q*.class'  // QueryDSL Q클래스 제외
-	}
-
-	reports {
-		html {
-			required = true
-			outputLocation = file("$buildDir/reports/spotbugs/main.html")
-		}
-		xml {
-			required = true
-			outputLocation = file("$buildDir/reports/spotbugs/main.xml")
-		}
-	}
-}
-
-// SpotBugs Test 태스크 - 경로 문제 해결
-tasks.register('spotbugsTestFixed', com.github.spotbugs.snom.SpotBugsTask) {
-	group = 'verification'
-	description = 'Run SpotBugs analysis on test source set'
-
-	dependsOn compileTestJava
-
-	classes = files("$buildDir/classes/java/test").asFileTree
-
-	reports {
-		html {
-			required = true
-			outputLocation = file("$buildDir/reports/spotbugs/test.html")
-		}
-		xml {
-			required = true
-			outputLocation = file("$buildDir/reports/spotbugs/test.xml")
-		}
-	}
-}
-
-// Spotless 설정 - 코드 스타일 100% 통일
+// ===== Spotless 설정 (항상 활성화) =====
 spotless {
 	java {
 		// Google Java Format 적용 - 일관된 들여쓰기, 괄호 배치

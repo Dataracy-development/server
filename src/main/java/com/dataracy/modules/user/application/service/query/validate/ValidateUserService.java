@@ -59,13 +59,14 @@ public class ValidateUserService implements DuplicateNicknameUseCase, DuplicateE
   public void validateDuplicatedEmail(String email) {
     Instant startTime =
         LoggerFactory.service()
-            .logStart(DUPLICATE_EMAIL_USE_CASE, DUPLICATE_EMAIL_MESSAGE + email + " 중복 여부 확인 서비스 시작");
+            .logStart(
+                DUPLICATE_EMAIL_USE_CASE, DUPLICATE_EMAIL_MESSAGE + email + " 중복 여부 확인 서비스 시작");
     Optional<User> existingUser = userDuplicateValidator.duplicateEmail(email);
     if (existingUser.isPresent()) {
       User user = existingUser.get();
       ProviderType providerType = user.getProvider();
       UserErrorStatus errorStatus;
-      
+
       if (providerType == null) {
         errorStatus = UserErrorStatus.DUPLICATED_LOCAL_EMAIL;
       } else {
@@ -82,7 +83,7 @@ public class ValidateUserService implements DuplicateNicknameUseCase, DuplicateE
             break;
         }
       }
-      
+
       LoggerFactory.service()
           .logWarning(
               DUPLICATE_EMAIL_USE_CASE,
@@ -91,6 +92,8 @@ public class ValidateUserService implements DuplicateNicknameUseCase, DuplicateE
     }
     LoggerFactory.service()
         .logSuccess(
-            DUPLICATE_EMAIL_USE_CASE, DUPLICATE_EMAIL_MESSAGE + email + " 중복 여부 확인 서비스 성공", startTime);
+            DUPLICATE_EMAIL_USE_CASE,
+            DUPLICATE_EMAIL_MESSAGE + email + " 중복 여부 확인 서비스 성공",
+            startTime);
   }
 }
