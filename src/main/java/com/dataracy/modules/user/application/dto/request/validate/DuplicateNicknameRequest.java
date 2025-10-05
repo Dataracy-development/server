@@ -5,6 +5,4 @@ package com.dataracy.modules.user.application.dto.request.validate;
  *
  * @param nickname 닉네임
  */
-public record DuplicateNicknameRequest(
-        String nickname
-) {}
+public record DuplicateNicknameRequest(String nickname) {}

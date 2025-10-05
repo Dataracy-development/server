@@ -32,6 +32,10 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
   kafka:
     bootstrap-servers: ${KAFKA_SERVER_HOST}:${KAFKA_SERVER_PORT}
+    listener:
+      long:
+        concurrency: 2
+        poll-timeout: 3000 # 개발 환경: 3초
 
 swagger:
   title: Dataracy

@@ -14,11 +14,10 @@ import java.time.LocalDateTime;
  * @param createdAt 생성 일시
  */
 public record RecentMinimalDataResponse(
-        Long id,
-        String title,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String dataThumbnailUrl,
-        LocalDateTime createdAt
-) {}
+    Long id,
+    String title,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String dataThumbnailUrl,
+    LocalDateTime createdAt) {}

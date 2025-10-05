@@ -8,9 +8,4 @@ package com.dataracy.modules.auth.application.dto.response;
  * @param provider 제공자
  * @param providerId 제공자로부터 받은 유저 id
  */
-public record OAuthUserInfo(
-        String email,
-        String name,
-        String provider,
-        String providerId
-) {}
+public record OAuthUserInfo(String email, String name, String provider, String providerId) {}

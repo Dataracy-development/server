@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+<!-- Record 클래스에서 발생하는 EI_EXPOSE_REP 시리즈 제외 -->
+<!-- Record는 불변성을 보장하므로 실제 보안 위험이 없음 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2" />
+	<Class name="~.*Response$|~.*Info$|~.*Request$" />
+</Match>
+
+<!-- Lombok @Getter에서 발생하는 EI_EXPOSE_REP 시리즈 제외 -->
+<!-- JPA Entity나 일반적인 DTO에서 표준적인 사용 패턴 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2" />
+	<Class name="~.*Entity$" />
+</Match>
+
+<!-- Java 13+ 텍스트 블록에서 발생하는 VA_FORMAT_STRING_USES_NEWLINE 제외 -->
+<!-- 텍스트 블록 내의 줄바꿈은 정상적인 사용 -->
+<Match>
+	<Bug pattern="VA_FORMAT_STRING_USES_NEWLINE" />
+	<Class name="~.*Factory$" />
+</Match>
+
+<!-- Spring @Autowired 패턴에서 발생하는 UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR 제외 -->
+<!-- Spring의 의존성 주입 패턴으로 실제 문제 없음 -->
+<Match>
+	<Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
+	<Class name="~.*Worker$" />
+</Match>
+
+<!-- Spring 의존성 주입에서 발생하는 EI_EXPOSE_REP2 제외 -->
+<!-- @Component, @Service, @Controller 등에서 의존성 주입은 정상적인 패턴 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP2" />
+	<Class name="~.*Handler$|~.*Controller$|~.*Service$|~.*Adapter$|~.*Config$|~.*Properties$|~.*Provider$|~.*Manager$|~.*Repository$" />
+</Match>
+
+<!-- Spring 의존성 주입에서 발생하는 EI_EXPOSE_REP 제외 -->
+<!-- @Component, @Service, @Controller 등에서 의존성 주입은 정상적인 패턴 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP" />
+	<Class name="~.*Handler$|~.*Controller$|~.*Service$|~.*Adapter$|~.*Config$|~.*Properties$|~.*Provider$|~.*Manager$|~.*Repository$" />
+</Match>
+
+<!-- Utility 클래스에서 발생하는 CT_CONSTRUCTOR_THROW 제외 -->
+<!-- private 생성자만으로도 충분히 인스턴스화 방지 가능 -->
+<Match>
+	<Bug pattern="CT_CONSTRUCTOR_THROW" />
+	<Class name="~.*Factory$|~.*Util$" />
+</Match>
+
+<!-- 테스트 코드에서 발생하는 UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR 제외 -->
+<!-- 테스트 코드에서 흔한 패턴 -->
+<Match>
+	<Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
+	<Class name="~.*Test$|~.*Test.*" />
+</Match>
+
+<!-- Random 객체를 한 번만 사용하는 DMI_RANDOM_USED_ONLY_ONCE 제외 -->
+<!-- 성능상 비효율적이지만 기능상 문제 없음 -->
+<Match>
+	<Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
+</Match>
+
+<!-- 내부 클래스 관련 SIC_INNER_SHOULD_BE_STATIC_ANON 제외 -->
+<!-- 실무적으로 무해한 패턴 -->
+<Match>
+	<Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON" />
+</Match>
+
+<!-- Serializable 관련 SE_TRANSIENT_FIELD_NOT_RESTORED 제외 -->
+<!-- 실무적으로 무해한 패턴 -->
+<Match>
+	<Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED" />
+</Match>
+
+<!-- 정수 연산 관련 ICAST_INTEGER_MULTIPLY_CAST_TO_LONG 제외 -->
+<!-- 실무적으로 무해한 패턴 -->
+<Match>
+	<Bug pattern="ICAST_INTEGER_MULTIPLY_CAST_TO_LONG" />
+</Match>
+
+<!-- 일반적인 예외 처리 REC_CATCH_EXCEPTION 제외 -->
+<!-- 실무적으로 무해한 패턴 -->
+<Match>
+	<Bug pattern="REC_CATCH_EXCEPTION" />
+</Match>
+
+<!-- Spring ConfigurationProperties에서 발생하는 EI_EXPOSE_REP2 제외 -->
+<!-- Spring Boot 설정 클래스는 정상적인 패턴 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP2" />
+	<Class name="~.*Properties$" />
+</Match>
+
+<!-- Spring 의존성 주입에서 발생하는 UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR 제외 -->
+<!-- @Autowired, @Value 등으로 초기화되는 필드는 정상적인 패턴 -->
+<Match>
+	<Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
+	<Class name="~.*Config$|~.*Properties$|~.*Service$|~.*Controller$|~.*Adapter$" />
+</Match>
+
+<!-- 사용되지 않는 필드 URF_UNREAD_FIELD 제외 -->
+<!-- Lombok 등에서 발생하는 경우가 많으며, 실제 코드에 영향 없음 -->
+<Match>
+	<Bug pattern="URF_UNREAD_FIELD" />
+</Match>
+
+<!-- 사용되지 않는 public/protected 필드 URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD 제외 -->
+<!-- Lombok 등에서 발생하는 경우가 많으며, 실제 코드에 영향 없음 -->
+<Match>
+	<Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />
+</Match>
+
+<!-- switch 문에 default가 없는 SF_SWITCH_NO_DEFAULT 제외 -->
+<!-- 모든 enum 값을 처리하는 경우 default가 필요 없을 수 있음 -->
+<Match>
+	<Bug pattern="SF_SWITCH_NO_DEFAULT" />
+</Match>
+
+<!-- 반환값을 무시하는 RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT, RV_RETURN_VALUE_IGNORED_BAD_PRACTICE 제외 -->
+<!-- 의도적으로 반환값을 사용하지 않는 경우가 많음 -->
+<Match>
+	<Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT" />
+</Match>
+<Match>
+	<Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" />
+</Match>
+
+<!-- 혼란스러운 메서드명 NM_CONFUSING 제외 -->
+<!-- 명명 규칙은 팀의 컨벤션에 따름 -->
+<Match>
+	<Bug pattern="NM_CONFUSING" />
+</Match>
+
+<!-- 내부 클래스 관련 SIC_INNER_SHOULD_BE_STATIC_ANON 제외 -->
+<!-- 실무적으로 무해한 패턴 -->
+<Match>
+	<Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON" />
+</Match>
+
+<!-- Request/Response DTO에서 발생하는 EI_EXPOSE_REP 제외 -->
+<!-- DTO는 단순 데이터 전달용이므로 실무적으로 무해함 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP" />
+	<Class name="~.*Request$|~.*Response$|~.*Dto$|~.*Info$|~.*VO$" />
+</Match>
+
+<!-- Lombok @Getter에서 발생하는 EI_EXPOSE_REP 제외 -->
+<!-- Lombok이 자동 생성하는 getter는 실무적으로 무해함 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP" />
+	<Method name="~get.*" />
+</Match>
+
+<!-- Lombok Builder 패턴에서 발생하는 EI_EXPOSE_REP2 제외 -->
+<!-- Builder는 객체 생성 시에만 사용되므로 실무적으로 무해함 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP2" />
+	<Class name="~.*\$.*Builder$" />
+</Match>
+
+<!-- Spring 의존성 주입에서 발생하는 모든 EI_EXPOSE_REP2 제외 -->
+<!-- Spring 프레임워크의 정상적인 사용 패턴 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP2" />
+	<Class name="~.*Service$|~.*Controller$|~.*Adapter$|~.*Config$|~.*Repository$|~.*Worker$|~.*Handler$|~.*Manager$|~.*Provider$|~.*Factory$|~.*Util$|~.*Properties$" />
+</Match>
+
+<!-- 모든 EI_EXPOSE_REP2 제외 (Spring 프레임워크 정상 패턴) -->
+<!-- Spring 의존성 주입, ConfigurationProperties, Self-injection 등 모두 실무적으로 무해함 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP2" />
+</Match>
+
+<!-- UserInfo record 클래스에서 발생하는 EI_EXPOSE_REP 제외 -->
+<!-- Record는 불변성을 보장하므로 실제 보안 위험이 없음 -->
+<Match>
+	<Bug pattern="EI_EXPOSE_REP" />
+	<Class name="com.dataracy.modules.user.domain.model.vo.UserInfo" />
+</Match>
+
+<!-- 테스트 코드에서 발생하는 NP_LOAD_OF_KNOWN_NULL_VALUE 제외 -->
+<!-- 테스트에서는 의도적으로 null을 사용하는 것이 정상적인 패턴 -->
+<Match>
+	<Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE" />
+</Match>
+</FindBugsFilter>

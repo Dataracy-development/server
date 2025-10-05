@@ -1,11 +1,12 @@
 package com.dataracy.modules.project.adapter.jpa.entity;
 
+import java.time.LocalDateTime;
+
 import com.dataracy.modules.common.base.BaseTimeEntity;
 import com.dataracy.modules.project.domain.enums.ProjectEsProjectionType;
+
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -14,58 +15,57 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(
-        name = "project_es_projection_queue",
-        indexes = {
-                @Index(name = "idx_proj_status_next_run_at", columnList = "status,nextRunAt"),
-                @Index(name = "idx_proj_project_id", columnList = "projectId")
-        }
-)
+    name = "project_es_projection_queue",
+    indexes = {
+      @Index(name = "idx_proj_status_next_run_at", columnList = "status,nextRunAt"),
+      @Index(name = "idx_proj_project_id", columnList = "projectId")
+    })
 public class ProjectEsProjectionTaskEntity extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    // 어떤 프로젝트 문서를 업데이트할지
-    @Column(nullable = false)
-    private Long projectId;
+  // 어떤 프로젝트 문서를 업데이트할지
+  @Column(nullable = false)
+  private Long projectId;
 
-    // 증감치: 댓글/좋아요 둘 다 지원
-    @Column(nullable = false)
-    @Builder.Default
-    private Integer deltaComment = 0;
+  // 증감치: 댓글/좋아요 둘 다 지원
+  @Column(nullable = false)
+  @Builder.Default
+  private Integer deltaComment = 0;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private Integer deltaLike = 0;
+  @Column(nullable = false)
+  @Builder.Default
+  private Integer deltaLike = 0;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private Long deltaView = 0L;
+  @Column(nullable = false)
+  @Builder.Default
+  private Long deltaView = 0L;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean setDeleted = false;
+  @Column(nullable = false)
+  @Builder.Default
+  private Boolean setDeleted = false;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @Builder.Default
-    private ProjectEsProjectionType status = ProjectEsProjectionType.PENDING;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  @Builder.Default
+  private ProjectEsProjectionType status = ProjectEsProjectionType.PENDING;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private Integer retryCount = 0;
+  @Column(nullable = false)
+  @Builder.Default
+  private Integer retryCount = 0;
 
-    @Column(nullable = false)
-    private LocalDateTime nextRunAt;  // 다음 시도 시간
+  @Column(nullable = false)
+  private LocalDateTime nextRunAt; // 다음 시도 시간
 
-    @Lob
-    @Column(columnDefinition = "TEXT")
-    private String lastError;
+  @Lob
+  @Column(columnDefinition = "TEXT")
+  private String lastError;
 
-    @PrePersist
-    public void prePersist() {
-        if (nextRunAt == null) {
-            nextRunAt = LocalDateTime.now();
-        }
+  @PrePersist
+  public void prePersist() {
+    if (nextRunAt == null) {
+      nextRunAt = LocalDateTime.now();
     }
+  }
 }

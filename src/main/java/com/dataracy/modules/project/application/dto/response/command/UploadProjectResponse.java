@@ -5,6 +5,4 @@ package com.dataracy.modules.project.application.dto.response.command;
  *
  * @param id 프로젝트 ID
  */
-public record UploadProjectResponse(
-        Long id
-) {}
+public record UploadProjectResponse(Long id) {}

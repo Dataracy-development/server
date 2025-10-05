@@ -8,7 +8,5 @@ import com.dataracy.modules.user.application.dto.request.PasswordConfirmable;
  * @param password 비밀번호
  * @param passwordConfirm 비밀번호 확인
  */
-public record ChangePasswordRequest(
-        String password,
-        String passwordConfirm
-) implements PasswordConfirmable {}
+public record ChangePasswordRequest(String password, String passwordConfirm)
+    implements PasswordConfirmable {}

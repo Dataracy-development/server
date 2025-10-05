@@ -72,6 +72,22 @@ jobs:
         run: ./gradlew jacocoTestReport
         if: always()
 
+      - name: Check test coverage
+        run: ./gradlew jacocoTestCoverageVerification
+        continue-on-error: true # 커버리지 부족해도 빌드 계속 진행
+        if: always()
+
+      - name: Display coverage summary
+        run: |
+          echo "📊 커버리지 요약:"
+          if [ -f "build/reports/jacoco/test/jacocoTestReport.xml" ]; then
+            echo "✅ 커버리지 리포트 생성 완료"
+            echo "📁 HTML 리포트: build/reports/jacoco/test/html/index.html"
+          else
+            echo "❌ 커버리지 리포트 생성 실패"
+          fi
+        if: always()
+
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()

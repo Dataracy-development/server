@@ -17,14 +17,13 @@ import java.time.LocalDateTime;
  * @param createdAt 작성 시기
  */
 public record ParentProjectResponse(
-        Long id,
-        String title,
-        String content,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        Long commentCount,
-        Long likeCount,
-        Long viewCount,
-        LocalDateTime createdAt
-) {}
+    Long id,
+    String title,
+    String content,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    Long commentCount,
+    Long likeCount,
+    Long viewCount,
+    LocalDateTime createdAt) {}

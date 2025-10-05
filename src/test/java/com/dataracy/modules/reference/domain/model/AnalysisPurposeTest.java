@@ -1,87 +1,95 @@
 package com.dataracy.modules.reference.domain.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("AnalysisPurpose 테스트")
 class AnalysisPurposeTest {
 
-    @Test
-    @DisplayName("AnalysisPurpose record 생성 및 속성 확인")
-    void analysisPurpose_ShouldCreateCorrectly() {
-        // Given
-        Long id = 1L;
-        String value = "research";
-        String label = "연구";
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
 
-        // When
-        AnalysisPurpose analysisPurpose = new AnalysisPurpose(id, value, label);
+  @Test
+  @DisplayName("AnalysisPurpose record 생성 및 속성 확인")
+  void analysisPurposeShouldCreateCorrectly() {
+    // Given
+    Long id = 1L;
+    String value = "research";
+    String label = "연구";
 
-        // Then
-        assertThat(analysisPurpose.id()).isEqualTo(id);
-        assertThat(analysisPurpose.value()).isEqualTo(value);
-        assertThat(analysisPurpose.label()).isEqualTo(label);
-    }
+    // When
+    AnalysisPurpose analysisPurpose = new AnalysisPurpose(id, value, label);
 
-    @Test
-    @DisplayName("AnalysisPurpose record equals 및 hashCode 테스트")
-    void analysisPurpose_ShouldHaveCorrectEqualsAndHashCode() {
-        // Given
-        AnalysisPurpose analysisPurpose1 = new AnalysisPurpose(1L, "business", "비즈니스");
-        AnalysisPurpose analysisPurpose2 = new AnalysisPurpose(1L, "business", "비즈니스");
-        AnalysisPurpose analysisPurpose3 = new AnalysisPurpose(2L, "business", "비즈니스");
+    // Then
+    assertAll(
+        () -> assertThat(analysisPurpose.id()).isEqualTo(id),
+        () -> assertThat(analysisPurpose.value()).isEqualTo(value),
+        () -> assertThat(analysisPurpose.label()).isEqualTo(label));
+  }
 
-        // When & Then
-        assertThat(analysisPurpose1).isEqualTo(analysisPurpose2);
-        assertThat(analysisPurpose1.hashCode()).isEqualTo(analysisPurpose2.hashCode());
-        assertThat(analysisPurpose1).isNotEqualTo(analysisPurpose3);
-    }
+  @Test
+  @DisplayName("AnalysisPurpose record equals 및 hashCode 테스트")
+  void analysisPurposeShouldHaveCorrectEqualsAndHashCode() {
+    // Given
+    AnalysisPurpose analysisPurpose1 = new AnalysisPurpose(1L, "business", "비즈니스");
+    AnalysisPurpose analysisPurpose2 = new AnalysisPurpose(1L, "business", "비즈니스");
+    AnalysisPurpose analysisPurpose3 = new AnalysisPurpose(2L, "business", "비즈니스");
 
-    @Test
-    @DisplayName("AnalysisPurpose record toString 테스트")
-    void analysisPurpose_ShouldHaveCorrectToString() {
-        // Given
-        AnalysisPurpose analysisPurpose = new AnalysisPurpose(1L, "education", "교육");
+    // When & Then
+    assertThat(analysisPurpose1)
+        .isEqualTo(analysisPurpose2)
+        .hasSameHashCodeAs(analysisPurpose2)
+        .isNotEqualTo(analysisPurpose3);
+  }
 
-        // When
-        String toString = analysisPurpose.toString();
+  @Test
+  @DisplayName("AnalysisPurpose record toString 테스트")
+  void analysisPurposeShouldHaveCorrectToString() {
+    // Given
+    AnalysisPurpose analysisPurpose = new AnalysisPurpose(1L, "education", "교육");
 
-        // Then
-        assertThat(toString).contains("AnalysisPurpose");
-        assertThat(toString).contains("1");
-        assertThat(toString).contains("education");
-        assertThat(toString).contains("교육");
-    }
+    // When
+    String toString = analysisPurpose.toString();
 
-    @Test
-    @DisplayName("AnalysisPurpose record - null 값 처리")
-    void analysisPurpose_ShouldHandleNullValues() {
-        // Given & When
-        AnalysisPurpose analysisPurpose = new AnalysisPurpose(null, null, null);
+    // Then
+    assertThat(toString)
+        .contains("AnalysisPurpose")
+        .contains("1")
+        .contains("education")
+        .contains("교육");
+  }
 
-        // Then
-        assertThat(analysisPurpose.id()).isNull();
-        assertThat(analysisPurpose.value()).isNull();
-        assertThat(analysisPurpose.label()).isNull();
-    }
+  @Test
+  @DisplayName("AnalysisPurpose record - null 값 처리")
+  void analysisPurposeShouldHandleNullValues() {
+    // Given & When
+    AnalysisPurpose analysisPurpose = new AnalysisPurpose(null, null, null);
 
-    @Test
-    @DisplayName("AnalysisPurpose record - 다양한 분석 목적들 테스트")
-    void analysisPurpose_ShouldHandleVariousPurposes() {
-        // Given & When
-        AnalysisPurpose analysisPurpose1 = new AnalysisPurpose(1L, "research", "연구");
-        AnalysisPurpose analysisPurpose2 = new AnalysisPurpose(2L, "business", "비즈니스");
-        AnalysisPurpose analysisPurpose3 = new AnalysisPurpose(3L, "education", "교육");
+    // Then
+    assertAll(
+        () -> assertThat(analysisPurpose.id()).isNull(),
+        () -> assertThat(analysisPurpose.value()).isNull(),
+        () -> assertThat(analysisPurpose.label()).isNull());
+  }
 
-        // Then
-        assertThat(analysisPurpose1.value()).isEqualTo("research");
-        assertThat(analysisPurpose2.value()).isEqualTo("business");
-        assertThat(analysisPurpose3.value()).isEqualTo("education");
-        
-        assertThat(analysisPurpose1.label()).isEqualTo("연구");
-        assertThat(analysisPurpose2.label()).isEqualTo("비즈니스");
-        assertThat(analysisPurpose3.label()).isEqualTo("교육");
-    }
+  @Test
+  @DisplayName("AnalysisPurpose record - 다양한 분석 목적들 테스트")
+  void analysisPurposeShouldHandleVariousPurposes() {
+    // Given & When
+    AnalysisPurpose analysisPurpose1 = new AnalysisPurpose(1L, "research", "연구");
+    AnalysisPurpose analysisPurpose2 = new AnalysisPurpose(2L, "business", "비즈니스");
+    AnalysisPurpose analysisPurpose3 = new AnalysisPurpose(3L, "education", "교육");
+
+    // Then
+    assertAll(
+        () -> assertThat(analysisPurpose1.value()).isEqualTo("research"),
+        () -> assertThat(analysisPurpose2.value()).isEqualTo("business"),
+        () -> assertThat(analysisPurpose3.value()).isEqualTo("education"),
+        () -> assertThat(analysisPurpose1.label()).isEqualTo("연구"),
+        () -> assertThat(analysisPurpose2.label()).isEqualTo("비즈니스"),
+        () -> assertThat(analysisPurpose3.label()).isEqualTo("교육"));
+  }
 }

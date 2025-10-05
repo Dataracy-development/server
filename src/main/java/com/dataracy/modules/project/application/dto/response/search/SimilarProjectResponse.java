@@ -19,18 +19,17 @@ package com.dataracy.modules.project.application.dto.response.search;
  * @param viewCount 조회 수
  */
 public record SimilarProjectResponse(
-        Long id,
-        String title,
-        String content,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String projectThumbnailUrl,
-        String topicLabel,
-        String analysisPurposeLabel,
-        String dataSourceLabel,
-        String authorLevelLabel,
-        Long commentCount,
-        Long likeCount,
-        Long viewCount
-) {}
+    Long id,
+    String title,
+    String content,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String projectThumbnailUrl,
+    String topicLabel,
+    String analysisPurposeLabel,
+    String dataSourceLabel,
+    String authorLevelLabel,
+    Long commentCount,
+    Long likeCount,
+    Long viewCount) {}

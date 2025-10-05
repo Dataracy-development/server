@@ -1,10 +1,30 @@
 package com.dataracy.modules.user.application.service.command.content;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
-import com.dataracy.modules.auth.application.port.in.token.BlackListTokenUseCase;
 import com.dataracy.modules.auth.application.port.in.token.ManageRefreshTokenUseCase;
 import com.dataracy.modules.auth.domain.exception.AuthException;
 import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
+import com.dataracy.modules.common.exception.CommonException;
+import com.dataracy.modules.common.status.CommonErrorStatus;
 import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
 import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
 import com.dataracy.modules.reference.application.port.in.occupation.ValidateOccupationUseCase;
@@ -13,262 +33,329 @@ import com.dataracy.modules.reference.application.port.in.visitsource.ValidateVi
 import com.dataracy.modules.user.application.dto.request.command.ModifyUserInfoRequest;
 import com.dataracy.modules.user.application.port.in.validate.DuplicateNicknameUseCase;
 import com.dataracy.modules.user.application.port.out.command.UserCommandPort;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.multipart.MultipartFile;
+import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
+import com.dataracy.modules.user.domain.exception.UserException;
+import com.dataracy.modules.user.domain.status.UserErrorStatus;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class UserCommandServiceTest {
 
-    @Mock
-    private UserCommandPort userCommandPort;
+  @InjectMocks private UserCommandService service;
 
-    @Mock
-    private com.dataracy.modules.user.application.port.out.query.UserQueryPort userQueryPort;
+  @Mock private UserCommandPort userCommandPort;
 
-    @Mock
-    private DuplicateNicknameUseCase duplicateNicknameUseCase;
+  @Mock private UserQueryPort userQueryPort;
 
-    @Mock
-    private ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
+  @Mock private DuplicateNicknameUseCase duplicateNicknameUseCase;
 
-    @Mock
-    private ValidateOccupationUseCase validateOccupationUseCase;
+  @Mock private ValidateAuthorLevelUseCase validateAuthorLevelUseCase;
 
-    @Mock
-    private ValidateVisitSourceUseCase validateVisitSourceUseCase;
+  @Mock private ValidateOccupationUseCase validateOccupationUseCase;
 
-    @Mock
-    private ValidateTopicUseCase validateTopicUseCase;
+  @Mock private ValidateVisitSourceUseCase validateVisitSourceUseCase;
 
-    @Mock
-    private FileCommandUseCase fileCommandUseCase;
+  @Mock private ValidateTopicUseCase validateTopicUseCase;
 
-    @Mock
-    private MultipartFile profileImageFile;
+  @Mock private FileCommandUseCase fileCommandUseCase;
 
-    @Mock
-    private JwtValidateUseCase jwtValidateUseCase;
+  @Mock private JwtValidateUseCase jwtValidateUseCase;
 
-    @Mock
-    private ManageRefreshTokenUseCase manageRefreshTokenUseCase;
+  @Mock private ManageRefreshTokenUseCase manageRefreshTokenUseCase;
 
-    @InjectMocks
-    private UserCommandService service;
+  @Mock private org.springframework.context.ApplicationContext applicationContext;
 
-    @Captor
-    private ArgumentCaptor<String> stringCaptor;
+  @Mock private MultipartFile profileImageFile;
 
-    @BeforeEach
-    void setUp() {
-        // Self-injection 설정 (Spring AOP 프록시를 통한 @DistributedLock 작동을 위함)
-        service.setSelf(service);
+  @BeforeEach
+  void setUp() {
+    // ApplicationContext mock 설정 - getSelf() 메서드가 자기 자신을 반환하도록
+    when(applicationContext.getBean(UserCommandService.class)).thenReturn(service);
+  }
+
+  private ModifyUserInfoRequest createSampleModifyRequest() {
+    return new ModifyUserInfoRequest("testuser", 1L, 1L, List.of(1L, 2L), 1L, "Test Introduction");
+  }
+
+  @Nested
+  @DisplayName("사용자 정보 수정")
+  class ModifyUserInfo {
+
+    @Test
+    @DisplayName("사용자 정보 수정 성공 - 닉네임 변경")
+    void modifyUserInfoSuccessWithNicknameChange() {
+      // given
+      Long userId = 1L;
+      ModifyUserInfoRequest request = createSampleModifyRequest();
+      String savedNickname = "oldsaveduser";
+
+      // Mock MultipartFile 설정
+      given(profileImageFile.isEmpty()).willReturn(false);
+      given(profileImageFile.getOriginalFilename()).willReturn("profile.jpg");
+      given(profileImageFile.getSize()).willReturn(1024L);
+
+      given(userQueryPort.findNicknameById(userId))
+          .willReturn(java.util.Optional.of(savedNickname));
+      willDoNothing().given(duplicateNicknameUseCase).validateDuplicatedNickname(anyString());
+      willDoNothing().given(validateAuthorLevelUseCase).validateAuthorLevel(anyLong());
+      willDoNothing().given(validateOccupationUseCase).validateOccupation(anyLong());
+      willDoNothing().given(validateVisitSourceUseCase).validateVisitSource(anyLong());
+      willDoNothing().given(validateTopicUseCase).validateTopic(anyLong());
+      willDoNothing().given(userCommandPort).modifyUserInfo(anyLong(), any());
+      given(fileCommandUseCase.uploadFile(anyString(), any())).willReturn("uploaded-url");
+
+      // when
+      service.modifyUserInfo(userId, profileImageFile, request);
+
+      // then
+      then(userCommandPort).should().modifyUserInfo(userId, request);
+      then(fileCommandUseCase).should().uploadFile(anyString(), any());
     }
 
-    @Nested
-    @DisplayName("modifyUserInfo")
-    class ModifyUserInfo {
+    @Test
+    @DisplayName("사용자 정보 수정 성공 - 닉네임 변경 없음")
+    void modifyUserInfoSuccessWithoutNicknameChange() {
+      // given
+      Long userId = 1L;
+      ModifyUserInfoRequest request = createSampleModifyRequest();
+      String savedNickname = "testuser"; // 동일한 닉네임
 
-        @Nested
-        @DisplayName("성공 케이스")
-        class Success {
+      // Mock MultipartFile 설정
+      given(profileImageFile.isEmpty()).willReturn(false);
+      given(profileImageFile.getOriginalFilename()).willReturn("profile.jpg");
+      given(profileImageFile.getSize()).willReturn(1024L);
 
-            @Test
-            @DisplayName("프로필 이미지 없이 회원정보 수정 성공")
-            void successWithoutImage() {
-                // given
-                Long userId = 1L;
-                ModifyUserInfoRequest req = new ModifyUserInfoRequest(
-                        "닉네임", 2L, 3L, List.of(10L, 20L), 4L, "자기소개"
-                );
-                MultipartFile nullImageFile = null;
-                
-                // Mock 설정
-                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
+      given(userQueryPort.findNicknameById(userId))
+          .willReturn(java.util.Optional.of(savedNickname));
+      willDoNothing().given(validateAuthorLevelUseCase).validateAuthorLevel(anyLong());
+      willDoNothing().given(validateOccupationUseCase).validateOccupation(anyLong());
+      willDoNothing().given(validateVisitSourceUseCase).validateVisitSource(anyLong());
+      willDoNothing().given(validateTopicUseCase).validateTopic(anyLong());
+      willDoNothing().given(userCommandPort).modifyUserInfo(anyLong(), any());
+      given(fileCommandUseCase.uploadFile(anyString(), any())).willReturn("uploaded-url");
 
-                // when
-                service.modifyUserInfo(userId, nullImageFile, req);
+      // when
+      service.modifyUserInfo(userId, profileImageFile, request);
 
-                // then
-                then(duplicateNicknameUseCase).should().validateDuplicatedNickname("닉네임");
-                then(validateAuthorLevelUseCase).should().validateAuthorLevel(2L);
-                then(validateOccupationUseCase).should().validateOccupation(3L);
-                then(validateVisitSourceUseCase).should().validateVisitSource(4L);
-                then(validateTopicUseCase).should(times(2)).validateTopic(anyLong());
-
-                then(userCommandPort).should().modifyUserInfo(userId, req);
-                then(userCommandPort).should(never()).updateProfileImageFile(anyLong(), anyString());
-            }
-
-            @Test
-            @DisplayName("프로필 이미지와 함께 회원정보 수정 성공")
-            void successWithImage() {
-                // given
-                Long userId = 1L;
-                ModifyUserInfoRequest req = new ModifyUserInfoRequest(
-                        "닉네임", 2L, null, List.of(), null, "소개"
-                );
-                given(profileImageFile.isEmpty()).willReturn(false);
-                given(profileImageFile.getOriginalFilename()).willReturn("profile.png");
-                given(fileCommandUseCase.uploadFile(anyString(), eq(profileImageFile)))
-                        .willReturn("https://s3.bucket/profile.png");
-                
-                // Mock 설정
-                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
-
-                // when
-                service.modifyUserInfo(userId, profileImageFile, req);
-
-                // then
-                then(userCommandPort).should().modifyUserInfo(userId, req);
-                then(fileCommandUseCase).should().uploadFile(stringCaptor.capture(), eq(profileImageFile));
-                then(userCommandPort).should().updateProfileImageFile(eq(userId), eq("https://s3.bucket/profile.png"));
-
-                assertThat(stringCaptor.getValue()).contains("user/" + userId);
-            }
-        }
-
-        @Nested
-        @DisplayName("실패 케이스")
-        class Fail {
-
-            @Test
-            @DisplayName("닉네임 중복 시 예외 발생")
-            void failDuplicatedNickname() {
-                // given
-                Long userId = 1L;
-                ModifyUserInfoRequest req = new ModifyUserInfoRequest(
-                        "중복닉", 2L, null, List.of(10L), 5L, "소개"
-                );
-                
-                // Mock 설정
-                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
-
-                willThrow(new  IllegalArgumentException("닉네임 중복"))
-                        .given(duplicateNicknameUseCase).validateDuplicatedNickname("중복닉");
-
-                // when
-                IllegalArgumentException ex = catchThrowableOfType(
-                        () -> service.modifyUserInfo(userId, null, req),
-                        IllegalArgumentException.class
-                );
-
-                // then
-                assertThat(ex).isNotNull();
-                assertThat(ex.getMessage()).isEqualTo("닉네임 중복");
-            }
-
-            @Test
-            @DisplayName("이미지 파일 검증 실패 시 예외 발생")
-            void failInvalidImage() {
-                // given
-                Long userId = 1L;
-                ModifyUserInfoRequest req = new ModifyUserInfoRequest(
-                        "닉네임", 2L, null, List.of(20L), null,"소개"
-                );
-                
-                // Mock 설정
-                given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.of("기존닉네임"));
-
-                willThrow(new  IllegalArgumentException("잘못된 이미지"))
-                        .given(profileImageFile).getOriginalFilename();
-
-                // when
-                IllegalArgumentException ex = catchThrowableOfType(
-                        () -> service.modifyUserInfo(userId, profileImageFile, req),
-                        IllegalArgumentException.class
-                );
-
-                // then
-                assertThat(ex).isNotNull();
-                assertThat(ex.getMessage()).isEqualTo("잘못된 이미지");
-            }
-        }
+      // then
+      then(userCommandPort).should().modifyUserInfo(userId, request);
+      then(duplicateNicknameUseCase).should(never()).validateDuplicatedNickname(anyString());
     }
 
-    @Nested
-    @DisplayName("withdrawUser")
-    class WithdrawUser {
+    @Test
+    @DisplayName("사용자 정보 수정 실패 - 사용자가 존재하지 않음")
+    void modifyUserInfoFailUserNotFound() {
+      // given
+      Long userId = 999L;
+      ModifyUserInfoRequest request = createSampleModifyRequest();
 
-        @Test
-        @DisplayName("회원 탈퇴 성공")
-        void success() {
-            // given
-            Long userId = 1L;
+      given(userQueryPort.findNicknameById(userId)).willReturn(java.util.Optional.empty());
 
-            // when
-            service.withdrawUser(userId);
-
-            // then
-            then(userCommandPort).should().withdrawalUser(userId);
-        }
+      // when & then
+      UserException ex =
+          catchThrowableOfType(
+              () -> service.modifyUserInfo(userId, profileImageFile, request), UserException.class);
+      assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.NOT_FOUND_USER);
     }
 
-    @Nested
-    @DisplayName("logout")
-    class Logout {
+    @Test
+    @DisplayName("사용자 정보 수정 실패 - 파일 업로드 실패")
+    void modifyUserInfoFailFileUploadFailure() {
+      // given
+      Long userId = 1L;
+      ModifyUserInfoRequest request = createSampleModifyRequest();
+      String savedNickname = "oldsaveduser";
 
-        @Test
-        @DisplayName("성공: 유저의 refreshToken 삭제")
-        void success() {
-            // given
-            Long userId = 1L;
-            String refreshToken = "valid-refresh-token";
-            given(jwtValidateUseCase.getUserIdFromToken(refreshToken)).willReturn(userId);
+      // Mock MultipartFile 설정
+      given(profileImageFile.isEmpty()).willReturn(false);
+      given(profileImageFile.getOriginalFilename()).willReturn("profile.jpg");
+      given(profileImageFile.getSize()).willReturn(1024L);
 
-            // when
-            service.logout(userId, refreshToken);
+      given(userQueryPort.findNicknameById(userId))
+          .willReturn(java.util.Optional.of(savedNickname));
+      willDoNothing().given(duplicateNicknameUseCase).validateDuplicatedNickname(anyString());
+      willDoNothing().given(validateAuthorLevelUseCase).validateAuthorLevel(anyLong());
+      willDoNothing().given(validateOccupationUseCase).validateOccupation(anyLong());
+      willDoNothing().given(validateVisitSourceUseCase).validateVisitSource(anyLong());
+      willDoNothing().given(validateTopicUseCase).validateTopic(anyLong());
+      willDoNothing().given(userCommandPort).modifyUserInfo(anyLong(), any());
+      given(fileCommandUseCase.uploadFile(anyString(), any()))
+          .willThrow(new RuntimeException("Upload failed"));
 
-            // then
-            then(jwtValidateUseCase).should().getUserIdFromToken(refreshToken);
-            then(manageRefreshTokenUseCase).should().deleteRefreshToken(String.valueOf(userId));
-        }
-
-        @Test
-        @DisplayName("실패: 만료된 리프레시 토큰일 경우 AuthException(EXPIRED_REFRESH_TOKEN) 발생")
-        void fail_expiredToken() {
-            // given
-            Long userId = 1L;
-            String refreshToken = "expired-refresh-token";
-            given(jwtValidateUseCase.getUserIdFromToken(refreshToken)).willReturn(null);
-
-            // when
-            AuthException ex = catchThrowableOfType(() -> service.logout(userId, refreshToken), AuthException.class);
-
-            // then
-            assertThat(ex.getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
-            then(manageRefreshTokenUseCase).should(never()).deleteRefreshToken(anyString());
-        }
-
-        @Test
-        @DisplayName("실패: 토큰의 userId와 요청 userId가 다를 경우 AuthException(REFRESH_TOKEN_USER_MISMATCH_IN_REDIS) 발생")
-        void fail_userMismatch() {
-            // given
-            Long userId = 1L;
-            String refreshToken = "other-user-refresh-token";
-            given(jwtValidateUseCase.getUserIdFromToken(refreshToken)).willReturn(2L);
-
-            // when
-            AuthException ex = catchThrowableOfType(() -> service.logout(userId, refreshToken), AuthException.class);
-
-            // then
-            assertThat(ex.getErrorCode()).isEqualTo(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
-            then(manageRefreshTokenUseCase).should(never()).deleteRefreshToken(anyString());
-        }
+      // when & then
+      CommonException ex =
+          catchThrowableOfType(
+              () -> service.modifyUserInfo(userId, profileImageFile, request),
+              CommonException.class);
+      assertThat(ex.getErrorCode()).isEqualTo(CommonErrorStatus.FILE_UPLOAD_FAILURE);
     }
+
+    @Test
+    @DisplayName("사용자 정보 수정 성공 - null 프로필 이미지")
+    void modifyUserInfoSuccessWithNullProfileImage() {
+      // given
+      Long userId = 1L;
+      ModifyUserInfoRequest request = createSampleModifyRequest();
+      String savedNickname = "oldsaveduser";
+
+      given(userQueryPort.findNicknameById(userId))
+          .willReturn(java.util.Optional.of(savedNickname));
+      willDoNothing().given(duplicateNicknameUseCase).validateDuplicatedNickname(anyString());
+      willDoNothing().given(validateAuthorLevelUseCase).validateAuthorLevel(anyLong());
+      willDoNothing().given(validateOccupationUseCase).validateOccupation(anyLong());
+      willDoNothing().given(validateVisitSourceUseCase).validateVisitSource(anyLong());
+      willDoNothing().given(validateTopicUseCase).validateTopic(anyLong());
+      willDoNothing().given(userCommandPort).modifyUserInfo(anyLong(), any());
+
+      // when
+      service.modifyUserInfo(userId, null, request);
+
+      // then
+      then(userCommandPort).should().modifyUserInfo(userId, request);
+      then(fileCommandUseCase).should(never()).uploadFile(anyString(), any());
+    }
+  }
+
+  @Nested
+  @DisplayName("사용자 탈퇴")
+  class WithdrawUser {
+
+    @Test
+    @DisplayName("사용자 탈퇴 성공")
+    void withdrawUserSuccess() {
+      // given
+      Long userId = 1L;
+      willDoNothing().given(userCommandPort).withdrawalUser(userId);
+
+      // when
+      service.withdrawUser(userId);
+
+      // then
+      then(userCommandPort).should().withdrawalUser(userId);
+    }
+
+    @Test
+    @DisplayName("사용자 탈퇴 성공 - 음수 사용자 ID")
+    void withdrawUserSuccessWithNegativeId() {
+      // given
+      Long negativeUserId = -1L;
+      willDoNothing().given(userCommandPort).withdrawalUser(negativeUserId);
+
+      // when
+      service.withdrawUser(negativeUserId);
+
+      // then
+      then(userCommandPort).should().withdrawalUser(negativeUserId);
+    }
+  }
+
+  @Nested
+  @DisplayName("사용자 로그아웃")
+  class LogoutUser {
+
+    @Test
+    @DisplayName("사용자 로그아웃 성공")
+    void logoutUserSuccess() {
+      // given
+      Long userId = 1L;
+      String refreshToken = "valid-refresh-token";
+
+      given(jwtValidateUseCase.getUserIdFromToken(refreshToken)).willReturn(userId);
+      willDoNothing().given(manageRefreshTokenUseCase).deleteRefreshToken(anyString());
+
+      // when
+      service.logout(userId, refreshToken);
+
+      // then
+      then(manageRefreshTokenUseCase).should().deleteRefreshToken(String.valueOf(userId));
+    }
+
+    @Test
+    @DisplayName("사용자 로그아웃 실패 - 만료된 리프레시 토큰")
+    void logoutUserFailExpiredRefreshToken() {
+      // given
+      Long userId = 1L;
+      String expiredRefreshToken = "expired-refresh-token";
+
+      given(jwtValidateUseCase.getUserIdFromToken(expiredRefreshToken)).willReturn(null);
+
+      // when & then
+      AuthException ex =
+          catchThrowableOfType(
+              () -> service.logout(userId, expiredRefreshToken), AuthException.class);
+      assertThat(ex.getErrorCode()).isEqualTo(AuthErrorStatus.EXPIRED_REFRESH_TOKEN);
+    }
+
+    @Test
+    @DisplayName("사용자 로그아웃 실패 - 사용자 ID 불일치")
+    void logoutUserFailUserMismatch() {
+      // given
+      Long userId = 1L;
+      Long differentUserId = 2L;
+      String refreshToken = "valid-refresh-token";
+
+      given(jwtValidateUseCase.getUserIdFromToken(refreshToken)).willReturn(differentUserId);
+
+      // when & then
+      AuthException ex =
+          catchThrowableOfType(() -> service.logout(userId, refreshToken), AuthException.class);
+      assertThat(ex.getErrorCode()).isEqualTo(AuthErrorStatus.REFRESH_TOKEN_USER_MISMATCH_IN_REDIS);
+    }
+  }
+
+  @Nested
+  @DisplayName("경계값 테스트")
+  class BoundaryTests {
+
+    @Test
+    @DisplayName("null 사용자 ID로 정보 수정")
+    void modifyUserInfoWithNullUserId() {
+      // given
+      ModifyUserInfoRequest request = createSampleModifyRequest();
+
+      given(userQueryPort.findNicknameById(null)).willReturn(java.util.Optional.empty());
+
+      // when & then
+      UserException ex =
+          catchThrowableOfType(
+              () -> service.modifyUserInfo(null, profileImageFile, request), UserException.class);
+      assertThat(ex.getErrorCode()).isEqualTo(UserErrorStatus.NOT_FOUND_USER);
+    }
+
+    @Test
+    @DisplayName("빈 토픽 ID 리스트로 정보 수정")
+    void modifyUserInfoWithEmptyTopicIds() {
+      // given
+      Long userId = 1L;
+      ModifyUserInfoRequest request =
+          new ModifyUserInfoRequest(
+              "testuser",
+              1L,
+              1L,
+              List.of(), // 빈 토픽 ID 리스트
+              1L,
+              "Test Introduction");
+      String savedNickname = "oldsaveduser";
+
+      given(userQueryPort.findNicknameById(userId))
+          .willReturn(java.util.Optional.of(savedNickname));
+      willDoNothing().given(duplicateNicknameUseCase).validateDuplicatedNickname(anyString());
+      willDoNothing().given(validateAuthorLevelUseCase).validateAuthorLevel(anyLong());
+      willDoNothing().given(validateOccupationUseCase).validateOccupation(anyLong());
+      willDoNothing().given(validateVisitSourceUseCase).validateVisitSource(anyLong());
+      willDoNothing().given(userCommandPort).modifyUserInfo(anyLong(), any());
+
+      // Mock MultipartFile 설정
+      given(profileImageFile.isEmpty()).willReturn(false);
+      given(profileImageFile.getOriginalFilename()).willReturn("test.jpg");
+      given(profileImageFile.getSize()).willReturn(1024L);
+
+      // when
+      service.modifyUserInfo(userId, profileImageFile, request);
+
+      // then
+      then(userCommandPort).should().modifyUserInfo(userId, request);
+      then(validateTopicUseCase).should(never()).validateTopic(anyLong());
+    }
+  }
 }

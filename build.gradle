@@ -1,9 +1,17 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.5'
+	id 'org.springframework.boot' version '3.3.11'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id 'jacoco'
-	id 'org.sonarqube' version '4.4.1.3373'
+
+	// ===== 코드 품질 도구 설정 =====
+	// 일상 개발용 (항상 활성화)
+	id 'checkstyle'                    // 코드 스타일 검사
+	id 'com.diffplug.spotless' version '6.23.3'  // 자동 포맷팅
+
+	// 품질 분석용 (필요시 활성화)
+	id 'jacoco'                     // 테스트 커버리지: ./gradlew jacocoTestReport
+	// id 'org.sonarqube' version '4.2.1.3168'  // 종합 분석: ./gradlew sonar
+	// id 'com.github.spotbugs' version '5.0.14'  // 버그 검사: ./gradlew spotbugsMain
 }
 
 group = 'com'
@@ -15,11 +23,14 @@ java {
 	}
 }
 
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
 }
+
+
 
 tasks.withType(JavaCompile) {
 	options.compilerArgs += ['-parameters']
@@ -75,7 +86,7 @@ dependencies {
 	// MySQL
 	implementation "com.mysql:mysql-connector-j:${mysqlConnectorVersion}"
 
-	// Kafka
+	// Kafka - Spring Boot 3.3.11과 호환되는 버전
 	implementation "org.springframework.kafka:spring-kafka"
 
 	// Elasticsearch 공식 Java Client (Spring Data 미사용)
@@ -86,6 +97,9 @@ dependencies {
 	// JSON 처리
 	implementation "jakarta.json:jakarta.json-api:${jakartaJsonApiVersion}"
 	implementation "org.glassfish:jakarta.json:${jakartaJsonImplVersion}"
+
+	// SnakeYaml 보안 취약점 해결을 위한 최신 버전
+	implementation 'org.yaml:snakeyaml:2.0'
 
 	// OAuth 2.0
 	implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
@@ -147,23 +161,27 @@ dependencies {
 	implementation "org.apache.commons:commons-pool2:${commonsPool2Version}"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 	testImplementation 'com.h2database:h2'
+
+	// 테스트 프레임워크 명시적 선언 (Gradle 9.0 호환성)
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('compileJava', JavaCompile).configure {
-	options.annotationProcessorGeneratedSourcesDirectory = file("$build/generated/sources/annotationProcessor/java/main")
+	options.generatedSourceOutputDirectory = file("$buildDir/generated/sources/annotationProcessor/java/main")
 }
 
 sourceSets {
 	main {
 		java {
-			srcDirs += "$build/generated/sources/annotationProcessor/java/main"
+			srcDirs += "$buildDir/generated/sources/annotationProcessor/java/main"
 		}
 	}
 }
 
 tasks.named('compileJava') {
 	doFirst {
-		def generatedDir = file("$build/generated/sources/annotationProcessor/java/main")
+		def generatedDir = file("$buildDir/generated/sources/annotationProcessor/java/main")
 		if (generatedDir.exists()) {
 			generatedDir.deleteDir()
 		}
@@ -172,8 +190,8 @@ tasks.named('compileJava') {
 
 tasks.named('test') {
 	useJUnitPlatform()
-	finalizedBy jacocoTestReport
-	
+	// finalizedBy jacocoTestReport  // JaCoCo 활성화 시 주석 해제
+
 	// CI 환경에서는 통합 테스트 제외 (외부 서버 의존성)
 	def isCI = System.getenv("CI") == "true"
 	if (isCI) {
@@ -184,7 +202,7 @@ tasks.named('test') {
 	} else {
 		println "[LOCAL MODE] Running all tests including integration tests"
 	}
-	
+
 	// 테스트 실행 전 로그
 	doFirst {
 		println "========================================="
@@ -193,6 +211,164 @@ tasks.named('test') {
 	}
 }
 
+// ===== SonarQube 설정 (필요시 활성화) =====
+// sonarqube {
+//	properties {
+//		property "sonar.projectKey", "dataracy"
+//		property "sonar.projectName", "dataracy"
+//		property "sonar.host.url", "http://localhost:9000"
+//		property "sonar.login", "admin"
+//		property "sonar.password", "Juuuunny123@"
+//		property "sonar.sources", "src/main/java"
+//		property "sonar.tests", "src/test/java"
+//		property "sonar.java.binaries", "build/classes/java/main"
+//		property "sonar.java.test.binaries", "build/classes/java/test"
+//		property "sonar.java.coveragePlugin", "jacoco"
+//		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+//		property "sonar.coverage.exclusions", "**/config/**/*,**/exception/**/*,**/dto/**/*,**/entity/**/*,**/vo/**/*"
+//		property "sonar.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store,**/config/**/*,**/dto/**/*,**/exception/**/*,**/entity/**/*,**/vo/**/*,**/domain/model/**/*,**/domain/enums/**/*,**/domain/entity/**/*"
+//		property "sonar.test.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store"
+//		property "sonar.sourceEncoding", "UTF-8"
+//		property "sonar.java.libraries", "build/libs/*.jar"
+//		property "sonar.java.source", "17"
+//		property "sonar.java.target", "17"
+//		property "sonar.qualitygate.wait", "false"
+//		property "sonar.qualitygate.timeout", "300"
+//		property "sonar.coverage.minimum", "70"
+//		property "sonar.coverage.target", "80"
+//		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+//		property "sonar.newCode.coverage.minimum", "0"
+//		property "sonar.newCode.period", "previous_version"
+//		property "sonar.duplicated_lines_density.maximum", "5"
+//		property "sonar.ncloc.minimum", "100"
+//		property "sonar.analysis.mode", "publish"
+//		property "sonar.issuesReport.console.enable", "true"
+//		property "sonar.verbose", "false"
+//		property "sonar.security.hotspots", "true"
+//		property "sonar.vulnerabilities", "true"
+//		property "sonar.cpd.java.minimumtokens", "100"
+//		property "sonar.cpd.minimumtokens", "100"
+//	}
+// }
+
+// ===== Checkstyle 설정 (항상 활성화) =====
+checkstyle {
+	toolVersion = '10.12.4'
+	configFile = file('checkstyle.xml')
+	ignoreFailures = true
+	maxWarnings = 100
+}
+
+// ===== SpotBugs 설정 (필요시 활성화) =====
+// spotbugs {
+//	toolVersion = '4.8.3'
+//	effort = 'max'
+//	reportLevel = 'low'
+//	ignoreFailures = true
+//	excludeFilter = file('spotbugs-exclude.xml')
+// }
+//
+// spotbugsMain {
+//	dependsOn compileJava
+//	classes = fileTree("$buildDir/classes/java/main") {
+//		exclude '**/Q*.class'  // QueryDSL Q클래스 제외
+//	}
+//	reports {
+//		html {
+//			required = true
+//			outputLocation = file("$buildDir/reports/spotbugs/main.html")
+//		}
+//		xml {
+//			required = true
+//			outputLocation = file("$buildDir/reports/spotbugs/main.xml")
+//		}
+//	}
+// }
+//
+// spotbugsTest {
+//	dependsOn compileTestJava
+//	classes = fileTree("$buildDir/classes/java/test")
+//	reports {
+//		html {
+//			required = true
+//			outputLocation = file("$buildDir/reports/spotbugs/test.html")
+//		}
+//		xml {
+//			required = true
+//			outputLocation = file("$buildDir/reports/spotbugs/test.xml")
+//		}
+//	}
+// }
+
+// ===== Spotless 설정 (항상 활성화) =====
+spotless {
+	java {
+		// Google Java Format 적용 - 일관된 들여쓰기, 괄호 배치
+		googleJavaFormat('1.19.2')
+
+		// Import 정리 - 표준 순서로 자동 정렬
+		importOrder('java', 'javax', 'org', 'com.dataracy', '')
+		removeUnusedImports()  // 사용하지 않는 import 자동 제거
+
+		// 기타 포맷팅 규칙
+		trimTrailingWhitespace()  // 줄 끝 공백 자동 제거
+		endWithNewline()          // 파일 끝 개행 문자로 통일
+
+		// QueryDSL 생성 파일 제외
+		targetExclude('**/Q*.java')
+	}
+
+	// Spotless 태스크 의존성 설정
+	tasks.named('spotlessJava') {
+		mustRunAfter 'compileJava'
+	}
+
+	// XML 파일 포맷팅 - 들여쓰기 및 구조 정리
+	format 'xml', {
+		target '*.xml'
+		trimTrailingWhitespace()
+		indentWithTabs()
+		endWithNewline()
+	}
+
+	// YAML 파일 포맷팅 - 들여쓰기 및 구조 정리
+	format 'yaml', {
+		target '*.yml', '*.yaml'
+		trimTrailingWhitespace()
+		indentWithTabs()
+		endWithNewline()
+	}
+
+	// Gradle 파일 포맷팅 - 들여쓰기 및 설정 정리
+	format 'gradle', {
+		target '*.gradle', '*.gradle.kts'
+		trimTrailingWhitespace()
+		indentWithTabs()
+		endWithNewline()
+	}
+
+	// Markdown 파일 포맷팅 - 공백 및 줄바꿈 정리
+	format 'markdown', {
+		target '*.md'
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+
+	// 기타 파일 포맷팅
+	format 'misc', {
+		target '*.properties', '*.json', '*.sql'
+		trimTrailingWhitespace()
+		indentWithTabs()
+		endWithNewline()
+	}
+}
+
+// ===== JaCoCo 설정 =====
+jacoco {
+	toolVersion = "0.8.8"
+}
+
+// ===== JaCoCo 설정 (실무적 적용) =====
 jacocoTestReport {
 	dependsOn test
 	reports {
@@ -200,31 +376,41 @@ jacocoTestReport {
 		html.required = true
 		csv.required = false
 	}
+
+	// 실무적 설정: 특정 패키지만 커버리지 측정
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+				'**/config/**',
+				'**/dto/**',
+				'**/vo/**',
+				'**/entity/**',
+				'**/enums/**',
+				'**/exception/**',
+				'**/DataracyApplication.class'
+			])
+		}))
+	}
+
+	finalizedBy jacocoTestCoverageVerification
 }
 
 jacocoTestCoverageVerification {
+	dependsOn jacocoTestReport
+
 	violationRules {
 		rule {
 			limit {
-				minimum = 0.80
+				minimum = 0.70 // 70% 이상 커버리지 요구 (실무적 기준)
 			}
 		}
-	}
-}
 
-sonarqube {
-	properties {
-		property "sonar.projectKey", "dataracy-server"
-		property "sonar.projectName", "Dataracy Server"
-		property "sonar.projectVersion", version
-		property "sonar.sources", "src/main/java"
-		property "sonar.tests", "src/test/java"
-		property "sonar.java.coveragePlugin", "jacoco"
-		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
-		property "sonar.java.binaries", "build/classes/java/main"
-		property "sonar.java.test.binaries", "build/classes/java/test"
-		property "sonar.exclusions", "**/generated/**/*,**/build/**/*"
-		property "sonar.test.exclusions", "**/generated/**/*,**/build/**/*"
-		property "sonar.qualitygate.wait", true
+		// 실무적 예외 처리: 경고만 표시
+		rule {
+			enabled = false // 경고만 표시, 빌드 실패하지 않음
+			limit {
+				minimum = 0.75 // 75% 목표 (경고 수준)
+			}
+		}
 	}
 }

@@ -8,7 +8,4 @@ import com.dataracy.modules.dataset.domain.model.Data;
  * @param data 데이터 도메인 객체
  * @param countConnectedProjects 연결된 프로젝트 수
  */
-public record DataWithProjectCountDto(
-        Data data,
-        Long countConnectedProjects
-) {}
+public record DataWithProjectCountDto(Data data, Long countConnectedProjects) {}

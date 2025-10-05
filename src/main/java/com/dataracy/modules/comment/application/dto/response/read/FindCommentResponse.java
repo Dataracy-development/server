@@ -17,14 +17,13 @@ import java.time.LocalDateTime;
  * @param isLiked 현재 사용자의 좋아요 여부
  */
 public record FindCommentResponse(
-        Long id,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String authorLevelLabel,
-        String content,
-        Long likeCount,
-        Long childCommentCount,
-        LocalDateTime createdAt,
-        boolean isLiked
-) {}
+    Long id,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String authorLevelLabel,
+    String content,
+    Long likeCount,
+    Long childCommentCount,
+    LocalDateTime createdAt,
+    boolean isLiked) {}

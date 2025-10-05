@@ -6,7 +6,4 @@ package com.dataracy.modules.comment.application.dto.request.command;
  * @param content 댓글 내용
  * @param parentCommentId 부모 댓글 ID(대댓글인 경우)
  */
-public record UploadCommentRequest(
-        String content,
-        Long parentCommentId
-) {}
+public record UploadCommentRequest(String content, Long parentCommentId) {}
