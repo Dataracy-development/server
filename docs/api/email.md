@@ -206,7 +206,7 @@ Authorization: Bearer {access_token}
 #### **이메일 인증 요청**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/email/verify" \
+curl -X POST "https://api.dataracy.store/api/v1/email/verify" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -217,7 +217,7 @@ curl -X POST "https://api.dataracy.co.kr/api/v1/email/verify" \
 #### **이메일 인증 확인**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/email/verify/confirm" \
+curl -X POST "https://api.dataracy.store/api/v1/email/verify/confirm" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",

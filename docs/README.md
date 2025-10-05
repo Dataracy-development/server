@@ -128,7 +128,7 @@ docs/
 ### **문서 관련 문의**
 
 - **슬랙**: #dataracy-docs
-- **이메일**: docs@dataracy.co.kr
+- **이메일**: docs@dataracy.store
 - **이슈**: GitHub Issues
 
 ### **기술 지원**

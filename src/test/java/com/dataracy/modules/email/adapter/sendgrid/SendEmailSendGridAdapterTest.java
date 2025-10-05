@@ -37,7 +37,7 @@ class SendEmailSendGridAdapterTest {
   @BeforeEach
   void init() {
     // 필수 프로퍼티 세팅
-    ReflectionTestUtils.setField(adapter, "sender", "no-reply@dataracy.co.kr");
+    ReflectionTestUtils.setField(adapter, "sender", "no-reply@dataracy.store");
   }
 
   @Nested

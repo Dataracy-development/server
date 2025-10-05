@@ -750,7 +750,7 @@ docker restart backend-blue
 ### **개발팀 연락처**
 
 - **슬랙**: #dataracy-dev
-- **이메일**: dev-team@dataracy.co.kr
+- **이메일**: dev-team@dataracy.store
 - **긴급**: +82-10-1234-5678
 
 ### **모니터링 도구**
@@ -761,7 +761,7 @@ docker restart backend-blue
 
 ### **문서 및 리소스**
 
-- **API 문서**: https://api.dataracy.co.kr/swagger-ui.html
+- **API 문서**: https://api.dataracy.store/swagger-ui.html
 - **개발 가이드**: ./docs/DEVELOPMENT_GUIDE.md
 - **배포 가이드**: ./deployment/README.md
 

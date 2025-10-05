@@ -404,7 +404,7 @@ Authorization: Bearer {access_token}
 #### **데이터셋 업로드**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/datasets" \
+curl -X POST "https://api.dataracy.store/api/v1/datasets" \
   -H "Authorization: Bearer {access_token}" \
   -F "dataFile=@dataset.csv" \
   -F "thumbnailFile=@thumbnail.jpg" \
@@ -414,7 +414,7 @@ curl -X POST "https://api.dataracy.co.kr/api/v1/datasets" \
 #### **데이터셋 검색**
 
 ```bash
-curl -X GET "https://api.dataracy.co.kr/api/v1/datasets/search?q=교통량&page=0&size=10" \
+curl -X GET "https://api.dataracy.store/api/v1/datasets/search?q=교통량&page=0&size=10" \
   -H "Content-Type: application/json"
 ```
 

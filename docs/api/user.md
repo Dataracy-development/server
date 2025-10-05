@@ -402,7 +402,7 @@ Authorization: Bearer {access_token}
 #### **회원가입**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/signup/self" \
+curl -X POST "https://api.dataracy.store/api/v1/signup/self" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -418,7 +418,7 @@ curl -X POST "https://api.dataracy.co.kr/api/v1/signup/self" \
 #### **프로필 수정**
 
 ```bash
-curl -X PUT "https://api.dataracy.co.kr/api/v1/user" \
+curl -X PUT "https://api.dataracy.store/api/v1/user" \
   -H "Authorization: Bearer {access_token}" \
   -F "webRequest={\"nickname\":\"새로운닉네임\",\"authorLevelId\":2};type=application/json" \
   -F "profileImageFile=@profile.jpg"

@@ -128,14 +128,14 @@ Authorization: Bearer {access_token}
 #### **PreSigned URL 생성**
 
 ```bash
-curl -X GET "https://api.dataracy.co.kr/api/v1/files/download-url?fileKey=uploads/document.pdf&expiresIn=600" \
+curl -X GET "https://api.dataracy.store/api/v1/files/download-url?fileKey=uploads/document.pdf&expiresIn=600" \
   -H "Authorization: Bearer {access_token}"
 ```
 
 #### **업로드 URL 생성**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/files/upload-url" \
+curl -X POST "https://api.dataracy.store/api/v1/files/upload-url" \
   -H "Authorization: Bearer {access_token}" \
   -H "Content-Type: application/json" \
   -d '{

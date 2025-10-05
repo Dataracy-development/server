@@ -371,7 +371,7 @@ git commit -m "feat: 새로운 기능 추가"
 ### **개발팀 연락처**
 
 - **슬랙**: #dataracy-dev
-- **이메일**: dev-team@dataracy.co.kr
+- **이메일**: dev-team@dataracy.store
 - **긴급**: +82-10-1234-5678
 
 ### **유용한 링크**

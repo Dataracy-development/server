@@ -95,14 +95,14 @@ Authorization: Bearer {access_token}
 #### **프로젝트 좋아요**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/projects/123/like" \
+curl -X POST "https://api.dataracy.store/api/v1/projects/123/like" \
   -H "Authorization: Bearer {access_token}"
 ```
 
 #### **댓글 좋아요**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/projects/123/comments/456/like" \
+curl -X POST "https://api.dataracy.store/api/v1/projects/123/comments/456/like" \
   -H "Authorization: Bearer {access_token}"
 ```
 

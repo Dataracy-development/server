@@ -849,7 +849,7 @@ void isPasswordMatchWhenPasswordMatchesReturnsTrue() {
 ### **테스트 관련 문의**
 
 - **슬랙**: #dataracy-testing
-- **이메일**: testing@dataracy.co.kr
+- **이메일**: testing@dataracy.store
 - **문서**: [테스트 가이드](./README.md)
 
 ### **실제 사용 도구 및 리소스**

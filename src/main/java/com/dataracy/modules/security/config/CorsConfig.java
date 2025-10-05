@@ -25,13 +25,13 @@ public class CorsConfig {
         List.of(
             "http://localhost:3000", // 프론트엔드 개발 주소
             "http://localhost:8080", // Swagger UI (같은 백엔드 서버지만, 브라우저에서 열기 때문에 Origin 임)
-            "http://dataracy.co.kr",
-            "https://dataracy.co.kr",
-            "http://www.dataracy.co.kr",
-            "https://www.dataracy.co.kr",
-            "https://api.dataracy.co.kr",
-            "http://dev-api.dataracy.co.kr:8080",
-            "https://dev-api.dataracy.co.kr:8443",
+            "http://dataracy.store",
+            "https://dataracy.store",
+            "http://www.dataracy.store",
+            "https://www.dataracy.store",
+            "https://api.dataracy.store",
+            "http://dev-api.dataracy.store:8080",
+            "https://dev-api.dataracy.store:8443",
             "http://localhost:63342",
             "https://dataracy-client.vercel.app/"));
     configuration.setAllowedMethods(

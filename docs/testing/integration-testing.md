@@ -761,7 +761,7 @@ class ApiPerformanceTest {
 ### **통합 테스트 관련 문의**
 
 - **슬랙**: #dataracy-integration-testing
-- **이메일**: testing@dataracy.co.kr
+- **이메일**: testing@dataracy.store
 - **문서**: [테스트 가이드](./README.md)
 
 ### **참고 자료**
