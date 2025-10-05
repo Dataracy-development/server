@@ -376,7 +376,7 @@ jacocoTestReport {
 		html.required = true
 		csv.required = false
 	}
-	
+
 	// 실무적 설정: 특정 패키지만 커버리지 측정
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
@@ -391,20 +391,20 @@ jacocoTestReport {
 			])
 		}))
 	}
-	
+
 	finalizedBy jacocoTestCoverageVerification
 }
 
 jacocoTestCoverageVerification {
 	dependsOn jacocoTestReport
-	
+
 	violationRules {
 		rule {
 			limit {
 				minimum = 0.70 // 70% 이상 커버리지 요구 (실무적 기준)
 			}
 		}
-		
+
 		// 실무적 예외 처리: 경고만 표시
 		rule {
 			enabled = false // 경고만 표시, 빌드 실패하지 않음
