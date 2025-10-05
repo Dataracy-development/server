@@ -42,10 +42,38 @@ out/
 .env
 .env.*
 
+# 로그 파일들 (절대 Git에 올라가면 안됨!)
 logs/
 *.log
+*.log.*
+*.out
+*.err
+server.log
 /logs/
 !/logs/.gitkeep
+
+# 시스템 로그
+system*.log
+system-error*.log
+*.log.?
+*.log.??
+*.log.???
+
+# 애플리케이션 로그
+application*.log
+spring*.log
+boot*.log
+
+# 모든 로그 패턴 (완전 차단)
+**/*.log
+**/logs/
+**/*.out
+**/*.err
+
+# 로그 디렉토리 전체
+**/log/
+**/logs/
+**/logging/
 
 /infrastructure/elasticsearch/ilm-policy.json
 /infrastructure/elasticsearch/index-template.json
