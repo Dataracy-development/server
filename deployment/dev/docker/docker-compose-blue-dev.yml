@@ -11,9 +11,10 @@ services:
       SPRING_PROFILES_ACTIVE: dev
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
     networks:
       - dataracy-network-dev
 
