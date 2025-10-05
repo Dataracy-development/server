@@ -289,14 +289,14 @@
 #### **전체 토픽 조회**
 
 ```bash
-curl -X GET "https://api.dataracy.co.kr/api/v1/references/topics" \
+curl -X GET "https://api.dataracy.store/api/v1/references/topics" \
   -H "Content-Type: application/json"
 ```
 
 #### **전체 직업 조회**
 
 ```bash
-curl -X GET "https://api.dataracy.co.kr/api/v1/references/occupations" \
+curl -X GET "https://api.dataracy.store/api/v1/references/occupations" \
   -H "Content-Type: application/json"
 ```
 

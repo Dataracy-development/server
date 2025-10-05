@@ -574,7 +574,7 @@ Authorization: Bearer {access_token}
 #### **프로젝트 업로드**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/projects" \
+curl -X POST "https://api.dataracy.store/api/v1/projects" \
   -H "Authorization: Bearer {access_token}" \
   -F "webRequest={\"title\":\"프로젝트 제목\",\"description\":\"프로젝트 설명\",\"analysisPurposeId\":1,\"dataSourceId\":2,\"dataTypeId\":3,\"datasetIds\":[1,2,3]};type=application/json" \
   -F "thumbnailFile=@thumbnail.jpg"
@@ -583,7 +583,7 @@ curl -X POST "https://api.dataracy.co.kr/api/v1/projects" \
 #### **프로젝트 검색**
 
 ```bash
-curl -X GET "https://api.dataracy.co.kr/api/v1/projects/search?q=교통량&page=0&size=10" \
+curl -X GET "https://api.dataracy.store/api/v1/projects/search?q=교통량&page=0&size=10" \
   -H "Content-Type: application/json"
 ```
 

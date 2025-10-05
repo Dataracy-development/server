@@ -4,8 +4,8 @@
 
 ### **Base URL**
 
-- **개발**: `https://dev-api.dataracy.co.kr`
-- **운영**: `https://api.dataracy.co.kr`
+- **개발**: `https://dev-api.dataracy.store`
+- **운영**: `https://api.dataracy.store`
 - **로컬**: `http://localhost:8080`
 
 ### **API 버전**
@@ -167,15 +167,15 @@ Authorization: Bearer {access_token}
 
 ### **Swagger UI**
 
-- **개발**: `https://dev-api.dataracy.co.kr/swagger-ui.html`
-- **운영**: `https://api.dataracy.co.kr/swagger-ui.html`
+- **개발**: `https://dev-api.dataracy.store/swagger-ui.html`
+- **운영**: `https://api.dataracy.store/swagger-ui.html`
 - **로컬**: `http://localhost:8080/swagger-ui.html`
 
 ### **API 테스트**
 
 ```bash
 # cURL 예제
-curl -X GET "https://api.dataracy.co.kr/api/v1/projects" \
+curl -X GET "https://api.dataracy.store/api/v1/projects" \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json"
 ```

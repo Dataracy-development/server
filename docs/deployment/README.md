@@ -13,9 +13,9 @@ Dataracy 백엔드 서비스의 배포 프로세스와 환경 설정을 안내�
 | 환경         | URL                                  | 브랜치      | 목적           |
 | ------------ | ------------------------------------ | ----------- | -------------- |
 | **로컬**     | `http://localhost:8080`              | `develop`   | 개발 및 테스트 |
-| **개발**     | `https://dev-api.dataracy.co.kr`     | `develop`   | 기능 검증      |
-| **스테이징** | `https://staging-api.dataracy.co.kr` | `release/*` | 최종 검증      |
-| **운영**     | `https://api.dataracy.co.kr`         | `main`      | 실제 서비스    |
+| **개발**     | `https://dev-api.dataracy.store`     | `develop`   | 기능 검증      |
+| **스테이징** | `https://staging-api.dataracy.store` | `release/*` | 최종 검증      |
+| **운영**     | `https://api.dataracy.store`         | `main`      | 실제 서비스    |
 
 ### **인프라 구성**
 
@@ -342,7 +342,7 @@ cd deployment/prod/blue-green
 ```nginx
 server {
     listen 443 ssl http2;
-    server_name api.dataracy.co.kr;
+    server_name api.dataracy.store;
 
     ssl_certificate /etc/ssl/certs/dataracy.crt;
     ssl_certificate_key /etc/ssl/private/dataracy.key;
@@ -424,7 +424,7 @@ spring:
 ### **배포 관련 문의**
 
 - **슬랙**: #dataracy-deployment
-- **이메일**: deployment@dataracy.co.kr
+- **이메일**: deployment@dataracy.store
 - **긴급**: +82-10-1234-5678
 
 ### **모니터링 도구**

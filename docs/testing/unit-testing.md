@@ -691,7 +691,7 @@ void 사용자_목록_조회_성능_테스트() {
 ### **단위 테스트 관련 문의**
 
 - **슬랙**: #dataracy-unit-testing
-- **이메일**: testing@dataracy.co.kr
+- **이메일**: testing@dataracy.store
 - **문서**: [테스트 가이드](./README.md)
 
 ### **참고 자료**

@@ -100,7 +100,7 @@ class CookieUtilTest {
     assertAll(
         () -> assertThat(cookieValue).contains("Secure"),
         () -> assertThat(cookieValue).contains("SameSite=None"),
-        () -> assertThat(cookieValue).contains("Domain=.dataracy.co.kr"));
+        () -> assertThat(cookieValue).contains("Domain=.dataracy.store"));
   }
 
   @Test
@@ -304,6 +304,6 @@ class CookieUtilTest {
     // Then
     verify(response).addHeader(eq("Set-Cookie"), valueCaptor.capture());
     String cookieValue = valueCaptor.getValue();
-    assertThat(cookieValue).contains("Domain=.dataracy.co.kr");
+    assertThat(cookieValue).contains("Domain=.dataracy.store");
   }
 }

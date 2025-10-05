@@ -294,7 +294,7 @@ Authorization: Bearer {access_token}
 #### **댓글 작성**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/projects/123/comments" \
+curl -X POST "https://api.dataracy.store/api/v1/projects/123/comments" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer {access_token}" \
   -d '{
@@ -306,7 +306,7 @@ curl -X POST "https://api.dataracy.co.kr/api/v1/projects/123/comments" \
 #### **답글 작성**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/projects/123/comments" \
+curl -X POST "https://api.dataracy.store/api/v1/projects/123/comments" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer {access_token}" \
   -d '{
@@ -318,7 +318,7 @@ curl -X POST "https://api.dataracy.co.kr/api/v1/projects/123/comments" \
 #### **댓글 목록 조회**
 
 ```bash
-curl -X GET "https://api.dataracy.co.kr/api/v1/projects/123/comments?page=0&size=10" \
+curl -X GET "https://api.dataracy.store/api/v1/projects/123/comments?page=0&size=10" \
   -H "Content-Type: application/json"
 ```
 

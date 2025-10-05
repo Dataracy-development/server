@@ -1,6 +1,6 @@
 server:
   port: 8080
-  url: http://dev-api.dataracy.co.kr:8080
+  url: http://dev-api.dataracy.store:8080
 
 spring:
   application:
@@ -41,7 +41,7 @@ swagger:
   title: Dataracy
   description: Dataracy 백엔드 API 개발 문서입니다
   version: v1.2.0
-  server-url: http://dev-api.dataracy.co.kr:8080
+  server-url: http://dev-api.dataracy.store:8080
   server-description: Development Server (HTTP Only)
 
 elasticsearch:

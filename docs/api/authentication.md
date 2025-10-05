@@ -140,7 +140,7 @@ Authorization: Bearer {access_token}
 #### **로그인**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/auth/login" \
+curl -X POST "https://api.dataracy.store/api/v1/auth/login" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -152,7 +152,7 @@ curl -X POST "https://api.dataracy.co.kr/api/v1/auth/login" \
 #### **토큰 재발급**
 
 ```bash
-curl -X POST "https://api.dataracy.co.kr/api/v1/auth/token/re-issue" \
+curl -X POST "https://api.dataracy.store/api/v1/auth/token/re-issue" \
   -b cookies.txt \
   -c cookies.txt
 ```

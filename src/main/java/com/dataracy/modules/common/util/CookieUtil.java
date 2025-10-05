@@ -98,14 +98,14 @@ public class CookieUtil {
   }
 
   /**
-   * 환경에 따른 쿠키 도메인을 반환합니다. dataracy.co.kr, api.dataracy.co.kr, dev-api.dataracy.co.kr 간의 쿠키 공유를 위해
+   * 환경에 따른 쿠키 도메인을 반환합니다. dataracy.store, api.dataracy.store, dev-api.dataracy.store 간의 쿠키 공유를 위해
    * 상위 도메인으로 설정합니다.
    */
   private String getCookieDomain() {
     if ("prod".equals(activeProfile)) {
-      return ".dataracy.co.kr"; // 운영 환경: dataracy.co.kr ↔ api.dataracy.co.kr 쿠키 공유
+      return ".dataracy.store"; // 운영 환경: dataracy.store ↔ api.dataracy.store 쿠키 공유
     } else if ("dev".equals(activeProfile)) {
-      return ".dataracy.co.kr"; // 개발 환경: dataracy.co.kr ↔ dev-api.dataracy.co.kr 쿠키 공유
+      return ".dataracy.store"; // 개발 환경: dataracy.store ↔ dev-api.dataracy.store 쿠키 공유
     } else {
       return null; // 로컬 환경: localhost에서는 도메인 설정 없음
     }
