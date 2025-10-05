@@ -9,7 +9,7 @@ plugins {
 	id 'com.diffplug.spotless' version '6.23.3'  // 자동 포맷팅
 
 	// 품질 분석용 (필요시 활성화)
-	// id 'jacoco'                     // 테스트 커버리지: ./gradlew jacocoTestReport
+	id 'jacoco'                     // 테스트 커버리지: ./gradlew jacocoTestReport
 	// id 'org.sonarqube' version '4.2.1.3168'  // 종합 분석: ./gradlew sonar
 	// id 'com.github.spotbugs' version '5.0.14'  // 버그 검사: ./gradlew spotbugsMain
 }
@@ -211,26 +211,6 @@ tasks.named('test') {
 	}
 }
 
-// ===== JaCoCo 설정 (필요시 활성화) =====
-// jacocoTestReport {
-//	dependsOn test
-//	reports {
-//		xml.required = true
-//		html.required = true
-//		csv.required = false
-//	}
-// }
-//
-// jacocoTestCoverageVerification {
-//	violationRules {
-//		rule {
-//			limit {
-//				minimum = 0.80
-//			}
-//		}
-//	}
-// }
-
 // ===== SonarQube 설정 (필요시 활성화) =====
 // sonarqube {
 //	properties {
@@ -380,5 +360,57 @@ spotless {
 		trimTrailingWhitespace()
 		indentWithTabs()
 		endWithNewline()
+	}
+}
+
+// ===== JaCoCo 설정 =====
+jacoco {
+	toolVersion = "0.8.8"
+}
+
+// ===== JaCoCo 설정 (실무적 적용) =====
+jacocoTestReport {
+	dependsOn test
+	reports {
+		xml.required = true
+		html.required = true
+		csv.required = false
+	}
+	
+	// 실무적 설정: 특정 패키지만 커버리지 측정
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+				'**/config/**',
+				'**/dto/**',
+				'**/vo/**',
+				'**/entity/**',
+				'**/enums/**',
+				'**/exception/**',
+				'**/DataracyApplication.class'
+			])
+		}))
+	}
+	
+	finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+	dependsOn jacocoTestReport
+	
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.70 // 70% 이상 커버리지 요구 (실무적 기준)
+			}
+		}
+		
+		// 실무적 예외 처리: 경고만 표시
+		rule {
+			enabled = false // 경고만 표시, 빌드 실패하지 않음
+			limit {
+				minimum = 0.75 // 75% 목표 (경고 수준)
+			}
+		}
 	}
 }
