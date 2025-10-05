@@ -7,5 +7,4 @@ package com.dataracy.modules.reference.application.dto.response.singleview;
  * @param value 값
  * @param label 라벨
  */
-public record TopicResponse(Long id, String value, String label
-) {}
+public record TopicResponse(Long id, String value, String label) {}

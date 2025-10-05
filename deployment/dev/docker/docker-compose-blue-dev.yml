@@ -1,10 +1,10 @@
 services:
-  backend-dev-blue:
-    image: juuuunny/backend:dev-blue
-    container_name: backend-dev-blue
+  backend-dev-green:
+    image: juuuunny/backend:dev-green
+    container_name: backend-dev-green
     restart: always
     ports:
-      - "8081:8080"
+      - "8082:8080"
     env_file:
       - /home/ubuntu/env-config/.env.dev
     environment:

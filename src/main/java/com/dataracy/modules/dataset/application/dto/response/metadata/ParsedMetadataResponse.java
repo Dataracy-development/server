@@ -7,8 +7,4 @@ package com.dataracy.modules.dataset.application.dto.response.metadata;
  * @param columnCount 데이터셋 파일 열
  * @param previewJson 데이터셋 파일 미리보기
  */
-public record ParsedMetadataResponse(
-        int rowCount,
-        int columnCount,
-        String previewJson
-) {}
+public record ParsedMetadataResponse(int rowCount, int columnCount, String previewJson) {}

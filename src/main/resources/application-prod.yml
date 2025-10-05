@@ -1,6 +1,6 @@
 server:
   port: 8080
-  url: https://api.dataracy.co.kr
+  url: https://api.dataracy.store
 
 spring:
   application:
@@ -32,12 +32,19 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
   kafka:
     bootstrap-servers: ${KAFKA_SERVER_HOST}:${KAFKA_SERVER_PORT}
+    listener:
+      long:
+        concurrency: 3
+        poll-timeout: 5000 # 운영 환경: 5초 (배치 효율성 최적화)
+    producer:
+      string:
+        observation-enabled: true # Micrometer 메트릭 수집 활성화
 
 swagger:
   title: Dataracy
   description: Dataracy 백엔드 API 운영 문서입니다
   version: v1.2.0
-  server-url: https://api.dataracy.co.kr
+  server-url: https://api.dataracy.store
   server-description: Production Server
 
 elasticsearch:

@@ -13,12 +13,11 @@ package com.dataracy.modules.project.application.dto.response.support;
  * @param likeCount 좋아요 수
  */
 public record ChildProjectResponse(
-        Long id,
-        String title,
-        String content,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        Long commentCount,
-        Long likeCount
-) {}
+    Long id,
+    String title,
+    String content,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    Long commentCount,
+    Long likeCount) {}

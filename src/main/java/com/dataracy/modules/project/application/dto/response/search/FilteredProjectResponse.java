@@ -1,9 +1,9 @@
 package com.dataracy.modules.project.application.dto.response.search;
 
-import com.dataracy.modules.project.application.dto.response.support.ChildProjectResponse;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.dataracy.modules.project.application.dto.response.support.ChildProjectResponse;
 
 /**
  * 프로젝트 필터링 애플리케이션 응답 DTO
@@ -26,20 +26,19 @@ import java.util.List;
  * @param childProjects 자식 프로젝트 목록
  */
 public record FilteredProjectResponse(
-        Long id,
-        String title,
-        String content,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String projectThumbnailUrl,
-        String topicLabel,
-        String analysisPurposeLabel,
-        String dataSourceLabel,
-        String authorLevelLabel,
-        Long commentCount,
-        Long likeCount,
-        Long viewCount,
-        LocalDateTime createdAt,
-        List<ChildProjectResponse> childProjects
-) {}
+    Long id,
+    String title,
+    String content,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String projectThumbnailUrl,
+    String topicLabel,
+    String analysisPurposeLabel,
+    String dataSourceLabel,
+    String authorLevelLabel,
+    Long commentCount,
+    Long likeCount,
+    Long viewCount,
+    LocalDateTime createdAt,
+    List<ChildProjectResponse> childProjects) {}

@@ -1,11 +1,14 @@
 package com.dataracy.modules.reference.application.service.query;
 
-import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
-import com.dataracy.modules.reference.application.dto.response.singleview.DataSourceResponse;
-import com.dataracy.modules.reference.application.mapper.DataSourceDtoMapper;
-import com.dataracy.modules.reference.application.port.out.DataSourcePort;
-import com.dataracy.modules.reference.domain.exception.ReferenceException;
-import com.dataracy.modules.reference.domain.model.DataSource;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,171 +17,163 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.BDDMockito.*;
+import com.dataracy.modules.reference.application.dto.response.allview.AllDataSourcesResponse;
+import com.dataracy.modules.reference.application.dto.response.singleview.DataSourceResponse;
+import com.dataracy.modules.reference.application.mapper.DataSourceDtoMapper;
+import com.dataracy.modules.reference.application.port.out.DataSourcePort;
+import com.dataracy.modules.reference.domain.exception.ReferenceException;
+import com.dataracy.modules.reference.domain.model.DataSource;
+
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DataSourceQueryServiceTest {
 
-    @Mock
-    private DataSourcePort dataSourcePort;
+  // Test constants
+  private static final Integer CURRENT_YEAR = 2024;
 
-    @Mock
-    private DataSourceDtoMapper dataSourceDtoMapper;
+  @Mock private DataSourcePort dataSourcePort;
 
-    @InjectMocks
-    private DataSourceQueryService service;
+  @Mock private DataSourceDtoMapper dataSourceDtoMapper;
 
-    @Test
-    @DisplayName("데이터 소스 전체 조회 성공")
-    void findAllDataSourcesSuccess() {
-        // given
-        List<DataSource> domainList = List.of(
-                new DataSource(1L, "v1", "l1"),
-                new DataSource(2L, "v2", "l2")
-        );
-        AllDataSourcesResponse mapped = new AllDataSourcesResponse(
-                List.of(
-                        new DataSourceResponse(1L, "v1", "l1"),
-                        new DataSourceResponse(2L, "v2", "l2")
-                )
-        );
-        given(dataSourcePort.findAllDataSources()).willReturn(domainList);
-        given(dataSourceDtoMapper.toResponseDto(domainList)).willReturn(mapped);
+  @InjectMocks private DataSourceQueryService service;
 
-        // when
-        AllDataSourcesResponse result = service.findAllDataSources();
+  @Test
+  @DisplayName("데이터 소스 전체 조회 성공")
+  void findAllDataSourcesSuccess() {
+    // given
+    List<DataSource> domainList =
+        List.of(new DataSource(1L, "v1", "l1"), new DataSource(2L, "v2", "l2"));
+    AllDataSourcesResponse mapped =
+        new AllDataSourcesResponse(
+            List.of(
+                new DataSourceResponse(1L, "v1", "l1"), new DataSourceResponse(2L, "v2", "l2")));
+    given(dataSourcePort.findAllDataSources()).willReturn(domainList);
+    given(dataSourceDtoMapper.toResponseDto(domainList)).willReturn(mapped);
 
-        // then
-        assertThat(result).isSameAs(mapped);
-        then(dataSourcePort).should().findAllDataSources();
-        then(dataSourceDtoMapper).should().toResponseDto(domainList);
-    }
+    // when
+    AllDataSourcesResponse result = service.findAllDataSources();
 
-    @Test
-    @DisplayName("데이터 소스 단건 조회 성공")
-    void findDataSourceSuccess() {
-        // given
-        Long id = 10L;
-        DataSource domain = new DataSource(id, "v", "l");
-        DataSourceResponse mapped = new DataSourceResponse(id, "v", "l");
-        given(dataSourcePort.findDataSourceById(id)).willReturn(Optional.of(domain));
-        given(dataSourceDtoMapper.toResponseDto(domain)).willReturn(mapped);
+    // then
+    assertThat(result).isSameAs(mapped);
+    then(dataSourcePort).should().findAllDataSources();
+    then(dataSourceDtoMapper).should().toResponseDto(domainList);
+  }
 
-        // when
-        DataSourceResponse result = service.findDataSource(id);
+  @Test
+  @DisplayName("데이터 소스 단건 조회 성공")
+  void findDataSourceSuccess() {
+    // given
+    Long id = 10L;
+    DataSource domain = new DataSource(id, "v", "l");
+    DataSourceResponse mapped = new DataSourceResponse(id, "v", "l");
+    given(dataSourcePort.findDataSourceById(id)).willReturn(Optional.of(domain));
+    given(dataSourceDtoMapper.toResponseDto(domain)).willReturn(mapped);
 
-        // then
-        assertThat(result).isSameAs(mapped);
-        then(dataSourcePort).should().findDataSourceById(id);
-        then(dataSourceDtoMapper).should().toResponseDto(domain);
-    }
+    // when
+    DataSourceResponse result = service.findDataSource(id);
 
-    @Test
-    @DisplayName("데이터 소스 단건 조회 실패 - 없을 때 예외 발생")
-    void findDataSourceFailWhenNotFound() {
-        // given
-        Long id = 999L;
-        given(dataSourcePort.findDataSourceById(id)).willReturn(Optional.empty());
+    // then
+    assertThat(result).isSameAs(mapped);
+    then(dataSourcePort).should().findDataSourceById(id);
+    then(dataSourceDtoMapper).should().toResponseDto(domain);
+  }
 
-        // when
-        ReferenceException ex = catchThrowableOfType(
-                () -> service.findDataSource(id),
-                ReferenceException.class
-        );
+  @Test
+  @DisplayName("데이터 소스 단건 조회 실패 - 없을 때 예외 발생")
+  void findDataSourceFailWhenNotFound() {
+    // given
+    Long id = 999L;
+    given(dataSourcePort.findDataSourceById(id)).willReturn(Optional.empty());
 
-        // then
-        assertThat(ex).isNotNull();
-        then(dataSourcePort).should().findDataSourceById(id);
-        then(dataSourceDtoMapper).shouldHaveNoInteractions();
-    }
+    // when
+    ReferenceException ex =
+        catchThrowableOfType(() -> service.findDataSource(id), ReferenceException.class);
 
-    @Test
-    @DisplayName("데이터 소스 라벨 조회 성공")
-    void getLabelByIdSuccess() {
-        // given
-        Long id = 1L;
-        given(dataSourcePort.getLabelById(id)).willReturn(Optional.of("label"));
+    // then
+    assertThat(ex).isNotNull();
+    then(dataSourcePort).should().findDataSourceById(id);
+    then(dataSourceDtoMapper).shouldHaveNoInteractions();
+  }
 
-        // when
-        String label = service.getLabelById(id);
+  @Test
+  @DisplayName("데이터 소스 라벨 조회 성공")
+  void getLabelByIdSuccess() {
+    // given
+    Long id = 1L;
+    given(dataSourcePort.getLabelById(id)).willReturn(Optional.of("label"));
 
-        // then
-        assertThat(label).isEqualTo("label");
-        then(dataSourcePort).should().getLabelById(id);
-    }
+    // when
+    String label = service.getLabelById(id);
 
-    @Test
-    @DisplayName("데이터 소스 라벨 조회 실패 - 없을 때 예외 발생")
-    void getLabelByIdFailWhenNotFound() {
-        // given
-        Long id = 404L;
-        given(dataSourcePort.getLabelById(id)).willReturn(Optional.empty());
+    // then
+    assertThat(label).isEqualTo("label");
+    then(dataSourcePort).should().getLabelById(id);
+  }
 
-        // when
-        ReferenceException ex = catchThrowableOfType(
-                () -> service.getLabelById(id),
-                ReferenceException.class
-        );
+  @Test
+  @DisplayName("데이터 소스 라벨 조회 실패 - 없을 때 예외 발생")
+  void getLabelByIdFailWhenNotFound() {
+    // given
+    Long id = 404L;
+    given(dataSourcePort.getLabelById(id)).willReturn(Optional.empty());
 
-        // then
-        assertThat(ex).isNotNull();
-        then(dataSourcePort).should().getLabelById(id);
-    }
+    // when
+    ReferenceException ex =
+        catchThrowableOfType(() -> service.getLabelById(id), ReferenceException.class);
 
-    @Test
-    @DisplayName("데이터 소스 검증 성공 - 존재할 때")
-    void validateDataSourceSuccess() {
-        // given
-        Long id = 1L;
-        given(dataSourcePort.existsDataSourceById(id)).willReturn(true);
+    // then
+    assertThat(ex).isNotNull();
+    then(dataSourcePort).should().getLabelById(id);
+  }
 
-        // when
-        service.validateDataSource(id);
+  @Test
+  @DisplayName("데이터 소스 검증 성공 - 존재할 때")
+  void validateDataSourceSuccess() {
+    // given
+    Long id = 1L;
+    given(dataSourcePort.existsDataSourceById(id)).willReturn(true);
 
-        // then
-        then(dataSourcePort).should().existsDataSourceById(id);
-    }
+    // when
+    service.validateDataSource(id);
 
-    @Test
-    @DisplayName("데이터 소스 검증 실패 - 없을 때 예외 발생")
-    void validateDataSourceFailWhenNotFound() {
-        // given
-        Long id = 2L;
-        given(dataSourcePort.existsDataSourceById(id)).willReturn(false);
+    // then
+    then(dataSourcePort).should().existsDataSourceById(id);
+  }
 
-        // when
-        ReferenceException ex = catchThrowableOfType(
-                () -> service.validateDataSource(id),
-                ReferenceException.class
-        );
+  @Test
+  @DisplayName("데이터 소스 검증 실패 - 없을 때 예외 발생")
+  void validateDataSourceFailWhenNotFound() {
+    // given
+    Long id = 2L;
+    given(dataSourcePort.existsDataSourceById(id)).willReturn(false);
 
-        // then
-        assertThat(ex).isNotNull();
-        then(dataSourcePort).should().existsDataSourceById(id);
-    }
+    // when
+    ReferenceException ex =
+        catchThrowableOfType(() -> service.validateDataSource(id), ReferenceException.class);
 
-    @Test
-    @DisplayName("데이터 소스 라벨 다건 조회 성공 및 빈 값 처리")
-    void getLabelsByIdsSuccessAndEmptyHandling() {
-        // given - empty/null
-        assertThat(service.getLabelsByIds(null)).isEmpty();
-        assertThat(service.getLabelsByIds(List.of())).isEmpty();
+    // then
+    assertThat(ex).isNotNull();
+    then(dataSourcePort).should().existsDataSourceById(id);
+  }
 
-        // given - values
-        List<Long> ids = List.of(1L, 2L);
-        given(dataSourcePort.getLabelsByIds(ids)).willReturn(Map.of(1L, "L1", 2L, "L2"));
+  @Test
+  @DisplayName("데이터 소스 라벨 다건 조회 성공 및 빈 값 처리")
+  void getLabelsByIdsSuccessAndEmptyHandling() {
+    // given - empty/null
+    assertAll(
+        () -> assertThat(service.getLabelsByIds(null)).isEmpty(),
+        () -> assertThat(service.getLabelsByIds(List.of())).isEmpty());
 
-        // when
-        Map<Long, String> result = service.getLabelsByIds(ids);
+    // given - values
+    List<Long> ids = List.of(1L, 2L);
+    given(dataSourcePort.getLabelsByIds(ids)).willReturn(Map.of(1L, "L1", 2L, "L2"));
 
-        // then
-        assertThat(result).containsEntry(1L, "L1").containsEntry(2L, "L2");
-        then(dataSourcePort).should().getLabelsByIds(ids);
-    }
+    // when
+    Map<Long, String> result = service.getLabelsByIds(ids);
+
+    // then
+    assertThat(result).containsEntry(1L, "L1").containsEntry(2L, "L2");
+    then(dataSourcePort).should().getLabelsByIds(ids);
+  }
 }

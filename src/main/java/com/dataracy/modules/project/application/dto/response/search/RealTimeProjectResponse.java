@@ -11,10 +11,9 @@ package com.dataracy.modules.project.application.dto.response.search;
  * @param projectThumbnailUrl 프로젝트 썸네일 URL
  */
 public record RealTimeProjectResponse(
-        Long id,
-        String title,
-        Long creatorId,
-        String creatorName,
-        String userProfileImageUrl,
-        String projectThumbnailUrl
-) {}
+    Long id,
+    String title,
+    Long creatorId,
+    String creatorName,
+    String userProfileImageUrl,
+    String projectThumbnailUrl) {}

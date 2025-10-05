@@ -71,14 +71,14 @@ docker compose -f "$NEXT_COMPOSE" up -d --pull always
 #######################################
 log "[INFO] Health Check 대기: $BACKEND_NAME ..."
 STATUS="starting"
-for i in {1..20}; do
+for i in {1..30}; do
   STATUS="$(docker inspect --format='{{json .State.Health.Status}}' "$BACKEND_NAME" 2>/dev/null || echo "null")"
   if [ "$STATUS" == "\"healthy\"" ]; then
     log "[SUCCESS] $BACKEND_NAME 가 healthy 상태다."
     break
   else
-    log "  [$i/20] 아직 준비되지 않음... (상태: $STATUS)"
-    sleep 5
+    log "  [$i/30] 아직 준비되지 않음... (상태: $STATUS)"
+    sleep 10
   fi
 done
 if [ "$STATUS" != "\"healthy\"" ]; then

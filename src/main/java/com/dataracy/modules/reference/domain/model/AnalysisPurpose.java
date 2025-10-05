@@ -7,8 +7,4 @@ package com.dataracy.modules.reference.domain.model;
  * @param value 분석 목적 값
  * @param label 분석 목적 라벨
  */
-public record AnalysisPurpose(
-        Long id,
-        String value,
-        String label
-) {}
+public record AnalysisPurpose(Long id, String value, String label) {}

@@ -1,0 +1,130 @@
+spring:
+  profiles:
+    active: test
+
+  datasource:
+    url: jdbc:h2:mem:integration-testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  application:
+    name: dataracy-integration-test
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
+        hbm2ddl:
+          auto: create-drop
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  h2:
+    console:
+      enabled: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      protocol: redis
+      database: 0
+  redis:
+    refresh-token-expiration-days: 14
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: integration-test-group
+      auto-offset-reset: earliest
+      auto-startup: false
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  # JWT 테스트용 설정
+  jwt:
+    secret: integration-test-secret-key-for-jwt-token-generation
+    redirect-onboarding: http://localhost:3000/onboarding
+    redirect-base: http://localhost:3000
+    register-token-expiration-time: 600000
+    reset-token-expiration-time: 600000
+    access-token-expiration-time: 3600000
+    refresh-token-expiration-time: 1209600000
+
+logging:
+  level:
+    com.dataracy: WARN
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+
+# 테스트용 설정
+test:
+  mock:
+    enabled: true
+  integration:
+    timeout: 30000
+
+# AWS/SES/SendGrid Mock 설정
+aws:
+  ses:
+    access-key: integration-test-access-key
+    secret-key: integration-test-secret-key
+    region: ap-northeast-2
+    sender: integration-test@example.com
+    expire-minutes: 10
+
+sendgrid:
+  api-key: integration-test-sendgrid-key
+  sender: integration-test@example.com
+
+cloud:
+  aws:
+    credentials:
+      access-key: integration-test-aws-access-key
+      secret-key: integration-test-aws-secret-key
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: integration-test-bucket
+
+default:
+  profile:
+    image-url: https://example.com/default-profile.png
+  project:
+    image-url: https://example.com/default-project.png
+  dataset:
+    image-url: https://example.com/default-dataset.png
+
+# Elasticsearch 테스트용 설정
+elasticsearch:
+  connection:
+    host: localhost
+    port: 9200
+    protocol: http
+    ssl: false
+
+# Swagger 테스트용 설정
+swagger:
+  title: Dataracy Integration Test
+  description: Dataracy 백엔드 API 통합 테스트 문서입니다
+  version: v1.2.0
+  server-url: http://localhost:8080
+  server-description: integration test server
+
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false

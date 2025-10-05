@@ -7,8 +7,4 @@ package com.dataracy.modules.reference.domain.model;
  * @param value 방문 경로 값
  * @param label 방문 경로 라벨
  */
-public record VisitSource(
-        Long id,
-        String value,
-        String label
-) {}
+public record VisitSource(Long id, String value, String label) {}
