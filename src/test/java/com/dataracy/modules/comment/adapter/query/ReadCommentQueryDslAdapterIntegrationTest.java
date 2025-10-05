@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dataracy.modules.comment.adapter.jpa.entity.CommentEntity;
@@ -30,7 +31,9 @@ import jakarta.persistence.PersistenceContext;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.yml")
 @Transactional
+@org.junit.jupiter.api.Tag("integration")
 class ReadCommentQueryDslAdapterIntegrationTest {
 
   @PersistenceContext private EntityManager entityManager;

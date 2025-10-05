@@ -48,7 +48,7 @@ class ValidateUserServiceTest {
     // when & then
     assertThatThrownBy(() -> service.validateDuplicatedNickname(nickname))
         .isInstanceOf(UserException.class)
-        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_NICKNAME);
+        .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.DUPLICATED_NICKNAME);
   }
 
   @Test
@@ -73,7 +73,7 @@ class ValidateUserServiceTest {
     // when & then
     assertThatThrownBy(() -> service.validateDuplicatedEmail(email))
         .isInstanceOf(UserException.class)
-        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
+        .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.DUPLICATED_GOOGLE_EMAIL);
   }
 
   @Test
@@ -87,7 +87,7 @@ class ValidateUserServiceTest {
     // when & then
     assertThatThrownBy(() -> service.validateDuplicatedEmail(email))
         .isInstanceOf(UserException.class)
-        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_KAKAO_EMAIL);
+        .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.DUPLICATED_KAKAO_EMAIL);
   }
 
   @Test
@@ -101,7 +101,7 @@ class ValidateUserServiceTest {
     // when & then
     assertThatThrownBy(() -> service.validateDuplicatedEmail(email))
         .isInstanceOf(UserException.class)
-        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
+        .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
   }
 
   @Test
@@ -115,6 +115,6 @@ class ValidateUserServiceTest {
     // when & then
     assertThatThrownBy(() -> service.validateDuplicatedEmail(email))
         .isInstanceOf(UserException.class)
-        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
+        .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.DUPLICATED_LOCAL_EMAIL);
   }
 }

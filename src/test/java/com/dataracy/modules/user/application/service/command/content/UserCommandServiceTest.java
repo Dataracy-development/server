@@ -43,11 +43,6 @@ class UserCommandServiceTest {
 
   @InjectMocks private UserCommandService service;
 
-  @BeforeEach
-  void setUp() {
-    // ApplicationContext를 통한 프록시 방식으로 변경되었으므로 setSelf 호출 제거
-  }
-
   @Mock private UserCommandPort userCommandPort;
 
   @Mock private UserQueryPort userQueryPort;
@@ -68,7 +63,15 @@ class UserCommandServiceTest {
 
   @Mock private ManageRefreshTokenUseCase manageRefreshTokenUseCase;
 
+  @Mock private org.springframework.context.ApplicationContext applicationContext;
+
   @Mock private MultipartFile profileImageFile;
+
+  @BeforeEach
+  void setUp() {
+    // ApplicationContext mock 설정 - getSelf() 메서드가 자기 자신을 반환하도록
+    when(applicationContext.getBean(UserCommandService.class)).thenReturn(service);
+  }
 
   private ModifyUserInfoRequest createSampleModifyRequest() {
     return new ModifyUserInfoRequest("testuser", 1L, 1L, List.of(1L, 2L), 1L, "Test Introduction");

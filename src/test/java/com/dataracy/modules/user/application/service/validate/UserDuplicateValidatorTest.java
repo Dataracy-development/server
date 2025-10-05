@@ -48,7 +48,7 @@ class UserDuplicateValidatorTest {
     // when & then
     assertThatThrownBy(() -> validator.duplicateNickname(nickname))
         .isInstanceOf(UserException.class)
-        .hasFieldOrPropertyWithValue("errorStatus", UserErrorStatus.DUPLICATED_NICKNAME);
+        .hasFieldOrPropertyWithValue("errorCode", UserErrorStatus.DUPLICATED_NICKNAME);
   }
 
   @Test
