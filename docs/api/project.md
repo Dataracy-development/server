@@ -31,11 +31,14 @@ Authorization: Bearer {access_token}
 thumbnailFile: [파일] (선택사항)
 webRequest: {
   "title": "프로젝트 제목",
-  "description": "프로젝트 설명",
-  "analysisPurposeId": 1,
-  "dataSourceId": 2,
-  "dataTypeId": 3,
-  "datasetIds": [1, 2, 3]
+  "topicId": 1,
+  "analysisPurposeId": 2,
+  "dataSourceId": 3,
+  "authorLevelId": 1,
+  "isContinue": true,
+  "parentProjectId": 1,
+  "content": "프로젝트 내용",
+  "dataIds": [1, 2, 3]
 }
 ```
 
@@ -43,21 +46,16 @@ webRequest: {
 
 ```json
 {
-  "success": true,
+  "httpStatus": 201,
+  "code": "201",
+  "message": "제출이 완료되었습니다",
   "data": {
     "id": 123,
     "title": "프로젝트 제목",
-    "description": "프로젝트 설명",
-    "thumbnailImageUrl": "https://example.com/thumbnail.jpg",
-    "author": {
-      "id": 1,
-      "nickname": "사용자명",
-      "profileImageUrl": "https://example.com/profile.jpg"
-    },
+    "content": "프로젝트 내용",
+    "projectThumbnailUrl": "https://example.com/thumbnail.jpg",
     "createdAt": "2024-01-15T10:30:00Z"
-  },
-  "message": "프로젝트 업로드에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
@@ -86,11 +84,14 @@ Authorization: Bearer {access_token}
 thumbnailFile: [파일] (선택사항)
 webRequest: {
   "title": "수정된 제목",
-  "description": "수정된 설명",
-  "analysisPurposeId": 2,
-  "dataSourceId": 3,
-  "dataTypeId": 4,
-  "datasetIds": [2, 3, 4]
+  "topicId": 2,
+  "analysisPurposeId": 3,
+  "dataSourceId": 4,
+  "authorLevelId": 2,
+  "isContinue": false,
+  "parentProjectId": null,
+  "content": "수정된 내용",
+  "dataIds": [2, 3, 4]
 }
 ```
 
@@ -98,10 +99,10 @@ webRequest: {
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "프로젝트 수정에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "프로젝트 수정이 완료되었습니다.",
+  "data": null
 }
 ```
 
@@ -127,10 +128,10 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "해당하는 프로젝트 삭제에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "프로젝트 삭제가 완료되었습니다.",
+  "data": null
 }
 ```
 
@@ -156,10 +157,10 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "해당하는 프로젝트 복원에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "프로젝트 복원에 완료되었습니다.",
+  "data": null
 }
 ```
 
@@ -181,44 +182,36 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "프로젝트 상세 정보를 조회하였습니다.",
   "data": {
     "id": 123,
     "title": "서울시 교통량 분석",
-    "description": "서울시 주요 도로의 교통량을 분석한 프로젝트입니다.",
-    "thumbnailImageUrl": "https://example.com/thumbnail.jpg",
-    "author": {
-      "id": 1,
-      "nickname": "분석가",
-      "profileImageUrl": "https://example.com/profile.jpg"
-    },
-    "analysisPurpose": {
-      "id": 1,
-      "name": "예측"
-    },
-    "dataSource": {
-      "id": 2,
-      "name": "서울시 공공데이터"
-    },
-    "dataType": {
-      "id": 3,
-      "name": "CSV"
-    },
-    "datasets": [
-      {
-        "id": 1,
-        "title": "서울시 교통량 데이터",
-        "dataType": "CSV"
-      }
-    ],
+    "content": "서울시 주요 도로의 교통량을 분석한 프로젝트입니다.",
+    "projectThumbnailUrl": "https://example.com/thumbnail.jpg",
+    "creatorId": 1,
+    "creatorName": "분석가",
+    "userProfileImageUrl": "https://example.com/profile.jpg",
+    "topicLabel": "교통",
+    "analysisPurposeLabel": "예측",
+    "dataSourceLabel": "서울시 공공데이터",
+    "authorLevelLabel": "중급자",
     "likeCount": 42,
     "viewCount": 156,
     "commentCount": 8,
-    "createdAt": "2024-01-15T10:30:00Z",
-    "updatedAt": "2024-01-15T10:30:00Z"
-  },
-  "message": "프로젝트 상세 정보 조회에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+    "isLiked": false,
+    "hasChild": true,
+    "connectedDataSets": [
+      {
+        "id": 1,
+        "title": "서울시 교통량 데이터",
+        "dataThumbnailUrl": "https://example.com/data-thumb.jpg"
+      }
+    ],
+    "parentProject": null,
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
@@ -243,19 +236,19 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회하였습니다.",
   "data": {
     "content": [
       {
         "id": 124,
         "title": "부산시 교통량 분석",
-        "description": "부산시 교통량을 분석한 프로젝트",
-        "thumbnailImageUrl": "https://example.com/thumbnail2.jpg",
-        "author": {
-          "id": 2,
-          "nickname": "다른분석가",
-          "profileImageUrl": "https://example.com/profile2.jpg"
-        },
+        "content": "부산시 교통량을 분석한 프로젝트",
+        "projectThumbnailUrl": "https://example.com/thumbnail2.jpg",
+        "creatorId": 2,
+        "creatorName": "다른분석가",
+        "userProfileImageUrl": "https://example.com/profile2.jpg",
         "likeCount": 25,
         "viewCount": 89,
         "createdAt": "2024-01-14T10:30:00Z"
@@ -273,9 +266,7 @@ Authorization: Bearer {access_token}
     "first": true,
     "last": false,
     "numberOfElements": 3
-  },
-  "message": "이어가기 프로젝트 리스트 조회에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
@@ -349,26 +340,27 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "인기있는 프로젝트 리스트를 조회하였습니다.",
   "data": [
     {
       "id": 126,
       "title": "부동산 가격 예측",
-      "description": "딥러닝을 활용한 부동산 가격 예측 모델",
-      "thumbnailImageUrl": "https://example.com/thumbnail4.jpg",
-      "author": {
-        "id": 4,
-        "nickname": "부동산분석가",
-        "profileImageUrl": "https://example.com/profile4.jpg"
-      },
-      "likeCount": 156,
-      "viewCount": 892,
+      "content": "딥러닝을 활용한 부동산 가격 예측 모델",
+      "creatorId": 4,
+      "creatorName": "부동산분석가",
+      "userProfileImageUrl": "https://example.com/profile4.jpg",
+      "projectThumbnailUrl": "https://example.com/thumbnail4.jpg",
+      "topicLabel": "부동산",
+      "analysisPurposeLabel": "예측",
+      "dataSourceLabel": "공공데이터",
+      "authorLevelLabel": "고급자",
       "commentCount": 23,
-      "createdAt": "2024-01-12T10:30:00Z"
+      "likeCount": 156,
+      "viewCount": 892
     }
-  ],
-  "message": "인기있는 프로젝트 리스트 조회에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  ]
 }
 ```
 
@@ -395,14 +387,16 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "로그인한 회원이 업로드한 프로젝트 목록 조회가 완료되었습니다.",
   "data": {
     "content": [
       {
         "id": 127,
         "title": "내 첫 프로젝트",
-        "description": "첫 번째 분석 프로젝트입니다",
-        "thumbnailImageUrl": "https://example.com/thumbnail5.jpg",
+        "content": "첫 번째 분석 프로젝트입니다",
+        "projectThumbnailUrl": "https://example.com/thumbnail5.jpg",
         "likeCount": 12,
         "viewCount": 45,
         "commentCount": 3,
@@ -422,9 +416,7 @@ Authorization: Bearer {access_token}
     "first": true,
     "last": true,
     "numberOfElements": 3
-  },
-  "message": "로그인한 회원이 업로드한 프로젝트 리스트를 조회에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
@@ -451,19 +443,19 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "로그인한 회원이 좋아요한 프로젝트 목록 조회가 완료되었습니다.",
   "data": {
     "content": [
       {
         "id": 128,
         "title": "좋아요한 프로젝트",
-        "description": "마음에 들어서 좋아요한 프로젝트",
-        "thumbnailImageUrl": "https://example.com/thumbnail6.jpg",
-        "author": {
-          "id": 5,
-          "nickname": "좋은분석가",
-          "profileImageUrl": "https://example.com/profile5.jpg"
-        },
+        "content": "마음에 들어서 좋아요한 프로젝트",
+        "projectThumbnailUrl": "https://example.com/thumbnail6.jpg",
+        "creatorId": 5,
+        "creatorName": "좋은분석가",
+        "userProfileImageUrl": "https://example.com/profile5.jpg",
         "likeCount": 89,
         "viewCount": 234,
         "commentCount": 12,
@@ -482,9 +474,7 @@ Authorization: Bearer {access_token}
     "first": true,
     "last": false,
     "numberOfElements": 5
-  },
-  "message": "로그인한 회원이 좋아요한 프로젝트 리스트를 조회에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
@@ -512,19 +502,19 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "필터링된 프로젝트 리스트를 조회하였습니다.",
   "data": {
     "content": [
       {
         "id": 129,
         "title": "검색된 프로젝트",
-        "description": "검색 키워드가 포함된 프로젝트",
-        "thumbnailImageUrl": "https://example.com/thumbnail7.jpg",
-        "author": {
-          "id": 6,
-          "nickname": "검색된분석가",
-          "profileImageUrl": "https://example.com/profile6.jpg"
-        },
+        "content": "검색 키워드가 포함된 프로젝트",
+        "projectThumbnailUrl": "https://example.com/thumbnail7.jpg",
+        "creatorId": 6,
+        "creatorName": "검색된분석가",
+        "userProfileImageUrl": "https://example.com/profile6.jpg",
         "likeCount": 34,
         "viewCount": 123,
         "commentCount": 5,
@@ -545,9 +535,7 @@ Authorization: Bearer {access_token}
     "first": true,
     "last": true,
     "numberOfElements": 15
-  },
-  "message": "프로젝트 검색에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
@@ -555,15 +543,35 @@ Authorization: Bearer {access_token}
 
 ## ❌ **에러 코드**
 
-| 코드                    | HTTP 상태 | 설명                     |
-| ----------------------- | --------- | ------------------------ |
-| `PROJECT_NOT_FOUND`     | 404       | 프로젝트를 찾을 수 없음  |
-| `PROJECT_ACCESS_DENIED` | 403       | 프로젝트 접근 권한 없음  |
-| `PROJECT_ALREADY_LIKED` | 409       | 이미 좋아요한 프로젝트   |
-| `PROJECT_NOT_LIKED`     | 409       | 좋아요하지 않은 프로젝트 |
-| `INVALID_PROJECT_ID`    | 400       | 잘못된 프로젝트 ID       |
-| `FILE_UPLOAD_FAILURE`   | 500       | 파일 업로드 실패         |
-| `INVALID_TOKEN`         | 401       | 유효하지 않은 토큰       |
+| 코드          | HTTP 상태 | 설명                                          | Enum 이름                      |
+| ------------- | --------- | --------------------------------------------- | ------------------------------ |
+| `PROJECT-001` | 500       | 프로젝트 업로드에 실패했습니다                | `FAIL_SAVE_PROJECT`            |
+| `PROJECT-002` | 404       | 해당 프로젝트 리소스가 존재하지 않습니다      | `NOT_FOUND_PROJECT`            |
+| `PROJECT-003` | 404       | 해당 부모 프로젝트 리소스가 존재하지 않습니다 | `NOT_FOUND_PARENT_PROJECT`     |
+| `PROJECT-008` | 403       | 작성자만 수정 및 삭제, 복원이 가능합니다      | `NOT_MATCH_CREATOR`            |
+| `PROJECT-010` | 400       | 유효하지 않은 썸네일 파일 URL입니다           | `INVALID_THUMBNAIL_FILE_URL`   |
+| `FILE-001`    | 400       | 이미지 파일은 최대 10MB까지 업로드 가능합니다 | `OVER_MAXIMUM_IMAGE_FILE_SIZE` |
+| `AUTH-011`    | 401       | 유효하지 않은 액세스 토큰입니다               | `INVALID_ACCESS_TOKEN`         |
+
+---
+
+## ✅ **성공 응답 코드**
+
+| 코드  | HTTP 상태 | 설명                                                          | Enum 이름                                |
+| ----- | --------- | ------------------------------------------------------------- | ---------------------------------------- |
+| `201` | 201       | 제출이 완료되었습니다                                         | `CREATED_PROJECT`                        |
+| `200` | 200       | 실시간 프로젝트 리스트를 조회하였습니다                       | `FIND_REAL_TIME_PROJECTS`                |
+| `200` | 200       | 유사 프로젝트 리스트를 조회하였습니다                         | `FIND_SIMILAR_PROJECTS`                  |
+| `200` | 200       | 인기있는 프로젝트 리스트를 조회하였습니다                     | `FIND_POPULAR_PROJECTS`                  |
+| `200` | 200       | 필터링된 프로젝트 리스트를 조회하였습니다                     | `FIND_FILTERED_PROJECTS`                 |
+| `200` | 200       | 프로젝트 상세 정보를 조회하였습니다                           | `GET_PROJECT_DETAIL`                     |
+| `200` | 200       | 해당하는 프로젝트의 이어가기 프로젝트 리스트를 조회하였습니다 | `GET_CONTINUE_PROJECTS`                  |
+| `200` | 200       | 해당하는 데이터셋을 이용한 프로젝트 리스트를 조회하였습니다   | `GET_CONNECTED_PROJECTS_ASSOCIATED_DATA` |
+| `200` | 200       | 프로젝트 수정이 완료되었습니다                                | `MODIFY_PROJECT`                         |
+| `200` | 200       | 프로젝트 삭제가 완료되었습니다                                | `DELETE_PROJECT`                         |
+| `200` | 200       | 프로젝트 복원에 완료되었습니다                                | `RESTORE_PROJECT`                        |
+| `200` | 200       | 로그인한 회원이 업로드한 프로젝트 목록 조회가 완료되었습니다  | `GET_USER_PROJECTS`                      |
+| `200` | 200       | 로그인한 회원이 좋아요한 프로젝트 목록 조회가 완료되었습니다  | `GET_LIKE_PROJECTS`                      |
 
 ---
 
@@ -576,7 +584,7 @@ Authorization: Bearer {access_token}
 ```bash
 curl -X POST "https://api.dataracy.store/api/v1/projects" \
   -H "Authorization: Bearer {access_token}" \
-  -F "webRequest={\"title\":\"프로젝트 제목\",\"description\":\"프로젝트 설명\",\"analysisPurposeId\":1,\"dataSourceId\":2,\"dataTypeId\":3,\"datasetIds\":[1,2,3]};type=application/json" \
+  -F "webRequest={\"title\":\"프로젝트 제목\",\"topicId\":1,\"analysisPurposeId\":2,\"dataSourceId\":3,\"authorLevelId\":1,\"isContinue\":true,\"parentProjectId\":1,\"content\":\"프로젝트 내용\",\"dataIds\":[1,2,3]};type=application/json" \
   -F "thumbnailFile=@thumbnail.jpg"
 ```
 
@@ -594,7 +602,20 @@ curl -X GET "https://api.dataracy.store/api/v1/projects/search?q=교통량&page=
 ```javascript
 const uploadProject = async (projectData, thumbnailFile) => {
   const formData = new FormData();
-  formData.append("webRequest", JSON.stringify(projectData));
+  formData.append(
+    "webRequest",
+    JSON.stringify({
+      title: projectData.title,
+      topicId: projectData.topicId,
+      analysisPurposeId: projectData.analysisPurposeId,
+      dataSourceId: projectData.dataSourceId,
+      authorLevelId: projectData.authorLevelId,
+      isContinue: projectData.isContinue,
+      parentProjectId: projectData.parentProjectId,
+      content: projectData.content,
+      dataIds: projectData.dataIds,
+    })
+  );
   if (thumbnailFile) {
     formData.append("thumbnailFile", thumbnailFile);
   }

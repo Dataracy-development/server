@@ -2,16 +2,16 @@
 
 ## 🎯 **실무적 커버리지 정책**
 
-### **커버리지 기준**
+### **커버리지 기준 (실제 구현)**
 
 - **70%**: 최소 기준 (빌드 실패 방지)
-- **75%**: 목표 기준 (경고 수준)
-- **80%**: 이상적 기준 (장기 목표)
+- **75%**: 목표 기준 (경고 수준, 비활성화됨)
+- **82.5%**: 실제 달성 커버리지 (Instruction Coverage)
 
-### **측정 대상**
+### **측정 대상 (실제 설정)**
 
 - ✅ **포함**: Service, Adapter, Repository, Mapper
-- ❌ **제외**: Config, DTO, VO, Entity, Enums, Exception, Application
+- ❌ **제외**: Config, DTO, VO, Entity, Enums, Exception, Application, DataracyApplication
 
 ## 🚀 **실무적 워크플로우**
 
@@ -27,12 +27,13 @@
 ./test-coverage.sh  # 커버리지 확인
 ```
 
-### **CI/CD 자동 검증**
+### **CI/CD 자동 검증 (실제 구현)**
 
 - ✅ **테스트 실행**: 모든 테스트 통과
 - ✅ **커버리지 리포트**: HTML/XML 생성
 - ✅ **커버리지 검증**: 70% 이상 확인
-- ⚠️ **경고 표시**: 75% 미달 시 경고
+- ⚠️ **경고 표시**: 75% 미달 시 경고 (비활성화됨)
+- 🚫 **통합 테스트 제외**: CI 환경에서 제외
 
 ## 📋 **커버리지 향상 방법**
 
@@ -73,8 +74,9 @@ open build/reports/jacoco/test/html/index.html
 
 ## 📊 **커버리지 해석**
 
-### **좋은 커버리지**
+### **좋은 커버리지 (실제 기준)**
 
+- **82.5%**: 현재 달성 (우수)
 - **80% 이상**: 우수
 - **70-79%**: 양호
 - **60-69%**: 개선 필요
@@ -113,15 +115,25 @@ open build/reports/jacoco/test/html/index.html
 # 누락된 부분 식별 후 테스트 추가
 ```
 
-### **커버리지 기준 조정**
+### **커버리지 기준 조정 (실제 설정)**
 
 ```gradle
-// build.gradle에서 기준 변경
+// build.gradle에서 실제 설정
 jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+
     violationRules {
         rule {
             limit {
-                minimum = 0.70 // 원하는 기준으로 변경
+                minimum = 0.70 // 70% 이상 커버리지 요구 (실무적 기준)
+            }
+        }
+
+        // 실무적 예외 처리: 경고만 표시
+        rule {
+            enabled = false // 경고만 표시, 빌드 실패하지 않음
+            limit {
+                minimum = 0.75 // 75% 목표 (경고 수준)
             }
         }
     }
@@ -136,8 +148,8 @@ jacocoTestCoverageVerification {
 - **월간**: 커버리지 목표 달성도 검토
 - **분기**: 커버리지 정책 재검토
 
-### **팀 목표**
+### **팀 목표 (실제 달성)**
 
-- **단기**: 70% 유지
-- **중기**: 75% 달성
-- **장기**: 80% 이상 달성
+- **단기**: 70% 유지 ✅
+- **중기**: 75% 달성 ✅
+- **장기**: 80% 이상 달성 ✅ (82.5% 달성)

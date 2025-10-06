@@ -10,12 +10,11 @@ Dataracy 백엔드 서비스의 배포 프로세스와 환경 설정을 안내�
 
 ### **환경별 설정**
 
-| 환경         | URL                                  | 브랜치      | 목적           |
-| ------------ | ------------------------------------ | ----------- | -------------- |
-| **로컬**     | `http://localhost:8080`              | `develop`   | 개발 및 테스트 |
-| **개발**     | `https://dev-api.dataracy.store`     | `develop`   | 기능 검증      |
-| **스테이징** | `https://staging-api.dataracy.store` | `release/*` | 최종 검증      |
-| **운영**     | `https://api.dataracy.store`         | `main`      | 실제 서비스    |
+| 환경     | URL                              | 브랜치    | 목적           |
+| -------- | -------------------------------- | --------- | -------------- |
+| **로컬** | `http://localhost:8080`          | `develop` | 개발 및 테스트 |
+| **개발** | `https://dev-api.dataracy.co.kr` | `develop` | 기능 검증      |
+| **운영** | `https://api.dataracy.co.kr`     | `main`    | 실제 서비스    |
 
 ### **인프라 구성**
 
@@ -79,28 +78,26 @@ Blue-Green 배포는 무중단 배포를 위한 전략으로, 두 개의 동일�
 
 ```bash
 # 1. 배포 실행
-./deployment/scripts/deploy-dev.sh
+~/dataracy-dev/deployment/dev/script/deploy-dev.sh
 
 # 2. 상태 확인
-./deployment/scripts/status.sh
+~/dataracy-dev/deployment/scripts/status.sh
 
 # 3. 트래픽 전환
-cd deployment/dev/blue-green
-./switch-dev.sh
+~/dataracy-dev/deployment/dev/blue-green/switch-dev.sh
 ```
 
 #### **운영 환경 배포**
 
 ```bash
 # 1. 배포 실행
-./deployment/scripts/deploy-prod.sh
+~/dataracy-prod/deployment/prod/script/deploy-prod.sh
 
 # 2. 상태 확인
-./deployment/scripts/status.sh
+~/dataracy-prod/deployment/scripts/status.sh
 
 # 3. 트래픽 전환
-cd deployment/prod/blue-green
-./switch-prod.sh
+~/dataracy-prod/deployment/prod/blue-green/switch-prod.sh
 ```
 
 ---
@@ -152,11 +149,14 @@ docker-compose -f deployment/prod/docker/docker-compose-green-prod.yml up -d
 
 ```bash
 # MySQL
-MYSQL_URL=jdbc:mysql://localhost:3306/dataracy
-MYSQL_USERNAME=root
-MYSQL_PASSWORD=password
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=dataracy
+DB_USERNAME=root
+DB_PASSWORD=password
 
 # Redis
+REDIS_PROTOCOL=redis
 REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=password
@@ -168,6 +168,7 @@ REDIS_PASSWORD=password
 # AWS S3
 AWS_ACCESS_KEY_ID=your-access-key
 AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_REGION=ap-northeast-2
 AWS_S3_BUCKET=dataracy-files
 
 # SendGrid
@@ -175,16 +176,16 @@ SENDGRID_API_KEY=your-sendgrid-key
 
 # JWT
 JWT_SECRET=your-jwt-secret
-JWT_ACCESS_EXPIRATION=3600
-JWT_REFRESH_EXPIRATION=1209600
+ACCESS_TOKEN_EXPIRATION_TIME=3600
+REFRESH_TOKEN_EXPIRATION_TIME=1209600
 ```
 
 #### **Elasticsearch**
 
 ```bash
 # Elasticsearch
-ELASTICSEARCH_HOST=localhost
-ELASTICSEARCH_PORT=9200
+ELASTIC_SEARCH_HOST=localhost
+ELASTIC_SEARCH_PORT=9200
 ELASTICSEARCH_USERNAME=elastic
 ELASTICSEARCH_PASSWORD=password
 ```
@@ -292,7 +293,7 @@ logging:
 # 헬스체크 실패 감지
 if ! curl -f http://localhost:8080/actuator/health; then
     echo "Health check failed, rolling back..."
-    ./deployment/scripts/rollback.sh
+    ~/dataracy-dev/deployment/scripts/rollback.sh
 fi
 ```
 
@@ -303,7 +304,7 @@ fi
 ERROR_RATE=$(curl -s http://localhost:8080/actuator/metrics/http.server.requests | jq '.measurements[0].value')
 if (( $(echo "$ERROR_RATE > 0.05" | bc -l) )); then
     echo "Error rate too high, rolling back..."
-    ./deployment/scripts/rollback.sh
+    ~/dataracy-dev/deployment/scripts/rollback.sh
 fi
 ```
 
@@ -313,12 +314,10 @@ fi
 
 ```bash
 # Blue-Green 전환 (이전 버전으로)
-cd deployment/dev/blue-green
-./switch-dev.sh
+~/dataracy-dev/deployment/dev/blue-green/switch-dev.sh
 
 # 또는 운영 환경
-cd deployment/prod/blue-green
-./switch-prod.sh
+~/dataracy-prod/deployment/prod/blue-green/switch-prod.sh
 ```
 
 #### **데이터베이스 롤백**
@@ -429,7 +428,6 @@ spring:
 
 ### **모니터링 도구**
 
-- **Grafana**: http://localhost:3000
 - **Prometheus**: http://localhost:9090
 - **Kibana**: http://localhost:5601
 

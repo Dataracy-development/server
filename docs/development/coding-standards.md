@@ -55,12 +55,14 @@ com.dataracy.modules.{domain}/
 
 #### **클래스명**
 
-- **도메인 모델**: `User`, `Project`, `Data`
-- **엔티티**: `UserEntity`, `ProjectEntity`
-- **서비스**: `UserService`, `ProjectService`
+- **도메인 모델**: `User`, `Project`, `Data`, `BehaviorLog`
+- **엔티티**: `UserEntity`, `ProjectEntity`, `DataEntity`
+- **서비스**: `UserCommandService`, `ProjectQueryService`
 - **컨트롤러**: `UserController`, `ProjectController`
-- **DTO**: `UserRequest`, `UserResponse`
-- **예외**: `UserException`, `ProjectException`
+- **DTO**: `SelfSignUpWebRequest`, `PopularProjectResponse`, `DataDetailResponse`
+- **예외**: `UserException`, `ProjectException`, `CommonException`
+- **매퍼**: `UserDtoMapper`, `ProjectReadDtoMapper`
+- **유틸리티**: `S3KeyGeneratorUtil`, `LoggerFactory`
 
 #### **메서드명**
 
@@ -109,7 +111,7 @@ if (condition) {
 ```java
 // 표준 순서
 import java.util.List;           // Java 표준 라이브러리
-import javax.persistence.Entity; // Java EE
+import jakarta.persistence.Entity; // Jakarta EE
 import org.springframework.web.bind.annotation.RestController; // Spring
 import com.dataracy.modules.user.domain.model.User; // 프로젝트 내부
 ```
@@ -180,21 +182,30 @@ if (userRepository.existsByEmail(request.getEmail())) {
 
 ```java
 @Test
-void 사용자_생성_성공() {
-    // Given
-    UserRequest request = createUserRequest();
+@DisplayName("isPasswordMatch - 비밀번호가 일치하는 경우 true를 반환한다")
+void isPasswordMatchWhenPasswordMatchesReturnsTrue() {
+    // given
+    PasswordEncoder encoder = mock(PasswordEncoder.class);
+    String rawPassword = "password1";
+    String encodedPassword = "encodedPassword1";
 
-    // When
-    UserResponse response = userService.createUser(request);
+    User user = User.builder().password(encodedPassword).build();
+    given(encoder.matches(rawPassword, encodedPassword)).willReturn(true);
 
-    // Then
-    assertThat(response.getId()).isNotNull();
+    // when
+    boolean result = user.isPasswordMatch(encoder, rawPassword);
+
+    // then
+    assertThat(result).isTrue();
 }
 ```
 
 ### **테스트 구조**
 
 - **Given-When-Then** 패턴 사용
+- **@DisplayName**으로 한글 테스트 설명
+- **@Nested**로 테스트 그룹화
+- **@ExtendWith(MockitoExtension.class)** 사용
 - **의미 있는 테스트 데이터** 생성
 - **경계값 테스트** 포함
 
@@ -228,10 +239,10 @@ if (user.getAge() > ADULT_AGE) {
 
 ```java
 // 구체적인 예외 사용
-throw new UserNotFoundException("사용자를 찾을 수 없습니다: " + userId);
+throw new UserException(UserErrorStatus.USER_NOT_FOUND);
 
 // 로깅 포함
-log.error("사용자 조회 실패: userId={}", userId, e);
+LoggerFactory.service().logError("사용자 조회 실패", "userId={}", userId, e);
 throw new UserException(UserErrorStatus.USER_NOT_FOUND);
 ```
 
@@ -248,8 +259,9 @@ throw new UserException(UserErrorStatus.USER_NOT_FOUND);
 ### **코드 검사**
 
 - **Checkstyle** 설정
-- **SpotBugs** 정적 분석
-- **SonarQube** 품질 게이트
+- **SpotBugs** 정적 분석 (주석 처리됨)
+- **SonarQube** 품질 게이트 (주석 처리됨)
+- **JaCoCo** 테스트 커버리지
 
 ### **IDE 설정**
 

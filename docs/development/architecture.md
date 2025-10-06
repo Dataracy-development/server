@@ -36,6 +36,8 @@ Dataracy 백엔드는 DDD(Domain-Driven Design)와 헥사고날 아키텍처를 
 
 ```java
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class User {
     private Long id;
@@ -56,6 +58,12 @@ public class User {
     private Long visitSourceId;
 
     private boolean isDeleted;
+
+    // 도메인 로직
+    public boolean isPasswordMatch(PasswordEncoder encoder, String rawPassword);
+    public void validatePasswordChangable();
+    public UserInfo toUserInfo();
+    public static User of(/* 16개 파라미터 */);
 }
 ```
 
@@ -63,6 +71,8 @@ public class User {
 
 ```java
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class Project {
     private Long id;
@@ -92,6 +102,13 @@ public class Project {
     private List<Project> childProjects;
     private Boolean isDeleted;
     private LocalDateTime createdAt;
+
+    // 방어적 복사
+    public List<Long> getDataIds();
+    public List<Project> getChildProjects();
+
+    // 도메인 로직
+    public void updateThumbnailUrl(String thumbnailUrl);
 }
 ```
 
@@ -99,20 +116,29 @@ public class Project {
 
 ```java
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class Data {
     private Long id;
     private String title;
-    private String description;
-    private Long dataTypeId;
+    private Long userId;
     private Long dataSourceId;
-    private String fileUrl;
-    private String thumbnailImageUrl;
-    private Long fileSize;
-    private Long uploadedBy;
-    private Long downloadCount;
-    private Boolean isDeleted;
+    private Long dataTypeId;
+    private Long topicId;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String description;
+    private String analysisGuide;
+    private String dataFileUrl;
+    private String dataThumbnailUrl;
+    private int downloadCount;
+    private Long sizeBytes;
+    private DataMetadata metadata;
     private LocalDateTime createdAt;
+
+    // 팩토리 메서드
+    public static Data of(/* 15개 파라미터 */);
 }
 ```
 
@@ -120,7 +146,9 @@ public class Data {
 
 ```java
 @Getter
-@Builder
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BehaviorLog {
     // 사용자 정보
     private String userId;
@@ -153,6 +181,10 @@ public class BehaviorLog {
     // 로그 타입 + 시간
     private LogType logType;
     private String timestamp;
+
+    // 도메인 로직
+    public boolean isValid();
+    public BehaviorLog withTimestampIfNull();
 }
 ```
 
@@ -164,7 +196,7 @@ public class BehaviorLog {
 
 ```
 modules/
-├── auth/                    # 인증/인가 도메인
+├── auth/ (60개 파일)        # 인증/인가 도메인
 │   ├── domain/             # 도메인 계층
 │   │   ├── model/         # JWT, OAuth2 모델
 │   │   ├── enums/         # 인증 관련 열거형
@@ -176,15 +208,17 @@ modules/
 │   └── adapter/           # 어댑터 계층
 │       ├── web/           # REST API
 │       └── persistence/   # JWT, Redis 어댑터
-├── user/                   # 사용자 도메인
-├── project/                # 프로젝트 도메인
-├── dataset/                # 데이터셋 도메인
-├── comment/                # 댓글 도메인
-├── like/                   # 좋아요 도메인
-├── behaviorlog/            # 행동 로그 도메인
-├── filestorage/            # 파일 저장소 도메인
-├── reference/              # 참조 데이터 도메인
-└── common/                 # 공통 모듈
+├── user/ (89개 파일)        # 사용자 도메인
+├── project/ (158개 파일)    # 프로젝트 도메인
+├── dataset/ (149개 파일)    # 데이터셋 도메인
+├── comment/ (60개 파일)     # 댓글 도메인
+├── like/ (26개 파일)        # 좋아요 도메인
+├── behaviorlog/ (23개 파일) # 행동 로그 도메인
+├── filestorage/ (18개 파일) # 파일 저장소 도메인
+├── reference/ (136개 파일)  # 참조 데이터 도메인
+├── email/ (29개 파일)       # 이메일 도메인
+├── security/ (10개 파일)    # 보안 도메인
+└── common/ (68개 파일)      # 공통 모듈
     ├── config/            # 공통 설정
     ├── exception/         # 공통 예외
     ├── logging/           # 로깅 지원
@@ -268,15 +302,15 @@ modules/
 
 ### **백엔드 프레임워크**
 
-- **Spring Boot**: 3.3.11
+- **Spring Boot**: 3.2.5
 - **Spring Security**: OAuth2, JWT
 - **Spring Data JPA**: 데이터 영속성
 - **Spring Kafka**: 이벤트 처리
-- **Spring WebFlux**: 비동기 처리
+- **Spring AOP**: 관점 지향 프로그래밍
 
 ### **데이터베이스**
 
-- **MySQL**: 8.0 (주 데이터베이스)
+- **MySQL**: 8.0.33 (주 데이터베이스)
 - **Redis**: 7.0 (캐시, 세션)
 - **Elasticsearch**: 8.13.4 (검색)
 - **H2**: 테스트용
@@ -284,19 +318,18 @@ modules/
 ### **메시징**
 
 - **Apache Kafka**: 3.5 (이벤트 스트리밍)
-- **Spring Integration**: 메시지 처리
+- **Spring Kafka**: Kafka 통합
 
 ### **파일 저장소**
 
-- **AWS S3**: 파일 저장
+- **AWS S3**: 1.12.787 (파일 저장)
 - **PreSigned URL**: 직접 업로드/다운로드
 
 ### **모니터링**
 
 - **Spring Actuator**: 헬스체크, 메트릭
 - **Prometheus**: 메트릭 수집
-- **Grafana**: 대시보드
-- **ELK Stack**: 로그 분석
+- **Micrometer**: 메트릭 수집 라이브러리
 
 ---
 
@@ -355,16 +388,15 @@ modules/
 ### **비동기 처리**
 
 - **Kafka**: 이벤트 기반 비동기 처리
-- **@Async**: Spring 비동기 처리
-- **WebSocket**: 실시간 통신
 - **CompletableFuture**: 비동기 프로그래밍
+- **@Scheduled**: 배치 처리
 
 ### **데이터베이스 최적화**
 
 - **연결 풀**: HikariCP 최적화
 - **인덱스**: 복합 인덱스, 부분 인덱스
 - **쿼리 최적화**: QueryDSL, 네이티브 쿼리
-- **읽기 전용 복제본**: 마스터-슬레이브 구조
+- **N+1 문제 해결**: 2단계 쿼리, 배치 처리
 
 ---
 
@@ -391,8 +423,7 @@ modules/
 ### **모니터링 스택**
 
 - **애플리케이션**: Spring Actuator
-- **인프라**: Prometheus + Grafana
-- **로그**: ELK Stack
+- **메트릭**: Prometheus + Micrometer
 - **분산 추적**: Zipkin (준비)
 
 ### **핵심 메트릭**
@@ -521,7 +552,7 @@ modules/
 
 - **JUnit 5**: 단위 테스트
 - **Mockito**: 모킹
-- **TestContainers**: 통합 테스트
+- **H2 Database**: 테스트용 인메모리 DB
 - **AssertJ**: 플루언트 어설션
 
 ---

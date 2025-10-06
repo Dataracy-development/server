@@ -24,12 +24,12 @@ Dataracy 백엔드 프로젝트의 통합 테스트 작성 방법과 실행 전�
 
 ### **테스트 환경**
 
-#### **TestContainers**
+#### **H2 인메모리 데이터베이스 (실제 사용)**
 
-- **MySQL**: 실제 데이터베이스 환경
-- **Redis**: 캐시 및 세션 저장소
-- **Elasticsearch**: 검색 엔진
-- **Kafka**: 메시지 브로커
+- **H2**: 인메모리 데이터베이스 (테스트용)
+- **Redis**: 캐시 및 세션 저장소 (Mock)
+- **Elasticsearch**: 검색 엔진 (Mock)
+- **Kafka**: 메시지 브로커 (Mock)
 
 ---
 
@@ -37,67 +37,62 @@ Dataracy 백엔드 프로젝트의 통합 테스트 작성 방법과 실행 전�
 
 ### **Spring Boot Test**
 
-#### **@SpringBootTest**
+#### **@SpringBootTest (실제 구현 기반)**
 
 ```java
+// 실제 DataracyApplicationTests.java 기반
 @SpringBootTest
-@Transactional
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserServiceIntegrationTest {
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
-
+class DataracyApplicationTests {
     @Test
-    void 사용자_생성_통합_테스트() {
-        // Given
-        UserRequest request = createUserRequest();
-
-        // When
-        UserResponse response = userService.createUser(request);
-
-        // Then
-        assertThat(response.getId()).isNotNull();
-
-        User savedUser = userRepository.findById(response.getId()).orElseThrow();
-        assertThat(savedUser.getEmail()).isEqualTo(request.getEmail());
-        assertThat(savedUser.getNickname()).isEqualTo(request.getNickname());
+    void contextLoads() {
+        // Spring 컨텍스트가 정상적으로 로드되는지 확인하는 테스트
+        // 별도 로직 없이 애플리케이션 컨텍스트 로딩만으로 충분
     }
 }
 ```
 
-#### **@WebMvcTest**
+#### **@WebMvcTest (실제 구현 기반)**
 
 ```java
-@WebMvcTest(UserController.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserControllerIntegrationTest {
+// 실제 TopicControllerTest.java 기반
+@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(
+    controllers = TopicController.class,
+    includeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {
+              com.dataracy.modules.common.util.CookieUtil.class,
+              com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver.class
+            }))
+class TopicControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private UserService userService;
+    @Autowired private MockMvc mockMvc;
+    @MockBean private FindAllTopicsUseCase findAllTopicsUseCase;
+    @MockBean private TopicWebMapper webMapper;
+    @MockBean private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+    @MockBean private JwtValidateUseCase jwtValidateUseCase;
 
     @Test
-    void 사용자_생성_API_테스트() throws Exception {
-        // Given
-        UserRequest request = createUserRequest();
-        UserResponse response = createUserResponse();
-        given(userService.createUser(any(UserRequest.class))).willReturn(response);
+    @DisplayName("findAllTopics API: 성공 - 200 OK와 JSON 응답 검증")
+    void findAllTopicsSuccess() throws Exception {
+        // given
+        AllTopicsResponse svc = new AllTopicsResponse(List.of());
+        AllTopicsWebResponse web = new AllTopicsWebResponse(
+            List.of(
+                new TopicWebResponse(1L, "AI", "인공지능"),
+                new TopicWebResponse(2L, "DATA", "데이터 분석")));
 
-        // When & Then
-        mockMvc.perform(post("/api/v1/user")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.httpStatus").value(201))
+        given(findAllTopicsUseCase.findAllTopics()).willReturn(svc);
+        given(webMapper.toWebDto(svc)).willReturn(web);
+
+        // when & then
+        mockMvc
+            .perform(get("/api/v1/references/topics").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.topics[0].id").value(1))
+            .andExpect(jsonPath("$.data.topics[0].value").value("AI"))
+            .andExpect(jsonPath("$.data.topics[0].label").value("인공지능"))
             .andExpect(jsonPath("$.code").value("SUCCESS"))
             .andExpect(jsonPath("$.data.id").value(1L))
             .andExpect(jsonPath("$.data.email").value("user@example.com"));
@@ -105,83 +100,79 @@ class UserControllerIntegrationTest {
 }
 ```
 
-### **TestContainers**
+### **H2 인메모리 데이터베이스 (실제 사용)**
 
-#### **MySQL 컨테이너**
+#### **테스트 설정**
 
-```java
-@Testcontainers
-@SpringBootTest
-@Transactional
-class UserRepositoryIntegrationTest {
+```yaml
+# application-test.yml (실제 파일)
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
 
-    @Container
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test")
-            .withReuse(true);
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
 
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mysql::getJdbcUrl);
-        registry.add("spring.datasource.username", mysql::getUsername);
-        registry.add("spring.datasource.password", mysql::getPassword);
-    }
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Test
-    void 사용자_저장_및_조회_테스트() {
-        // Given
-        User user = createUser();
-
-        // When
-        User savedUser = userRepository.save(user);
-        User foundUser = userRepository.findById(savedUser.getId()).orElseThrow();
-
-        // Then
-        assertThat(foundUser.getId()).isEqualTo(savedUser.getId());
-        assertThat(foundUser.getEmail()).isEqualTo(user.getEmail());
-    }
-}
+  h2:
+    console:
+      enabled: true
 ```
 
-#### **Redis 컨테이너**
+#### **실제 테스트 예시**
 
 ```java
-@Testcontainers
+// 실제 LockTest.java 기반
 @SpringBootTest
-class CacheServiceIntegrationTest {
+class LockTest {
 
-    @Container
-    static GenericContainer<?> redis = new GenericContainer<>("redis:7.0")
-            .withExposedPorts(6379)
-            .withReuse(true);
+    private MockMvc mockMvc;
+    @Autowired private UserValidateController userController;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.redis.host", redis::getHost);
-        registry.add("spring.redis.port", redis::getFirstMappedPort);
+    @BeforeEach
+    void setup() {
+        // Spring Security 없이 컨트롤러만 등록
+        this.mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
-    @Autowired
-    private CacheService cacheService;
-
     @Test
-    void 캐시_저장_및_조회_테스트() {
-        // Given
-        String key = "user:1";
-        User user = createUser();
+    void testNicknameLockconcurrentAccess() throws Exception {
+        // given
+        int threadCount = 5;
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
 
-        // When
-        cacheService.put(key, user, Duration.ofMinutes(10));
-        Optional<User> cachedUser = cacheService.get(key, User.class);
+        String json = objectMapper.writeValueAsString(new DuplicateNicknameRequest("주니22"));
 
-        // Then
-        assertThat(cachedUser).isPresent();
-        assertThat(cachedUser.get().getEmail()).isEqualTo(user.getEmail());
+        // when
+        for (int i = 0; i < threadCount; i++) {
+            executor.submit(() -> {
+                try {
+                    mockMvc.perform(
+                        post("/api/v1/public/nickname/check")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(json))
+                        .andDo(print());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        // then
+        latch.await(10, TimeUnit.SECONDS);
+        executor.shutdown();
     }
 }
 ```
@@ -190,48 +181,39 @@ class CacheServiceIntegrationTest {
 
 ## 🗄️ **데이터베이스 테스트**
 
-### **JPA 통합 테스트**
+### **H2 인메모리 데이터베이스 테스트**
 
-#### **엔티티 테스트**
+#### **실제 테스트 설정**
 
-```java
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserEntityTest {
+```yaml
+# application-test.yml (실제 파일)
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
 
-    @Autowired
-    private TestEntityManager entityManager;
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
+        hbm2ddl:
+          auto: create-drop
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Test
-    void 사용자_엔티티_저장_테스트() {
-        // Given
-        User user = createUser();
-
-        // When
-        User savedUser = entityManager.persistAndFlush(user);
-
-        // Then
-        assertThat(savedUser.getId()).isNotNull();
-        assertThat(savedUser.getCreatedAt()).isNotNull();
-        assertThat(savedUser.getUpdatedAt()).isNotNull();
-    }
-
-    @Test
-    void 사용자_이메일_중복_검사_테스트() {
-        // Given
-        User user1 = createUserWithEmail("test@example.com");
-        User user2 = createUserWithEmail("test@example.com");
-
-        entityManager.persistAndFlush(user1);
-
-        // When & Then
-        assertThatThrownBy(() -> entityManager.persistAndFlush(user2))
-            .isInstanceOf(DataIntegrityViolationException.class);
-    }
-}
+  h2:
+    console:
+      enabled: true
 ```
 
 #### **쿼리 테스트**
@@ -326,55 +308,54 @@ class UserServiceTransactionTest {
 
 ### **REST API 테스트**
 
-#### **컨트롤러 통합 테스트**
+#### **컨트롤러 통합 테스트 (실제 구현 기반)**
 
 ```java
-@SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@AutoConfigureMockMvc
-class UserControllerIntegrationTest {
+// 실제 CommentCommandControllerTest.java 기반
+@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(
+    controllers = CommentCommandController.class,
+    includeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {
+              com.dataracy.modules.common.util.CookieUtil.class,
+              com.dataracy.modules.common.support.resolver.CurrentUserIdArgumentResolver.class
+            }))
+class CommentCommandControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
+    @MockBean private UploadCommentUseCase uploadCommentUseCase;
+    @MockBean private ModifyCommentUseCase modifyCommentUseCase;
+    @MockBean private DeleteCommentUseCase deleteCommentUseCase;
+    @MockBean private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+    @MockBean private JwtValidateUseCase jwtValidateUseCase;
+    @MockBean private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private UserRepository userRepository;
+    @BeforeEach
+    void setupResolver() {
+        // 모든 @CurrentUserId Long 파라미터 → userId=1L 주입
+        given(currentUserIdArgumentResolver.supportsParameter(any())).willReturn(true);
+        given(currentUserIdArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
+    }
 
     @Test
-    void 사용자_생성_API_통합_테스트() throws Exception {
-        // Given
-        UserRequest request = createUserRequest();
+    @DisplayName("댓글 생성 API: 성공 - 201 Created와 JSON 응답 검증")
+    void uploadCommentSuccess() throws Exception {
+        // given
+        UploadCommentWebRequest request = new UploadCommentWebRequest(1L, "테스트 댓글");
+        UploadCommentResponse response = new UploadCommentResponse(1L);
+        given(uploadCommentUseCase.uploadComment(any(), any())).willReturn(response);
 
-        // When & Then
-        mockMvc.perform(post("/api/v1/user")
+        // when & then
+        mockMvc.perform(post("/api/v1/projects/1/comments")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.httpStatus").value(201))
             .andExpect(jsonPath("$.code").value("SUCCESS"))
-            .andExpect(jsonPath("$.data.id").exists())
-            .andExpect(jsonPath("$.data.email").value(request.getEmail()));
-
-        // 데이터베이스에 실제로 저장되었는지 확인
-        assertThat(userRepository.findByEmail(request.getEmail())).isPresent();
-    }
-
-    @Test
-    void 사용자_조회_API_통합_테스트() throws Exception {
-        // Given
-        User user = createUser();
-        userRepository.save(user);
-
-        // When & Then
-        mockMvc.perform(get("/api/v1/user/{id}", user.getId()))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.httpStatus").value(200))
-            .andExpect(jsonPath("$.code").value("SUCCESS"))
-            .andExpect(jsonPath("$.data.id").value(user.getId()))
-            .andExpect(jsonPath("$.data.email").value(user.getEmail()));
+            .andExpect(jsonPath("$.data.commentId").value(1L));
     }
 }
 ```
@@ -438,38 +419,34 @@ class AuthControllerIntegrationTest {
 
 ## 🔍 **검색 엔진 테스트**
 
-### **Elasticsearch 통합 테스트**
+### **Elasticsearch Mock 테스트 (실제 구현)**
 
 ```java
-@Testcontainers
-@SpringBootTest
-class ProjectSearchIntegrationTest {
+// 실제 구현에서는 Elasticsearch를 Mock으로 처리
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+class ProjectSearchServiceTest {
 
-    @Container
-    static ElasticsearchContainer elasticsearch = new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:8.13.4")
-            .withReuse(true);
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.elasticsearch.hosts",
-            () -> "http://" + elasticsearch.getHttpHostAddress());
-    }
-
-    @Autowired
-    private ProjectSearchService projectSearchService;
+    @Mock private ProjectSearchPort projectSearchPort;
+    @InjectMocks private ProjectSearchService projectSearchService;
 
     @Test
-    void 프로젝트_검색_통합_테스트() {
-        // Given
-        ProjectDocument project = createProjectDocument();
-        projectSearchService.indexProject(project);
+    @DisplayName("프로젝트 검색 성공")
+    void searchProjectsSuccess() {
+        // given
+        String keyword = "머신러닝";
+        List<ProjectSearchDocument> expectedResults = List.of(
+            new ProjectSearchDocument(1L, "머신러닝 프로젝트", "AI", "데이터 분석")
+        );
+        given(projectSearchPort.searchProjects(keyword)).willReturn(expectedResults);
 
-        // When
-        List<ProjectDocument> results = projectSearchService.searchProjects("머신러닝");
+        // when
+        List<ProjectSearchDocument> results = projectSearchService.searchProjects(keyword);
 
-        // Then
+        // then
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getTitle()).contains("머신러닝");
+        verify(projectSearchPort).searchProjects(keyword);
     }
 }
 ```
@@ -478,43 +455,32 @@ class ProjectSearchIntegrationTest {
 
 ## 📨 **메시징 테스트**
 
-### **Kafka 통합 테스트**
+### **Kafka Mock 테스트 (실제 구현)**
 
 ```java
-@Testcontainers
-@SpringBootTest
-class EventPublishingIntegrationTest {
+// 실제 구현에서는 Kafka를 Mock으로 처리
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+class BehaviorLogKafkaProducerAdapterTest {
 
-    @Container
-    static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"))
-            .withReuse(true);
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-    }
-
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
-
-    @Autowired
-    private TestEventConsumer testEventConsumer;
+    @Mock private KafkaTemplate<String, String> kafkaTemplate;
+    @InjectMocks private BehaviorLogKafkaProducerAdapter adapter;
 
     @Test
-    void 이벤트_발행_및_소비_테스트() throws InterruptedException {
-        // Given
-        String eventMessage = "{\"userId\":1,\"action\":\"LOGIN\"}";
+    @DisplayName("행동 로그 Kafka 전송 성공")
+    void sendBehaviorLogSuccess() {
+        // given
+        BehaviorLog behaviorLog = BehaviorLog.builder()
+            .userId("1")
+            .path("/api/v1/projects")
+            .action(ActionType.CLICK)
+            .build();
 
-        // When
-        kafkaTemplate.send("user-events", eventMessage);
+        // when
+        adapter.send(behaviorLog);
 
-        // Then
-        await().atMost(10, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                assertThat(testEventConsumer.getReceivedMessages())
-                    .hasSize(1)
-                    .contains(eventMessage);
-            });
+        // then
+        verify(kafkaTemplate).send(eq("behavior-log-topic"), anyString());
     }
 }
 ```
@@ -570,31 +536,24 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 ```
 
-### **테스트 전용 Bean**
+### **테스트 전용 Bean (실제 구현)**
 
 #### **@TestConfiguration**
 
 ```java
-@TestConfiguration
-public class IntegrationTestConfig {
+// 실제 구현에서는 MockBean을 주로 사용
+@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(controllers = CommentCommandController.class)
+class CommentCommandControllerTest {
 
-    @Bean
-    @Primary
-    public EmailService testEmailService() {
-        return new TestEmailService();
-    }
+    @MockBean private UploadCommentUseCase uploadCommentUseCase;
+    @MockBean private ModifyCommentUseCase modifyCommentUseCase;
+    @MockBean private DeleteCommentUseCase deleteCommentUseCase;
+    @MockBean private BehaviorLogSendProducerPort behaviorLogSendProducerPort;
+    @MockBean private JwtValidateUseCase jwtValidateUseCase;
+    @MockBean private CurrentUserIdArgumentResolver currentUserIdArgumentResolver;
 
-    @Bean
-    @Primary
-    public FileStorageService testFileStorageService() {
-        return new TestFileStorageService();
-    }
-
-    @Bean
-    @Primary
-    public Clock testClock() {
-        return Clock.fixed(Instant.parse("2024-01-15T10:00:00Z"), ZoneId.systemDefault());
-    }
+    // 실제 테스트에서는 외부 서비스를 Mock으로 처리
 }
 ```
 
@@ -653,29 +612,32 @@ DELETE FROM users;
 
 ## 🚀 **테스트 실행**
 
-### **로컬 실행**
+### **로컬 실행 (실제 구현)**
 
-#### **통합 테스트만 실행**
+#### **통합 테스트 실행**
 
 ```bash
-# 통합 테스트 실행
-./gradlew integrationTest
+# 실제 테스트 실행 스크립트 사용
+./test-run.sh
 
-# 특정 통합 테스트 실행
-./gradlew integrationTest --tests "*IntegrationTest"
+# 또는 직접 실행
+./gradlew test --continue --exclude-tests "*IntegrationTest"
+
+# 통합 테스트만 실행 (CI 환경에서 제외됨)
+./gradlew test --tests "*IntegrationTest"
 
 # 특정 클래스 실행
-./gradlew integrationTest --tests "UserServiceIntegrationTest"
+./gradlew test --tests "DataracyApplicationTests"
 ```
 
-#### **TestContainers 실행**
+#### **H2 데이터베이스 실행**
 
 ```bash
-# Docker가 실행 중인지 확인
-docker ps
-
-# 통합 테스트 실행 (컨테이너 자동 시작)
-./gradlew integrationTest
+# H2 콘솔 접속 (테스트용)
+# http://localhost:8080/h2-console
+# JDBC URL: jdbc:h2:mem:testdb
+# Username: sa
+# Password: (비어있음)
 ```
 
 ### **CI/CD 실행**

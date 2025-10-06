@@ -15,7 +15,7 @@
 ### 2. [SonarQube](sonarqube.md) - 정적 분석
 
 - **목적**: 종합적인 코드 품질 분석
-- **상태**: 🔄 필요시 활성화
+- **상태**: 🚫 주석 처리됨 (필요시 활성화)
 - **사용법**: `./gradlew sonar`
 
 ### 3. [Checkstyle](checkstyle.md) - 코드 스타일 검사
@@ -33,7 +33,7 @@
 ### 5. [SpotBugs](spotbugs.md) - 버그 검출
 
 - **목적**: 잠재적 버그 패턴 검출
-- **상태**: 🔄 필요시 활성화
+- **상태**: 🚫 주석 처리됨 (필요시 활성화)
 - **사용법**: `./gradlew spotbugsMain`
 
 ## 통합 워크플로우
@@ -50,11 +50,11 @@
 # 3. 테스트 실행 및 커버리지 측정 (CI/CD)
 ./gradlew test jacocoTestReport
 
-# 4. 버그 검출 (필요시)
-./gradlew spotbugsMain spotbugsTest
+# 4. 버그 검출 (필요시 - 주석 처리됨)
+# ./gradlew spotbugsMain spotbugsTest
 
-# 5. 종합 품질 분석 (필요시)
-./gradlew sonar
+# 5. 종합 품질 분석 (필요시 - 주석 처리됨)
+# ./gradlew sonar
 ```
 
 ### CI/CD 파이프라인 통합
@@ -87,9 +87,9 @@ jobs:
       - name: Run Tests with Coverage
         run: ./gradlew test jacocoTestReport
 
-      - name: Bug Detection
-        run: ./gradlew spotbugsMain spotbugsTest
-        continue-on-error: true
+      # - name: Bug Detection (주석 처리됨)
+      #   run: ./gradlew spotbugsMain spotbugsTest
+      #   continue-on-error: true
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
@@ -104,24 +104,24 @@ jobs:
 
 ## 품질 기준
 
-### 커버리지 기준
+### 커버리지 기준 (실제 달성)
 
 - **최소 요구사항**: 70%
 - **목표 수준**: 75%
 - **우수 수준**: 80% 이상
+- **현재 달성**: 82.5% (Instruction Coverage)
 
-### 코드 스타일 기준
+### 코드 스타일 기준 (실제 달성)
 
-- **Checkstyle**: 경고 100개 이하
+- **Checkstyle**: 0개 경고 (Main 코드 완전 해결)
 - **Spotless**: 모든 파일 포맷팅 적용
 - **라인 길이**: 최대 200자
 - **파일 길이**: 최대 2000라인
 
-### 버그 검출 기준
+### 버그 검출 기준 (주석 처리됨)
 
-- **심각한 버그**: 0개
-- **중요한 버그**: 5개 이하
-- **일반적인 버그**: 10개 이하
+- **SpotBugs**: 주석 처리됨 (필요시 활성화)
+- **SonarQube**: 주석 처리됨 (필요시 활성화)
 
 ## 도구별 설정 파일
 
@@ -129,15 +129,15 @@ jobs:
 
 - `build.gradle` - 모든 도구의 Gradle 설정
 - `checkstyle.xml` - Checkstyle 규칙 설정
-- `spotbugs-exclude.xml` - SpotBugs 제외 규칙
+- `spotbugs-exclude.xml` - SpotBugs 제외 규칙 (주석 처리됨)
 - `quality-gate.yml` - 품질 게이트 기준
 
 ### 리포트 위치
 
 - **JaCoCo**: `build/reports/jacoco/test/`
 - **Checkstyle**: `build/reports/checkstyle/`
-- **SpotBugs**: `build/reports/spotbugs/`
-- **SonarQube**: 웹 인터페이스 (http://localhost:9000)
+- **SpotBugs**: `build/reports/spotbugs/` (주석 처리됨)
+- **SonarQube**: 웹 인터페이스 (http://localhost:9000) (주석 처리됨)
 
 ## 모범 사례
 

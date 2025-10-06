@@ -32,9 +32,13 @@ dataFile: [파일] (필수)
 thumbnailFile: [파일] (선택사항)
 webRequest: {
   "title": "데이터셋 제목",
+  "topicId": 1,
+  "dataSourceId": 2,
+  "dataTypeId": 3,
+  "startDate": "2024-01-01",
+  "endDate": "2024-12-31",
   "description": "데이터셋 설명",
-  "dataSourceId": 1,
-  "dataTypeId": 2
+  "analysisGuide": "분석 가이드"
 }
 ```
 
@@ -42,31 +46,12 @@ webRequest: {
 
 ```json
 {
-  "success": true,
+  "httpStatus": 201,
+  "code": "201",
+  "message": "제출이 완료되었습니다",
   "data": {
-    "id": 456,
-    "title": "데이터셋 제목",
-    "description": "데이터셋 설명",
-    "dataType": {
-      "id": 2,
-      "name": "CSV"
-    },
-    "dataSource": {
-      "id": 1,
-      "name": "공공데이터"
-    },
-    "fileUrl": "https://example.com/dataset.csv",
-    "thumbnailImageUrl": "https://example.com/thumbnail.jpg",
-    "fileSize": 1024000,
-    "uploadedBy": {
-      "id": 1,
-      "nickname": "사용자명",
-      "profileImageUrl": "https://example.com/profile.jpg"
-    },
-    "createdAt": "2024-01-15T10:30:00Z"
-  },
-  "message": "데이터셋 업로드에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+    "id": 456
+  }
 }
 ```
 
@@ -92,13 +77,17 @@ Authorization: Bearer {access_token}
 **요청 본문** (multipart/form-data):
 
 ```
-dataFile: [파일] (필수)
+dataFile: [파일] (선택사항)
 thumbnailFile: [파일] (선택사항)
 webRequest: {
   "title": "수정된 제목",
+  "topicId": 2,
+  "dataSourceId": 3,
+  "dataTypeId": 4,
+  "startDate": "2024-02-01",
+  "endDate": "2024-12-31",
   "description": "수정된 설명",
-  "dataSourceId": 2,
-  "dataTypeId": 3
+  "analysisGuide": "수정된 분석 가이드"
 }
 ```
 
@@ -106,10 +95,10 @@ webRequest: {
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "데이터셋 수정에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "수정이 완료되었습니다",
+  "data": null
 }
 ```
 
@@ -135,10 +124,10 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "해당하는 데이터셋 삭제에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "데이터셋 삭제가 완료되었습니다.",
+  "data": null
 }
 ```
 
@@ -160,33 +149,31 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "인기 데이터셋 조회가 완료되었습니다.",
   "data": [
     {
       "id": 457,
       "title": "서울시 교통량 데이터",
+      "creatorId": 2,
+      "creatorName": "데이터업로더",
+      "userProfileImageUrl": "https://example.com/profile2.jpg",
+      "topicLabel": "교통",
+      "dataSourceLabel": "서울시 공공데이터",
+      "dataTypeLabel": "CSV",
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
       "description": "서울시 주요 도로의 교통량 데이터",
-      "dataType": {
-        "id": 2,
-        "name": "CSV"
-      },
-      "dataSource": {
-        "id": 1,
-        "name": "서울시 공공데이터"
-      },
-      "thumbnailImageUrl": "https://example.com/thumbnail2.jpg",
+      "dataThumbnailUrl": "https://example.com/thumbnail2.jpg",
       "downloadCount": 1250,
-      "projectCount": 45,
-      "uploadedBy": {
-        "id": 2,
-        "nickname": "데이터업로더",
-        "profileImageUrl": "https://example.com/profile2.jpg"
-      },
-      "createdAt": "2024-01-14T10:30:00Z"
+      "sizeBytes": 1024000,
+      "rowCount": 10000,
+      "columnCount": 5,
+      "createdAt": "2024-01-14T10:30:00Z",
+      "countConnectedProjects": 45
     }
-  ],
-  "message": "인기 있는 데이터셋 조회에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  ]
 }
 ```
 
@@ -206,34 +193,31 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "데이터 상세 정보 조회가 완료되었습니다.",
   "data": {
     "id": 458,
     "title": "부동산 가격 데이터",
+    "creatorId": 3,
+    "creatorName": "부동산분석가",
+    "userProfileImageUrl": "https://example.com/profile3.jpg",
+    "topicLabel": "부동산",
+    "dataSourceLabel": "국토교통부",
+    "dataTypeLabel": "CSV",
+    "authorLevelLabel": "중급자",
+    "startDate": "2024-01-01",
+    "endDate": "2024-12-31",
     "description": "전국 부동산 가격 데이터셋",
-    "dataType": {
-      "id": 2,
-      "name": "CSV"
-    },
-    "dataSource": {
-      "id": 3,
-      "name": "국토교통부"
-    },
-    "fileUrl": "https://example.com/realestate.csv",
-    "thumbnailImageUrl": "https://example.com/thumbnail3.jpg",
-    "fileSize": 2048000,
+    "analysisGuide": "부동산 가격 분석 가이드",
+    "dataThumbnailUrl": "https://example.com/thumbnail3.jpg",
     "downloadCount": 890,
-    "projectCount": 23,
-    "uploadedBy": {
-      "id": 3,
-      "nickname": "부동산분석가",
-      "profileImageUrl": "https://example.com/profile3.jpg"
-    },
-    "createdAt": "2024-01-13T10:30:00Z",
-    "updatedAt": "2024-01-13T10:30:00Z"
-  },
-  "message": "데이터셋 세부정보 조회에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+    "sizeBytes": 2048000,
+    "rowCount": 50000,
+    "columnCount": 8,
+    "previewJson": "{\"sample\": \"data\"}",
+    "createdAt": "2024-01-13T10:30:00Z"
+  }
 }
 ```
 
@@ -253,27 +237,20 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "최신 데이터셋 목록 조회가 완료되었습니다.",
   "data": [
     {
       "id": 459,
       "title": "최근 업로드된 데이터",
-      "description": "방금 업로드된 데이터셋",
-      "dataType": {
-        "id": 3,
-        "name": "JSON"
-      },
-      "thumbnailImageUrl": "https://example.com/thumbnail4.jpg",
-      "uploadedBy": {
-        "id": 4,
-        "nickname": "신규사용자",
-        "profileImageUrl": "https://example.com/profile4.jpg"
-      },
+      "creatorId": 4,
+      "creatorName": "신규사용자",
+      "userProfileImageUrl": "https://example.com/profile4.jpg",
+      "dataThumbnailUrl": "https://example.com/thumbnail4.jpg",
       "createdAt": "2024-01-15T09:30:00Z"
     }
-  ],
-  "message": "최근 데이터셋 조회에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  ]
 }
 ```
 
@@ -300,29 +277,22 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "데이터셋 필터링이 완료되었습니다.",
   "data": {
     "content": [
       {
         "id": 460,
         "title": "검색된 데이터셋",
-        "description": "검색 키워드가 포함된 데이터셋",
-        "dataType": {
-          "id": 2,
-          "name": "CSV"
-        },
-        "dataSource": {
-          "id": 2,
-          "name": "기상청"
-        },
-        "thumbnailImageUrl": "https://example.com/thumbnail5.jpg",
+        "creatorId": 5,
+        "creatorName": "기상분석가",
+        "userProfileImageUrl": "https://example.com/profile5.jpg",
+        "topicLabel": "기상",
+        "dataSourceLabel": "기상청",
+        "dataTypeLabel": "CSV",
+        "dataThumbnailUrl": "https://example.com/thumbnail5.jpg",
         "downloadCount": 567,
-        "projectCount": 12,
-        "uploadedBy": {
-          "id": 5,
-          "nickname": "기상분석가",
-          "profileImageUrl": "https://example.com/profile5.jpg"
-        },
         "createdAt": "2024-01-12T10:30:00Z"
       }
     ],
@@ -340,9 +310,7 @@ Authorization: Bearer {access_token}
     "first": true,
     "last": false,
     "numberOfElements": 20
-  },
-  "message": "데이터셋 검색에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
@@ -363,21 +331,19 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "데이터셋 자동완성을 위한 데이터셋 목록을 조회한다.",
   "data": [
     {
       "id": 461,
       "title": "실시간 검색 결과",
-      "description": "실시간으로 검색된 데이터셋",
-      "dataType": {
-        "id": 2,
-        "name": "CSV"
-      },
-      "thumbnailImageUrl": "https://example.com/thumbnail6.jpg"
+      "creatorId": 6,
+      "creatorName": "실시간분석가",
+      "userProfileImageUrl": "https://example.com/profile6.jpg",
+      "dataThumbnailUrl": "https://example.com/thumbnail6.jpg"
     }
-  ],
-  "message": "실시간 데이터셋 검색에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  ]
 }
 ```
 
@@ -385,15 +351,15 @@ Authorization: Bearer {access_token}
 
 ## ❌ **에러 코드**
 
-| 코드                    | HTTP 상태 | 설명                    |
-| ----------------------- | --------- | ----------------------- |
-| `DATASET_NOT_FOUND`     | 404       | 데이터셋을 찾을 수 없음 |
-| `DATASET_ACCESS_DENIED` | 403       | 데이터셋 접근 권한 없음 |
-| `INVALID_DATASET_ID`    | 400       | 잘못된 데이터셋 ID      |
-| `FILE_UPLOAD_FAILURE`   | 500       | 파일 업로드 실패        |
-| `FILE_SIZE_EXCEEDED`    | 413       | 파일 크기 초과          |
-| `INVALID_FILE_FORMAT`   | 400       | 잘못된 파일 형식        |
-| `INVALID_TOKEN`         | 401       | 유효하지 않은 토큰      |
+| 코드       | HTTP 상태 | 설명                                                |
+| ---------- | --------- | --------------------------------------------------- |
+| `DATA-002` | 404       | 해당 데이터셋 리소스가 존재하지 않습니다            |
+| `DATA-008` | 403       | 작성자만 수정 및 삭제, 복원이 가능합니다            |
+| `DATA-001` | 500       | 데이터셋 업로드에 실패했습니다                      |
+| `DATA-003` | 400       | 데이터셋 수집 시작일은 종료일보다 이전이어야 합니다 |
+| `DATA-010` | 400       | 유효하지 않은 파일 url입니다                        |
+| `FILE-001` | 400       | 이미지 파일은 최대 10MB까지 업로드 가능합니다       |
+| `AUTH-011` | 401       | 유효하지 않은 액세스 토큰입니다                     |
 
 ---
 
@@ -408,7 +374,7 @@ curl -X POST "https://api.dataracy.store/api/v1/datasets" \
   -H "Authorization: Bearer {access_token}" \
   -F "dataFile=@dataset.csv" \
   -F "thumbnailFile=@thumbnail.jpg" \
-  -F "webRequest={\"title\":\"데이터셋 제목\",\"description\":\"데이터셋 설명\",\"dataSourceId\":1,\"dataTypeId\":2};type=application/json"
+  -F "webRequest={\"title\":\"데이터셋 제목\",\"topicId\":1,\"dataSourceId\":2,\"dataTypeId\":3,\"startDate\":\"2024-01-01\",\"endDate\":\"2024-12-31\",\"description\":\"데이터셋 설명\",\"analysisGuide\":\"분석 가이드\"};type=application/json"
 ```
 
 #### **데이터셋 검색**
@@ -426,7 +392,19 @@ curl -X GET "https://api.dataracy.store/api/v1/datasets/search?q=교통량&page=
 const uploadDataset = async (datasetData, dataFile, thumbnailFile) => {
   const formData = new FormData();
   formData.append("dataFile", dataFile);
-  formData.append("webRequest", JSON.stringify(datasetData));
+  formData.append(
+    "webRequest",
+    JSON.stringify({
+      title: datasetData.title,
+      topicId: datasetData.topicId,
+      dataSourceId: datasetData.dataSourceId,
+      dataTypeId: datasetData.dataTypeId,
+      startDate: datasetData.startDate,
+      endDate: datasetData.endDate,
+      description: datasetData.description,
+      analysisGuide: datasetData.analysisGuide,
+    })
+  );
   if (thumbnailFile) {
     formData.append("thumbnailFile", thumbnailFile);
   }

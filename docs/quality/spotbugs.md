@@ -4,63 +4,65 @@
 
 SpotBugs는 Java 코드에서 잠재적인 버그를 검출하는 정적 분석 도구입니다. FindBugs의 후속 버전으로, 코드의 버그 패턴, 성능 문제, 보안 취약점 등을 자동으로 찾아줍니다.
 
+> **⚠️ 현재 상태**: 주석 처리됨 (필요시 활성화)
+
 ## 설정
 
 ### Gradle 설정
 
 ```gradle
-// SpotBugs 플러그인 (필요시 활성화)
-plugins {
-    id 'com.github.spotbugs' version '5.0.14'
-}
+// SpotBugs 플러그인 (현재 주석 처리됨)
+// plugins {
+//     id 'com.github.spotbugs' version '5.0.14'
+// }
 
-// SpotBugs 설정
-spotbugs {
-    toolVersion = '4.8.3'
-    effort = 'max'
-    reportLevel = 'low'
-    ignoreFailures = true
-    excludeFilter = file('spotbugs-exclude.xml')
-}
+// SpotBugs 설정 (현재 주석 처리됨)
+// spotbugs {
+//     toolVersion = '4.8.3'
+//     effort = 'max'
+//     reportLevel = 'low'
+//     ignoreFailures = true
+//     excludeFilter = file('spotbugs-exclude.xml')
+// }
 
-// 메인 소스 코드 분석
-spotbugsMain {
-    dependsOn compileJava
-    classes = fileTree("$buildDir/classes/java/main") {
-        exclude '**/Q*.class'  // QueryDSL Q클래스 제외
-    }
-    reports {
-        html {
-            required = true
-            outputLocation = file("$buildDir/reports/spotbugs/main.html")
-        }
-        xml {
-            required = true
-            outputLocation = file("$buildDir/reports/spotbugs/main.xml")
-        }
-    }
-}
+// 메인 소스 코드 분석 (현재 주석 처리됨)
+// spotbugsMain {
+//     dependsOn compileJava
+//     classes = fileTree("$buildDir/classes/java/main") {
+//         exclude '**/Q*.class'  // QueryDSL Q클래스 제외
+//     }
+//     reports {
+//         html {
+//             required = true
+//             outputLocation = file("$buildDir/reports/spotbugs/main.html")
+//         }
+//         xml {
+//             required = true
+//             outputLocation = file("$buildDir/reports/spotbugs/test.xml")
+//         }
+//     }
+// }
 
-// 테스트 코드 분석
-spotbugsTest {
-    dependsOn compileTestJava
-    classes = fileTree("$buildDir/classes/java/test")
-    reports {
-        html {
-            required = true
-            outputLocation = file("$buildDir/reports/spotbugs/test.html")
-        }
-        xml {
-            required = true
-            outputLocation = file("$buildDir/reports/spotbugs/test.xml")
-        }
-    }
-}
+// 테스트 코드 분석 (현재 주석 처리됨)
+// spotbugsTest {
+//     dependsOn compileTestJava
+//     classes = fileTree("$buildDir/classes/java/test")
+//     reports {
+//         html {
+//             required = true
+//             outputLocation = file("$buildDir/reports/spotbugs/test.html")
+//         }
+//         xml {
+//             required = true
+//             outputLocation = file("$buildDir/reports/spotbugs/test.xml")
+//         }
+//     }
+// }
 ```
 
-### SpotBugs 제외 필터 설정
+### SpotBugs 제외 필터 설정 (현재 비활성화)
 
-현재 프로젝트의 `spotbugs-exclude.xml` 설정:
+현재 프로젝트의 `spotbugs-exclude.xml` 설정 (주석 처리됨):
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -102,30 +104,30 @@ spotbugsTest {
 </FindBugsFilter>
 ```
 
-## 사용법
+## 사용법 (현재 비활성화)
 
-### 기본 명령어
+### 기본 명령어 (주석 처리됨)
 
 ```bash
-# SpotBugs 분석 실행
-./gradlew spotbugsMain
+# SpotBugs 분석 실행 (현재 주석 처리됨)
+# ./gradlew spotbugsMain
 
-# 테스트 코드 SpotBugs 분석
-./gradlew spotbugsTest
+# 테스트 코드 SpotBugs 분석 (현재 주석 처리됨)
+# ./gradlew spotbugsTest
 
-# 모든 SpotBugs 분석 실행
-./gradlew spotbugs
+# 모든 SpotBugs 분석 실행 (현재 주석 처리됨)
+# ./gradlew spotbugs
 
-# HTML 리포트 생성
-./gradlew spotbugsMain --info
+# HTML 리포트 생성 (현재 주석 처리됨)
+# ./gradlew spotbugsMain --info
 ```
 
-### 리포트 확인
+### 리포트 확인 (현재 비활성화)
 
-SpotBugs 리포트는 다음 위치에서 확인할 수 있습니다:
+SpotBugs 리포트는 다음 위치에서 확인할 수 있습니다 (현재 생성되지 않음):
 
-- **HTML 리포트**: `build/reports/spotbugs/main.html`
-- **XML 리포트**: `build/reports/spotbugs/main.xml`
+- **HTML 리포트**: `build/reports/spotbugs/main.html` (주석 처리됨)
+- **XML 리포트**: `build/reports/spotbugs/main.xml` (주석 처리됨)
 
 ## 주요 버그 패턴 및 해결 방법
 
@@ -353,37 +355,37 @@ public boolean isInvalid() {
 }
 ```
 
-## CI/CD 통합
+## CI/CD 통합 (현재 비활성화)
 
-### GitHub Actions 설정
+### GitHub Actions 설정 (주석 처리됨)
 
 ```yaml
-name: SpotBugs Analysis
-
-on: [push, pull_request]
-
-jobs:
-  spotbugs:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: "17"
-          distribution: "temurin"
-
-      - name: Run SpotBugs
-        run: ./gradlew spotbugsMain spotbugsTest
-
-      - name: Upload SpotBugs Report
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: spotbugs-report
-          path: build/reports/spotbugs/
+# name: SpotBugs Analysis (현재 비활성화)
+#
+# on: [push, pull_request]
+#
+# jobs:
+#   spotbugs:
+#     runs-on: ubuntu-latest
+#
+#     steps:
+#       - uses: actions/checkout@v3
+#
+#       - name: Set up JDK 17
+#         uses: actions/setup-java@v3
+#         with:
+#           java-version: "17"
+#           distribution: "temurin"
+#
+#       - name: Run SpotBugs (현재 주석 처리됨)
+#         run: ./gradlew spotbugsMain spotbugsTest
+#
+#       - name: Upload SpotBugs Report (현재 주석 처리됨)
+#         uses: actions/upload-artifact@v3
+#         if: always()
+#         with:
+#           name: spotbugs-report
+#           path: build/reports/spotbugs/
 ```
 
 ## IDE 통합
@@ -462,17 +464,17 @@ jobs:
    - JVM 힙 크기 증가: `-Xmx2g`
    - `effort` 설정을 'default'로 조정
 
-### 디버깅 팁
+### 디버깅 팁 (현재 비활성화)
 
 ```bash
-# SpotBugs 버전 확인
-./gradlew spotbugsMain --version
+# SpotBugs 버전 확인 (현재 주석 처리됨)
+# ./gradlew spotbugsMain --version
 
-# 특정 버그 패턴만 검사
-./gradlew spotbugsMain -Pspotbugs.includeFilter=security.xml
+# 특정 버그 패턴만 검사 (현재 주석 처리됨)
+# ./gradlew spotbugsMain -Pspotbugs.includeFilter=security.xml
 
-# 리포트 상세 확인
-open build/reports/spotbugs/main.html
+# 리포트 상세 확인 (현재 주석 처리됨)
+# open build/reports/spotbugs/main.html
 ```
 
 ## 모범 사례
@@ -523,10 +525,10 @@ spotbugs {
 
 ## 관련 도구
 
-- **SonarQube**: 종합적인 코드 품질 분석
+- **SonarQube**: 종합적인 코드 품질 분석 🚫 (주석 처리됨)
 - **PMD**: 추가적인 코드 품질 규칙
-- **Checkstyle**: 코드 스타일 검사
-- **JaCoCo**: 테스트 커버리지 측정
+- **Checkstyle**: 코드 스타일 검사 ✅
+- **JaCoCo**: 테스트 커버리지 측정 ✅
 
 ## 참고 자료
 
