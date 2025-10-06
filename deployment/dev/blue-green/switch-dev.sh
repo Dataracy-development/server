@@ -205,7 +205,12 @@ if [ "$ALWAYS_RELOAD" = true ]; then
   log "[SUCCESS] NGINX reload 완료"
 else
   log "[INFO] NGINX 컨테이너 완전 재시작(캐시/잔존 상태 정리 목적)"
-  docker compose -f "$NGINX_COMPOSE" down -v
+  
+  # 기존 컨테이너 강제 제거
+  docker rm -f "$NGINX_SVC_NAME" 2>/dev/null || true
+  sleep 2
+  
+  # Docker Compose로 새로 시작
   docker compose -f "$NGINX_COMPOSE" up -d --build
   sleep 2
   log "[SUCCESS] NGINX 재시작 및 설정 반영 완료"

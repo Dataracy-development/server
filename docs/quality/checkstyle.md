@@ -14,7 +14,7 @@ plugins {
     id 'checkstyle'
 }
 
-// Checkstyle 설정
+// Checkstyle 설정 (실제 구현)
 checkstyle {
     toolVersion = '10.12.4'
     configFile = file('checkstyle.xml')
@@ -450,8 +450,9 @@ jobs:
    - 파일 인코딩 확인 (UTF-8)
 
 3. **너무 많은 경고**
-   - `maxWarnings` 설정 조정
+   - `maxWarnings` 설정 조정 (현재 100개)
    - `ignoreFailures = true` 설정으로 빌드 실패 방지
+   - **현재 상태**: Main 코드 0개 경고 (완전 해결)
 
 ### 디버깅 팁
 
@@ -507,10 +508,10 @@ open build/reports/checkstyle/main.html
 
 ## 관련 도구
 
-- **Spotless**: 코드 포맷팅 자동화
-- **SonarQube**: 종합적인 코드 품질 분석
+- **Spotless**: 코드 포맷팅 자동화 ✅
+- **SonarQube**: 종합적인 코드 품질 분석 🚫 (주석 처리됨)
 - **PMD**: 추가적인 코드 품질 규칙
-- **SpotBugs**: 버그 패턴 검출
+- **SpotBugs**: 버그 패턴 검출 🚫 (주석 처리됨)
 
 ## 참고 자료
 

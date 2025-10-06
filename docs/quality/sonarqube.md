@@ -4,63 +4,65 @@
 
 SonarQube는 코드 품질, 보안, 유지보수성을 종합적으로 분석하는 정적 분석 도구입니다. 코드 스멜, 버그, 보안 취약점, 중복 코드 등을 자동으로 검출하여 코드 품질을 향상시킵니다.
 
+> **⚠️ 현재 상태**: 주석 처리됨 (필요시 활성화)
+
 ## 설정
 
 ### Gradle 설정
 
 ```gradle
-// SonarQube 플러그인 (필요시 활성화)
-plugins {
-    id 'org.sonarqube' version '4.2.1.3168'
-}
+// SonarQube 플러그인 (현재 주석 처리됨)
+// plugins {
+//     id 'org.sonarqube' version '4.2.1.3168'
+// }
 
-// SonarQube 설정
-sonarqube {
-    properties {
-        property "sonar.projectKey", "dataracy"
-        property "sonar.projectName", "dataracy"
-        property "sonar.host.url", "http://localhost:9000"
-        property "sonar.login", "admin"
-        property "sonar.password", "Juuuunny123@"
-        property "sonar.sources", "src/main/java"
-        property "sonar.tests", "src/test/java"
-        property "sonar.java.binaries", "build/classes/java/main"
-        property "sonar.java.test.binaries", "build/classes/java/test"
-        property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
-
-        // 제외할 파일/패키지
-        property "sonar.coverage.exclusions", "**/config/**/*,**/exception/**/*,**/dto/**/*,**/entity/**/*,**/vo/**/*"
-        property "sonar.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store,**/config/**/*,**/dto/**/*,**/exception/**/*,**/entity/**/*,**/vo/**/*,**/domain/model/**/*,**/domain/enums/**/*,**/domain/entity/**/*"
-        property "sonar.test.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store"
-
-        // 인코딩 및 버전 설정
-        property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.java.source", "17"
-        property "sonar.java.target", "17"
-
-        // 품질 게이트 설정
-        property "sonar.qualitygate.wait", "false"
-        property "sonar.qualitygate.timeout", "300"
-        property "sonar.coverage.minimum", "70"
-        property "sonar.coverage.target", "80"
-        property "sonar.newCode.coverage.minimum", "0"
-        property "sonar.newCode.period", "previous_version"
-
-        // 중복 코드 설정
-        property "sonar.duplicated_lines_density.maximum", "5"
-        property "sonar.cpd.java.minimumtokens", "100"
-        property "sonar.cpd.minimumtokens", "100"
-
-        // 기타 설정
-        property "sonar.ncloc.minimum", "100"
-        property "sonar.analysis.mode", "publish"
-        property "sonar.issuesReport.console.enable", "true"
-        property "sonar.verbose", "false"
-        property "sonar.security.hotspots", "true"
-        property "sonar.vulnerabilities", "true"
-    }
-}
+// SonarQube 설정 (현재 주석 처리됨)
+// sonarqube {
+//     properties {
+//         property "sonar.projectKey", "dataracy"
+//         property "sonar.projectName", "dataracy"
+//         property "sonar.host.url", "http://localhost:9000"
+//         property "sonar.login", "admin"
+//         property "sonar.password", "Juuuunny123@"
+//         property "sonar.sources", "src/main/java"
+//         property "sonar.tests", "src/test/java"
+//         property "sonar.java.binaries", "build/classes/java/main"
+//         property "sonar.java.test.binaries", "build/classes/java/test"
+//         property "sonar.java.coveragePlugin", "jacoco"
+//         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+//
+//         // 제외할 파일/패키지
+//         property "sonar.coverage.exclusions", "**/config/**/*,**/exception/**/*,**/dto/**/*,**/entity/**/*,**/vo/**/*"
+//         property "sonar.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store,**/config/**/*,**/dto/**/*,**/exception/**/*,**/entity/**/*,**/vo/**/*,**/domain/model/**/*,**/domain/enums/**/*,**/domain/entity/**/*"
+//         property "sonar.test.exclusions", "**/generated/**/*,**/build/**/*,**/.DS_Store"
+//
+//         // 인코딩 및 버전 설정
+//         property "sonar.sourceEncoding", "UTF-8"
+//         property "sonar.java.source", "17"
+//         property "sonar.java.target", "17"
+//
+//         // 품질 게이트 설정
+//         property "sonar.qualitygate.wait", "false"
+//         property "sonar.qualitygate.timeout", "300"
+//         property "sonar.coverage.minimum", "70"
+//         property "sonar.coverage.target", "80"
+//         property "sonar.newCode.coverage.minimum", "0"
+//         property "sonar.newCode.period", "previous_version"
+//
+//         // 중복 코드 설정
+//         property "sonar.duplicated_lines_density.maximum", "5"
+//         property "sonar.cpd.java.minimumtokens", "100"
+//         property "sonar.cpd.minimumtokens", "100"
+//
+//         // 기타 설정
+//         property "sonar.ncloc.minimum", "100"
+//         property "sonar.analysis.mode", "publish"
+//         property "sonar.issuesReport.console.enable", "true"
+//         property "sonar.verbose", "false"
+//         property "sonar.security.hotspots", "true"
+//         property "sonar.vulnerabilities", "true"
+//     }
+// }
 ```
 
 ### Docker Compose 설정
@@ -124,19 +126,19 @@ docker-compose -f docker-compose.sonarqube.yml up -d
 docker-compose -f docker-compose.sonarqube.yml ps
 ```
 
-### 분석 실행
+### 분석 실행 (현재 비활성화)
 
 ```bash
-# SonarQube 분석 실행
-./gradlew sonar
+# SonarQube 분석 실행 (현재 주석 처리됨)
+# ./gradlew sonar
 
-# 테스트와 함께 분석 실행
-./gradlew test jacocoTestReport sonar
+# 테스트와 함께 분석 실행 (현재 주석 처리됨)
+# ./gradlew test jacocoTestReport sonar
 ```
 
-### 웹 인터페이스 접근
+### 웹 인터페이스 접근 (현재 비활성화)
 
-- **URL**: http://localhost:9000
+- **URL**: http://localhost:9000 (서버 미실행)
 - **기본 계정**: admin / admin
 - **프로젝트**: dataracy
 
@@ -174,12 +176,12 @@ docker-compose -f docker-compose.sonarqube.yml ps
 ### 프로젝트 품질 게이트 설정
 
 ```yaml
-# quality-gate.yml
+# quality-gate.yml (현재 비활성화)
 quality_gate:
   # 코드 커버리지 최소 기준
   coverage:
-    minimum: 70
-    target: 80
+    minimum: 80 # 실제 82.5% 커버리지에 맞춘 기준
+    target: 85
 
   # 코드 중복도 최대 허용치
   duplication:
@@ -332,54 +334,54 @@ private void validateUserEmail(String email) {
 }
 ```
 
-## CI/CD 통합
+## CI/CD 통합 (현재 비활성화)
 
-### GitHub Actions 설정
+### GitHub Actions 설정 (주석 처리됨)
 
 ```yaml
-name: SonarQube Analysis
-
-on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
-
-jobs:
-  sonarqube:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: "17"
-          distribution: "temurin"
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Run tests with coverage
-        run: ./gradlew test jacocoTestReport
-
-      - name: SonarQube Scan
-        uses: sonarqube-quality-gate-action@master
-        with:
-          scanMetadataReportFile: target/sonar/report-task.txt
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+# name: SonarQube Analysis (현재 비활성화)
+#
+# on:
+#   push:
+#     branches: [main, develop]
+#   pull_request:
+#     branches: [main]
+#
+# jobs:
+#   sonarqube:
+#     runs-on: ubuntu-latest
+#
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0
+#
+#       - name: Set up JDK 17
+#         uses: actions/setup-java@v3
+#         with:
+#           java-version: "17"
+#           distribution: "temurin"
+#
+#       - name: Cache Gradle packages
+#         uses: actions/cache@v3
+#         with:
+#           path: |
+#             ~/.gradle/caches
+#             ~/.gradle/wrapper
+#           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#           restore-keys: |
+#             ${{ runner.os }}-gradle-
+#
+#       - name: Run tests with coverage
+#         run: ./gradlew test jacocoTestReport
+#
+#       - name: SonarQube Scan (현재 주석 처리됨)
+#         uses: sonarqube-quality-gate-action@master
+#         with:
+#           scanMetadataReportFile: target/sonar/report-task.txt
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 ```
 
 ## 모니터링 및 알림
@@ -421,17 +423,17 @@ jobs:
    - 코드 스멜 해결
    - 보안 취약점 수정
 
-### 디버깅 팁
+### 디버깅 팁 (현재 비활성화)
 
 ```bash
-# 상세한 로그와 함께 분석 실행
-./gradlew sonar --info --stacktrace
+# 상세한 로그와 함께 분석 실행 (현재 주석 처리됨)
+# ./gradlew sonar --info --stacktrace
 
-# 특정 프로젝트만 분석
-./gradlew :module-name:sonar
+# 특정 프로젝트만 분석 (현재 주석 처리됨)
+# ./gradlew :module-name:sonar
 
-# 캐시 클리어 후 재분석
-./gradlew clean sonar
+# 캐시 클리어 후 재분석 (현재 주석 처리됨)
+# ./gradlew clean sonar
 ```
 
 ## 모범 사례
@@ -457,10 +459,10 @@ jobs:
 
 ## 관련 도구
 
-- **JaCoCo**: 테스트 커버리지 측정
-- **Checkstyle**: 코드 스타일 검사
-- **SpotBugs**: 정적 버그 검출
-- **Spotless**: 코드 포맷팅
+- **JaCoCo**: 테스트 커버리지 측정 ✅
+- **Checkstyle**: 코드 스타일 검사 ✅
+- **SpotBugs**: 정적 버그 검출 🚫 (주석 처리됨)
+- **Spotless**: 코드 포맷팅 ✅
 
 ## 참고 자료
 

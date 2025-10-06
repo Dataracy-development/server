@@ -88,12 +88,12 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "SUCCESS",
+  "message": "요청이 성공적으로 처리되었습니다.",
   "data": {
     // 응답 데이터
-  },
-  "message": "요청이 성공적으로 처리되었습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
@@ -101,13 +101,9 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "USER_NOT_FOUND",
-    "message": "사용자를 찾을 수 없습니다.",
-    "details": "요청한 사용자 ID가 존재하지 않습니다."
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 404,
+  "code": "USER-001",
+  "message": "사용자를 찾을 수 없습니다."
 }
 ```
 
@@ -115,7 +111,9 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "SUCCESS",
+  "message": "조회에 성공했습니다.",
   "data": {
     "content": [
       // 데이터 배열
@@ -144,22 +142,22 @@ Authorization: Bearer {access_token}
 
 ### **공통 에러**
 
-| 코드                    | HTTP 상태 | 설명           |
-| ----------------------- | --------- | -------------- |
-| `INVALID_REQUEST`       | 400       | 잘못된 요청    |
-| `UNAUTHORIZED`          | 401       | 인증 필요      |
-| `FORBIDDEN`             | 403       | 권한 없음      |
-| `NOT_FOUND`             | 404       | 리소스 없음    |
-| `INTERNAL_SERVER_ERROR` | 500       | 서버 내부 오류 |
+| 코드         | HTTP 상태 | 설명           |
+| ------------ | --------- | -------------- |
+| `COMMON-400` | 400       | 잘못된 요청    |
+| `COMMON-401` | 401       | 인증 필요      |
+| `COMMON-403` | 403       | 권한 없음      |
+| `COMMON-404` | 404       | 리소스 없음    |
+| `COMMON-500` | 500       | 서버 내부 오류 |
 
 ### **사용자 관련 에러**
 
-| 코드                  | HTTP 상태 | 설명                  |
-| --------------------- | --------- | --------------------- |
-| `USER_NOT_FOUND`      | 404       | 사용자를 찾을 수 없음 |
-| `DUPLICATED_EMAIL`    | 409       | 중복된 이메일         |
-| `DUPLICATED_NICKNAME` | 409       | 중복된 닉네임         |
-| `INVALID_PASSWORD`    | 400       | 잘못된 비밀번호       |
+| 코드       | HTTP 상태 | 설명                                      |
+| ---------- | --------- | ----------------------------------------- |
+| `USER-002` | 404       | 해당 유저가 존재하지 않습니다             |
+| `USER-005` | 409       | 중복된 이메일은 사용할 수 없습니다        |
+| `USER-004` | 409       | 이미 사용 중인 닉네임입니다               |
+| `USER-003` | 400       | 비밀번호와 비밀번호 확인은 동일해야합니다 |
 
 ---
 
@@ -182,9 +180,9 @@ curl -X GET "https://api.dataracy.store/api/v1/projects" \
 
 ### **Rate Limiting**
 
-- **일반 사용자**: 1000 requests/hour
-- **인증된 사용자**: 5000 requests/hour
-- **관리자**: 10000 requests/hour
+- **로그인 API**: IP별 10 requests/minute (Redis 기반)
+- **일반 API**: IP별 제한 없음 (현재 미적용)
+- **메모리 기반**: 단일 인스턴스 환경용 (기본값: 10 requests/minute)
 
 ---
 

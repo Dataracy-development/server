@@ -50,12 +50,19 @@ vim .env.local
 **필수 환경 변수**:
 
 ```bash
+# 서버 설정
+SERVER_HOST=localhost
+SERVER_PORT=8080
+
 # 데이터베이스
-MYSQL_URL=jdbc:mysql://localhost:3306/dataracy_local
-MYSQL_USERNAME=root
-MYSQL_PASSWORD=password
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=dataracy_local
+DB_USERNAME=root
+DB_PASSWORD=password
 
 # Redis
+REDIS_PROTOCOL=redis
 REDIS_HOST=localhost
 REDIS_PORT=6379
 
@@ -64,22 +71,29 @@ KAFKA_SERVER_HOST=localhost
 KAFKA_SERVER_PORT=9092
 
 # Elasticsearch
-ELASTICSEARCH_URL=http://localhost:9200
+ELASTIC_SEARCH_HOST=localhost
+ELASTIC_SEARCH_PORT=9200
 
 # JWT
 JWT_SECRET=your-jwt-secret-key
-JWT_ACCESS_TOKEN_EXPIRATION_TIME=3600000
-JWT_REFRESH_TOKEN_EXPIRATION_TIME=1209600000
+ACCESS_TOKEN_EXPIRATION_TIME=3600000
+REFRESH_TOKEN_EXPIRATION_TIME=1209600000
+REGISTER_TOKEN_EXPIRATION_TIME=600000
+RESET_TOKEN_EXPIRATION_TIME=600000
 
 # AWS S3
 AWS_S3_BUCKET_NAME=dataracy-bucket-local
 AWS_ACCESS_KEY=your-access-key
 AWS_SECRET_KEY=your-secret-key
+AWS_REGION=ap-northeast-2
 ```
 
 ### **3. 인프라 서비스 시작**
 
 ```bash
+# Docker 네트워크 생성 (필요시)
+docker network create dataracy-network
+
 # Kafka 시작
 docker-compose -f infrastructure/kafka/docker-compose.kafka-local.yml up -d
 
@@ -96,11 +110,11 @@ docker ps
 ### **4. 데이터베이스 설정**
 
 ```bash
-# MySQL 컨테이너 시작 (Docker Compose에 포함된 경우)
-docker-compose -f infrastructure/mysql/docker-compose.mysql-local.yml up -d
-
-# 또는 로컬 MySQL 사용
+# 로컬 MySQL 사용 (권장)
 mysql -u root -p -e "CREATE DATABASE dataracy_local;"
+
+# 또는 Docker MySQL 컨테이너 사용
+docker run --name mysql-local -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=dataracy_local -p 3306:3306 -d mysql:8.0
 ```
 
 ### **5. 애플리케이션 실행**
@@ -192,7 +206,7 @@ docker exec -it kafka kafka-consumer-groups --bootstrap-server localhost:9092 --
 
 ### **2. 테스트 데이터베이스**
 
-- **H2 인메모리**: 테스트용 자동 설정
+- **H2 인메모리**: 테스트용 자동 설정 (기본값)
 - **MySQL**: 통합 테스트용 (선택사항)
 
 ### **3. 테스트 프로파일**
@@ -378,7 +392,7 @@ git commit -m "feat: 새로운 기능 추가"
 
 - **API 문서**: http://localhost:8080/swagger-ui.html
 - **모니터링**: http://localhost:8080/actuator
-- **H2 콘솔**: http://localhost:8080/h2-console
+- **Kibana**: http://localhost:5601 (Elasticsearch 대시보드)
 
 ---
 

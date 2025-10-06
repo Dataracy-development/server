@@ -184,9 +184,11 @@ docker logs mysql-container
 mysql -h localhost -P 3306 -u root -p
 
 # 4. 환경 변수 확인
-echo $MYSQL_URL
-echo $MYSQL_USERNAME
-echo $MYSQL_PASSWORD
+echo $DB_HOST
+echo $DB_PORT
+echo $DB_NAME
+echo $DB_USERNAME
+echo $DB_PASSWORD
 ```
 
 ### **2. 데이터베이스 스키마 문제**
@@ -515,18 +517,17 @@ Deployment failed during switch
 
 ```bash
 # 1. 현재 상태 확인
-./deployment/scripts/status.sh
+~/dataracy-dev/deployment/scripts/status.sh
 
 # 2. 수동 스위치
-cd deployment/dev/blue-green
-./switch-dev.sh
+~/dataracy-dev/deployment/dev/blue-green/switch-dev.sh
 
 # 3. 로그 확인
 docker logs backend-blue
 docker logs backend-green
 
 # 4. 롤백
-./switch-dev.sh  # 다시 실행하여 이전 버전으로 복구
+~/dataracy-dev/deployment/dev/blue-green/switch-dev.sh  # 다시 실행하여 이전 버전으로 복구
 ```
 
 ### **3. 헬스체크 실패**
@@ -699,14 +700,13 @@ grep -c "INFO" logs/system.log
 
 ```bash
 # 1. 서비스 상태 확인
-./deployment/scripts/status.sh
+~/dataracy-dev/deployment/scripts/status.sh
 
 # 2. 로그 확인
 docker logs --tail 100 backend-blue
 
 # 3. 롤백 실행
-cd deployment/dev/blue-green
-./switch-dev.sh
+~/dataracy-dev/deployment/dev/blue-green/switch-dev.sh
 
 # 4. 모니터링 확인
 curl http://localhost:8080/actuator/health
@@ -755,15 +755,14 @@ docker restart backend-blue
 
 ### **모니터링 도구**
 
-- **Grafana**: http://localhost:3000
 - **Prometheus**: http://localhost:9090
 - **Kibana**: http://localhost:5601
 
 ### **문서 및 리소스**
 
-- **API 문서**: https://api.dataracy.store/swagger-ui.html
-- **개발 가이드**: ./docs/DEVELOPMENT_GUIDE.md
-- **배포 가이드**: ./deployment/README.md
+- **API 문서**: https://api.dataracy.co.kr/swagger-ui.html
+- **개발 가이드**: ./docs/development/README.md
+- **배포 가이드**: ./docs/deployment/README.md
 
 ---
 

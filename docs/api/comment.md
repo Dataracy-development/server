@@ -42,22 +42,12 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 201,
+  "code": "201",
+  "message": "댓글 작성이 완료되었습니다",
   "data": {
-    "id": 789,
-    "content": "댓글 내용입니다.",
-    "author": {
-      "id": 1,
-      "nickname": "댓글작성자",
-      "profileImageUrl": "https://example.com/profile.jpg"
-    },
-    "parentCommentId": 123,
-    "likeCount": 0,
-    "replyCount": 0,
-    "createdAt": "2024-01-15T10:30:00Z"
-  },
-  "message": "피드백 댓글 작성에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+    "id": 789
+  }
 }
 ```
 
@@ -93,10 +83,10 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "댓글 수정에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "댓글 수정이 완료되었습니다.",
+  "data": null
 }
 ```
 
@@ -123,10 +113,10 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "해당하는 피드백 댓글 삭제에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "댓글 삭제가 완료되었습니다.",
+  "data": null
 }
 ```
 
@@ -154,41 +144,27 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "프로젝트에 대한 댓글 목록 조회가 완료되었습니다.",
   "data": {
     "content": [
       {
         "id": 790,
         "content": "정말 좋은 분석이네요!",
-        "author": {
-          "id": 2,
-          "nickname": "분석애호가",
-          "profileImageUrl": "https://example.com/profile2.jpg"
-        },
+        "creatorId": 2,
+        "creatorName": "분석애호가",
+        "userProfileImageUrl": "https://example.com/profile2.jpg",
+        "authorLevelLabel": "중급자",
         "parentCommentId": null,
-        "likeCount": 5,
-        "replyCount": 2,
-        "replies": [
-          {
-            "id": 791,
-            "content": "감사합니다!",
-            "author": {
-              "id": 1,
-              "nickname": "프로젝트작성자",
-              "profileImageUrl": "https://example.com/profile.jpg"
-            },
-            "parentCommentId": 790,
-            "likeCount": 1,
-            "replyCount": 0,
-            "createdAt": "2024-01-15T11:00:00Z"
-          }
-        ],
+        "childCommentCount": 2,
+        "isLiked": false,
         "createdAt": "2024-01-15T10:30:00Z"
       }
     ],
     "pageable": {
       "pageNumber": 0,
-      "pageSize": 20,
+      "pageSize": 5,
       "sort": {
         "sorted": true,
         "direction": "DESC",
@@ -196,78 +172,79 @@ Authorization: Bearer {access_token}
       }
     },
     "totalElements": 15,
-    "totalPages": 1,
+    "totalPages": 3,
     "first": true,
-    "last": true,
-    "numberOfElements": 15
-  },
-  "message": "댓글 목록 조회에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+    "last": false,
+    "numberOfElements": 5
+  }
 }
 ```
 
 ---
 
-#### **2. 댓글 상세 조회**
+#### **2. 답글 목록 조회**
 
 **엔드포인트**: `GET /api/v1/projects/{projectId}/comments/{commentId}`
 
-**설명**: 특정 댓글의 상세 정보와 답글들을 조회
+**설명**: 특정 댓글에 대한 답글 목록을 페이지네이션하여 조회
 
 **경로 변수**:
 
 - `projectId`: 댓글이 속한 프로젝트의 ID (1 이상)
-- `commentId`: 조회할 댓글의 ID (1 이상)
+- `commentId`: 답글을 조회할 부모 댓글의 ID (1 이상)
+
+**쿼리 파라미터**:
+
+- `page`: 페이지 번호 (기본값: 0)
+- `size`: 페이지 크기 (기본값: 5)
 
 **응답**:
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "댓글에 대한 답글 목록 조회가 완료되었습니다.",
   "data": {
-    "id": 792,
-    "content": "상세 조회할 댓글 내용",
-    "author": {
-      "id": 3,
-      "nickname": "댓글상세조회자",
-      "profileImageUrl": "https://example.com/profile3.jpg"
-    },
-    "parentCommentId": null,
-    "likeCount": 8,
-    "replyCount": 3,
-    "replies": [
+    "content": [
       {
         "id": 793,
         "content": "답글 1",
-        "author": {
-          "id": 4,
-          "nickname": "답글작성자1",
-          "profileImageUrl": "https://example.com/profile4.jpg"
-        },
+        "creatorId": 4,
+        "creatorName": "답글작성자1",
+        "userProfileImageUrl": "https://example.com/profile4.jpg",
+        "authorLevelLabel": "초급자",
         "parentCommentId": 792,
-        "likeCount": 2,
-        "replyCount": 0,
+        "isLiked": false,
         "createdAt": "2024-01-15T12:00:00Z"
       },
       {
         "id": 794,
         "content": "답글 2",
-        "author": {
-          "id": 5,
-          "nickname": "답글작성자2",
-          "profileImageUrl": "https://example.com/profile5.jpg"
-        },
+        "creatorId": 5,
+        "creatorName": "답글작성자2",
+        "userProfileImageUrl": "https://example.com/profile5.jpg",
+        "authorLevelLabel": "중급자",
         "parentCommentId": 792,
-        "likeCount": 1,
-        "replyCount": 0,
+        "isLiked": true,
         "createdAt": "2024-01-15T12:30:00Z"
       }
     ],
-    "createdAt": "2024-01-15T11:30:00Z",
-    "updatedAt": "2024-01-15T11:30:00Z"
-  },
-  "message": "댓글 상세 조회에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+    "pageable": {
+      "pageNumber": 0,
+      "pageSize": 5,
+      "sort": {
+        "sorted": true,
+        "direction": "ASC",
+        "property": "createdAt"
+      }
+    },
+    "totalElements": 2,
+    "totalPages": 1,
+    "first": true,
+    "last": true,
+    "numberOfElements": 2
+  }
 }
 ```
 
@@ -275,15 +252,15 @@ Authorization: Bearer {access_token}
 
 ## ❌ **에러 코드**
 
-| 코드                       | HTTP 상태 | 설명                     |
-| -------------------------- | --------- | ------------------------ |
-| `COMMENT_NOT_FOUND`        | 404       | 댓글을 찾을 수 없음      |
-| `COMMENT_ACCESS_DENIED`    | 403       | 댓글 접근 권한 없음      |
-| `INVALID_COMMENT_ID`       | 400       | 잘못된 댓글 ID           |
-| `INVALID_PROJECT_ID`       | 400       | 잘못된 프로젝트 ID       |
-| `PARENT_COMMENT_NOT_FOUND` | 404       | 부모 댓글을 찾을 수 없음 |
-| `COMMENT_TOO_LONG`         | 400       | 댓글 내용이 너무 김      |
-| `INVALID_TOKEN`            | 401       | 유효하지 않은 토큰       |
+| 코드          | HTTP 상태 | 설명                                        |
+| ------------- | --------- | ------------------------------------------- |
+| `COMMENT-001` | 500       | 피드백 댓글 업로드에 실패했습니다           |
+| `COMMENT-002` | 404       | 해당 피드백 댓글 리소스가 존재하지 않습니다 |
+| `COMMENT-003` | 404       | 해당 부모 댓글 리소스가 존재하지 않습니다   |
+| `COMMENT-004` | 403       | 작성자만 수정 및 삭제, 복원이 가능합니다    |
+| `COMMENT-005` | 403       | 답글에 다시 답글을 작성할 순 없습니다       |
+| `COMMENT-006` | 403       | 해당 프로젝트에 작성된 댓글이 아닙니다      |
+| `AUTH-011`    | 401       | 유효하지 않은 액세스 토큰입니다             |
 
 ---
 
@@ -318,7 +295,14 @@ curl -X POST "https://api.dataracy.store/api/v1/projects/123/comments" \
 #### **댓글 목록 조회**
 
 ```bash
-curl -X GET "https://api.dataracy.store/api/v1/projects/123/comments?page=0&size=10" \
+curl -X GET "https://api.dataracy.store/api/v1/projects/123/comments?page=0&size=5" \
+  -H "Content-Type: application/json"
+```
+
+#### **답글 목록 조회**
+
+```bash
+curl -X GET "https://api.dataracy.store/api/v1/projects/123/comments/790?page=0&size=5" \
   -H "Content-Type: application/json"
 ```
 
@@ -367,7 +351,7 @@ const updateComment = async (projectId, commentId, content) => {
 #### **댓글 목록 조회**
 
 ```javascript
-const getComments = async (projectId, page = 0, size = 20) => {
+const getComments = async (projectId, page = 0, size = 5) => {
   const params = new URLSearchParams({
     page: page.toString(),
     size: size.toString(),
@@ -376,6 +360,22 @@ const getComments = async (projectId, page = 0, size = 20) => {
 
   const response = await fetch(
     `/api/v1/projects/${projectId}/comments?${params}`
+  );
+  return response.json();
+};
+```
+
+#### **답글 목록 조회**
+
+```javascript
+const getReplyComments = async (projectId, commentId, page = 0, size = 5) => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+  });
+
+  const response = await fetch(
+    `/api/v1/projects/${projectId}/comments/${commentId}?${params}`
   );
   return response.json();
 };

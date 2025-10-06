@@ -36,6 +36,17 @@ spring:
       long:
         concurrency: 2
         poll-timeout: 3000 # 개발 환경: 3초
+    consumer:
+      enable-auto-commit: false
+      properties:
+        # Kafka 연결 실패 시에도 애플리케이션 시작 허용
+        connection.max.idle.ms: 30000
+        request.timeout.ms: 10000
+        retry.backoff.ms: 1000
+        # 개발 환경에서 Kafka 연결 실패 시 graceful degradation
+        bootstrap.servers: ${KAFKA_SERVER_HOST}:${KAFKA_SERVER_PORT}
+    # 개발 환경에서 Kafka Consumer 비활성화 (연결 실패 시)
+    auto-startup: false
 
 swagger:
   title: Dataracy

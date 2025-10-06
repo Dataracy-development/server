@@ -12,7 +12,7 @@ Dataracy 백엔드 프로젝트의 개발 워크플로우와 협업 프로세스
 
 ```
 main                    # 운영 브랜치
-├── develop            # 개발 브랜치
+├── develop            # 개발 브랜치 (자동 배포: dev-api.dataracy.co.kr)
 ├── feature/user-auth  # 기능 개발 브랜치
 ├── hotfix/critical-bug # 긴급 수정 브랜치
 └── release/v1.2.0    # 릴리스 브랜치
@@ -200,33 +200,38 @@ graph TD
 #### **개발 환경**
 
 - **브랜치**: `develop`
-- **트리거**: PR 머지 시 자동 배포
+- **트리거**: develop 브랜치 푸시 시 자동 배포
+- **URL**: `https://dev-api.dataracy.co.kr`
 - **목적**: 기능 검증 및 통합 테스트
-
-#### **스테이징 환경**
-
-- **브랜치**: `release/*`
-- **트리거**: 수동 배포
-- **목적**: 최종 검증 및 성능 테스트
 
 #### **운영 환경**
 
 - **브랜치**: `main`
-- **트리거**: 승인 후 배포
+- **트리거**: main 브랜치 푸시 시 자동 배포
+- **URL**: `https://api.dataracy.co.kr`
 - **목적**: 실제 서비스 제공
 
 ### **Blue-Green 배포**
 
 ```bash
-# 배포 스크립트 실행
-./deployment/scripts/deploy-dev.sh
+# 개발 환경 배포
+cd ~/dataracy-dev/deployment/dev/script
+./deploy.sh
+
+# 운영 환경 배포
+cd ~/dataracy-prod/deployment/prod/script
+./deploy-prod.sh
 
 # 상태 확인
 ./deployment/scripts/status.sh
 
-# 트래픽 전환
-cd deployment/dev/blue-green
+# 트래픽 전환 (개발)
+cd ~/dataracy-dev/deployment/dev/blue-green
 ./switch-dev.sh
+
+# 트래픽 전환 (운영)
+cd ~/dataracy-prod/deployment/prod/blue-green
+./switch-prod.sh
 ```
 
 ---
@@ -283,9 +288,11 @@ cd deployment/dev/blue-green
 
 #### **품질 관리**
 
-- **SonarQube**: 코드 품질 분석
-- **JaCoCo**: 테스트 커버리지
-- **Checkstyle**: 코드 스타일 검사
+- **JaCoCo**: 테스트 커버리지 (82.5% Instruction Coverage)
+- **Checkstyle**: 코드 스타일 검사 (Main 코드 0개 경고)
+- **Spotless**: 자동 코드 포맷팅
+- **SonarQube**: 코드 품질 분석 (주석 처리됨)
+- **SpotBugs**: 정적 분석 (주석 처리됨)
 
 ### **협업 도구**
 

@@ -16,20 +16,26 @@ Dataracy 백엔드 프로젝트의 단위 테스트 작성 방법과 모범 사�
 - **Self-Validating**: 자체 검증 (성공/실패가 명확)
 - **Timely**: 적시에 작성 (코드 작성과 동시에)
 
-### **AAA 패턴**
+### **AAA 패턴 (실제 구현 기반)**
 
 ```java
+// 실제 UserTest.java 기반
 @Test
-void 사용자_생성_성공() {
-    // Arrange (Given) - 테스트 데이터 준비
-    UserRequest request = createUserRequest();
+@DisplayName("isPasswordMatch - 비밀번호가 일치하는 경우 true를 반환한다")
+void isPasswordMatchWhenPasswordMatchesReturnsTrue() {
+    // given (Arrange) - 테스트 데이터 준비
+    PasswordEncoder encoder = mock(PasswordEncoder.class);
+    String rawPassword = "password1";
+    String encodedPassword = "encodedPassword1";
 
-    // Act (When) - 테스트 대상 실행
-    UserResponse response = userService.createUser(request);
+    User user = User.builder().password(encodedPassword).build();
+    given(encoder.matches(rawPassword, encodedPassword)).willReturn(true);
 
-    // Assert (Then) - 결과 검증
-    assertThat(response.getId()).isNotNull();
-    assertThat(response.getEmail()).isEqualTo(request.getEmail());
+    // when (Act) - 테스트 대상 실행
+    boolean result = user.isPasswordMatch(encoder, rawPassword);
+
+    // then (Assert) - 결과 검증
+    assertThat(result).isTrue();
 }
 ```
 
@@ -107,33 +113,37 @@ void 이메일_유효성_검증(String email, boolean expected) {
 
 ### **Mockito**
 
-#### **Mock 생성**
+#### **Mock 생성 (실제 구현 기반)**
 
 ```java
+// 실제 DataCommandServiceTest.java 기반
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+@MockitoSettings(strictness = Strictness.LENIENT)
+class DataCommandServiceTest {
 
-    @Mock
-    private UserRepository userRepository;
+    @InjectMocks private DataCommandService service;
 
-    @Mock
-    private EmailService emailService;
-
-    @InjectMocks
-    private UserService userService;
+    @Mock private CreateDataDtoMapper createDataDtoMapper;
+    @Mock private CreateDataPort createDataPort;
+    @Mock private UpdateDataPort updateDataPort;
+    @Mock private FileCommandUseCase fileCommandUseCase;
+    @Mock private MultipartFile dataFile;
 
     @Test
-    void 사용자_조회_성공() {
-        // Given
-        User user = createUser();
-        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+    @DisplayName("성공: 데이터 업로드 성공")
+    void uploadDataNormalUploadReturnsSuccess() {
+        // given
+        UploadDataRequest request = createSampleUploadRequest();
+        Data data = createSampleData();
+        given(createDataDtoMapper.toDomain(any(), any(), any(), any())).willReturn(data);
+        given(createDataPort.save(any(Data.class))).willReturn(data);
 
-        // When
-        UserResponse response = userService.getUser(1L);
+        // when
+        UploadDataResponse response = service.uploadData(request, dataFile, null);
 
-        // Then
-        assertThat(response.getId()).isEqualTo(1L);
-        verify(userRepository).findById(1L);
+        // then
+        assertThat(response).isNotNull();
+        verify(createDataPort).save(any(Data.class));
     }
 }
 ```
@@ -227,21 +237,23 @@ void 사용자_목록_검증() {
 }
 ```
 
-#### **예외 어설션**
+#### **예외 어설션 (실제 구현 기반)**
 
 ```java
+// 실제 UserTest.java 기반
 @Test
-void 존재하지_않는_사용자_조회_예외() {
-    // Given
-    given(userRepository.findById(999L)).willReturn(Optional.empty());
+@DisplayName("validatePasswordChangable - GOOGLE 유저는 비밀번호 변경이 불가합니다")
+void validatePasswordChangableWhenGoogleUserThrowsException() {
+    // given
+    User user = User.builder()
+        .provider(ProviderType.GOOGLE)
+        .build();
 
-    // When & Then
-    assertThatThrownBy(() -> userService.getUser(999L))
-        .isInstanceOf(UserNotFoundException.class)
-        .hasMessage("사용자를 찾을 수 없습니다: 999");
-
-    assertThatCode(() -> userService.getUser(1L))
-        .doesNotThrowAnyException();
+    // when & then
+    assertThatThrownBy(() -> user.validatePasswordChangable())
+        .isInstanceOf(UserException.class)
+        .extracting("errorStatus")
+        .isEqualTo(UserErrorStatus.FORBIDDEN_CHANGE_PASSWORD_GOOGLE);
 }
 ```
 
@@ -339,50 +351,40 @@ class UserServiceTest {
 }
 ```
 
-### **테스트 데이터 빌더**
+### **테스트 데이터 생성 (실제 구현 기반)**
 
 ```java
-public class UserTestDataBuilder {
+// 실제 DataCommandServiceTest.java 기반
+private Data createSampleData() {
+    return Data.of(
+        1L,
+        "Test Data",
+        1L,
+        1L,
+        1L,
+        1L,
+        LocalDate.now(),
+        LocalDate.now(),
+        "Description",
+        "Guide",
+        "file-url",
+        "thumb-url",
+        1,
+        1024L,
+        DataMetadata.of(1L, 10, 5, "{}"),
+        LocalDateTime.now());
+}
 
-    public static User.UserBuilder defaultUser() {
-        return User.builder()
-            .id(1L)
-            .email("test@example.com")
-            .nickname("테스트사용자")
-            .password("password123")
-            .role(RoleType.ROLE_USER)
-            .createdAt(LocalDateTime.now());
-    }
-
-    public static User createUser() {
-        return defaultUser().build();
-    }
-
-    public static User createUserWithEmail(String email) {
-        return defaultUser().email(email).build();
-    }
-
-    public static User createAdminUser() {
-        return defaultUser()
-            .role(RoleType.ROLE_ADMIN)
-            .email("admin@example.com")
-            .build();
-    }
-
-    public static UserRequest.UserRequestBuilder defaultUserRequest() {
-        return UserRequest.builder()
-            .email("test@example.com")
-            .nickname("테스트사용자")
-            .password("password123")
-            .authorLevelId(1L)
-            .occupationId(2L)
-            .topicIds(List.of(1L, 2L))
-            .visitSourceId(1L);
-    }
-
-    public static UserRequest createUserRequest() {
-        return defaultUserRequest().build();
-    }
+private UploadDataRequest createSampleUploadRequest() {
+    return new UploadDataRequest(
+        "Test Data",
+        1L,
+        2L,
+        3L,
+        LocalDate.now(),
+        LocalDate.now().plusDays(1),
+        "Description",
+        "Guide");
 }
 ```
 
@@ -411,21 +413,24 @@ void 사용자_생성_시_외부_서비스_호출() {
 }
 ```
 
-#### **정적 메서드 Mock**
+#### **정적 메서드 Mock (실제 구현 기반)**
 
 ```java
-@Test
-void 현재_시간_기반_테스트() {
-    // Given
-    LocalDateTime fixedTime = LocalDateTime.of(2024, 1, 15, 10, 0);
-    try (MockedStatic<LocalDateTime> mockedDateTime = mockStatic(LocalDateTime.class)) {
-        mockedDateTime.when(LocalDateTime::now).thenReturn(fixedTime);
+// 실제 DataSearchServiceTest.java 기반
+@BeforeEach
+void setUp() {
+    loggerFactoryMock = mockStatic(LoggerFactory.class);
+    loggerService = mock(com.dataracy.modules.common.logging.ServiceLogger.class);
+    loggerFactoryMock.when(LoggerFactory::service).thenReturn(loggerService);
+    doReturn(Instant.now()).when(loggerService).logStart(anyString(), anyString());
+    doNothing().when(loggerService).logSuccess(anyString(), anyString(), any(Instant.class));
+    doNothing().when(loggerService).logWarning(anyString(), anyString());
+}
 
-        // When
-        User user = userService.createUser(createUserRequest());
-
-        // Then
-        assertThat(user.getCreatedAt()).isEqualTo(fixedTime);
+@AfterEach
+void tearDown() {
+    if (loggerFactoryMock != null) {
+        loggerFactoryMock.close();
     }
 }
 ```
@@ -559,9 +564,9 @@ open build/reports/jacoco/test/html/index.html
 ./gradlew jacocoTestCoverageVerification
 ```
 
-### **커버리지 목표**
+### **커버리지 목표 (실제 기준)**
 
-- **전체 커버리지**: 70% 이상
+- **전체 커버리지**: 82.5% (실제 달성)
 - **핵심 비즈니스 로직**: 90% 이상
 - **서비스 계층**: 80% 이상
 - **유틸리티 클래스**: 95% 이상

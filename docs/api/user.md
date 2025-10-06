@@ -29,12 +29,14 @@ Content-Type: application/json
 ```json
 {
   "email": "user@example.com",
-  "password": "password123",
+  "password": "password123@",
+  "passwordConfirm": "password123@",
   "nickname": "사용자명",
   "authorLevelId": 1,
   "occupationId": 2,
   "topicIds": [1, 2, 3],
-  "visitSourceId": 1
+  "visitSourceId": 1,
+  "isAdTermsAgreed": true
 }
 ```
 
@@ -42,10 +44,10 @@ Content-Type: application/json
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "회원가입이 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 201,
+  "code": "201",
+  "message": "회원가입에 성공했습니다",
+  "data": null
 }
 ```
 
@@ -80,10 +82,10 @@ Cookie: registerToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "소셜 회원가입이 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 201,
+  "code": "201",
+  "message": "회원가입에 성공했습니다",
+  "data": null
 }
 ```
 
@@ -118,14 +120,23 @@ webRequest: {
 }
 ```
 
+**필드 설명**:
+
+- `nickname`: 닉네임 (2~8자, 필수)
+- `authorLevelId`: 작성자 유형 ID (1 이상, 필수)
+- `occupationId`: 직업 ID (1 이상, 선택사항)
+- `topicIds`: 흥미있는 토픽 ID 리스트 (필수)
+- `visitSourceId`: 방문 경로 ID (1 이상, 선택사항)
+- `introductionText`: 자기소개 글 (선택사항)
+
 **응답**:
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "회원 정보 수정이 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "회원 정보 수정이 완료되었습니다.",
+  "data": null
 }
 ```
 
@@ -147,10 +158,10 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "회원 탈퇴가 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "회원 탈퇴가 완료되었습니다.",
+  "data": null
 }
 ```
 
@@ -173,10 +184,10 @@ Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "로그아웃이 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "회원 로그아웃이 완료되었습니다.",
+  "data": null
 }
 ```
 
@@ -200,7 +211,9 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "유저 정보 조회가 완료되었습니다.",
   "data": {
     "id": 1,
     "email": "user@example.com",
@@ -225,9 +238,7 @@ Authorization: Bearer {access_token}
     "introductionText": "안녕하세요!",
     "createdAt": "2024-01-15T10:30:00Z",
     "updatedAt": "2024-01-15T10:30:00Z"
-  },
-  "message": "프로필 조회가 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
@@ -247,7 +258,9 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
+  "httpStatus": 200,
+  "code": "200",
+  "message": "타인유저 정보 조회가 완료되었습니다.",
   "data": {
     "id": 2,
     "nickname": "다른사용자",
@@ -266,9 +279,7 @@ Authorization: Bearer {access_token}
     ],
     "introductionText": "데이터 사이언스 전문가입니다.",
     "createdAt": "2024-01-10T10:30:00Z"
-  },
-  "message": "사용자 프로필 조회가 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
@@ -300,12 +311,10 @@ Content-Type: application/json
 
 ```json
 {
-  "success": true,
-  "data": {
-    "available": true
-  },
-  "message": "사용 가능한 닉네임입니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "사용할 수 있는 닉네임입니다.",
+  "data": null
 }
 ```
 
@@ -329,8 +338,9 @@ Content-Type: application/json
 
 ```json
 {
-  "token": "reset_token_here",
-  "newPassword": "new_password123"
+  "resetPasswordToken": "reset_token_here",
+  "password": "new_password123@",
+  "passwordConfirm": "new_password123@"
 }
 ```
 
@@ -338,10 +348,10 @@ Content-Type: application/json
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "비밀번호 재설정에 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "비밀번호를 재설정했습니다.",
+  "data": null
 }
 ```
 
@@ -364,7 +374,8 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "newPassword": "새비밀번호"
+  "password": "새비밀번호@",
+  "passwordConfirm": "새비밀번호@"
 }
 ```
 
@@ -372,10 +383,10 @@ Authorization: Bearer {access_token}
 
 ```json
 {
-  "success": true,
-  "data": null,
-  "message": "비밀번호 변경이 성공했습니다.",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "httpStatus": 200,
+  "code": "200",
+  "message": "비밀번호를 변경했습니다.",
+  "data": null
 }
 ```
 
@@ -383,15 +394,32 @@ Authorization: Bearer {access_token}
 
 ## ❌ **에러 코드**
 
-| 코드                  | HTTP 상태 | 설명                          |
-| --------------------- | --------- | ----------------------------- |
-| `USER_NOT_FOUND`      | 404       | 사용자를 찾을 수 없음         |
-| `DUPLICATED_EMAIL`    | 409       | 중복된 이메일                 |
-| `DUPLICATED_NICKNAME` | 409       | 중복된 닉네임                 |
-| `INVALID_PASSWORD`    | 400       | 잘못된 비밀번호               |
-| `PASSWORD_MISMATCH`   | 400       | 현재 비밀번호가 일치하지 않음 |
-| `INVALID_TOKEN`       | 401       | 유효하지 않은 토큰            |
-| `FILE_UPLOAD_FAILURE` | 500       | 파일 업로드 실패              |
+| 코드       | HTTP 상태 | 설명                                          | Enum 이름                      |
+| ---------- | --------- | --------------------------------------------- | ------------------------------ |
+| `USER-001` | 409       | 이미 가입된 계정입니다                        | `ALREADY_SIGN_UP_USER`         |
+| `USER-002` | 404       | 해당 유저가 존재하지 않습니다                 | `NOT_FOUND_USER`               |
+| `USER-003` | 400       | 비밀번호와 비밀번호 확인은 동일해야합니다     | `NOT_SAME_PASSWORD`            |
+| `USER-004` | 409       | 이미 사용 중인 닉네임입니다                   | `DUPLICATED_NICKNAME`          |
+| `USER-005` | 409       | 중복된 이메일은 사용할 수 없습니다            | `DUPLICATED_EMAIL`             |
+| `USER-006` | 400       | 이전과 동일한 비밀번호입니다                  | `DUPLICATED_PASSWORD`          |
+| `AUTH-011` | 401       | 유효하지 않은 액세스 토큰입니다               | `INVALID_ACCESS_TOKEN`         |
+| `FILE-001` | 400       | 이미지 파일은 최대 10MB까지 업로드 가능합니다 | `OVER_MAXIMUM_IMAGE_FILE_SIZE` |
+
+---
+
+## ✅ **성공 응답 코드**
+
+| 코드  | HTTP 상태 | 설명                                | Enum 이름                    |
+| ----- | --------- | ----------------------------------- | ---------------------------- |
+| `201` | 201       | 회원가입에 성공했습니다             | `CREATED_USER`               |
+| `200` | 200       | 유저 정보 조회가 완료되었습니다     | `OK_GET_USER_INFO`           |
+| `200` | 200       | 타인유저 정보 조회가 완료되었습니다 | `OK_GET_OTHER_USER_INFO`     |
+| `200` | 200       | 사용할 수 있는 닉네임입니다         | `OK_NOT_DUPLICATED_NICKNAME` |
+| `200` | 200       | 비밀번호를 변경했습니다             | `OK_CHANGE_PASSWORD`         |
+| `200` | 200       | 비밀번호를 재설정했습니다           | `OK_RESET_PASSWORD`          |
+| `200` | 200       | 회원 정보 수정이 완료되었습니다     | `OK_MODIFY_USER_INFO`        |
+| `200` | 200       | 회원 탈퇴가 완료되었습니다          | `OK_WITHDRAW_USER`           |
+| `200` | 200       | 회원 로그아웃이 완료되었습니다      | `OK_LOGOUT`                  |
 
 ---
 
