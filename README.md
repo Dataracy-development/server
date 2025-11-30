@@ -32,14 +32,17 @@
 
 ### **2. 데이터 처리 전략**
 
-- **Kafka 기반 이벤트 처리**: 비동기 분리로 API 부하 완화
+- **Kafka 기반 이벤트 처리**: 비동기 분리로 API 부하 완화, 멱등성 보장으로 중복 메시지 처리 방지
 - **Redis 캐싱**: 인메모리 캐싱으로 조회 성능 향상
 - **Elasticsearch 검색**: 전문 검색과 유사도 추천으로 사용자 경험 향상
+- **Worker 최적화**: 제한된 병렬 처리로 ES 부하 제어 및 성능 향상
 
 ### **3. 운영 안정성**
 
 - **Blue-Green 배포**: 무중단 배포로 서비스 연속성 확보
 - **분산락**: Redisson 기반 동시성 제어로 데이터 정합성 보장
+- **멱등성 보장**: Kafka Consumer에서 Partition + Offset 기반 중복 메시지 처리 방지
+- **Worker 안정성**: 분산 락과 제한된 병렬 처리로 다중 인스턴스 환경에서 안정적 동작
 - **모니터링**: Prometheus + Grafana로 실시간 시스템 상태 추적
 
 ---
@@ -443,6 +446,8 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 - `ProjectEsProjectionWorker`:
 - `@Scheduled(fixedDelayString = "PT3S")`로 3초마다 폴링
+- **분산 락 적용**: `@DistributedLock`으로 여러 인스턴스 간 중복 실행 방지
+- **제한된 병렬 처리**: `ThreadPoolTaskExecutor` (Core 10, Max 20, Queue 200)로 최대 20개 작업 동시 처리
 - 각 Task를 `REQUIRES_NEW` 트랜잭션으로 실행 → 실패가 다른 Task에 영향 없음
 - **지수 백오프**로 재시도, 한도 초과 시 DLQ로 이동
 - 성공 시 Task 삭제 → ES와 DB의 최종적 일관성 유지
@@ -450,7 +455,8 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 - `DataEsProjectionWorker`:
 - `@Scheduled(fixedDelayString = "PT3S")`로 3초마다 폴링
-- **CompletableFuture**를 사용한 비동기 처리로 병렬성 향상
+- **분산 락 적용**: `@DistributedLock`으로 여러 인스턴스 간 중복 실행 방지
+- **제한된 병렬 처리**: `ThreadPoolTaskExecutor` (Core 10, Max 20, Queue 200)로 최대 20개 작업 동시 처리
 - 각 Task를 `REQUIRES_NEW` 트랜잭션으로 실행 → 실패가 다른 Task에 영향 없음
 - **지수 백오프**로 재시도, 한도 초과 시 DLQ로 이동
 - 성공 시 Task 삭제 → ES와 DB의 최종적 일관성 유지
@@ -472,6 +478,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 
 - **안정성 확보**
   배치 처리, 재시도/백오프, DLQ 격리로 장애 확산 방지
+  **분산 락**으로 다중 인스턴스 환경에서도 단일 Worker만 실행하여 중복 처리 방지
 
 - **운영 편의성**
   DLQ를 통한 원인 분석 및 재처리 가능
@@ -480,6 +487,7 @@ ec2 내 상태 파일: `/home/ubuntu/color-config/current_color_dev` (현재 활
 - **성능 개선**
   API 요청 시 ES 반영을 기다리지 않음 → 응답 속도 단축
   ES 반영을 비동기로 처리 → 트래픽 급증에도 확장성 확보
+  **제한된 병렬 처리**로 ES 부하를 제어하면서 처리 속도 향상 (순차 처리 → 최대 20개 동시 처리)
 
 <br/>
 <br/>
@@ -1277,8 +1285,12 @@ public class BatchCacheStrategy {
 ## 🛡️ 신뢰성 운영
 
 - **재시도/백오프**: 일시 오류는 자동 재시도, 한계 초과 시 **DLQ**로 격리
-- **멱등성**: 동일 메시지 재처리에 안전하도록 **키/이벤트ID** 기반 처리(소비자 책임)
-- **오프셋 커밋**: 컨테이너 정책에 따라 처리 완료 후 커밋(기본 설정 사용)
+- **멱등성 보장**: Partition + Offset 기반 중복 메시지 처리 방지
+  - Redis 키 기반 중복 체크 (`kafka:idempotent:topic:partition:offset`)
+  - `processIdempotently()` 공통 메서드로 모든 Consumer에 적용
+  - 중복 메시지 감지 시 즉시 스킵, 처리 실패 시 Redis 키 삭제로 재시도 가능
+- **수동 커밋 모드**: `AckMode.MANUAL_IMMEDIATE`로 처리 성공 후에만 offset 커밋
+- **Consumer 설정 최적화**: `max.poll.records=200`, `max.poll.interval.ms` 조정으로 안정성 확보
 - **모니터링 핵심 지표**: **Lag**, **DLQ 적재량**, **처리 지연/오류율**, **소비 스루풋**
 
 ---
@@ -1938,15 +1950,18 @@ open build/reports/jacoco/test/html/index.html    # 커버리지 리포트
 
 ### **성능 & 확장성**
 
-- **Kafka 기반 이벤트 처리**: 비동기 분리로 API 부하 완화
+- **Kafka 기반 이벤트 처리**: 비동기 분리로 API 부하 완화, 멱등성 보장으로 중복 메시지 처리 방지
 - **Redis 캐싱**: 인메모리 캐싱으로 조회 성능 향상
 - **Elasticsearch 검색**: 전문 검색과 유사도 추천으로 사용자 경험 향상
 - **QueryDSL 최적화**: N+1 문제 해결 및 복잡한 쿼리 최적화
+- **Worker 병렬 처리**: 제한된 병렬 처리로 ES 부하 제어 및 성능 향상
 
 ### **운영 & 안정성**
 
 - **Blue-Green 배포**: 무중단 배포로 서비스 연속성 확보
 - **분산락**: Redisson 기반 동시성 제어로 데이터 정합성 보장
+- **멱등성 보장**: Kafka Consumer에서 Partition + Offset 기반 중복 메시지 처리 방지
+- **Worker 안정성**: 분산 락과 제한된 병렬 처리로 다중 인스턴스 환경에서 안정적 동작
 - **모니터링**: Prometheus + Grafana로 실시간 시스템 상태 추적
 - **Gradle 9.0 호환성**: 최신 빌드 도구 지원으로 미래 지향적 개발 환경 구축
 
