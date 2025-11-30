@@ -12,18 +12,28 @@ const popularDataLoadTime = new Trend("popular_data_load_time");
 const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
 const SCENARIO = __ENV.SCENARIO || "smoke";
 
-// Test scenarios
+// Test scenarios - ramping-vus for realistic load testing
 const scenarios = {
   smoke: {
-    executor: "constant-vus",
-    vus: 1,
-    duration: "30s",
+    executor: "ramping-vus",
+    startVUs: 0,
+    stages: [
+      { duration: "5s", target: 1 }, // Ramp-up: 0 → 1 VU
+      { duration: "20s", target: 1 }, // Peak: 1 VU 유지
+      { duration: "5s", target: 0 }, // Ramp-down: 1 → 0 VU
+    ],
+    gracefulRampDown: "5s",
     tags: { test_type: "smoke" },
   },
   load: {
-    executor: "constant-vus",
-    vus: 10,
-    duration: "60s",
+    executor: "ramping-vus",
+    startVUs: 0,
+    stages: [
+      { duration: "10s", target: 10 }, // Ramp-up: 0 → 10 VU
+      { duration: "40s", target: 10 }, // Peak: 10 VU 유지
+      { duration: "10s", target: 0 }, // Ramp-down: 10 → 0 VU
+    ],
+    gracefulRampDown: "10s",
     tags: { test_type: "load" },
   },
   stress: {
@@ -102,7 +112,7 @@ export default function () {
   popularDataErrorRate.add(!success);
   popularDataLoadTime.add(responseTime);
 
-  sleep(1);
+  sleep(0.1); // 최소 대기로 최대 부하 시뮬레이션
 }
 
 export function handleSummary(data) {

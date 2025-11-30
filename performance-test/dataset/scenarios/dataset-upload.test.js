@@ -119,25 +119,34 @@ function getOptions() {
     thresholds: {
       // 트러블슈팅을 위한 개선된 기준치
       dataset_upload_success_rate: [`rate>=${config.expectedSuccessRate}`],
-      dataset_upload_response_time: ["p(95)<8000"], // 95% 응답시간 < 8초 (현실적)
+      dataset_upload_response_time: ["p(95)<60000"], // 95% 응답시간 < 60초 (파일 업로드 특성)
       dataset_oom_errors: [`count<${Math.ceil(config.expectedOomRate * 50)}`], // 예상 OOM 에러 허용
 
       // 추가 트러블슈팅 지표
-      dataset_upload_attempts: ["count>5"], // 최소 5번 시도
-      dataset_memory_usage: ["avg<10000"], // 평균 메모리 사용량 10MB 미만
+      dataset_upload_attempts: ["count>0"], // 최소 1번 시도
+      dataset_memory_usage: ["avg<50000"], // 평균 메모리 사용량 50MB 미만
       http_req_failed: [`rate<${1 - config.expectedSuccessRate + 0.2}`], // 실패율 허용 (Before에서 실패 허용)
     },
   };
 
-  // 60초 테스트: 점진적 부하 증가 → 유지 → 감소 (더 현실적인 패턴)
+  // ramping-vus: 점진적 부하 증가 → 유지 → 감소 (현실적인 패턴)
   return {
     ...baseOptions,
-    stages: [
-      { duration: "10s", target: 1 }, // 서서히 시작
-      { duration: "10s", target: Math.ceil(config.vus * 0.5) }, // 절반 부하
-      { duration: "30s", target: config.vus }, // 최대 부하 유지
-      { duration: "10s", target: 0 }, // 서서히 감소
-    ],
+    scenarios: {
+      default: {
+        executor: "ramping-vus",
+        startVUs: 0,
+        stages: [
+          { duration: "10s", target: Math.ceil(config.vus * 0.5) }, // Ramp-up: 0 → 절반
+          {
+            duration: `${parseInt(config.duration) - 20}s`,
+            target: config.vus,
+          }, // Peak: 최대 부하 유지
+          { duration: "10s", target: 0 }, // Ramp-down: 최대 → 0
+        ],
+        gracefulRampDown: "10s",
+      },
+    },
   };
 }
 

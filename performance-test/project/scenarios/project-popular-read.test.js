@@ -12,8 +12,8 @@
  * - Infrastructure: JPA Repository, QueryDSL, Redis 캐시, Elasticsearch 검색, 통계 집계
  *
  * 🔍 테스트 시나리오별 목적:
- * - smoke: 기본 인기도 조회 검증 (5 VU, 30초) - CI/CD 파이프라인용
- * - load: 일반 인기도 조회 테스트 (10-100 VU, 8분) - 일상적 인기 프로젝트 조회 시뮬레이션
+ * - smoke: 기본 인기도 조회 검증 (ramping-vus: 0→1→0, 30초) - 트러블슈팅 전후 비교용
+ * - load: 일반 인기도 조회 테스트 (ramping-vus: 0→10→0, 60초) - 실제 부하 테스트
  * - stress: 고부하 인기도 조회 테스트 (50-300 VU, 10분) - 인기 프로젝트 집중 조회 시나리오
  * - soak: 장시간 인기도 조회 안정성 테스트 (100 VU, 1시간) - 캐시 효율성 및 랭킹 정확성 검증
  * - spike: 급격한 인기도 조회 폭증 테스트 (20-800 VU, 2분 30초) - 갑작스러운 인기 프로젝트 조회 대응
@@ -95,20 +95,26 @@ export let rankingConsistency = new Rate("project_ranking_consistency");
 export let options = {
   scenarios: {
     smoke: {
-      executor: "constant-vus",
-      vus: 5,
-      duration: "30s",
+      executor: "ramping-vus",
+      startVUs: 0,
       exec: "smoke",
+      stages: [
+        { duration: "5s", target: 1 }, // Ramp-up: 0 → 1 VU
+        { duration: "20s", target: 1 }, // Peak: 1 VU 유지
+        { duration: "5s", target: 0 }, // Ramp-down: 1 → 0 VU
+      ],
+      gracefulRampDown: "5s",
     },
     load: {
       executor: "ramping-vus",
-      startVUs: 10,
+      startVUs: 0,
       exec: "load",
       stages: [
-        { duration: "2m", target: 50 },
-        { duration: "4m", target: 100 },
-        { duration: "2m", target: 0 },
+        { duration: "10s", target: 10 }, // Ramp-up: 0 → 10 VU
+        { duration: "40s", target: 10 }, // Peak: 10 VU 유지
+        { duration: "10s", target: 0 }, // Ramp-down: 10 → 0 VU
       ],
+      gracefulRampDown: "10s",
     },
     stress: {
       executor: "ramping-vus",
@@ -205,12 +211,9 @@ function readPopularProjects() {
   const startTime = Date.now();
   popularReadAttempts.add(1);
 
-  // 인기 프로젝트 조회 파라미터 결정 (실제 사용 패턴 반영)
-  const page = Math.floor(Math.random() * 5) + 1; // 1-5 페이지
-  const size = 20;
-  const period = ["WEEK", "MONTH", "YEAR"][Math.floor(Math.random() * 3)]; // 기간별 인기도
-
-  const url = `${BASE_URL}/api/v1/projects/popular?page=${page}&size=${size}&period=${period}`;
+  // 트러블슈팅 문서와 일치하는 API 엔드포인트
+  const size = 5; // 인기 프로젝트 상위 5개 조회
+  const url = `${BASE_URL}/api/v1/projects/popular?size=${size}`;
   const res = http.get(url, { headers: getAuthHeaders() });
   const responseTime = Date.now() - startTime;
 
@@ -314,7 +317,7 @@ function readPopularProjects() {
 
 function scenarioExec() {
   readPopularProjects();
-  sleep(Math.random() * 2 + 1);
+  sleep(0.1); // 최소 대기 시간으로 최대 부하 시뮬레이션
 }
 
 export function smoke() {

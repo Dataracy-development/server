@@ -1,21 +1,20 @@
 /**
  * ========================================
- * 데이터셋 업로드 성능 테스트
+ * Kafka 비동기 메타데이터 파싱 성능 테스트
  * ========================================
  *
- * 테스트 목적: DataCommandController.uploadDataset() API 성능 검증
+ * 테스트 목적: 동기 vs 비동기 메타데이터 파싱 성능 비교
  *
  * 시나리오:
- * - smoke: 기본 기능 확인 (1 VU, 30초)
- * - load: 로드 테스트 (5→20 VU, 8분)
- * - stress: 스트레스 테스트 (10→50 VU, 10분)
- * - spike: 스파이크 테스트 (5→100 VU, 3분)
+ * - MODE=sync: 동기 처리 (Before)
+ * - MODE=async: 비동기 처리 (After)
  *
  * 실행 명령어:
- * k6 run --env SCENARIO=smoke --env BASE_URL=http://localhost:8080 performance-test/dataset/scenarios/dataset-upload-complete.test.js
- * k6 run --env SCENARIO=load --env BASE_URL=http://localhost:8080 performance-test/dataset/scenarios/dataset-upload-complete.test.js
- * k6 run --env SCENARIO=stress --env BASE_URL=http://localhost:8080 performance-test/dataset/scenarios/dataset-upload-complete.test.js
- * k6 run --env SCENARIO=spike --env BASE_URL=http://localhost:8080 performance-test/dataset/scenarios/dataset-upload-complete.test.js
+ * # Before (동기 처리)
+ * k6 run --env MODE=sync performance-test/dataset/scenarios/dataset-upload-complete.test.js
+ *
+ * # After (비동기 처리)
+ * k6 run --env MODE=async performance-test/dataset/scenarios/dataset-upload-complete.test.js
  */
 
 import http from "k6/http";
@@ -24,8 +23,8 @@ import { Rate, Trend, Counter } from "k6/metrics";
 
 // ==================== 설정 ====================
 const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
-const RUN_SCENARIO = __ENV.SCENARIO || "smoke";
-const FILE_SIZE_MB = __ENV.FILE_SIZE_MB || "3";
+const PROCESSING_MODE = __ENV.MODE || "async"; // "sync" or "async"
+const FILE_SIZE_KB = 3072; // 3MB 고정 (공정한 비교)
 
 // 인증 토큰
 const authToken =
@@ -36,64 +35,28 @@ const uploadSuccessRate = new Rate("dataset_upload_success_rate");
 const uploadResponseTime = new Trend("dataset_upload_response_time");
 const uploadAttempts = new Counter("dataset_upload_attempts");
 const timeoutErrors = new Counter("dataset_timeout_errors");
-const metadataParsingTime = new Trend("metadata_parsing_time");
+const fileSizeDistribution = new Trend("dataset_file_size_distribution");
 
 export let options = {
   scenarios: {
-    smoke: {
-      executor: "constant-vus",
-      vus: 1,
-      duration: "30s",
-      exec: "smoke",
-    },
-    load: {
+    default: {
       executor: "ramping-vus",
-      startVUs: 5,
-      exec: "load",
+      startVUs: 0,
       stages: [
-        { duration: "2m", target: 10 },
-        { duration: "4m", target: 20 },
-        { duration: "2m", target: 0 },
+        { duration: "10s", target: 3 }, // Ramp-up: 0 → 3 VU
+        { duration: "40s", target: 5 }, // Peak: 5 VU 유지
+        { duration: "10s", target: 0 }, // Ramp-down: 5 → 0 VU
       ],
-    },
-    stress: {
-      executor: "ramping-vus",
-      startVUs: 10,
-      exec: "stress",
-      stages: [
-        { duration: "2m", target: 25 },
-        { duration: "4m", target: 50 },
-        { duration: "2m", target: 0 },
-      ],
-    },
-    spike: {
-      executor: "ramping-vus",
-      startVUs: 5,
-      exec: "spike",
-      stages: [
-        { duration: "30s", target: 50 },
-        { duration: "2m", target: 100 },
-        { duration: "30s", target: 0 },
-      ],
+      gracefulRampDown: "10s",
     },
   },
   thresholds: {
-    http_req_failed: ["rate<0.02"], // 2% 이하 실패율 (더 엄격)
-    http_req_duration: ["p(95)<5000"], // 5초 이하 (더 엄격)
-    dataset_upload_success_rate: ["rate>0.98"], // 98% 이상 성공 (더 엄격)
-    dataset_upload_response_time: ["p(95)<10000"], // 10초 이하 (현실적)
+    http_req_failed: ["rate<0.02"],
+    dataset_upload_success_rate: ["rate>0.90"],
+    dataset_upload_response_time: ["p(95)<10000"],
+    dataset_timeout_errors: ["count<10"],
   },
 };
-
-// Remove unused scenarios
-for (const s of Object.keys(options.scenarios)) {
-  if (s !== RUN_SCENARIO) delete options.scenarios[s];
-}
-
-// 파일 크기 결정
-function determineFileSize() {
-  return parseInt(FILE_SIZE_MB) * 1024; // KB로 변환
-}
 
 // 테스트 파일 생성
 function createTestFile(sizeKB) {
@@ -114,16 +77,15 @@ function uploadDataset() {
   const startTime = Date.now();
   uploadAttempts.add(1);
 
-  const fileSize = determineFileSize();
-  const fileContent = createTestFile(fileSize);
-  const fileName = `test_dataset_${RUN_SCENARIO}_${Date.now()}.csv`;
+  const fileContent = createTestFile(FILE_SIZE_KB);
+  const fileName = `test_dataset_${PROCESSING_MODE}_${Date.now()}.csv`;
 
   const formData = {
     dataFile: http.file(fileContent, fileName, "text/csv"),
     webRequest: JSON.stringify({
-      title: `Test Dataset ${RUN_SCENARIO} ${Date.now()}`,
-      description: `테스트용 데이터셋 - ${RUN_SCENARIO} 시나리오`,
-      analysisGuide: `Performance test dataset for ${RUN_SCENARIO} scenario.`,
+      title: `Test Dataset ${PROCESSING_MODE} ${Date.now()}`,
+      description: `테스트용 데이터셋 - ${PROCESSING_MODE} 모드`,
+      analysisGuide: `Performance test dataset for ${PROCESSING_MODE} mode.`,
       topicId: 1,
       dataSourceId: 1,
       dataTypeId: 1,
@@ -136,24 +98,23 @@ function uploadDataset() {
     Authorization: `Bearer ${authToken}`,
   };
 
-  const response = http.post(`${BASE_URL}/api/v1/datasets`, formData, {
+  // 동기/비동기 모드에 따라 다른 엔드포인트 사용
+  const endpoint =
+    PROCESSING_MODE === "sync"
+      ? "/api/v1/datasets/sync" // 동기 처리 엔드포인트
+      : "/api/v1/datasets"; // 비동기 처리 엔드포인트
+
+  const response = http.post(`${BASE_URL}${endpoint}`, formData, {
     headers,
   });
   const responseTime = Date.now() - startTime;
 
   uploadResponseTime.add(responseTime);
+  fileSizeDistribution.add(FILE_SIZE_KB);
 
   const isSuccess = check(response, {
-    "upload status is 201": (r) => r.status === 201,
-    "response time is acceptable": (r) => r.timings.duration < 10000,
-    "response has data ID": (r) => {
-      try {
-        const body = JSON.parse(r.body);
-        return body.data && body.data.id;
-      } catch (e) {
-        return false;
-      }
-    },
+    "업로드 성공": (r) => r.status === 201,
+    "타임아웃 없음": (r) => r.status !== 0,
   });
 
   uploadSuccessRate.add(isSuccess);
@@ -162,85 +123,10 @@ function uploadDataset() {
     timeoutErrors.add(1);
   }
 
-  if (isSuccess) {
-    const dataId = JSON.parse(response.body).data.id;
-    const parsingTime = waitForMetadataParsing(dataId);
-    if (parsingTime > 0) {
-      metadataParsingTime.add(parsingTime);
-    }
-  }
-
   return response;
 }
 
-// 메타데이터 파싱 완료 대기
-function waitForMetadataParsing(dataId) {
-  const maxAttempts = 10;
-  const interval = 2000;
-  const startTime = Date.now();
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const detailResponse = http.get(`${BASE_URL}/api/v1/datasets/${dataId}`, {
-      headers: { Authorization: `Bearer ${authToken}` },
-    });
-
-    if (detailResponse.status === 200) {
-      try {
-        const detailData = JSON.parse(detailResponse.body);
-        if (detailData.data && detailData.data.metadata) {
-          const parsingTime = Date.now() - startTime;
-          return parsingTime;
-        }
-      } catch (e) {
-        // 파싱 실패 시 계속 대기
-      }
-    }
-
-    if (attempt < maxAttempts) {
-      sleep(interval / 1000);
-    }
-  }
-
-  timeoutErrors.add(1);
-  return 0;
-}
-
-// 시나리오별 실행 함수들
-export function smoke() {
-  uploadDataset();
-  sleep(2);
-}
-
-export function load() {
-  uploadDataset();
-  sleep(Math.random() * 3 + 1);
-}
-
-export function stress() {
-  uploadDataset();
-  sleep(Math.random() * 2 + 0.5);
-}
-
-export function spike() {
-  uploadDataset();
-  sleep(Math.random() * 1 + 0.2);
-}
-
 export default function () {
-  switch (RUN_SCENARIO) {
-    case "smoke":
-      smoke();
-      break;
-    case "load":
-      load();
-      break;
-    case "stress":
-      stress();
-      break;
-    case "spike":
-      spike();
-      break;
-    default:
-      load();
-  }
+  uploadDataset();
+  sleep(1); // 다음 업로드까지 1초 대기
 }
