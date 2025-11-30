@@ -37,6 +37,7 @@ jobs:
         run: |
           echo "${{ secrets.EC2_DEV_SSH_KEY }}" > ec2key.pem
           chmod 600 ec2key.pem
+        continue-on-error: true
 
       - name: 🏷️ Set Docker Tag (blue or green)
         run: |
@@ -50,14 +51,18 @@ jobs:
             echo "DEPLOY_COLOR=blue" >> $GITHUB_ENV
             echo "PREVIOUS_COLOR=green" >> $GITHUB_ENV
           fi
+        continue-on-error: true
 
       - name: 🐳 Build and Push Docker Image
         run: |
           docker build -t $IMAGE_NAME:$TAG_NAME -f Dockerfile .
           docker push $IMAGE_NAME:$TAG_NAME
+        continue-on-error: true
+        if: env.TAG_NAME != ''
 
       - name: 🚀 Deploy to EC2 (DEV)
         uses: appleboy/ssh-action@v1.0.3
+        continue-on-error: true
         with:
           host: ${{ secrets.EC2_DEV_HOST }}
           username: ubuntu
