@@ -113,7 +113,7 @@ spring:
 
       properties:
         fetch.max.bytes: 5242880 # 5MB
-        max.poll.records: 500 # 한 번에 가져올 레코드 수
+        max.poll.records: 200 # 한 번에 가져올 레코드 수 (안전성 향상: 500 → 200)
         # 연결 안정성 개선
         session.timeout.ms: 30000
         heartbeat.interval.ms: 3000

@@ -46,4 +46,32 @@ public class AsyncConfig {
 
     return executor;
   }
+
+  /**
+   * ES 프로젝션 워커 전용 ThreadPoolTaskExecutor를 생성합니다.
+   *
+   * <p>워커 작업은 독립적이므로 병렬 처리 가능하지만, ES 부하를 고려해 제한된 스레드 풀을 사용합니다.
+   *
+   * @return ES 프로젝션 워커 작업을 처리할 ThreadPoolTaskExecutor 인스턴스
+   */
+  @Bean(name = "esProjectionWorkerExecutor")
+  public Executor esProjectionWorkerExecutor() {
+    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+
+    // 스레드 풀 설정 (ES 부하 고려)
+    executor.setCorePoolSize(10); // 기본 스레드 수
+    executor.setMaxPoolSize(20); // 최대 스레드 수
+    executor.setQueueCapacity(200); // 대기 큐 크기
+    executor.setThreadNamePrefix("es-projection-worker-"); // 스레드 이름 접두사
+    executor.setKeepAliveSeconds(60); // 유휴 스레드 유지 시간
+
+    // 스레드 풀 종료 시 대기 중인 작업 완료 후 종료
+    executor.setWaitForTasksToCompleteOnShutdown(true);
+    executor.setAwaitTerminationSeconds(30);
+
+    // 스레드 풀 초기화
+    executor.initialize();
+
+    return executor;
+  }
 }

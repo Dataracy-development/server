@@ -101,8 +101,8 @@ public class KafkaLongConsumerConfig extends AbstractKafkaConsumerConfig<Long> {
     // 동시성 (파티션 수/부하에 맞춰 조정)
     factory.setConcurrency(concurrency);
 
-    // 1건 처리 성공 시마다 즉시 커밋(정합성 강화)
-    factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
+    // 수동 커밋 모드: Acknowledgment.acknowledge() 호출 시 커밋 (멱등성 보장을 위해)
+    factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
 
     // 폴링 타임아웃 설정 (application.yml에서 조정 가능)
     factory.getContainerProperties().setPollTimeout(pollTimeout);

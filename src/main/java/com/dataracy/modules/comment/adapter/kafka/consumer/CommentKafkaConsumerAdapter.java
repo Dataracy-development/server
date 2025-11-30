@@ -1,7 +1,10 @@
 package com.dataracy.modules.comment.adapter.kafka.consumer;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 import com.dataracy.modules.comment.application.port.in.command.count.DecreaseLikeCountUseCase;
@@ -13,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class CommentKafkaConsumerAdapter {
+  private final StringRedisTemplate redisTemplate;
   private final IncreaseLikeCountUseCase increaseLikeCountUseCase;
   private final DecreaseLikeCountUseCase decreaseLikeCountUseCase;
 
@@ -25,48 +29,105 @@ public class CommentKafkaConsumerAdapter {
   /**
    * Kafka에서 댓글 좋아요 증가 이벤트를 수신하여 해당 댓글의 좋아요 수를 증가시킵니다.
    *
-   * @param commentId 좋아요 수를 증가시킬 댓글의 ID
+   * <p>멱등성 보장: partition + offset 기반 중복 처리 방지
+   *
+   * @param record Kafka ConsumerRecord
+   * @param acknowledgment 수동 커밋용 Acknowledgment
    */
   @KafkaListener(
       topics = "${spring.kafka.consumer.comment-like-increase.topic:comment-like-increase-topic}",
       groupId =
           "${spring.kafka.consumer.comment-like-increase.group-id:comment-like-increase-consumer-group}",
       containerFactory = "longKafkaListenerContainerFactory")
-  public void consumeLikeIncrease(Long commentId) {
-    try {
-      LoggerFactory.kafka()
-          .logConsume(commentLikeIncreaseTopic, "댓글 좋아요 이벤트 수신됨: commentId=" + commentId);
-      increaseLikeCountUseCase.increaseLikeCount(commentId);
-      LoggerFactory.kafka()
-          .logConsume(commentLikeIncreaseTopic, "댓글 좋아요 이벤트 처리 완료: commentId=" + commentId);
-    } catch (Exception e) {
-      LoggerFactory.kafka()
-          .logError(commentLikeIncreaseTopic, "댓글 좋아요 이벤트 처리 실패: commentId=" + commentId, e);
-      throw e; // 재시도를 위해 예외 재던지기
-    }
+  public void consumeLikeIncrease(
+      ConsumerRecord<String, Long> record, Acknowledgment acknowledgment) {
+    processIdempotently(
+        record,
+        acknowledgment,
+        () -> {
+          Long commentId = record.value();
+          LoggerFactory.kafka()
+              .logConsume(commentLikeIncreaseTopic, "댓글 좋아요 이벤트 수신됨: commentId=" + commentId);
+          increaseLikeCountUseCase.increaseLikeCount(commentId);
+          LoggerFactory.kafka()
+              .logConsume(commentLikeIncreaseTopic, "댓글 좋아요 이벤트 처리 완료: commentId=" + commentId);
+        });
   }
 
   /**
    * Kafka에서 댓글 좋아요 취소 이벤트를 수신하여 해당 댓글의 좋아요 수를 감소시킵니다.
    *
-   * @param commentId 좋아요 수를 감소시킬 댓글의 ID
+   * <p>멱등성 보장: partition + offset 기반 중복 처리 방지
+   *
+   * @param record Kafka ConsumerRecord
+   * @param acknowledgment 수동 커밋용 Acknowledgment
    */
   @KafkaListener(
       topics = "${spring.kafka.consumer.comment-like-decrease.topic:comment-like-decrease-topic}",
       groupId =
           "${spring.kafka.consumer.comment-like-decrease.group-id:comment-like-decrease-consumer-group}",
       containerFactory = "longKafkaListenerContainerFactory")
-  public void consumeLikeDecrease(Long commentId) {
+  public void consumeLikeDecrease(
+      ConsumerRecord<String, Long> record, Acknowledgment acknowledgment) {
+    processIdempotently(
+        record,
+        acknowledgment,
+        () -> {
+          Long commentId = record.value();
+          LoggerFactory.kafka()
+              .logConsume(commentLikeDecreaseTopic, "댓글 좋아요 취소 이벤트 수신됨: commentId=" + commentId);
+          decreaseLikeCountUseCase.decreaseLikeCount(commentId);
+          LoggerFactory.kafka()
+              .logConsume(commentLikeDecreaseTopic, "댓글 좋아요 취소 이벤트 처리 완료: commentId=" + commentId);
+        });
+  }
+
+  /**
+   * 멱등성 보장을 위한 공통 처리 메서드
+   *
+   * @param record Kafka ConsumerRecord
+   * @param acknowledgment 수동 커밋용 Acknowledgment
+   * @param processor 실제 처리 로직
+   */
+  private <K, V> void processIdempotently(
+      ConsumerRecord<K, V> record, Acknowledgment acknowledgment, Runnable processor) {
+    String idempotentKey =
+        "kafka:idempotent:" + record.topic() + ":" + record.partition() + ":" + record.offset();
+
+    // Redis에 이미 존재하면 중복 메시지로 간주하고 스킵
+    Boolean wasSet =
+        redisTemplate.opsForValue().setIfAbsent(idempotentKey, "1", java.time.Duration.ofDays(7));
+    if (Boolean.FALSE.equals(wasSet)) {
+      LoggerFactory.kafka()
+          .logWarning(
+              record.topic(),
+              String.format(
+                  "중복 메시지 감지 - topic: %s, partition: %d, offset: %d",
+                  record.topic(), record.partition(), record.offset()));
+      if (acknowledgment != null) {
+        acknowledgment.acknowledge();
+      }
+      return;
+    }
+
     try {
-      LoggerFactory.kafka()
-          .logConsume(commentLikeDecreaseTopic, "댓글 좋아요 취소 이벤트 수신됨: commentId=" + commentId);
-      decreaseLikeCountUseCase.decreaseLikeCount(commentId);
-      LoggerFactory.kafka()
-          .logConsume(commentLikeDecreaseTopic, "댓글 좋아요 취소 이벤트 처리 완료: commentId=" + commentId);
+      // 실제 처리 로직 실행
+      processor.run();
+      // 성공 시 수동 커밋
+      if (acknowledgment != null) {
+        acknowledgment.acknowledge();
+      }
     } catch (Exception e) {
+      // 실패 시 Redis 키 삭제하여 재시도 가능하도록 함
+      redisTemplate.delete(idempotentKey);
       LoggerFactory.kafka()
-          .logError(commentLikeDecreaseTopic, "댓글 좋아요 취소 이벤트 처리 실패: commentId=" + commentId, e);
-      throw e; // 재시도를 위해 예외 재던지기
+          .logError(
+              record.topic(),
+              String.format(
+                  "메시지 처리 실패 - topic: %s, partition: %d, offset: %d",
+                  record.topic(), record.partition(), record.offset()),
+              e);
+      throw e;
     }
   }
 }

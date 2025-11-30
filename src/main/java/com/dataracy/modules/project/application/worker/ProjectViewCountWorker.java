@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.project.application.port.out.command.projection.ManageProjectProjectionTaskPort;
 import com.dataracy.modules.project.application.port.out.command.update.UpdateProjectViewPort;
 import com.dataracy.modules.project.application.port.out.view.ManageProjectViewCountPort;
@@ -43,8 +44,13 @@ public class ProjectViewCountWorker {
    * 데이터베이스의 조회수를 증가시키고 프로젝션(검색 색인 등) 업데이트를 위한 델타를 대기열에 등록합니다.
    *
    * <p>배치 처리로 성능을 최적화하여 개별 프로젝트 처리 대신 한 번에 처리합니다. 메서드는 스케줄러로 주기적으로 실행되며 트랜잭션 범위에서 동작합니다 (현재
-   * fixedDelay = 20 * 1000).
+   * fixedDelay = 20 * 1000). 분산 락: 여러 인스턴스가 동시에 실행되는 것을 방지
    */
+  @DistributedLock(
+      key = "'lock:worker:project-view-count'",
+      waitTime = 100L,
+      leaseTime = 25000L,
+      retry = 1)
   @Scheduled(fixedDelay = 20 * 1000)
   @Transactional
   public void flushProjectViews() {

@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mockStatic;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.dataracy.modules.common.logging.KafkaLogger;
@@ -29,15 +33,21 @@ class DataKafkaConsumerAdapterTest {
   // Test constants
   private static final Long PROJECT_ID = 1L;
 
+  @Mock private StringRedisTemplate redisTemplate;
+
+  @Mock private ValueOperations<String, String> valueOperations;
+
   @Mock private ParseMetadataUseCase parseMetadataUseCase;
 
   @Mock private KafkaLogger kafkaLogger;
+
+  @Mock private Acknowledgment acknowledgment;
 
   private DataKafkaConsumerAdapter adapter;
 
   @BeforeEach
   void setUp() {
-    adapter = new DataKafkaConsumerAdapter(parseMetadataUseCase);
+    adapter = new DataKafkaConsumerAdapter(redisTemplate, parseMetadataUseCase);
     ReflectionTestUtils.setField(adapter, "dataUploadedTopic", "data-uploaded-topic");
   }
 
@@ -46,17 +56,22 @@ class DataKafkaConsumerAdapterTest {
   void consumeDataUploadEventSuccess() {
     // given
     DataUploadEvent event = new DataUploadEvent(1L, "http://example.com/data.csv", "dataset.csv");
+    ConsumerRecord<String, DataUploadEvent> record =
+        new ConsumerRecord<>("data-uploaded-topic", 0, 0L, "key", event);
+    org.mockito.BDDMockito.given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    org.mockito.BDDMockito.given(valueOperations.setIfAbsent(any(), any(), any())).willReturn(true);
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
 
       // when
-      adapter.consume(event);
+      adapter.consume(record, acknowledgment);
 
       // then
       then(parseMetadataUseCase).should().parseAndSaveMetadata(any(ParseMetadataRequest.class));
       then(kafkaLogger).should().logConsume("data-uploaded-topic", "데이터셋 업로드 이벤트 수신됨: dataId=1");
       then(kafkaLogger).should().logConsume("data-uploaded-topic", "데이터셋 업로드 이벤트 처리 완료: dataId=1");
+      then(acknowledgment).should().acknowledge();
     }
   }
 
@@ -66,7 +81,11 @@ class DataKafkaConsumerAdapterTest {
     // given
     DataUploadEvent event =
         new DataUploadEvent(PROJECT_ID, "http://example.com/data.xlsx", "dataset.xlsx");
+    ConsumerRecord<String, DataUploadEvent> record =
+        new ConsumerRecord<>("data-uploaded-topic", 0, 0L, "key", event);
     RuntimeException exception = new RuntimeException("Metadata parsing failed");
+    org.mockito.BDDMockito.given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    org.mockito.BDDMockito.given(valueOperations.setIfAbsent(any(), any(), any())).willReturn(true);
     willThrow(exception)
         .given(parseMetadataUseCase)
         .parseAndSaveMetadata(any(ParseMetadataRequest.class));
@@ -76,7 +95,8 @@ class DataKafkaConsumerAdapterTest {
 
       // when & then
       RuntimeException caughtException =
-          catchThrowableOfType(() -> adapter.consume(event), RuntimeException.class);
+          catchThrowableOfType(
+              () -> adapter.consume(record, acknowledgment), RuntimeException.class);
       assertAll(
           () -> org.assertj.core.api.Assertions.assertThat(caughtException).isSameAs(exception));
 
@@ -85,7 +105,7 @@ class DataKafkaConsumerAdapterTest {
           .should()
           .logError(
               eq("data-uploaded-topic"),
-              eq("데이터셋 업로드 이벤트 처리 실패: dataId=1"),
+              eq("메시지 처리 실패 - topic: data-uploaded-topic, partition: 0, offset: 0"),
               any(RuntimeException.class));
     }
   }

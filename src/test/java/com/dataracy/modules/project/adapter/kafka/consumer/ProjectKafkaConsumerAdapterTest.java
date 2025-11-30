@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mockStatic;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.dataracy.modules.common.logging.KafkaLogger;
@@ -31,6 +35,10 @@ class ProjectKafkaConsumerAdapterTest {
   private static final Long PROJECT_ID = 1L;
   private static final Long COMMENT_ID = 2L;
 
+  @Mock private StringRedisTemplate redisTemplate;
+
+  @Mock private ValueOperations<String, String> valueOperations;
+
   @Mock private IncreaseCommentCountUseCase increaseCommentCountUseCase;
 
   @Mock private DecreaseCommentCountUseCase decreaseCommentCountUseCase;
@@ -41,12 +49,15 @@ class ProjectKafkaConsumerAdapterTest {
 
   @Mock private KafkaLogger kafkaLogger;
 
+  @Mock private Acknowledgment acknowledgment;
+
   private ProjectKafkaConsumerAdapter adapter;
 
   @BeforeEach
   void setUp() {
     adapter =
         new ProjectKafkaConsumerAdapter(
+            redisTemplate,
             increaseCommentCountUseCase,
             decreaseCommentCountUseCase,
             increaseLikeCountUseCase,
@@ -62,12 +73,16 @@ class ProjectKafkaConsumerAdapterTest {
   void consumeCommentUploadSuccess() {
     // given
     Long projectId = 1L;
+    ConsumerRecord<String, Long> record =
+        new ConsumerRecord<>("comment-uploaded-topic", 0, 0L, "key", projectId);
+    org.mockito.BDDMockito.given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    org.mockito.BDDMockito.given(valueOperations.setIfAbsent(any(), any(), any())).willReturn(true);
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
 
       // when
-      adapter.consumeCommentUpload(projectId);
+      adapter.consumeCommentUpload(record, acknowledgment);
 
       // then
       then(increaseCommentCountUseCase).should().increaseCommentCount(projectId);
@@ -75,6 +90,7 @@ class ProjectKafkaConsumerAdapterTest {
       then(kafkaLogger)
           .should()
           .logConsume("comment-uploaded-topic", "댓글 작성 이벤트 처리 완료: projectId=1");
+      then(acknowledgment).should().acknowledge();
     }
   }
 
@@ -83,7 +99,11 @@ class ProjectKafkaConsumerAdapterTest {
   void consumeCommentUploadFailure() {
     // given
     Long projectId = 1L;
+    ConsumerRecord<String, Long> record =
+        new ConsumerRecord<>("comment-uploaded-topic", 0, 0L, "key", projectId);
     RuntimeException exception = new RuntimeException("Database error");
+    org.mockito.BDDMockito.given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    org.mockito.BDDMockito.given(valueOperations.setIfAbsent(any(), any(), any())).willReturn(true);
     willThrow(exception).given(increaseCommentCountUseCase).increaseCommentCount(projectId);
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
@@ -92,7 +112,7 @@ class ProjectKafkaConsumerAdapterTest {
       // when & then
       RuntimeException caughtException =
           catchThrowableOfType(
-              () -> adapter.consumeCommentUpload(projectId), RuntimeException.class);
+              () -> adapter.consumeCommentUpload(record, acknowledgment), RuntimeException.class);
       assertAll(
           () -> org.assertj.core.api.Assertions.assertThat(caughtException).isSameAs(exception));
 
@@ -101,7 +121,7 @@ class ProjectKafkaConsumerAdapterTest {
           .should()
           .logError(
               eq("comment-uploaded-topic"),
-              eq("댓글 작성 이벤트 처리 실패: projectId=1"),
+              eq("메시지 처리 실패 - topic: comment-uploaded-topic, partition: 0, offset: 0"),
               any(RuntimeException.class));
     }
   }
@@ -111,12 +131,16 @@ class ProjectKafkaConsumerAdapterTest {
   void consumeCommentDeleteSuccess() {
     // given
     Long projectId = PROJECT_ID;
+    ConsumerRecord<String, Long> record =
+        new ConsumerRecord<>("comment-deleted-topic", 0, 0L, "key", projectId);
+    org.mockito.BDDMockito.given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    org.mockito.BDDMockito.given(valueOperations.setIfAbsent(any(), any(), any())).willReturn(true);
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
 
       // when
-      adapter.consumeCommentDelete(projectId);
+      adapter.consumeCommentDelete(record, acknowledgment);
 
       // then
       then(decreaseCommentCountUseCase).should().decreaseCommentCount(projectId);
@@ -124,6 +148,7 @@ class ProjectKafkaConsumerAdapterTest {
       then(kafkaLogger)
           .should()
           .logConsume("comment-deleted-topic", "댓글 삭제 이벤트 처리 완료: projectId=1");
+      then(acknowledgment).should().acknowledge();
     }
   }
 
@@ -132,12 +157,16 @@ class ProjectKafkaConsumerAdapterTest {
   void consumeLikeIncreaseSuccess() {
     // given
     Long projectId = COMMENT_ID;
+    ConsumerRecord<String, Long> record =
+        new ConsumerRecord<>("project-like-increase-topic", 0, 0L, "key", projectId);
+    org.mockito.BDDMockito.given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    org.mockito.BDDMockito.given(valueOperations.setIfAbsent(any(), any(), any())).willReturn(true);
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
 
       // when
-      adapter.consumeLikeIncrease(projectId);
+      adapter.consumeLikeIncrease(record, acknowledgment);
 
       // then
       then(increaseLikeCountUseCase).should().increaseLikeCount(projectId);
@@ -147,6 +176,7 @@ class ProjectKafkaConsumerAdapterTest {
       then(kafkaLogger)
           .should()
           .logConsume("project-like-increase-topic", "프로젝트 좋아요 이벤트 처리 완료: projectId=2");
+      then(acknowledgment).should().acknowledge();
     }
   }
 
@@ -155,12 +185,16 @@ class ProjectKafkaConsumerAdapterTest {
   void consumeLikeDecreaseSuccess() {
     // given
     Long projectId = 999L;
+    ConsumerRecord<String, Long> record =
+        new ConsumerRecord<>("project-like-decrease-topic", 0, 0L, "key", projectId);
+    org.mockito.BDDMockito.given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    org.mockito.BDDMockito.given(valueOperations.setIfAbsent(any(), any(), any())).willReturn(true);
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
       loggerFactoryMock.when(LoggerFactory::kafka).thenReturn(kafkaLogger);
 
       // when
-      adapter.consumeLikeDecrease(projectId);
+      adapter.consumeLikeDecrease(record, acknowledgment);
 
       // then
       then(decreaseLikeCountUseCase).should().decreaseLikeCount(projectId);
@@ -170,6 +204,7 @@ class ProjectKafkaConsumerAdapterTest {
       then(kafkaLogger)
           .should()
           .logConsume("project-like-decrease-topic", "프로젝트 좋아요 취소 이벤트 처리 완료: projectId=999");
+      then(acknowledgment).should().acknowledge();
     }
   }
 
@@ -178,7 +213,11 @@ class ProjectKafkaConsumerAdapterTest {
   void consumeLikeIncreaseFailure() {
     // given
     Long projectId = COMMENT_ID;
+    ConsumerRecord<String, Long> record =
+        new ConsumerRecord<>("project-like-increase-topic", 0, 0L, "key", projectId);
     RuntimeException exception = new RuntimeException("Elasticsearch error");
+    org.mockito.BDDMockito.given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    org.mockito.BDDMockito.given(valueOperations.setIfAbsent(any(), any(), any())).willReturn(true);
     willThrow(exception).given(increaseLikeCountUseCase).increaseLikeCount(projectId);
 
     try (MockedStatic<LoggerFactory> loggerFactoryMock = mockStatic(LoggerFactory.class)) {
@@ -187,7 +226,7 @@ class ProjectKafkaConsumerAdapterTest {
       // when & then
       RuntimeException caughtException =
           catchThrowableOfType(
-              () -> adapter.consumeLikeIncrease(projectId), RuntimeException.class);
+              () -> adapter.consumeLikeIncrease(record, acknowledgment), RuntimeException.class);
       assertAll(
           () -> org.assertj.core.api.Assertions.assertThat(caughtException).isSameAs(exception));
 
@@ -198,7 +237,7 @@ class ProjectKafkaConsumerAdapterTest {
           .should()
           .logError(
               eq("project-like-increase-topic"),
-              eq("프로젝트 좋아요 이벤트 처리 실패: projectId=2"),
+              eq("메시지 처리 실패 - topic: project-like-increase-topic, partition: 0, offset: 0"),
               any(RuntimeException.class));
     }
   }

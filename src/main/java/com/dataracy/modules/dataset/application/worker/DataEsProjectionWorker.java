@@ -3,6 +3,7 @@ package com.dataracy.modules.dataset.application.worker;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.dataset.adapter.jpa.entity.DataEsProjectionTaskEntity;
 import com.dataracy.modules.dataset.application.port.out.command.delete.SoftDeleteDataPort;
 import com.dataracy.modules.dataset.application.port.out.command.projection.ManageDataProjectionDlqPort;
@@ -30,6 +32,9 @@ public class DataEsProjectionWorker {
   private final SoftDeleteDataPort softDeleteDataEsPort;
   private final UpdateDataDownloadPort updateDataDownloadEsPort;
 
+  // 워커 전용 Executor (제한된 병렬 처리)
+  private final Executor esProjectionWorkerExecutor;
+
   // Self-injection: Spring 프록시를 통해 REQUIRES_NEW 트랜잭션이 작동하도록 함
   private DataEsProjectionWorker self;
 
@@ -47,12 +52,14 @@ public class DataEsProjectionWorker {
       LoadDataProjectionTaskPort loadDataProjectionTaskPort,
       ManageDataProjectionDlqPort manageDataProjectionDlqPort,
       @Qualifier("softDeleteDataEsAdapter") SoftDeleteDataPort softDeleteDataEsPort,
-      @Qualifier("updateDataDownloadEsAdapter") UpdateDataDownloadPort updateDataDownloadEsPort) {
+      @Qualifier("updateDataDownloadEsAdapter") UpdateDataDownloadPort updateDataDownloadEsPort,
+      @Qualifier("esProjectionWorkerExecutor") Executor esProjectionWorkerExecutor) {
     this.manageDataProjectionTaskPort = manageDataProjectionTaskPort;
     this.loadDataProjectionTaskPort = loadDataProjectionTaskPort;
     this.manageDataProjectionDlqPort = manageDataProjectionDlqPort;
     this.softDeleteDataEsPort = softDeleteDataEsPort;
     this.updateDataDownloadEsPort = updateDataDownloadEsPort;
+    this.esProjectionWorkerExecutor = esProjectionWorkerExecutor;
   }
 
   /**
@@ -82,13 +89,17 @@ public class DataEsProjectionWorker {
   }
 
   /**
-   * 3초마다 대기중(PENDING) 또는 재시도(RETRYING) 상태의 Projection 작업을 배치로 조회하여 각 작업을 비동기로 처리합니다.
+   * 3초마다 대기중(PENDING) 또는 재시도(RETRYING) 상태의 Projection 작업을 배치로 조회하여 각 작업을 제한된 병렬 처리로 처리합니다.
    *
-   * <p>개선사항: - 트랜잭션 경계 제거: 전체 배치에 대한 트랜잭션 경계를 제거하여 성능 향상 - 비동기 처리: 각 작업을 비동기로 처리하여 병렬성 향상 - 독립성 보장:
-   * 각 작업은 여전히 독립적인 트랜잭션에서 실행
+   * <p>개선사항: - 트랜잭션 경계 제거: 전체 배치에 대한 트랜잭션 경계를 제거하여 성능 향상 - 제한된 병렬 처리: 스레드 풀을 통해 ES 부하를 제어하면서 병렬성 향상
+   * - 독립성 보장: 각 작업은 여전히 독립적인 트랜잭션에서 실행 - 분산 락: 여러 인스턴스가 동시에 실행되는 것을 방지
    */
+  @DistributedLock(
+      key = "'lock:worker:data-es-projection'",
+      waitTime = 100L,
+      leaseTime = 5000L,
+      retry = 1)
   @Scheduled(fixedDelayString = "PT3S")
-  @Transactional
   public void run() {
     List<DataEsProjectionTaskEntity> tasks =
         loadDataProjectionTaskPort.findBatchForWork(
@@ -96,26 +107,27 @@ public class DataEsProjectionWorker {
             List.of(DataEsProjectionType.PENDING, DataEsProjectionType.RETRYING),
             PageRequest.of(0, BATCH));
 
-    // 각 작업을 비동기로 처리
-    List<CompletableFuture<Void>> futures = tasks.stream().map(this::processTaskAsync).toList();
+    // 각 작업을 제한된 병렬 처리로 실행 (스레드 풀 사용)
+    List<CompletableFuture<Void>> futures =
+        tasks.stream()
+            .map(
+                task ->
+                    CompletableFuture.runAsync(
+                        () -> self.processTask(task), esProjectionWorkerExecutor))
+            .toList();
 
-    // 모든 작업 완료 대기 (선택적)
-    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-        .exceptionally(
-            throwable -> {
-              LoggerFactory.elastic().logError("data_index", "비동기 작업 처리 중 예외 발생", throwable);
-              return null;
-            });
-  }
-
-  /**
-   * 단일 데이터 반영 작업을 비동기로 처리합니다. Self-injection을 통해 프록시 객체를 사용하여 REQUIRES_NEW 트랜잭션이 작동하도록 합니다.
-   *
-   * @param t 작업 대상 엔터티
-   * @return CompletableFuture<Void> 비동기 처리 결과
-   */
-  public CompletableFuture<Void> processTaskAsync(DataEsProjectionTaskEntity t) {
-    return CompletableFuture.runAsync(() -> self.processTask(t));
+    // 모든 작업 완료 대기 (비동기로 실행되지만 완료는 기다림)
+    try {
+      CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+          .exceptionally(
+              throwable -> {
+                LoggerFactory.elastic().logError("data_index", "비동기 작업 처리 중 예외 발생", throwable);
+                return null;
+              })
+          .join(); // 완료까지 대기
+    } catch (Exception e) {
+      LoggerFactory.elastic().logError("data_index", "워커 실행 중 예외 발생", e);
+    }
   }
 
   /**

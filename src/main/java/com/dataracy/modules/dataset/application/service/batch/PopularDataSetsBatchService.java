@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.dataset.application.dto.response.read.PopularDataResponse;
 import com.dataracy.modules.dataset.application.dto.response.support.DataLabelMapResponse;
 import com.dataracy.modules.dataset.application.dto.response.support.DataWithProjectCountDto;
@@ -36,8 +37,13 @@ public class PopularDataSetsBatchService implements UpdatePopularDataSetsStorage
   /**
    * 매 5분마다 인기 데이터셋 목록을 계산하고 캐시에 저장합니다.
    *
-   * <p>실제 운영에서는 더 긴 주기(예: 30분)로 설정할 수 있습니다.
+   * <p>실제 운영에서는 더 긴 주기(예: 30분)로 설정할 수 있습니다. 분산 락: 여러 인스턴스가 동시에 실행되는 것을 방지
    */
+  @DistributedLock(
+      key = "'lock:batch:popular-datasets'",
+      waitTime = 100L,
+      leaseTime = 300000L,
+      retry = 1)
   @Scheduled(fixedRate = 300000) // 5분 = 300,000ms
   public void updatePopularDataSetsCache() {
     LoggerFactory.scheduler().logStart(POPULAR_DATASETS_BATCH_SERVICE);

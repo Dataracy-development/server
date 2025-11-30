@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import com.dataracy.modules.behaviorlog.domain.model.BehaviorLog;
@@ -33,6 +34,7 @@ public class KafkaBehaviorLogConsumerConfig {
     Map<String, Object> config = new HashMap<>();
     config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     config.put(ConsumerConfig.GROUP_ID_CONFIG, "behavior-log-consumer-group");
+    config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false); // 수동 커밋
     config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
     config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
@@ -57,6 +59,8 @@ public class KafkaBehaviorLogConsumerConfig {
     ConcurrentKafkaListenerContainerFactory<String, BehaviorLog> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(behaviorLogConsumerFactory());
+    // 수동 커밋 모드: Acknowledgment.acknowledge() 호출 시 커밋 (멱등성 보장을 위해)
+    factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
     return factory;
   }
 }

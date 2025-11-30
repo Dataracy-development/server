@@ -2,6 +2,8 @@ package com.dataracy.modules.project.application.worker;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dataracy.modules.common.logging.support.LoggerFactory;
+import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.project.adapter.jpa.entity.ProjectEsProjectionTaskEntity;
 import com.dataracy.modules.project.application.port.out.command.delete.SoftDeleteProjectPort;
 import com.dataracy.modules.project.application.port.out.command.projection.ManageProjectProjectionDlqPort;
@@ -32,6 +35,9 @@ public class ProjectEsProjectionWorker {
   private final UpdateProjectLikePort updateProjectLikeEsPort;
   private final UpdateProjectViewPort updateProjectViewEsPort;
 
+  // 워커 전용 Executor (제한된 병렬 처리)
+  private final Executor esProjectionWorkerExecutor;
+
   // Self-injection: Spring 프록시를 통해 REQUIRES_NEW 트랜잭션이 작동하도록 함
   private ProjectEsProjectionWorker self;
 
@@ -51,7 +57,8 @@ public class ProjectEsProjectionWorker {
       @Qualifier("updateProjectCommentEsAdapter")
           UpdateProjectCommentPort updateProjectCommentEsPort,
       @Qualifier("updateProjectLikeEsAdapter") UpdateProjectLikePort updateProjectLikeEsPort,
-      @Qualifier("updateProjectViewEsAdapter") UpdateProjectViewPort updateProjectViewEsPort) {
+      @Qualifier("updateProjectViewEsAdapter") UpdateProjectViewPort updateProjectViewEsPort,
+      @Qualifier("esProjectionWorkerExecutor") Executor esProjectionWorkerExecutor) {
     this.manageProjectProjectionTaskPort = manageProjectProjectionTaskPort;
     this.manageProjectProjectionDlqPort = manageProjectProjectionDlqPort;
     this.loadProjectProjectionTaskPort = loadProjectProjectionTaskPort;
@@ -59,6 +66,7 @@ public class ProjectEsProjectionWorker {
     this.updateProjectCommentEsPort = updateProjectCommentEsPort;
     this.updateProjectLikeEsPort = updateProjectLikeEsPort;
     this.updateProjectViewEsPort = updateProjectViewEsPort;
+    this.esProjectionWorkerExecutor = esProjectionWorkerExecutor;
   }
 
   /**
@@ -92,10 +100,17 @@ public class ProjectEsProjectionWorker {
   }
 
   /**
-   * 3초마다 Projection Task를 가져와 개별 Task 단위로 처리 각 Task는 REQUIRES_NEW 트랜잭션으로 실행 → 실패해도 나머지 성공 건은 커밋 유지
-   * Self-injection을 통해 프록시 객체를 사용하여 REQUIRES_NEW 트랜잭션이 작동하도록 합니다.
+   * 3초마다 Projection Task를 가져와 제한된 병렬 처리로 처리합니다.
+   *
+   * <p>각 Task는 REQUIRES_NEW 트랜잭션으로 실행 → 실패해도 나머지 성공 건은 커밋 유지 Self-injection을 통해 프록시 객체를 사용하여
+   * REQUIRES_NEW 트랜잭션이 작동하도록 합니다. 분산 락: 여러 인스턴스가 동시에 실행되는 것을 방지 제한된 병렬 처리: 스레드 풀을 통해 ES 부하를 제어하면서
+   * 병렬성 향상
    */
-  @Transactional
+  @DistributedLock(
+      key = "'lock:worker:project-es-projection'",
+      waitTime = 100L,
+      leaseTime = 5000L,
+      retry = 1)
   @Scheduled(fixedDelayString = "PT3S")
   public void run() {
     List<ProjectEsProjectionTaskEntity> tasks =
@@ -104,8 +119,26 @@ public class ProjectEsProjectionWorker {
             List.of(ProjectEsProjectionType.PENDING, ProjectEsProjectionType.RETRYING),
             PageRequest.of(0, BATCH));
 
-    for (ProjectEsProjectionTaskEntity t : tasks) {
-      self.processTask(t);
+    // 각 작업을 제한된 병렬 처리로 실행 (스레드 풀 사용)
+    List<CompletableFuture<Void>> futures =
+        tasks.stream()
+            .map(
+                task ->
+                    CompletableFuture.runAsync(
+                        () -> self.processTask(task), esProjectionWorkerExecutor))
+            .toList();
+
+    // 모든 작업 완료 대기 (비동기로 실행되지만 완료는 기다림)
+    try {
+      CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+          .exceptionally(
+              throwable -> {
+                LoggerFactory.elastic().logError("project_index", "비동기 작업 처리 중 예외 발생", throwable);
+                return null;
+              })
+          .join(); // 완료까지 대기
+    } catch (Exception e) {
+      LoggerFactory.elastic().logError("project_index", "워커 실행 중 예외 발생", e);
     }
   }
 

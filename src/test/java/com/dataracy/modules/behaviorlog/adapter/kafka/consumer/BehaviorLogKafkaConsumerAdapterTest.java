@@ -2,15 +2,19 @@ package com.dataracy.modules.behaviorlog.adapter.kafka.consumer;
 
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.kafka.support.Acknowledgment;
 
 import com.dataracy.modules.behaviorlog.application.port.out.SaveBehaviorLogPort;
 import com.dataracy.modules.behaviorlog.domain.enums.ActionType;
@@ -22,21 +26,37 @@ import com.dataracy.modules.common.support.enums.HttpMethod;
 @ExtendWith(MockitoExtension.class)
 class BehaviorLogKafkaConsumerAdapterTest {
 
+  @Mock private StringRedisTemplate redisTemplate;
+
+  @Mock private ValueOperations<String, String> valueOperations;
+
   @Mock private SaveBehaviorLogPort saveBehaviorLogPort;
 
-  @InjectMocks private BehaviorLogKafkaConsumerAdapter adapter;
+  @Mock private Acknowledgment acknowledgment;
+
+  private BehaviorLogKafkaConsumerAdapter adapter;
+
+  @org.junit.jupiter.api.BeforeEach
+  void setUp() {
+    adapter = new BehaviorLogKafkaConsumerAdapter(redisTemplate, saveBehaviorLogPort);
+    org.mockito.BDDMockito.given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    org.mockito.BDDMockito.given(valueOperations.setIfAbsent(any(), any(), any())).willReturn(true);
+  }
 
   @Test
   @DisplayName("행동 로그 수신 및 저장 성공")
   void consumeBehaviorLogSuccess() {
     // given
     BehaviorLog behaviorLog = createTestBehaviorLog();
+    ConsumerRecord<String, BehaviorLog> record =
+        new ConsumerRecord<>("behavior-logs", 0, 0L, "key", behaviorLog);
 
     // when
-    adapter.consume(behaviorLog);
+    adapter.consume(record, acknowledgment);
 
     // then
     then(saveBehaviorLogPort).should().save(behaviorLog);
+    then(acknowledgment).should().acknowledge();
   }
 
   @Test
@@ -44,12 +64,14 @@ class BehaviorLogKafkaConsumerAdapterTest {
   void consumeBehaviorLogFailure() {
     // given
     BehaviorLog behaviorLog = createTestBehaviorLog();
+    ConsumerRecord<String, BehaviorLog> record =
+        new ConsumerRecord<>("behavior-logs", 0, 0L, "key", behaviorLog);
     RuntimeException dbError = new RuntimeException("Database connection failed");
     willThrow(dbError).given(saveBehaviorLogPort).save(behaviorLog);
 
     // when & then
     RuntimeException exception =
-        catchThrowableOfType(() -> adapter.consume(behaviorLog), RuntimeException.class);
+        catchThrowableOfType(() -> adapter.consume(record, acknowledgment), RuntimeException.class);
     assertAll(
         () ->
             org.assertj.core.api.Assertions.assertThat(exception)
@@ -66,12 +88,14 @@ class BehaviorLogKafkaConsumerAdapterTest {
   void consumeBehaviorLogFailureWithLogging() {
     // given
     BehaviorLog behaviorLog = createTestBehaviorLog();
+    ConsumerRecord<String, BehaviorLog> record =
+        new ConsumerRecord<>("behavior-logs", 0, 0L, "key", behaviorLog);
     RuntimeException dbError = new RuntimeException("Storage error");
     willThrow(dbError).given(saveBehaviorLogPort).save(behaviorLog);
 
     // when & then
     RuntimeException exception =
-        catchThrowableOfType(() -> adapter.consume(behaviorLog), RuntimeException.class);
+        catchThrowableOfType(() -> adapter.consume(record, acknowledgment), RuntimeException.class);
     assertAll(() -> org.assertj.core.api.Assertions.assertThat(exception).isSameAs(dbError));
 
     // 저장이 호출되었는지 확인
