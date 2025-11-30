@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import com.dataracy.modules.auth.application.dto.response.RefreshTokenResponse;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtGenerateUseCase;
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.auth.application.port.in.token.ManageRefreshTokenUseCase;
+import com.dataracy.modules.auth.application.port.out.RateLimitPort;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.reference.application.port.in.authorlevel.ValidateAuthorLevelUseCase;
@@ -57,6 +59,9 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
 
   private final ManageRefreshTokenUseCase manageRefreshTokenUseCase;
 
+  @Qualifier("redisRateLimitAdapter")
+  private final RateLimitPort rateLimitPort;
+
   /**
    * 자체 회원가입을 처리하고 새 사용자를 생성한 뒤 리프레시 토큰을 발급해 반환한다.
    *
@@ -74,9 +79,25 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
       retry = 2)
   @Transactional
   public RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto) {
+    return signUpSelf(requestDto, null);
+  }
+
+  @Override
+  @DistributedLock(
+      key = "'lock:signup:email:' + #requestDto.email()",
+      waitTime = 500L,
+      leaseTime = 1500L,
+      retry = 2)
+  @Transactional
+  public RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto, String clientIp) {
     Instant startTime =
         LoggerFactory.service()
             .logStart(SELF_SIGN_UP_USE_CASE, "자체 회원가입 서비스 시작 nickname=" + requestDto.nickname());
+
+    // Rate Limiting 검증 (IP가 제공된 경우)
+    if (clientIp != null && !clientIp.trim().isEmpty()) {
+      validateSignUpRateLimit(requestDto.email(), clientIp);
+    }
 
     // 자체 회원 가입 요청 정보 유효성 검사
     validateSignUpInfo(
@@ -108,6 +129,48 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
         .logSuccess(
             SELF_SIGN_UP_USE_CASE, "자체 회원가입 서비스 성공 nickname=" + requestDto.nickname(), startTime);
     return refreshTokenResponse;
+  }
+
+  /**
+   * 회원가입 레이트 리미팅 검증
+   *
+   * <p>다층 방어 전략:
+   * 1. IP별 제한: 같은 IP에서 무한 회원가입 시도 방지
+   * 2. 이메일별 제한: 같은 이메일로 무한 회원가입 시도 방지
+   */
+  private void validateSignUpRateLimit(String email, String clientIp) {
+    // 1. IP별 제한: 같은 IP에서 여러 회원가입 시도 방지
+    String ipKey = "signup:ip:" + clientIp;
+    int ipMaxRequests = 5; // IP당 5회/시간
+    
+    if (!rateLimitPort.isAllowed(ipKey, ipMaxRequests, 60)) {
+      LoggerFactory.service()
+          .logWarning(
+              SELF_SIGN_UP_USE_CASE,
+              String.format("회원가입 IP별 레이트 리미팅 초과 - IP: %s, 제한: %d회/시간", clientIp, ipMaxRequests));
+      throw new com.dataracy.modules.user.domain.exception.UserException(
+          com.dataracy.modules.user.domain.status.UserErrorStatus.RATE_LIMIT_EXCEEDED);
+    }
+
+    // 2. 이메일별 제한: 같은 이메일로 무한 회원가입 시도 방지
+    String emailKey = "signup:email:" + email.toLowerCase();
+    int emailMaxRequests = 3; // 이메일당 3회/시간
+    
+    if (!rateLimitPort.isAllowed(emailKey, emailMaxRequests, 60)) {
+      LoggerFactory.service()
+          .logWarning(
+              SELF_SIGN_UP_USE_CASE,
+              String.format(
+                  "회원가입 이메일별 레이트 리미팅 초과 - 이메일: %s, 제한: %d회/시간", email, emailMaxRequests));
+      throw new com.dataracy.modules.user.domain.exception.UserException(
+          com.dataracy.modules.user.domain.status.UserErrorStatus.RATE_LIMIT_EXCEEDED);
+    }
+
+    LoggerFactory.service()
+        .logInfo(
+            SELF_SIGN_UP_USE_CASE,
+            String.format(
+                "회원가입 레이트 리미팅 통과 - 이메일: %s, IP: %s", email, clientIp));
   }
 
   /**

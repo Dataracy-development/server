@@ -44,9 +44,10 @@ public class UserSignUpController implements UserSignUpApi {
     Instant startTime = LoggerFactory.api().logRequest("[SignUpUserSelf] 자체 회원가입 API 요청 시작");
 
     try {
+      String clientIp = getClientIp(request);
       SelfSignUpRequest requestDto = userSignUpWebMapper.toApplicationDto(webRequest);
-      // 자체 회원가입 진행
-      RefreshTokenResponse responseDto = selfSignUpUseCase.signUpSelf(requestDto);
+      // 자체 회원가입 진행 (rate limiting 포함)
+      RefreshTokenResponse responseDto = selfSignUpUseCase.signUpSelf(requestDto, clientIp);
       // 리프레시 토큰을 쿠키에 저장
       long expirationSeconds = responseDto.refreshTokenExpiration() / 1000;
       int maxAge =
@@ -58,6 +59,28 @@ public class UserSignUpController implements UserSignUpApi {
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(SuccessResponse.of(UserSuccessStatus.CREATED_USER));
+  }
+
+  /**
+   * 클라이언트의 실제 IP 주소를 추출합니다. 프록시나 로드 밸런서를 통한 요청도 고려합니다.
+   *
+   * @param request HTTP 요청 객체
+   * @return 클라이언트 IP 주소
+   */
+  private String getClientIp(HttpServletRequest request) {
+    String xForwardedFor = request.getHeader("X-Forwarded-For");
+    if (xForwardedFor != null
+        && !xForwardedFor.isEmpty()
+        && !"unknown".equalsIgnoreCase(xForwardedFor)) {
+      return xForwardedFor.split(",")[0].trim();
+    }
+
+    String xRealIp = request.getHeader("X-Real-IP");
+    if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
+      return xRealIp;
+    }
+
+    return request.getRemoteAddr();
   }
 
   /**

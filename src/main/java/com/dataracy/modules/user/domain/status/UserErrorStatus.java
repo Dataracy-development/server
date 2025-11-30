@@ -64,7 +64,11 @@ public enum UserErrorStatus implements BaseErrorCode {
 
   // 비밀번호 재설정
   INVALID_OR_EXPIRED_RESET_PASSWORD_TOKEN(
-      HttpStatus.FORBIDDEN, "USER-021", "비밀번호 재설정 토큰이 유효하지 않거나 만료되었습니다.");
+      HttpStatus.FORBIDDEN, "USER-021", "비밀번호 재설정 토큰이 유효하지 않거나 만료되었습니다."),
+
+  // 레이트 리미팅 오류
+  RATE_LIMIT_EXCEEDED(
+      HttpStatus.TOO_MANY_REQUESTS, "USER-022", "요청 횟수가 초과되었습니다. 잠시 후 다시 시도해주세요.");
   private final HttpStatus httpStatus;
   private final String code;
   private final String message;

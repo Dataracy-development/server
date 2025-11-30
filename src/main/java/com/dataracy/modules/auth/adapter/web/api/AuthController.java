@@ -129,8 +129,9 @@ public class AuthController implements AuthApi {
       String refreshToken, HttpServletRequest request, HttpServletResponse response) {
     Instant startTime = LoggerFactory.api().logRequest("[ReIssueToken] 토큰 재발급 API 요청 시작");
     try {
-      // 토큰 재발급 진행
-      ReIssueTokenResponse responseDto = reIssueTokenUseCase.reIssueToken(refreshToken);
+      String clientIp = getClientIp(request);
+      // 토큰 재발급 진행 (rate limiting 포함)
+      ReIssueTokenResponse responseDto = reIssueTokenUseCase.reIssueToken(refreshToken, clientIp);
       // 어세스 토큰, 어세스 토큰 만료기간, 리프레시 토큰 쿠키 저장
       setResponseHeaders(request, response, responseDto);
     } finally {

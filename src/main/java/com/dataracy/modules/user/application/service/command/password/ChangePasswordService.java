@@ -2,12 +2,14 @@ package com.dataracy.modules.user.application.service.command.password;
 
 import java.time.Instant;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
 import com.dataracy.modules.auth.application.port.in.token.ManageResetTokenUseCase;
+import com.dataracy.modules.auth.application.port.out.RateLimitPort;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.user.application.dto.request.password.ChangePasswordRequest;
 import com.dataracy.modules.user.application.dto.request.password.ResetPasswordWithTokenRequest;
@@ -30,6 +32,9 @@ public class ChangePasswordService implements ChangePasswordUseCase {
 
   private final ManageResetTokenUseCase manageResetTokenUseCase;
   private final JwtValidateUseCase jwtValidateUseCase;
+
+  @Qualifier("redisRateLimitAdapter")
+  private final RateLimitPort rateLimitPort;
 
   private static final String USE_CASE = "ChangePasswordUseCase";
 
@@ -80,6 +85,12 @@ public class ChangePasswordService implements ChangePasswordUseCase {
   @Override
   @Transactional
   public void resetPassword(ResetPasswordWithTokenRequest requestDto) {
+    resetPassword(requestDto, null);
+  }
+
+  @Override
+  @Transactional
+  public void resetPassword(ResetPasswordWithTokenRequest requestDto, String clientIp) {
     Instant startTime = LoggerFactory.service().logStart(USE_CASE, "비밀번호 재설정 서비스 시작");
 
     // 토큰 유효성 검사
@@ -90,10 +101,16 @@ public class ChangePasswordService implements ChangePasswordUseCase {
       throw new UserException(UserErrorStatus.INVALID_OR_EXPIRED_RESET_PASSWORD_TOKEN);
     }
 
+    String email = jwtValidateUseCase.getEmailFromResetToken(requestDto.resetPasswordToken());
+
+    // Rate Limiting 검증 (IP가 제공된 경우)
+    if (clientIp != null && !clientIp.trim().isEmpty()) {
+      validateResetPasswordRateLimit(email, clientIp);
+    }
+
     // 비밀번호 - 비밀번호 확인 검증
     requestDto.validatePasswordMatch();
 
-    String email = jwtValidateUseCase.getEmailFromResetToken(requestDto.resetPasswordToken());
     User savedUser =
         userQueryPort
             .findUserByEmail(email)
@@ -109,5 +126,46 @@ public class ChangePasswordService implements ChangePasswordUseCase {
     userCommandPort.changePassword(savedUser.getId(), encodedPassword);
 
     LoggerFactory.service().logSuccess(USE_CASE, "비밀번호 재설정 서비스 성공", startTime);
+  }
+
+  /**
+   * 비밀번호 재설정 레이트 리미팅 검증
+   *
+   * <p>다층 방어 전략:
+   * 1. IP별 제한: 같은 IP에서 무한 비밀번호 재설정 시도 방지
+   * 2. 이메일별 제한: 같은 이메일로 무한 비밀번호 재설정 시도 방지
+   */
+  private void validateResetPasswordRateLimit(String email, String clientIp) {
+    // 1. IP별 제한: 같은 IP에서 여러 비밀번호 재설정 시도 방지
+    String ipKey = "reset-password:ip:" + clientIp;
+    int ipMaxRequests = 5; // IP당 5회/시간
+    
+    if (!rateLimitPort.isAllowed(ipKey, ipMaxRequests, 60)) {
+      LoggerFactory.service()
+          .logWarning(
+              USE_CASE,
+              String.format(
+                  "비밀번호 재설정 IP별 레이트 리미팅 초과 - IP: %s, 제한: %d회/시간", clientIp, ipMaxRequests));
+      throw new UserException(UserErrorStatus.RATE_LIMIT_EXCEEDED);
+    }
+
+    // 2. 이메일별 제한: 같은 이메일로 무한 비밀번호 재설정 시도 방지
+    String emailKey = "reset-password:email:" + email.toLowerCase();
+    int emailMaxRequests = 3; // 이메일당 3회/시간
+    
+    if (!rateLimitPort.isAllowed(emailKey, emailMaxRequests, 60)) {
+      LoggerFactory.service()
+          .logWarning(
+              USE_CASE,
+              String.format(
+                  "비밀번호 재설정 이메일별 레이트 리미팅 초과 - 이메일: %s, 제한: %d회/시간",
+                  email, emailMaxRequests));
+      throw new UserException(UserErrorStatus.RATE_LIMIT_EXCEEDED);
+    }
+
+    LoggerFactory.service()
+        .logInfo(
+            USE_CASE,
+            String.format("비밀번호 재설정 레이트 리미팅 통과 - 이메일: %s, IP: %s", email, clientIp));
   }
 }

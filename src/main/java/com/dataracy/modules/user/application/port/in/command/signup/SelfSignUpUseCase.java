@@ -11,4 +11,13 @@ public interface SelfSignUpUseCase {
    * @return 회원가입 완료 후 발급된 리프레시 토큰 응답
    */
   RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto);
+
+  /**
+   * 사용자가 자체적으로 회원가입을 진행하고, 성공 시 리프레시 토큰을 반환합니다. (Rate Limiting 적용)
+   *
+   * @param requestDto 자체 회원가입 요청 정보를 담은 객체
+   * @param clientIp 클라이언트 IP 주소 (Rate Limiting용)
+   * @return 회원가입 완료 후 발급된 리프레시 토큰 응답
+   */
+  RefreshTokenResponse signUpSelf(SelfSignUpRequest requestDto, String clientIp);
 }

@@ -50,17 +50,16 @@ class MemoryRateLimitAdapterTest {
     int windowMinutes = 1;
 
     // when
+    // isAllowed는 내부에서 카운트를 증가시킴
     boolean firstRequest = memoryRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
-    memoryRateLimitAdapter.incrementRequestCount(key, 1);
     boolean secondRequest = memoryRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
-    memoryRateLimitAdapter.incrementRequestCount(key, 1);
     boolean thirdRequest = memoryRateLimitAdapter.isAllowed(key, maxRequests, windowMinutes);
 
     // then
     assertAll(
-        () -> assertThat(firstRequest).isTrue(),
-        () -> assertThat(secondRequest).isTrue(),
-        () -> assertThat(thirdRequest).isFalse());
+        () -> assertThat(firstRequest).isTrue(),  // 1 <= 2
+        () -> assertThat(secondRequest).isTrue(), // 2 <= 2
+        () -> assertThat(thirdRequest).isFalse()); // 3 > 2
   }
 
   @ParameterizedTest

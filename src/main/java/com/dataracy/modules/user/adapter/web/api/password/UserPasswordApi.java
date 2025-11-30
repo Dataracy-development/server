@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.dataracy.modules.common.dto.response.SuccessResponse;
 import com.dataracy.modules.common.support.annotation.CurrentUserId;
 import com.dataracy.modules.user.adapter.web.request.password.ChangePasswordWebRequest;
@@ -83,7 +85,8 @@ public interface UserPasswordApi {
                       schema = @Schema(implementation = ResetPasswordWithTokenWebRequest.class)))
           @Validated
           @RequestBody
-          ResetPasswordWithTokenWebRequest webRequest);
+          ResetPasswordWithTokenWebRequest webRequest,
+      @Parameter(hidden = true) HttpServletRequest request);
 
   /**
    * 현재 사용자의 비밀번호가 입력한 값과 일치하는지 검증한다.

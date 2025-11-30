@@ -18,4 +18,12 @@ public interface ChangePasswordUseCase {
    * @param requestDto 비밀번호 재설정에 필요한 정보를 담은 요청 객체
    */
   void resetPassword(ResetPasswordWithTokenRequest requestDto);
+
+  /**
+   * 토큰 기반 요청을 사용하여 사용자의 비밀번호를 재설정합니다. (Rate Limiting 적용)
+   *
+   * @param requestDto 비밀번호 재설정에 필요한 정보를 담은 요청 객체
+   * @param clientIp 클라이언트 IP 주소 (Rate Limiting용)
+   */
+  void resetPassword(ResetPasswordWithTokenRequest requestDto, String clientIp);
 }

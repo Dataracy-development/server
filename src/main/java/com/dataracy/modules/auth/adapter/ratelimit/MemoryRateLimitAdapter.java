@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.dataracy.modules.auth.application.port.out.rate.RateLimitPort;
+import com.dataracy.modules.auth.application.port.out.RateLimitPort;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 
 import jakarta.annotation.PostConstruct;
@@ -72,18 +72,22 @@ public class MemoryRateLimitAdapter implements RateLimitPort {
       counter.reset(currentTime);
     }
 
-    boolean allowed = counter.getCount() < maxRequests;
+    // 카운트 증가 (RedisRateLimitAdapter와 동일한 동작)
+    counter.increment();
+    int currentCount = counter.getCount();
+
+    boolean allowed = currentCount <= maxRequests;
 
     if (allowed) {
       LoggerFactory.common()
           .logInfo(
               ADAPTER_NAME,
-              String.format("요청 허용 - IP: %s, 현재 카운트: %d/%d", key, counter.getCount(), maxRequests));
+              String.format("요청 허용 - IP: %s, 현재 카운트: %d/%d", key, currentCount, maxRequests));
     } else {
       LoggerFactory.common()
           .logWarning(
               ADAPTER_NAME,
-              String.format("요청 차단 - IP: %s, 현재 카운트: %d/%d", key, counter.getCount(), maxRequests));
+              String.format("요청 차단 - IP: %s, 현재 카운트: %d/%d", key, currentCount, maxRequests));
     }
 
     return allowed;
@@ -91,8 +95,10 @@ public class MemoryRateLimitAdapter implements RateLimitPort {
 
   @Override
   public void incrementRequestCount(String key, int incrementBy) {
+    // isAllowed에서 이미 increment를 수행하므로 이 메서드는 더 이상 사용되지 않음
+    // 하지만 인터페이스 구현을 위해 유지
     if (key == null || key.trim().isEmpty()) {
-      return; // IP가 없으면 카운트하지 않음
+      return;
     }
 
     long currentTime = System.currentTimeMillis();
@@ -104,11 +110,15 @@ public class MemoryRateLimitAdapter implements RateLimitPort {
       counter.reset(currentTime);
     }
 
-    counter.increment();
+    // incrementBy만큼 증가
+    for (int i = 0; i < incrementBy; i++) {
+      counter.increment();
+    }
 
     LoggerFactory.common()
         .logInfo(
-            ADAPTER_NAME, String.format("요청 카운트 증가 - IP: %s, 현재 카운트: %d", key, counter.getCount()));
+            ADAPTER_NAME,
+            String.format("요청 카운트 증가 - IP: %s, 증가량: %d, 현재 카운트: %d", key, incrementBy, counter.getCount()));
   }
 
   private void cleanupExpiredCounters() {

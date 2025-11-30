@@ -19,6 +19,7 @@ import com.dataracy.modules.user.application.port.in.command.password.ChangePass
 import com.dataracy.modules.user.application.port.in.query.password.ConfirmPasswordUseCase;
 import com.dataracy.modules.user.domain.status.UserSuccessStatus;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -60,19 +61,42 @@ public class UserPasswordController implements UserPasswordApi {
    */
   @Override
   public ResponseEntity<SuccessResponse<Void>> resetPasswordWithToken(
-      ResetPasswordWithTokenWebRequest webRequest) {
+      ResetPasswordWithTokenWebRequest webRequest, HttpServletRequest request) {
     Instant startTime =
         LoggerFactory.api().logRequest("[ResetPasswordWithToken] 비밀번호 재설정 API 요청 시작");
 
     try {
+      String clientIp = getClientIp(request);
       ResetPasswordWithTokenRequest requestDto = userPasswordWebMapper.toApplicationDto(webRequest);
-      changePasswordUseCase.resetPassword(requestDto);
+      changePasswordUseCase.resetPassword(requestDto, clientIp);
     } finally {
       LoggerFactory.api().logResponse("[ResetPasswordWithToken] 비밀번호 재설정 API 응답 완료", startTime);
     }
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(SuccessResponse.of(UserSuccessStatus.OK_RESET_PASSWORD));
+  }
+
+  /**
+   * 클라이언트의 실제 IP 주소를 추출합니다. 프록시나 로드 밸런서를 통한 요청도 고려합니다.
+   *
+   * @param request HTTP 요청 객체
+   * @return 클라이언트 IP 주소
+   */
+  private String getClientIp(HttpServletRequest request) {
+    String xForwardedFor = request.getHeader("X-Forwarded-For");
+    if (xForwardedFor != null
+        && !xForwardedFor.isEmpty()
+        && !"unknown".equalsIgnoreCase(xForwardedFor)) {
+      return xForwardedFor.split(",")[0].trim();
+    }
+
+    String xRealIp = request.getHeader("X-Real-IP");
+    if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
+      return xRealIp;
+    }
+
+    return request.getRemoteAddr();
   }
 
   /**
