@@ -131,15 +131,13 @@ public class ChangePasswordService implements ChangePasswordUseCase {
   /**
    * 비밀번호 재설정 레이트 리미팅 검증
    *
-   * <p>다층 방어 전략:
-   * 1. IP별 제한: 같은 IP에서 무한 비밀번호 재설정 시도 방지
-   * 2. 이메일별 제한: 같은 이메일로 무한 비밀번호 재설정 시도 방지
+   * <p>다층 방어 전략: 1. IP별 제한: 같은 IP에서 무한 비밀번호 재설정 시도 방지 2. 이메일별 제한: 같은 이메일로 무한 비밀번호 재설정 시도 방지
    */
   private void validateResetPasswordRateLimit(String email, String clientIp) {
     // 1. IP별 제한: 같은 IP에서 여러 비밀번호 재설정 시도 방지
     String ipKey = "reset-password:ip:" + clientIp;
     int ipMaxRequests = 5; // IP당 5회/시간
-    
+
     if (!rateLimitPort.isAllowed(ipKey, ipMaxRequests, 60)) {
       LoggerFactory.service()
           .logWarning(
@@ -152,20 +150,17 @@ public class ChangePasswordService implements ChangePasswordUseCase {
     // 2. 이메일별 제한: 같은 이메일로 무한 비밀번호 재설정 시도 방지
     String emailKey = "reset-password:email:" + email.toLowerCase();
     int emailMaxRequests = 3; // 이메일당 3회/시간
-    
+
     if (!rateLimitPort.isAllowed(emailKey, emailMaxRequests, 60)) {
       LoggerFactory.service()
           .logWarning(
               USE_CASE,
               String.format(
-                  "비밀번호 재설정 이메일별 레이트 리미팅 초과 - 이메일: %s, 제한: %d회/시간",
-                  email, emailMaxRequests));
+                  "비밀번호 재설정 이메일별 레이트 리미팅 초과 - 이메일: %s, 제한: %d회/시간", email, emailMaxRequests));
       throw new UserException(UserErrorStatus.RATE_LIMIT_EXCEEDED);
     }
 
     LoggerFactory.service()
-        .logInfo(
-            USE_CASE,
-            String.format("비밀번호 재설정 레이트 리미팅 통과 - 이메일: %s, IP: %s", email, clientIp));
+        .logInfo(USE_CASE, String.format("비밀번호 재설정 레이트 리미팅 통과 - 이메일: %s, IP: %s", email, clientIp));
   }
 }

@@ -156,53 +156,48 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
   /**
    * 레이트 리미팅 검증
    *
-   * <p>다층 방어 전략:
-   * 1. IP별 제한: 같은 IP에서 여러 이메일로 시도하는 공격 방지
-   * 2. 이메일별 제한: 같은 이메일을 여러 IP에서 시도하는 공격 방지
-   * 3. 조합별 제한: 특정 이메일:IP 조합에 대한 추가 제한
+   * <p>다층 방어 전략: 1. IP별 제한: 같은 IP에서 여러 이메일로 시도하는 공격 방지 2. 이메일별 제한: 같은 이메일을 여러 IP에서 시도하는 공격 방지 3.
+   * 조합별 제한: 특정 이메일:IP 조합에 대한 추가 제한
    *
    * <p>주의: RedisRateLimitAdapter의 isAllowed 메서드는 내부에서 카운트를 증가시키므로 별도로 incrementRequestCount를 호출할
    * 필요가 없습니다.
    */
   private void validateRateLimit(String email, String clientIp) {
     if (clientIp == null || clientIp.trim().isEmpty()) {
-      LoggerFactory.service()
-          .logWarning(SELF_LOGIN_USE_CASE, "클라이언트 IP가 없어 레이트 리미팅을 건너뜁니다.");
+      LoggerFactory.service().logWarning(SELF_LOGIN_USE_CASE, "클라이언트 IP가 없어 레이트 리미팅을 건너뜁니다.");
       return;
     }
 
     boolean isNormal = isNormalUser(email);
-    
+
     // 1. IP별 제한: 같은 IP에서 여러 이메일로 시도하는 공격 방지
     String ipKey = "login:ip:" + clientIp;
     int ipMaxRequests = isNormal ? 100 : 20; // IP당 제한 (정상: 100회/분, 의심: 20회/분)
-    
+
     if (!rateLimitPort.isAllowed(ipKey, ipMaxRequests, 1)) {
       LoggerFactory.service()
           .logWarning(
               SELF_LOGIN_USE_CASE,
-              String.format(
-                  "IP별 레이트 리미팅 초과 - IP: %s, 제한: %d회/분", clientIp, ipMaxRequests));
+              String.format("IP별 레이트 리미팅 초과 - IP: %s, 제한: %d회/분", clientIp, ipMaxRequests));
       throw new AuthException(AuthErrorStatus.RATE_LIMIT_EXCEEDED);
     }
 
     // 2. 이메일별 제한: 같은 이메일을 여러 IP에서 시도하는 공격 방지
     String emailKey = "login:email:" + email.toLowerCase();
     int emailMaxRequests = isNormal ? 10 : 3; // 이메일당 제한 (정상: 10회/분, 의심: 3회/분)
-    
+
     if (!rateLimitPort.isAllowed(emailKey, emailMaxRequests, 1)) {
       LoggerFactory.service()
           .logWarning(
               SELF_LOGIN_USE_CASE,
-              String.format(
-                  "이메일별 레이트 리미팅 초과 - 이메일: %s, 제한: %d회/분", email, emailMaxRequests));
+              String.format("이메일별 레이트 리미팅 초과 - 이메일: %s, 제한: %d회/분", email, emailMaxRequests));
       throw new AuthException(AuthErrorStatus.RATE_LIMIT_EXCEEDED);
     }
 
     // 3. 조합별 제한: 특정 이메일:IP 조합에 대한 추가 제한
     String combinationKey = "login:combination:" + email.toLowerCase() + ":" + clientIp;
     int combinationMaxRequests = isNormal ? 60 : 5; // 조합당 제한 (정상: 60회/분, 의심: 5회/분)
-    
+
     if (!rateLimitPort.isAllowed(combinationKey, combinationMaxRequests, 1)) {
       LoggerFactory.service()
           .logWarning(
@@ -218,11 +213,7 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
             SELF_LOGIN_USE_CASE,
             String.format(
                 "레이트 리미팅 통과 - 이메일: %s, IP: %s (IP: %d/%d, 이메일: %d/%d, 조합: %d/%d)",
-                email,
-                clientIp,
-                ipMaxRequests,
-                emailMaxRequests,
-                combinationMaxRequests));
+                email, clientIp, ipMaxRequests, emailMaxRequests, combinationMaxRequests));
   }
 
   /** 리프레시 토큰 응답 생성 */
@@ -328,28 +319,25 @@ public class AuthCommandService implements SelfLoginUseCase, ReIssueTokenUseCase
   /**
    * 토큰 재발급 레이트 리미팅 검증
    *
-   * <p>다층 방어 전략:
-   * 1. IP별 제한: 같은 IP에서 무한 토큰 재발급 시도 방지
-   * 2. 사용자별 제한: 같은 사용자로 무한 토큰 재발급 시도 방지
+   * <p>다층 방어 전략: 1. IP별 제한: 같은 IP에서 무한 토큰 재발급 시도 방지 2. 사용자별 제한: 같은 사용자로 무한 토큰 재발급 시도 방지
    */
   private void validateReIssueTokenRateLimit(Long userId, String clientIp) {
     // 1. IP별 제한: 같은 IP에서 여러 토큰 재발급 시도 방지
     String ipKey = "reissue-token:ip:" + clientIp;
     int ipMaxRequests = 30; // IP당 30회/분
-    
+
     if (!rateLimitPort.isAllowed(ipKey, ipMaxRequests, 1)) {
       LoggerFactory.service()
           .logWarning(
               RE_ISSUE_TOKEN_USE_CASE,
-              String.format(
-                  "토큰 재발급 IP별 레이트 리미팅 초과 - IP: %s, 제한: %d회/분", clientIp, ipMaxRequests));
+              String.format("토큰 재발급 IP별 레이트 리미팅 초과 - IP: %s, 제한: %d회/분", clientIp, ipMaxRequests));
       throw new AuthException(AuthErrorStatus.RATE_LIMIT_EXCEEDED);
     }
 
     // 2. 사용자별 제한: 같은 사용자로 무한 토큰 재발급 시도 방지
     String userKey = "reissue-token:user:" + userId;
     int userMaxRequests = 10; // 사용자당 10회/분
-    
+
     if (!rateLimitPort.isAllowed(userKey, userMaxRequests, 1)) {
       LoggerFactory.service()
           .logWarning(

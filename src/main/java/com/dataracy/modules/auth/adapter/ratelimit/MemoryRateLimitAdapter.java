@@ -118,7 +118,8 @@ public class MemoryRateLimitAdapter implements RateLimitPort {
     LoggerFactory.common()
         .logInfo(
             ADAPTER_NAME,
-            String.format("요청 카운트 증가 - IP: %s, 증가량: %d, 현재 카운트: %d", key, incrementBy, counter.getCount()));
+            String.format(
+                "요청 카운트 증가 - IP: %s, 증가량: %d, 현재 카운트: %d", key, incrementBy, counter.getCount()));
   }
 
   private void cleanupExpiredCounters() {

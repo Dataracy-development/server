@@ -134,15 +134,13 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
   /**
    * 회원가입 레이트 리미팅 검증
    *
-   * <p>다층 방어 전략:
-   * 1. IP별 제한: 같은 IP에서 무한 회원가입 시도 방지
-   * 2. 이메일별 제한: 같은 이메일로 무한 회원가입 시도 방지
+   * <p>다층 방어 전략: 1. IP별 제한: 같은 IP에서 무한 회원가입 시도 방지 2. 이메일별 제한: 같은 이메일로 무한 회원가입 시도 방지
    */
   private void validateSignUpRateLimit(String email, String clientIp) {
     // 1. IP별 제한: 같은 IP에서 여러 회원가입 시도 방지
     String ipKey = "signup:ip:" + clientIp;
     int ipMaxRequests = 5; // IP당 5회/시간
-    
+
     if (!rateLimitPort.isAllowed(ipKey, ipMaxRequests, 60)) {
       LoggerFactory.service()
           .logWarning(
@@ -155,13 +153,12 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     // 2. 이메일별 제한: 같은 이메일로 무한 회원가입 시도 방지
     String emailKey = "signup:email:" + email.toLowerCase();
     int emailMaxRequests = 3; // 이메일당 3회/시간
-    
+
     if (!rateLimitPort.isAllowed(emailKey, emailMaxRequests, 60)) {
       LoggerFactory.service()
           .logWarning(
               SELF_SIGN_UP_USE_CASE,
-              String.format(
-                  "회원가입 이메일별 레이트 리미팅 초과 - 이메일: %s, 제한: %d회/시간", email, emailMaxRequests));
+              String.format("회원가입 이메일별 레이트 리미팅 초과 - 이메일: %s, 제한: %d회/시간", email, emailMaxRequests));
       throw new com.dataracy.modules.user.domain.exception.UserException(
           com.dataracy.modules.user.domain.status.UserErrorStatus.RATE_LIMIT_EXCEEDED);
     }
@@ -169,8 +166,7 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
     LoggerFactory.service()
         .logInfo(
             SELF_SIGN_UP_USE_CASE,
-            String.format(
-                "회원가입 레이트 리미팅 통과 - 이메일: %s, IP: %s", email, clientIp));
+            String.format("회원가입 레이트 리미팅 통과 - 이메일: %s, IP: %s", email, clientIp));
   }
 
   /**

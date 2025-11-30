@@ -57,7 +57,7 @@ class MemoryRateLimitAdapterTest {
 
     // then
     assertAll(
-        () -> assertThat(firstRequest).isTrue(),  // 1 <= 2
+        () -> assertThat(firstRequest).isTrue(), // 1 <= 2
         () -> assertThat(secondRequest).isTrue(), // 2 <= 2
         () -> assertThat(thirdRequest).isFalse()); // 3 > 2
   }
