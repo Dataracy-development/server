@@ -68,6 +68,7 @@ public class ParseMetadataService implements ParseMetadataUseCase {
         LoggerFactory.service()
             .logStart(
                 PARSE_METADATA_USE_CASE, "데이터셋 파일을 파싱하고 내용 저장 서비스 시작 dataId=" + request.dataId());
+    boolean success = false;
     try (InputStream inputStream = fileStoragePort.download(request.fileUrl())) {
       ParsedMetadataResponse response =
           FileParsingUtil.parse(inputStream, request.originalFilename());
@@ -99,6 +100,7 @@ public class ParseMetadataService implements ParseMetadataUseCase {
       // Elasticsearch 색인
       DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);
       indexDataPort.index(document);
+      success = true;
     } catch (IOException e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "파일 다운로드 또는 파싱 실패", e);
     } catch (DataException e) {
@@ -106,10 +108,13 @@ public class ParseMetadataService implements ParseMetadataUseCase {
     } catch (Exception e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "예상치 못한 오류 발생", e);
     }
-    LoggerFactory.service()
-        .logSuccess(
-            PARSE_METADATA_USE_CASE,
-            "데이터셋 파일을 파싱하고 내용 저장 서비스 종료. dataId=" + request.dataId(),
-            startTime);
+    
+    if (success) {
+      LoggerFactory.service()
+          .logSuccess(
+              PARSE_METADATA_USE_CASE,
+              "데이터셋 파일을 파싱하고 내용 저장 서비스 종료. dataId=" + request.dataId(),
+              startTime);
+    }
   }
 }

@@ -44,7 +44,7 @@ public class ExtractHeaderUtil {
       return extractAccessToken(request).map(jwtValidateUseCase::getUserIdFromToken).orElse(null);
     } catch (Exception e) {
       LoggerFactory.common()
-          .logWarning("ExtractHeaderUtil", "인증된 사용자 ID 추출 실패", e);
+          .logError("ExtractHeaderUtil", "인증된 사용자 ID 추출 실패", e);
       return null;
     }
   }
@@ -72,7 +72,7 @@ public class ExtractHeaderUtil {
     } catch (Exception e) {
       // 인증 실패 시 anonymousId로 대체 (의도된 동작)
       LoggerFactory.common()
-          .logDebug("ExtractHeaderUtil", "인증 실패, anonymousId로 대체", e);
+          .logInfo("ExtractHeaderUtil", "인증 실패, anonymousId로 대체: " + e.getMessage());
       return cookieUtil.getOrCreateAnonymousId(request, response);
     }
     // anonymousId 반환
