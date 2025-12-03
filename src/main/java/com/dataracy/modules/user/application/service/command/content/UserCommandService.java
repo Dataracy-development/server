@@ -3,7 +3,6 @@ package com.dataracy.modules.user.application.service.command.content;
 import java.time.Instant;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +14,6 @@ import com.dataracy.modules.auth.domain.status.AuthErrorStatus;
 import com.dataracy.modules.common.exception.CommonException;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.common.status.CommonErrorStatus;
-import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.common.util.FileUtil;
 import com.dataracy.modules.filestorage.application.port.in.FileCommandUseCase;
 import com.dataracy.modules.filestorage.support.util.S3KeyGeneratorUtil;
@@ -61,28 +59,19 @@ public class UserCommandService
 
   private final JwtValidateUseCase jwtValidateUseCase;
   private final ManageRefreshTokenUseCase manageRefreshTokenUseCase;
-  private final ApplicationContext applicationContext;
-
-  /**
-   * Spring 프록시를 통해 @Transactional과 @DistributedLock이 작동하도록 하는 메서드입니다. ApplicationContext를 통해 프록시된
-   * 빈을 가져옵니다.
-   *
-   * @return 프록시된 UserCommandService 인스턴스
-   */
-  private UserCommandService getSelf() {
-    return applicationContext.getBean(UserCommandService.class);
-  }
 
   /**
    * 회원의 정보를 수정하고(필수 유효성 검사 수행) 필요 시 프로필 이미지를 업로드하여 갱신한다.
    *
-   * <p>요청한 닉네임을 키로 분산락을 획득하여 동시성 충돌을 방지한다. 요청 데이터 유효성 검사(닉네임 중복, 저자 레벨 필수 등)와 선택적 연관 엔터티 검사(직업,
-   * 방문경로, 관심 토픽)를 수행한 뒤 사용자 정보를 갱신한다. profileImageFile이 null이 아니고 비어있지 않으면 파일을 저장소에 업로드하고 사용자 프로필
-   * 이미지 URL을 업데이트한다.
+   * <p>요청 데이터 유효성 검사(닉네임 중복, 저자 레벨 필수 등)와 선택적 연관 엔터티 검사(직업, 방문경로, 관심 토픽)를 수행한 뒤 사용자 정보를 갱신한다.
+   * profileImageFile이 null이 아니고 비어있지 않으면 파일을 저장소에 업로드하고 사용자 프로필 이미지 URL을 업데이트한다.
+   *
+   * <p>데이터베이스의 unique constraint({@code nickname})로 중복 닉네임이 방지되므로 분산 락이 불필요합니다. 동시에 여러 요청이 들어와도 하나만
+   * 성공하고 나머지는 unique constraint 위반 예외가 발생하며, 이는 정상적인 동작입니다.
    *
    * @param userId 수정 대상 사용자 계정의 식별자
    * @param profileImageFile 새 프로필 이미지 파일(없으면 null 또는 비어있는 파일을 전달하여 이미지를 유지)
-   * @param requestDto 수정할 사용자 정보 DTO; 닉네임은 분산락 키로 사용됨
+   * @param requestDto 수정할 사용자 정보 DTO
    */
   @Override
   @Transactional
@@ -105,70 +94,27 @@ public class UserCommandService
                   return new UserException(UserErrorStatus.NOT_FOUND_USER);
                 });
 
-    // 닉네임 변경 여부에 따라 다른 분산락 적용
+    // 닉네임 변경 여부에 따라 다른 검증 로직 적용
     if (requestDto.nickname().equals(savedNickname)) {
-      // 닉네임이 변경되지 않은 경우 - userId 기반 분산락 (동시성 문제 방지)
-      getSelf().modifyUserInfoWithUserIdLock(userId, profileImageFile, requestDto, startTime);
+      // 닉네임이 변경되지 않은 경우 - 닉네임 중복 검사 생략
+      executeModifyUserInfo(userId, profileImageFile, requestDto, startTime);
     } else {
-      // 닉네임이 변경된 경우 - 닉네임 기반 분산락 (중복 방지)
-      getSelf()
-          .modifyUserInfoWithNicknameLock(
-              userId, savedNickname, profileImageFile, requestDto, startTime);
+      // 닉네임이 변경된 경우 - 닉네임 중복 검사 포함
+      validateModifyUserInfo(
+          requestDto.nickname(),
+          requestDto.authorLevelId(),
+          requestDto.occupationId(),
+          requestDto.visitSourceId(),
+          requestDto.topicIds(),
+          profileImageFile);
+      userCommandPort.modifyUserInfo(userId, requestDto);
+      modifyProfileImageFile(profileImageFile, userId, MODIFY_USER_INFO_USE_CASE);
+      LoggerFactory.service()
+          .logSuccess(
+              MODIFY_USER_INFO_USE_CASE, USER_INFO_MODIFY_SUCCESS_MESSAGE + userId, startTime);
     }
   }
 
-  @DistributedLock(
-      key = "'lock:nickname:' + #requestDto.nickname()",
-      waitTime = 500L,
-      leaseTime = 5000L,
-      retry = 3)
-  @Transactional
-  public void modifyUserInfoWithNicknameLock(
-      Long userId,
-      String savedNickname,
-      MultipartFile profileImageFile,
-      ModifyUserInfoRequest requestDto,
-      Instant startTime) {
-    // 회원 정보 수정 요청 정보 유효성 검사
-    validateModifyUserInfo(
-        requestDto.nickname(),
-        requestDto.authorLevelId(),
-        requestDto.occupationId(),
-        requestDto.visitSourceId(),
-        requestDto.topicIds(),
-        profileImageFile);
-    userCommandPort.modifyUserInfo(userId, requestDto);
-
-    // 새로운 프로필 이미지 첨부 시 업데이트, 없을 경우 기존 유지
-    modifyProfileImageFile(profileImageFile, userId, MODIFY_USER_INFO_USE_CASE);
-
-    LoggerFactory.service()
-        .logSuccess(
-            MODIFY_USER_INFO_USE_CASE, USER_INFO_MODIFY_SUCCESS_MESSAGE + userId, startTime);
-  }
-
-  @DistributedLock(
-      key = "'lock:user:modify:' + #userId",
-      waitTime = 500L,
-      leaseTime = 5000L,
-      retry = 3)
-  @Transactional
-  public void modifyUserInfoWithUserIdLock(
-      Long userId,
-      MultipartFile profileImageFile,
-      ModifyUserInfoRequest requestDto,
-      Instant startTime) {
-    executeModifyUserInfo(userId, profileImageFile, requestDto, startTime);
-  }
-
-  @Transactional
-  public void modifyUserInfoWithoutLock(
-      Long userId,
-      MultipartFile profileImageFile,
-      ModifyUserInfoRequest requestDto,
-      Instant startTime) {
-    executeModifyUserInfo(userId, profileImageFile, requestDto, startTime);
-  }
 
   /**
    * 회원 정보 수정 로직을 실행합니다.
