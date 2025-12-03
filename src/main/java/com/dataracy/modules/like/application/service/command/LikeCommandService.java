@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dataracy.modules.comment.application.port.in.query.validate.ValidateCommentUseCase;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
-import com.dataracy.modules.common.support.lock.DistributedLock;
 import com.dataracy.modules.like.application.dto.request.TargetLikeRequest;
 import com.dataracy.modules.like.application.port.in.command.LikeTargetUseCase;
 import com.dataracy.modules.like.application.port.out.command.LikeCommandPort;
@@ -36,7 +35,8 @@ public class LikeCommandService implements LikeTargetUseCase {
    * 사용자가 프로젝트 또는 댓글에 대해 좋아요 또는 좋아요 취소를 수행합니다. 대상 엔티티의 존재를 검증한 후, 이전 좋아요 여부에 따라 좋아요를 저장하거나 취소하며, 성공
    * 시 해당 이벤트를 발행합니다.
    *
-   * <p>동시성 제어를 위해 분산 락을 적용하여 같은 사용자가 동시에 좋아요/취소를 요청할 때 데이터 일관성을 보장합니다.
+   * <p>데이터베이스의 unique constraint({@code targetId}, {@code targetType}, {@code userId})로 중복 좋아요가
+   * 방지되므로 분산 락이 불필요합니다. 동시에 여러 요청이 들어와도 하나만 성공하고 나머지는 unique constraint 위반 예외가 발생하며, 이는 정상적인 동작입니다.
    *
    * @param userId 좋아요 또는 좋아요 취소를 요청하는 사용자의 ID
    * @param requestDto 대상 타입, 대상 ID, 이전 좋아요 여부를 포함한 요청 정보
@@ -44,12 +44,6 @@ public class LikeCommandService implements LikeTargetUseCase {
    * @throws LikeException 좋아요 또는 좋아요 취소 과정에서 실패 시, 대상 및 작업에 따라 도메인별 예외가 발생합니다.
    */
   @Override
-  @DistributedLock(
-      key =
-          "'lock:like:' + #requestDto.targetType + ':' + #requestDto.targetId() + ':user:' + #userId",
-      waitTime = 500L,
-      leaseTime = 3000L,
-      retry = 3)
   @Transactional
   public TargetType likeTarget(Long userId, TargetLikeRequest requestDto) {
     Instant startTime =
