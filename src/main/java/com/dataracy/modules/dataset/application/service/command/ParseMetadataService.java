@@ -15,8 +15,10 @@ import com.dataracy.modules.dataset.application.dto.response.metadata.ParsedMeta
 import com.dataracy.modules.dataset.application.dto.response.support.DataLabels;
 import com.dataracy.modules.dataset.application.port.in.command.metadata.ParseMetadataUseCase;
 import com.dataracy.modules.dataset.application.port.out.command.create.CreateMetadataPort;
+import com.dataracy.modules.dataset.application.port.out.command.update.UpdateMetadataParsingStatusPort;
 import com.dataracy.modules.dataset.application.port.out.indexing.IndexDataPort;
 import com.dataracy.modules.dataset.application.port.out.query.read.FindDataPort;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.DataMetadata;
@@ -39,6 +41,7 @@ public class ParseMetadataService implements ParseMetadataUseCase {
   private final CreateMetadataPort metadataRepositoryPort;
   private final FindDataPort findDataPort;
   private final IndexDataPort indexDataPort;
+  private final UpdateMetadataParsingStatusPort updateMetadataParsingStatusPort;
 
   private final FindUsernameUseCase findUsernameUseCase;
   private final FindUserThumbnailUseCase findUserThumbnailUseCase;
@@ -68,6 +71,10 @@ public class ParseMetadataService implements ParseMetadataUseCase {
         LoggerFactory.service()
             .logStart(
                 PARSE_METADATA_USE_CASE, "데이터셋 파일을 파싱하고 내용 저장 서비스 시작 dataId=" + request.dataId());
+    
+    // 파싱 시작: 상태를 PROCESSING으로 변경
+    updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.PROCESSING);
+    
     boolean success = false;
     try (InputStream inputStream = fileStoragePort.download(request.fileUrl())) {
       ParsedMetadataResponse response =
@@ -101,12 +108,18 @@ public class ParseMetadataService implements ParseMetadataUseCase {
       DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);
       indexDataPort.index(document);
       success = true;
+      
+      // 파싱 성공: 상태를 COMPLETED로 변경
+      updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.COMPLETED);
     } catch (IOException e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "파일 다운로드 또는 파싱 실패", e);
+      updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.FAILED);
     } catch (DataException e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "데이터 조회 실패", e);
+      updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.FAILED);
     } catch (Exception e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "예상치 못한 오류 발생", e);
+      updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.FAILED);
     }
     
     if (success) {

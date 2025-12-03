@@ -7,6 +7,7 @@ import org.hibernate.annotations.SQLRestriction;
 import com.dataracy.modules.common.base.BaseTimeEntity;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
 
@@ -63,6 +64,12 @@ public class DataEntity extends BaseTimeEntity {
   // 메타데이터 FK (1:1)
   @OneToOne(mappedBy = "data", cascade = CascadeType.PERSIST)
   private DataMetadataEntity metadata;
+
+  // 메타데이터 파싱 상태
+  @Enumerated(EnumType.STRING)
+  @Column(name = "metadata_parsing_status", nullable = false)
+  @Builder.Default
+  private MetadataParsingStatus metadataParsingStatus = MetadataParsingStatus.PENDING;
 
   @Column(name = "is_deleted", nullable = false)
   @Builder.Default
@@ -153,6 +160,15 @@ public class DataEntity extends BaseTimeEntity {
   }
 
   /**
+   * 메타데이터 파싱 상태를 업데이트합니다.
+   *
+   * @param status 새로운 파싱 상태
+   */
+  public void updateMetadataParsingStatus(MetadataParsingStatus status) {
+    this.metadataParsingStatus = status;
+  }
+
+  /**
    * 주어진 값들로 새로운 DataEntity 인스턴스를 생성하여 반환합니다.
    *
    * <p>데이터셋의 식별·분류 정보, 설명 및 연관 메타데이터를 초기화한 엔티티를 빌더로 생성합니다.
@@ -191,7 +207,8 @@ public class DataEntity extends BaseTimeEntity {
       String dataThumbnailUrl,
       int downloadCount,
       Long sizeBytes,
-      DataMetadataEntity metadata) {
+      DataMetadataEntity metadata,
+      MetadataParsingStatus metadataParsingStatus) {
     return DataEntity.builder()
         .title(title)
         .topicId(topicId)
@@ -207,6 +224,7 @@ public class DataEntity extends BaseTimeEntity {
         .downloadCount(downloadCount)
         .sizeBytes(sizeBytes)
         .metadata(metadata)
+        .metadataParsingStatus(metadataParsingStatus)
         .build();
   }
 }

@@ -3,6 +3,8 @@ package com.dataracy.modules.dataset.application.dto.response.read;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
+
 /**
  * 데이터셋 상세 정보 조회 애플리케이션 응답 DTO
  *
@@ -26,6 +28,7 @@ import java.time.LocalDateTime;
  * @param rowCount 행 개수
  * @param columnCount 열 개수
  * @param previewJson 데이터 파일 미리보기 문자열
+ * @param metadataParsingStatus 메타데이터 파싱 상태 (PENDING, PROCESSING, COMPLETED, FAILED)
  * @param createdAt 생성 일시
  */
 public record DataDetailResponse(
@@ -50,4 +53,5 @@ public record DataDetailResponse(
     Integer rowCount,
     Integer columnCount,
     String previewJson,
+    MetadataParsingStatus metadataParsingStatus,
     LocalDateTime createdAt) {}

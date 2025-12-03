@@ -3,6 +3,8 @@ package com.dataracy.modules.dataset.domain.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
+
 import lombok.*;
 
 @Getter
@@ -32,6 +34,7 @@ public class Data {
 
   private Long sizeBytes;
   private DataMetadata metadata;
+  private MetadataParsingStatus metadataParsingStatus;
   private LocalDateTime createdAt;
 
   /**
@@ -61,6 +64,7 @@ public class Data {
       int downloadCount,
       Long sizeBytes,
       DataMetadata metadata,
+      MetadataParsingStatus metadataParsingStatus,
       LocalDateTime createdAt) {
     return Data.builder()
         .id(id)
@@ -78,6 +82,7 @@ public class Data {
         .downloadCount(downloadCount)
         .sizeBytes(sizeBytes)
         .metadata(metadata)
+        .metadataParsingStatus(metadataParsingStatus)
         .createdAt(createdAt)
         .build();
   }

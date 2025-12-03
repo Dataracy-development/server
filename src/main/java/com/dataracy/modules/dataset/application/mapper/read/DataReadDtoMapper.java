@@ -164,6 +164,7 @@ public class DataReadDtoMapper {
         data.getMetadata().getRowCount(),
         data.getMetadata().getColumnCount(),
         data.getMetadata().getPreviewJson(),
+        data.getMetadataParsingStatus(),
         data.getCreatedAt());
   }
 

@@ -42,6 +42,7 @@ public class DataReadWebMapper {
         responseDto.rowCount(),
         responseDto.columnCount(),
         responseDto.previewJson(),
+        responseDto.metadataParsingStatus(),
         responseDto.createdAt());
   }
 

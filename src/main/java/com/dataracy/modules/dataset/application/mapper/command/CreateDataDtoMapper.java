@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.dataracy.modules.dataset.application.dto.request.command.UploadDataRequest;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.model.Data;
 
 /** Data 도메인 요청 DTO -> Data 도메인 모델 */
@@ -36,6 +37,7 @@ public class CreateDataDtoMapper {
         0,
         null,
         null,
+        MetadataParsingStatus.PENDING,
         null);
   }
 }

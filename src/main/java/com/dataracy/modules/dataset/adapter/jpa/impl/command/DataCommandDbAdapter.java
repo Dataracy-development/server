@@ -10,7 +10,9 @@ import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRe
 import com.dataracy.modules.dataset.application.port.out.command.create.CreateDataPort;
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDataFilePort;
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDataPort;
+import com.dataracy.modules.dataset.application.port.out.command.update.UpdateMetadataParsingStatusPort;
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateThumbnailFilePort;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
@@ -20,7 +22,11 @@ import lombok.RequiredArgsConstructor;
 @Repository
 @RequiredArgsConstructor
 public class DataCommandDbAdapter
-    implements CreateDataPort, UpdateDataFilePort, UpdateThumbnailFilePort, UpdateDataPort {
+    implements CreateDataPort,
+        UpdateDataFilePort,
+        UpdateThumbnailFilePort,
+        UpdateDataPort,
+        UpdateMetadataParsingStatusPort {
   private final DataJpaRepository dataJpaRepository;
 
   // Entity 및 메시지 상수 정의
@@ -109,5 +115,30 @@ public class DataCommandDbAdapter
     dataEntity.modify(requestDto);
     dataJpaRepository.save(dataEntity);
     LoggerFactory.db().logUpdate(DATA_ENTITY, String.valueOf(dataId), "데이터셋 업데이트가 완료되었습니다.");
+  }
+
+  /**
+   * 지정된 데이터의 메타데이터 파싱 상태를 업데이트합니다.
+   *
+   * @param dataId 데이터 ID
+   * @param status 새로운 파싱 상태
+   */
+  @Override
+  public void updateParsingStatus(Long dataId, MetadataParsingStatus status) {
+    DataEntity dataEntity =
+        dataJpaRepository
+            .findById(dataId)
+            .orElseThrow(
+                () -> {
+                  LoggerFactory.db().logWarning(DATA_ENTITY, DATA_NOT_FOUND_MESSAGE + dataId);
+                  return new DataException(DataErrorStatus.NOT_FOUND_DATA);
+                });
+    dataEntity.updateMetadataParsingStatus(status);
+    dataJpaRepository.save(dataEntity);
+    LoggerFactory.db()
+        .logUpdate(
+            DATA_ENTITY,
+            String.valueOf(dataId),
+            "메타데이터 파싱 상태 업데이트: " + status);
   }
 }
