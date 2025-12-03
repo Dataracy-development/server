@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.dataracy.modules.auth.application.port.in.jwt.JwtValidateUseCase;
+import com.dataracy.modules.common.logging.support.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,6 +43,8 @@ public class ExtractHeaderUtil {
     try {
       return extractAccessToken(request).map(jwtValidateUseCase::getUserIdFromToken).orElse(null);
     } catch (Exception e) {
+      LoggerFactory.common()
+          .logWarning("ExtractHeaderUtil", "인증된 사용자 ID 추출 실패", e);
       return null;
     }
   }
@@ -66,8 +69,10 @@ public class ExtractHeaderUtil {
           return String.valueOf(userId);
         }
       }
-    } catch (Exception ignored) {
-      // 인증 실패 시 무시하고 anonymousId로 대체
+    } catch (Exception e) {
+      // 인증 실패 시 anonymousId로 대체 (의도된 동작)
+      LoggerFactory.common()
+          .logDebug("ExtractHeaderUtil", "인증 실패, anonymousId로 대체", e);
       return cookieUtil.getOrCreateAnonymousId(request, response);
     }
     // anonymousId 반환
