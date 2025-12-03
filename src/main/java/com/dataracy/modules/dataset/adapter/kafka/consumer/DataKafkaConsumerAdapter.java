@@ -10,13 +10,8 @@ import org.springframework.stereotype.Component;
 import com.dataracy.modules.common.logging.support.LoggerFactory;
 import com.dataracy.modules.dataset.application.dto.request.metadata.ParseMetadataRequest;
 import com.dataracy.modules.dataset.application.port.in.command.metadata.ParseMetadataUseCase;
+import com.dataracy.modules.dataset.application.service.command.DataParsingNotificationService;
 import com.dataracy.modules.dataset.domain.model.event.DataUploadEvent;
-import com.dataracy.modules.dataset.application.port.out.command.update.UpdateMetadataParsingStatusPort;
-import com.dataracy.modules.dataset.application.port.out.query.read.FindDataPort;
-import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
-import com.dataracy.modules.dataset.domain.model.Data;
-import com.dataracy.modules.email.application.port.out.command.SendEmailPort;
-import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,10 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class DataKafkaConsumerAdapter {
   private final StringRedisTemplate redisTemplate;
   private final ParseMetadataUseCase parseMetadataUseCase;
-  private final UpdateMetadataParsingStatusPort updateMetadataParsingStatusPort;
-  private final FindDataPort findDataPort;
-  private final UserQueryPort userQueryPort;
-  private final SendEmailPort sendEmailPort;
+  private final DataParsingNotificationService dataParsingNotificationService;
 
   @Value("${spring.kafka.consumer.extract-metadata.topic:data-uploaded}")
   private String dataUploadedTopic;
@@ -138,11 +130,8 @@ public class DataKafkaConsumerAdapter {
               "DLT 메시지 수신 - 모든 재시도 실패: dataId=" + dataId,
               null);
 
-      // 파싱 상태를 FAILED로 업데이트
-      updateMetadataParsingStatusPort.updateParsingStatus(dataId, MetadataParsingStatus.FAILED);
-
-      // 완전 실패 이메일 전송
-      sendFinalFailureEmail(dataId);
+      // 완전 실패 처리 (상태 업데이트 + 이메일 전송)
+      dataParsingNotificationService.notifyFinalFailure(dataId);
 
       // 수동 커밋
       if (acknowledgment != null) {
@@ -158,53 +147,6 @@ public class DataKafkaConsumerAdapter {
       if (acknowledgment != null) {
         acknowledgment.acknowledge();
       }
-    }
-  }
-
-  /**
-   * 모든 재시도 실패 후 완전 실패 시 사용자에게 이메일을 전송합니다.
-   *
-   * @param dataId 데이터셋 ID
-   */
-  private void sendFinalFailureEmail(Long dataId) {
-    try {
-      Data data = findDataPort.findDataById(dataId).orElse(null);
-      if (data == null) {
-        LoggerFactory.kafka()
-            .logWarning(
-                dataUploadedTopic + "-dlt",
-                "완전 실패 이메일 전송 실패 - 데이터셋을 찾을 수 없음 dataId=" + dataId);
-        return;
-      }
-
-      userQueryPort
-          .findUserById(data.getUserId())
-          .ifPresent(
-              user -> {
-                String email = user.getEmail();
-                if (email != null && !email.isBlank()) {
-                  String title = "[Dataracy] 데이터셋 메타데이터 파싱 완전 실패";
-                  String body =
-                      String.format(
-                          "안녕하세요.\n\n"
-                              + "업로드하신 데이터셋 '%s'의 메타데이터 파싱이 모든 재시도 후에도 실패했습니다.\n\n"
-                              + "데이터셋 ID: %d\n\n"
-                              + "시스템이 여러 번 시도했으나 파싱에 실패했습니다.\n"
-                              + "파일 형식이나 내용을 확인해주시고, 문제가 지속되면 고객지원으로 문의해주세요.\n\n"
-                              + "감사합니다.",
-                          data.getTitle(), dataId);
-                  sendEmailPort.send(email, title, body);
-                  LoggerFactory.kafka()
-                      .logConsume(
-                          dataUploadedTopic + "-dlt",
-                          "완전 실패 이메일 전송 완료 - userId=" + data.getUserId() + ", dataId=" + dataId);
-                }
-              });
-    } catch (Exception e) {
-      // 이메일 전송 실패는 로그만 남김
-      LoggerFactory.kafka()
-          .logError(
-              dataUploadedTopic + "-dlt", "완전 실패 이메일 전송 실패 - dataId=" + dataId, e);
     }
   }
 }

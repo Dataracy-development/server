@@ -27,10 +27,8 @@ import com.dataracy.modules.filestorage.application.port.out.FileStoragePort;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.topic.GetTopicLabelFromIdUseCase;
-import com.dataracy.modules.email.application.port.out.command.SendEmailPort;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUserThumbnailUseCase;
 import com.dataracy.modules.user.application.port.in.query.extractor.FindUsernameUseCase;
-import com.dataracy.modules.user.application.port.out.query.UserQueryPort;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,8 +48,7 @@ public class ParseMetadataService implements ParseMetadataUseCase {
   private final GetTopicLabelFromIdUseCase getTopicLabelFromIdUseCase;
   private final GetDataSourceLabelFromIdUseCase getDataSourceLabelFromIdUseCase;
   private final GetDataTypeLabelFromIdUseCase getDataTypeLabelFromIdUseCase;
-  private final UserQueryPort userQueryPort;
-  private final SendEmailPort sendEmailPort;
+  private final DataParsingNotificationService dataParsingNotificationService;
 
   // Use Case 상수 정의
   private static final String PARSE_METADATA_USE_CASE = "ParseMetadataUseCase";
@@ -117,19 +114,19 @@ public class ParseMetadataService implements ParseMetadataUseCase {
       updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.COMPLETED);
       
       // 파싱 성공 이메일 전송
-      sendParsingSuccessEmail(data.getUserId(), data.getTitle(), request.dataId());
+      dataParsingNotificationService.notifyParsingSuccess(data.getUserId(), data.getTitle(), request.dataId());
     } catch (IOException e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "파일 다운로드 또는 파싱 실패", e);
       updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.FAILED);
-      sendParsingFailureEmail(request.dataId(), "파일 다운로드 또는 파싱 중 오류가 발생했습니다.");
+      dataParsingNotificationService.notifyParsingFailure(request.dataId(), "파일 다운로드 또는 파싱 중 오류가 발생했습니다.");
     } catch (DataException e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "데이터 조회 실패", e);
       updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.FAILED);
-      sendParsingFailureEmail(request.dataId(), "데이터 조회 중 오류가 발생했습니다.");
+      dataParsingNotificationService.notifyParsingFailure(request.dataId(), "데이터 조회 중 오류가 발생했습니다.");
     } catch (Exception e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "예상치 못한 오류 발생", e);
       updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.FAILED);
-      sendParsingFailureEmail(request.dataId(), "예상치 못한 오류가 발생했습니다.");
+      dataParsingNotificationService.notifyParsingFailure(request.dataId(), "예상치 못한 오류가 발생했습니다.");
     }
     
     if (success) {
@@ -138,97 +135,6 @@ public class ParseMetadataService implements ParseMetadataUseCase {
               PARSE_METADATA_USE_CASE,
               "데이터셋 파일을 파싱하고 내용 저장 서비스 종료. dataId=" + request.dataId(),
               startTime);
-    }
-  }
-
-  /**
-   * 파싱 성공 시 사용자에게 이메일을 전송합니다.
-   *
-   * @param userId 사용자 ID
-   * @param dataTitle 데이터셋 제목
-   * @param dataId 데이터셋 ID
-   */
-  private void sendParsingSuccessEmail(Long userId, String dataTitle, Long dataId) {
-    try {
-      userQueryPort
-          .findUserById(userId)
-          .ifPresent(
-              user -> {
-                String email = user.getEmail();
-                if (email != null && !email.isBlank()) {
-                  String title = "[Dataracy] 데이터셋 메타데이터 파싱 완료";
-                  String body =
-                      String.format(
-                          "안녕하세요.\n\n"
-                              + "업로드하신 데이터셋 '%s'의 메타데이터 파싱이 완료되었습니다.\n\n"
-                              + "데이터셋 ID: %d\n\n"
-                              + "이제 데이터셋을 검색하고 활용할 수 있습니다.\n\n"
-                              + "감사합니다.",
-                          dataTitle, dataId);
-                  sendEmailPort.send(email, title, body);
-                  LoggerFactory.service()
-                      .logInfo(
-                          PARSE_METADATA_USE_CASE,
-                          "파싱 성공 이메일 전송 완료 - userId=" + userId + ", dataId=" + dataId);
-                }
-              });
-    } catch (Exception e) {
-      // 이메일 전송 실패는 로그만 남기고 파싱 성공 자체는 유지
-      LoggerFactory.service()
-          .logException(
-              PARSE_METADATA_USE_CASE,
-              "파싱 성공 이메일 전송 실패 - userId=" + userId + ", dataId=" + dataId,
-              e);
-    }
-  }
-
-  /**
-   * 파싱 실패 시 사용자에게 이메일을 전송합니다.
-   *
-   * @param dataId 데이터셋 ID
-   * @param errorMessage 오류 메시지
-   */
-  private void sendParsingFailureEmail(Long dataId, String errorMessage) {
-    try {
-      Data data =
-          findDataPort
-              .findDataById(dataId)
-              .orElse(null);
-      if (data == null) {
-        LoggerFactory.service()
-            .logWarning(
-                PARSE_METADATA_USE_CASE, "파싱 실패 이메일 전송 실패 - 데이터셋을 찾을 수 없음 dataId=" + dataId);
-        return;
-      }
-
-      userQueryPort
-          .findUserById(data.getUserId())
-          .ifPresent(
-              user -> {
-                String email = user.getEmail();
-                if (email != null && !email.isBlank()) {
-                  String title = "[Dataracy] 데이터셋 메타데이터 파싱 실패";
-                  String body =
-                      String.format(
-                          "안녕하세요.\n\n"
-                              + "업로드하신 데이터셋 '%s'의 메타데이터 파싱 중 오류가 발생했습니다.\n\n"
-                              + "데이터셋 ID: %d\n"
-                              + "오류 내용: %s\n\n"
-                              + "파일 형식이나 내용을 확인해주시고, 문제가 지속되면 고객지원으로 문의해주세요.\n\n"
-                              + "감사합니다.",
-                          data.getTitle(), dataId, errorMessage);
-                  sendEmailPort.send(email, title, body);
-                  LoggerFactory.service()
-                      .logInfo(
-                          PARSE_METADATA_USE_CASE,
-                          "파싱 실패 이메일 전송 완료 - userId=" + data.getUserId() + ", dataId=" + dataId);
-                }
-              });
-    } catch (Exception e) {
-      // 이메일 전송 실패는 로그만 남김
-      LoggerFactory.service()
-          .logException(
-              PARSE_METADATA_USE_CASE, "파싱 실패 이메일 전송 실패 - dataId=" + dataId, e);
     }
   }
 }
