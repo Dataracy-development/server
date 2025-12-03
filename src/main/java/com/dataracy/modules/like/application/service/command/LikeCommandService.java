@@ -82,7 +82,7 @@ public class LikeCommandService implements LikeTargetUseCase {
       likeCommandPort.cancelLike(userId, targetId, targetType);
       sendLikeEventPort.sendLikeEvent(targetType, targetId, true);
     } catch (Exception e) {
-      handleLikeError(targetType, targetId, true);
+      handleLikeError(targetType, targetId, true, e);
     }
   }
 
@@ -92,21 +92,21 @@ public class LikeCommandService implements LikeTargetUseCase {
       likeCommandPort.save(like);
       sendLikeEventPort.sendLikeEvent(targetType, targetId, false);
     } catch (Exception e) {
-      handleLikeError(targetType, targetId, false);
+      handleLikeError(targetType, targetId, false, e);
     }
   }
 
-  private void handleLikeError(TargetType targetType, Long targetId, boolean isCancelling) {
+  private void handleLikeError(TargetType targetType, Long targetId, boolean isCancelling, Exception e) {
     switch (targetType) {
       case PROJECT -> {
         String message = isCancelling ? "프로젝트 좋아요 취소 실패. targetId=" : "프로젝트 좋아요 실패. targetId=";
-        LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, message + targetId);
+        LoggerFactory.service().logException(LIKE_TARGET_USE_CASE, message + targetId, e);
         throw new LikeException(
             isCancelling ? LikeErrorStatus.FAIL_UNLIKE_PROJECT : LikeErrorStatus.FAIL_LIKE_PROJECT);
       }
       case COMMENT -> {
         String message = isCancelling ? "댓글 좋아요 취소 실패. targetId=" : "댓글 좋아요 실패. targetId=";
-        LoggerFactory.service().logWarning(LIKE_TARGET_USE_CASE, message + targetId);
+        LoggerFactory.service().logException(LIKE_TARGET_USE_CASE, message + targetId, e);
         throw new LikeException(
             isCancelling ? LikeErrorStatus.FAIL_UNLIKE_COMMENT : LikeErrorStatus.FAIL_LIKE_COMMENT);
       }
