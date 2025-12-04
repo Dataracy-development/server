@@ -100,7 +100,8 @@ public class DataParsingNotificationService {
                               + "업로드하신 데이터셋 '%s'의 메타데이터 파싱 중 오류가 발생했습니다.\n\n"
                               + "데이터셋 ID: %d\n"
                               + "오류 내용: %s\n\n"
-                              + "파일 형식이나 내용을 확인해주시고, 문제가 지속되면 고객지원으로 문의해주세요.\n\n"
+                              + "현재 데이터셋 파싱 재시도가 진행중입니다."
+                              + "파일 형식이나 내용을 확인해주시고, 재시도 최종 실패 시 다시 연락드리겠습니다.\n\n"
                               + "감사합니다.",
                           data.getTitle(), dataId, errorMessage);
                   sendEmailPort.send(email, title, body);
