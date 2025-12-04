@@ -32,5 +32,6 @@ public record DataDetailWebResponse(
     @Schema(description = "데이터셋 행 수", example = "55") Integer rowCount,
     @Schema(description = "데이터셋 열 수", example = "100") Integer columnCount,
     @Schema(description = "데이터셋 미리보기", example = "이 데이터셋 미리보기 문자열입니다. ~~") String previewJson,
-    @Schema(description = "메타데이터 파싱 상태", example = "COMPLETED") MetadataParsingStatus metadataParsingStatus,
+    @Schema(description = "메타데이터 파싱 상태", example = "COMPLETED")
+        MetadataParsingStatus metadataParsingStatus,
     @Schema(description = "생성일", example = "2025-08-04T10:30:00") LocalDateTime createdAt) {}

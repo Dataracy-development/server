@@ -33,6 +33,7 @@ import com.dataracy.modules.dataset.adapter.web.mapper.read.DataReadWebMapper;
 import com.dataracy.modules.dataset.adapter.web.response.read.*;
 import com.dataracy.modules.dataset.application.dto.response.read.*;
 import com.dataracy.modules.dataset.application.port.in.query.read.*;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.status.DataSuccessStatus;
 import com.dataracy.modules.security.config.SecurityPathConfig;
 
@@ -175,6 +176,7 @@ class DataReadControllerTest {
             300,
             15,
             "{\"preview\":true}",
+            MetadataParsingStatus.COMPLETED,
             LocalDateTime.of(2022, 6, 1, CURRENT_HOUR, 30));
     DataDetailWebResponse webRes =
         new DataDetailWebResponse(
@@ -199,6 +201,7 @@ class DataReadControllerTest {
             300,
             15,
             "{\"preview\":true}",
+            MetadataParsingStatus.COMPLETED,
             LocalDateTime.of(2022, 6, 1, CURRENT_HOUR, 30));
 
     given(getDataDetailUseCase.getDataDetail(2L)).willReturn(resDto);

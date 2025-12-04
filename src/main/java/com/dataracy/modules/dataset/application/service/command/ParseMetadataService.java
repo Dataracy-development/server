@@ -72,10 +72,11 @@ public class ParseMetadataService implements ParseMetadataUseCase {
         LoggerFactory.service()
             .logStart(
                 PARSE_METADATA_USE_CASE, "데이터셋 파일을 파싱하고 내용 저장 서비스 시작 dataId=" + request.dataId());
-    
+
     // 파싱 시작: 상태를 PROCESSING으로 변경
-    updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.PROCESSING);
-    
+    updateMetadataParsingStatusPort.updateParsingStatus(
+        request.dataId(), MetadataParsingStatus.PROCESSING);
+
     boolean success = false;
     try (InputStream inputStream = fileStoragePort.download(request.fileUrl())) {
       ParsedMetadataResponse response =
@@ -109,26 +110,32 @@ public class ParseMetadataService implements ParseMetadataUseCase {
       DataSearchDocument document = DataSearchDocument.from(data, metadata, dataLabels);
       indexDataPort.index(document);
       success = true;
-      
+
       // 파싱 성공: 상태를 COMPLETED로 변경
-      updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.COMPLETED);
-      
+      updateMetadataParsingStatusPort.updateParsingStatus(
+          request.dataId(), MetadataParsingStatus.COMPLETED);
+
       // 파싱 성공 이메일 전송
-      dataParsingNotificationService.notifyParsingSuccess(data.getUserId(), data.getTitle(), request.dataId());
+      dataParsingNotificationService.notifyParsingSuccess(
+          data.getUserId(), data.getTitle(), request.dataId());
     } catch (IOException e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "파일 다운로드 또는 파싱 실패", e);
-      updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.FAILED);
-      dataParsingNotificationService.notifyParsingFailure(request.dataId(), "파일 다운로드 또는 파싱 중 오류가 발생했습니다.");
+      updateMetadataParsingStatusPort.updateParsingStatus(
+          request.dataId(), MetadataParsingStatus.FAILED);
+      dataParsingNotificationService.notifyParsingFailure(
+          request.dataId(), "파일 다운로드 또는 파싱 중 오류가 발생했습니다.");
     } catch (DataException e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "데이터 조회 실패", e);
-      updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.FAILED);
+      updateMetadataParsingStatusPort.updateParsingStatus(
+          request.dataId(), MetadataParsingStatus.FAILED);
       dataParsingNotificationService.notifyParsingFailure(request.dataId(), "데이터 조회 중 오류가 발생했습니다.");
     } catch (Exception e) {
       LoggerFactory.service().logException(PARSE_METADATA_USE_CASE, "예상치 못한 오류 발생", e);
-      updateMetadataParsingStatusPort.updateParsingStatus(request.dataId(), MetadataParsingStatus.FAILED);
+      updateMetadataParsingStatusPort.updateParsingStatus(
+          request.dataId(), MetadataParsingStatus.FAILED);
       dataParsingNotificationService.notifyParsingFailure(request.dataId(), "예상치 못한 오류가 발생했습니다.");
     }
-    
+
     if (success) {
       LoggerFactory.service()
           .logSuccess(

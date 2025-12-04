@@ -37,6 +37,7 @@ import com.dataracy.modules.dataset.application.dto.response.support.DataWithPro
 import com.dataracy.modules.dataset.application.mapper.read.DataReadDtoMapper;
 import com.dataracy.modules.dataset.application.port.in.query.read.FindDataLabelMapUseCase;
 import com.dataracy.modules.dataset.application.port.out.query.read.*;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.DataMetadata;
@@ -114,6 +115,7 @@ class DataReadServiceTest {
         1,
         10L,
         DataMetadata.of(1L, 1, 1, "{}"),
+        MetadataParsingStatus.COMPLETED,
         LocalDateTime.now());
   }
 
@@ -213,6 +215,7 @@ class DataReadServiceTest {
                   1,
                   1,
                   "{}",
+                  MetadataParsingStatus.COMPLETED,
                   LocalDateTime.now()));
 
       // when

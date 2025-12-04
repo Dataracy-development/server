@@ -136,9 +136,6 @@ public class DataCommandDbAdapter
     dataEntity.updateMetadataParsingStatus(status);
     dataJpaRepository.save(dataEntity);
     LoggerFactory.db()
-        .logUpdate(
-            DATA_ENTITY,
-            String.valueOf(dataId),
-            "메타데이터 파싱 상태 업데이트: " + status);
+        .logUpdate(DATA_ENTITY, String.valueOf(dataId), "메타데이터 파싱 상태 업데이트: " + status);
   }
 }

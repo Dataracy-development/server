@@ -64,9 +64,7 @@ public class DataParsingNotificationService {
       // 이메일 전송 실패는 로그만 남기고 파싱 성공 자체는 유지
       LoggerFactory.service()
           .logException(
-              NOTIFICATION_SERVICE,
-              "파싱 성공 이메일 전송 실패 - userId=" + userId + ", dataId=" + dataId,
-              e);
+              NOTIFICATION_SERVICE, "파싱 성공 이메일 전송 실패 - userId=" + userId + ", dataId=" + dataId, e);
     }
   }
 
@@ -81,8 +79,7 @@ public class DataParsingNotificationService {
       Optional<Data> dataOpt = findDataPort.findDataById(dataId);
       if (dataOpt.isEmpty()) {
         LoggerFactory.service()
-            .logWarning(
-                NOTIFICATION_SERVICE, "파싱 실패 이메일 전송 실패 - 데이터셋을 찾을 수 없음 dataId=" + dataId);
+            .logWarning(NOTIFICATION_SERVICE, "파싱 실패 이메일 전송 실패 - 데이터셋을 찾을 수 없음 dataId=" + dataId);
         return;
       }
 
@@ -114,8 +111,7 @@ public class DataParsingNotificationService {
     } catch (Exception e) {
       // 이메일 전송 실패는 로그만 남김
       LoggerFactory.service()
-          .logException(
-              NOTIFICATION_SERVICE, "파싱 실패 이메일 전송 실패 - dataId=" + dataId, e);
+          .logException(NOTIFICATION_SERVICE, "파싱 실패 이메일 전송 실패 - dataId=" + dataId, e);
     }
   }
 
@@ -129,8 +125,7 @@ public class DataParsingNotificationService {
       Optional<Data> dataOpt = findDataPort.findDataById(dataId);
       if (dataOpt.isEmpty()) {
         LoggerFactory.service()
-            .logWarning(
-                NOTIFICATION_SERVICE, "완전 실패 이메일 전송 실패 - 데이터셋을 찾을 수 없음 dataId=" + dataId);
+            .logWarning(NOTIFICATION_SERVICE, "완전 실패 이메일 전송 실패 - 데이터셋을 찾을 수 없음 dataId=" + dataId);
         return;
       }
 
@@ -166,9 +161,7 @@ public class DataParsingNotificationService {
     } catch (Exception e) {
       // 이메일 전송 실패는 로그만 남김
       LoggerFactory.service()
-          .logException(
-              NOTIFICATION_SERVICE, "완전 실패 이메일 전송 실패 - dataId=" + dataId, e);
+          .logException(NOTIFICATION_SERVICE, "완전 실패 이메일 전송 실패 - dataId=" + dataId, e);
     }
   }
 }
-

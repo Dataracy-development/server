@@ -125,10 +125,7 @@ public class DataKafkaConsumerAdapter {
       Long dataId = event.getDataId();
 
       LoggerFactory.kafka()
-          .logError(
-              dataUploadedTopic + "-dlt",
-              "DLT 메시지 수신 - 모든 재시도 실패: dataId=" + dataId,
-              null);
+          .logError(dataUploadedTopic + "-dlt", "DLT 메시지 수신 - 모든 재시도 실패: dataId=" + dataId, null);
 
       // 완전 실패 처리 (상태 업데이트 + 이메일 전송)
       dataParsingNotificationService.notifyFinalFailure(dataId);
@@ -141,7 +138,8 @@ public class DataKafkaConsumerAdapter {
       LoggerFactory.kafka()
           .logError(
               dataUploadedTopic + "-dlt",
-              "DLT 메시지 처리 중 오류 발생: dataId=" + (record.value() != null ? record.value().getDataId() : "unknown"),
+              "DLT 메시지 처리 중 오류 발생: dataId="
+                  + (record.value() != null ? record.value().getDataId() : "unknown"),
               e);
       // DLT 처리 실패는 로그만 남기고 커밋 (무한 루프 방지)
       if (acknowledgment != null) {

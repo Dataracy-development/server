@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
+
 /** Data 도메인 모델 테스트 */
 class DataTest {
 
@@ -52,6 +54,7 @@ class DataTest {
             100,
             1024L,
             metadata,
+            MetadataParsingStatus.COMPLETED,
             createdAt);
 
     // then
@@ -152,6 +155,7 @@ class DataTest {
             100,
             1024L,
             null,
+            MetadataParsingStatus.COMPLETED,
             createdAt);
 
     // then
@@ -183,6 +187,7 @@ class DataTest {
             100,
             1024L,
             metadata,
+            MetadataParsingStatus.COMPLETED,
             createdAt);
 
     // then
@@ -204,7 +209,23 @@ class DataTest {
     // when
     Data data =
         Data.of(
-            1L, "", 1L, 1L, 1L, 1L, startDate, endDate, "", "", "", "", 0, 0L, metadata, createdAt);
+            1L,
+            "",
+            1L,
+            1L,
+            1L,
+            1L,
+            startDate,
+            endDate,
+            "",
+            "",
+            "",
+            "",
+            0,
+            0L,
+            metadata,
+            MetadataParsingStatus.COMPLETED,
+            createdAt);
 
     // then
     assertAll(

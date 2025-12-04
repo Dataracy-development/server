@@ -15,4 +15,3 @@ public enum MetadataParsingStatus {
   /** 파싱 실패 */
   FAILED
 }
-

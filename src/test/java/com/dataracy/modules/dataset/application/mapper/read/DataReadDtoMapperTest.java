@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.dataracy.modules.dataset.application.dto.response.read.*;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.DataMetadata;
 
@@ -34,6 +35,7 @@ class DataReadDtoMapperTest {
         10,
         100L,
         DataMetadata.of(1L, 100, 10, "{}"),
+        MetadataParsingStatus.COMPLETED,
         LocalDateTime.now());
   }
 

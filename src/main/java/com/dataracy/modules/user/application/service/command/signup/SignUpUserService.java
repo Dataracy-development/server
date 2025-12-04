@@ -67,8 +67,8 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
    * <p>요청 DTO의 필수 정보(이메일, 닉네임, 비밀번호 일치 등)를 검증하고, 작성자 유형, 직업, 방문 경로, 토픽 등의 참조 데이터 유효성 및 중복 이메일/닉네임
    * 검사를 수행한 후 사용자 엔터티를 생성·저장한다. 저장된 사용자 ID로 리프레시 토큰을 생성하여 영구 저장소에 저장하고, 토큰과 만료 시간을 포함한 응답을 반환한다.
    *
-   * <p>데이터베이스의 unique constraint({@code email}, {@code nickname})로 중복 회원가입이 방지되므로 분산 락이 불필요합니다.
-   * 동시에 여러 요청이 들어와도 하나만 성공하고 나머지는 unique constraint 위반 예외가 발생하며, 이는 정상적인 동작입니다.
+   * <p>데이터베이스의 unique constraint({@code email}, {@code nickname})로 중복 회원가입이 방지되므로 분산 락이 불필요합니다. 동시에
+   * 여러 요청이 들어와도 하나만 성공하고 나머지는 unique constraint 위반 예외가 발생하며, 이는 정상적인 동작입니다.
    *
    * @param requestDto 자체 회원가입 요청 정보 (이메일, 닉네임, 비밀번호 등)
    * @return 발급된 리프레시 토큰과 해당 토큰의 만료 시간을 포함한 RefreshTokenResponse
@@ -167,8 +167,8 @@ public class SignUpUserService implements SelfSignUpUseCase, OAuthSignUpUseCase 
    * <p>주어진 등록(Register) 토큰의 유효성을 확인하고, 토큰에서 추출한 소셜 공급자 정보와 온보딩 요청 정보를 바탕으로 신규 사용자 계정을 생성·저장합니다. 생성된
    * 사용자에 대해 리프레시 토큰을 생성·영구 저장한 뒤 토큰 값과 만료 시간을 담은 응답을 반환합니다.
    *
-   * <p>데이터베이스의 unique constraint({@code email}, {@code nickname})로 중복 회원가입이 방지되므로 분산 락이 불필요합니다.
-   * 동시에 여러 요청이 들어와도 하나만 성공하고 나머지는 unique constraint 위반 예외가 발생하며, 이는 정상적인 동작입니다.
+   * <p>데이터베이스의 unique constraint({@code email}, {@code nickname})로 중복 회원가입이 방지되므로 분산 락이 불필요합니다. 동시에
+   * 여러 요청이 들어와도 하나만 성공하고 나머지는 unique constraint 위반 예외가 발생하며, 이는 정상적인 동작입니다.
    *
    * @param registerToken 소셜 회원가입을 위한 등록용 JWT 토큰(유효성 검사 및 정보 추출에 사용)
    * @param requestDto 온보딩 요청 정보(닉네임, 레벨/직업/방문경로/관심주제 식별자 등)

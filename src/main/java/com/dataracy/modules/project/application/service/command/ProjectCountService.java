@@ -49,8 +49,8 @@ public class ProjectCountService
   /**
    * 프로젝트의 댓글 수를 1 증가시키고 변경을 프로젝션 동기화 작업으로 등록합니다.
    *
-   * <p>영구 저장소의 댓글 수를 증가시키고(데이터베이스) 동일 트랜잭션 내에서 프로젝션 동기화용 델타(+1)를 큐에 등록합니다. 데이터베이스의 원자적 연산(UPDATE SET
-   * commentCount = commentCount + 1)으로 동시성 문제를 해결하므로 분산 락이 불필요합니다.
+   * <p>영구 저장소의 댓글 수를 증가시키고(데이터베이스) 동일 트랜잭션 내에서 프로젝션 동기화용 델타(+1)를 큐에 등록합니다. 데이터베이스의 원자적 연산(UPDATE
+   * SET commentCount = commentCount + 1)으로 동시성 문제를 해결하므로 분산 락이 불필요합니다.
    *
    * @param projectId 증가할 대상 프로젝트의 ID
    */
@@ -78,8 +78,8 @@ public class ProjectCountService
   /**
    * 지정한 프로젝트의 댓글 수를 1만큼 감소시키고 변경을 영속화한 뒤 프로젝션(검색 인덱스 등)에 반영할 델타를 등록합니다.
    *
-   * <p>데이터베이스의 원자적 연산(UPDATE SET commentCount = CASE WHEN ... THEN commentCount - 1 ...)으로 동시성
-   * 문제를 해결하므로 분산 락이 불필요합니다. 트랜잭션 내에서 실행되어 데이터베이스의 카운트를 감소시킨 후 프로젝션 동기화를 위한 델타를 큐에 등록합니다.
+   * <p>데이터베이스의 원자적 연산(UPDATE SET commentCount = CASE WHEN ... THEN commentCount - 1 ...)으로 동시성 문제를
+   * 해결하므로 분산 락이 불필요합니다. 트랜잭션 내에서 실행되어 데이터베이스의 카운트를 감소시킨 후 프로젝션 동기화를 위한 델타를 큐에 등록합니다.
    *
    * @param projectId 감소할 대상 프로젝트의 ID
    */
@@ -104,8 +104,8 @@ public class ProjectCountService
   /**
    * 지정한 프로젝트의 좋아요 수를 1 증가시키고, DB에 반영한 뒤 프로젝션 동기화용 델타(+1)를 큐에 등록한다.
    *
-   * <p>데이터베이스의 원자적 연산(UPDATE SET likeCount = likeCount + 1)으로 동시성 문제를 해결하므로 분산 락이 불필요합니다.
-   * 트랜잭션 내에서 실행되어 동시성과 원자성을 보장한다.
+   * <p>데이터베이스의 원자적 연산(UPDATE SET likeCount = likeCount + 1)으로 동시성 문제를 해결하므로 분산 락이 불필요합니다. 트랜잭션 내에서
+   * 실행되어 동시성과 원자성을 보장한다.
    *
    * @param projectId 좋아요 수를 증가시킬 프로젝트의 ID
    */
@@ -127,8 +127,8 @@ public class ProjectCountService
   /**
    * 지정한 프로젝트의 좋아요 수를 1 감소시키고, 데이터베이스와 Elasticsearch 인덱스의 값을 동기화합니다.
    *
-   * <p>데이터베이스의 원자적 연산(UPDATE SET likeCount = CASE WHEN ... THEN likeCount - 1 ...)으로 동시성 문제를
-   * 해결하므로 분산 락이 불필요합니다.
+   * <p>데이터베이스의 원자적 연산(UPDATE SET likeCount = CASE WHEN ... THEN likeCount - 1 ...)으로 동시성 문제를 해결하므로
+   * 분산 락이 불필요합니다.
    *
    * @param projectId 좋아요 수를 감소시킬 프로젝트의 ID
    */

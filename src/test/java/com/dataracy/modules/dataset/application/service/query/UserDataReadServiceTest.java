@@ -27,6 +27,7 @@ import com.dataracy.modules.dataset.application.dto.response.read.UserDataRespon
 import com.dataracy.modules.dataset.application.dto.response.support.DataWithProjectCountDto;
 import com.dataracy.modules.dataset.application.mapper.read.DataReadDtoMapper;
 import com.dataracy.modules.dataset.application.port.out.query.read.FindUserDataSetsPort;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.DataMetadata;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
@@ -62,6 +63,7 @@ class UserDataReadServiceTest {
         1,
         10L,
         DataMetadata.of(1L, 1, 1, "{}"),
+        MetadataParsingStatus.COMPLETED,
         LocalDateTime.now());
   }
 
@@ -100,6 +102,7 @@ class UserDataReadServiceTest {
             1,
             20L,
             DataMetadata.of(2L, 2, 2, "{}"),
+            MetadataParsingStatus.COMPLETED,
             LocalDateTime.now());
 
     Page<DataWithProjectCountDto> page =

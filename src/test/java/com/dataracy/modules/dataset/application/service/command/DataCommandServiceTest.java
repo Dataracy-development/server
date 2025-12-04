@@ -33,6 +33,7 @@ import com.dataracy.modules.dataset.application.port.out.command.update.UpdateDa
 import com.dataracy.modules.dataset.application.port.out.command.update.UpdateThumbnailFilePort;
 import com.dataracy.modules.dataset.application.port.out.query.read.FindDataPort;
 import com.dataracy.modules.dataset.application.port.out.validate.CheckDataExistsByIdPort;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.model.DataMetadata;
@@ -96,6 +97,7 @@ class DataCommandServiceTest {
         1,
         1024L,
         DataMetadata.of(1L, 10, 5, "{}"),
+        MetadataParsingStatus.COMPLETED,
         LocalDateTime.now());
   }
 

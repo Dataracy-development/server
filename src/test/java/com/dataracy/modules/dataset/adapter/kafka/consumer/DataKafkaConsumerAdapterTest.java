@@ -39,6 +39,10 @@ class DataKafkaConsumerAdapterTest {
 
   @Mock private ParseMetadataUseCase parseMetadataUseCase;
 
+  @Mock
+  private com.dataracy.modules.dataset.application.service.command.DataParsingNotificationService
+      dataParsingNotificationService;
+
   @Mock private KafkaLogger kafkaLogger;
 
   @Mock private Acknowledgment acknowledgment;
@@ -47,7 +51,9 @@ class DataKafkaConsumerAdapterTest {
 
   @BeforeEach
   void setUp() {
-    adapter = new DataKafkaConsumerAdapter(redisTemplate, parseMetadataUseCase);
+    adapter =
+        new DataKafkaConsumerAdapter(
+            redisTemplate, parseMetadataUseCase, dataParsingNotificationService);
     ReflectionTestUtils.setField(adapter, "dataUploadedTopic", "data-uploaded-topic");
   }
 

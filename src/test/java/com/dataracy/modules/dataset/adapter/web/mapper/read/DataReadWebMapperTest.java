@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import com.dataracy.modules.dataset.adapter.web.response.read.*;
 import com.dataracy.modules.dataset.application.dto.response.read.*;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 
 class DataReadWebMapperTest {
 
@@ -46,6 +47,7 @@ class DataReadWebMapperTest {
             300,
             10,
             "{\"col\":\"val\"}",
+            MetadataParsingStatus.COMPLETED,
             LocalDateTime.of(2023, 5, 1, 10, 0));
 
     // when

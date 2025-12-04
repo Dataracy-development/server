@@ -25,6 +25,7 @@ import com.dataracy.modules.dataset.application.mapper.read.DataReadDtoMapper;
 import com.dataracy.modules.dataset.application.port.in.query.read.FindDataLabelMapUseCase;
 import com.dataracy.modules.dataset.application.port.out.query.read.GetPopularDataSetsPort;
 import com.dataracy.modules.dataset.application.port.out.storage.PopularDataSetsStoragePort;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.model.Data;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,6 +60,7 @@ class PopularDataSetsBatchServiceTest {
         1,
         10L,
         com.dataracy.modules.dataset.domain.model.DataMetadata.of(1L, 1, 1, "{}"),
+        MetadataParsingStatus.COMPLETED,
         LocalDateTime.now());
   }
 

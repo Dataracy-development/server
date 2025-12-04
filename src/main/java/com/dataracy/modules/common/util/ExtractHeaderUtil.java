@@ -43,8 +43,7 @@ public class ExtractHeaderUtil {
     try {
       return extractAccessToken(request).map(jwtValidateUseCase::getUserIdFromToken).orElse(null);
     } catch (Exception e) {
-      LoggerFactory.common()
-          .logError("ExtractHeaderUtil", "인증된 사용자 ID 추출 실패", e);
+      LoggerFactory.common().logError("ExtractHeaderUtil", "인증된 사용자 ID 추출 실패", e);
       return null;
     }
   }

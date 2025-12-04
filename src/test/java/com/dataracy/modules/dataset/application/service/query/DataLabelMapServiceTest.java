@@ -20,6 +20,7 @@ import org.mockito.quality.Strictness;
 
 import com.dataracy.modules.dataset.application.dto.response.support.DataLabelMapResponse;
 import com.dataracy.modules.dataset.application.dto.response.support.DataWithProjectCountDto;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.reference.application.port.in.datasource.GetDataSourceLabelFromIdUseCase;
 import com.dataracy.modules.reference.application.port.in.datatype.GetDataTypeLabelFromIdUseCase;
@@ -64,6 +65,7 @@ class DataLabelMapServiceTest {
             1,
             1L,
             null,
+            MetadataParsingStatus.COMPLETED,
             LocalDateTime.now());
     DataWithProjectCountDto dto = new DataWithProjectCountDto(d, 2L);
 

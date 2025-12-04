@@ -23,6 +23,7 @@ import com.dataracy.modules.dataset.adapter.jpa.entity.DataEntity;
 import com.dataracy.modules.dataset.adapter.jpa.mapper.DataEntityMapper;
 import com.dataracy.modules.dataset.adapter.jpa.repository.DataJpaRepository;
 import com.dataracy.modules.dataset.application.dto.request.command.ModifyDataRequest;
+import com.dataracy.modules.dataset.domain.enums.MetadataParsingStatus;
 import com.dataracy.modules.dataset.domain.exception.DataException;
 import com.dataracy.modules.dataset.domain.model.Data;
 import com.dataracy.modules.dataset.domain.status.DataErrorStatus;
@@ -45,7 +46,22 @@ class DataCommandDbAdapterTest {
       // given
       Data data =
           Data.of(
-              1L, "title", 1L, 1L, 1L, 1L, null, null, "desc", "guide", null, null, 0, null, null,
+              1L,
+              "title",
+              1L,
+              1L,
+              1L,
+              1L,
+              null,
+              null,
+              "desc",
+              "guide",
+              null,
+              null,
+              0,
+              null,
+              null,
+              MetadataParsingStatus.PENDING,
               null);
       DataEntity entity = DataEntityMapper.toEntity(data);
       given(repo.save(any(DataEntity.class))).willReturn(entity);

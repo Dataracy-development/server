@@ -96,7 +96,8 @@ public class LikeCommandService implements LikeTargetUseCase {
     }
   }
 
-  private void handleLikeError(TargetType targetType, Long targetId, boolean isCancelling, Exception e) {
+  private void handleLikeError(
+      TargetType targetType, Long targetId, boolean isCancelling, Exception e) {
     switch (targetType) {
       case PROJECT -> {
         String message = isCancelling ? "프로젝트 좋아요 취소 실패. targetId=" : "프로젝트 좋아요 실패. targetId=";
